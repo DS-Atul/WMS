@@ -1,0 +1,25 @@
+const OrderDataTitle = [
+  "Docket Number* ",
+  "Booking Date",
+  "Current Status",
+  "Navigate To",
+  "Client",
+  "Origin",
+  "Destination",
+  "Shipper*",
+  "Consignee*",
+  "Genrate Pdf",
+  "	Manifest Pdf",
+  "Runsheet No.",
+  "Created By",
+  "Is Completed",
+  "Cold Chain",
+  "Delivered",
+  "Total Quantity",
+  "Current Branch",
+  "Docket Entry",
+  "Is Manifested",
+  "Delivery Type",
+];
+
+export default OrderDataTitle;
