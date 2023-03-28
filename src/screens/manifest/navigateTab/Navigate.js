@@ -23,7 +23,7 @@ const Navigate = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Pending For Dispatch" && e.read === true
+        (e) => e.sub_model === "Panding For Dispatch" && e.read === true
       )
     ) {
       setcan_dispatch(true);
@@ -35,7 +35,7 @@ const Navigate = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Pending To Depart" && e.read === true
+        (e) => e.sub_model === "Panding To Depart" && e.read === true
       )
     ) {
       setcan_depart(true);
@@ -47,7 +47,7 @@ const Navigate = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Rough Manifest" && e.read === true
+        (e) => e.sub_model === "Raugh Manifest" && e.read === true
       )
     ) {
       setraugh(true);
@@ -129,10 +129,10 @@ const Navigate = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 4 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 3 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(4));
+            dispatch(setManifestTab(3));
             navigate("/manifest/pendingtodepart");
           }}
         >
@@ -143,10 +143,10 @@ const Navigate = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 5 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 4 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(5));
+            dispatch(setManifestTab(4));
             navigate("/manifest/incomingmanifest");
           }}
         >
@@ -157,10 +157,10 @@ const Navigate = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 6 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 5 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(6));
+            dispatch(setManifestTab(5));
             navigate("/manifest/allmanifest");
           }}
         >

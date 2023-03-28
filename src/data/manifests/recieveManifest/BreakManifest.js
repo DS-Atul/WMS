@@ -182,7 +182,7 @@ const BreakManifest = ({
 
   return (
     <>
-      <div className="table">
+      <div className="table" style={{overflow:"scroll"}}>
         <table
           className="topheader table-light"
           style={{ borderCollapse: "collapse", width: "100%", borderWidth: 1 }}

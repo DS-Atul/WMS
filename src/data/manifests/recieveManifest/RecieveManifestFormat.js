@@ -250,13 +250,6 @@ const RecieveDataFormat = ({
                           <div style={{color:"red"}}> No Barcode Attached</div> 
                         }
                       </td>
-
-                     
-                      
-                   
-
-                    
-                   
                   
                       <td>
                         <select

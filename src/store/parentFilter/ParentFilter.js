@@ -4,8 +4,8 @@ const initialState = {
   toggle: "",
   manifest_tab: 1,
   runsheet_tab: 1,
-  incoming_tab:8,
-  rough_tab:6,
+  incoming_tab:1,
+  rough_tab:1,
 };
 
 export const parentFilterSlice = createSlice({

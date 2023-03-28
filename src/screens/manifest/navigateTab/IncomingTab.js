@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setManifestTab } from "../../../store/parentFilter/ParentFilter";
+import { setChildTab, setIncomingTab } from "../../../store/parentFilter/ParentFilter";
 
 const IncomingTab = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const IncomingTab = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Pending For Dispatch" && e.read === true
+        (e) => e.sub_model === "Panding For Dispatch" && e.read === true
       )
     ) {
       setcan_dispatch(true);
@@ -34,7 +34,7 @@ const IncomingTab = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Pending To Depart" && e.read === true
+        (e) => e.sub_model === "Panding To Depart" && e.read === true
       )
     ) {
       setcan_depart(true);
@@ -46,7 +46,7 @@ const IncomingTab = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Rough Manifest" && e.read === true
+        (e) => e.sub_model === "Raugh Manifest" && e.read === true
       )
     ) {
       setraugh(true);
@@ -85,10 +85,10 @@ const IncomingTab = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 8 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 1 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(1));
+            dispatch(setIncomingTab(1));
             navigate("/manifest/incomingmanifest");
           }}
         >
@@ -100,10 +100,10 @@ const IncomingTab = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 9 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 2 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(2));
+            dispatch(setIncomingTab(2));
             navigate("/manifest/incominghub");
           }}
         >

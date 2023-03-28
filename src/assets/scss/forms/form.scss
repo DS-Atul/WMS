@@ -207,8 +207,13 @@ $const-clr: hsl(213, 100%, 95%);
 .custom-modal{
   max-width: 70%;
   margin: 0 auto;
+  padding: 10px;
 }
-
+.custom-modal2{
+  max-width: 65%;
+  margin: 0 auto;
+  padding: 10px;
+}
 .parent_tab {
   // background-color: #EEF0FC;
   background-color: #f8f8fb;

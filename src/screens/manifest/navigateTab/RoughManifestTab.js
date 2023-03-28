@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setManifestTab } from "../../../store/parentFilter/ParentFilter";
+import { setManifestTab, setRoughTab } from "../../../store/parentFilter/ParentFilter";
 
 const RoughTab = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authentication.userdetails);
-  const tab = useSelector((state) => state.parentfilter);
+  const tab = useSelector((state) => state.parentfilter.rough_tab);
  
-  console.log("RoughTab",tab)
   //Permission
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
@@ -23,7 +22,7 @@ const RoughTab = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Pending For Dispatch" && e.read === true
+        (e) => e.sub_model === "Panding For Dispatch" && e.read === true
       )
     ) {
       setcan_dispatch(true);
@@ -35,7 +34,7 @@ const RoughTab = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Pending To Depart" && e.read === true
+        (e) => e.sub_model === "Panding To Depart" && e.read === true
       )
     ) {
       setcan_depart(true);
@@ -47,7 +46,7 @@ const RoughTab = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Rough Manifest" && e.read === true
+        (e) => e.sub_model === "Raugh Manifest" && e.read === true
       )
     ) {
       setraugh(true);
@@ -86,10 +85,10 @@ const RoughTab = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 6 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 1 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(6));
+            dispatch(setRoughTab(1));
             navigate("/manifest/roughmanifest");
           }}
         >
@@ -101,10 +100,10 @@ const RoughTab = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 7 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 2 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(7));
+            dispatch(setRoughTab(2));
             navigate("/manifest/branchmanifest");
           }}
         >

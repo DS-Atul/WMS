@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import "../../../assets/scss/forms/form.scss";
+// import "../../../assets/scss/forms/form.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -136,7 +136,7 @@ const RecieveManifest = ({ depart }) => {
     "In Transit",
   ]);
   const [trans_mode_selected, settrans_mode_selected] = useState("");
-const [vehicle_no, setvehicle_no] = useState("")
+  const [vehicle_no, setvehicle_no] = useState("")
   const get_orderof_manifest = () => {
     axios
       .get(
@@ -222,54 +222,55 @@ const [vehicle_no, setvehicle_no] = useState("")
         onHide={handleClose}
         backdrop="static"
         keyboard={false}
+        dialogClassName={is_break && "custom-modal2"}
       >
         <Modal.Header closeButton>
-          
+
         </Modal.Header>
 
         {
-          is_break ? 
-          <Modal.Body>
-           <BreakManifest 
-           data={location_data.state.depart.orders}
-           is_issue={is_issue}
-           setis_issue={setis_issue}
-           received={received}
-           setReceived={setReceived}
-           notReceived={notReceived}
-           setNotReceived={setNotReceived}
-           />
-          </Modal.Body>
-          :
-<Modal.Body>
-        <div style={{ marginLeft: "170px" }}>
-            <img src={Question} width="100vw" height="100vh" />
-          </div>
-          <div
-            style={{
-              marginTop: "20px",
-              fontSize: "14px",
-              fontWeight: "bold",
-              marginLeft: "20px",
-              color:"red",
-            }}
-          >
-             {manifest_no} Have Some Issues In Box Or Bag Do You Want To Break Manifest ?
-          </div>
-          
+          is_break ?
+            <Modal.Body>
+                <BreakManifest
+                data={location_data.state.depart.orders}
+                is_issue={is_issue}
+                setis_issue={setis_issue}
+                received={received}
+                setReceived={setReceived}
+                notReceived={notReceived}
+                setNotReceived={setNotReceived}
+              />
+            </Modal.Body>
+            :
+            <Modal.Body>
+              <div style={{ marginLeft: "170px" }}>
+                <img src={Question} width="100vw" height="100vh" />
+              </div>
+              <div
+                style={{
+                  marginTop: "20px",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  marginLeft: "20px",
+                  color: "red",
+                }}
+              >
+                {manifest_no} Have Some Issues In Box Or Bag Do You Want To Break Manifest ?
+              </div>
+
             </Modal.Body>
         }
-        
-            <Modal.Footer>
+
+        <Modal.Footer>
           <Button variant="danger" onClick={handleClose}>
             No,Later
           </Button>
-          <Button variant="success" onClick={()=>{
+          <Button variant="success" onClick={() => {
             setis_break(true);
           }}>Yes</Button>
         </Modal.Footer>
       </Modal>
-{/* Bag info started */}
+      {/* Bag info started */}
       <Title title="Recieve Manifest" parent_title="Manifests" />
       <PageTitle page="RecieveManifest" />
       <div className="mt-0 m-3">
@@ -301,7 +302,7 @@ const [vehicle_no, setvehicle_no] = useState("")
           </Card>
         </Col>
       </div>
-{/* Bag Info Ended */}
+      {/* Bag Info Ended */}
 
       {/* Colader Services */}
       <div className="m-3">
@@ -380,26 +381,26 @@ const [vehicle_no, setvehicle_no] = useState("")
                       </div>
                     </Col>
                   )}
-                       {trans_mode_selected === "Road" &&
-                  <Col lg={4} md={6} sm={6}>
-                    <div className="mb-2">
-                      <Label className="header-child">
-                        Vehicle Number :
-                      </Label>
-                 
-                      <Input
-                        name="vehicle_no"
-                        type="text"
-                        id="input"
-                        value={vehicle_no}
-                        onChange={(e) => {
-                          setvehicle_no(e.target.value)
-                        }}
-                      />
-                    </div>
-                      
-                  </Col>
-                      }
+                  {trans_mode_selected === "Road" &&
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header-child">
+                          Vehicle Number :
+                        </Label>
+
+                        <Input
+                          name="vehicle_no"
+                          type="text"
+                          id="input"
+                          value={vehicle_no}
+                          onChange={(e) => {
+                            setvehicle_no(e.target.value)
+                          }}
+                        />
+                      </div>
+
+                    </Col>
+                  }
                 </Row>
               </CardBody>
             ) : null}
@@ -414,10 +415,9 @@ const [vehicle_no, setvehicle_no] = useState("")
                 className="btn btn-info m-1 cu_btn"
                 onClick={() => {
                   dispatch(setLoaded(true));
-                  if(received.length>0 || notReceived.length>0)
-                  {
+                  if (received.length > 0 || notReceived.length > 0) {
                     handleShow()
-                  }               
+                  }
                 }}
               >
                 Recieve
