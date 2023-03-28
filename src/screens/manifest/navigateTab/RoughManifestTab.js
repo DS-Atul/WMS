@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setManifestTab } from "../../../store/parentFilter/ParentFilter";
 
-const Navigate = () => {
+const RoughTab = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authentication.userdetails);
-  const tab = useSelector((state) => state.parentfilter.manifest_tab);
-
-  console.log("navigateTab",tab)
+  const tab = useSelector((state) => state.parentfilter);
+ 
+  console.log("RoughTab",tab)
   //Permission
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
@@ -86,89 +86,33 @@ const Navigate = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 1 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 6 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(1));
-            navigate("/manifest/pendingfordispatch");
+            dispatch(setManifestTab(6));
+            navigate("/manifest/roughmanifest");
           }}
         >
           {/* Panding For Dispatch */}
-          Pending For Dispatch
+          Forwarding(Air)
         </div>
       )}
       {(raugh || user.is_superuser) && (
         <div
           className="header_tab"
           style={{
-            background: tab === 2 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 7 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(2));
-            navigate("/manifest/roughmanifest");
-          }}
-        >
-          Rough Manifest
-        </div>
-      )}
-            {/* {(raugh || user.is_superuser) && (
-        <div
-          className="header_tab"
-          style={{
-            background: tab === 3 ? "#d6e8ff" : "#F8F8FB",
-          }}
-          onClick={() => {
-            dispatch(setManifestTab(3));
+            dispatch(setManifestTab(7));
             navigate("/manifest/branchmanifest");
           }}
         >
-          Rough Manifest(Vehicle)
-        </div>
-      )} */}
-      {(can_depart || user.is_superuser) && (
-        <div
-          className="header_tab"
-          style={{
-            background: tab === 4 ? "#d6e8ff" : "#F8F8FB",
-          }}
-          onClick={() => {
-            dispatch(setManifestTab(4));
-            navigate("/manifest/pendingtodepart");
-          }}
-        >
-          Pending To Depart
-        </div>
-      )}
-      {(incoming || user.is_superuser) && (
-        <div
-          className="header_tab"
-          style={{
-            background: tab === 5 ? "#d6e8ff" : "#F8F8FB",
-          }}
-          onClick={() => {
-            dispatch(setManifestTab(5));
-            navigate("/manifest/incomingmanifest");
-          }}
-        >
-          Incoming Manifest
-        </div>
-      )}
-      {(all || user.is_superuser) && (
-        <div
-          className="header_tab"
-          style={{
-            background: tab === 6 ? "#d6e8ff" : "#F8F8FB",
-          }}
-          onClick={() => {
-            dispatch(setManifestTab(6));
-            navigate("/manifest/allmanifest");
-          }}
-        >
-          All Manifest
+          Forwarding(Vehicle)
         </div>
       )}
     </div>
   );
 };
 
-export default Navigate;
+export default RoughTab;

@@ -29,9 +29,8 @@ import { useNavigate } from "react-router-dom";
 import { Select } from "@mui/material";
 // import "./addanother.css";
 
-const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
-  console.log("edit-------",edit)
-  console.log("id_m-----", id_m)
+const AddAnotherOrder = (id_m, refresh, setrefresh) => {
+  console.log("id_m-------",id_m)
   // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
@@ -199,7 +198,7 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
       .post(
         ServerAddress + `manifest/add_manifest_order/`,
         {
-          manifest_no: id_m,
+          manifest_no: id_m.id_m,
           awb_no_list: id,
           steps: "FIRST",
         },
@@ -227,9 +226,8 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
 
   return (
     <>
-      <Button size={edit && "sm"} outline color={edit && "primary"} className={!edit && "btn btn-info m-1 cu_btn"} onClick={handleShow}>
-        {edit ? "Edit" : "Add More"}
-        
+      <Button className="btn btn-info m-1 cu_btn" onClick={handleShow}>
+        Add More
       </Button>
 
       <Modal

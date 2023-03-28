@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import Modal from "react-bootstrap/Modal";
 import Question from "../../../assets/images/bookings/question.png";
-
+import correct from "../../../assets/images/bookings/check-mark.png";
+import cross from "../../../assets/images/bookings/remove.png";
 // import { setMain_checkbox } from "../../../store/Components/ListDisplay/Main_Checkbox/action";
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
@@ -259,6 +260,7 @@ const IncomingManifestDataFormat = ({ data, data1, can_delete }) => {
         </tr>
       ) : (
         (list_toggle === true ? data1 : data).map((depart, index) => {
+          console.log("depart[[[]]",depart)
           return (
             <tr
               key={index}
@@ -289,7 +291,20 @@ const IncomingManifestDataFormat = ({ data, data1, can_delete }) => {
               <td>{depart.orders.length}</td>
               <td>{toTitleCase(depart.coloader_name)}</td>
               <td>{depart.bag_count}</td>
+              <td>{depart.open_box
+              ?
+              <div>
+                    <img src={correct} width="18" height="18" />
+                  </div> : <div>
+                    <img src={cross} width="18" height="18" />
+                  </div>
+              }</td>
+              <td>{depart.box_count
+              ?
+              depart.box_count : "--"
+              }</td>
               <td>{depart.total_weight}</td>
+
               {(can_update || user.is_superuser) && (
 
               <td>

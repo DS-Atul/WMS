@@ -25,7 +25,7 @@ import IncomingManifestDataFormat from "../../../data/manifests/incomingManifest
 import IncomingManifestTitle from "../../../data/manifests/incomingManifest/IncomingManifestTitle";
 import Navigate from "../navigateTab/Navigate";
 import { setLoaded } from "../../../store/manifest/RecieveManifest";
-
+import IncomingTab from "../navigateTab/IncomingTab";
 const IncomingManifest = () => {
   const dispatch = useDispatch();
   const toggle = useSelector((state) => state.parentfilter.toggle);
@@ -74,6 +74,7 @@ const IncomingManifest = () => {
     <>
       <PageTitle page="Incoming Manifest" />
       <Navigate />
+      <IncomingTab/>
       <Title title="Incoming Manifest" parent_title="Manifests" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
@@ -101,32 +102,7 @@ const IncomingManifest = () => {
         </div>
       </div>
 
-      <Title title="Incoming Hub Manifest" parent_title="Manifests" />
-      <div className="mx-3">
-        <div className="container-fluid " style={{ background: "white" }}>
-          <div className="mb-2 row ">
-            <div className="col-sm-4">
-              <SearchList />
-            </div>
-            <div className="col-sm-8">
-              <div
-                className="text-sm-end"
-                onClick={() => dispatch(setPageNumber(1))}
-              ></div>
-            </div>
-          </div>
-
-          {/* DataTable */}
-          <DataList
-           can_delete={can_delete}
-            Data_Title={IncomingHubTitle}
-            Data_Format={IncomingHubDataFormat}
-            pathb={`manifest/get_incoming_hub/?search=${search}&p=${page_num}&records=${data_len}`}
-            checkbox={"NO"}
-          />
-          <NumPagination pathb={"path"} />
-        </div>
-      </div>
+     
     </>
   );
 };

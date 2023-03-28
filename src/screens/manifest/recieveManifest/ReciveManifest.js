@@ -1,8 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -12,9 +10,9 @@ import {
   CardTitle,
   Label,
   Input,
-  FormFeedback,
-  Form,
 } from "reactstrap";
+import Modal from 'react-bootstrap/Modal';
+
 import { IconContext } from "react-icons";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
@@ -22,8 +20,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-
-import TransferList from "../../../components/formComponent/transferList/TransferList";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setAlertType,
@@ -34,13 +30,15 @@ import {
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
-import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import RecieveDataFormat from "../../../data/manifests/recieveManifest/RecieveManifestFormat";
 import { setLoaded } from "../../../store/manifest/RecieveManifest";
-
+// import Question from "../../../"
+import Question from "../../../assets/images/bookings/question.png";
+import BreakManifest from "../../../data/manifests/recieveManifest/BreakManifest";
 const RecieveManifest = ({ depart }) => {
   const [is_issue, setis_issue] = useState(false);
+  console.log("is_issue-----", is_issue)
   const [received, setReceived] = useState([]);
   const [notReceived, setNotReceived] = useState([]);
   console.log("receive--------", received)
@@ -91,6 +89,7 @@ const RecieveManifest = ({ depart }) => {
     dispatch(setToggle(true));
     navigate("/manifest/incomingmanifest");
   };
+  const [is_break, setis_break] = useState(false);
 
   const [coloader_list, setcoloader_list] = useState([]);
   const [coloader_selected, setcoloader_selected] = useState("");
@@ -205,20 +204,77 @@ const [vehicle_no, setvehicle_no] = useState("")
   console.log("error=--->>", received, notReceived);
   useEffect(() => {
     if (loaded) {
-      RecieveManifest();
+      // RecieveManifest();
     }
   }, [loaded]);
   console.log("=================", received, notReceived);
 
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          
+        </Modal.Header>
 
+        {
+          is_break ? 
+          <Modal.Body>
+           <BreakManifest 
+           data={location_data.state.depart.orders}
+           is_issue={is_issue}
+           setis_issue={setis_issue}
+           received={received}
+           setReceived={setReceived}
+           notReceived={notReceived}
+           setNotReceived={setNotReceived}
+           />
+          </Modal.Body>
+          :
+<Modal.Body>
+        <div style={{ marginLeft: "170px" }}>
+            <img src={Question} width="100vw" height="100vh" />
+          </div>
+          <div
+            style={{
+              marginTop: "20px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              marginLeft: "20px",
+              color:"red",
+            }}
+          >
+             {manifest_no} Have Some Issues In Box Or Bag Do You Want To Break Manifest ?
+          </div>
+          
+            </Modal.Body>
+        }
+        
+            <Modal.Footer>
+          <Button variant="danger" onClick={handleClose}>
+            No,Later
+          </Button>
+          <Button variant="success" onClick={()=>{
+            setis_break(true);
+          }}>Yes</Button>
+        </Modal.Footer>
+      </Modal>
+{/* Bag info started */}
       <Title title="Recieve Manifest" parent_title="Manifests" />
       <PageTitle page="RecieveManifest" />
       <div className="mt-0 m-3">
         <Col lg={12}>
           <Card className="shadow bg-white rounded">
-
             <CardBody style={{ paddingTop: "0px" }}>
               <Row>
                 <div className="container-fluid" style={{ background: "white" }}>
@@ -245,6 +301,7 @@ const [vehicle_no, setvehicle_no] = useState("")
           </Card>
         </Col>
       </div>
+{/* Bag Info Ended */}
 
       {/* Colader Services */}
       <div className="m-3">
@@ -357,6 +414,10 @@ const [vehicle_no, setvehicle_no] = useState("")
                 className="btn btn-info m-1 cu_btn"
                 onClick={() => {
                   dispatch(setLoaded(true));
+                  if(received.length>0 || notReceived.length>0)
+                  {
+                    handleShow()
+                  }               
                 }}
               >
                 Recieve

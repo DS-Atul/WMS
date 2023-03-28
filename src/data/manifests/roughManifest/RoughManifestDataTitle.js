@@ -8,7 +8,6 @@ const RoughDataTitle = [
   "Total Weight",
   "Manifest Date",
   "Print",
-  "Edit",
   "Forward",
 ];
 

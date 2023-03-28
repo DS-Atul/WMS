@@ -13,6 +13,7 @@ import NumPagination from "../../../components/listDisplay/numPagination/NumPagi
 import Navigate from "../navigateTab/Navigate";
 import BranchManifestDataFormat from "../../../data/manifests/branchManifest/BranchManifestDataFormat";
 import BranchManifestDataTitle from "../../../data/manifests/branchManifest/BranchManifestDataTitle";
+import RoughTab from "../navigateTab/RoughManifestTab";
 
 const BranchForwarding = () => {
   const dispatch = useDispatch();
@@ -59,6 +60,7 @@ const BranchForwarding = () => {
     <>
       <PageTitle page="Branch Forward" />
       <Navigate />
+      <RoughTab />
       <Title title="Branch Forward" parent_title="Manifest" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>

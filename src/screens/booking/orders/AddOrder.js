@@ -614,9 +614,6 @@ const AddOrder = () => {
     setlogger_id_list(temp_2);
   };
 
-  const [same_as, setsame_as] = useState(false)
-  const [showOrder, setShowOrder] = useState(false);
-  const [toggle_order, settoggle_order] = useState(false)
 
   // validation
   const validation = useFormik({
@@ -711,8 +708,6 @@ const AddOrder = () => {
       } else if (booking_date === "") {
         alert("Please Add Booking Date");
       } else {
-        // setShowOrder(!isupdating && true);
-        // aa(values)
         isupdating ? update_order(values) : send_order_data(values);
       }
     },
@@ -1101,7 +1096,7 @@ const AddOrder = () => {
           origin_pincode: shipper_pincode.toUpperCase(),
           origin_locality: shipper_locality.toUpperCase(),
           destination_city: destinationcity.toUpperCase(),
-          destination_state: consignee_state.toUpperCase(),
+          destination_state:consignee_state.toUpperCase(),
           destination_pincode: consignee_pincode.toUpperCase(),
           destination_locality: consignee_locality.toUpperCase(),
           billto_name: billto.toUpperCase(),
@@ -1130,7 +1125,7 @@ const AddOrder = () => {
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Order  ${docket_no_value} Added sucessfully`));
           dispatch(setAlertType("success"));
-          setShowOrder(true);          
+          navigate("/booking/orders");
         }
       })
       .catch((error) => {
@@ -1252,7 +1247,7 @@ const AddOrder = () => {
           origin_pincode: shipper_pincode.toUpperCase(),
           origin_locality: shipper_locality.toUpperCase(),
           destination_city: destinationcity.toUpperCase(),
-          destination_state: consignee_state.toUpperCase(),
+          destination_state:consignee_state.toUpperCase(),
           destination_pincode: consignee_pincode.toUpperCase(),
           destination_locality: consignee_locality.toUpperCase(),
           billto_name: billto.toUpperCase(),
@@ -2121,63 +2116,9 @@ const AddOrder = () => {
 
   }, [user, isupdating])
 
-  //If Same Client
-  // const [same_as, setsame_as] = useState(false)
-  // const [showOrder, setShowOrder] = useState(false);
-  // const [toggle_order, settoggle_order] = useState(false)
-  console.log("showOrder-----", showOrder)
-  console.log("same_as----", same_as)
-  console.log("toggle_order----", toggle_order)
 
-  const handleCloseOrder = () => setShowOrder(false);
-
-  // const handleShowOrder = () => {
-  //   setShowOrder(true);
-  //   setsame_as(false)
-  //   settoggle_order(false)
-  // }
-
-  const handleSubmitOrder = ()=>{
-    // setShowOrder(false);
-    settoggle_order(true)
-    setsame_as(true)
-  }
-  const handleClsOrder=()=>{
-    settoggle_order(true)
-    setShowOrder(false);
-  }
-
-//   useEffect(() => {
-// if(toggle_order===true){
-//   alert("111111")
-// }
-//   }, [toggle_order])
-console.log("showOrder-----", showOrder)
-console.log("same_as------", same_as)
-
-useEffect(() => {
-  if(same_as && showOrder){
-    navigate("/booking/orders");
-  }
-}, [showOrder,same_as])
-
-  
   return (
     <div>
-      <Modal show={showOrder} onHide={handleCloseOrder}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>If Client is same as previous Client</Modal.Body>
-        <Modal.Footer>
-          <Button type="button" variant="secondary" onClick={handleClsOrder}>
-            Yes
-          </Button>
-          <Button type="button" variant="primary" onClick={handleSubmitOrder}>
-            No
-          </Button>
-        </Modal.Footer>
-      </Modal>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
@@ -2213,12 +2154,12 @@ useEffect(() => {
       <Form
         onSubmit={(e) => {
           e.preventDefault();
+
           validation.handleSubmit(e.values);
           return false;
         }}
         encType="multipart/form-data"
       >
-      
         {/* Booking type */}
 
         <div className="m-3">
@@ -4461,7 +4402,6 @@ useEffect(() => {
                 <Button
                   type="submit"
                   className={isupdating && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
-                  onClick={()=> setsame_as(false)}
                 >
                   {isupdating && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
                 </Button>

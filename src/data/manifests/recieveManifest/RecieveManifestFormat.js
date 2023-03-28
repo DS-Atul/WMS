@@ -12,19 +12,12 @@ import {
 } from "../../../store/manifest/RecieveManifest";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { Input } from "reactstrap";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
+
 const RecieveManifestTitle = [
-  "Docket No",
-  "Orgin",
-  "Destination",
-  "Consignee",
-  "Shipper",
-  "Date",
-  "Qty",
-  "ColdChain",
-  ["Futher Connected", false],
-  ["Is Going To Hub", false],
-  "Issue Type",
+  "Manifest No",
+ "Bag or Box",
+"BarCode",
+"Issue Type"
 ];
 
 
@@ -40,6 +33,7 @@ const RecieveDataFormat = ({
   const [refresh, setrefresh] = useState(false);
   const [selected_id, setselected_id] = useState([]);
   console.log("selected_id--===--", selected_id)
+  console.log("data[[[[[",data)
   const [going_hub_id, setgoing_hub_id] = useState([]);
   console.log("going_hub_id----====---", going_hub_id)
   const [issue_id, setissue_id] = useState([]);
@@ -49,25 +43,37 @@ const RecieveDataFormat = ({
 
   const dispatch = useDispatch();
 
-  // const handle_checked = (id) => {
-  //   if (selected_id.includes(id)) {
-  //     let lis = [...selected_id];
-  //     setselected_id(lis.filter((e) => e !== id));
-  //   } else {
-  //     setselected_id([...selected_id, id]);
-  //   }
-  // };
+  const array=[
 
-  // const handle_checked_hub = (id) => {
-  //   console.log(id)
-  //   if (going_hub_id.includes(id)) {
-  //     let lis = [...going_hub_id];
-  //     setgoing_hub_id(lis.filter((e) => e !== id));
-  //   } else {
-  //     setgoing_hub_id([...going_hub_id, id]);
-  //   }
-  // };
-
+    {
+      box:"Bag (4)",
+      barcode:"Qil001"
+    },
+    {
+      box:"Bag (4)",
+      barcode:"Qil002"
+    },
+    {
+      box:"Box (3)",
+      barcode:"Qil003"
+    },
+    {
+      box:"Box (3)",
+      barcode:"Qil004"
+    },
+    {
+      box:"Bag (4)",
+      barcode:"Qil005"
+    },
+    {
+      box:"Box(3)",
+      barcode:"Qil006"
+    },
+    {
+      box:"Bag (4)",
+      barcode:"Qil007"
+    },
+  ]
 
   const handle_checked = (id) => {
 
@@ -133,14 +139,14 @@ const RecieveDataFormat = ({
 
   // const [is_issue, setis_issue] = useState(false);
 
-  function handleIssueTypeChange(e, docketNo, index) {
+  function handleIssueTypeChange(e, bag_barcode, index) {
     setis_issue(true);
     const issueType = e.target.value;
     let remarks = "";
     // if (issueType === "Other") {
     //   remarks = prompt("Enter remarks:");
     // }
-    const orderInfo = { docketNo, issueType, remarks };
+    const orderInfo = { bag_barcode, issueType, remarks };
 
     if (["Broken", "Damage"].includes(issueType)) {
       setReceived((prevReceived) => {
@@ -149,7 +155,7 @@ const RecieveDataFormat = ({
         return newReceived;
       });
       setNotReceived((prevNotReceived) =>
-        prevNotReceived.filter((o) => o.docketNo !== docketNo)
+        prevNotReceived.filter((o) => o.bag_barcode !== bag_barcode)
       );
     } else {
       setNotReceived((prevNotReceived) => {
@@ -158,7 +164,7 @@ const RecieveDataFormat = ({
         return newNotReceived;
       });
       setReceived((prevReceived) =>
-        prevReceived.filter((o) => o.docketNo !== docketNo)
+        prevReceived.filter((o) => o.bag_barcode !== bag_barcode)
       );
     }
   }
@@ -217,13 +223,13 @@ const RecieveDataFormat = ({
           </thead>
 
           <tbody>
-            {data.length === 0 ? (
+            {array.length === 0 ? (
               <tr>
                 <td>No Data Found</td>
               </tr>
             ) : (
-              data.map((order, index) => {
-                let f_date_f = order.booking_at.split("T")[0];
+              array.map((order, index) => {
+                // let f_date_f = order.booking_at.split("T")[0];
                 // .substring(0, 11);
 
                 return (
@@ -234,65 +240,28 @@ const RecieveDataFormat = ({
                         borderWidth: 1,
                       }}
                     >
-                      <td>{order.docket_no}</td>
-                      <td>{toTitleCase(order.shipper_city)}</td>
-                      <td>{toTitleCase(order.consignee_city)}</td>
-
-                      <td>{toTitleCase(order.consignee_name)}</td>
-
-                      <td>{toTitleCase(order.shipper_name)}</td>
-                      <td>{f_date_f}</td>
-                      <td>{order.total_quantity}</td>
+                      <td>{order.manifest_no}</td>
+                      <td>{order.box}</td>
                       <td>
-                        {order.cold_chain ? (
-                          <img src={cross} width="15" height="15" />
-                        ) : (
-                          <img src={correct} width="15" height="15" />
-                        )}
+                        {
+                          order.barcode ?
+
+                          order.barcode :
+                          <div style={{color:"red"}}> No Barcode Attached</div> 
+                        }
                       </td>
 
-                      <td
-                        onClick={() => {
-                          handle_checked(
-                            order.id,
-                          );
-                        }}
-                      >
-                        {selected_id.includes(order.id) ? (
-                          <FiCheckSquare size={15} />
-                        ) : (
-                          <FiSquare size={15} />
-                        )}
-                      </td>
-                      <td
-                        onClick={() => {
-                          handle_checked_hub(
-                            order.id
-                          );
-                        }}
-                      >
-                        {going_hub_id.includes(order.id) ? (
-                          <FiCheckSquare size={15} />
-                        ) : (
-                          <FiSquare size={15} />
-                        )}
-                      </td>
-                      {/* <td
-                      onClick={() => {
-                        handle_checked_issue(order.id);
-                      }}
-                    >
-                      {issue_id.includes(order.id) ? (
-                        <FiCheckSquare size={15} />
-                      ) : (
-                        <FiSquare size={15} />
-                      )}
-                    </td>
-                    {issue_id.includes(order.id) && ( */}
+                     
+                      
+                   
+
+                    
+                   
+                  
                       <td>
                         <select
                           onChange={(e) =>
-                            handleIssueTypeChange(e, order.id, index)
+                            handleIssueTypeChange(e, order.barcode, index)
                           }
                         >
                           <option defaultChecked>Select...</option>

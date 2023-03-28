@@ -276,6 +276,9 @@ const ReciveManifest = React.lazy(() =>
 const RecieveHubManifest = React.lazy(() =>
   import("./screens/manifest/recieveHubManifest/ReciveHubManifest.js")
 );
+const RecieveHub = React.lazy(() =>
+  import("./screens/manifest/incomingManifest/IncomingHub.js")
+);
 const AllManifest = React.lazy(() =>
   import("./screens/manifest/allmanifest/AllManifest.js")
 );
@@ -693,6 +696,10 @@ const routes = [
   {
     path: "/manifest/recieve_hub_manifest",
     element: <RecieveHubManifest />,
+  },
+  {
+    path: "/manifest/incominghub",
+    element: <RecieveHub />,
   },
   {
     path: "/manifest/recieve_manifest",
