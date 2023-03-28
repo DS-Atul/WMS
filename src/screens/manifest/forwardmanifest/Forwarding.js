@@ -17,7 +17,7 @@ import AssetsDataFormat from "../../../data/master/assets/AssetDataFormat";
 import RoughDataTitle from "../../../data/manifests/roughManifest/RoughManifestDataTitle";
 import RoughDataFormat from "../../../data/manifests/roughManifest/RoughManifestDataFormat";
 import Navigate from "../navigateTab/Navigate";
-import RoughTab from "../navigateTab/RoughManifestTab";
+
 const Forwarding = () => {
   const dispatch = useDispatch();
   const toggle = useSelector((state) => state.parentfilter.toggle);
@@ -63,7 +63,6 @@ const Forwarding = () => {
     <>
       <PageTitle page="RoughManifest" />
       <Navigate />
-      <RoughTab/>
       <Title title="Rough Manifest" parent_title="Manifest" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
@@ -84,7 +83,7 @@ const Forwarding = () => {
 
           {/* DataTable */}
           <DataList
-          can_delete={can_delete}
+            can_delete={can_delete}
             Data_Title={RoughDataTitle}
             Data_Format={RoughDataFormat}
             path={`manifest/get_manifest/?search=${search}&p=${page_num}&records=${data_len}`}

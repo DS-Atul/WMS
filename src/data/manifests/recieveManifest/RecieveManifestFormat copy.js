@@ -22,8 +22,8 @@ const RecieveManifestTitle = [
   "Date",
   "Qty",
   "ColdChain",
-  // ["Futher Connected", false],
-  // ["Is Going To Hub", false],
+  ["Futher Connected", false],
+  ["Is Going To Hub", false],
   "Issue Type",
 ];
 {
@@ -33,7 +33,7 @@ const RecieveManifestTitle = [
   console.log("item2222----", RecieveManifestTitle[9]);
 }
 
-const BreakManifest = ({
+const RecieveDataFormat = ({
   data,
   is_issue,
   setis_issue,
@@ -292,7 +292,38 @@ const BreakManifest = ({
                       )}
                     </td> */}
 
-                      
+                      <td
+                        onClick={() => {
+                          handle_checked(
+                            order.id,
+                            setselected_id,
+                            setgoing_hub_id,
+                            going_hub_id
+                          );
+                        }}
+                      >
+                        {selected_id.includes(order.id) ? (
+                          <FiCheckSquare size={15} />
+                        ) : (
+                          <FiSquare size={15} />
+                        )}
+                      </td>
+                      <td
+                        onClick={() => {
+                          handle_checked(
+                            order.id,
+                            setgoing_hub_id,
+                            setselected_id,
+                            selected_id
+                          );
+                        }}
+                      >
+                        {going_hub_id.includes(order.id) ? (
+                          <FiCheckSquare size={15} />
+                        ) : (
+                          <FiSquare size={15} />
+                        )}
+                      </td>
                       {/* <td
                       onClick={() => {
                         handle_checked_issue(order.id);
@@ -311,7 +342,7 @@ const BreakManifest = ({
                             handleIssueTypeChange(e, order.id, index)
                           }
                         >
-                          <option defaultChecked>Select One Issue</option>
+                          <option defaultChecked>Select...</option>
                           <option value="Not Received">Not Received</option>
                           <option value="Broken">Broken</option>
                           <option value="Damage">Damage</option>
@@ -373,4 +404,4 @@ const BreakManifest = ({
   );
 };
 
-export default BreakManifest;
+export default RecieveDataFormat;

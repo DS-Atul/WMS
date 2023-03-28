@@ -27,8 +27,9 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import AddForward from "../../../screens/manifest/forwardmanifest/AddForward";
+import AddAnotherOrder from "../../../screens/manifest/editManifest/AddAnotherOrder";
 
-const RoughDataFormat = ({ data, data1 ,can_delete}) => {
+const RoughDataFormat = ({ data, data1, can_delete }) => {
   console.log("data111---", data);
   // Permissions
   const user_permissions = useSelector(
@@ -179,7 +180,7 @@ const RoughDataFormat = ({ data, data1 ,can_delete}) => {
     // send_runsheet_data();
   };
   const [manifest_data, setmanifest_data] = useState([])
-
+  const [refresh, setrefresh] = useState("false");
   return (
     <>
       {(list_toggle === true ? data1 : data).length === 0 ? (
@@ -213,7 +214,7 @@ const RoughDataFormat = ({ data, data1 ,can_delete}) => {
               </td>
               )} */}
               <td>{
-              <Link to="/manifest/pendingfordispatch">{manifest.manifest_no}</Link>
+                <Link to="/manifest/pendingfordispatch">{manifest.manifest_no}</Link>
               }</td>
 
               <td>{toTitleCase(manifest.from_branch_n)}</td>
@@ -251,11 +252,17 @@ const RoughDataFormat = ({ data, data1 ,can_delete}) => {
                   </Link>
                 </div>
               </td>
-
               <td>
-
+                <AddAnotherOrder
+                  edit={true}
+                  id_m={manifest.manifest_no}
+                  refresh={refresh}
+                  setrefresh={setrefresh}
+                />
+              </td>
+              <td>
                 <AddForward manifest={manifest} />
-              {/* {(can_update || user.is_superuser) ? (
+                {/* {(can_update || user.is_superuser) ? (
                   <Link to="/manifest/forward" state={{ manifest: manifest }}>
                     Forward Manifest
                   </Link>                  

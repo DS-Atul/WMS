@@ -37,7 +37,6 @@ import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
 import Main_c from "../../../components/crop/main";
 import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
-import { FiSquare, FiCheckSquare } from "react-icons/fi";
 
 const AddForward = (manifest) => {
   console.log("manifest-----", manifest)
@@ -93,8 +92,6 @@ const AddForward = (manifest) => {
   const [manifest_no, setmanifest_no] = useState("");
   const [forward_branch, setforward_branch] = useState("");
   const [today, settoday] = useState("");
-  const [open_box, setopen_box] = useState(false);
-  const [box_quantity, setbox_quantity] = useState("");
 
   const [coloader_list, setcoloader_list] = useState([]);
   const [company_slected_list, setcompany_slected_list] = useState("");
@@ -212,10 +209,13 @@ const AddForward = (manifest) => {
 
   const updateManifest = (values) => {
     let fields_name = Object.entries({
+
       airwaybill_no:values.coloader_no,
       bag_count:values.no_of_bags,
+      carrier_name: values.flight_no,
       chargeable_weight:values.chargeable_weight,
-      coloader: coloader_id,
+      coloader_mode:coloader_selcted_m,
+      coloader_name: coloader_selected,
       total_weight:values.actual_weight,
     });
     console.log("fields_name-------", fields_name)
@@ -249,9 +249,6 @@ const AddForward = (manifest) => {
           carrier_name: toTitleCase(values.flight_no).toUpperCase(),
           is_forwarded: "True",
           forwarded_by: user_id,
-          open_box:open_box ? "True" :"False",
-          box_count:box_quantity,
-
           forwarded: "True",
           forwarded_branch: user_branch,
           modified_by: user_id,
@@ -862,38 +859,6 @@ useEffect(() => {
                             />
                           </div>
                         </Col>
-                        <Col lg={3} md={3} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">Open Box</Label>
-                            {
-                              open_box ? 
-                              <FiCheckSquare onClick={()=>{
-                                setopen_box(!open_box)
-                              }} />:
-                              <FiSquare  onClick={()=>{
-                                setopen_box(!open_box);
-                               }}/>
-                            }
-                          
-                          </div>
-                        </Col>
-                        {open_box &&
-                        
-                        <Col lg={3} md={3} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">Box Quantity</Label>
-                            <Input
-                              id="input"
-                              placeholder="Enter Box Quantity"
-                              value={box_quantity}
-                              onChange={(e)=>{
-                                setbox_quantity(e.target.value);
-                              }}
-                            />
-                          </div>
-                        </Col>
-                        }
-                        
                       </Row>
                     </CardBody>
                   ) : null}

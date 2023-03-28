@@ -9,7 +9,6 @@ const Navigate = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const tab = useSelector((state) => state.parentfilter.manifest_tab);
 
-  console.log("navigateTab",tab)
   //Permission
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
@@ -23,7 +22,7 @@ const Navigate = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Pending For Dispatch" && e.read === true
+        (e) => e.sub_model === "Panding For Dispatch" && e.read === true
       )
     ) {
       setcan_dispatch(true);
@@ -35,7 +34,7 @@ const Navigate = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Pending To Depart" && e.read === true
+        (e) => e.sub_model === "Panding To Depart" && e.read === true
       )
     ) {
       setcan_depart(true);
@@ -47,7 +46,7 @@ const Navigate = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Rough Manifest" && e.read === true
+        (e) => e.sub_model === "Raugh Manifest" && e.read === true
       )
     ) {
       setraugh(true);
@@ -108,10 +107,10 @@ const Navigate = () => {
             navigate("/manifest/roughmanifest");
           }}
         >
-          Rough Manifest
+          Raugh Manifest(Air)
         </div>
       )}
-            {/* {(raugh || user.is_superuser) && (
+            {(raugh || user.is_superuser) && (
         <div
           className="header_tab"
           style={{
@@ -122,9 +121,9 @@ const Navigate = () => {
             navigate("/manifest/branchmanifest");
           }}
         >
-          Rough Manifest(Vehicle)
+          Raugh Manifest(Vehicle)
         </div>
-      )} */}
+      )}
       {(can_depart || user.is_superuser) && (
         <div
           className="header_tab"
