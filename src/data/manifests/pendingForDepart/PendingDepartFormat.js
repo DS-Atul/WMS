@@ -28,6 +28,7 @@ import Modal from "react-bootstrap/Modal";
 import Question from "../../../assets/images/bookings/question.png";
 
 const PendingDepartDataFormat = ({ data, data1, can_delete }) => {
+  console.log("data----------bbb----",data )
   const navigate = useNavigate();
   // Permissions
   const user_permissions = useSelector(
@@ -294,6 +295,7 @@ const PendingDepartDataFormat = ({ data, data1, can_delete }) => {
               <td>{depart.total_weight}</td>
               {(can_update || user.is_superuser) && (
               <td>
+                {/* /manifest/editraughdocket */}
                 <Link to="/manifest/editmanifest" state={{ depart: depart }}>
                   <Button size="sm" outline type="button" color="warning">
                     Edit

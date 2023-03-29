@@ -7,13 +7,17 @@ import {
   CardBody,
   CardTitle,
   Label,
-  Button,
+  // Button,
+  FormFeedback,
   Input,
   Form,
 } from "reactstrap";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import { useFormik } from "formik";
+import * as Yup from "yup";
 // import CreateRunsheet from "./CreateRunsheet";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import UnrunsheetsDataFormat from "../../../data/manifests/pendingForDispatch/unmanifests/UnrunsheetsDataFormat";
@@ -29,6 +33,7 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import Navigate from "../navigateTab/Navigate";
+import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 // import Navigate from "../../runsheet/runsheetTab/Navigate";
 
@@ -62,6 +67,8 @@ const PendingForDispatch = () => {
   const [local_list, setlocal_list] = useState(divide_deliverys);
 
   const [createRunsheet_list, setcreateRunsheet_list] = useState([]);
+  const [box_count, setbox_count] = useState(0)
+  const [bag_count, setbag_count] = useState(0)
 
   let awb_no_list = [];
   for (let index = 0; index < createRunsheet_list.length; index++) {
@@ -96,16 +103,16 @@ const PendingForDispatch = () => {
   const [branch_dest, setbranch_dest] = useState("");
   const [branch_dest_id, setbranch_dest_id] = useState("");
   const [page, setpage] = useState(1);
-console.log("branch_selected----", branch_selected)
+  console.log("branch_selected----", branch_selected)
   console.log("branch_type_short-----", branch_type_short)
 
   const get_branch = () => {
     axios
       .get(
         ServerAddress +
-          `master/all-branches/?search=${""}&p=${branch_page}&records=${10}&branch_name=${[
-            "",
-          ]}&branch_city=${[""]}&branch_search=${branch_search}&vendor=&data=all`,
+        `master/all-branches/?search=${""}&p=${branch_page}&records=${10}&branch_name=${[
+          "",
+        ]}&branch_city=${[""]}&branch_search=${branch_search}&vendor=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -199,6 +206,8 @@ console.log("branch_selected----", branch_selected)
           destination_branch_name: branch_selected.toUpperCase(),
           destination: branch_dest_id,
           destination_city: branch_dest,
+          bag_count: bag_count,
+          box_count: box_count,
         },
         {
           headers: {
@@ -210,6 +219,7 @@ console.log("branch_selected----", branch_selected)
         if (response.data.status === "success") {
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
+          setShow(false)
           getPendindOrders();
           setcreateRunsheet_list([]);
           dispatch(setDataExist(`Manifest Created sucessfully`));
@@ -237,9 +247,9 @@ console.log("branch_selected----", branch_selected)
           destination_location: branch_dest_id,
           awb_no_list: id,
           created_by: user.id,
-          destination_branch_name : branch_selected.toUpperCase(),
-          origin_location_name:user_home_branch_city,
-          destination_location_name:branch_dest,
+          destination_branch_name: branch_selected.toUpperCase(),
+          origin_location_name: user_home_branch_city,
+          destination_location_name: branch_dest,
         },
         {
           headers: {
@@ -269,9 +279,69 @@ console.log("branch_selected----", branch_selected)
     }
   }, [createRunsheet_list, branch_selected, unmanifest_list]);
 
+  //Modal
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <>
-      <Form>
+      <form>
+        <Modal
+          show={show}
+          onHide={handleClose}
+          backdrop="static"
+          keyboard={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Modal title</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {/* <Label>Is Defined Row</Label> */}
+            <div >
+              <Row>
+                <Col lg={4} md={6} sm={6}>
+                  <div className="mb-2">
+                    <Label className="header-child">Box Count*</Label>
+                    <Input
+                      value={box_count}
+                      onChange={(val) => {
+                        setbox_count(val.target.value);
+                      }}
+                      type="text"
+                      className="form-control-md"
+                      id="input"
+                      placeholder="Enter Vehicle Number"
+                    />
+                  </div>
+                </Col>
+                <Col lg={4} md={6} sm={6}>
+                  <div className="mb-2">
+                    <Label className="header-child">Bag Count*</Label>
+                    <Input
+                      value={bag_count}
+                      onChange={(val) => {
+                        setbag_count(val.target.value);
+                      }}
+                      type="text"
+                      className="form-control-md"
+                      id="input"
+                      placeholder="Enter Vehicle Number"
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button type="submit" variant="primary" onClick={() => send_manifest_data()}>Save</Button>
+          </Modal.Footer>
+        </Modal>
+
         <Navigate />
         <Title title="Pending For Dispatch" parent_title="Manifests" />
         <PageTitle page="Pending For Dispatch" />
@@ -335,12 +405,7 @@ console.log("branch_selected----", branch_selected)
                       data_list={branch_list}
                       setdata_list={setbranch_list}
                       data_item_s={branch_selected}
-                      set_data_item_s={(value) => 
-                        {
-                        console.log(
-                          "eeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-                          branch_list
-                        );
+                      set_data_item_s={(value) => {
                         let cv = branch_list.forEach((e) => {
                           if (e[1] === value) {
                             console.log(
@@ -414,7 +479,7 @@ console.log("branch_selected----", branch_selected)
                       disabled={toggle === false}
                       onClick={() => {
                         manifest_type === "Create_Manifest"
-                          ? send_manifest_data()
+                          ? handleShow()
                           : send_hub_data();
                       }}
                     >
@@ -445,7 +510,7 @@ console.log("branch_selected----", branch_selected)
             </Card>
           </Col>
         </div>
-      </Form>
+      </form>
     </>
   );
 };

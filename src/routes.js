@@ -266,6 +266,9 @@ const IncomingManifest = React.lazy(() =>
 const EditManifest = React.lazy(() =>
   import("./screens/manifest/editManifest/EditManifest.js")
 );
+const EditRoughDocket = React.lazy(() =>
+  import("./screens/manifest/editManifest/EditRoughDocket.js")
+);
 
 const EditHub = React.lazy(() =>
   import("./screens/manifest/editHub/EditHub.js")
@@ -688,6 +691,10 @@ const routes = [
   {
     path: "/manifest/editmanifest",
     element: <EditManifest />,
+  },
+  {
+    path: "/manifest/editraughdocket",
+    element: <EditRoughDocket/>,
   },
   {
     path: "/manifest/edithub",

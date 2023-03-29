@@ -24,7 +24,7 @@ import {
 } from "../../../store/alert/Alert";
 import pdf from "../../../assets/images/Pdf/printer.png";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import Button from "react-bootstrap/Button";
+import { Button } from "reactstrap";
 import Modal from "react-bootstrap/Modal";
 import AddForward from "../../../screens/manifest/forwardmanifest/AddForward";
 import AddAnotherOrder from "../../../screens/manifest/editManifest/AddAnotherOrder";
@@ -222,23 +222,25 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
               <td>{toTitleCase(manifest.destination_branch_n)}</td>
               <td>{manifest.orders.length}</td>
               <td>
-                {manifest.bag_count === "" ? (
+                {manifest.bag_count ? manifest.bag_count : "-"}
+                {/* {manifest.bag_count === "" ? (
                   manifest.bag_count
                 ) : (
                   <div style={{ color: "red" }}>
                     Manifest Total Packets Not Added
                   </div>
                 )}
-                {""}
+                {""} */}
               </td>
               <td>
-                {manifest.manifest_weight === "" ? (
+                {manifest.box_count ? manifest.box_count : "-"}
+                {/* {manifest.manifest_weight === "" ? (
                   manifest.manifest_weight
                 ) : (
                   <div style={{ color: "red" }}>
                     Manifest Total Weight Not Added
                   </div>
-                )}
+                )} */}
               </td>
               {/* <td>{""}</td> */}
               <td>{manifest.manifest_date}</td>
@@ -253,12 +255,17 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
                 </div>
               </td>
               <td>
-                <AddAnotherOrder
+                {/* <AddAnotherOrder
                   edit={true}
                   id_m={manifest.manifest_no}
                   refresh={refresh}
                   setrefresh={setrefresh}
-                />
+                /> */}
+                <Link to="/manifest/editraughdocket" state={{ manifest: manifest }}>
+                  <Button size="sm" outline type="button" color="primary">
+                    Edit
+                  </Button>
+                </Link>
               </td>
               <td>
                 <AddForward manifest={manifest} />

@@ -324,16 +324,16 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
           {/* </form> */}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
+        <Button
             variant="primary"
             onClick={() => {
               send_manifest_data();
             }}
           >
             Save
+          </Button>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
           </Button>
         </Modal.Footer>
       </Modal>
