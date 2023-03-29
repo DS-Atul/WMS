@@ -4,10 +4,33 @@ import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setPageNumber } from "../../../store/pagination/Pagination";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
+import { ServerAddress } from "../../../constants/ServerAddress";
+import axios from "axios";
+import PickDataFormat from "../../../data/manifests/recieveManifest/PickDataFormat";
+
+
 
 const PickedUpOrders = () => {
   const dispatch = useDispatch();
+  const accessToken = useSelector((state) => state.authentication.access_token);
+const [picked_orders, setpicked_orders] = useState([]);
+  const getPendindOrders = () => {
+    axios
+      .get(ServerAddress + `booking/orderboxqrcodecheck/`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((response) => {
+        console.log("response[[[]",response.data)
+        setpicked_orders(response.data);
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Domestic Order , ${err}`);
+      });
+  };
 
+  useEffect(() => {
+    getPendindOrders();
+  }, []);
   return (
     <>
       <PageTitle page="PickedOrders" />
@@ -30,14 +53,9 @@ const PickedUpOrders = () => {
           </div>
 
           {/* DataTable */}
-          {/* <DataList
-          can_delete={can_delete}
-            Data_Title={RoughDataTitle}
-            Data_Format={RoughDataFormat}
-            path={`manifest/get_manifest/?search=${search}&p=${page_num}&records=${data_len}`}
-            checkbox={"NO"}
-          /> */}
-          {/* <NumPagination path={"path"} /> */}
+         <PickDataFormat 
+         data={picked_orders}
+         />
         </div>
       </div>
     </>
