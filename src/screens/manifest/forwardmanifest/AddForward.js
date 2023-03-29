@@ -249,8 +249,8 @@ const AddForward = (manifest) => {
           carrier_name: toTitleCase(values.flight_no).toUpperCase(),
           is_forwarded: "True",
           forwarded_by: user_id,
-          open_box:open_box ? "True" :"False",
-          box_count:0,
+          // open_box:open_box ? "True" :"False",
+          // box_count:box_quantity,
 
           forwarded: "True",
           forwarded_branch: user_branch,
@@ -862,7 +862,7 @@ useEffect(() => {
                             />
                           </div>
                         </Col>
-                        <Col lg={3} md={3} sm={6}>
+                        {/* <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">Open Box</Label>
                             {
@@ -893,7 +893,7 @@ useEffect(() => {
                           </div>
                         </Col>
                         }
-                        
+                         */}
                       </Row>
                     </CardBody>
                   ) : null}

@@ -161,11 +161,11 @@ const RecieveManifest = ({ depart }) => {
         alert(`Error While  Updateing Manifest ${err}`);
       });
   };
-  useEffect(() => {
-    if (is_submit) {
-      RecieveManifest();
-    }
-  }, [is_submit]);
+  // useEffect(() => {
+  //   if (is_submit) {
+  //     RecieveManifest();
+  //   }
+  // }, [is_submit]);
 
   const [show, setShow] = useState(false);
 console.log("[][]data",data)
@@ -291,7 +291,6 @@ let docket_no_list = []
             <Button
               variant="success"
               onClick={() => {
-                RecieveManifest("STEP2")
                 setis_break(true);
               }}
             >
@@ -301,6 +300,7 @@ let docket_no_list = []
             <Button
               variant="success"
               onClick={() => {
+                RecieveManifest("STEP2")
                 setis_submit(true);
               }}
             >
