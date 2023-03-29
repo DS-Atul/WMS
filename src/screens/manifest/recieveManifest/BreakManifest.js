@@ -25,8 +25,8 @@ import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import RecieveDataFormat from "../../../data/manifests/recieveManifest/RecieveManifestFormat";
 import { setLoaded } from "../../../store/manifest/RecieveManifest";
 import Question from "../../../assets/images/bookings/question.png";
-import BreakManifest from "../../../data/manifests/recieveManifest/BreakManifest";
-const RecieveManifest = ({ depart }) => {
+import BreakManifestT from "../../../data/manifests/recieveManifest/BreakManifest";
+const BreakManifest = ({ depart }) => {
   const [is_submit, setis_submit] = useState(false);
   const [is_issue, setis_issue] = useState(false);
   const [received, setReceived] = useState([]);
@@ -177,7 +177,7 @@ let docket_no_list = []
  }
  console.log("docket_number---",docket_no_list)
   const handleClose = () => {
-    RecieveManifest("STEP1");
+    RecieveManifest("Steps1");
     setis_break(false);
     setShow(false);
   };
@@ -190,9 +190,8 @@ let docket_no_list = []
   return (
     <>
       <Modal
-        show={is_recv}
+        show={is_break}
         onHide={()=>{
-          setShow(false);
           setis_break(false);
         }}
         backdrop="static"
@@ -213,8 +212,7 @@ let docket_no_list = []
               color: "blue",
             }}
           >
-            In {manifest_no} You Have Recieved All Bags And Boxes Do You Want To
-            Update Status Connecting To Hub ?
+            Are You Sure You Want To Break This Manifest {manifest_no} 
           </div>
         </Modal.Body>
 
@@ -222,96 +220,24 @@ let docket_no_list = []
           <Button
             variant="danger"
             onClick={() => {
-              setis_recv(false);
+              setis_break(false);
             }}
           >
             Cancel
           </Button>
 
           <Button variant="success" onClick={() => {
-            RecieveManifest("STEP1");
+            RecieveManifest("STEP2");
           }}>
-            Update
+            Proceed
           </Button>
         </Modal.Footer>
       </Modal>
 
-      <Modal
-        show={show}
-        onHide={handleCloseAll}
-        backdrop="static"
-        keyboard={false}
-        dialogClassName={is_break && "custom-modal2"}
-      >
-        <Modal.Header closeButton></Modal.Header>
-
-        {is_break ? (
-          <Modal.Body>
-            <BreakManifest
-              data={location_data.state.depart.orders}
-              is_issue={is_issue}
-              setis_issue={setis_issue}
-              received={received}
-              setReceived={setReceived}
-              notReceived={notReceived}
-              setNotReceived={setNotReceived}
-            />
-          </Modal.Body>
-        ) : (
-          <Modal.Body>
-            <div style={{ marginLeft: "170px" }}>
-              <img src={Question} width="100vw" height="100vh" />
-            </div>
-            <div
-              style={{
-                marginTop: "20px",
-                fontSize: "14px",
-                fontWeight: "bold",
-                marginLeft: "20px",
-                color: "red",
-              }}
-            >
-              {manifest_no} Have Some Issues In Box Or Bag Do You Want To Break
-              Manifest ?
-            </div>
-          </Modal.Body>
-        )}
-
-        <Modal.Footer>
-          {
-            is_break ?
-            <Button variant="danger" onClick={handleCloseAll}>Cancel</Button>
-            :
-          <Button variant="danger" onClick={handleClose}>
-                No,Later
-          </Button>
-          }
-        
-          {!is_break ? (
-            <Button
-              variant="success"
-              onClick={() => {
-                RecieveManifest("STEP2")
-                setis_break(true);
-              }}
-            >
-              Yes
-            </Button>
-          ) : (
-            <Button
-              variant="success"
-              onClick={() => {
-                setis_submit(true);
-              }}
-            >
-              Break
-            </Button>
-          )}
-        </Modal.Footer>
-      </Modal>
+      
       {/* Modal For Break manifest Started*/}
-      <Title title="Recieve Manifest" parent_title="Manifests" />
-      <PageTitle page="RecieveManifest" />
+      <Title title="Break Manifest" parent_title="Manifests" />
+      <PageTitle page="BreakManifest" />
       <div className="mt-0 m-3">
         <Col lg={12}>
           <Card className="shadow bg-white rounded">
@@ -321,31 +247,20 @@ let docket_no_list = []
                   className="container-fluid"
                   style={{ background: "white" }}
                 >
-                  <div className="mb-2 row ">
+                
                     
-                     <div style={{color:"blue",fontSize:"15px",marginTop:"10px"}}> 
-                      Docket Present In This Manifest = [
-                        {
-                          docket_no_list.map((v)=>{
-                              return <a>{v}{docket_no_list[docket_no_list.length-1]===v?null:","}</a>
-                            }
-                          )
-                        }
-                      ]
-                     </div>
-                    
-                  </div>
+                
 
                   {/* DataTable */}
-                  <RecieveDataFormat
-                    data={location_data.state.depart.orders}
-                    is_issue={is_issuerec}
-                    setis_issue={setis_issuerec}
-                    received={receivedrec}
-                    setReceived={setReceivedrec}
-                    notReceived={notReceivedrec}
-                    setNotReceived={setNotReceivedrec}
-                  />
+                  <BreakManifestT
+              data={location_data.state.depart.orders}
+              is_issue={is_issue}
+              setis_issue={setis_issue}
+              received={received}
+              setReceived={setReceived}
+              notReceived={notReceived}
+              setNotReceived={setNotReceived}
+            />
 
                 </div>
               </Row>
@@ -408,6 +323,7 @@ let docket_no_list = []
                         type="text"
                         id="input"
                         maxLength={10}
+                        disabled
                         value={vehicle_no}
                         onChange={(e) => {
                           setvehicle_no(e.target.value);
@@ -428,6 +344,7 @@ let docket_no_list = []
                         }}
                         placeholder="Enter Remarks"
                       />
+                      {console.log("firstharshit998777787",is_break)}
                     </div>
                   </Col>
                 </Row>
@@ -443,15 +360,11 @@ let docket_no_list = []
                 type="button"
                 className="btn btn-info m-1 cu_btn"
                 onClick={() => {
-                  dispatch(setLoaded(true));
-                  if (receivedrec.length > 0 || notReceivedrec.length > 0) {
-                    handleShow();
-                  } else {
-                    setis_recv(true);
-                  }
+                  // dispatch(setLoaded(true));
+                 setis_break(true);
                 }}
               >
-                Recieve
+                Break
               </Button>
 
               <Button
@@ -469,4 +382,4 @@ let docket_no_list = []
   );
 };
 
-export default RecieveManifest;
+export default BreakManifest;

@@ -108,7 +108,22 @@ const IncomingTab = () => {
             navigate("/manifest/incominghub");
           }}
         >
-          IncomingManifest(Vehicle)
+          IncomingManifest(Branch)
+        </div>
+      )}
+       {(raugh || user.is_superuser) && (
+        <div
+          className="header_tab"
+          style={{
+            background: tab === 3 ? "#d6e8ff" : "#F8F8FB",
+          }}
+          onClick={() => {
+            dispatch(setIncomingTab(3));
+            // navigate("/manifest/incomingmanifest");
+            navigate("/manifest/pickeduporders");
+          }}
+        >
+          Incoming Orders(Vehicle)
         </div>
       )}
     </div>

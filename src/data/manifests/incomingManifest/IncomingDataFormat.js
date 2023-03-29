@@ -310,6 +310,11 @@ const IncomingManifestDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 <div>
                   {depart.is_received ? (
+                    <Link
+                    to="/manifest/breakmanifest"
+                    state={{depart:depart}}
+                    >
+
                     <Button
                       size="sm"
                       outline
@@ -320,6 +325,7 @@ const IncomingManifestDataFormat = ({ data, data1, can_delete }) => {
                     >
                       Break
                     </Button>
+                    </Link>
                   ) : (
                     <Link
                     to="/manifest/recieve_manifest"

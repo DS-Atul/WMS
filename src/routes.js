@@ -270,6 +270,9 @@ const EditRoughDocket = React.lazy(() =>
   import("./screens/manifest/editManifest/EditRoughDocket.js")
 );
 
+const BreakManifest = React.lazy(() =>
+  import("./screens/manifest/recieveManifest/BreakManifest.js")
+);
 const EditHub = React.lazy(() =>
   import("./screens/manifest/editHub/EditHub.js")
 );
@@ -344,6 +347,9 @@ const Sample = React.lazy(() => import("./screens/dashboard/Sample.js"));
 
 // Calender
 const Calender = React.lazy(() => import("./screens/dashboard/Calendar/Calendar.js"));
+const Pickedup = React.lazy(() =>
+  import("./screens/manifest/incomingVehcile/PickedUp.js")
+);
 // Routes
 const auth_routes = [
   { path: "/signin", element: <SignIn /> },
@@ -655,6 +661,14 @@ const routes = [
   {
     path: "/manifest/pendingfordispatch",
     element: <PendingForDispatch />,
+  },
+  {
+    path: "/manifest/breakmanifest",
+    element: <BreakManifest />,
+  },
+   {
+    path: "/manifest/pickeduporders",
+    element: <Pickedup />,
   },
   {
     path: "/manifest/roughmanifest",

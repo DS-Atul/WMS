@@ -250,7 +250,7 @@ const AddForward = (manifest) => {
           is_forwarded: "True",
           forwarded_by: user_id,
           open_box:open_box ? "True" :"False",
-          box_count:box_quantity,
+          box_count:0,
 
           forwarded: "True",
           forwarded_branch: user_branch,
