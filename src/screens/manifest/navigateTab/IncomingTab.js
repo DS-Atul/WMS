@@ -104,6 +104,7 @@ const IncomingTab = () => {
           }}
           onClick={() => {
             dispatch(setIncomingTab(2));
+            // navigate("/manifest/incomingmanifest");
             navigate("/manifest/incominghub");
           }}
         >

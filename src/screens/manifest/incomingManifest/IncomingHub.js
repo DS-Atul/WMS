@@ -8,9 +8,9 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
 import Navigate from "../navigateTab/Navigate";
-import RoughTab from "../navigateTab/RoughManifestTab";
 import IncomingHubDataFormat from "../../../data/manifests/incomingHubManifest/IncomingHubDataFormat";
 import IncomingHubTitle from "../../../data/manifests/incomingHubManifest/IncomingTittle";
+import IncomingTab from "../navigateTab/IncomingTab";
 
 const IncomingHub = () => {
   const dispatch = useDispatch();
@@ -55,7 +55,7 @@ const IncomingHub = () => {
     <>
       <PageTitle page="IncomingHub" />
       <Navigate />
-      <RoughTab/>
+      <IncomingTab/>
       <Title title="IncomingHub(Vehicle)" parent_title="Manifest" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>

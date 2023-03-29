@@ -37,13 +37,23 @@ import { setLoaded } from "../../../store/manifest/RecieveManifest";
 import Question from "../../../assets/images/bookings/question.png";
 import BreakManifest from "../../../data/manifests/recieveManifest/BreakManifest";
 const RecieveManifest = ({ depart }) => {
+  const [is_submit, setis_submit] = useState(false)
   const [is_issue, setis_issue] = useState(false);
-  console.log("is_issue-----", is_issue)
   const [received, setReceived] = useState([]);
   const [notReceived, setNotReceived] = useState([]);
+
+  const [is_issuerec, setis_issuerec] = useState(false);
+  const [receivedrec, setReceivedrec] = useState([]);
+  const [notReceivedrec, setNotReceivedrec] = useState([]);
   console.log("receive--------", received)
   console.log("notReceived--------", notReceived)
   console.log("is_issue--------", is_issue)
+  console.log("is_issue-----", is_issue)
+
+  console.log("receiverec--------", receivedrec)
+  console.log("notReceivedrec--------", notReceivedrec)
+  console.log("is_issuerec--------", is_issuerec)
+  console.log("is_issuerec-----", is_issuerec)
 
   // console.log("Recive Data", depart);
   const user = useSelector((state) => state.authentication.userdetails);
@@ -90,6 +100,7 @@ const RecieveManifest = ({ depart }) => {
     navigate("/manifest/incomingmanifest");
   };
   const [is_break, setis_break] = useState(false);
+  console.log("is_break-----", is_break)
 
   const [coloader_list, setcoloader_list] = useState([]);
   const [coloader_selected, setcoloader_selected] = useState("");
@@ -166,8 +177,8 @@ const RecieveManifest = ({ depart }) => {
           manifest_no: manifest_no,
           is_received: "True",
           awb_no_list: order_id,
-          futher_connected: futher_conn_id,
-          is_going_to_hub_list: going_hub_id,
+          // futher_connected: futher_conn_id,
+          // is_going_to_hub_list: going_hub_id,
           issue_type: issue_id,
           is_issue: is_issue,
           is_disputed: false,
@@ -178,6 +189,12 @@ const RecieveManifest = ({ depart }) => {
           issue_notrecieved_order: notReceived,
           vehicle_no: toTitleCase(vehicle_no).toUpperCase(),
           transport_mode: (trans_mode_selected).toUpperCase(),
+          step:is_submit ? "STEP2" : "STEP1",
+
+          issue_recieved_order_rec: receivedrec,
+          issue_notrecieved_order_rec: notReceivedrec,
+          is_issue_rec: is_issuerec,
+
         },
 
         {
@@ -202,18 +219,30 @@ const RecieveManifest = ({ depart }) => {
       });
   };
   console.log("error=--->>", received, notReceived);
+  // useEffect(() => {
+  //   if (loaded) {
+  //     RecieveManifest();
+  //   }
+  // }, [loaded]);
+
   useEffect(() => {
-    if (loaded) {
-      // RecieveManifest();
+    if (is_submit) {
+      RecieveManifest();
     }
-  }, [loaded]);
+  }, [is_submit]);
+
   console.log("=================", received, notReceived);
 
 
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () =>
+  {
+    setis_break(false);
+    setShow(false);
+  } 
   const handleShow = () => setShow(true);
+
 
   return (
     <>
@@ -265,9 +294,15 @@ const RecieveManifest = ({ depart }) => {
           <Button variant="danger" onClick={handleClose}>
             No,Later
           </Button>
+          {!is_break ?
           <Button variant="success" onClick={() => {
             setis_break(true);
-          }}>Yes</Button>
+          }}>Yes1</Button>
+          :
+          <Button variant="success" onClick={() => {
+            setis_submit(true)
+          }}>Yes2</Button>    
+        }
         </Modal.Footer>
       </Modal>
       {/* Bag info started */}
@@ -289,12 +324,12 @@ const RecieveManifest = ({ depart }) => {
                   {/* DataTable */}
                   <RecieveDataFormat
                     data={location_data.state.depart.orders}
-                    is_issue={is_issue}
-                    setis_issue={setis_issue}
-                    received={received}
-                    setReceived={setReceived}
-                    notReceived={notReceived}
-                    setNotReceived={setNotReceived}
+                    is_issue={is_issuerec}
+                    setis_issue={setis_issuerec}
+                    received={receivedrec}
+                    setReceived={setReceivedrec}
+                    notReceived={notReceivedrec}
+                    setNotReceived={setNotReceivedrec}
                   />
                 </div>
               </Row>
@@ -411,11 +446,11 @@ const RecieveManifest = ({ depart }) => {
           <Col lg={12}>
             <div className="mb-1 footer_btn">
               <Button
-                type="submit"
+                type="button"
                 className="btn btn-info m-1 cu_btn"
                 onClick={() => {
                   dispatch(setLoaded(true));
-                  if (received.length > 0 || notReceived.length > 0) {
+                  if (receivedrec.length > 0 || notReceivedrec.length > 0) {
                     handleShow()
                   }
                 }}
