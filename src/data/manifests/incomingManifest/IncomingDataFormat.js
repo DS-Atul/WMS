@@ -261,6 +261,7 @@ const IncomingManifestDataFormat = ({ data, data1, can_delete }) => {
       ) : (
         (list_toggle === true ? data1 : data).map((depart, index) => {
           console.log("depart[[[]]",depart)
+          console.log("depart6666",depart)
           return (
             <tr
               key={index}

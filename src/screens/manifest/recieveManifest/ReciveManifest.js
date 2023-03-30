@@ -27,6 +27,7 @@ import { setLoaded } from "../../../store/manifest/RecieveManifest";
 import Question from "../../../assets/images/bookings/question.png";
 import BreakManifest from "../../../data/manifests/recieveManifest/BreakManifest";
 const RecieveManifest = ({ depart }) => {
+
   const [is_submit, setis_submit] = useState(false);
   const [is_issue, setis_issue] = useState(false);
   const [received, setReceived] = useState([]);
@@ -116,6 +117,15 @@ const RecieveManifest = ({ depart }) => {
     manifest_no && get_orderof_manifest();
   }, [manifest_no, success]);
 
+const [mn_barcode, setmn_barcode] = useState([]);
+  useEffect(() => {
+    
+  console.log("hello ji pass check",location_data.state.depart.mn_barcode);
+  if (location_data.state.depart.mn_barcode) {
+    setmn_barcode(location_data.state.depart.mn_barcode);
+  }
+  }, [])
+  
   const RecieveManifest = (steps) => {
     axios
       .post(
@@ -126,6 +136,7 @@ const RecieveManifest = ({ depart }) => {
           awb_no_list: order_id,
           issue_type: issue_id,
           is_issue: is_issue,
+          vehcile_no:vehicle_no,
           is_disputed: false,
           disputed_by: "",
           dispute_username: "",
@@ -339,6 +350,7 @@ let docket_no_list = []
                   {/* DataTable */}
                   <RecieveDataFormat
                     data={location_data.state.depart.orders}
+                    barcode={mn_barcode}
                     is_issue={is_issuerec}
                     setis_issue={setis_issuerec}
                     received={receivedrec}

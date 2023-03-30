@@ -247,15 +247,15 @@ const PickDataFormat = ({
                       <td>{order.total_box}</td>
                       <td>{order.current_status}</td>
                       <td>
-                        <Link 
+                        {/* <Link 
                         to="/manifest/breakmanifest"
                         state={{vehicle_no:order}}
-                        >
+                        > */}
                         <Button color="success" >
                           
                           Receive
                         </Button>
-                          </Link>
+                          {/* </Link> */}
                       </td>
                      </tr>
                   </>

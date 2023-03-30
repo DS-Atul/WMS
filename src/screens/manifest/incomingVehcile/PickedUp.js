@@ -47,7 +47,6 @@ const [picked_orders, setpicked_orders] = useState([]);
                 onClick={() => dispatch(setPageNumber(1))}
               >
                 {/* Filter Tool */}
-                {/* <Filter type={"client"} /> */}
               </div>
             </div>
           </div>
