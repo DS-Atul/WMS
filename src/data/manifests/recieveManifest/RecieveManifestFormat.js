@@ -207,7 +207,8 @@ const RecieveDataFormat = ({
                               />
                             </td>
                           )}
-                       
+                       {console.log("received999999",received)}
+                       {console.log("notReceived999999",notReceived)}
                       
                       {received[index] &&
                           received[index]["issueType"] === "Broken" && (

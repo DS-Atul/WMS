@@ -350,6 +350,7 @@ const Calender = React.lazy(() => import("./screens/dashboard/Calendar/Calendar.
 const Pickedup = React.lazy(() =>
   import("./screens/manifest/incomingVehcile/PickedUp.js")
 );
+const BoxDetail =React.lazy(()=>import("./screens/manifest/incomingVehcile/BoxDetail.js"))
 // Routes
 const auth_routes = [
   { path: "/signin", element: <SignIn /> },
@@ -373,6 +374,10 @@ const routes = [
   {
     path: "/test",
     element: <Test />,
+  },
+  {
+    path: "/order/boxdetail",
+    element: <BoxDetail/>,
   },
   {
     path: "/testImport",

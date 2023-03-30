@@ -7,6 +7,8 @@ import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import axios from "axios";
 import PickDataFormat from "../../../data/manifests/recieveManifest/PickDataFormat";
+import IncomingTab from "../navigateTab/IncomingTab";
+import Navigate from "../navigateTab/Navigate";
 
 
 
@@ -34,6 +36,8 @@ const [picked_orders, setpicked_orders] = useState([]);
   return (
     <>
       <PageTitle page="PickedOrders" />
+      <Navigate/>
+    <IncomingTab/>
       <Title title="PickedOrders" parent_title="Incoming" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
