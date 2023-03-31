@@ -31,11 +31,12 @@ const RecieveManifest = ({ depart }) => {
   const [is_submit, setis_submit] = useState(false);
   const [is_issue, setis_issue] = useState(false);
   const [received, setReceived] = useState([]);
-  const [notReceived, setNotReceived] = useState([]);
-
+  // const [notReceived, setNotReceived] = useState([]);
+  // console.log("Recived", received);
+  // console.log("Not Recived", notReceived);
   const [is_issuerec, setis_issuerec] = useState(false);
   const [receivedrec, setReceivedrec] = useState([]);
-  const [notReceivedrec, setNotReceivedrec] = useState([]);
+  // const [notReceivedrec, setNotReceivedrec] = useState([]);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const success = useSelector((state) => state.alert.show_alert);
   const [remarks, setremarks] = useState("");
@@ -43,6 +44,7 @@ const RecieveManifest = ({ depart }) => {
   const location_data = useLocation();
   const navigate = useNavigate();
   const order_id = useSelector((state) => state.manifest.order_id);
+  console.log("Order_id-----",order_id)
   const issue_id = useSelector((state) => state.manifest.issueorder_id);
   const loaded = useSelector((state) => state.manifest.loaded);
 
@@ -142,12 +144,12 @@ const [mn_barcode, setmn_barcode] = useState([]);
           dispute_username: "",
           remarks: remarks,
           issue_recieved_order: received,
-          issue_notrecieved_order: notReceived,
+          // issue_notrecieved_order: notReceived,
           vehicle_no: toTitleCase(vehicle_no).toUpperCase(),
           transport_mode: trans_mode_selected.toUpperCase(),
           step: steps,
           issue_recieved_order_rec: receivedrec,
-          issue_notrecieved_order_rec: notReceivedrec,
+          // issue_notrecieved_order_rec: notReceivedrec,
           is_issue_rec: is_issuerec,
         },
 
@@ -179,14 +181,12 @@ const [mn_barcode, setmn_barcode] = useState([]);
   // }, [is_submit]);
 
   const [show, setShow] = useState(false);
-console.log("[][]data",data)
+
 let docket_no_list = []
  for (let index = 0; index < data.length; index++) {
   const element = data[index]?.docket_number;
   docket_no_list.push(element)
-  console.log("element[]",element)
  }
- console.log("docket_number---",docket_no_list)
   const handleClose = () => {
     RecieveManifest("STEP1");
     setis_break(false);
@@ -197,6 +197,8 @@ let docket_no_list = []
     setShow(false);
   };
   const handleShow = () => setShow(true);
+
+  const [order_issue, setorder_issue] = useState([])
 
   return (
     <>
@@ -259,13 +261,13 @@ let docket_no_list = []
         {is_break ? (
           <Modal.Body>
             <BreakManifest
-              data={location_data.state.depart.orders}
+              manifest_no={manifest_no}
               is_issue={is_issue}
               setis_issue={setis_issue}
               received={received}
               setReceived={setReceived}
-              notReceived={notReceived}
-              setNotReceived={setNotReceived}
+              // notReceived={notReceived}
+              // setNotReceived={setNotReceived}
             />
           </Modal.Body>
         ) : (
@@ -355,8 +357,8 @@ let docket_no_list = []
                     setis_issue={setis_issuerec}
                     received={receivedrec}
                     setReceived={setReceivedrec}
-                    notReceived={notReceivedrec}
-                    setNotReceived={setNotReceivedrec}
+                    // notReceived={notReceivedrec}
+                    // setNotReceived={setNotReceivedrec}
                   />
 
                 </div>
@@ -456,7 +458,7 @@ let docket_no_list = []
                 className="btn btn-info m-1 cu_btn"
                 onClick={() => {
                   dispatch(setLoaded(true));
-                  if (receivedrec.length > 0 || notReceivedrec.length > 0) {
+                  if (receivedrec.length > 0) {
                     handleShow();
                   } else {
                     setis_recv(true);

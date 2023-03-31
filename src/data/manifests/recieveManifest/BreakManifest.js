@@ -10,48 +10,44 @@ import {
   setIssue_id,
   setOrder_id,
 } from "../../../store/manifest/RecieveManifest";
+import axios from "axios";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { Input } from "reactstrap";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
+import { ServerAddress } from "../../../constants/ServerAddress";
 const RecieveManifestTitle = [
   "Docket No",
-  "Orgin",
-  "Destination",
-  "Consignee",
-  "Shipper",
-  "Date",
-  "Qty",
-  "ColdChain",
+  "Barcode Number",
+  // "Destination",
+  // "Consignee",
+  // "Shipper",
+  // "Date",
+  // "Qty",
+  // "ColdChain",
   // ["Futher Connected", false],
   // ["Is Going To Hub", false],
   "Issue Type",
 ];
-{
-  console.log("item11111----", RecieveManifestTitle[8]);
-}
-{
-  console.log("item2222----", RecieveManifestTitle[9]);
-}
+
 
 const BreakManifest = ({
-  data,
+  manifest_no,
   is_issue,
   setis_issue,
   received,
   setReceived,
-  notReceived,
-  setNotReceived,
+  // notReceived,
+  // setNotReceived,
 }) => {
-  console.log("data------", data);
-  console.log("issu 00000000------------", is_issue);
+  console.log("manifest_no00000000000000", manifest_no)
+  const [data, setdata] = useState([])
   const searchData = useSelector((state) => state.searchbar.search_item);
   const [refresh, setrefresh] = useState(false);
   const [selected_id, setselected_id] = useState([]);
-  console.log()
   const [going_hub_id, setgoing_hub_id] = useState([]);
   const [issue_id, setissue_id] = useState([]);
   const loaded = useSelector((state) => state.manifest.loaded);
-
+  const accessToken = useSelector((state) => state.authentication.access_token);
   const [issue, setissue] = useState([]);
 
   const dispatch = useDispatch();
@@ -66,7 +62,6 @@ const BreakManifest = ({
   // };
 
   // const handle_checked_hub = (id) => {
-  //   console.log(id)
   //   if (going_hub_id.includes(id)) {
   //     let lis = [...going_hub_id];
   //     setgoing_hub_id(lis.filter((e) => e !== id));
@@ -74,6 +69,29 @@ const BreakManifest = ({
   //     setgoing_hub_id([...going_hub_id, id]);
   //   }
   // };
+
+  const getOrderPieces = () => {
+    // let state_list = [...state_list_s];
+    let state_list = [];
+    axios
+      .get(
+        ServerAddress +
+          `booking/orderboxqrcodecheck/${manifest_no}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        console.log("resp-------", resp)
+        if (resp.data.length > 0) {
+          setdata(resp.data)
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get orderboxqrcodecheck, ${err}`);
+      });
+  };
+
 
   const handle_checked = (
     id,
@@ -104,7 +122,6 @@ const BreakManifest = ({
       let lis = [...issue_id];
       setissue_id(lis.filter((e) => e !== id));
       let updatedArr = issue.filter((obj) => obj.id !== id);
-      console.log("updatedArr---", updatedArr);
       setissue(updatedArr);
     } else {
       setissue_id([...issue_id, id]);
@@ -118,15 +135,12 @@ const BreakManifest = ({
   }, [selected_id, going_hub_id, issue]);
 
   useEffect(() => {
-    let orderid_list = data.map((v) => v.id);
-    dispatch(setOrder_id(orderid_list));
+    let orderid_list = data.map((v) => v.order);
+    let unique_orderid_list = [...new Set(orderid_list)];
+    dispatch(setOrder_id(unique_orderid_list));
   }, [data]);
 
   useEffect(() => {
-    console.log("issue----", issue);
-    if (issue.length >= 1) {
-      // dispatch(setIssue_id(issue));
-    }
     dispatch(setIssue_id(issue));
   }, [loaded]);
 
@@ -141,44 +155,44 @@ const BreakManifest = ({
   const [issue_type, setissue_type] = useState("");
   const [issues, setIssues] = useState([]);
 
-  useLayoutEffect(() => {
-    console.log("issue _type", issue_type);
-  }, [issue_type]);
 
   // const [is_issue, setis_issue] = useState(false);
-
-  function handleIssueTypeChange(e, docketNo, index) {
+  // e, universal_no, index, universal_type, issue_location, barcode)
+  function handleIssueTypeChange(e, universal_no, index, universal_type, barcode, issue_location, barcode_type) {
     setis_issue(true);
     const issueType = e.target.value;
     let remarks = "";
     // if (issueType === "Other") {
     //   remarks = prompt("Enter remarks:");
     // }
-    const orderInfo = { docketNo, issueType, remarks };
-    if (["Broken", "Damage"].includes(issueType)) {
+    const orderInfo = { universal_no, issueType, remarks, universal_type, barcode, issue_location, barcode_type};
+    if (["Broken", "Damage", "Not Received", "Custom Check Failed", "Other"].includes(issueType)) {
       setReceived((prevReceived) => {
         const newReceived = [...prevReceived];
         newReceived[index] = orderInfo;
         return newReceived;
       });
-      setNotReceived((prevNotReceived) =>
-        prevNotReceived.filter((o) => o.docketNo !== docketNo)
-      );
-    } else {
-      setNotReceived((prevNotReceived) => {
-        const newNotReceived = [...prevNotReceived];
-        newNotReceived[index] = orderInfo;
-        return newNotReceived;
-      });
-      setReceived((prevReceived) =>
-        prevReceived.filter((o) => o.docketNo !== docketNo)
-      );
-    }
+      // setNotReceived((prevNotReceived) =>
+      //   prevNotReceived.filter((o) => o.docketNo !== docketNo)
+      // );
+    } 
+    // else {
+    //   setNotReceived((prevNotReceived) => {
+    //     const newNotReceived = [...prevNotReceived];
+    //     newNotReceived[index] = orderInfo;
+    //     return newNotReceived;
+    //   });
+    //   setReceived((prevReceived) =>
+    //     prevReceived.filter((o) => o.docketNo !== docketNo)
+    //   );
+    // }
   }
   useLayoutEffect(() => {
-    console.log("Recived", received);
-    console.log("Not Recived", notReceived);
-  }, [received]);
+    if(manifest_no !== "")
+    {
+      getOrderPieces()
+    }
+  }, [manifest_no]);
 
   return (
     <>
@@ -218,7 +232,6 @@ const BreakManifest = ({
                           }
                         }}
                       >
-                        {console.log("item----", item[0])}
 
                         {item[1] ? (
                           <FiCheckSquare size={15} />
@@ -240,7 +253,7 @@ const BreakManifest = ({
               </tr>
             ) : (
               data.map((order, index) => {
-                let f_date_f = order.booking_at.split("T")[0];
+                // let f_date_f = order.booking_at.split("T")[0];
                 // .substring(0, 11);
 
                 return (
@@ -252,21 +265,21 @@ const BreakManifest = ({
                       }}
                     >
                       <td>{order.docket_no}</td>
-                      <td>{toTitleCase(order.shipper_city)}</td>
-                      <td>{toTitleCase(order.consignee_city)}</td>
+                      <td>{toTitleCase(order.barcode_no)}</td>
+                      {/* <td>{toTitleCase(order.consignee_city)}</td>
 
                       <td>{toTitleCase(order.consignee_name)}</td>
 
-                      <td>{toTitleCase(order.shipper_name)}</td>
-                      <td>{f_date_f}</td>
-                      <td>{order.total_quantity}</td>
+                      <td>{toTitleCase(order.shipper_name)}</td> */}
+                      {/* <td>{f_date_f}</td> */}
+                      {/* <td>{order.total_quantity}</td>
                       <td>
                         {order.cold_chain ? (
                           <img src={cross} width="15" height="15" />
                         ) : (
                           <img src={correct} width="15" height="15" />
                         )}
-                      </td>
+                      </td> */}
 
                       {/* <td
                       onClick={() => {
@@ -308,16 +321,14 @@ const BreakManifest = ({
                       <td>
                         <select
                           onChange={(e) =>
-                            handleIssueTypeChange(e, order.id, index)
+                            handleIssueTypeChange(e, order.docket_no, index, "BOOKING",order.barcode_no, "ON BREAK", "PKT")
                           }
                         >
-                          <option defaultChecked>Select One Issue</option>
+                          <option defaultChecked>Select Issue</option>
                           <option value="Not Received">Not Received</option>
                           <option value="Broken">Broken</option>
                           <option value="Damage">Damage</option>
-                          <option value="Custom Check Failed">
-                            Custom Check Failed
-                          </option>
+                          <option value="Custom Check Failed">Custom Check Failed</option>
                           <option value="Other">Other</option>
                         </select>
                       </td>
@@ -346,15 +357,15 @@ const BreakManifest = ({
                         />
                       </td>} */}
                     </tr>
-                    {notReceived[index] &&
-                      notReceived[index]["issueType"] === "Other" && (
+                    {received[index] &&
+                      received[index]["issueType"] === "Other" && (
                         <tr>
                           <td colSpan={12}>
                             <Input
                               type="text"
                               placeholder="Enter Issue"
                               onChange={(val) => {
-                                notReceived[index]["remarks"] =
+                                received[index]["remarks"] =
                                   val.target.value;
                                 setrefresh(!refresh);
                               }}

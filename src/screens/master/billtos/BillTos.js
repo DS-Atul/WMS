@@ -102,7 +102,7 @@ const Clients = () => {
             can_delete={can_delete}
             Data_Title={BillTosDataTitles}
             Data_Format={BillTosDataFormat}
-          path={`master/all_billtoes/?search=${search}&p=${page_num}&records=${data_len}&data=&value=${cm_value}`}
+            path={`master/all_billtoes/?search=${search}&p=${page_num}&records=${data_len}&data=&value=${cm_value}`}
           />
           <NumPagination path={"client"} />
         </div>

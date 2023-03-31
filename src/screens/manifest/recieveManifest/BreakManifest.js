@@ -31,6 +31,7 @@ const BreakManifest = ({ depart }) => {
   const [is_issue, setis_issue] = useState(false);
   const [received, setReceived] = useState([]);
   const [notReceived, setNotReceived] = useState([]);
+  console.log("received received===", received)
 
   const [is_issuerec, setis_issuerec] = useState(false);
   const [receivedrec, setReceivedrec] = useState([]);
@@ -71,9 +72,12 @@ const BreakManifest = ({ depart }) => {
   const [flight_name, setflight_name] = useState("");
   const [data, setdata] = useState([]);
 
+  console.log("99999999999999999",location_data)
   useLayoutEffect(() => {
     let manifest_data = location_data.state.depart;
+    console.log("vehicle no {{{{",manifest_data)
     setmanifest_no(manifest_data.manifest_no);
+  setvehicle_no(manifest_data.vehicle_no);
     setmanifest_id(manifest_data.id);
     setfrom_branch(manifest_data.from_branch_n);
     setto_branch(manifest_data.to_branch_n);
@@ -148,6 +152,7 @@ const BreakManifest = ({ depart }) => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
+          setShow(false);
           dispatch(setToggle(true));
           dispatch(setShowAlert(true));
           dispatch(
@@ -252,16 +257,16 @@ let docket_no_list = []
                 
 
                   {/* DataTable */}
-                  <BreakManifestT
-              data={location_data.state.depart.orders}
+              
+              <BreakManifestT
+              manifest_no={manifest_no}
               is_issue={is_issue}
               setis_issue={setis_issue}
               received={received}
               setReceived={setReceived}
-              notReceived={notReceived}
-              setNotReceived={setNotReceived}
+              // notReceived={notReceived}
+              // setNotReceived={setNotReceived}
             />
-
                 </div>
               </Row>
             </CardBody>

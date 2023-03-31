@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setManifestTab } from "../../../store/parentFilter/ParentFilter";
+import { setIncomingTab, setManifestTab, setRoughTab } from "../../../store/parentFilter/ParentFilter";
 
 const Navigate = () => {
   const navigate = useNavigate();
@@ -105,6 +105,7 @@ const Navigate = () => {
           }}
           onClick={() => {
             dispatch(setManifestTab(2));
+            dispatch(setRoughTab(1));
             navigate("/manifest/roughmanifest");
           }}
         >
@@ -147,6 +148,7 @@ const Navigate = () => {
           }}
           onClick={() => {
             dispatch(setManifestTab(4));
+            dispatch(setIncomingTab(1));
             navigate("/manifest/incomingmanifest");
           }}
         >

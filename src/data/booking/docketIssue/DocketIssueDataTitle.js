@@ -1,7 +1,10 @@
 const DocketIssueDataTitle = [
-"Docket Number",
-"Manifest Number",
-"Issue Type"
+"Number",
+"Type",
+"Issue Location",
+"created date",
+"Barcode Number",
+"Barcode Type"
 ]
 
 export default DocketIssueDataTitle

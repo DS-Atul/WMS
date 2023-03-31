@@ -40,7 +40,7 @@ import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 
 const AddForward = (manifest) => {
-  console.log("manifest-----", manifest)
+  console.log("manifest--yyy---", manifest.manifest.is_scanned)
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const user_branch = useSelector(
     (state) => state.authentication.userdetails.home_branch
@@ -452,7 +452,7 @@ useEffect(() => {
 
   return (
     <>
-      <Button size="sm" outline color="primary" type="button" onClick={() => setShow(true)}>
+      <Button size="sm" outline color="primary" type="button" onClick={() => setShow(true)} disabled={!manifest.manifest.is_scanned}>
         Forward
       </Button>
 

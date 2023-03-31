@@ -30,7 +30,7 @@ import cross from "../../../assets/images/ComponentsIcon/cross.png";
 import correct from "../../../assets/images/ComponentsIcon/check-mark.png";
 import { BsPrinterFill } from "react-icons/bs";
 
-const IncomingHubDataFormat = ({ datab, data1 }) => {
+const IncomingHubDataFormat = ({ data, data1 }) => {
   // Permissions
   const user_permissions = useSelector(
     (state) => state.permissions.user_permissions
@@ -42,7 +42,7 @@ const IncomingHubDataFormat = ({ datab, data1 }) => {
   );
 
   const searchData = useSelector((state) => state.searchbar.search_item);
-  const total_data = useSelector((state) => state.pagination.total_datab);
+  const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
@@ -163,12 +163,12 @@ const IncomingHubDataFormat = ({ datab, data1 }) => {
 
   return (
     <>
-      {(list_toggle === true ? data1 : datab).length === 0 ? (
+      {(list_toggle === true ? data1 : data).length === 0 ? (
         <tr>
           <td>No Data Found</td>
         </tr>
       ) : (
-        (list_toggle === true ? data1 : datab).map((hub, index) => {
+        (list_toggle === true ? data1 : data).map((hub, index) => {
           return (
             <tr
               key={index}

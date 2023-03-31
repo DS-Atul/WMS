@@ -103,7 +103,8 @@ const DocketIssue = () => {
             can_delete={can_delete}
             Data_Title={DocketIssueDataTitle}
             Data_Format={DocketIssueDataFormate}
-            path={`booking/get_order_issue/?search=${search}&p=${page_num}&records=${data_len}`}
+            // path={`booking/get_order_issue/?search=${search}&p=${page_num}&records=${data_len}`}
+            path={`booking/get_all_issue/?search=${search}&p=${page_num}&records=${data_len}`}
           />
           <NumPagination path={"path"} />
         </div>

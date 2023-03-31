@@ -172,6 +172,11 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
         </tr>
       ) : (
         (list_toggle === true ? data1 : data).map((order, index) => {
+          let f_date_f = order.created_at.split("T");
+          let f_date = f_date_f[0];
+          let f_time_r = String(f_date_f[1]).substring(0, 5);
+          let l_fdate = f_date + " " + f_time_r;
+
           return (
             <tr
               key={index}
@@ -204,15 +209,23 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
                     to="/booking/docketIssue/AddDocketIssue"
                     state={{ order: order }}
                   >
-                    {toTitleCase(order.docket_no)}
+                    {/* {toTitleCase(order.docket_no)} */}
+                    {order.universal_no}
+                    
                   </Link>
 
                 ) : (
-                  toTitleCase(order.commodity_name)
+                  // toTitleCase(order.commodity_name)
+                  order.universal_no
                 )}
               </td>
-              <td>{order.manifest_no}</td>
-              <td>{order.issue_type}</td>
+              {/* <td>{order.manifest_no}</td> */}
+              <td>{toTitleCase(order.universal_type)}</td>
+              <td>{toTitleCase(order.issue_location)}</td>
+              <td>{l_fdate}</td>
+              {/* <td>{order.issue_type}</td> */}
+              <td>{order.barcode}</td>
+              <td>{toTitleCase(order.barcode_type)}</td>
             </tr>
           );
         })

@@ -67,8 +67,8 @@ const PendingForDispatch = () => {
   const [local_list, setlocal_list] = useState(divide_deliverys);
 
   const [createRunsheet_list, setcreateRunsheet_list] = useState([]);
-  const [box_count, setbox_count] = useState(0)
-  const [bag_count, setbag_count] = useState(0)
+  const [box_count, setbox_count] = useState(1)
+  const [bag_count, setbag_count] = useState(1)
 
   let awb_no_list = [];
   for (let index = 0; index < createRunsheet_list.length; index++) {
@@ -295,7 +295,7 @@ const PendingForDispatch = () => {
           keyboard={false}
         >
           <Modal.Header closeButton>
-            <Modal.Title>Modal title</Modal.Title>
+            <Modal.Title>Add Bag and Box</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {/* <Label>Is Defined Row</Label> */}

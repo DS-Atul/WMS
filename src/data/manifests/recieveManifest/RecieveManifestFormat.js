@@ -28,8 +28,8 @@ const RecieveDataFormat = ({
   setis_issue,
   received,
   setReceived,
-  notReceived,
-  setNotReceived,
+  // notReceived,
+  // setNotReceived,
 }) => {
   const [refresh, setrefresh] = useState(false);
   const [selected_id, setselected_id] = useState([]);
@@ -43,12 +43,6 @@ const RecieveDataFormat = ({
   const [issue, setissue] = useState([]);
 
   const dispatch = useDispatch();
-
-
-
-
-
- 
 
   useEffect(() => {
     dispatch(setFuther_conn_id(selected_id));
@@ -67,34 +61,35 @@ const RecieveDataFormat = ({
   }, [loaded]);
 
 
-  function handleIssueTypeChange(e, bag_barcode, index) {
+  function handleIssueTypeChange(e, universal_no, index, universal_type, barcode, issue_location, barcode_type, issue_image) {
     setis_issue(true);
     const issueType = e.target.value;
     let remarks = "";
     // if (issueType === "Other") {
     //   remarks = prompt("Enter remarks:");
     // }
-    const orderInfo = { bag_barcode, issueType, remarks };
+    const orderInfo = { universal_no, issueType, remarks, universal_type, barcode, issue_location, barcode_type, issue_image};
 
-    if (["Broken", "Damage"].includes(issueType)) {
+    if (["Broken", "Damage", "Not Received", "Custom Check Failed", "Other"].includes(issueType)) {
       setReceived((prevReceived) => {
         const newReceived = [...prevReceived];
         newReceived[index] = orderInfo;
         return newReceived;
       });
-      setNotReceived((prevNotReceived) =>
-        prevNotReceived.filter((o) => o.bag_barcode !== bag_barcode)
-      );
-    } else {
-      setNotReceived((prevNotReceived) => {
-        const newNotReceived = [...prevNotReceived];
-        newNotReceived[index] = orderInfo;
-        return newNotReceived;
-      });
-      setReceived((prevReceived) =>
-        prevReceived.filter((o) => o.bag_barcode !== bag_barcode)
-      );
-    }
+      // setNotReceived((prevNotReceived) =>
+      //   prevNotReceived.filter((o) => o.bag_barcode !== bag_barcode)
+      // );
+    } 
+    // else {
+    //   setNotReceived((prevNotReceived) => {
+    //     const newNotReceived = [...prevNotReceived];
+    //     newNotReceived[index] = orderInfo;
+    //     return newNotReceived;
+    //   });
+    //   setReceived((prevReceived) =>
+    //     prevReceived.filter((o) => o.bag_barcode !== bag_barcode)
+    //   );
+    // }
   }
 
   return (
@@ -176,7 +171,7 @@ const RecieveDataFormat = ({
                       <td>
                         <select
                           onChange={(e) =>
-                            handleIssueTypeChange(e, order.barcode, index)
+                            handleIssueTypeChange(e, order.menifest_no, index, "MANIFEST",order.barcode_no, "ON RECEIVE", order.box_tpye, '')
                           }
                         >
                           <option defaultChecked>Select...</option>
@@ -208,7 +203,7 @@ const RecieveDataFormat = ({
                             </td>
                           )}
                        {console.log("received999999",received)}
-                       {console.log("notReceived999999",notReceived)}
+                       {/* {console.log("notReceived999999",notReceived)} */}
                       
                       {received[index] &&
                           received[index]["issueType"] === "Broken" && (
@@ -238,8 +233,8 @@ const RecieveDataFormat = ({
                           )}
                     
                   
-                      {notReceived[index] &&
-                          notReceived[index]["issueType"] === "Other" && (
+                      {received[index] &&
+                          received[index]["issueType"] === "Other" && (
                             <td>
                               <Input
                                 type="file"
@@ -250,21 +245,17 @@ const RecieveDataFormat = ({
                               />
                             </td>
                           )}
-                     
-
-
-
 
                     </tr>
-                    {notReceived[index] &&
-                      notReceived[index]["issueType"] === "Other" && (
+                    {received[index] &&
+                      received[index]["issueType"] === "Other" && (
                         <tr>
                           <td colSpan={12}>
                             <Input
                               type="text"
                               placeholder="Enter Issue"
                               onChange={(val) => {
-                                notReceived[index]["remarks"] =
+                                received[index]["remarks"] =
                                   val.target.value;
                                 setrefresh(!refresh);
                               }}

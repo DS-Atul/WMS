@@ -61,6 +61,7 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
         }
       )
       .then(function (response) {
+        console.log("response-----", response)
         setorder_status_list(response.data);
       })
       .catch((error) => {
@@ -118,6 +119,9 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
                 >
                   <td>{index + 1}</td>
                   <td>
+                    {status.status==="SHIPMENT ORDER RECEIVED" ?
+                    toTitleCase(status.status)
+                    :
                     <Link
                       to="/booking/orders/adddocketstatus"
                       state={{
@@ -130,6 +134,7 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
                     >
                       {toTitleCase(status.status)}
                     </Link>
+                     }
                   </td>
                   {/* <td>
                   {user_permissions.includes('Can change Update Docket Status') ?
