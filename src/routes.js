@@ -352,6 +352,9 @@ const Pickedup = React.lazy(() =>
 );
 const BoxDetail =React.lazy(()=>import("./screens/manifest/incomingVehcile/BoxDetail.js"))
 // Routes
+
+// eway bill
+const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"))
 const auth_routes = [
   { path: "/signin", element: <SignIn /> },
   { path: "/", exact: true, element: <Navigate to="/signin" /> },
@@ -391,6 +394,10 @@ const routes = [
   {
     path: "/ems/users",
     element: <Users />,
+  },
+  {
+    path: "/elogin",
+    element: <EloginIn/>,
   },
   {
     path: "/ems/users/Userinfo",

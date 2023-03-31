@@ -12,6 +12,7 @@ import customerReducer from "./master/customer/Customer";
 import orderReducer from "./booking/order/Order";
 import RecieveManifest from "./manifest/RecieveManifest";
 import OrderTracking from "./orderTracking/OrderTracking";
+import Ewaybill from "./ewayBill/EwayBill"; 
 
 const appReducer = combineReducers({
   authentication: authenticationReducer,
@@ -27,6 +28,8 @@ const appReducer = combineReducers({
   order: orderReducer,
   manifest: RecieveManifest,
   OrderTracking: OrderTracking,
+  eway_bill:Ewaybill,
+
 });
 
 export default appReducer;
