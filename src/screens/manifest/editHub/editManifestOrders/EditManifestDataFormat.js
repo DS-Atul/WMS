@@ -125,8 +125,8 @@ const EditManifestDataFormat = ({ Manifest_list }) => {
               </tr>
             ) : (
               Manifest_list.map((order, index) => {
-                let booking_date_n = order.date1
-                  ? order.date1.split("T")[0]
+                let booking_date_n = order.booking_at
+                  ? order.date1.split("+")[0]
                   : "none";
                 return (
                   <tr

@@ -29,7 +29,7 @@ import Modal from "react-bootstrap/Modal";
 import AddForward from "../../../screens/manifest/forwardmanifest/AddForward";
 import AddAnotherOrder from "../../../screens/manifest/editManifest/AddAnotherOrder";
 
-const RoughDataFormat = ({ data, data1, can_delete }) => {
+const HubAirDataFormat = ({ data, data1, can_delete }) => {
   console.log("data111---", data);
   // Permissions
   const user_permissions = useSelector(
@@ -189,6 +189,11 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
         </tr>
       ) : (
         (list_toggle === true ? data1 : data).map((manifest, index) => {
+          let f_date_f = manifest.manifest_date.split("T");
+          let f_date = f_date_f[0];
+          let f_time_r = String(f_date_f[1]).substring(0, 5);
+          let l_fdate = f_date + " " + f_time_r;
+
           return (
             <tr
               key={index}
@@ -222,28 +227,21 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
               <td>{toTitleCase(manifest.destination_branch_n)}</td>
               <td>{manifest.orders.length}</td>
               <td>
-                {manifest.bag_count ? manifest.bag_count : "-"}
-                {/* {manifest.bag_count === "" ? (
-                  manifest.bag_count
-                ) : (
-                  <div style={{ color: "red" }}>
-                    Manifest Total Packets Not Added
-                  </div>
-                )}
-                {""} */}
+                {manifest.bag_count ? manifest.bag_count : 
+                <div style={{ color: "red" }}>
+                 Bag Is Not Added
+              </div>
+                }
               </td>
               <td>
-                {manifest.box_count ? manifest.box_count : "-"}
-                {/* {manifest.manifest_weight === "" ? (
-                  manifest.manifest_weight
-                ) : (
+                {manifest.box_count ? manifest.box_count : 
                   <div style={{ color: "red" }}>
-                    Manifest Total Weight Not Added
-                  </div>
-                )} */}
+                  Box Is Not Added
+                </div>
+                }
               </td>
               {/* <td>{""}</td> */}
-              <td>{manifest.manifest_date}</td>
+              <td>{l_fdate}</td>
               <td>
                 <div>
                   <Link
@@ -255,15 +253,17 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
                 </div>
               </td>
               <td>
-                <AddForward manifest={manifest} />
-                {/* {(can_update || user.is_superuser) ? (
-                  <Link to="/manifest/forward" state={{ manifest: manifest }}>
-                    Forward Manifest
-                  </Link>                  
-                ) : (
-                  "Forward Manifest"
-                )} */}
-
+                {/* <AddAnotherOrder
+                  edit={true}
+                  id_m={manifest.manifest_no}
+                  refresh={refresh}
+                  setrefresh={setrefresh}
+                /> */}
+                <Link to="/manifest/editraughdocket" state={{ manifest: manifest }}>
+                  <Button size="sm" outline type="button" color="primary">
+                    Edit
+                  </Button>
+                </Link>
               </td>
             </tr>
           );
@@ -273,4 +273,4 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
   );
 };
 
-export default RoughDataFormat;
+export default HubAirDataFormat;

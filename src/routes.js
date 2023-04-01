@@ -270,6 +270,27 @@ const EditRoughDocket = React.lazy(() =>
   import("./screens/manifest/editManifest/EditRoughDocket.js")
 );
 
+const EditHubDocket = React.lazy(() =>
+  import("./screens/manifest/editHub/EditHubDocket.js")
+);
+
+const AddHubAir = React.lazy(() =>
+  import("./screens/manifest/hubAirForward/AddHubAir.js")
+);
+
+const HubAirForwarding = React.lazy(() =>
+  import("./screens/manifest/hubAirForward/HubAirForwarding.js")
+);
+
+const AddHubVehicle = React.lazy(() =>
+  import("./screens/manifest/hubVehicleForward/AddHubVehicle.js")
+);
+
+const HubVehicleForwarding = React.lazy(() =>
+  import("./screens/manifest/hubVehicleForward/HubVehicleForwarding.js")
+);
+
+
 const BreakManifest = React.lazy(() =>
   import("./screens/manifest/recieveManifest/BreakManifest.js")
 );
@@ -723,6 +744,10 @@ const routes = [
     element: <EditRoughDocket/>,
   },
   {
+    path: "/manifest/edithubdocket",
+    element: <EditHubDocket/>,
+  },
+  {
     path: "/manifest/edithub",
     element: <EditHub />,
   },
@@ -745,6 +770,24 @@ const routes = [
   {
     path: "/manifest/roughmanfest",
     element: <RoughManifestPdf />,
+  },
+
+  {
+    path: "/manifest/addhubair",
+    element: <AddHubAir />,
+  },
+
+  {
+    path: "/manifest/hubairforward",
+    element: <HubAirForwarding />,
+  },
+  {
+    path: "/manifest/addhubvehicle",
+    element: <AddHubVehicle />,
+  },
+  {
+    path: "/manifest/hubvehicleforward",
+    element: <HubVehicleForwarding />,
   },
   {
     path: "/booking/docketIssue/DocketIssue",

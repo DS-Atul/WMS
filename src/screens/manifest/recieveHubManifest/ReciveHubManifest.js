@@ -1,20 +1,9 @@
 /* eslint-disable */
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import "../../../assets/scss/forms/form.scss";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Card,
-  Col,
-  Row,
-  CardBody,
-  CardTitle,
-  Label,
-  Input,
-  FormFeedback,
-  Form,
-} from "reactstrap";
+import { Card, Col, Row, CardBody, CardTitle, Label, Input } from "reactstrap";
+import Modal from "react-bootstrap/Modal";
+
 import { IconContext } from "react-icons";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
@@ -22,8 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-
-import TransferList from "../../../components/formComponent/transferList/TransferList";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setAlertType,
@@ -34,56 +21,38 @@ import {
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
-import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
+import Question from "../../../assets/images/bookings/question.png";
+import BreakManifest from "../../../data/manifests/recieveManifest/BreakManifest";
 import RecieveDataFormat from "../../../data/manifests/recieveManifest/RecieveManifestFormat";
 import { setLoaded } from "../../../store/manifest/RecieveManifest";
 import RecieveHubDataFormat from "../../../data/manifests/recieveHubManifest/RecieveHubManifestFormat";
-
+import BreakHubManifest from "../../../data/manifests/recieveHubManifest/BreakHubManifest";
 const RecieveHubManifest = ({ depart }) => {
+
+  const [is_submit, setis_submit] = useState(false);
   const [is_issue, setis_issue] = useState(false);
   const [received, setReceived] = useState([]);
-  const [notReceived, setNotReceived] = useState([]);
-  const [order_without_issue, setorder_without_issue] = useState([])
-  console.log("notReceived-----", notReceived)
-  console.log("received-------", received)
-
-  // console.log("Recive Data", depart);
-  const user = useSelector((state) => state.authentication.userdetails);
+  // const [notReceived, setNotReceived] = useState([]);
+  // console.log("Recived", received);
+  // console.log("Not Recived", notReceived);
+  const [is_issuerec, setis_issuerec] = useState(false);
+  const [receivedrec, setReceivedrec] = useState([]);
+  // const [notReceivedrec, setNotReceivedrec] = useState([]);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const search = useSelector((state) => state.searchbar.search_item);
   const success = useSelector((state) => state.alert.show_alert);
-  const [page, setpage] = useState(1);
-  const [refresh, setrefresh] = useState("false");
   const [remarks, setremarks] = useState("");
   const dispatch = useDispatch();
   const location_data = useLocation();
-
   const navigate = useNavigate();
   const order_id = useSelector((state) => state.manifest.order_id);
-  const futher_conn_id = useSelector((state) => state.manifest.futher_conn_id);
-  const going_hub_id = useSelector((state) => state.manifest.going_hub_id);
+  console.log("location_data--location_data--",location_data)
   const issue_id = useSelector((state) => state.manifest.issueorder_id);
   const loaded = useSelector((state) => state.manifest.loaded);
-
-  // console.log("futher_conn_id----", futher_conn_id);
-  // console.log("going_hub_id----", going_hub_id);
-  // console.log("issue_id---", issue_id);
-
-  //Circle Toogle Btn
-  const [circle_btn, setcircle_btn] = useState(true);
-  const toggle_circle = () => {
-    setcircle_btn(!circle_btn);
-  };
 
   const [circle_btn1, setcircle_btn1] = useState(true);
   const toggle_circle1 = () => {
     setcircle_btn1(!circle_btn1);
-  };
-
-  const [circle_btn2, setcircle_btn2] = useState(true);
-  const toggle_circle2 = () => {
-    setcircle_btn2(!circle_btn2);
   };
 
   // Navigation At the time of Cancel
@@ -91,8 +60,9 @@ const RecieveHubManifest = ({ depart }) => {
     dispatch(setToggle(true));
     navigate("/manifest/incomingmanifest");
   };
+  const [is_break, setis_break] = useState(false);
+  const [is_recv, setis_recv] = useState(false);
 
-  const [coloader_list, setcoloader_list] = useState([]);
   const [coloader_selected, setcoloader_selected] = useState("");
   const [coloader_id, setcoloader_id] = useState("");
   const [from_branch, setfrom_branch] = useState("");
@@ -103,30 +73,24 @@ const RecieveHubManifest = ({ depart }) => {
   const [manifest_weight, setmanifest_weight] = useState("");
   const [airway_bill_no, setairway_bill_no] = useState("");
   const [coloader_mode, setcoloader_mode] = useState("");
-  const [company_slected_list, setcompany_slected_list] = useState("");
   const [flight_name, setflight_name] = useState("");
   const [data, setdata] = useState([]);
-  const [coloader_mode_list, setcoloader_mode_list] = useState([
-    "DIRECT AWB",
-    "AIR CONSOLE",
-    "BY ROAD (SURFACE)",
-    "BY TRAIN",
-    "DIRECT VEHICLE",
-    "PARTLOAD",
-  ]);
+
   useLayoutEffect(() => {
-    let hub_data = location_data.state.hub;
-    sethub_transfer_no(hub_data.hub_transfer_no);
-    setmanifest_id(hub_data.id);
-    setfrom_branch(hub_data.from_branch_n);
-    setto_branch(hub_data.to_branch_n);
-    setcoloader_mode(hub_data.coloader_mode);
-    setcoloader_id(hub_data.coloader);
-    setcoloader_selected(hub_data.coloader_name);
-    settotal_bags(hub_data.bag_count);
-    setmanifest_weight(hub_data.total_weight);
-    setairway_bill_no(hub_data.airwaybill_no);
-    setflight_name(hub_data.carrier_name);
+    let manifest_data = location_data.state.hub;
+    sethub_transfer_no(manifest_data.hub_transfer_no);
+    setmanifest_id(manifest_data.id);
+    setfrom_branch(manifest_data.from_branch_n);
+    setto_branch(manifest_data.to_branch_n);
+    setcoloader_mode(manifest_data.coloader_mode);
+    setcoloader_id(manifest_data.coloader);
+    setcoloader_selected(manifest_data.coloader_name);
+    settotal_bags(manifest_data.bag_count);
+    setmanifest_weight(manifest_data.total_weight);
+    setairway_bill_no(manifest_data.airwaybill_no);
+    setflight_name(manifest_data.carrier_name);
+    setvehicle_no(manifest_data.vehicle_no)
+    setremarks(manifest_data.remarks)
   }, []);
 
   const [trans_mode_list, settrans_mode_list] = useState([
@@ -137,29 +101,38 @@ const RecieveHubManifest = ({ depart }) => {
     "In Transit",
   ]);
   const [trans_mode_selected, settrans_mode_selected] = useState("");
-const [vehicle_no, setvehicle_no] = useState("")
-  // const get_orderof_manifest = () => {
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //       `manifest/get_manifest_order/?hub_transfer_no=${hub_transfer_no}`,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((response) => {
-  //       setdata(response.data);
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error While Loading Client , ${err}`);
-  //     });
-  // };
+  const [vehicle_no, setvehicle_no] = useState("");
+  const get_orderof_manifest = () => {
+    axios
+      .get(
+        ServerAddress +
+          `manifest/get_manifest_order/?manifest_no=${hub_transfer_no}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        setdata(response.data);
+      })
+      .catch((err) => {
+        alert(`Error While Loading Client , ${err}`);
+      });
+  };
 
-  // useLayoutEffect(() => {
-  //   hub_transfer_no && get_orderof_manifest();
-  // }, [hub_transfer_no, success]);
+  useLayoutEffect(() => {
+    hub_transfer_no && get_orderof_manifest();
+  }, [hub_transfer_no, success]);
 
-  const RecieveManifest = () => {
+// const [mn_barcode, setmn_barcode] = useState([]);
+//   useEffect(() => {
+    
+//   console.log("hello ji pass check",location_data.state.depart.mn_barcode);
+//   if (location_data.state.depart.mn_barcode) {
+//     setmn_barcode(location_data.state.depart.mn_barcode);
+//   }
+//   }, [])
+  
+  const RecieveHubManifest = (steps) => {
     axios
       .post(
         ServerAddress + "manifest/add_hubrecieve_manifest/",
@@ -167,19 +140,21 @@ const [vehicle_no, setvehicle_no] = useState("")
           hubtransfer_no: hub_transfer_no,
           is_received: "True",
           awb_no_list: order_id,
-          // futher_connected: futher_conn_id,
-          // is_going_to_hub_list: going_hub_id,
           issue_type: issue_id,
           is_issue: is_issue,
+          vehicle_no:vehicle_no,
           is_disputed: false,
           disputed_by: "",
           dispute_username: "",
           remarks: remarks,
           issue_recieved_order: received,
-          issue_notrecieved_order: notReceived,
-          order_without_issue: order_without_issue,
-          // vehicle_no: toTitleCase(vehicle_no).toUpperCase(),
-          // transport_mode: (trans_mode_selected).toUpperCase(),
+          // issue_notrecieved_order: notReceived,
+          vehicle_no: toTitleCase(vehicle_no).toUpperCase(),
+          transport_mode: trans_mode_selected.toUpperCase(),
+          step: steps,
+          issue_recieved_order_rec: receivedrec,
+          // issue_notrecieved_order_rec: notReceivedrec,
+          is_issue_rec: is_issuerec,
         },
 
         {
@@ -203,56 +178,201 @@ const [vehicle_no, setvehicle_no] = useState("")
         alert(`Error While  Updateing Manifest ${err}`);
       });
   };
-  useEffect(() => {
-    if (loaded) {
-      RecieveManifest();
-    }
-  }, [loaded]);
+  // useEffect(() => {
+  //   if (is_submit) {
+  //     RecieveHubManifest();
+  //   }
+  // }, [is_submit]);
 
-  useEffect(() => {
-    const issue_received_order = received.map(({ docketNo }) => docketNo);
-    const issue_notreceived_order = notReceived.map(({ docketNo }) => docketNo);
-    const result = issue_received_order.concat(issue_notreceived_order).filter(item => item !== "empty");
-    let without_issue = order_id.filter(v=> !result.includes(v))
-    setorder_without_issue(without_issue)
-  }, [received,notReceived])
-  
+  const [show, setShow] = useState(false);
+
+let docket_no_list = []
+ for (let index = 0; index < data.length; index++) {
+  const element = data[index]?.docket_number;
+  docket_no_list.push(element)
+ }
+  const handleClose = () => {
+    RecieveHubManifest("STEP1");
+    setis_break(false);
+    setShow(false);
+  };
+  const handleCloseAll = () => {
+    setis_break(false);
+    setShow(false);
+  };
+  const handleShow = () => setShow(true);
+
+  const [order_issue, setorder_issue] = useState([])
 
   return (
     <>
+      <Modal
+        show={is_recv}
+        onHide={()=>{
+          setShow(false);
+          setis_break(false);
+        }}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header></Modal.Header>
 
+        <Modal.Body>
+          <div style={{ marginLeft: "170px" }}>
+            <img src={Question} width="100vw" height="100vh" />
+          </div>
+          <div
+            style={{
+              marginTop: "20px",
+              fontSize: "14px",
+              fontWeight: "bold",
+              marginLeft: "20px",
+              color: "blue",
+            }}
+          >
+            In {hub_transfer_no} You Have Recieved All Bags And Boxes Do You Want To
+            Update Status Connecting To Hub ?
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button
+            variant="danger"
+            onClick={() => {
+              setis_recv(false);
+            }}
+          >
+            Cancel
+          </Button>
+
+          <Button variant="success" onClick={() => {
+            RecieveHubManifest("STEP1");
+          }}>
+            Update
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={show}
+        onHide={handleCloseAll}
+        backdrop="static"
+        keyboard={false}
+        dialogClassName={is_break && "custom-modal2"}
+      >
+        <Modal.Header closeButton></Modal.Header>
+
+        {is_break ? (
+          <Modal.Body>
+            <BreakHubManifest
+              hub_transfer_no={hub_transfer_no}
+              is_issue={is_issue}
+              setis_issue={setis_issue}
+              received={received}
+              setReceived={setReceived}
+              // notReceived={notReceived}
+              // setNotReceived={setNotReceived}
+            />
+          </Modal.Body>
+        ) : (
+          <Modal.Body>
+            <div style={{ marginLeft: "170px" }}>
+              <img src={Question} width="100vw" height="100vh" />
+            </div>
+            <div
+              style={{
+                marginTop: "20px",
+                fontSize: "14px",
+                fontWeight: "bold",
+                marginLeft: "20px",
+                color: "red",
+              }}
+            >
+              {hub_transfer_no} Have Some Issues In Box Or Bag Do You Want To Break
+              Manifest ?
+            </div>
+          </Modal.Body>
+        )}
+
+        <Modal.Footer>
+          {
+            is_break ?
+            <Button variant="danger" onClick={handleCloseAll}>Cancel</Button>
+            :
+          <Button variant="danger" onClick={handleClose}>
+                No,Later
+          </Button>
+          }
+        
+          {!is_break ? (
+            <Button
+              variant="success"
+              onClick={() => {
+                setis_break(true);
+              }}
+            >
+              Yes
+            </Button>
+          ) : (
+            <Button
+              variant="success"
+              onClick={() => {
+                RecieveHubManifest("STEP2")
+                setis_submit(true);
+              }}
+            >
+              Break
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
+      {/* Modal For Break manifest Started*/}
       <Title title="Recieve Hub Manifest" parent_title="Manifests" />
       <PageTitle page="RecieveHubManifest" />
       <div className="mt-0 m-3">
         <Col lg={12}>
           <Card className="shadow bg-white rounded">
-
             <CardBody style={{ paddingTop: "0px" }}>
               <Row>
-                <div className="container-fluid" style={{ background: "white" }}>
+                <div
+                  className="container-fluid"
+                  style={{ background: "white" }}
+                >
                   <div className="mb-2 row ">
-                    <div className="col-sm-4">
-                      <SearchList />
-                    </div>
-
+                    
+                     <div style={{color:"blue",fontSize:"15px",marginTop:"10px"}}> 
+                      Docket Present In This Manifest = [
+                        {
+                          docket_no_list.map((v)=>{
+                              return <a>{v}{docket_no_list[docket_no_list.length-1]===v?null:", "}</a>
+                            }
+                          )
+                        }
+                      ]
+                     </div>
+                    
                   </div>
 
                   {/* DataTable */}
                   <RecieveHubDataFormat
                     data={location_data.state.hub.orders}
-                    is_issue={is_issue}
-                    setis_issue={setis_issue}
-                    received={received}
-                    setReceived={setReceived}
-                    notReceived={notReceived}
-                    setNotReceived={setNotReceived}
+                    // barcode={mn_barcode}
+                    barcode={[]}
+                    is_issue={is_issuerec}
+                    setis_issue={setis_issuerec}
+                    received={receivedrec}
+                    setReceived={setReceivedrec}
+                    // notReceived={notReceivedrec}
+                    // setNotReceived={setNotReceivedrec}
                   />
+
                 </div>
               </Row>
             </CardBody>
           </Card>
         </Col>
       </div>
+      {/* Bag Info Ended */}
 
       {/* Colader Services */}
       <div className="m-3">
@@ -287,15 +407,30 @@ const [vehicle_no, setvehicle_no] = useState("")
             {circle_btn1 ? (
               <CardBody>
                 <Row>
-                  <Col lg={12} md={12} sm={12}>
+                  <Col lg={4} md={6} sm={6}>
                     <div className="mb-2">
-                      <Label className="header-child">Hub Transfer No* :</Label>
+                      <Label className="header-child">Manifest No* :</Label>
 
                       <Input
                         className="form-control-md"
                         id="input"
                         disabled
                         value={hub_transfer_no}
+                      />
+                    </div>
+                  </Col>
+                  <Col lg={4} md={8} sm={8}>
+                    <div className="mb-2">
+                      <Label className="header-child">Vehcile No* :</Label>
+                      <Input
+                        name="vehicle_no"
+                        type="text"
+                        id="input"
+                        maxLength={10}
+                        value={vehicle_no}
+                        onChange={(e) => {
+                          setvehicle_no(e.target.value);
+                        }}
                       />
                     </div>
                   </Col>
@@ -314,43 +449,6 @@ const [vehicle_no, setvehicle_no] = useState("")
                       />
                     </div>
                   </Col>
-
-                  {/* {going_hub_id.length !== 0 && (
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">
-                          Transporation Mode :
-                        </Label>
-                        <NSearchInput
-                          data_list={trans_mode_list}
-                          data_item_s={trans_mode_selected}
-                          set_data_item_s={settrans_mode_selected}
-                          show_search={false}
-                          error_message={"Please Select Transportation Mode"}
-                        />
-                      </div>
-                    </Col>
-                  )}
-                       {trans_mode_selected === "Road" &&
-                  <Col lg={4} md={6} sm={6}>
-                    <div className="mb-2">
-                      <Label className="header-child">
-                        Vehicle Number :
-                      </Label>
-                 
-                      <Input
-                        name="vehicle_no"
-                        type="text"
-                        id="input"
-                        value={vehicle_no}
-                        onChange={(e) => {
-                          setvehicle_no(e.target.value)
-                        }}
-                      />
-                    </div>
-                      
-                  </Col>
-                      } */}
                 </Row>
               </CardBody>
             ) : null}
@@ -361,10 +459,15 @@ const [vehicle_no, setvehicle_no] = useState("")
           <Col lg={12}>
             <div className="mb-1 footer_btn">
               <Button
-                type="submit"
+                type="button"
                 className="btn btn-info m-1 cu_btn"
                 onClick={() => {
                   dispatch(setLoaded(true));
+                  if (receivedrec.length > 0) {
+                    handleShow();
+                  } else {
+                    setis_recv(true);
+                  }
                 }}
               >
                 Recieve

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 // import { setMain_checkbox } from "../../../store/Components/ListDisplay/Main_Checkbox/action";
 import axios from "axios";
+import { Button } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setIsDeleted,
@@ -24,13 +25,10 @@ import {
 } from "../../../store/alert/Alert";
 import pdf from "../../../assets/images/Pdf/printer.png";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { Button } from "reactstrap";
-import Modal from "react-bootstrap/Modal";
-import AddForward from "../../../screens/manifest/forwardmanifest/AddForward";
-import AddAnotherOrder from "../../../screens/manifest/editManifest/AddAnotherOrder";
+import AddBranchForward from "../../../screens/manifest/forwardbranchmanifest/AddBranchForward";
 
-const RoughDataFormat = ({ data, data1, can_delete }) => {
-  console.log("data111---", data);
+const HubVehicleDataFormat = ({ data, data1, can_delete }) => {
+  console.log("data---", data);
   // Permissions
   const user_permissions = useSelector(
     (state) => state.permissions.user_permissions
@@ -173,14 +171,6 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
     }
   }, [userpermission]);
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const handleSuccess = () => {
-    // send_runsheet_data();
-  };
-  const [manifest_data, setmanifest_data] = useState([])
-  const [refresh, setrefresh] = useState("false");
   return (
     <>
       {(list_toggle === true ? data1 : data).length === 0 ? (
@@ -189,6 +179,11 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
         </tr>
       ) : (
         (list_toggle === true ? data1 : data).map((manifest, index) => {
+          let f_date_f = manifest.created_at.split("T");
+          let f_date = f_date_f[0];
+          let f_time_r = String(f_date_f[1]).substring(0, 5);
+          let l_fdate = f_date + " " + f_time_r;
+
           return (
             <tr
               key={index}
@@ -213,41 +208,31 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
                 )}
               </td>
               )} */}
-              <td>{
-                <Link to="/manifest/pendingfordispatch">{manifest.manifest_no}</Link>
-              }</td>
+              <td>{manifest.hub_transfer_no}</td>
 
-              <td>{toTitleCase(manifest.from_branch_n)}</td>
-              <td>{toTitleCase(manifest.to_branch_n)}</td>
-              <td>{toTitleCase(manifest.destination_branch_n)}</td>
+              <td>{toTitleCase(manifest.orgin_branch_name)}</td>
+              <td>{toTitleCase(manifest.destination_branch_name)}</td>
+              <td>{toTitleCase(manifest.destination_s)}</td>
               <td>{manifest.orders.length}</td>
               <td>
-                {manifest.bag_count ? manifest.bag_count : "-"}
-                {/* {manifest.bag_count === "" ? (
-                  manifest.bag_count
-                ) : (
-                  <div style={{ color: "red" }}>
-                    Manifest Total Packets Not Added
-                  </div>
-                )}
-                {""} */}
+                {manifest.bag_count ? manifest.bag_count : 
+                <div style={{ color: "red" }}>
+                 Bag Is Not Added
+              </div>
+                }
               </td>
               <td>
-                {manifest.box_count ? manifest.box_count : "-"}
-                {/* {manifest.manifest_weight === "" ? (
-                  manifest.manifest_weight
-                ) : (
+                {manifest.box_count ? manifest.box_count : 
                   <div style={{ color: "red" }}>
-                    Manifest Total Weight Not Added
-                  </div>
-                )} */}
+                  Box Is Not Added
+                </div>
+                }
               </td>
-              {/* <td>{""}</td> */}
-              <td>{manifest.manifest_date}</td>
+              <td>{l_fdate}</td>
               <td>
                 <div>
                   <Link
-                    to="/manifest/roughmanfest"
+                    to="/manifest/branch_pdf"
                     state={{ manifest: manifest }}
                   >
                     <img src={pdf} width="20" height="20" />
@@ -255,15 +240,11 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
                 </div>
               </td>
               <td>
-                <AddForward manifest={manifest} />
-                {/* {(can_update || user.is_superuser) ? (
-                  <Link to="/manifest/forward" state={{ manifest: manifest }}>
-                    Forward Manifest
-                  </Link>                  
-                ) : (
-                  "Forward Manifest"
-                )} */}
-
+                <Link to="/manifest/edithubdocket" state={{ hub: manifest }}>
+                  <Button size="sm" outline type="button" color="primary">
+                    Edit
+                  </Button>
+                </Link>
               </td>
             </tr>
           );
@@ -273,4 +254,4 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
   );
 };
 
-export default RoughDataFormat;
+export default HubVehicleDataFormat;

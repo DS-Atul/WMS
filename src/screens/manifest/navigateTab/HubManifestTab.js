@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setChildTab, setIncomingTab } from "../../../store/parentFilter/ParentFilter";
+import { setHubTab, setManifestTab, setRoughTab } from "../../../store/parentFilter/ParentFilter";
 
-const IncomingTab = () => {
+const HubManifestTab = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authentication.userdetails);
-  const tab = useSelector((state) => state.parentfilter.incoming_tab);
-
+  const tab = useSelector((state) => state.parentfilter.hub_tab);
+ 
   //Permission
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
@@ -88,12 +88,12 @@ const IncomingTab = () => {
             background: tab === 1 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setIncomingTab(1));
-            navigate("/manifest/incomingmanifest");
+            dispatch(setHubTab(1));
+            navigate("/manifest/hubairforward");
           }}
         >
           {/* Panding For Dispatch */}
-          IncomingManifest(Air)
+          Hub Dispatch(Air)
         </div>
       )}
       {(raugh || user.is_superuser) && (
@@ -103,31 +103,15 @@ const IncomingTab = () => {
             background: tab === 2 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setIncomingTab(2));
-            // navigate("/manifest/incomingmanifest");
-            navigate("/manifest/incominghub");
+            dispatch(setHubTab(2));
+            navigate("/manifest/hubvehicleforward");
           }}
         >
-          IncomingManifest(Branch)
-        </div>
-      )}
-       {(raugh || user.is_superuser) && (
-        <div
-          className="header_tab"
-          style={{
-            background: tab === 3 ? "#d6e8ff" : "#F8F8FB",
-          }}
-          onClick={() => {
-            dispatch(setIncomingTab(3));
-            // navigate("/manifest/incomingmanifest");
-            navigate("/manifest/pickeduporders");
-          }}
-        >
-          Picked Orders
+         Hub Dispatch(Vehicle)
         </div>
       )}
     </div>
   );
 };
 
-export default IncomingTab;
+export default HubManifestTab;

@@ -259,6 +259,7 @@ const AddOrder = () => {
 
   // Status Info
   const [current_status, setcurrent_status] = useState("");
+  console.log("current_status------oo----", current_status)
 
   //Multi Field List(Packages----)
   const [order_active_btn, setorder_active_btn] = useState("first");

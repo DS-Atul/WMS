@@ -10,12 +10,19 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
+import BillTosDataFormat from "../../../data/master/clients/BillTosDataFormat";
+import ClientsDataTitle from "../../../data/master/clients/BillTosDataTitles";
+import AssetDataTitle from "../../../data/master/assets/AssetDataTitle";
+import AssetsDataFormat from "../../../data/master/assets/AssetDataFormat";
+import RoughDataTitle from "../../../data/manifests/roughManifest/RoughManifestDataTitle";
+import RoughDataFormat from "../../../data/manifests/roughManifest/RoughManifestDataFormat";
 import Navigate from "../navigateTab/Navigate";
-import BranchManifestDataFormat from "../../../data/manifests/branchManifest/BranchManifestDataFormat";
-import BranchManifestDataTitle from "../../../data/manifests/branchManifest/BranchManifestDataTitle";
 import RoughTab from "../navigateTab/RoughManifestTab";
+import HubManifestTab from "../navigateTab/HubManifestTab";
+import HubAirDataTitle from "../../../data/manifests/hubAirForward/HubAirDataTitle";
+import HubAirDataFormat from "../../../data/manifests/hubAirForward/HubAirDataFormat";
 
-const BranchForwarding = () => {
+const HubAirForwarding = () => {
   const dispatch = useDispatch();
   const toggle = useSelector((state) => state.parentfilter.toggle);
   const commodity_type = useSelector((state) => state.filtervalue.data_a);
@@ -58,10 +65,10 @@ const BranchForwarding = () => {
     }, [userpermission]);
   return (
     <>
-      <PageTitle page="Branch Forward" />
+      <PageTitle page="Hub Air Forward" />
       <Navigate />
-      <RoughTab />
-      <Title title="Branch Forward" parent_title="Manifest" />
+      <HubManifestTab/>
+      <Title title="Hub Air Forward" parent_title="Manifest" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
           <div className="mb-2 row ">
@@ -81,10 +88,10 @@ const BranchForwarding = () => {
 
           {/* DataTable */}
           <DataList
-            can_delete={can_delete}
-            Data_Title={BranchManifestDataTitle}
-            Data_Format={BranchManifestDataFormat}
-            path={`manifest/get_hub_manifest/?search=${search}&p=${page_num}&records=${data_len}&is_scanned=True`}
+          can_delete={can_delete}
+            Data_Title={HubAirDataTitle}
+            Data_Format={HubAirDataFormat}
+            path={`manifest/get_manifest/?search=${search}&p=${page_num}&records=${data_len}&is_scanned=False`}
             checkbox={"NO"}
           />
           <NumPagination path={"path"} />
@@ -93,4 +100,4 @@ const BranchForwarding = () => {
     </>
   );
 };
-export default BranchForwarding;
+export default HubAirForwarding;

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 // import { setMain_checkbox } from "../../../store/Components/ListDisplay/Main_Checkbox/action";
 import axios from "axios";
+import { Button } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setIsDeleted,
@@ -26,7 +27,7 @@ import pdf from "../../../assets/images/Pdf/printer.png";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import AddBranchForward from "../../../screens/manifest/forwardbranchmanifest/AddBranchForward";
 
-const BranchManifestDataFormat = ({ data, data1 ,can_delete}) => {
+const BranchManifestDataFormat = ({ data, data1, can_delete }) => {
   console.log("data---", data);
   // Permissions
   const user_permissions = useSelector(
@@ -209,23 +210,25 @@ const BranchManifestDataFormat = ({ data, data1 ,can_delete}) => {
               <td>{toTitleCase(manifest.destination_s)}</td>
               <td>{manifest.orders.length}</td>
               <td>
-                {manifest.bag_count === "" ? (
+                {manifest.bag_count ? manifest.bag_count : "-"}
+                {/* {manifest.bag_count === "" ? (
                   manifest.bag_count
                 ) : (
                   <div style={{ color: "red" }}>
                     Manifest Total Packets Not Added
                   </div>
                 )}
-                {""}
+                {""} */}
               </td>
               <td>
-                {manifest.manifest_weight === "" ? (
+              {manifest.box_count ? manifest.box_count : "-"}
+                {/* {manifest.manifest_weight === "" ? (
                   manifest.manifest_weight
                 ) : (
                   <div style={{ color: "red" }}>
                     Manifest Total Weight Not Added
                   </div>
-                )}
+                )} */}
               </td>
               {/* <td>{""}</td> */}
               <td>{manifest.created_at}</td>
@@ -239,9 +242,15 @@ const BranchManifestDataFormat = ({ data, data1 ,can_delete}) => {
                   </Link>
                 </div>
               </td>
-
+              {/* <td>
+                <Link to="/manifest/edithubdocket" state={{ hub: manifest }}>
+                  <Button size="sm" outline type="button" color="primary">
+                    Edit
+                  </Button>
+                </Link>
+              </td> */}
               <td>
-              {/* {(can_update || user.is_superuser) ? (
+                {/* {(can_update || user.is_superuser) ? (
 
                   <Link to="/manifest/branchforward" state={{ manifest: manifest }}>
                     Forward Branch Manifest
@@ -249,7 +258,7 @@ const BranchManifestDataFormat = ({ data, data1 ,can_delete}) => {
                 ) : (
                   "Forward Manifest"
                 )} */}
-                     <AddBranchForward manifest={manifest} />
+                <AddBranchForward manifest={manifest} />
               </td>
             </tr>
           );

@@ -4,10 +4,13 @@ const BranchManifestDataTitle = [
   "To Branch",
   "Destination",
   "Total Orders",
-  "Total Packets",
-  "Total Weight",
+  "Total Bag",
+  "Total Box",
+  // "Total Packets",
+  // "Total Weight",
   "Manifest Date",
   "Print",
+  // "Edit",
   "Forward",
 ];
 

@@ -38,6 +38,8 @@ import { setToggle } from "../../../store/pagination/Pagination";
 import Main_c from "../../../components/crop/main";
 import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
+import EditManifestDataFormat from "../editManifest/editManifestOrders/EditManifestDataFormat";
+import AddAnotherOrder from "../editManifest/AddAnotherOrder";
 
 const AddForward = (manifest) => {
   console.log("manifest--yyy---", manifest.manifest.is_scanned)
@@ -48,14 +50,15 @@ const AddForward = (manifest) => {
   const [show, setShow] = useState(false);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const alert = useSelector((state) => state.alert.show_alert);
-
+  const [data, setdata] = useState([]);
   // const location= useLocation
+  const success = useSelector((state) => state.alert.show_alert);
 
   const dispatch = useDispatch();
   const location_data = useLocation();
   console.log("location_data-----", location_data);
   const navigate = useNavigate();
-
+  const [manifest_data, setmanifest_data] = useState([])
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
   const toggle_circle = () => {
@@ -85,7 +88,7 @@ const AddForward = (manifest) => {
     // "Partload",
   ]);
   console.log("coloader_mode_list-----", coloader_mode_list)
-
+  const [refresh, setrefresh] = useState("false");
   const [coloader_selcted_m, setcoloader_selcted_m] = useState("");
   const [coloader_selected, setcoloader_selected] = useState("");
   const [search, setsearch] = useState("");
@@ -183,15 +186,17 @@ const AddForward = (manifest) => {
     initialValues: {
       coloader_no: "",
       flight_no: "",
-      no_of_bags: "",
+      no_of_bags: manifest_data.bag_count || "",
       actual_weight: "",
-      chargeable_weight: ""
+      chargeable_weight: "",
+      no_of_box: manifest_data.box_count || ""
     },
 
     validationSchema: Yup.object({
       coloader_no: Yup.string().required("Coloader No is required"),
       flight_no: Yup.string().required("Flight Name is required"),
-      no_of_bags: Yup.string().required("Number Of Bags is required"),
+      no_of_bags: Yup.string().required("Bags is required"),
+      no_of_box: Yup.string().required("Box is required"),
       actual_weight: Yup.string().required("Enter Manifest Weight"),
       chargeable_weight: Yup.string().required("Enter Chargable Weight"),
       actual_weight: Yup.string().required("Enter Actual Weight"),
@@ -209,14 +214,33 @@ const AddForward = (manifest) => {
       }
     },
   });
+  const get_orderof_manifest = () => {
+    axios
+      .get(
+        ServerAddress +
+        `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        setdata(response.data);
+      })
+      .catch((err) => {
+        alert(`Error While Loading Client , ${err}`);
+      });
+  };
+  useLayoutEffect(() => {
+    manifest_no && get_orderof_manifest();
+  }, [manifest_no, success]);
 
   const updateManifest = (values) => {
     let fields_name = Object.entries({
-      airwaybill_no:values.coloader_no,
-      bag_count:values.no_of_bags,
-      chargeable_weight:values.chargeable_weight,
+      airwaybill_no: values.coloader_no,
+      bag_count: values.no_of_bags,
+      chargeable_weight: values.chargeable_weight,
       coloader: coloader_id,
-      total_weight:values.actual_weight,
+      total_weight: values.actual_weight,
     });
     console.log("fields_name-------", fields_name)
     let change_fields = {};
@@ -242,6 +266,7 @@ const AddForward = (manifest) => {
           airwaybill_no: toTitleCase(values.coloader_no).toUpperCase(),
           forwarded_at: today,
           bag_count: values.no_of_bags,
+          box_count: values.no_of_box,
           total_weight: values.actual_weight,
           manifest_no: manifest_no,
           chargeable_weight: values.chargeable_weight,
@@ -315,9 +340,9 @@ const AddForward = (manifest) => {
         alert(`Error While  Updateing Manifest ${err}`);
       });
   };
-
   useEffect(() => {
     if (manifest.manifest && show) {
+      setmanifest_data(manifest.manifest)
       setorders(manifest.manifest.orders)
       setmanifest_no(manifest.manifest.manifest_no);
       setforward_branch(
@@ -326,6 +351,7 @@ const AddForward = (manifest) => {
       setorgin(toTitleCase(manifest.manifest.orgin_branch_n));
       setdest(toTitleCase(manifest.manifest.destination_branch_n));
       setmanifest_id(manifest.manifest.id);
+
     }
 
   }, [show]);
@@ -446,13 +472,13 @@ const AddForward = (manifest) => {
     // send_runsheet_data();
   };
 
-useEffect(() => {
-  dispatch(setToggle(false));
-}, [alert])
+  useEffect(() => {
+    dispatch(setToggle(false));
+  }, [alert])
 
   return (
     <>
-      <Button size="sm" outline color="primary" type="button" onClick={() => setShow(true)} disabled={!manifest.manifest.is_scanned}>
+      <Button size="sm" outline color="primary" type="button" onClick={() => setShow(true)}>
         Forward
       </Button>
 
@@ -751,7 +777,34 @@ useEffect(() => {
                             ) : null}
                           </div>
                         </Col>
-
+                        <Col lg={3} md={3} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">No of Box* :</Label>
+                            <Input
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={validation.values.no_of_box || ""}
+                              invalid={
+                                validation.touched.no_of_box &&
+                                  validation.errors.no_of_box
+                                  ? true
+                                  : false
+                              }
+                              type="number"
+                              min={0}
+                              className="form-control-md"
+                              id="input"
+                              name="no_of_box"
+                              placeholder="Enter Total Box"
+                            />
+                            {validation.touched.no_of_box &&
+                              validation.errors.no_of_box ? (
+                              <FormFeedback type="invalid">
+                                {validation.errors.no_of_box}
+                              </FormFeedback>
+                            ) : null}
+                          </div>
+                        </Col>
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">
@@ -901,6 +954,51 @@ useEffect(() => {
               </Col>
             </div>
             {/* Packages */}
+            {/* Docket Info */}
+
+            <div className="m-3">
+              <Col lg={12}>
+                <Card className="shadow bg-white rounded">
+                  <CardTitle className="mb-1 header">
+                    <div className="header-text-icon header-text">
+                      Docket Info
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <AddAnotherOrder
+                          id_m={manifest_no}
+                          refresh={refresh}
+                          setrefresh={setrefresh}
+                        />
+                        <IconContext.Provider
+                          value={{
+                            className: "header-add-icon",
+                          }}
+                        >
+                          <div onClick={toggle_circle1}>
+                            {circle_btn1 ? (
+                              <MdRemoveCircleOutline />
+                            ) : (
+                              <MdAddCircleOutline />
+                            )}
+                          </div>
+                        </IconContext.Provider>
+                      </div>
+                    </div>
+                  </CardTitle>
+                  {circle_btn1 ? (
+                    <CardBody>
+                      <EditManifestDataFormat Manifest_list={data} />
+                    </CardBody>
+                  ) : null}
+                </Card>
+              </Col>
+            </div>
+
             <div className="m-3">
               <Col lg={12}>
                 <Card className="shadow bg-white rounded">

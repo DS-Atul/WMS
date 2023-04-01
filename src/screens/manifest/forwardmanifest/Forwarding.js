@@ -87,7 +87,7 @@ const Forwarding = () => {
           can_delete={can_delete}
             Data_Title={RoughDataTitle}
             Data_Format={RoughDataFormat}
-            path={`manifest/get_manifest/?search=${search}&p=${page_num}&records=${data_len}`}
+            path={`manifest/get_manifest/?search=${search}&p=${page_num}&records=${data_len}&is_scanned=True`}
             checkbox={"NO"}
           />
           <NumPagination path={"path"} />

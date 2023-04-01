@@ -12,36 +12,31 @@ import {
 } from "../../../store/manifest/RecieveManifest";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { Input } from "reactstrap";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
+
 const RecieveManifestTitle = [
-  "Docket No",
-  "Orgin",
-  "Destination",
-  "Consignee",
-  "Shipper",
-  "Date",
-  "Qty",
-  "ColdChain",
-  // ["Futher Connected", false],
-  // ["Is Going To Hub", false],
-  "Issue Type",
+  "Manifest No",
+ "Bag or Box",
+"BarCode No",
+"Issue Type"
 ];
 
 
 const RecieveHubDataFormat = ({
   data,
+  barcode,
   is_issue,
   setis_issue,
   received,
   setReceived,
-  notReceived,
-  setNotReceived,
+  // notReceived,
+  // setNotReceived,
 }) => {
-
-  console.log("data--rssssssss---", data)
   const [refresh, setrefresh] = useState(false);
   const [selected_id, setselected_id] = useState([]);
+  console.log("selected_id--===--", selected_id)
+  console.log("data[[[[[",data)
   const [going_hub_id, setgoing_hub_id] = useState([]);
+  console.log("going_hub_id----====---", going_hub_id)
   const [issue_id, setissue_id] = useState([]);
   const loaded = useSelector((state) => state.manifest.loaded);
 
@@ -49,121 +44,54 @@ const RecieveHubDataFormat = ({
 
   const dispatch = useDispatch();
 
-  // const handle_checked = (id) => {
-  //   if (selected_id.includes(id)) {
-  //     let lis = [...selected_id];
-  //     setselected_id(lis.filter((e) => e !== id));
-  //   } else {
-  //     setselected_id([...selected_id, id]);
-  //   }
-  // };
-
-  // const handle_checked_hub = (id) => {
-  //   console.log(id)
-  //   if (going_hub_id.includes(id)) {
-  //     let lis = [...going_hub_id];
-  //     setgoing_hub_id(lis.filter((e) => e !== id));
-  //   } else {
-  //     setgoing_hub_id([...going_hub_id, id]);
-  //   }
-  // };
-
-
-  // const handle_checked = (id) => {
-
-  //   if (selected_id.includes(id)) {
-  //     let lis = [...selected_id];
-  //     setselected_id(lis.filter((e) => e !== id));
-  //   } else {
-  //     setselected_id([...selected_id, id]);
-  //   }
-  // };
-
-  // const handle_checked_hub = (id) => {
-
-  //   if (going_hub_id.includes(id)) {
-  //     let lis = [...going_hub_id];
-  //     setgoing_hub_id(lis.filter((e) => e !== id));
-  //   } else {
-  //     setgoing_hub_id([...going_hub_id, id]);
-  //   }
-  // };
-
-  // const handle_checked_issue = (id) => {
-  //   if (issue_id.includes(id)) {
-  //     let lis = [...issue_id];
-  //     setissue_id(lis.filter((e) => e !== id));
-  //     let updatedArr = issue.filter((obj) => obj.id !== id);
-  //     // console.log("updatedArr---", updatedArr);
-  //     setissue(updatedArr);
-  //   } else {
-  //     setissue_id([...issue_id, id]);
-  //   }
-  // };
-
   useEffect(() => {
     dispatch(setFuther_conn_id(selected_id));
     dispatch(setGoing_hub_id(going_hub_id));
-    // dispatch(setIssue_id(issue));
   }, [selected_id, going_hub_id, issue]);
 
   useEffect(() => {
-    let orderid_list = data.map((v) => v.awb);
+    let orderid_list = data.map((v) => v.id);
     dispatch(setOrder_id(orderid_list));
   }, [data]);
 
   useEffect(() => {
-    // console.log("issue----", issue);
     if (issue.length >= 1) {
-      // dispatch(setIssue_id(issue));
     }
     dispatch(setIssue_id(issue));
   }, [loaded]);
 
-  ///===
-  const [issue_type_list, setissue_type_list] = useState([
-    "Not Received",
-    "Broken",
-    "Damage",
-    "Custom Check Failed",
-    "Other",
-  ]);
-  const [issue_type, setissue_type] = useState("");
-  const [issues, setIssues] = useState([]);
 
-  // const [is_issue, setis_issue] = useState(false);
-
-  function handleIssueTypeChange(e, docketNo, index) {
+  function handleIssueTypeChange(e, universal_no, index, universal_type, barcode, issue_location, barcode_type, issue_image) {
     setis_issue(true);
     const issueType = e.target.value;
     let remarks = "";
     // if (issueType === "Other") {
     //   remarks = prompt("Enter remarks:");
     // }
-    const orderInfo = { docketNo, issueType, remarks };
+    const orderInfo = { universal_no, issueType, remarks, universal_type, barcode, issue_location, barcode_type, issue_image};
 
-    if (["Broken", "Damage"].includes(issueType)) {
+    if (["Broken", "Damage", "Not Received", "Custom Check Failed", "Other"].includes(issueType)) {
       setReceived((prevReceived) => {
         const newReceived = [...prevReceived];
         newReceived[index] = orderInfo;
         return newReceived;
       });
-      setNotReceived((prevNotReceived) =>
-        prevNotReceived.filter((o) => o.docketNo !== docketNo)
-      );
-    } else {
-      setNotReceived((prevNotReceived) => {
-        const newNotReceived = [...prevNotReceived];
-        newNotReceived[index] = orderInfo;
-        return newNotReceived;
-      });
-      setReceived((prevReceived) =>
-        prevReceived.filter((o) => o.docketNo !== docketNo)
-      );
-    }
+      // setNotReceived((prevNotReceived) =>
+      //   prevNotReceived.filter((o) => o.bag_barcode !== bag_barcode)
+      // );
+    } 
+    // else {
+    //   setNotReceived((prevNotReceived) => {
+    //     const newNotReceived = [...prevNotReceived];
+    //     newNotReceived[index] = orderInfo;
+    //     return newNotReceived;
+    //   });
+    //   setReceived((prevReceived) =>
+    //     prevReceived.filter((o) => o.bag_barcode !== bag_barcode)
+    //   );
+    // }
   }
 
-  const [first, setfirst] = useState(false)
   return (
     <>
       <div className="table">
@@ -217,15 +145,15 @@ const RecieveHubDataFormat = ({
           </thead>
 
           <tbody>
-            {data.length === 0 ? (
+            {barcode.length === 0 ? (
               <tr>
                 <td>No Data Found</td>
               </tr>
             ) : (
-              data.map((order, index) => {
-                let f_date_f = order.booking_at.split("T")[0];
+              barcode.map((order, index) => {
+                // let f_date_f = order.booking_at.split("T")[0];
                 // .substring(0, 11);
-
+          console.log("hello ji",order)
                 return (
                   <>
                     <tr
@@ -234,77 +162,100 @@ const RecieveHubDataFormat = ({
                         borderWidth: 1,
                       }}
                     >
-                      <td>{order.docket_no}</td>
-                      <td>{toTitleCase(order.shipper_city)}</td>
-                      <td>{toTitleCase(order.consignee_city)}</td>
-
-                      <td>{toTitleCase(order.consignee_name)}</td>
-
-                      <td>{toTitleCase(order.shipper_name)}</td>
-                      <td>{f_date_f}</td>
-                      <td>{order.total_quantity}</td>
+                      <td>{order.menifest_no}</td>
+                      <td>{order.box_tpye}</td>
                       <td>
-                        {order.cold_chain ? (
-                          <img src={cross} width="15" height="15" />
-                        ) : (
-                          <img src={correct} width="15" height="15" />
-                        )}
+                        {order.barcode_no}
                       </td>
-{/* 
-                      <td
-                        onClick={() => {
-                          handle_checked(
-                            order.id,
-                          );
-                        }}
-                      >
-                        {selected_id.includes(order.id) ? (
-                          <FiCheckSquare size={15} />
-                        ) : (
-                          <FiSquare size={15} />
-                        )}
-                      </td>
-                      <td
-                        onClick={() => {
-                          handle_checked_hub(
-                            order.id
-                          );
-                        }}
-                      >
-                        {going_hub_id.includes(order.id) ? (
-                          <FiCheckSquare size={15} />
-                        ) : (
-                          <FiSquare size={15} />
-                        )}
-                      </td> */}
-                    
+                  
                       <td>
                         <select
                           onChange={(e) =>
-                            handleIssueTypeChange(e, order.awb, index)
+                            handleIssueTypeChange(e, order.menifest_no, index, "MANIFEST",order.barcode_no, "ON RECEIVE", order.box_tpye, '')
                           }
                         >
                           <option defaultChecked>Select...</option>
-                          <option value="Not Received">Not Received</option>
+                          {!going_hub_id.includes(order.id) && !selected_id.includes(order.id) &&
+                            <option value="Not Received">Not Received</option>
+                          }
                           <option value="Broken">Broken</option>
-                          <option value="Damage">Damage</option>                         
-                          <option value="Custom Check Failed">
-                            Custom Check Failed
-                          </option>
-                          <option value="Other">Other</option>
+                          <option value="Damage">Damage</option>
+                          {!going_hub_id.includes(order.id) && !selected_id.includes(order.id) && <>
+                            <option value="Custom Check Failed">
+                              Custom Check Failed
+                            </option>
+                            <option value="Other">Other</option>
+                          </>
+                          }
                         </select>
                       </td>
 
+                      {received[index] &&
+                          received[index]["issueType"] === "Damage" && (
+                            <td>
+                              <Input
+                                type="file"
+                                name="file"
+                                id="exampleFile"
+                                size={"sm"}
+                                style={{ width: "12vw" }}
+                              />
+                            </td>
+                          )}
+                       {console.log("received999999",received)}
+                       {/* {console.log("notReceived999999",notReceived)} */}
+                      
+                      {received[index] &&
+                          received[index]["issueType"] === "Broken" && (
+                            <td>
+                              <Input
+                                type="file"
+                                name="file"
+                                id="exampleFile"
+                                size={"sm"}
+                                style={{ width: "12vw" }}
+                              />
+                            </td>
+                          )}
+                  
+                    
+                      {received[index] &&
+                          received[index]["issueType"] === "Custom Check Failed" && (
+                            <td>
+                              <Input
+                                type="file"
+                                name="file"
+                                id="exampleFile"
+                                size={"sm"}
+                                style={{ width: "12vw" }}
+                              />
+                            </td>
+                          )}
+                    
+                  
+                      {received[index] &&
+                          received[index]["issueType"] === "Other" && (
+                            <td>
+                              <Input
+                                type="file"
+                                name="file"
+                                id="exampleFile"
+                                size={"sm"}
+                                style={{ width: "12vw" }}
+                              />
+                            </td>
+                          )}
+
                     </tr>
-                    {notReceived[index] &&
-                      notReceived[index]["issueType"] === "Other" && (
+                    {received[index] &&
+                      received[index]["issueType"] === "Other" && (
                         <tr>
                           <td colSpan={12}>
                             <Input
                               type="text"
                               placeholder="Enter Issue"
                               onChange={(val) => {
-                                notReceived[index]["remarks"] =
+                                received[index]["remarks"] =
                                   val.target.value;
                                 setrefresh(!refresh);
                               }}

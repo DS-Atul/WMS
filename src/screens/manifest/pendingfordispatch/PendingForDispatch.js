@@ -34,6 +34,7 @@ import {
 } from "../../../store/alert/Alert";
 import Navigate from "../navigateTab/Navigate";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
+import { useStepContext } from "@mui/material";
 
 // import Navigate from "../../runsheet/runsheetTab/Navigate";
 
@@ -67,8 +68,6 @@ const PendingForDispatch = () => {
   const [local_list, setlocal_list] = useState(divide_deliverys);
 
   const [createRunsheet_list, setcreateRunsheet_list] = useState([]);
-  const [box_count, setbox_count] = useState(1)
-  const [bag_count, setbag_count] = useState(1)
 
   let awb_no_list = [];
   for (let index = 0; index < createRunsheet_list.length; index++) {
@@ -206,8 +205,6 @@ const PendingForDispatch = () => {
           destination_branch_name: branch_selected.toUpperCase(),
           destination: branch_dest_id,
           destination_city: branch_dest,
-          bag_count: bag_count,
-          box_count: box_count,
         },
         {
           headers: {
@@ -219,7 +216,6 @@ const PendingForDispatch = () => {
         if (response.data.status === "success") {
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
-          setShow(false)
           getPendindOrders();
           setcreateRunsheet_list([]);
           dispatch(setDataExist(`Manifest Created sucessfully`));
@@ -279,68 +275,9 @@ const PendingForDispatch = () => {
     }
   }, [createRunsheet_list, branch_selected, unmanifest_list]);
 
-  //Modal
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
   return (
     <>
       <form>
-        <Modal
-          show={show}
-          onHide={handleClose}
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Add Bag and Box</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {/* <Label>Is Defined Row</Label> */}
-            <div >
-              <Row>
-                <Col lg={4} md={6} sm={6}>
-                  <div className="mb-2">
-                    <Label className="header-child">Box Count*</Label>
-                    <Input
-                      value={box_count}
-                      onChange={(val) => {
-                        setbox_count(val.target.value);
-                      }}
-                      type="text"
-                      className="form-control-md"
-                      id="input"
-                      placeholder="Enter Vehicle Number"
-                    />
-                  </div>
-                </Col>
-                <Col lg={4} md={6} sm={6}>
-                  <div className="mb-2">
-                    <Label className="header-child">Bag Count*</Label>
-                    <Input
-                      value={bag_count}
-                      onChange={(val) => {
-                        setbag_count(val.target.value);
-                      }}
-                      type="text"
-                      className="form-control-md"
-                      id="input"
-                      placeholder="Enter Vehicle Number"
-                    />
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-            <Button type="submit" variant="primary" onClick={() => send_manifest_data()}>Save</Button>
-          </Modal.Footer>
-        </Modal>
 
         <Navigate />
         <Title title="Pending For Dispatch" parent_title="Manifests" />
@@ -479,8 +416,8 @@ const PendingForDispatch = () => {
                       disabled={toggle === false}
                       onClick={() => {
                         manifest_type === "Create_Manifest"
-                          ? handleShow()
-                          : send_hub_data();
+                          ? send_manifest_data()
+                          :  send_hub_data();
                       }}
                     >
                       {manifest_type === "Create_Manifest"

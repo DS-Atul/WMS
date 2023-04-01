@@ -21,7 +21,7 @@ import { Button } from "reactstrap";
 const StatusInfoDataFormat = ({ order_id, data }) => {
   const dispatch = useDispatch();
   const success = useSelector((state) => state.alert.show_alert);
-
+  const user = useSelector((state) => state.authentication.userdetails);
   // const active_order_last_status = useSelector(
   //   state => state.orders.last_active_order_status
   // );
@@ -180,6 +180,7 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
                             delete_order_status(status.id, status.status);
                           }
                         }}
+                        disabled={!user.is_superuser}
                       >
                         Delete
                       </Button>

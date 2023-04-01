@@ -1,5 +1,5 @@
 
-const RoughDataTitle = [
+const HubAirDataTitle = [
   "Manifest",
   "From Branch",
   "To Branch",
@@ -9,7 +9,7 @@ const RoughDataTitle = [
   "Total Box",
   "Manifest Date",
   "Print",
-  "Forward",
+  "Edit",
 ];
 
-export default RoughDataTitle;
+export default HubAirDataTitle;

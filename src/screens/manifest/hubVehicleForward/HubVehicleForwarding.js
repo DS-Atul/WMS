@@ -11,11 +11,12 @@ import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
 import Navigate from "../navigateTab/Navigate";
-import BranchManifestDataFormat from "../../../data/manifests/branchManifest/BranchManifestDataFormat";
-import BranchManifestDataTitle from "../../../data/manifests/branchManifest/BranchManifestDataTitle";
 import RoughTab from "../navigateTab/RoughManifestTab";
+import HubManifestTab from "../navigateTab/HubManifestTab";
+import HubVehicleDataTitle from "../../../data/manifests/hubVehicleForward/HubVehicleDataTitle";
+import HubVehicleDataFormat from "../../../data/manifests/hubVehicleForward/HubVehicleDataFormat";
 
-const BranchForwarding = () => {
+const HubVehicleForwarding = () => {
   const dispatch = useDispatch();
   const toggle = useSelector((state) => state.parentfilter.toggle);
   const commodity_type = useSelector((state) => state.filtervalue.data_a);
@@ -39,29 +40,29 @@ const BranchForwarding = () => {
     dispatch(setToggle(false));
   }, []);
 
-    //Permission
-    const userpermission = useSelector(
-      (state) => state.authentication.userpermission
-    );
-    const [can_delete, setcan_delete] = useState(false);
-  
-    useEffect(() => {
-      if (
-        userpermission.some(
-          (e) => e.sub_model === "Raugh Manifest" && e.delete === true
-        )
-      ) {
-        setcan_delete(true);
-      } else {
-        setcan_delete(false);
-      }
-    }, [userpermission]);
+  //Permission
+  const userpermission = useSelector(
+    (state) => state.authentication.userpermission
+  );
+  const [can_delete, setcan_delete] = useState(false);
+
+  useEffect(() => {
+    if (
+      userpermission.some(
+        (e) => e.sub_model === "Raugh Manifest" && e.delete === true
+      )
+    ) {
+      setcan_delete(true);
+    } else {
+      setcan_delete(false);
+    }
+  }, [userpermission]);
   return (
     <>
-      <PageTitle page="Branch Forward" />
+      <PageTitle page="Hub Vehicle Forward" />
       <Navigate />
-      <RoughTab />
-      <Title title="Branch Forward" parent_title="Manifest" />
+      <HubManifestTab />
+      <Title title="Hub Vehicle Forward" parent_title="Manifest" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
           <div className="mb-2 row ">
@@ -82,9 +83,9 @@ const BranchForwarding = () => {
           {/* DataTable */}
           <DataList
             can_delete={can_delete}
-            Data_Title={BranchManifestDataTitle}
-            Data_Format={BranchManifestDataFormat}
-            path={`manifest/get_hub_manifest/?search=${search}&p=${page_num}&records=${data_len}&is_scanned=True`}
+            Data_Title={HubVehicleDataTitle}
+            Data_Format={HubVehicleDataFormat}
+            path={`manifest/get_hub_manifest/?search=${search}&p=${page_num}&records=${data_len}&is_scanned=False`}
             checkbox={"NO"}
           />
           <NumPagination path={"path"} />
@@ -93,4 +94,4 @@ const BranchForwarding = () => {
     </>
   );
 };
-export default BranchForwarding;
+export default HubVehicleForwarding;

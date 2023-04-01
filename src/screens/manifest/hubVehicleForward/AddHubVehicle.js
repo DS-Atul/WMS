@@ -2,8 +2,8 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
-import { Button } from "reactstrap";
 import * as Yup from "yup";
+// import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -22,6 +22,7 @@ import { IconContext } from "react-icons";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { Button } from "reactstrap";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
@@ -36,10 +37,10 @@ import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
 import Main_c from "../../../components/crop/main";
 import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
-import EditManifestDataFormat from "../editHub/editManifestOrders/EditManifestDataFormat";
-import AddAnotherOrder from "../editHub/AddAnotherOrder";
+import { FiSquare, FiCheckSquare } from "react-icons/fi";
 
-const AddBranchForward = (manifest) => {
+const AddHubVehicle = (manifest) => {
+  console.log("manifest--yyy---", manifest.manifest.is_scanned)
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const user_branch = useSelector(
     (state) => state.authentication.userdetails.home_branch
@@ -52,7 +53,7 @@ const AddBranchForward = (manifest) => {
 
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("manifest Hub-----", manifest);
+  console.log("location_data-----", location_data);
   const navigate = useNavigate();
 
   //Circle Toogle Btn
@@ -92,7 +93,9 @@ const AddBranchForward = (manifest) => {
   const [manifest_no, setmanifest_no] = useState("");
   const [forward_branch, setforward_branch] = useState("");
   const [today, settoday] = useState("");
-  const [refresh, setrefresh] = useState("false");
+  const [open_box, setopen_box] = useState(false);
+  const [box_quantity, setbox_quantity] = useState("");
+
   const [coloader_list, setcoloader_list] = useState([]);
   const [company_slected_list, setcompany_slected_list] = useState("");
   const [coloader_selected_s, setcoloader_selected_s] = useState("");
@@ -100,12 +103,10 @@ const AddBranchForward = (manifest) => {
   const [orgin, setorgin] = useState("");
   const [dest, setdest] = useState("");
   const [manifest_id, setmanifest_id] = useState();
-  const [hub_data, sethub_data] = useState([])
+
   const [orders, setorders] = useState([])
   const [docket_weight, setdocket_weight] = useState("")
-  const success = useSelector((state) => state.alert.show_alert);
 
-  const [data, setdata] = useState([]);
   //This state is used for date
   const [coloader_mode_error, setcoloader_mode_error] = useState(false);
   const [forwording_date_error, setforwording_date_error] = useState(false);
@@ -130,6 +131,7 @@ const AddBranchForward = (manifest) => {
 
   let dimension_list = [length, breadth, height, pieces];
   const [row, setrow] = useState([dimension_list]);
+  console.log("row-----------", row)
 
   // adding extra input fields in Order Images
   const [selectedFile, setSelectedFile] = useState("");
@@ -157,10 +159,6 @@ const AddBranchForward = (manifest) => {
     setrow([...row, dimension_list]);
   };
 
-  useEffect(() => {
-    console.log("doc_result_imagedoc_result_image", doc_result_image);
-  }, [doc_result_image]);
-
   const deletePackage = (item) => {
     setlength("length");
     setbreadth("breadth");
@@ -184,49 +182,41 @@ const AddBranchForward = (manifest) => {
     enableReinitialize: true,
     initialValues: {
       coloader_no: "",
-      vehicle_no: "",
-      no_of_bags: hub_data.bag_count || "",
+      flight_no: "",
+      no_of_bags: "",
       actual_weight: "",
-      chargeable_weight: "",
-      driver_name:"",
-      supporting_staff:"",
-      no_of_box: hub_data.box_count || ""
+      chargeable_weight: ""
     },
 
     validationSchema: Yup.object({
       coloader_no: Yup.string().required("Coloader No is required"),
-      vehicle_no: Yup.string().required("Vehicle Number is required"),
-      no_of_bags: Yup.string().required("Bags is required"),
-      no_of_box: Yup.string().required("Box is required"),
-      actual_weight: Yup.string().required("Manifest Weight is required"),
-      driver_name: Yup.string().required("Driver Name is required"),
-      supporting_staff: Yup.string().required("Spporting Staff Name is required"),
+      flight_no: Yup.string().required("Flight Name is required"),
+      no_of_bags: Yup.string().required("Number Of Bags is required"),
+      actual_weight: Yup.string().required("Enter Manifest Weight"),
+      chargeable_weight: Yup.string().required("Enter Chargable Weight"),
+      actual_weight: Yup.string().required("Enter Actual Weight"),
     }),
 
     onSubmit: (values) => {
       if (docket_weight + 5 >= values.actual_weight) {
-        updateHubTransfer(values);
+        updateManifest(values);
       }
       else {
         const result = window.confirm('Docket Weight Is Not Equal To Coloader Actual Weight Are you sure you want to proceed?');
         if (result) {
-          updateHubTransfer(values);
+          updateManifest(values);
         }
       }
     },
   });
 
-  const updateHubTransfer = (values) => {
+  const updateManifest = (values) => {
     let fields_name = Object.entries({
       airwaybill_no:values.coloader_no,
       bag_count:values.no_of_bags,
       chargeable_weight:values.chargeable_weight,
-      coloader_mode:coloader_selcted_m,
-      coloader_name: coloader_selected,
-      driver_name:values.driver_name,
-      supporting_staff:values.supporting_staff,
+      coloader: coloader_id,
       total_weight:values.actual_weight,
-      vehicle_no:values.vehicle_no,
     });
     console.log("fields_name-------", fields_name)
     let change_fields = {};
@@ -241,31 +231,31 @@ const AddBranchForward = (manifest) => {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
+    console.log("change_fields----", change_fields)
     axios
       .put(
-        ServerAddress + "manifest/update_hub_manifest/" + manifest_id,
+        ServerAddress + "manifest/update_manifest/" + manifest_id,
         {
+          change_fields: change_fields,
           coloader_mode: coloader_selcted_m.toUpperCase(),
           coloader: coloader_id,
-          airwaybill_no: values.coloader_no,
+          airwaybill_no: toTitleCase(values.coloader_no).toUpperCase(),
           forwarded_at: today,
           bag_count: values.no_of_bags,
-          box_count: values.no_of_box,
           total_weight: values.actual_weight,
+          manifest_no: manifest_no,
           chargeable_weight: values.chargeable_weight,
-          coloader_name: coloader_selected.toUpperCase(),
-          // carrier_name: toTitleCase(values.vehicle_no).toUpperCase(),
+          coloader_name: (coloader_selected).toUpperCase(),
+          carrier_name: toTitleCase(values.flight_no).toUpperCase(),
           is_forwarded: "True",
           forwarded_by: user_id,
+          // open_box:open_box ? "True" :"False",
+          // box_count:box_quantity,
+
           forwarded: "True",
           forwarded_branch: user_branch,
           modified_by: user_id,
-          hub_packages : row,
-          vehicle_no: values.vehicle_no,
-          driver_name: values.driver_name,
-          supporting_staff: values.supporting_staff,
-          change_fields:change_fields,
-          hubtransfer_no:manifest_no,
+          manifest_packages: row,
         },
 
         {
@@ -313,7 +303,9 @@ const AddBranchForward = (manifest) => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
-              `Already exists`
+              `Commodity Name "${toTitleCase(
+                values.commodity_name
+              )}" already exists`
             )
           );
           dispatch(setAlertType("warning"));
@@ -326,14 +318,13 @@ const AddBranchForward = (manifest) => {
 
   useEffect(() => {
     if (manifest.manifest && show) {
-      sethub_data(manifest.manifest)
       setorders(manifest.manifest.orders)
-      setmanifest_no(manifest.manifest.hub_transfer_no);
+      setmanifest_no(manifest.manifest.manifest_no);
       setforward_branch(
-        toTitleCase(manifest.manifest.orgin_branch_name)
+        toTitleCase(manifest.manifest.from_branch_n)
       );
-      setorgin(toTitleCase(manifest.manifest.orgin_s));
-      setdest(toTitleCase(manifest.manifest.destination_s));
+      setorgin(toTitleCase(manifest.manifest.orgin_branch_n));
+      setdest(toTitleCase(manifest.manifest.destination_branch_n));
       setmanifest_id(manifest.manifest.id);
     }
 
@@ -345,21 +336,9 @@ const AddBranchForward = (manifest) => {
       setdocket_weight(sum)
     }
   }, [orders])
-  const get_orderof_manifest = () => {
-    axios
-      .get(ServerAddress + `manifest/get_hub_orders/?hub_no=${manifest_no}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => {
-        setdata(response.data);
-      })
-      .catch((err) => {
-        alert(`Error While Loading Client , ${err}`);
-      });
-  };
-  useLayoutEffect(() => {
-    manifest_no && get_orderof_manifest();
-  }, [manifest_no,success]);
+
+
+
 
   const get_coloader = () => {
     axios
@@ -397,19 +376,24 @@ const AddBranchForward = (manifest) => {
 
         for (let index = 0; index < resp.data.vendor_service.length; index++) {
           const data = resp.data.vendor_service[index];
-
-          if (data.service_type === 'DIRECT VEHICLE') {
-            temp.push('Direct Vehicle')
+          if (data.service_type === 'AIRWAY BILL') {
+            temp.push('Direct AWB')
           }
-          else if (data.service_type === 'PART LOAD VEHICLE') {
-            temp.push('Part Load')
+          // else if (data.service_type === 'DIRECT VEHICLE') {
+          //   temp.push('Direct Vehicle')
+          // }
+          else if (data.service_type === 'CONSOLE CONNECTION') {
+            temp.push('Air Console')
           }
-          else if (data.service_mode === 'FORWARDING BY TRAIN') {
-            temp.push('By Train')
-          }
-          else if (data.service_type === 'DIRECT VEHICLE' || data.service_type === 'KG WISE' || data.service_type === 'PART LOAD VEHICLE') {
-            temp.push('By Road')
-          }
+          // else if (data.service_type === 'PART LOAD VEHICLE') {
+          //   temp.push('Part Load')
+          // }
+          // else if (data.service_mode === 'FORWARDING BY TRAIN') {
+          //   temp.push('By Train')
+          // }
+          // else if (data.service_type === 'DIRECT VEHICLE' || data.service_type === 'KG WISE' || data.service_type === 'PART LOAD VEHICLE') {
+          //   temp.push('By Road')
+          // }
 
         }
         setcoloader_mode_list([...new Set(temp)])
@@ -455,10 +439,6 @@ const AddBranchForward = (manifest) => {
     setcoloader_selcted_m("")
   }, [coloader_id])
 
-  useEffect(() => {
-    dispatch(setToggle(false));
-  }, [alert])
-  
   //Modal
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -466,9 +446,13 @@ const AddBranchForward = (manifest) => {
     // send_runsheet_data();
   };
 
+useEffect(() => {
+  dispatch(setToggle(false));
+}, [alert])
+
   return (
     <>
-      <Button size="sm" outline color="primary" type="button" onClick={() => setShow(true)}>
+      <Button size="sm" outline color="primary" type="button" onClick={() => setShow(true)} disabled={!manifest.manifest.is_scanned}>
         Forward
       </Button>
 
@@ -484,6 +468,7 @@ const AddBranchForward = (manifest) => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+
           <Form
             onSubmit={(e) => {
               e.preventDefault();
@@ -497,7 +482,6 @@ const AddBranchForward = (manifest) => {
               return false;
             }}
           >
-
             {/* Branch Info */}
             <div className="m-3">
               <Col lg={12}>
@@ -651,93 +635,37 @@ const AddBranchForward = (manifest) => {
                             ) : null}
                           </div>
                         </Col>
-                        <Col lg={3} md={3} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">
-                              Vehicle Number* :
-                            </Label>
-                            <Input
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.vehicle_no}
-                              invalid={
-                                validation.touched.vehicle_no &&
-                                  validation.errors.vehicle_no
-                                  ? true
-                                  : false
-                              }
-                              type="text"
-                              className="form-control-md"
-                              id="input"
-                              name="vehicle_no"
-                              placeholder="Enter Vehicle Number"
-                            />
-                            {validation.touched.vehicle_no &&
-                              validation.errors.vehicle_no ? (
-                              <FormFeedback type="invalid">
-                                {validation.errors.vehicle_no}
-                              </FormFeedback>
-                            ) : null}
-                          </div>
-                        </Col>
-                        <Col lg={3} md={3} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">
-                              Driver Name* :
-                            </Label>
-                            <Input
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.driver_name}
-                              invalid={
-                                validation.touched.driver_name &&
-                                  validation.errors.driver_name
-                                  ? true
-                                  : false
-                              }
-                              type="text"
-                              className="form-control-md"
-                              id="input"
-                              name="driver_name"
-                              placeholder="Enter Driver Name"
-                            />
-                            {validation.touched.driver_name &&
-                              validation.errors.driver_name ? (
-                              <FormFeedback type="invalid">
-                                {validation.errors.driver_name}
-                              </FormFeedback>
-                            ) : null}
-                          </div>
-                        </Col>
-                        <Col lg={3} md={3} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">
-                            Spporting Staff* :
-                            </Label>
-                            <Input
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.supporting_staff}
-                              invalid={
-                                validation.touched.supporting_staff &&
-                                  validation.errors.supporting_staff
-                                  ? true
-                                  : false
-                              }
-                              type="text"
-                              className="form-control-md"
-                              id="input"
-                              name="supporting_staff"
-                              placeholder="Enter Spporting Staff Name"
-                            />
-                            {validation.touched.supporting_staff &&
-                              validation.errors.supporting_staff ? (
-                              <FormFeedback type="invalid">
-                                {validation.errors.supporting_staff}
-                              </FormFeedback>
-                            ) : null}
-                          </div>
-                        </Col>
+                        {(coloader_selcted_m === "Direct AWB" || coloader_selcted_m === "Air Console") &&
+                          <Col lg={3} md={3} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Flight Name & Number :
+                              </Label>
+                              <Input
+                                onChange={validation.handleChange}
+                                onBlur={validation.handleBlur}
+                                value={validation.values.flight_no}
+                                invalid={
+                                  validation.touched.flight_no &&
+                                    validation.errors.flight_no
+                                    ? true
+                                    : false
+                                }
+                                type="text"
+                                className="form-control-md"
+                                id="input"
+                                name="flight_no"
+                                placeholder="Enter Flight Name"
+                              />
+                              {validation.touched.flight_no &&
+                                validation.errors.flight_no ? (
+                                <FormFeedback type="invalid">
+                                  {validation.errors.flight_no}
+                                </FormFeedback>
+                              ) : null}
+                            </div>
+                          </Col>
+                        }
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">
@@ -823,34 +751,7 @@ const AddBranchForward = (manifest) => {
                             ) : null}
                           </div>
                         </Col>
-                        <Col lg={3} md={3} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">No of Box* :</Label>
-                            <Input
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.no_of_box || ""}
-                              invalid={
-                                validation.touched.no_of_box &&
-                                  validation.errors.no_of_box
-                                  ? true
-                                  : false
-                              }
-                              type="number"
-                              min={0}
-                              className="form-control-md"
-                              id="input"
-                              name="no_of_box"
-                              placeholder="Enter Total Box"
-                            />
-                            {validation.touched.no_of_box &&
-                              validation.errors.no_of_box ? (
-                              <FormFeedback type="invalid">
-                                {validation.errors.no_of_box}
-                              </FormFeedback>
-                            ) : null}
-                          </div>
-                        </Col>
+
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">
@@ -961,57 +862,44 @@ const AddBranchForward = (manifest) => {
                             />
                           </div>
                         </Col>
+                        {/* <Col lg={3} md={3} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">Open Box</Label>
+                            {
+                              open_box ? 
+                              <FiCheckSquare onClick={()=>{
+                                setopen_box(!open_box)
+                              }} />:
+                              <FiSquare  onClick={()=>{
+                                setopen_box(!open_box);
+                               }}/>
+                            }
+                          
+                          </div>
+                        </Col>
+                        {open_box &&
+                        
+                        <Col lg={3} md={3} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">Box Quantity</Label>
+                            <Input
+                              id="input"
+                              placeholder="Enter Box Quantity"
+                              value={box_quantity}
+                              onChange={(e)=>{
+                                setbox_quantity(e.target.value);
+                              }}
+                            />
+                          </div>
+                        </Col>
+                        }
+                         */}
                       </Row>
                     </CardBody>
                   ) : null}
                 </Card>
               </Col>
             </div>
-
-            {/* Dockets */}
-            <div className="m-3">
-            <Col lg={12}>
-              <Card className="shadow bg-white rounded">
-                <CardTitle className="mb-1 header">
-                  <div className="header-text-icon header-text">
-                    Docket Info
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <AddAnotherOrder
-                        id_m={manifest_no}
-                        refresh={refresh}
-                        setrefresh={setrefresh}
-                      />
-                      <IconContext.Provider
-                        value={{
-                          className: "header-add-icon",
-                        }}
-                      >
-                        <div onClick={toggle_circle1}>
-                          {circle_btn1 ? (
-                            <MdRemoveCircleOutline />
-                          ) : (
-                            <MdAddCircleOutline />
-                          )}
-                        </div>
-                      </IconContext.Provider>
-                    </div>
-                  </div>
-                </CardTitle>
-                {circle_btn1 ? (
-                  <CardBody>
-                    <EditManifestDataFormat Manifest_list={data} />
-                  </CardBody>
-                ) : null}
-              </Card>
-            </Col>
-          </div>
-
             {/* Packages */}
             <div className="m-3">
               <Col lg={12}>
@@ -1437,4 +1325,4 @@ const AddBranchForward = (manifest) => {
   );
 };
 
-export default AddBranchForward;
+export default AddHubVehicle;

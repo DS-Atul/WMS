@@ -340,7 +340,7 @@ let docket_no_list = []
                       Docket Present In This Manifest = [
                         {
                           docket_no_list.map((v)=>{
-                              return <a>{v}{docket_no_list[docket_no_list.length-1]===v?null:","}</a>
+                              return <a>{v}{docket_no_list[docket_no_list.length-1]===v?null:", "}</a>
                             }
                           )
                         }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setIncomingTab, setManifestTab, setRoughTab } from "../../../store/parentFilter/ParentFilter";
+import { setHubTab, setIncomingTab, setManifestTab, setRoughTab } from "../../../store/parentFilter/ParentFilter";
 
 const Navigate = () => {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ const Navigate = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const tab = useSelector((state) => state.parentfilter.manifest_tab);
 
-  console.log("navigateTab",tab)
+  console.log("navigateTab", tab)
   //Permission
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
@@ -97,22 +97,38 @@ const Navigate = () => {
           Pending For Dispatch
         </div>
       )}
+      <div
+        className="header_tab"
+        style={{
+          background: tab === 2 ? "#d6e8ff" : "#F8F8FB",
+        }}
+        onClick={() => {
+          dispatch(setManifestTab(2));
+          dispatch(setHubTab(1))
+          navigate("/manifest/hubairforward");
+        }}
+      >
+        {/* Panding For Dispatch */}
+        Hub Dispatch
+      </div>
+
       {(raugh || user.is_superuser) && (
         <div
           className="header_tab"
           style={{
-            background: tab === 2 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 3 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(2));
+            dispatch(setManifestTab(3));
             dispatch(setRoughTab(1));
             navigate("/manifest/roughmanifest");
           }}
         >
-          Rough Manifest
+          {/* Rough Manifest */}
+          Forwarding Details
         </div>
       )}
-            {/* {(raugh || user.is_superuser) && (
+      {/* {(raugh || user.is_superuser) && (
         <div
           className="header_tab"
           style={{
@@ -130,10 +146,10 @@ const Navigate = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 3 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 4 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(3));
+            dispatch(setManifestTab(4));
             navigate("/manifest/pendingtodepart");
           }}
         >
@@ -144,10 +160,10 @@ const Navigate = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 4 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 5 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(4));
+            dispatch(setManifestTab(5));
             dispatch(setIncomingTab(1));
             navigate("/manifest/incomingmanifest");
           }}
@@ -159,10 +175,10 @@ const Navigate = () => {
         <div
           className="header_tab"
           style={{
-            background: tab === 5 ? "#d6e8ff" : "#F8F8FB",
+            background: tab === 6 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
-            dispatch(setManifestTab(5));
+            dispatch(setManifestTab(6));
             navigate("/manifest/allmanifest");
           }}
         >

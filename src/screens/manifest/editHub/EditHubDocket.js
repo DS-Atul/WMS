@@ -3,8 +3,8 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { MdDeleteForever, MdAdd } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
+import { MdDeleteForever, MdAdd } from "react-icons/md";
 import {
   Card,
   Col,
@@ -35,29 +35,30 @@ import {
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
-import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import EditManifestDataFormat from "./editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "./AddAnotherOrder";
+import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 
-const EditRoughDocket = () => {
+const EditHubDocket = () => {
   const user = useSelector((state) => state.authentication.userdetails);
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const success = useSelector((state) => state.alert.show_alert);
-
+  const search = useSelector((state) => state.searchbar.search_item);
+  const [page, setpage] = useState(1);
+  const user_branch = useSelector(
+    (state) => state.authentication.userdetails.home_branch
+  );
   const [refresh, setrefresh] = useState("false");
   const dispatch = useDispatch();
   const location_data = useLocation();
+  const [same_box, setsame_box] = useState(true)
+  console.log("location_data--------hub-", location_data)
+  const user_id = useSelector((state) => state.authentication.userdetails.id);
   const navigate = useNavigate();
-
+  const [hub_data, sethub_data] = useState([])
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
-  };
-  const [circle_btn4, setcircle_btn4] = useState(true);
-  const toggle_circle4 = () => {
-    setcircle_btn4(!circle_btn4);
   };
 
   const [circle_btn1, setcircle_btn1] = useState(true);
@@ -69,16 +70,24 @@ const EditRoughDocket = () => {
   const toggle_circle2 = () => {
     setcircle_btn2(!circle_btn2);
   };
+  const [circle_btn4, setcircle_btn4] = useState(true);
+  const toggle_circle4 = () => {
+    setcircle_btn4(!circle_btn4);
+  };
 
   // Navigation At the time of Cancel
   const handleAction = () => {
     dispatch(setToggle(true));
-    navigate(-1)
-    // navigate("/manifest/pendingtomanifest");
+    navigate(-1);
   };
+
   const [order_active_btn, setorder_active_btn] = useState("first");
-  const [manifest_data, setmanifest_data] = useState([])
-  const [same_box, setsame_box] = useState(true)
+
+  //  State For Cropping In React Crop
+  const [showModal, setshowModal] = useState(false);
+  const [document, setdocument] = useState([]);
+  const [doc_result_image, setdoc_result_image] = useState([]);
+
   // adding extra input fields in Packages
   const [length, setlength] = useState("");
   const [breadth, setbreadth] = useState("");
@@ -101,73 +110,103 @@ const EditRoughDocket = () => {
   const [invoice_img, setinvoice_img] = useState("");
   const [invoice_no, setinvoice_no] = useState("");
   const [invoice_value, setinvoice_value] = useState("");
-  const [today, settoday] = useState("");
 
-  let dimension_list2 = [invoice_img, today, invoice_no, invoice_value];
+  let dimension_list2 = [invoice_img, invoice_no, invoice_value];
   const [row2, setrow2] = useState([dimension_list2]);
 
   // Packages
   let p = row.length - 1;
   const a = parseInt(row[p][3]) + parseInt(row[p][3]);
+  const addPackage = () => {
+    setlength("");
+    setbreadth("");
+    setheight("");
+    setpieces("");
+    dimension_list = ["", "", "", ""];
+    setrow([...row, dimension_list]);
+  };
 
-  // used for validation
-  const [total_bag_error, settotal_bag_error] = useState(false);
-  const [manifest_weight_error, setmanifest_weight_error] = useState(false);
-  const [airway_bill_no_error, setairway_bill_no_error] = useState(false);
-  const [flight_name_error, setflight_name_error] = useState(false);
+  const deletePackage = (item) => {
+    setlength("length");
+    setbreadth("breadth");
+    setheight("height");
+    setpieces("pieces");
 
+    let temp = [...row];
+    let temp_2 = [...package_id_list];
+
+    const index = temp.indexOf(item);
+
+    if (index > -1) {
+      temp.splice(index, 1);
+      temp_2.splice(index, 1);
+    }
+    setrow(temp);
+    setpackage_id_list(temp_2);
+  };
+  const [from_branch, setfrom_branch] = useState("");
+  const [to_branch, setto_branch] = useState("");
+  const [hub_no, sethub_no] = useState("");
+  const [hub_id, sethub_id] = useState("");
+  const success = useSelector((state) => state.alert.show_alert);
+
+  const [data, setdata] = useState([]);
+
+  const [coloader_mode_list, setcoloader_mode_list] = useState([
+
+  ]);
+  const [coloader_mode, setcoloader_mode] = useState("");
+  const [search_text, setsearch_text] = useState("")
   const [coloader_list, setcoloader_list] = useState([]);
   const [coloader_selected, setcoloader_selected] = useState("");
   const [coloader_id, setcoloader_id] = useState("");
-  const [search, setsearch] = useState("");
-  const [page, setpage] = useState(1);
 
-  const [from_branch, setfrom_branch] = useState("");
-  const [to_branch, setto_branch] = useState("");
-  const [manifest_no, setmanifest_no] = useState("");
-  const [manifest_id, setmanifest_id] = useState("");
-  const [total_bags, settotal_bags] = useState(0);
-  const [total_box, settotal_box] = useState(0)
-  const [manifest_weight, setmanifest_weight] = useState("");
-  const [airway_bill_no, setairway_bill_no] = useState("");
-  const [coloader_mode, setcoloader_mode] = useState("");
-  const [company_slected_list, setcompany_slected_list] = useState("");
-  const [flight_name, setflight_name] = useState("");
-  const [data, setdata] = useState([]);
-  const [coloader_mode_list, setcoloader_mode_list] = useState([
-    // "Direct Awb",
-    // "Air Console",
-    // "By Road (Surface)",
-    // "By Train",
-    // "Direct Vehicle",
-    // "Partload",
-  ]);
+  const [total_bags, settotal_bags] = useState("");
+  const [total_box, settotal_box] = useState("")
+  const [total_bag_error, settotal_bag_error] = useState(false);
+
+  // Validation
+  const validation = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      coloader_no: hub_data.airwaybill_no || "",
+      vehicle_no: hub_data.vehicle_no || "",
+      actual_weight: hub_data.total_weight || "",
+      chargeable_weight: hub_data.chargeable_weight || "",
+      driver_name: hub_data.driver_name || "",
+      supporting_staff: hub_data.supporting_staff || "",
+    },
+
+    validationSchema: Yup.object({
+      // coloader_no: Yup.string().required("Coloader No is required"),
+      // vehicle_no: Yup.string().required("Vehicle Number is required"),
+      // actual_weight: Yup.string().required("Manifest Weight is required"),
+      // driver_name: Yup.string().required("Driver Name is required"),
+      // supporting_staff: Yup.string().required("Spporting Staff Name is required"),
+    }),
+
+    onSubmit: (values) => {
+      updateManifest(values);
+    },
+  });
+
+
   useLayoutEffect(() => {
-    let manifest_data = location_data.state.manifest;
-    setmanifest_data(manifest_data)
-    setmanifest_no(manifest_data.manifest_no);
-    setmanifest_id(manifest_data.id);
-    setfrom_branch(toTitleCase(manifest_data.from_branch_n));
-    setto_branch(toTitleCase(manifest_data.to_branch_n));
-    setcoloader_mode(toTitleCase(manifest_data.coloader_mode));
-    setcoloader_id(manifest_data.coloader);
-    setcoloader_selected(toTitleCase(manifest_data.coloader_name));
+    let manifest_data = location_data.state.hub;
+    sethub_data(manifest_data)
+    sethub_no(manifest_data.hub_transfer_no);
+    sethub_id(manifest_data.id);
+    setfrom_branch(toTitleCase(manifest_data.orgin_branch_name));
+    setto_branch(toTitleCase(manifest_data.destination_branch_name));
     settotal_bags(manifest_data.bag_count);
     settotal_box(manifest_data.box_count);
-    setmanifest_weight(manifest_data.total_weight);
-    setairway_bill_no(manifest_data.airwaybill_no);
-    setflight_name(toTitleCase(manifest_data.carrier_name));
   }, []);
 
   const get_orderof_manifest = () => {
     axios
-      .get(
-        ServerAddress +
-        `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
+      .get(ServerAddress + `manifest/get_hub_orders/?hub_no=${hub_no}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
       .then((response) => {
         setdata(response.data);
       })
@@ -177,34 +216,40 @@ const EditRoughDocket = () => {
   };
 
   useLayoutEffect(() => {
-    manifest_no && get_orderof_manifest();
-  }, [manifest_no, success]);
+    hub_no && get_orderof_manifest();
+  }, [hub_no,success]);
 
-  const updateManifest = () => {
+  const updateManifest = (values) => {
     axios
       .put(
-        ServerAddress + "manifest/update_manifest/" + manifest_id,
+        ServerAddress + "manifest/update_hub_manifest/" + hub_data.id,
         {
-          coloader_mode: coloader_mode,
+          coloader_mode: coloader_mode.toUpperCase(),
           coloader: coloader_id,
-          airwaybill_no: airway_bill_no,
+          airwaybill_no: values.coloader_no,
+          // forwarded_at: today,
           bag_count: total_bags,
           box_count: total_box,
-          total_weight: manifest_weight,
-          coloader_name: coloader_selected,
-          carrier_name: flight_name,
+          total_weight: 0,
+          chargeable_weight: 0,
+          coloader_name: coloader_selected.toUpperCase(),
+          carrier_name: toTitleCase(values.vehicle_no).toUpperCase(),
+          
+          is_scanned:same_box ? hub_data.is_scanned : false,
           update: "True",
+          forwarded_by: user_id,
           forwarded: "False",
-          manifested: "False",
           departed: "False",
-          is_scanned:same_box ? manifest_data.is_scanned : false,
-          modified_by: user_id,
-          forwarded_branch_name: "",
           forwarded_branch: null,
-          manifest_packages: row,
-          manifest_no: manifest_no,
+          modified_by: user_id,
+          hub_packages: row,
+          vehicle_no: values.vehicle_no,
+          driver_name: values.driver_name,
+          supporting_staff: values.supporting_staff,
           deleted_packages: deleted_packages_id,
+          hubtransfer_no:hub_no,
         },
+
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -212,64 +257,76 @@ const EditRoughDocket = () => {
         }
       )
       .then(function (response) {
+        console.log("response-----", response.data)
         if (response.data.status === "success") {
           dispatch(setToggle(true));
           dispatch(setShowAlert(true));
           dispatch(
-            setDataExist(`Manifest of  ${manifest_no} Forwarded sucessfully`)
+            setDataExist(`Manifest Updated sucessfully`)
           );
           dispatch(setAlertType("info"));
-          navigate(-1);
+          navigate(-1)
+          let form = new FormData();
+          if (document.length !== 0) {
+            document.forEach((e, i) => {
+              form.append(`manifestImage${i}`, e, e.name);
+            });
+            let imageLength = document.length;
+            form.append(`manifest_count`, imageLength);
+            form.append(`manifest_no`, response.data.data.manifest_no);
+            axios
+              .post(ServerAddress + `manifest/add-manifest-image/`, form, {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                  "content-type": "multipart/form-data",
+                },
+              })
+              .then((res) => {
+                console.log("ImageResssssssssssssssssssss", res.data);
+                successMSg();
+              })
+              .catch((err) => {
+                console.log("ImaeErrrrrrrrrrrrrrrrrrr", err);
+              });
+          } else {
+            console.log("Manifest created without image");
+          }
+        } else if (response.data === "duplicate") {
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(
+              `Already exists`
+            )
+          );
+          dispatch(setAlertType("warning"));
         }
       })
       .catch(function (err) {
-        alert(`Error While  Updating Manifest ${err}`);
+        alert(`Error While  Updateing Manifest ${err}`);
       });
   };
-
- 
   useEffect(() => {
-    if (total_bags == manifest_data.bag_count && total_box == manifest_data.box_count) {
+    if (total_bags == hub_data.bag_count && total_box == hub_data.box_count) {
       setsame_box(true)
     }
     else {
       setsame_box(false)
     }
 
-  }, [total_bags, total_box, manifest_data])
-  console.log("total_bags-----", total_bags)
-  console.log("total_box------", total_box)
-  console.log("manifest_data-bag_count----", manifest_data.bag_count)
-  console.log("manifest_data--box_count---", manifest_data.box_count)
-  console.log("manifest_data-------", manifest_data)
-  console.log("setsame_box----", same_box)
-
-
+  }, [total_bags, total_box, hub_data])
   return (
     <>
       <div>
         <Form
           onSubmit={(e) => {
             e.preventDefault();
-            if (total_bags == "") {
-              settotal_bag_error(true);
-            }
-            if (manifest_weight == "") {
-              setmanifest_weight_error(true);
-            }
-            if (airway_bill_no == "") {
-              setairway_bill_no_error(true);
-            }
-            if (flight_name == "") {
-              setflight_name_error(true);
-            }
             validation.handleSubmit(e.values);
             return false;
           }}
         >
           <div className="mt-3">
-            <PageTitle page={"Edit Manifest"} />
-            <Title title={"Edit Manifest"} parent_title="Manifests" />
+            <PageTitle page={"Edit Hub Manifest"} />
+            <Title title={"Edit Hub Manifest"} parent_title="Manifests" />
           </div>
 
           {/* Company Info */}
@@ -278,7 +335,7 @@ const EditRoughDocket = () => {
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
                   <div className="header-text-icon header-text">
-                    Forwarding Info :
+                    Hub Manifest Info :
                     <IconContext.Provider
                       value={{
                         className: "header-add-icon",
@@ -301,7 +358,7 @@ const EditRoughDocket = () => {
                         <div className="mb-2">
                           <Label className="header-child">Manifest No* :</Label>
 
-                          <Input id="input" disabled value={manifest_no} />
+                          <Input id="input" disabled value={hub_no} />
                         </div>
                       </Col>
                       <Col lg={4} md={6} sm={6}>
@@ -382,7 +439,7 @@ const EditRoughDocket = () => {
                       }}
                     >
                       <AddAnotherOrder
-                        id_m={manifest_no}
+                        id_m={hub_no}
                         refresh={refresh}
                         setrefresh={setrefresh}
                       />
@@ -415,13 +472,7 @@ const EditRoughDocket = () => {
           <div className="m-3">
             <Col lg={12}>
               <div className="mb-1 footer_btn">
-                <Button
-                  type="button"
-                  className="btn btn-info m-1 cu_btn"
-                  onClick={() => {
-                    updateManifest();
-                  }}
-                >
+                <Button type="submit" className="btn btn-info m-1 cu_btn">
                   Save
                 </Button>
 
@@ -441,4 +492,4 @@ const EditRoughDocket = () => {
   );
 };
 
-export default EditRoughDocket;
+export default EditHubDocket;
