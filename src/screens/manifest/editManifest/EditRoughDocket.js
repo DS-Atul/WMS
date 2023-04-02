@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
+import { FiSquare, FiCheckSquare } from "react-icons/fi";
 
 import TransferList from "../../../components/formComponent/transferList/TransferList";
 import { ServerAddress } from "../../../constants/ServerAddress";
@@ -245,6 +246,58 @@ const EditRoughDocket = () => {
   console.log("setsame_box----", same_box)
 
 
+  const [vendor_list, setvendor_list] = useState([]);
+  const [vendor_name, setvendor_name] = useState("");
+  const [vendor_id, setvendor_id] = useState("");
+  const [vendor_n_page, setvendor_n_page] = useState(1);
+  const [search_vendor_name, setsearch_vendor_name] = useState("");
+  const [vendor_error, setvendor_error] = useState(false);
+  const [refresh_r, setrefresh_r] = useState(false);
+  const [vendor_data, setvendor_data] = useState([]);
+  const [rental, setrental] = useState(false);
+  const [vehicle_no, setvehicle_no] = useState("");
+//  For getting Vehcile number
+  const get_vehcile_no = () => {
+    let vendor_temp = [];
+    let data = [];
+    axios
+      .get(
+        ServerAddress +
+          `master/all_vehcile/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        data = response.data.results;
+        console.log("data printing",data)
+        setvendor_data(data);
+        if (response.data.results.length > 0) {
+          if (vendor_n_page == 1) {
+            vendor_temp = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.vehcile_no),
+            ]);
+          } else {
+            vendor_temp = [
+              ...vendor_list,
+              ...response.data.results.map((v) => [v.id, v.vehcile_no]),
+            ];
+          }
+        }
+        setvendor_list(vendor_temp);
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get , ${err}`);
+      });
+  };
+
+ 
+  useLayoutEffect(() => {
+    get_vehcile_no();
+  }, [vendor_n_page, search_vendor_name, refresh_r]);
+
+
   return (
     <>
       <div>
@@ -340,6 +393,7 @@ const EditRoughDocket = () => {
                             <FormFeedback type="invalid">
                               Total Bages is required
                             </FormFeedback>
+                            
                           ) : null}
                         </div>
                       </Col>
@@ -360,6 +414,57 @@ const EditRoughDocket = () => {
                           />
                         </div>
                       </Col>
+                      <Col lg={4} md={8} sm={8}>
+                    <div className="mb-2">
+                      <Label className="header-child">Vehcile No* :</Label>
+                      {
+                        rental ? 
+                        null :
+                        <SearchInput
+                        data_list={vendor_list}
+                        setdata_list={setvendor_list}
+                        data_item_s={vendor_name}
+                        set_data_item_s={setvendor_name}
+                        set_id={setvendor_id}
+                        page={vendor_n_page}
+                        setpage={setvendor_n_page}
+                        search_item={search_vendor_name}
+                        setsearch_item={setsearch_vendor_name}
+                        error_message={"Please Select Any Vechile Number"}
+                        error_s={vendor_error}
+                      />
+
+                      }
+                     
+       {rental &&
+ <Input
+ name="vehicle_no"
+ type="text"
+ id="input"
+ maxLength={10}
+ value={vehicle_no}
+ onChange={(e) => {
+   setvehicle_no(e.target.value);
+ }}
+/>
+       }
+                     
+                    </div>
+                  </Col>
+                  <Col>
+                  <div className="mb-2" style={{marginTop:"25px"}}>
+                      <Label className="header-child">Rentend Vehcile :</Label>
+                  {rental ?
+        <FiCheckSquare size={20} onClick={()=>{
+          setrental(false);
+        }}/>
+        :
+        <FiSquare size={20} onClick={()=>{
+          setrental(true);
+        }}/> 
+        }
+        </div>
+        </Col>
                     </Row>
                   </CardBody>
                 ) : null}

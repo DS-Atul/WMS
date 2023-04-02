@@ -358,6 +358,9 @@ const EditManifest = () => {
       setdeleted_packages_id(id_list);
     }
   }, [package_id_list, packages_id]);
+
+
+  
   
   return (
     <>
