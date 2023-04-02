@@ -376,6 +376,8 @@ const BoxDetail =React.lazy(()=>import("./screens/manifest/incomingVehcile/BoxDe
 
 // eway bill
 const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"))
+const Vehcile=React.lazy(()=>import("./screens/master/vehcile/vehcile.js"))
+const AddVehcile=React.lazy(()=>import("./screens/master/vehcile/add_Vehcile.js"))
 const auth_routes = [
   { path: "/signin", element: <SignIn /> },
   { path: "/", exact: true, element: <Navigate to="/signin" /> },
@@ -423,6 +425,14 @@ const routes = [
   {
     path: "/ems/users/Userinfo",
     element: <UserInfo />,
+  },
+  {
+    path: "/master/Vehcile",
+    element: <Vehcile />,
+  },
+  {
+    path: "/master/Add_Vehcile",
+    element: <AddVehcile/>,
   },
   {
     path: "/ems/department/adddepartment",

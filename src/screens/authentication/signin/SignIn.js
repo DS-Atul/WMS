@@ -454,6 +454,7 @@ const SignIn = () => {
             ["Assets", "/master/assets"],
             ["Routes", "/master/routes"],
             ["Vendors", "/master/vendor/Vendor"],
+            ["Vehcile", "/master/Vehcile"],
           ],
           trigger: false,
         },
