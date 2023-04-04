@@ -237,8 +237,8 @@ setget_status(last);
                                   {" "}
                                   <span className="icon">
                                     {" "}
-                                    {/* <i className="fa fa-warehouse"></i>{" "} */}
-                                    <FaRoute />
+                                    <i className="fa fa-warehouse"></i>{" "}
+                                    {/* <FaRoute /> */}
                                   </span>{" "}
                                   <span className="text">
                                     {" "}
@@ -325,7 +325,7 @@ setget_status(last);
                                   <span className="icon">
                                     {" "}
                                     <i className="fa fa-warehouse"></i>{" "}
-                                    <FaRoute />
+                                    {/* <FaRoute /> */}
                                   </span>{" "}
                                   <span className="text">
                                     {" "}
@@ -414,7 +414,7 @@ setget_status(last);
                                     {" "}
                                     <i className="fa fa-warehouse">
                                       {" "}
-                                      <FaRoute />
+                                      {/* <FaRoute /> */}
                                     </i>{" "}
                                   </span>{" "}
                                   <span className="text">
@@ -502,7 +502,9 @@ setget_status(last);
                                   {" "}
                                   <span className="icon">
                                     {" "}
-                                    <FaRoute />
+                                    <i className="fa fa-warehouse"></i>{" "}
+
+                                    {/* <FaRoute /> */}
                                   </span>{" "}
                                   <span className="text">
                                     {" "}
@@ -588,8 +590,8 @@ setget_status(last);
                                   {" "}
                                   <span className="icon">
                                     {" "}
-                                    {/* <i className="fas fa-route"></i> */}
-                                     <FaRoute />{" "}
+                                    <i className="fa fa-warehouse"></i>{" "}
+                                     {/* <FaRoute />{" "} */}
                                   </span>{" "}
                                   <span className="text">
                                     Shipment Arrived At Destination
@@ -675,7 +677,7 @@ setget_status(last);
                                   {" "}
                                   <span className="icon">
                                     {" "}
-                                    <i class="fas fa-route"></i> <FaRoute />{" "}
+                                    <i className="fa fa-warehouse"></i>{" "}
                                   </span>{" "}
                                   <span className="text">
                                     Shipment Arrived At Destination
@@ -761,7 +763,7 @@ setget_status(last);
                                   <span className="icon">
                                     {" "}
                                     <i className="fa fa-warehouse"></i>{" "}
-                                    <i className="fas fa-route"></i>
+                                    {/* <i className="fas fa-route"></i> */}
                                   </span>{" "}
                                   <span className="text">
                                     Shipment Arrived At Destination

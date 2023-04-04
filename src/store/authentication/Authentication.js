@@ -39,6 +39,18 @@ export const authenticationSlice = createSlice({
     setUserPermission: (state, action) => {
       state.userpermission = action.payload;
     },
+    resetAuthenticationState: (state,action) => {
+      state.username = "";
+      state.userpass = { username: "", password: "" };
+      state.userdetails = {};
+      state.access_token = "";
+      state.refresh_token = "";
+      state.login_id = "";
+      state.userdepartment = {};
+      state.userpermission = [];
+localStorage.removeItem('userdetails')
+
+    }
   },
 });
 
@@ -52,6 +64,7 @@ export const {
   setLoginID,
   setUserDepartment,
   setUserPermission,
+  resetAuthenticationState,
 } = authenticationSlice.actions;
 
 export default authenticationSlice.reducer;

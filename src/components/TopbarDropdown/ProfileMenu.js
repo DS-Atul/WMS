@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useCallback, useLayoutEffect } from "react";
 import {
   Dropdown,
   DropdownToggle,
@@ -11,7 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 //i18n
 // import { withTranslation } from "react-i18next"
 // Redux
-import { connect } from "react-redux";
 import { withRouter, Link, useNavigate } from "react-router-dom";
 import toTitleCase from "../../lib/titleCase/TitleCase";
 import {
@@ -22,10 +20,11 @@ import {
 import { ServerAddress } from "../../constants/ServerAddress";
 import axios from "axios";
 import { setPermission } from "../../store/permissions/Permissions";
+import {resetAuthenticationState} from "../../store/authentication/Authentication";
 // users
 // import user1 from "../../../assets/images/users/avatar-1.jpg"
 
-const ProfileMenu = () => {
+const ProfileMenu = (apiCall) => {
   // Declare a new state variable, which we'll call "menu"
   const accessTK = useSelector((state) => state.authentication.access_token);
   const dispatch = useDispatch();
@@ -61,12 +60,57 @@ const ProfileMenu = () => {
             headers: { Authorization: `Bearer ${accessTK}` },
           }
         )
-        .then(function (response) {})
+        .then(function (response) {
+          console.log("Logout time",response);
+        })
         .catch(function () {
           alert("Error Occur While Sending Logout Data");
         });
     }
   };
+
+  //FOr logout after 30 sec
+
+  const handleApi = useCallback(async () => {
+    try {
+      await apiCall();
+    } catch (error) {
+    }
+  }, [apiCall]);
+
+  useLayoutEffect(() => {
+    let timeoutId;
+
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        send_logout_time(); 
+        dispatch(setUserDetails(null));
+        dispatch(setAccessToken(""));
+        dispatch(setRefreshToken(""));
+        dispatch(setPermission(false));
+        dispatch(resetAuthenticationState());
+        localStorage.clear();
+        window.location.reload();
+      }, 1800000);
+      // 1800000
+    };
+
+    resetTimer();
+
+    document.addEventListener("mousemove", resetTimer);
+    document.addEventListener("mousedown", resetTimer);
+    document.addEventListener("keypress", resetTimer);
+
+    return () => {
+      clearTimeout(timeoutId);
+
+      document.removeEventListener("mousemove", resetTimer);
+      document.removeEventListener("mousedown", resetTimer);
+      document.removeEventListener("keypress", resetTimer);
+    };
+  }, [navigate, send_logout_time, dispatch, handleApi]);
+
   return (
     <React.Fragment>
       <Dropdown
@@ -130,11 +174,13 @@ const ProfileMenu = () => {
             className="dropdown-item"
             onMouseDown={() => {
               send_logout_time();
-              dispatch(setUserDetails(null));
-              dispatch(setAccessToken(""));
-              dispatch(setRefreshToken(""));
-              navigate("/");
+              // dispatch(setUserDetails(null));
+              // dispatch(setAccessToken(""));
+              // dispatch(setRefreshToken(""));
               dispatch(setPermission(false));
+              dispatch(resetAuthenticationState());
+              localStorage.clear();
+              navigate("/");
             }}
           >
             <i className="bx bx-power-off font-size-16 align-middle me-1 text-danger" />
