@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useLayoutEffect} from "react";
 import Notification from "./Notification";
 import useWindowDimensions from "./ScreenSize";
 import "./Dashboard.css";
@@ -9,15 +9,47 @@ import Calendar from "./Logo/Calendar.png";
 import Whatsapp from "./Logo/Whatsapp.png";
 import Attendance from "./Logo/Attendance.png";
 import { useNavigate } from "react-router";
+import axios from "axios";
+import {TiPlus} from "react-icons/ti";
 
-const DashboardNotificationSection = () => {
+const DashboardNotificationSection = ({
+  show,
+  setShow,
+}) => {
   const navigate = useNavigate();
   // To get Screen Size
-  const { height} = useWindowDimensions();
+  const { height } = useWindowDimensions();
+
+  const getdepartment = () => {
+    axios
+      .get(
+        `http://192.168.29.82:7000/notice_board/get-Category/?&p=${1}&records=${10}`
+        )
+      .then((response) => {
+console.log("Notice res",response)
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get , ${err}`);
+      });
+  };
+  useLayoutEffect(() => {
+    getdepartment();
+  }, [])
+
+
+    
   return (
     <>
       <div>
+
+        <div  style={{display:"flex",justifyContent:"space-between"}}>
+        <div>
         <h4 className="timline_heading">Timeline</h4>
+        </div>
+        <div style={{cursor:"pointer"}} onClick={() => {
+          navigate("/dashboard/Notification/Notification");
+        }}><TiPlus/></div>
+        </div>
         <div
           className="custom-scrollbars__content"
           style={{
@@ -116,27 +148,40 @@ const DashboardNotificationSection = () => {
         <div className="notification_Card_container">
           <div className="notification_row">
             <span className="notity_card">
-              <img  src={Birtday} alt="Birtday" width="100" />
+              <img onClick={() => {
+                // <BirthdayModal/>
+                setShow(!show);
+              }} src={Birtday} alt="Birtday" width="100" />
             </span>
 
             <span className="notity_card">
-              <img  onClick={() => {
-navigate("/dashboard/Calendar/Calendar");
-alert("Done loading")   
-           }} src={Calendar} alt="Calendar" width="100" />
+              <img
+                onClick={() => {
+                  navigate("/dashboard/Calendar/Calendar");
+                }}
+                src={Calendar}
+                alt="Calendar"
+                width="100"
+              />
             </span>
 
             <span className="notity_card">
-              <img src={Attendance} alt="Calendar" width="100" />
+              <img src={Attendance} alt="Attendance" width="100" />
             </span>
           </div>
           <div className="notification_row1">
             <span className="notity_card">
+            <a  href="https://mail.google.com/">
               <img src={Gmail} alt="Gmail" width="100" />
+              </a>
             </span>
 
             <span className="notity_card">
-              <img src={Whatsapp} alt="Whatsapp" width="100" />
+              <a  href="https://web.whatsapp.com/">
+              
+              <img  src={Whatsapp} alt="Whatsapp" width="100" />
+
+              </a>
             </span>
 
             <span className="notity_card">

@@ -6,6 +6,26 @@ const DonutChart = ({ series, labels, colors }) => {
     chart: {
       type: "donut",
     },
+    plotOptions: {
+      pie: {
+        donut: {
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              showAlways: true,
+              fontSize: 22,
+              color: "#333333",
+              fontFamily: "Helvetica"
+            },
+          },
+        },
+      },
+    },
+    dataLabels: {
+      enabled: true,
+    },
+
     colors: colors,
     labels: labels,
     legend: {
@@ -14,19 +34,7 @@ const DonutChart = ({ series, labels, colors }) => {
       horizontalAlign: "center",
       offsetY: 10,
     },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: "100%",
-          },
-          legend: {
-            position: "bottom",
-          },
-        },
-      },
-    ],
+   
   };
 
   return (

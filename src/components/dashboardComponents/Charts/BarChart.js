@@ -2,11 +2,11 @@ import React from "react";
 import ReactApexChart from "react-apexcharts";
 
 const BarChart = ({ seriesData, categories, color, chartDirection }) => {
-  const series = [{ data: seriesData }];
+  const order = [{ data: seriesData }];
   const options = {
     chart: {
       toolbar: {
-        show: false,
+        show: true,
       },
     },
     plotOptions: {
@@ -15,11 +15,15 @@ const BarChart = ({ seriesData, categories, color, chartDirection }) => {
       },
     },
     dataLabels: {
-      enabled: false,
+      enabled: true,
     },
     colors: [color],
     grid: {
       borderColor: "#f1f1f1",
+    },
+    fill:{
+colors: [ "#1F8A70",
+]
     },
     xaxis: {
       categories: categories,
@@ -27,7 +31,7 @@ const BarChart = ({ seriesData, categories, color, chartDirection }) => {
   };
 
   return (
-    <ReactApexChart options={options} series={series} type="bar" height="350" />
+    <ReactApexChart options={options} series={order}  type="bar" height="350" />
   );
 };
 

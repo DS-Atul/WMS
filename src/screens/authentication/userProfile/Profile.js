@@ -29,7 +29,7 @@ const Profile = () => {
               <div className="d-flex">
                 <div className="ms-3">
                   <img
-                    src="https://lh3.googleusercontent.com/ogw/AAEL6sjCYnZKga0Wg_cTIGoL6VzMWWQLLGzGkPKYT5SRJw=s32-c-mo"
+                    src="https://www.etechcube.com/wp-content/uploads/2021/03/cropped-cropped-cropped-cropped-color_logo_transparent-1-1-1.png"
                     alt="React Image"
                     className="round-image"
                   />
@@ -72,20 +72,7 @@ const Profile = () => {
                           placeholder="Rahul@gmail.com"
                         />
                       </div>
-                      <div class="form-group">
-                        <label for="city">City</label>
-                        <select id="city">
-                          <option value="california">Jamshedpur</option>
-                          <option value="washington">Delhi</option>
-                          <option value="toronto">Noida</option>
-                          <option value="newyork" selected>
-                            Jamshedpur
-                          </option>
-                          <option value="london">London</option>
-                          <option value="netherland">Netherland</option>
-                          <option value="poland">Poland</option>
-                        </select>
-                      </div>
+                   
                       <div class="boxz">
                         <button onClick={() => {
                           navigate("/ems/users/Userinfo");

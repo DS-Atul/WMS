@@ -377,6 +377,11 @@ const Sample = React.lazy(() => import("./screens/dashboard/Sample.js"));
 
 // Calender
 const Calender = React.lazy(() => import("./screens/dashboard/Calendar/Calendar.js"));
+
+//Notification
+const Notification = React.lazy(() => import("./screens/dashboard/Notification/Notification.js"));
+
+
 const Pickedup = React.lazy(() =>
   import("./screens/manifest/incomingVehcile/PickedUp.js")
 );
@@ -923,6 +928,14 @@ const routes = [
     path: "/dashboard/Calendar/Calendar",
     element: <Calender/>,
   },
+
+  
+  {
+    path: "/dashboard/Notification/Notification",
+    element: <Notification/>,
+   },
+   
+  
   
 ];
 

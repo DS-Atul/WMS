@@ -26,9 +26,9 @@ return (
 <React.Fragment>
 {showEventModal && <EventModal onClose={handleHideEventModal} />}
 
-  <div className="h-screen flex flex-col">
-    <CalendarHeader />
-    <div className="flex flex-1">
+<div style={{height:"100vh", display:'flex', flexDirection:'column',}}>
+  <CalendarHeader />
+  <div style={{display:'flex', flex:'1', color:'green',}}>
       <Sidebar onMonthIndexChange={setMonthIndex} />
       <Month month={currentMonth} onShowEventModal={handleShowEventModal} />
     </div>

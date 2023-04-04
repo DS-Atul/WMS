@@ -10,11 +10,11 @@
 }
 
 /* For Chart Section */
-.header_card_container {
+/* .header_card_container {
   display: flex;
   justify-content: space-between;
   margin: 2px;
-}
+} */
 
 .dashboard {
   background-color: #0074d9;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect ,useLayoutEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaExpandArrowsAlt, FaCrosshairs } from "react-icons/fa";
 import { useNavigate } from "react-router";
@@ -7,6 +7,21 @@ import axios from "axios";
 import { ServerAddress } from "../../constants/ServerAddress";
 import { setUserDepartment } from "../../store/authentication/Authentication";
 import useWindowDimensions from "./ScreenSize";
+import BirthdayModal from "./BirthdayModal";
+import {
+  Card,
+  Col,
+  Row,
+  CardBody,
+  CardTitle,
+  Label,
+  Input,
+  FormFeedback,
+  Form,
+  FormGroup,
+  Button,
+} from "reactstrap";
+import Modal from "react-bootstrap/Modal";
 
 import DashboardChartSection from "./DashboardChartSection";
 import ClientDashboard from "./DashboardTypes/ClientDashboard";
@@ -16,8 +31,6 @@ import NSearchInput from "../../components/formComponent/nsearchInput/NSearchInp
 import VmsDashboard from "./DashboardTypes/VmsDashboard";
 import TripDashboard from "./DashboardTypes/TripDashboard";
 import BillingDashboard from "./DashboardTypes/BillingDashboard";
-import TrackingOrderDash from "./TrackingOrderDash";
-import {setSearchDocket} from "../../store/orderTracking/OrderTracking";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -30,8 +43,6 @@ const Dashboard = () => {
   const department = useSelector((state) => state.authentication.userdetails);
   const [dep_id, setdep_id] = useState("");
 
-
-  const search_order = useSelector((state) => state.OrderTracking.search_docket);
   const getdepartment = () => {
     axios
       .get(ServerAddress + "ems/get_department_info/?dep_id=" + dep_id, {
@@ -59,7 +70,7 @@ const Dashboard = () => {
   }, [department]);
 
   // To get Screen Size
-  const {  width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   // for dashborad type
   const [dashboard_type, setdashboard_type] = useState("Home");
@@ -73,20 +84,56 @@ const Dashboard = () => {
     "OERATIONAL",
   ]);
 
+  // Modal funcation
+  const [show, setShow] = useState(false);
 
-  useLayoutEffect(() => {
-   dispatch(setSearchDocket(false));
-  }, [])
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+    // setmessage_error(false)
+  };
+
+  const [birthday_list, setbirthday_list] = useState(["","","","","","",""]);
+
+  console.log("Modal", show);
   return (
     <>
+      {/* Birtday Modal */}
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Show Today's Birthdays</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ background: "#E9EDC9", }}>
+          {birthday_list.length === 0 ? (
+            <div>NO Birthdays Today</div>
+          ) : (
+            <>
+              {birthday_list.map((item, idx) => {
+                return (
+                  <BirthdayModal
+                    name={"Sibu Soren"}
+                    Img={`https://www.etechcube.com/wp-content/uploads/2021/03/cropped-cropped-cropped-cropped-color_logo_transparent-1-1-1.png`}
+                  Gender={"Male"}
+                  DOB={"13th of something"}
+                  Age={"87"}
+                  />
+                );
+              })}
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+         Close
+          </Button>
+          
+        </Modal.Footer>
+      </Modal>
+
       {/* <div>
       width: {width} ~ height: {height}
     </div> */}
- {/* {search_order ? 
- <TrackingOrderDash/>
-
-: */}
-<div
+      <div
         style={{
           display: "flex",
           Width: width,
@@ -227,12 +274,9 @@ const Dashboard = () => {
             border: "2px solid white",
           }}
         >
-          <DashboardNotificationSection />
+          <DashboardNotificationSection show={show} setShow={setShow} />
         </div>
       </div>
-{/* } */}
-
-      
     </>
   );
 };

@@ -1,9 +1,51 @@
-import React from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { Col, Row } from "reactstrap";
 import BranchStatusCard from "../../../components/dashboardComponents/branchStatusCard/BranchStatusCard";
 // import useWindowDimensions from "./ScreenSize";
+import { useSelector } from "react-redux";
+import { ServerAddress } from "../../../constants/ServerAddress";
+import axios from "axios";
 
 const BranchDailyDetails = () => {
+  const [branchStatus, setbranchStatus] = useState([]);
+  // const [total_count, setTotal_count] = useState([]);
+  const accessToken = useSelector((state) => state.authentication.access_token);
+  // const getData1 = async () => {
+  //   try {
+  //     const resp = await axios.get(
+  //       ServerAddress + "analytic/get_dailystatusdashboardview/",
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     );
+  //     setbranchStatus(resp.data.total_order_dist);
+  //     // console.log("d-----", resp.data.total_order_dist);
+
+  //     console.log("value is",branchStatus)
+
+  //   } catch (err) {
+  //     alert(`Error Occur in , ${err}`);
+  //   }
+  // };
+  // console.log("MSg")
+
+  const getData1 = () => {
+    axios
+      .get(ServerAddress + `analytic/get_dailystatusdashboardview/`)
+      .then((response) => {
+        console.log("my res", response);
+        setbranchStatus(response.data.total_order_dist);
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get , ${err}`);
+      });
+  };
+
+  console.log("Data is ===", branchStatus);
+  useEffect(() => {
+    getData1();
+  }, []);
+
   return (
     <div style={{ margin: "10px" }}>
       <div style={{ display: "", justifyContent: "space-between", margin: "" }}>
@@ -29,7 +71,7 @@ const BranchDailyDetails = () => {
           <div
             style={{
               background: "#D0C9C0",
-              
+
               color: "white",
               fontWeight: "bold",
               fontSize: "16px",
@@ -46,7 +88,7 @@ const BranchDailyDetails = () => {
           <div
             style={{
               background: "#E14D2A",
-              
+
               color: "white",
               flex: "2.5",
               padding: "10px",
@@ -80,7 +122,7 @@ const BranchDailyDetails = () => {
           <div
             style={{
               background: "#73777B",
-             
+
               color: "white",
               flex: "2.5",
               padding: "8px",
@@ -97,193 +139,37 @@ const BranchDailyDetails = () => {
         </div>
         <div
           style={{
-            alignItems: "center",
-            marginBottom: "9px",
-          }}
-        >
-          <Col lg={12} md={12} sm={12}>
-            <Row>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                   
-                    Unit={"0"}
-                    Upper={"Andheri"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                   
-                    Unit={"0"}
-                    Upper={"Ranchi"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                  
-                    Unit={"0"}
-                    Upper={"Bangalore"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                   
-                    Unit={"0"}
-                    Upper={"Cochin"}
-                  />
-                </div>
-              </Col>
-            </Row>
-          </Col>
-        </div>
+            // alignItems: "center",
 
-        <div
-          style={{
-            alignItems: "center",
-            marginBottom: "8px",
+            display: "flex",
+            flexWrap: "wrap",
           }}
         >
           <Col lg={12} md={12} sm={12}>
             <Row>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                  
-                    Unit={"0"}
-                    Upper={"Jaipur"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                   
-                    Unit={"0"}
-                    Upper={"Jhodpur"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                   
-                    Unit={"0"}
-                    Upper={"Bikaner"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                 
-                    Unit={"0"}
-                    Upper={"Sikar"}
-                  />
-                </div>
-              </Col>
-            </Row>
-          </Col>
-        </div>
-
-        <div
-          style={{
-            alignItems: "center",
-            marginBottom: "8px",
-          }}
-        >
-          <Col lg={12} md={12} sm={12}>
-            <Row>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                 
-                    Unit={"0"}
-                    Upper={"Pune"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                  
-                    Unit={"0"}
-                    Upper={"Allahabad"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                 
-                    Unit={"0"}
-                    Upper={"Mumbai"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                   
-                    Unit={"0"}
-                    Upper={"Kerala"}
-                  />
-                </div>
-              </Col>
-            </Row>
-          </Col>
-        </div>
-
-        <div
-          style={{
-            alignItems: "center",
-            marginBottom: "15px",
-            textAlign: "center",
-          }}
-        >
-          <Col lg={12} md={12} sm={12}>
-            <Row>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                   
-                    Unit={"0"}
-                    Upper={"Delhi"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                    
-                    Unit={"0"}
-                    Upper={"Chennai"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                  
-                    Unit={"0"}
-                    Upper={"Jamshedpur"}
-                  />
-                </div>
-              </Col>
-              <Col lg={3} md={6} sm={6}>
-                <div>
-                  <BranchStatusCard
-                   
-                    Unit={"0"}
-                    Upper={"Chandigarh"}
-                  />
-                </div>
-              </Col>
+              {branchStatus.length > 0 && (
+                <>
+                  {" "}
+                  {branchStatus.map((item, index) => {
+                    return (
+                      <Col
+                        lg={3}
+                        md={6}
+                        sm={6}
+                        // key={index}
+                      >
+                        <BranchStatusCard
+                          Upper={item.branch_name}
+                          Cold_chain={12}
+                          Manifest_order={12}
+                          Pending_order={12}
+                          Total_count={item.total_count}
+                        />
+                      </Col>
+                    );
+                  })}{" "}
+                </>
+              )}{" "}
             </Row>
           </Col>
         </div>

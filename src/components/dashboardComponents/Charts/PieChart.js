@@ -7,18 +7,18 @@ const PieChart = ({ series, labels, colors }) => {
     colors: colors,
     legend: {
       show: true,
-      position: "bottom",
+      position: "left",
       // position: "left",
       horizontalAlign: "center",
       verticalAlign: "middle",
       floating: false,
       fontSize: "14px",
       offsetX: 0,
-      offsetY: -10,
+      offsetY: -8,
     },
     responsive: [
       {
-        breakpoint: 600,
+        breakpoint: 400,
         options: {
           chart: {
             height: 240,
@@ -32,7 +32,7 @@ const PieChart = ({ series, labels, colors }) => {
   };
 
   return (
-    <ReactApexChart options={options} series={series} type="pie" height="380" />
+    <ReactApexChart options={options} series={series} type="pie" height="340" />
   );
 };
 

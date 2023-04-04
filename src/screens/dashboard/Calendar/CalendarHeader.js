@@ -17,7 +17,7 @@ monthIndex === dayjs().month()
 return (
 <Navbar
   style={{
-    backgroundImage: "linear-gradient(to right, #434343 20%, black 60%)",
+   backgroundColor:'#FFFFFF',
   }}
   className="px-4 py-2 flex items-center"
 >
@@ -25,7 +25,7 @@ return (
    
    
     <h1
-      style={{ color: "white" }}
+      style={{ color: "black" }}
       className="mr-10 text-xl fond-bold"
     >
       Calendar
