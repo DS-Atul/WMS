@@ -1,12 +1,10 @@
-import React,{useState,useLayoutEffect} from 'react';
+import React ,{useState, useLayoutEffect} from 'react';
 import {Col,Card,CardTitle,CardBody} from "reactstrap";
-import "../../../../components/historyTabComponents/NewHistoryTab.css"
+import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
-
-const ChargeCreatedHistory = ({page_data}) => {
-
-    console.log("page",page_data)
-  const [charge_data, setcharge_data] = useState("");
+const RouteCreatedHistory = ({page_data}) => {
+  console.log("page",page_data)
+  const [route_data, setroute_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
   useLayoutEffect(() => {
@@ -16,14 +14,15 @@ const ChargeCreatedHistory = ({page_data}) => {
 
 let data = p_data.change_message;
 let n_data = JSON.parse(data)
-setcharge_data(n_data);      
+setroute_data(n_data);      
     }
   }, [page_data])
 
-  console.log("Carge data====>>",charge_data);
+  console.log("Route data >>>>>",route_data);
+  
 
-  let time = new Date(charge_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
-
+  let time = new Date(route_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+  
   return (
 <>
       <Col lg={12} md={12} sm={12}>
@@ -43,16 +42,16 @@ setcharge_data(n_data);
                   fontFamily: "arial, sans-serif",
                 }}
               >
-                <h5>Charge Details</h5>
+                <h5>Route Info</h5>
               </div>
             </CardTitle>
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Charge Type</span> <span>{charge_data.charge_category}</span>
+                  <span>Name</span> <span> ABCD</span>
                 </div>
                 <div className="container_element">
-                  <span>Charge Name</span> <span>{charge_data.charge_name}</span>
+                  <span>Pin Code</span> <span>821112</span>
                 </div>
                 <div className="container_element">
                   <span>Created By</span> <span>{user_name}</span>
@@ -66,7 +65,8 @@ setcharge_data(n_data);
         </div>
       </Col>
      
-    </>  )
+    </>
+   )
 }
 
-export default ChargeCreatedHistory
+export default RouteCreatedHistory

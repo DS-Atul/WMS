@@ -1,4 +1,5 @@
 const BranchHistoryTableTitle = [
+  "SL NO.",
   "Operation",
   "Branch Code",
   "Branch Type",
@@ -17,8 +18,6 @@ const BranchHistoryTableTitle = [
   "Branch Head",
   "Branch Head Email",
   "Branch Head Phone",
-  "Created By",
-  "Created At",
   "Modified By",
   "Modified At",
 ];

@@ -1,9 +1,9 @@
 import React from 'react';
 
-const OrderOriginsHistoryFormate = ({ table_data}) => {
+const AssetHistoryTableFormate = ({ table_data}) => {
   return (
     <>
-    {table_data.length === 0 ? (
+    {table_data.length === 0 ? (  
       <tr>Data Not Found</tr>
     ) : (
       <>
@@ -21,16 +21,6 @@ const OrderOriginsHistoryFormate = ({ table_data}) => {
             <td>{(item.action_flag === 1 ? "Created" : "Updated")}</td>
           <td>{(new_data.countary_name ? new_data.countary_name : "-")}</td>
           <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
           <td>{(new_data.city_name ? new_data.city_name : "-")}</td>
           <td>{(new_data.pincode_name ? new_data.pincode_name : "-")}</td>
           <td>{(new_data.name ? new_data.name : "-")}</td>
@@ -46,4 +36,4 @@ const OrderOriginsHistoryFormate = ({ table_data}) => {
   )
 }
 
-export default OrderOriginsHistoryFormate
+export default AssetHistoryTableFormate

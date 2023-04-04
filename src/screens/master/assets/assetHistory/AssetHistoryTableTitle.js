@@ -1,0 +1,20 @@
+const AssetHistoryTableTitle = [
+    "SL No.",
+    "Operation",
+    "Asset Type",
+    "Manufacture Name",
+    "Teamperature Type",
+    "Logger Number",
+    "Box Type",
+    "Box Capacities",  
+    "Product ID",
+    "Initial Assign Branch",
+    "Callibration From",
+    "Callibration To",
+    "Certificate Issued By",
+    "Certificate",
+    "Issued Date",
+    "Modified By",
+    "Modified At", 
+]
+export default AssetHistoryTableTitle

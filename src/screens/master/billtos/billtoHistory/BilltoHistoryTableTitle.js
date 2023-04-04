@@ -1,4 +1,5 @@
 const BilltoHistoryTableTitle = [
+    "SL NO.",
     "Operation",
     "Name",
     "Email",
@@ -13,8 +14,6 @@ const BilltoHistoryTableTitle = [
     "Authorised Person Name",
     "Authorised Person Email",
     "Authorised Person Number",
-    "Created By",
-    "Created At",
     "Modified By",
     "Modified At",
 ]

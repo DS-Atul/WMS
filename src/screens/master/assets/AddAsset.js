@@ -726,6 +726,12 @@ const AddAsset = () => {
       setShow(false)
     }
   }
+  // for history
+  const handlClk = () => {
+    navigate("/assets/assetHistory/AssetHistoryPage", {
+      state: { asset : asset },
+    });
+  };
 
   return (
     <div>
@@ -770,6 +776,19 @@ const AddAsset = () => {
             parent_title="Masters"
           />
         </div>
+        {/* Add For History Button */}
+   {isupdating && 
+            <div style={{ justifyContent: "right", display: "flex" }}>
+              <Button
+                type="button"
+                onClick={() => {
+                  handlClk();
+                }}
+              >
+                History
+              </Button>
+            </div>
+          }
 
         {/* Branch Info */}
         <div className="m-3">

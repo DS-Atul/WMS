@@ -1,8 +1,9 @@
 const ChargeHistoryTableTitle = [
+    "SL NO.",
     "Operation",
     "Charge Category",
-"Charge Name",
-"Modified By",
+     "Charge Name",
+     "Modified By",
     "Modified At",
 ]
 

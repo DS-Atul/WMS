@@ -989,7 +989,12 @@ const AddOrganization = () => {
       setoffice_locality_id(0)
     }
   }, [dimension_list])
-
+  // for history
+  const handlClk = () => {
+    navigate("/organization/organization/organizationHistory/OrganizationHistoryPage", {
+      state: { organization : organization },
+    });
+  };
 
   return (
     <>
@@ -1010,6 +1015,19 @@ const AddOrganization = () => {
               parent_title="Masters"
             />
           </div>
+          {/* Add For History Button */}
+   {isupdating && 
+            <div style={{ justifyContent: "right", display: "flex" }}>
+              <Button
+                type="button"
+                onClick={() => {
+                  handlClk();
+                }}
+              >
+                History
+              </Button>
+            </div>
+          }
 
           {/* organisation Info */}
           <div className="m-3">

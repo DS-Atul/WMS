@@ -385,6 +385,12 @@ function AddRoute() {
       setShow(false)
     }
   }
+   //used for history
+   const handlClk = () => {
+    navigate("/route/routeHistory/RouteHistoryPage", {
+      state: { routes: routes },
+    });
+  };
 
   return (
     <div>
@@ -437,6 +443,19 @@ function AddRoute() {
             parent_title="Masters"
           />
         </div>
+         {/* Add For History Button  */}
+         {isupdating && 
+            <div style={{ justifyContent: "right", display: "flex" }}>
+              <Button
+                type="button"
+                onClick={() => {
+                  handlClk();
+                }}
+              >
+                History
+              </Button>
+            </div>
+          }
 
         {/* Routes Info */}
         <div className="m-3">

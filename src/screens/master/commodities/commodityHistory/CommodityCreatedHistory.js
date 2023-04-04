@@ -18,8 +18,9 @@ setcommodity_data(n_data);
     }
   }, [page_data])
 
-  // console.log("COmmodity data",commodity_data);
+  console.log("COmmodity data",commodity_data);
   // console.log("COmmodity data",user_name);
+  let time = new Date(commodity_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
   
   
   return (
@@ -56,7 +57,7 @@ setcommodity_data(n_data);
                   <span>Created By</span> <span>{user_name}</span>
                 </div>
                 <div className="container_element">
-                  <span>Created At</span> <span>{commodity_data.created_at}</span>
+                  <span>Created At</span> <span>{time}</span>
                 </div>
               </div>
             </CardBody>

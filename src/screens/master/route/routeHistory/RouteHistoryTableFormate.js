@@ -1,6 +1,6 @@
 import React from 'react';
 
-const VendorHistoryTableFormate  = ({ table_data}) => {
+const RouteHistoryTableFormate = ({ table_data}) => {
   return (
     <>
     {table_data.length === 0 ? (
@@ -19,10 +19,8 @@ const VendorHistoryTableFormate  = ({ table_data}) => {
           }}>
             <td>{idx +1}</td>
             <td>{(item.action_flag === 1 ? "Created" : "Updated")}</td>
-          {/* <td>{(new_data.type ? new_data.type : "-")}</td> */}
-          <td>{(new_data.vendor_name ? new_data.vendor_name : "-")}</td>
-          <td>{(new_data.email ? new_data.email : "-")}</td>
-          <td>{(new_data.phone_number ? new_data.phone_number : "-")}</td>
+          <td>{(new_data.name ? new_data.name : "-")}</td>
+          <td>{(new_data.pincode_name ? new_data.pincode_name : "-")}</td>
           <td>{item.name_r }</td>
           <td>{time}</td>
         </tr>
@@ -35,4 +33,4 @@ const VendorHistoryTableFormate  = ({ table_data}) => {
   )
 }
 
-export default VendorHistoryTableFormate
+export default RouteHistoryTableFormate

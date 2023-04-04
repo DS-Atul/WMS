@@ -802,7 +802,11 @@ const handleSubmit = () => {
     setShow(false)
   }
 }
-
+const handlClk = () => {
+  navigate("/locations/locationHistory/LocationHistoryPage", {
+    state: { location: location },
+  });
+};
   return (
     <div>
             <Modal show={show} onHide={handleClose}>
@@ -865,6 +869,19 @@ setpincode_error(true);
           parent_title="Masters"
         />
       </div>
+       {/* Add For History Button  */}
+       {isupdating && 
+            <div style={{ justifyContent: "right", display: "flex" }}>
+              <Button
+                type="button"
+                onClick={() => {
+                  handlClk();
+                }}
+              >
+                History
+              </Button>
+            </div>
+          }
       <div className="m-3">
         <Col lg={12}>
           <Card className="shadow bg-white rounded">

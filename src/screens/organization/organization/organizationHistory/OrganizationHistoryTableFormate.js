@@ -1,9 +1,9 @@
 import React from 'react';
 
-const CommoditieHistoryTableFormate = ({ table_data}) => {
+const OrganizationHistoryTableFormate = ({ table_data}) => {
   return (
     <>
-    {table_data.length === 0 ? (
+    {table_data.length === 0 ? (  
       <tr>Data Not Found</tr>
     ) : (
       <>
@@ -11,8 +11,6 @@ const CommoditieHistoryTableFormate = ({ table_data}) => {
           // console.log("CHnage msg", item.change_message);
           const new_data = JSON.parse(item.change_message);
           var time = new Date(item.action_time).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
-
-
         console.log("length",new_data)
         console.log(item)
         return (
@@ -22,7 +20,25 @@ const CommoditieHistoryTableFormate = ({ table_data}) => {
             <td>{idx +1}</td>
             <td>{(item.action_flag === 1 ? "Created" : "Updated")}</td>
           <td>{(new_data.type ? new_data.type : "-")}</td>
-          <td>{(new_data.commodity_name ? new_data.commodity_name : "-")}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
+          <td>{(new_data)}</td>
           <td>{item.name_r }</td>
           <td>{time}</td>
         </tr>
@@ -35,4 +51,4 @@ const CommoditieHistoryTableFormate = ({ table_data}) => {
   )
 }
 
-export default CommoditieHistoryTableFormate
+export default OrganizationHistoryTableFormate

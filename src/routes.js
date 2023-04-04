@@ -103,6 +103,8 @@ const HiredDetails = React.lazy(() =>
 // Master
 const Assets = React.lazy(() => import("./screens/master/assets/Assets.js"));
 
+const AssetHistoryPage = React.lazy(() => import("./screens/master/assets/assetHistory/AssetHistoryPage.js"));
+
 const AssigneBranch = React.lazy(() =>
   import("./screens/master/assets/AssigneBranch.js")
 );
@@ -166,10 +168,13 @@ const Locations = React.lazy(() =>
 const AddLocation = React.lazy(() =>
   import("./screens/master/locations/AddLocation.js")
 );
+const LocationHistoryPage = React.lazy(() => import("./screens/master/locations/locationHistory/LocationHistoryPage.js"));
+
 
 const Routes = React.lazy(() => import("./screens/master/route/Routes.js"));
 
 const AddRoute = React.lazy(() => import("./screens/master/route/AddRoute.js"));
+const RouteHistoryPage = React.lazy(() => import("./screens/master/route/routeHistory/RouteHistoryPage.js"));
 
 const Vendor = React.lazy(() => import("./screens/master/vendor/Vendor.js"));
 const AddVendor = React.lazy(() =>
@@ -189,6 +194,10 @@ const OrderOriginsHistoryPage = React.lazy(() => import("./screens/master/orderO
 
 const Organization = React.lazy(() =>
   import("./screens/organization/organization/Organization.js")
+);
+//For History Page in organization
+const OrganizationHistoryPage = React.lazy(() =>
+  import("./screens/organization/organization/organizationHistory/OrganizationHistoryPage.js")
 );
 
 const AddOrganization = React.lazy(() =>
@@ -540,6 +549,10 @@ const routes = [
     element: <AddAsset />,
   },
   {
+    path: "/assets/assetHistory/AssetHistoryPage",
+    element: <AssetHistoryPage />,
+  },
+  {
     path: "/master/commodities",
     element: <Commodities />,
   },
@@ -612,6 +625,10 @@ const routes = [
     element: <AddLocation />,
   },
   {
+    path: "/locations/locationHistory/LocationHistoryPage",
+    element: <LocationHistoryPage/>,
+   },
+  {
     path: "/master/routes",
     element: <Routes />,
   },
@@ -619,6 +636,10 @@ const routes = [
     path: "/master/routes/addroute",
     element: <AddRoute />,
   },
+  {
+    path: "/route/routeHistory/RouteHistoryPage",
+    element: <RouteHistoryPage/>,
+   },
   {
     path: "/master/vendor/Vendor",
     element: <Vendor />,
@@ -650,6 +671,10 @@ const routes = [
   {
     path: "/organization/AddOrganization",
     element: <AddOrganization />,
+  },
+  {
+    path: "/organization/organization/organizationHistory/OrganizationHistoryPage",
+    element: <OrganizationHistoryPage />,
   },
 
   // Booking

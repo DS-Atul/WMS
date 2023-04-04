@@ -1,4 +1,5 @@
 const CommodityHistoryTableTitle = [
+    "SL NO.",
     "Operation",
     "Commodity Type",
     "Commodity Name",

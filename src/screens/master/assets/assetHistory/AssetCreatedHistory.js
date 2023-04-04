@@ -1,11 +1,10 @@
-import React,{useState,useLayoutEffect} from 'react';
-import { Col, Card, CardTitle, CardBody } from "reactstrap";
-import "../../../../components/historyTabComponents/NewHistoryTab.css"
+import React ,{useState, useLayoutEffect} from 'react';
+import {Col,Card,CardTitle,CardBody} from "reactstrap";
+import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
-const BranchCreatedHistory = ({ page_data }) => {
-  console.log("page",page_data);
-  const [branch_data, setbranch_data] = useState("");
-  // const [op_city, setop_city] = useState("");
+const AssetCreatedHistory = ({page_data}) => {
+  console.log("page",page_data)
+  const [asset_data, setasset_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
   useLayoutEffect(() => {
@@ -14,65 +13,19 @@ const BranchCreatedHistory = ({ page_data }) => {
       setuser_name(p_data.name_r)
 
 let data = p_data.change_message;
-let n_data = JSON.parse(data)
-setbranch_data(n_data);  
-// setop_city(branch_data.operating_city)    
+let n_data = JSON.parse(data)  
+setasset_data(n_data);      
     }
   }, [page_data])
 
-  console.log("branc data====>>",branch_data);
-  // console.log("city data====>>",op_city);
-  let time = new Date(branch_data.created_date).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+  console.log("Asset  data >>>>>",asset_data);
+  
 
-
-    return (
-    <>
-      <Col lg={4} md={12} sm={12}>
-        <div>
-          <Card  
-            className="h_card"
-          >
-            <CardTitle>
-              <div
-                style={{
-                  display: "flex",
-                  paddingLeft: "16px",
-                  paddingTop: "8px",
-                  paddingBottom: "2px",
-                  color: "Black",
-                  fontSize: "18px",
-                  fontFamily: "arial, sans-serif",
-                }}
-              >
-                <h5>Branch Info</h5>
-              </div>
-            </CardTitle>
-            <CardBody>
-              <div className="body_container">
-                <div className="container_element">
-                  <span>Branch Type</span> <span>{branch_data.code}</span>
-                </div>
-                <div className="container_element">
-                  <span>Branch Name</span> <span>{branch_data.type}</span>
-                </div>
-                <div className="container_element">
-                  <span>Branch Email</span> <span>{branch_data.email}</span>
-                </div>
-                <div className="container_element">
-                  <span>Branch Phone Number*</span> <span>{branch_data.contact_number}</span>
-                </div>
-                <div className="container_element">
-                  <span>PAN Number*</span> <span>{branch_data.pan_no}</span>
-                </div>
-                <div className="container_element">
-                  <span>GST Number *</span> <span>{branch_data.gst_no}</span>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        </div>
-      </Col>
-      <Col lg={4} md={12} sm={12}>
+  let time = new Date(asset_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+  
+  return (
+<>
+<Col lg={12} md={12} sm={12}>
         <div>
           <Card
             className="h_card"
@@ -89,44 +42,40 @@ setbranch_data(n_data);
                   fontFamily: "arial, sans-serif",
                 }}
               >
-                <h5>Location Info</h5>
+                <h5>Asset Info</h5>
               </div>
             </CardTitle>
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Address Line </span> <span>{branch_data.address_line_1}</span>
+                  <span>Asset Type </span> <span> Logger</span>
                 </div>
                 <div className="container_element">
-                  <span>State</span> <span>{branch_data.state_name}</span>
+                  <span>Manufacture Name</span> <span>ABC Private Limited </span>
                 </div>
                 <div className="container_element">
-                  <span>City</span> <span>{branch_data.city_name}</span>
+                  <span>Teamperature Type</span> <span>20 to 25 </span>
                 </div>
                 <div className="container_element">
-                  <span>Pin Code</span> <span>{branch_data.pincode_name}</span>
+                  <span>Logger Number</span> <span> 12345</span>
                 </div>
                 <div className="container_element">
-                  <span>Locality</span> <span>{branch_data.locality_name}</span>
+                  <span>Box Type</span> <span> ABCDES</span>
                 </div>
                 <div className="container_element">
-                  <span>Operating City</span> <span>{}</span>
+                  <span>Box Capacities </span> <span> 20 L</span>
+                </div>
+                <div className="container_element">
+                  <span>Product ID </span> <span> 207620456 L</span>
                 </div>
               </div>
             </CardBody>
           </Card>
         </div>
       </Col>
-      <Col lg={4} md={12} sm={12}>
+      <Col lg={12} md={12} sm={12}>
         <div>
           <Card
-            // style={{
-            //   overflow: "scrollX",
-            //   overflowY: "hidden",
-            //   boxShadow:
-            //     "rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px",
-            //   borderRadius: "6px",
-            // }}
             className="h_card"
           >
             <CardTitle>
@@ -141,19 +90,13 @@ setbranch_data(n_data);
                   fontFamily: "arial, sans-serif",
                 }}
               >
-                <h5>Employee Info</h5>
+                <h5>Asset Details</h5>
               </div>
             </CardTitle>
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Branch Head</span> <span>{branch_data.head}</span>
-                </div>
-                <div className="container_element">
-                  <span>Branch Head Email</span> <span>{branch_data.head_email}</span>
-                </div>
-                <div className="container_element">
-                  <span>Branch Head Phone</span> <span>{branch_data.head_phone_number}</span>
+                  <span>Initial Assign Branch </span> <span> Jamshedpur </span>
                 </div>
                 <div className="container_element">
                   <span>Created By</span> <span>{user_name}</span>
@@ -166,8 +109,50 @@ setbranch_data(n_data);
           </Card>
         </div>
       </Col>
+      <Col lg={12} md={12} sm={12}>
+        <div>
+          <Card
+            className="h_card"
+          >
+            <CardTitle>
+              <div
+                style={{
+                  display: "flex",
+                  paddingLeft: "16px",
+                  paddingTop: "8px",
+                  paddingBottom: "2px",
+                  color: "Black",
+                  fontSize: "18px",
+                  fontFamily: "arial, sans-serif",
+                }}
+              >
+                <h5>Asset Callibration Info</h5>
+              </div>
+            </CardTitle>
+            <CardBody>
+              <div className="body_container">
+                <div className="container_element">
+                  <span>Callibration From </span> <span> 12/03/2023</span>
+                </div>
+                <div className="container_element">
+                  <span>Callibration To</span> <span>22/03/2023 </span>
+                </div>
+                <div className="container_element">
+                  <span>Certificate Issued By</span> <span>Admin</span>
+                </div>
+                <div className="container_element">
+                  <span>Issued Date</span> <span> 8/03/2023</span>
+                </div>
+                <div className="container_element">
+                  <span>Certificate</span> <span> Yes</span>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+      </Col>
     </>
-  );
-};
+   )
+}
 
-export default BranchCreatedHistory;
+export default AssetCreatedHistory
