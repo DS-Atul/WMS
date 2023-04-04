@@ -46,7 +46,7 @@ const RecieveHubManifest = ({ depart }) => {
   const location_data = useLocation();
   const navigate = useNavigate();
   const order_id = useSelector((state) => state.manifest.order_id);
-  console.log("location_data--location_data--",location_data)
+  console.log("location_data--location_data-Hub-",location_data)
   const issue_id = useSelector((state) => state.manifest.issueorder_id);
   const loaded = useSelector((state) => state.manifest.loaded);
 
@@ -112,7 +112,7 @@ const RecieveHubManifest = ({ depart }) => {
         }
       )
       .then((response) => {
-        setdata(response.data);
+        // setdata(response.data);
       })
       .catch((err) => {
         alert(`Error While Loading Client , ${err}`);
@@ -123,21 +123,21 @@ const RecieveHubManifest = ({ depart }) => {
     hub_transfer_no && get_orderof_manifest();
   }, [hub_transfer_no, success]);
 
-// const [mn_barcode, setmn_barcode] = useState([]);
-//   useEffect(() => {
+const [mn_barcode, setmn_barcode] = useState([]);
+  useEffect(() => {
     
-//   console.log("hello ji pass check",location_data.state.depart.mn_barcode);
-//   if (location_data.state.depart.mn_barcode) {
-//     setmn_barcode(location_data.state.depart.mn_barcode);
-//   }
-//   }, [])
+  console.log("hello ji pass check",location_data.state.hub.mn_barcode);
+  if (location_data.state.hub.mn_barcode) {
+    setmn_barcode(location_data.state.hub.mn_barcode);
+  }
+  }, [])
   
   const RecieveHubManifest = (steps) => {
     axios
       .post(
         ServerAddress + "manifest/add_hubrecieve_manifest/",
         {
-          hubtransfer_no: hub_transfer_no,
+          hub_transfer_no: hub_transfer_no,
           is_received: "True",
           awb_no_list: order_id,
           issue_type: issue_id,
@@ -187,9 +187,11 @@ const RecieveHubManifest = ({ depart }) => {
   const [show, setShow] = useState(false);
 
 let docket_no_list = []
+
  for (let index = 0; index < data.length; index++) {
-  const element = data[index]?.docket_number;
+  const element = data[index]?.docket_no;
   docket_no_list.push(element)
+  console.log("docket_no_list hub-------", docket_no_list)
  }
   const handleClose = () => {
     RecieveHubManifest("STEP1");
@@ -202,7 +204,10 @@ let docket_no_list = []
   };
   const handleShow = () => setShow(true);
 
-  const [order_issue, setorder_issue] = useState([])
+  useEffect(() => {
+    setdata(location_data.state.hub.orders)
+  }, [location_data])
+  
 
   return (
     <>
@@ -356,8 +361,8 @@ let docket_no_list = []
                   {/* DataTable */}
                   <RecieveHubDataFormat
                     data={location_data.state.hub.orders}
+                    barcode={mn_barcode}
                     // barcode={mn_barcode}
-                    barcode={[]}
                     is_issue={is_issuerec}
                     setis_issue={setis_issuerec}
                     received={receivedrec}

@@ -123,7 +123,8 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
                     toTitleCase(status.status)
                     :
                     <Link
-                      to="/booking/orders/adddocketstatus"
+                      // to="/booking/orders/adddocketstatus"
+                      to="/manifest/pickeduporders"                      
                       state={{
                         order: status,
                         index: index,

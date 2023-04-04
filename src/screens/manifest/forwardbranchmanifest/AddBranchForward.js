@@ -40,6 +40,7 @@ import EditManifestDataFormat from "../editHub/editManifestOrders/EditManifestDa
 import AddAnotherOrder from "../editHub/AddAnotherOrder";
 
 const AddBranchForward = (manifest) => {
+  console.log("manifest bra===========", manifest)
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const user_branch = useSelector(
     (state) => state.authentication.userdetails.home_branch
@@ -106,6 +107,7 @@ const AddBranchForward = (manifest) => {
   const success = useSelector((state) => state.alert.show_alert);
 
   const [data, setdata] = useState([]);
+  const [data2, setdata2] = useState([])
   //This state is used for date
   const [coloader_mode_error, setcoloader_mode_error] = useState(false);
   const [forwording_date_error, setforwording_date_error] = useState(false);
@@ -347,11 +349,12 @@ const AddBranchForward = (manifest) => {
   }, [orders])
   const get_orderof_manifest = () => {
     axios
-      .get(ServerAddress + `manifest/get_hub_orders/?hub_no=${manifest_no}`, {
+      .get(ServerAddress + `manifest/get_all_hub_orders/?hub_no=${manifest_no}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
-        setdata(response.data);
+        setdata(response.data[0].orders); 
+        setdata2(response.data[0].orders); 
       })
       .catch((err) => {
         alert(`Error While Loading Client , ${err}`);
@@ -359,7 +362,7 @@ const AddBranchForward = (manifest) => {
   };
   useLayoutEffect(() => {
     manifest_no && get_orderof_manifest();
-  }, [manifest_no,success]);
+  }, [manifest_no,success,refresh]);
 
   const get_coloader = () => {
     axios
@@ -983,6 +986,7 @@ const AddBranchForward = (manifest) => {
                       }}
                     >
                       <AddAnotherOrder
+                         data2={data2}
                         id_m={manifest_no}
                         refresh={refresh}
                         setrefresh={setrefresh}

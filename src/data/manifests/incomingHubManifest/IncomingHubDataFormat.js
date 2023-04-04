@@ -31,6 +31,7 @@ import correct from "../../../assets/images/ComponentsIcon/check-mark.png";
 import { BsPrinterFill } from "react-icons/bs";
 
 const IncomingHubDataFormat = ({ data, data1 }) => {
+  console.log("data-hub-----", data)
   // Permissions
   const user_permissions = useSelector(
     (state) => state.permissions.user_permissions
@@ -199,26 +200,31 @@ const IncomingHubDataFormat = ({ data, data1 }) => {
 
               <td>
                 <div style={{ marginLeft: "20px" }}>
-                  {hub.is_received ? (
-                    <Button
-                      size="sm"
-                      outline
-                      color="warning"
-                      type="button"
-                      onClick={() => handleModal(hub.hub_transfer_no)}
-                      disabled={hub.is_broken}
+                  {hub.is_recieved ? (
+                    <Link
+                      to="/manifest/breakhubmanifest"
+                      state={{ hub: hub }}
                     >
-                      Break
-                    </Button>
+                      <Button
+                        size="sm"
+                        outline
+                        color="warning"
+                        type="button"
+                        onClick={() => handleModal(hub.hub_transfer_no)}
+                        disabled={hub.is_broken}
+                      >
+                        Break
+                      </Button>
+                    </Link>
                   ) : (
                     <Link
-                    to="/manifest/recieve_hub_manifest"
-                    state={{ hub: hub }}
-                    disabled={hub.is_received === true}
-                  >
-                    <Button size="sm" outline color="success">    
-                        Receive                    
-                    </Button>
+                      to="/manifest/recieve_hub_manifest"
+                      state={{ hub: hub }}
+                      disabled={hub.is_received === true}
+                    >
+                      <Button size="sm" outline color="success">
+                        Receive
+                      </Button>
                     </Link>
                   )}
                 </div>

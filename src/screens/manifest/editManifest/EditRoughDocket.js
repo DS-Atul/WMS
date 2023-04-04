@@ -46,7 +46,7 @@ const EditRoughDocket = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
   const success = useSelector((state) => state.alert.show_alert);
 
-  const [refresh, setrefresh] = useState("false");
+  const [refresh, setrefresh] = useState(false);
   const dispatch = useDispatch();
   const location_data = useLocation();
   const navigate = useNavigate();
@@ -135,6 +135,8 @@ const EditRoughDocket = () => {
   const [company_slected_list, setcompany_slected_list] = useState("");
   const [flight_name, setflight_name] = useState("");
   const [data, setdata] = useState([]);
+  const [data2, setdata2] = useState([])
+
   const [coloader_mode_list, setcoloader_mode_list] = useState([
     // "Direct Awb",
     // "Air Console",
@@ -164,13 +166,16 @@ const EditRoughDocket = () => {
     axios
       .get(
         ServerAddress +
-        `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
+        // `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
+        `manifest/get_all_manifest_order/?manifest_no=${manifest_no}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
-        setdata(response.data);
+          setdata(response.data[0].orders); 
+          setdata2(response.data[0].orders); 
+
       })
       .catch((err) => {
         alert(`Error While Loading Client , ${err}`);
@@ -179,7 +184,7 @@ const EditRoughDocket = () => {
 
   useLayoutEffect(() => {
     manifest_no && get_orderof_manifest();
-  }, [manifest_no, success]);
+  }, [manifest_no, success, refresh]);
 
   const updateManifest = () => {
     axios
@@ -238,13 +243,7 @@ const EditRoughDocket = () => {
     }
 
   }, [total_bags, total_box, manifest_data])
-  console.log("total_bags-----", total_bags)
-  console.log("total_box------", total_box)
-  console.log("manifest_data-bag_count----", manifest_data.bag_count)
-  console.log("manifest_data--box_count---", manifest_data.box_count)
-  console.log("manifest_data-------", manifest_data)
-  console.log("setsame_box----", same_box)
-
+ 
 
   const [vendor_list, setvendor_list] = useState([]);
   const [vendor_name, setvendor_name] = useState("");
@@ -487,9 +486,10 @@ const EditRoughDocket = () => {
                       }}
                     >
                       <AddAnotherOrder
+                        data2={data2}
                         id_m={manifest_no}
-                        refresh={refresh}
-                        setrefresh={setrefresh}
+                        refresh2={refresh}
+                        setrefresh2={setrefresh}
                       />
                       <IconContext.Provider
                         value={{

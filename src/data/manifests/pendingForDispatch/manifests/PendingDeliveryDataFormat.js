@@ -64,7 +64,7 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
                   if (searchData === "") {
                     return local;
                   } else if (
-                    local.awb_no
+                    local.docket_no
                       .toLowerCase()
                       .includes(searchData.toLowerCase())
                   ) {

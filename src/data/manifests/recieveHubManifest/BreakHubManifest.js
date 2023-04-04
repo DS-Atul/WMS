@@ -31,7 +31,7 @@ const RecieveManifestTitle = [
 
 
 const BreakHubManifest = ({
-  manifest_no,
+  hub_transfer_no,
   is_issue,
   setis_issue,
   received,
@@ -39,7 +39,7 @@ const BreakHubManifest = ({
   // notReceived,
   // setNotReceived,
 }) => {
-  console.log("manifest_no00000000000000", manifest_no)
+  console.log("hub_transfer_no00000000000000", hub_transfer_no)
   const [data, setdata] = useState([])
   const searchData = useSelector((state) => state.searchbar.search_item);
   const [refresh, setrefresh] = useState(false);
@@ -76,13 +76,13 @@ const BreakHubManifest = ({
     axios
       .get(
         ServerAddress +
-          `booking/orderboxqrcodecheck/${manifest_no}`,
+          `booking/orderboxqrcodecheck/${hub_transfer_no}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((resp) => {
-        console.log("resp-------", resp)
+        console.log("respfff-------", resp)
         if (resp.data.length > 0) {
           setdata(resp.data)
         }
@@ -188,11 +188,11 @@ const BreakHubManifest = ({
     // }
   }
   useLayoutEffect(() => {
-    if(manifest_no !== "")
+    if(hub_transfer_no !== "")
     {
       getOrderPieces()
     }
-  }, [manifest_no]);
+  }, [hub_transfer_no]);
 
   return (
     <>

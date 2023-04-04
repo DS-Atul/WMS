@@ -28,7 +28,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import AddBranchForward from "../../../screens/manifest/forwardbranchmanifest/AddBranchForward";
 
 const BranchManifestDataFormat = ({ data, data1, can_delete }) => {
-  console.log("data---", data);
+  console.log("databran---", data);
   // Permissions
   const user_permissions = useSelector(
     (state) => state.permissions.user_permissions

@@ -219,7 +219,8 @@ const HubAirDataFormat = ({ data, data1, can_delete }) => {
               </td>
               )} */}
               <td>{
-                <Link to="/manifest/pendingfordispatch">{manifest.manifest_no}</Link>
+                // <Link to="/manifest/pendingfordispatch">{manifest.manifest_no}</Link>
+                manifest.manifest_no
               }</td>
 
               <td>{toTitleCase(manifest.from_branch_n)}</td>

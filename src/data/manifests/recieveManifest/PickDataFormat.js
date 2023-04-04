@@ -245,13 +245,13 @@ const PickDataFormat = ({
                       <td>{order.vehicle_no}</td>
                       <td>{f_date_f}</td>
                       <td>{order.total_box}</td>
-                      <td>{order.current_status}</td>
+                      <td>{toTitleCase(order.current_status)}</td>
                       <td>
                         <Link 
                         to="/order/boxdetail"
                         state={{order:order}}
                         >
-                        <Button color="success" >
+                        <Button size="sm" color="success" >
                           
                           Receive
                         </Button>

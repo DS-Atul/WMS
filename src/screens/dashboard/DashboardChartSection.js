@@ -110,7 +110,7 @@ const DashboardChartSection = () => {
           .slice(0, 8)
       );
     } catch (err) {
-      alert(`Error Occur in , ${err}`);
+      // alert(`Error Occur in , ${err}`);
     }
   };
 

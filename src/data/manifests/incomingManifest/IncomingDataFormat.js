@@ -315,7 +315,6 @@ const IncomingManifestDataFormat = ({ data, data1, can_delete }) => {
                     to="/manifest/breakmanifest"
                     state={{depart:depart}}
                     >
-
                     <Button
                       size="sm"
                       outline

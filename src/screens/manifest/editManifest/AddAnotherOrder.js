@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect ,useRef } from "react";
 // import "../../../assets/scss/forms/form.scss";
 import {
   Card,
@@ -29,9 +29,14 @@ import { useNavigate } from "react-router-dom";
 import { Select } from "@mui/material";
 // import "./addanother.css";
 
-const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
-  console.log("edit-------",edit)
-  console.log("id_m-----", id_m)
+const AddAnotherOrder = ({ id_m, edit = false, data2, setrefresh2 }) => {
+  const [refresh, setrefresh] = useState(false);
+  const [old_data2, setold_data2] = useState(data2);
+  const data2Ref = useRef(data2);
+  console.log("id_m--------", id_m)
+  
+const [deleted_ids, setdeleted_ids] = useState([])
+const [new_ids, setnew_ids] = useState([])
   // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
@@ -64,12 +69,23 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
 
   const [createRunsheet_list, setcreateRunsheet_list] = useState([]);
 
+  useEffect(() => {
+    if (refresh) {
+      setcreateRunsheet_list(data2)
+    }
+
+  }, [refresh])
+
   const handleClose = () => {
-    setShow(false);
+    setrefresh(false)
     setcreateRunsheet_list([]);
+    setShow(false);
+    setrefresh2(true)
   };
 
   const handleShow = () => {
+    setrefresh2(false)
+    setrefresh(true)
     setShow(true);
     setsuccess(true);
   };
@@ -86,8 +102,9 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
     let remove_list1 = unmanifest_list;
     remove_list1.push(remove);
     setunmanifest_list(remove_list1);
+    setcreateRunsheet_list([]);
     setcreateRunsheet_list(
-      createRunsheet_list.filter((data) => data !== remove)
+      createRunsheet_list.filter((data2) => data2 !== remove)
     );
   };
   const transfer_list = (index) => {
@@ -95,8 +112,9 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
     let item = temp_list[index];
     let temp_list1 = createRunsheet_list;
     temp_list1.push(item);
+    setcreateRunsheet_list([]);
     setcreateRunsheet_list(temp_list1);
-    setunmanifest_list(unmanifest_list.filter((data) => data !== item));
+    setunmanifest_list(unmanifest_list.filter((data2) => data2 !== item));
   };
 
   //  For Fetching Branch Data Started
@@ -109,15 +127,14 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
     axios
       .get(
         ServerAddress +
-          `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
-            "",
-          ]}&branch_city=${[""]}&branch_search=${search}&vendor=&data=all`,
+        `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
+          "",
+        ]}&branch_city=${[""]}&branch_search=${search}&vendor=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
-        console.log("branch-response", response.data);
         let temp = [];
         let temp2 = [...branch_list];
         temp = response.data.results;
@@ -146,7 +163,6 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
     // console.log("branch list ---------",branch_list)
     if (branch_type_short) {
       branch_list.forEach((element) => {
-        console.log("element checking----", element);
         if (element[2]) {
           setbranch_dest(element[2]);
           setbranch_dest_id(element[3]);
@@ -167,7 +183,6 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
-        console.log("response hello", response.data);
         setdomestic_order(response.data);
       })
       .catch((err) => {
@@ -184,10 +199,6 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
     setsuccess(false);
   }, [success]);
 
-  console.log("success----------", success);
-
-  console.log("id_m", id_m.id_m);
-
   const send_manifest_data = () => {
     let data1 = createRunsheet_list;
     let id = [];
@@ -200,7 +211,8 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
         ServerAddress + `manifest/add_manifest_order/`,
         {
           manifest_no: id_m,
-          awb_no_list: id,
+          awb_no_list: new_ids,
+          deleted_ids: deleted_ids,
           steps: "FIRST",
         },
         {
@@ -211,6 +223,7 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
       )
       .then(function (response) {
         if (response.data === "done") {
+          setrefresh(false)
           setShow(false);
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
@@ -223,13 +236,47 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
         alert(`Error While Creating Manifest ${error}`);
       });
   };
-  console.log("unmanifest_list----------", unmanifest_list)
+
+// const [a, seta] = useState(data2)
+// console.log("aaaaaaaaaaaaaaaaa[[]]", a)
+// useLayoutEffect(() => {
+//   if(refresh){
+//     seta(data2)
+//   }
+// }, [refresh])
+
+useEffect(() => {
+  data2Ref.current = data2;
+}, [data2]);
+
+useLayoutEffect(() => {
+  if (refresh) {
+    setold_data2([...data2Ref.current]);
+  }
+}, [refresh]);
+
+  useEffect(() => {
+    // get list of IDs from createRunsheet_list
+    const createRunsheet_ids = createRunsheet_list.map((item) => item.id);
+    
+    // get list of IDs from old_data2
+    const old_data2_ids = old_data2.map((item) => item.id);
+  
+    // find new IDs in createRunsheet_list that are not in old_data2
+    let new_list = createRunsheet_ids.filter((id) => !old_data2_ids.includes(id));
+    setnew_ids(new_list)
+
+    // find deleted IDs in old_data2 that are not in createRunsheet_list
+    let deleted_ids = old_data2_ids.filter((id) => !createRunsheet_ids.includes(id));
+    setdeleted_ids(deleted_ids)
+  
+  }, [createRunsheet_list, old_data2, unmanifest_list])
 
   return (
     <>
-      <Button size={edit && "sm"} outline color={edit && "primary"} className={!edit && "btn btn-info m-1 cu_btn"} onClick={handleShow}>
+      <Button size={edit && "sm"} outline color={edit && "primary"} className={!edit && "btn btn-info m-1 cu_btn"} onClick={() => handleShow()}>
         {edit ? "Edit" : "Add More"}
-        
+
       </Button>
 
       <Modal
@@ -239,7 +286,7 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
         keyboard={false}
         dialogClassName="main-modal"
       >
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>Add Another Docket</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -324,10 +371,17 @@ const AddAnotherOrder = ({id_m, refresh, setrefresh, edit=false}) => {
           {/* </form> */}
         </Modal.Body>
         <Modal.Footer>
-        <Button
+
+          <Button
             variant="primary"
             onClick={() => {
+              if(createRunsheet_list.length>0)
+              {
               send_manifest_data();
+              }
+              else{
+                alert("Please Select At Least One Docket")
+              }
             }}
           >
             Save

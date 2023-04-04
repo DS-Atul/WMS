@@ -142,18 +142,18 @@ const EditManifestDataFormat = ({ Manifest_list }) => {
                       borderWidth: 1,
                     }}
                   >
-                    <td>{order.docket_number}</td>
+                    <td>{order.docket_no}</td>
                     <td>{toTitleCase(order.shipper_name)}</td>
                     <td>{toTitleCase(order.consignee_name)}</td>
-                    <td>{order.pcs}</td>
-                    <td>{order.weight}</td>
+                    <td>{order.total_quantity}</td>
+                    <td>{order.actual_weight}</td>
                     <td>{booking_date_n}</td>
-                    <td>{toTitleCase(order.status)}</td>
+                    <td>{toTitleCase(order.current_status)}</td>
                     <td>
                       {Manifest_list.length > 1 && (
                         <div
                           onClick={() => {
-                            handleModal(order.docket_no, order.manifest_no);
+                            handleModal(order.id, order.manifest_no);
                           }}
                         >
                           <Button

@@ -35,10 +35,10 @@ const [picked_orders, setpicked_orders] = useState([]);
   }, []);
   return (
     <>
-      <PageTitle page="PickedOrders" />
+      <PageTitle page="Picked Orders" />
       <Navigate/>
     <IncomingTab/>
-      <Title title="PickedOrders" parent_title="Incoming" />
+      <Title title="Picked Orders" parent_title="Incoming" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
           <div className="mb-2 row ">

@@ -47,7 +47,7 @@ const EditHubDocket = () => {
   const user_branch = useSelector(
     (state) => state.authentication.userdetails.home_branch
   );
-  const [refresh, setrefresh] = useState("false");
+  const [refresh, setrefresh] = useState(false);
   const dispatch = useDispatch();
   const location_data = useLocation();
   const [same_box, setsame_box] = useState(true)
@@ -60,7 +60,8 @@ const EditHubDocket = () => {
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
   };
-
+  const [data2, setdata2] = useState([])
+  console.log("data2data2data2data2data2data2'''''", data2)
   const [circle_btn1, setcircle_btn1] = useState(true);
   const toggle_circle1 = () => {
     setcircle_btn1(!circle_btn1);
@@ -204,11 +205,17 @@ const EditHubDocket = () => {
 
   const get_orderof_manifest = () => {
     axios
-      .get(ServerAddress + `manifest/get_hub_orders/?hub_no=${hub_no}`, {
+      // .get(ServerAddress + `manifest/get_hub_orders/?hub_no=${hub_no}`, 
+      .get(ServerAddress + `manifest/get_all_hub_orders/?hub_no=${hub_no}`, 
+      
+      {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
-        setdata(response.data);
+
+        console.log("responsesss==hub===", response)
+        setdata(response.data[0].orders);
+        setdata2(response.data[0].orders);
       })
       .catch((err) => {
         alert(`Error While Loading Client , ${err}`);
@@ -544,9 +551,10 @@ const EditHubDocket = () => {
                       }}
                     >
                       <AddAnotherOrder
+                        data2={data2}
                         id_m={hub_no}
-                        refresh={refresh}
-                        setrefresh={setrefresh}
+                        refresh2={refresh}
+                        setrefresh2={setrefresh}
                       />
                       <IconContext.Provider
                         value={{

@@ -73,6 +73,7 @@ const AddOrder = () => {
 
   //Get Updated Location Data
   const [order, setorder] = useState([]);
+  console.log("orderorderorderorder", order)
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
@@ -3398,9 +3399,16 @@ useEffect(() => {
                               type="button"
                               className="btn btn-info mx-1 cu_btn "
                               onClick={() => {
-                                navigate("/booking/orders/adddocketstatus", {
-                                  state: { order: order, type: "add" },
-                                });
+                                if(order.current_status === "SHIPMENT PICKED UP")
+                                {
+                                  navigate("/manifest/pickeduporders")                                  
+                                }
+                                else{
+                                  navigate("/booking/orders/adddocketstatus", {
+                                    state: { order: order, type: "add" },
+                                  });
+                                }
+                                
                               }}
                             >
                               Add Status

@@ -100,9 +100,7 @@ const IncomingManifest = () => {
           />
           <NumPagination path={"path"} />
         </div>
-      </div>
-
-     
+      </div> 
     </>
   );
 };

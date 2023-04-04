@@ -303,6 +303,9 @@ const HubVehicleForwarding = React.lazy(() =>
 const BreakManifest = React.lazy(() =>
   import("./screens/manifest/recieveManifest/BreakManifest.js")
 );
+const BreakHubManifest = React.lazy(() =>
+  import("./screens/manifest/recieveHubManifest/BreakHubManifest.js")
+);
 const EditHub = React.lazy(() =>
   import("./screens/manifest/editHub/EditHub.js")
 );
@@ -738,6 +741,10 @@ const routes = [
   {
     path: "/manifest/breakmanifest",
     element: <BreakManifest />,
+  },
+  {
+    path: "/manifest/breakhubmanifest",
+    element: <BreakHubManifest />,
   },
    {
     path: "/manifest/pickeduporders",

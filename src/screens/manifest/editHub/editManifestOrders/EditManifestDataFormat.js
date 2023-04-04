@@ -9,6 +9,7 @@ import axios from "axios";
 import { ServerAddress } from "../../../../constants/ServerAddress";
 import { useSelector, useDispatch } from "react-redux";
 import { setAlertType, setDataExist, setShowAlert } from "../../../../store/alert/Alert";
+import toTitleCase from "../../../../lib/titleCase/TitleCase";
 
 const EditManifestDataFormat = ({ Manifest_list }) => {
   console.log("Manifest_list-hub------------", Manifest_list)
@@ -126,7 +127,7 @@ const EditManifestDataFormat = ({ Manifest_list }) => {
             ) : (
               Manifest_list.map((order, index) => {
                 let booking_date_n = order.booking_at
-                  ? order.date1.split("+")[0]
+                  ? order.booking_at.split("T")[0]
                   : "none";
                 return (
                   <tr
@@ -137,19 +138,19 @@ const EditManifestDataFormat = ({ Manifest_list }) => {
                   >
                     <td>{order.docket_no}</td>
 
-                    <td>{order.shipper_name}</td>
-                    <td>{order.consignee_name}</td>
-                    <td>{order.pcs}</td>
-                    <td>{order.weight}</td>
+                    <td>{toTitleCase(order.shipper_name)}</td>
+                    <td>{toTitleCase(order.consignee_name)}</td>
+                    <td>{order.total_quantity}</td>
+                    <td>{order.actual_weight}</td>
                     <td>{booking_date_n}</td>
-                    <td>{order.status}</td>
+                    <td>{toTitleCase(order.current_status)}</td>
                     <td>
                       <Button
                         color="danger"
                         size="sm"
                         outline
                         onClick={() => {
-                          handleModal(order.awb, order.hub_transfer_no);
+                          handleModal(order.id, order.hub_transfer_no);
                         }}
                       >
                         Remove

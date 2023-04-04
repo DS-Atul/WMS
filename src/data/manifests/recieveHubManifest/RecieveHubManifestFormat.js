@@ -162,7 +162,7 @@ const RecieveHubDataFormat = ({
                         borderWidth: 1,
                       }}
                     >
-                      <td>{order.menifest_no}</td>
+                      <td>{order.hub_transfer_no}</td>
                       <td>{order.box_tpye}</td>
                       <td>
                         {order.barcode_no}
@@ -171,7 +171,7 @@ const RecieveHubDataFormat = ({
                       <td>
                         <select
                           onChange={(e) =>
-                            handleIssueTypeChange(e, order.menifest_no, index, "MANIFEST",order.barcode_no, "ON RECEIVE", order.box_tpye, '')
+                            handleIssueTypeChange(e, order.hub_transfer_no, index, "HUB MANIFEST",order.barcode_no, "ON RECEIVE", order.box_tpye, '')
                           }
                         >
                           <option defaultChecked>Select...</option>

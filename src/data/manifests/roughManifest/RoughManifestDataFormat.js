@@ -213,9 +213,10 @@ const RoughDataFormat = ({ data, data1, can_delete }) => {
                 )}
               </td>
               )} */}
-              <td>{
-                <Link to="/manifest/pendingfordispatch">{manifest.manifest_no}</Link>
-              }</td>
+              <td>
+               {/* <Link to="/manifest/pendingfordispatch">{manifest.manifest_no}</Link> */}
+                {manifest.manifest_no}
+              </td>
 
               <td>{toTitleCase(manifest.from_branch_n)}</td>
               <td>{toTitleCase(manifest.to_branch_n)}</td>

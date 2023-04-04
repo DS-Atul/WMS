@@ -42,7 +42,7 @@ import EditManifestDataFormat from "../editManifest/editManifestOrders/EditManif
 import AddAnotherOrder from "../editManifest/AddAnotherOrder";
 
 const AddForward = (manifest) => {
-  console.log("manifest--yyy---", manifest.manifest.is_scanned)
+  console.log("manifest--yyy---", manifest)
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const user_branch = useSelector(
     (state) => state.authentication.userdetails.home_branch
@@ -51,6 +51,7 @@ const AddForward = (manifest) => {
   const accessToken = useSelector((state) => state.authentication.access_token);
   const alert = useSelector((state) => state.alert.show_alert);
   const [data, setdata] = useState([]);
+  const [data2, setdata2] = useState([])
   // const location= useLocation
   const success = useSelector((state) => state.alert.show_alert);
 
@@ -218,13 +219,14 @@ const AddForward = (manifest) => {
     axios
       .get(
         ServerAddress +
-        `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
+        `manifest/get_all_manifest_order/?manifest_no=${manifest_no}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
-        setdata(response.data);
+        setdata(response.data[0].orders); 
+        setdata2(response.data[0].orders); 
       })
       .catch((err) => {
         alert(`Error While Loading Client , ${err}`);
@@ -232,7 +234,7 @@ const AddForward = (manifest) => {
   };
   useLayoutEffect(() => {
     manifest_no && get_orderof_manifest();
-  }, [manifest_no, success]);
+  }, [manifest_no, success, refresh]);
 
   const updateManifest = (values) => {
     let fields_name = Object.entries({
@@ -970,9 +972,10 @@ const AddForward = (manifest) => {
                         }}
                       >
                         <AddAnotherOrder
+                          data2={data2}
                           id_m={manifest_no}
-                          refresh={refresh}
-                          setrefresh={setrefresh}
+                          refresh2={refresh}
+                          setrefresh2={setrefresh}
                         />
                         <IconContext.Provider
                           value={{
