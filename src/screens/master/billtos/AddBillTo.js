@@ -848,9 +848,9 @@ const AddClient = () => {
             {/* Add For History Button */}
 
           {/* <Col lg={12}> */}
-          <Card className="shadow bg-white rounded">
+          <Card className="shadow bg-white rounded" >
             <CardTitle className="mb-1 header">
-              <div className="header-text-icon header-text">
+              <div className="header-text-icon header-text" id="1">
                 Bill To Details
                 <IconContext.Provider
                   value={{
@@ -1376,12 +1376,13 @@ const AddClient = () => {
                             }
                           }}
                           value={pincode}
-                          invalid={
-                            validation.touched.pincode &&
-                              validation.errors.pincode
-                              ? true
-                              : false
-                          }
+                          // invalid={
+                          //   validation.touched.pincode &&
+                          //     validation.errors.pincode
+                          //     ? true
+                          //     : false
+                          // }
+                          invalid ={pincode_error}
                           type="number"
                           className="form-control-md"
                           id="input"
@@ -1451,12 +1452,13 @@ const AddClient = () => {
                             }
                           }}
                           value={locality}
-                          invalid={
-                            validation.touched.locality &&
-                              validation.errors.locality
-                              ? true
-                              : false
-                          }
+                          // invalid={
+                          //   validation.touched.locality &&
+                          //     validation.errors.locality
+                          //     ? true
+                          //     : false
+                          // }
+                          invalid={locality_error}
                           type="text"
                           className="form-control-md"
                           id="input"

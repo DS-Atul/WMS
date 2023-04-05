@@ -93,9 +93,14 @@ const AddOrganization = () => {
 
   const [state_error, setstate_error] = useState(false);
   const [city_error, setcity_error] = useState(false);
+  const [state_error1, setstate_error1] = useState(false);
+  const [city_error1, setcity_error1] = useState(false);
   const [pin_code_error, setpin_code_error] = useState(false);
   const [pincode_error, setpincode_error] = useState(false);
   const [pincode_error2, setpincode_error2] = useState(false);
+  const [sec_mobile2, setsec_mobile2] = useState("");
+  const [mobile_error, setmobile_error] = useState(false);
+
 
 
   const [isupdating, setisupdating] = useState(false);
@@ -112,6 +117,8 @@ const AddOrganization = () => {
   const [state_list_s, setstate_list_s] = useState([]);
   const [office_add_line1, setoffice_add_line1] = useState("");
   const [office_add_line2, setoffice_add_line2] = useState("");
+  const [office_add1_err, setoffice_add1_err] = useState(false);
+  const [bill_add1_err, setbill_add1_err] = useState(false)
   const [office_state, setoffice_state] = useState("");
   const [office_state_id, setoffice_state_id] = useState("");
   const [city_page, setcity_page] = useState(1);
@@ -132,9 +139,11 @@ const AddOrganization = () => {
   const [office_locality_id, setoffice_locality_id] = useState("");
   const [locality_page, setlocality_page] = useState(1);
   const [locality_search_item, setlocality_search_item] = useState("");
-
+  const [local_err, setlocal_err] = useState(false);
+  const [local_err2, setlocal_err2] = useState(false);
 
   // ForBilling Address
+  const [bill_color, setbill_color] = useState(false);
   const [billing_add_line1, setbilling_add_line1] = useState("");
   const [billing_add_line2, setbilling_add_line2] = useState("");
   const [billing_state, setbilling_state] = useState("");
@@ -175,35 +184,41 @@ const AddOrganization = () => {
       registeration_number: organization.regd_no || "",
       pan_no: organization.pan_no || "",
       phone_numberp: organization.mobile_nop || "",
-      phone_numbers: organization.mobile_nos || "",
+      // phone_numbers: organization.mobile_nos || "",
       email: organization.email || "",
       web_url: organization.website || "",
       contact_person_name: toTitleCase(organization.contact_person) || "",
-      description: toTitleCase(organization.description) || "",
+      // description: toTitleCase(organization.description) || "",
       contact_person_email: organization.contact_person_email || "",
       contact_person_ph_no: organization.contact_person_mobile || "",
     },
 
     validationSchema: Yup.object({
       organisation_name: Yup.string().required("Organisation Name is required"),
-      registeration_number: Yup.string().required(
+      registeration_number: Yup.string().min(12, "Number must be 12 digit").max(12, "Number must be 12 digit").required(
         "Registeratin Number is required"
       ),
-      toll_free_number: Yup.string().required("Toll Free Number is required"),
+      toll_free_number: Yup.string().min(11, "Number must be 11 digit")
+      .max(11, "Number must be 11 digit").required("Toll Free Number is required"),
       pan_no: Yup.string()
         .min(10)
         .max(10)
         .required("PAN Number is required"),
       email: Yup.string().email().required("Email is required"),
       web_url: Yup.string().required("Website URL is required"),
-      phone_numberp: Yup.string().required(
+      phone_numberp: Yup.string()
+      .min(10, "Invalid number")
+        .max(10, "invalid number").required(
         "Phone Number is required"
       ),
+      contact_person_name: Yup.string().required("Name is required"),
       contact_person_email: Yup.string().email().required("Email is required"),
-      contact_person_ph_no: Yup.string().required("Phone Number is required"),
+      contact_person_ph_no: Yup.string().min(10, "Invalid number")
+      .max(10, "invalid number").required("Phone Number is required"),
+      // phone_numbers: Yup.string().min(10,"invalid").max(10,"invalid").required("Number is required"),
     }),
-
     onSubmit: (values) => {
+      console.log("Outer Submit Run")
       isupdating ? update_organisation(values) : send_organisation_data(values);
     },
   });
@@ -989,6 +1004,7 @@ const AddOrganization = () => {
       setoffice_locality_id(0)
     }
   }, [dimension_list])
+
   // for history
   const handlClk = () => {
     navigate("/organization/organization/organizationHistory/OrganizationHistoryPage", {
@@ -996,12 +1012,175 @@ const AddOrganization = () => {
     });
   };
 
+
+  useEffect(() => {
+  
+    if(office_add_line1)
+    {
+      setoffice_add1_err(false);
+    } 
+     if(office_state)
+    {
+      setstate_error(false);
+    }
+    if(office_city)
+    {
+      setcity_error(false);
+    }
+    if(office_pincode)
+    {
+      setpincode_error(false);
+    }
+     if(office_locality)
+    {
+      setlocal_err(false);
+    }
+     if(billing_add_line1)
+    {
+      setbill_add1_err(false);
+    }
+     if(billing_state)
+    {
+      setstate_error1(false);
+    }
+     if(billing_city)
+    {
+      setcity_error1(false);
+    }
+    if(billing_pincode)
+    {
+      setpincode_error2(false);
+    }
+    if(billing_locality)
+    {
+      setlocal_err2(false);
+    }
+    
+     }, [dimension_list,
+      office_add_line1,office_state,office_city,
+      office_pincode,office_locality,
+      billing_add_line1,billing_state,
+      billing_city,billing_pincode,billing_locality
+    ]);
+
+
   return (
     <>
       <div>
         <Form
           onSubmit={(e) => {
+            console.log("Submit Run")
             e.preventDefault();
+             console.log("yooo",validation.values);
+            let shaw= Object.entries(validation.values);
+            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0 );
+            let map_value = filter_value.map((m) => m[0]);
+            console.log("nooo",map_value)
+            let all_value = map_value[0];
+            console.log("ttt",all_value);
+
+            let fields1=[
+              "organisation_name",
+              "email",
+              "toll_free_number",
+              "registeration_number",
+              "pan_no",
+              "phone_numberp",
+              
+              "web_url",
+            ]
+            let fields2=[
+              "contact_person_name",
+              "contact_person_email",
+              "contact_person_ph_no",
+            ]
+            
+            if(fields1.includes(all_value))
+            {
+              // idd1.scrollIntoView();
+              document.getElementById("section1").scrollIntoView();
+            }
+            // else if(sec_mobile2 === ""){
+            //   setmobile_error(false);
+            // }
+            // else if(sec_mobile2.length !== 10){
+            //   setmobile_error(true);
+            // }
+             else if(office_add_line1 === "") {
+              // console.log("show",office_add1_err);
+              setoffice_add1_err(true);
+              document.getElementById("add").scrollIntoView();
+            }
+           
+           else if(office_state === "")
+           {
+             setstate_error(true);
+              document.getElementById("add").scrollIntoView();
+           } 
+            else if(office_city === "")
+           {
+             setcity_error(true);
+              document.getElementById("add").scrollIntoView();
+           } 
+           else  if (office_pincode === "")
+            {
+              setpincode_error(true);
+               document.getElementById("add").scrollIntoView();
+            } 
+            else if(office_locality === "")
+            {
+              setlocal_err(true); 
+               document.getElementById("add").scrollIntoView();
+            }
+            else if(fields2.includes(all_value))
+            {
+              // idd2.scrollIntoView();
+              document.getElementById("section2").scrollIntoView(); 
+            }
+          
+          else if(office_add_line1 !== "" && office_state !== "" && office_city !== "" && office_pincode !== "" && office_locality !== "")
+             {
+              if(billing_add_line1 === "" || billing_state === "" || billing_city ==="" || billing_pincode === "" || billing_locality === "")
+           {
+                  setbill_color(true);
+                  document.getElementById("add").scrollIntoView();
+           }
+           else {
+            setbill_color(false);
+           }
+          }
+          else  if(billing_add_line1 === "")
+               {
+                setbill_add1_err(true);
+                // alert("Please Fill the fields of Billing address");
+                document.getElementById("add").scrollIntoView();
+               }
+               else  if(billing_state ==="")
+            {
+              setstate_error1(true);
+              // alert("Please Fill the fields of Billing address");
+               document.getElementById("add").scrollIntoView();
+            }
+             else  if(billing_city === "")
+            {
+              setcity_error1(true);
+              // alert("Please Fill the fields of Billing address");
+               document.getElementById("add").scrollIntoView();
+            }
+          else if(billing_pincode === "")
+            {
+              setpincode_error2(true);
+              // alert("Please Fill the fields of Billing address");
+               document.getElementById("add").scrollIntoView();
+            }
+          else  if(billing_locality === "")
+            {
+              setlocal_err2(true);
+              // alert("Please Fill the fields of Billing address");
+               document.getElementById("add").scrollIntoView();
+            }
+          
+             
             validation.handleSubmit(e.values);
             return false;
           }}
@@ -1055,7 +1234,7 @@ const AddOrganization = () => {
                   <CardBody>
                     <Row>
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
+                        <div className="mb-2" id="section1">
                           <Label className="header-child">
                             Name*
                           </Label>
@@ -1239,15 +1418,20 @@ const AddOrganization = () => {
                             Secondary Mobile No.
                           </Label>
                           <Input
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.phone_numbers || ""}
+                               onChange={(val) => {
+                                setsec_mobile2(val.target.value);
+                               }}
+                               value={sec_mobile2}
+                               invalid={mobile_error}
                             className="form-control-md"
                             id="input"
                             name="phone_numbers"
                             type="number"
                             placeholder="Enter Phone Number"
                           />
+                           <div className="mt-1 error-text" color="danger">
+                                {mobile_error ? " invalid number" : null} 
+                              </div> 
                         </div>
                       </Col>
 
@@ -1266,7 +1450,7 @@ const AddOrganization = () => {
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">
-                            Website Address:
+                            Website Address*:
                           </Label>
                           <Input
                             onChange={validation.handleChange}
@@ -1560,7 +1744,7 @@ const AddOrganization = () => {
           </div>
 
           {/* Address info */}
-          <div className="m-3">
+          <div className="m-3" id="add">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1">
@@ -1582,6 +1766,7 @@ const AddOrganization = () => {
                       <div
                         style={{
                           background: active_tab == "second" ? "#C4D7FE" : null,
+                          color: bill_color ? "red" : null ,
                         }}
                         className="btn1 footer-text"
                         value="second"
@@ -1642,12 +1827,22 @@ const AddOrganization = () => {
                                 onChange={(val) => {
                                   setoffice_add_line1(val.target.value);
                                 }}
+                                onBlur={() => {
+                                  if(office_add_line1 === "")
+                                  {
+                                    setoffice_add1_err(true);
+                                  }
+                                }} 
+                                invalid={office_add1_err}
                                 type="text"
                                 className="form-control-md"
                                 id="input"
                                 name="office_add_line1"
                                 placeholder="Enter Address Line1"
                               />
+                               <div className="mt-1 error-text" color="danger">
+                        {office_add1_err ? "Address field is required" : null}
+                      </div>
                             </div>
                           </Col>
 
@@ -1684,6 +1879,8 @@ const AddOrganization = () => {
                                   page={billing_state_page}
                                   setpage={setbilling_state_page}
                                   setsearch_item={setbilling_state_search_item}
+                                  error_message={"Please Select Any State"}
+                                  error_s={state_error}
                                 />
                               </span>
                               {/* <div className="mt-1 error-text" color="danger">
@@ -1705,10 +1902,12 @@ const AddOrganization = () => {
                                 setpage={setcity_page}
                                 search_item={city_search_item}
                                 setsearch_item={setcity_search_item}
+                                error_message={"Please Select Any City"}
+                                error_s={city_error}
                               />
-                              <div className="mt-1 error-text" color="danger">
+                              {/* <div className="mt-1 error-text" color="danger">
                                 {city_error ? "Please Select Any City" : null}
-                              </div>
+                              </div> */}
                             </div>
                           </Col>
 
@@ -1729,12 +1928,14 @@ const AddOrganization = () => {
                                   setpage={setpincode_page}
                                   search_item={pincode_search_item}
                                   setsearch_item={setpincode_search_item}
+                                  error_message={"Please add Code"}
+                                  error_s={pincode_error}
                                 />
                               </div>
                             ) : (
                               <div className="mb-2">
                                 <Label className="header-child">
-                                  Pin Code*
+                                  Pin Code*:
                                 </Label>
                                 <Input
                                   onChange={(val) => {
@@ -1770,10 +1971,7 @@ const AddOrganization = () => {
                                   }}
                                   value={office_pincode}
                                   invalid={
-                                    validation.touched.pincode &&
-                                      validation.errors.pincode
-                                      ? true
-                                      : false
+                                   pincode_error
                                   }
                                   type="number"
                                   className="form-control-md"
@@ -1784,8 +1982,9 @@ const AddOrganization = () => {
 
                                 {pincode_loaded === false &&
                                   pincode_error === true ? (
-                                  <div style={{ color: "red" }}>
-                                    Please add pincode
+                                    <div className="mt-1 error-text" color="danger">
+                                    {pincode_error ? "Please Add Pin code" : null}
+                                      
                                   </div>
                                 ) : null}
 
@@ -1810,7 +2009,7 @@ const AddOrganization = () => {
                             {office_pincode_loaded && (
                               <div className="mb-2">
                                 <Label className="header-child">
-                                  Locality*
+                                  Locality*:
                                 </Label>
 
                                 <SearchInput
@@ -1822,6 +2021,8 @@ const AddOrganization = () => {
                                   page={locality_page}
                                   setpage={setlocality_page}
                                   setsearch_item={setlocality_search_item}
+                                  error_message={"Select Locality"}
+                                  error_s={local_err}
                                 />
                               </div>
                             )}
@@ -1862,12 +2063,20 @@ const AddOrganization = () => {
                                   onChange={(val) => {
                                     setbilling_add_line1(val.target.value);
                                   }}
+                                  onBlur={() => {
+                                    if(billing_add_line1 === "")
+                                    setbill_add1_err(true);
+                                  }}
+                                  invalid={bill_add1_err}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
                                   name="billing_add_line1"
                                   placeholder="Enter Address Line1"
                                 />
+                                 <div className="mt-1 error-text" color="danger">
+                                  {bill_add1_err ? "Address Field  is required" : null}
+                                </div>
                               </div>
                             </Col>
                           }
@@ -1928,7 +2137,7 @@ const AddOrganization = () => {
                             :
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
-                                <Label className="header-child">State*</Label>
+                                <Label className="header-child">State*:</Label>
                                 <span onClick={() => setby_pincode(false)}>
                                   <SearchInput
                                     data_list={state_list_s}
@@ -1943,11 +2152,13 @@ const AddOrganization = () => {
                                     page={billing_state_page}
                                     setpage={setbilling_state_page}
                                     setsearch_item={setbilling_state_search_item}
+                                    error_message={"Please Select Any State"}
+                                    error_s={state_error1}
                                   />
                                 </span>
-                                <div className="mt-1 error-text" color="danger">
+                                {/* <div className="mt-1 error-text" color="danger">
                                   {state_error ? "Please Select Any State" : null}
-                                </div>
+                                </div> */}
                               </div>
                             </Col>
                           }
@@ -1969,7 +2180,7 @@ const AddOrganization = () => {
                             :
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
-                                <Label className="header-child">City*</Label>
+                                <Label className="header-child">City*:</Label>
                                 <SearchInput
                                   data_list={billing_city_list}
                                   setdata_list={setbilling_city_list}
@@ -1984,10 +2195,12 @@ const AddOrganization = () => {
                                   setpage={setbilling_city_page}
                                   search_item={billing_city_search_item}
                                   setsearch_item={setbilling_city_search_item}
+                                  error_message={"Please Select Any City"}
+                                  error_s={city_error1}
                                 />
-                                <div className="mt-1 error-text" color="danger">
+                                {/* <div className="mt-1 error-text" color="danger">
                                   {city_error ? "Please Select Any City" : null}
-                                </div>
+                                </div> */}
                               </div>
                             </Col>
                           }
@@ -2011,7 +2224,7 @@ const AddOrganization = () => {
                               {billing_pincode_loaded ? (
                                 <div className="mb-2">
                                   <Label className="header-child">
-                                    Pin Code*
+                                    Pin Code*:
                                   </Label>
 
                                   <SearchInput
@@ -2027,12 +2240,14 @@ const AddOrganization = () => {
                                     page={billing_pincode_page}
                                     setpage={setbilling_pincode_page}
                                     setsearch_item={setbilling_pincode_search_item}
+                                    error_message={"Please Add Pin Code"}
+                                    error_s={pincode_error2}
                                   />
                                 </div>
                               ) : (
                                 <div className="mb-2">
                                   <Label className="header-child">
-                                    Pin Code*
+                                    Pin Code*:
                                   </Label>
                                   <Input
                                     onChange={(val) => {
@@ -2064,10 +2279,7 @@ const AddOrganization = () => {
                                     }}
                                     value={billing_pincode}
                                     invalid={
-                                      validation.touched.pincode &&
-                                        validation.errors.pincode
-                                        ? true
-                                        : false
+                                     pincode_error2
                                     }
                                     type="number"
                                     className="form-control-md"
@@ -2078,8 +2290,8 @@ const AddOrganization = () => {
 
                                   {pincode_loaded === false &&
                                     pincode_error === true ? (
-                                    <div style={{ color: "red" }}>
-                                      Please add pincode
+                                      <div className="mt-1 error-text" color="danger">
+                                      {pincode_error2 ? "Please Add PinCode" : null}
                                     </div>
                                   ) : null}
 
@@ -2120,7 +2332,7 @@ const AddOrganization = () => {
                               {billing_pincode_loaded && (
                                 <div className="mb-2">
                                   <Label className="header-child">
-                                    Locality*
+                                    Locality*:
                                   </Label>
                                   <SearchInput
                                     data_list={billing_locality_list}
@@ -2131,6 +2343,8 @@ const AddOrganization = () => {
                                     page={billing_locality_page}
                                     setpage={setbilling_locality_page}
                                     setsearch_item={setbilling_locality_search_item}
+                                    error_message={"Select locality"}
+                                    error_s={local_err2}
                                   />
                                 </div>
                               )}
@@ -2146,7 +2360,7 @@ const AddOrganization = () => {
           </div>
 
           {/*Employee info*/}
-          <div className="m-3">
+          <div className="m-3" id="section2">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
@@ -2203,7 +2417,7 @@ const AddOrganization = () => {
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">
-                            Contact Person Email*
+                            Contact Person Email*:
                           </Label>
                           <Input
                             onChange={validation.handleChange}
@@ -2233,7 +2447,7 @@ const AddOrganization = () => {
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">
-                            Contact Person Phone Number*
+                            Contact Person Phone Number*:
                           </Label>
                           <Input
                             onChange={validation.handleChange}

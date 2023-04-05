@@ -55,8 +55,10 @@ const AddLocation = () => {
   const [location, setlocation] = useState([]);
   const [override, setoverride] = useState(false);
   const [other_city, setother_city] = useState("");
+  const [other_city_error, setother_city_error] = useState(false);
   const [other_pincode, setother_pincode] = useState("");
-
+  const [other_pincode_error, setother_pincode_error] = useState(false);
+const [pincode_len_error, setpincode_len_error] = useState(false);
   // Location Info
   const [state_list_s, setstate_list_s] = useState([]);
   const [state, setstate] = useState("");
@@ -64,6 +66,7 @@ const AddLocation = () => {
   const [state_page, setstate_page] = useState(1);
   const [state_search_item, setstate_search_item] = useState("");
   const [other_state, setother_state] = useState("");
+  const [other_state_error, setother_state_error] = useState(false);
   const [empty_state, setempty_state] = useState(false);
   const [zone_error, setzone_error] = useState(false);
   const [togstate, settogstate] = useState(false);
@@ -439,8 +442,8 @@ const AddLocation = () => {
 
             dispatch(
               setDataExist(
-                `City ${toTitleCase(other_city)} in District ${toTitleCase(
-                  district
+                `City ${toTitleCase(other_city)} in State ${toTitleCase(
+                  other_state
                 )} Added Sucessfully`
               )
             );
@@ -619,6 +622,7 @@ const AddLocation = () => {
         }
       )
       .then(function (response) {
+        console.log("Location resp",response.data);
         if (response.data.status === "data_exist") {
           dispatch(setToggle(true));
           dispatch(setAlertType("warning"));
@@ -807,6 +811,25 @@ const handlClk = () => {
     state: { location: location },
   });
 };
+
+
+//for validation 
+useLayoutEffect(() => {
+  if(other_state !== "") {
+    setother_state_error(false);
+  }
+  if(other_city !== "") {
+    setother_city_error(false);
+  }
+  if(other_pincode !== "") {
+    setother_pincode_error(false);
+  }
+  if(other_pincode.length === 6) {
+    setpincode_len_error(false);
+  }
+}, [other_state,other_city,other_pincode])
+
+console.log("pintype",other_pincode, typeof other_pincode);
   return (
     <div>
             <Modal show={show} onHide={handleClose}>
@@ -850,11 +873,29 @@ const handlClk = () => {
         }
        else if (country !== "" && state === "") {
           setempty_state(true);
-        } else if (state !== "" && city === "") {
+        }
+        else if(state === "Add New" && zone === "") {
+          setzone_error(true);
+        }
+        else if(state === "Add New" && zone !== "" && other_state ==="") {
+          setother_state_error(true);
+        }
+        
+        else if (state !== "" && city === "") {
           setempty_city(true);
-        } else if(city !== "" && pincode === "") {
+        } else if(city === "Add New" && other_city === "") {
+setother_city_error(true);
+        }
+        
+        
+        else if(city !== "" && pincode === "") {
 setpincode_error(true);
-        } 
+        } else if(pincode === "Add New" && other_pincode === "") {
+          setother_pincode_error(true);
+        }
+//         else if(pincode === "Add New" && other_pincode !== "" && other_pincode.length !== 6){
+// setpincode_len_error(true);
+//         }
         else {
           validation.handleSubmit(e.values);
         }
@@ -1001,10 +1042,12 @@ setpincode_error(true);
                             data_item_s={zone}
                             set_data_item_s={setzone}
                             show_search={false}
+                            error_message={"Zone is required"}
+                            error_s={zone_error}
                           />
-                          <div className="mt-1 error-text" color="danger">
-                            {zone_error ? "Zoneis required" : null}
-                          </div>
+                          {/* <div className="mt-1 error-text" color="danger">
+                            {zone_error ? "Zone is required" : null}
+                          </div> */}
                         </div>
                       </Col>
 
@@ -1035,6 +1078,11 @@ setpincode_error(true);
                             id="input"
                             placeholder="Enter Other State"
                           />
+                          {other_state_error ? 
+                          <div style={{fontSize: "10.5px",
+                            color: "#f46a6a"}}>
+                            Please Enter State
+                          </div> :null}
                         </div>
                       </Col>
                     </>
@@ -1095,6 +1143,11 @@ setpincode_error(true);
                           id="input"
                           placeholder="Enter Other City"
                         />
+
+                        {other_city_error ?
+                        <div style={{fontSize: "10.5px",
+                        color: "#f46a6a"}}>Please Enter City</div>
+                        : null}
                       </div>
                     </Col>
                   ) : null}
@@ -1132,7 +1185,7 @@ setpincode_error(true);
                               setother_pincode(val.target.value)
                             }
                             onBlur={() => {
-                              if (other_pincode !== "") {
+                              if (other_pincode !== "" && other_pincode.length == 6 ) {
                                 if (
                                   window.confirm(
                                     `Do You Want To Add Pin Code ${toTitleCase(
@@ -1146,6 +1199,8 @@ setpincode_error(true);
                                     setPicode("");
                                   }
                                 }
+                              } else {
+                                setpincode_len_error(true);
                               }
                             }}
                             value={other_pincode}
@@ -1155,6 +1210,15 @@ setpincode_error(true);
                             id="input"
                             placeholder="Enter Other Pin Code"
                           />
+                          {other_pincode_error ? 
+                        <div style={{fontSize: "10.5px",
+                        color: "#f46a6a"}}>Please Enter Pincode</div>  
+                        : null}
+
+{pincode_len_error ? 
+                        <div style={{fontSize: "10.5px",
+                        color: "#f46a6a"}}>Please Enter a Valid Pincode</div>  
+                        : null}
                         </div>
                       </Col>
                     </>

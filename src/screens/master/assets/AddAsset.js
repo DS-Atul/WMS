@@ -212,6 +212,8 @@ const AddAsset = () => {
   const [callibration_to_date_error, setcallibration_to_date_error] =
     useState(false);
 
+    const [Add_manufacture_err, setAdd_manufacture_err] = useState(false);
+
   //Used for circle btn
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
@@ -584,6 +586,9 @@ const AddAsset = () => {
     if (manufacture_type !== "") {
       setmanufacture_type_error(false);
     }
+    if(other_manufacture_type !== ""){
+      setAdd_manufacture_err(false);
+    }
     if (temperature_log_type !== "") {
       settemperature_log_type_error(false);
     }
@@ -897,6 +902,7 @@ const AddAsset = () => {
                                   }
                                 }}
                                 value={other_manufacture_type}
+                                invalid={Add_manufacture_err}
                                 type="text"
                                 name="other_manufacture_type"
                                 className="form-control-md"
@@ -1399,6 +1405,28 @@ const AddAsset = () => {
                 type="button"
                 className={isupdating && (user.user_department_name === "ADMIN") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
                 onClick={() => {
+
+                //   if(asset_type ===""){
+                //     setasset_type_error(true);
+                //   }
+                //  else if(logger_box_type === ""){
+                //     setlogger_box_type_error(true);
+                //   }
+                //  else if(manufacture_type === ""){
+                //     setmanufacture_type_error(true);
+                //   }
+                //  else if(temperature_log_type === ""){
+                //     settemperature_log_type_error(true);
+                //   }
+                //   else if(other_manufacture_type ===""){
+                //     setAdd_manufacture_err(true);
+                //   }
+                //  else if(logger_box_no === ""){
+                //     setlogger_number_error(true);
+                //   }
+                //  else  if(branch_selected === ""){
+                //     setbranch_error(true);
+                //   }
                   // if (today == "") {
                   //   setexpire_date_error(true);
                   // }
@@ -1443,12 +1471,12 @@ const AddAsset = () => {
                   //     setbranch_error(true);
                   //   }
                   // }
-                  if (purchase_date === "" & expiry_date === "" & asset_type === "Logger") {
-                    alert("You Can Not Send Asset Callibration info Blank")
-                  }
-                  else {
+                  //  else if (purchase_date === "" & expiry_date === "" & asset_type === "Logger") {
+                  //   alert("You Can Not Send Asset Callibration info Blank")
+                  // }
+                  // else {
                     isupdating ? updateAsset() : add_asset();
-                  }
+                  // }
                 }}
               >
            {isupdating && (user.user_department_name === "ADMIN" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}

@@ -140,6 +140,10 @@ const AddVendor = () => {
   const [airway_bill, setairway_bill] = useState(false);
   const [console_connect, setconsole_connect] = useState(false);
 
+  const [emptyregisterd_number_errr, setemptyregisterd_number_errr] = useState(false);
+
+  
+
   const [direct_vehicle, setdirect_vehicle] = useState(false);
   const [part_load_vehicle, setpart_load_vehicle] = useState(false);
   const [kg_wise, setkg_wise] = useState(false);
@@ -261,6 +265,12 @@ const AddVendor = () => {
       setforwarding_by_air_value("AirWay Bill & Console COnnect");
     }
   }, [airway_bill, console_connect, forward_by_air]);
+
+  useEffect(()=>{
+    if(msme_registerd_number){
+      setemptyregisterd_number_errr(false)
+    }
+  },[msme_registerd_number])
 
   // Post Vendor
   const add_vendor = (values) => {
@@ -647,6 +657,13 @@ const AddVendor = () => {
       getVendorService(vendor_data.id);
     }
   }, [isupdating]);
+
+
+  useEffect(()=>{
+    if(msme_registerd_number){
+      setmsme_registerd_number_error();
+    }
+  })
 
   useEffect(() => {
     if (other_list_id !== "") {
@@ -1323,12 +1340,11 @@ const AddVendor = () => {
                                 onChange={(val) => {
                                   setmsme_registerd_number(val.target.value)
                                 }}
+                                invalid={msme_registerd_number_error}
                               />
-                              {msme_registerd_number_error ?
-                                <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
-                                Please Enter MSME Reg no.
-                              </div>
-                              : null}
+                              <div className="mt-1 error-text" color="danger">
+                                {msme_registerd_number_error ? " invalid number" : null} 
+                              </div> 
                             </div>
                           </Col>
 

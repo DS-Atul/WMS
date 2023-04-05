@@ -55,6 +55,7 @@ const Add_Commodity = () => {
   const [other_commodity_type, setother_commodity_type] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [jsonData, setJsonData] = useState([]);
+  const [add_como_err, setadd_como_err] = useState(false);
 
   const validation = useFormik({
     enableReinitialize: true,
@@ -63,6 +64,7 @@ const Add_Commodity = () => {
     },
     validationSchema: Yup.object({
       commodity_name: Yup.string().required("Commodity name is required"),
+
     }),
     onSubmit: (values) => {
       isupdating ? update_commodity(values) : add_commodity(values);
@@ -327,7 +329,10 @@ const Add_Commodity = () => {
     if (commodity_type === "Add New") {
       setother_commodity_type("");
     }
-  }, [commodity_type]);
+    if(other_commodity_type){
+      add_como_err(false);
+    }
+  }, [commodity_type],[other_commodity_type]);
 
   useLayoutEffect(() => {
     if (commodity_type !== "") {
@@ -512,6 +517,9 @@ const Add_Commodity = () => {
           if (commodity_type == "") {
             setcommodity_type_error(true);
           }
+          if(other_commodity_type == ""){
+            setadd_como_err(true);
+          }
           validation.handleSubmit(e.values);
           return false;
         }}
@@ -683,6 +691,7 @@ const Add_Commodity = () => {
                               }
                             }}
                             value={other_commodity_type}
+                            invalid={add_como_err}
                             type="text"
                             name="other_commodity_type"
                             className="form-control-md"
