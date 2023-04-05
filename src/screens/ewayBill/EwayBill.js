@@ -9,6 +9,7 @@ import { useDispatch,useSelector } from 'react-redux';
 const EwayBill = () => {
     const dispatch = useDispatch();
     const e_acess_token = useSelector((state) => state.eway_bill.e_access_token);
+    const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
 
     const login_in = () => {
         axios
@@ -46,7 +47,7 @@ const EwayBill = () => {
              {
                 
                     "token": `${e_acess_token}`,
-                    "orgId": "4"
+                    "orgid": "4"
                     
              },
            
@@ -57,38 +58,49 @@ const EwayBill = () => {
             }
           )
           .then(function (response) {
-           console.log("response",response);
+           console.log("responseblogin",response.data.response.token);
         //    console.log("token",response.data.response.token);
-        //    dispatch(setEAccessToken(response.data.response.token));
+           dispatch(setBAccessToken(response.data.response.token));
         //    dispatch(setOrgs(response.data.response.orgs));
           })
           .catch((error) => {
             alert(`Error Happen while posting Order  Data ${error}`);
           });
       };
-    //   const  business_login = () => {
-    //     axios
-    //       .post(
-    //          "https://dev.api.easywaybill.in/ezewb/v1/auth/completelogin",
-    //          {
-    //             "token":"eyJhbGciOiJIUzI1NiJ9.eyJ1IjoxNTcsInYiOmZhbHNlLCJleHAiOjE2ODAyNjgzMzksIm0iOmZhbHNlLCJpYXQiOjE2ODAyNDY3Mzl9._B2GT7fdx7-mw_aQwUKUs630Om2lDrMX6LFizcE06iw",
-    //             "orgId": "4"
-    //          },
+
+      const step3 = () => {
+        axios
+          .post(
+             "https://dev.api.easywaybill.in/ezewb/v1/org/addbusiness",
+             {
+                
+                  
+                    "token": `${b_acess_token}`,
+                      "gstn": "05AAAAT2562R1Z3",
+                      "name": "HAI LOGICS",
+                      "nicUser": "HAI LOGICS",
+                      "nicPass": "Abcd@12345"
+                     
+                    
+             },
            
-    //         {
-    //           headers: {
-    //             'Content-Type': 'application/json',
-    //           },
-    //         }
-    //       )
-    //       .then(function (response) {
-    //        console.log("businesscompleteion",response);
-           
-    //       })
-    //       .catch((error) => {
-    //         console.log(`Error Happen while business data ${error}`);
-    //       });
-    //   };
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          )
+          .then(function (response) {
+           console.log("responseblogin",response.data.response.token);
+        //    console.log("token",response.data.response.token);
+           dispatch(setBAccessToken(response.data.response.token));
+        //    dispatch(setOrgs(response.data.response.orgs));
+          })
+          .catch((error) => {
+            alert(`Error Happen while posting Order  Data ${error}`);
+          });
+      };
+     
 
 
   return (
@@ -105,6 +117,11 @@ const EwayBill = () => {
     <Button onClick={()=>{
      login();
     }}> Business Login In</Button>
+</div>
+<div>
+    <Button onClick={()=>{
+     step3();
+    }}>Step 3</Button>
 </div>
     </>
  

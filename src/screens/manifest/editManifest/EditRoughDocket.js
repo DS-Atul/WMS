@@ -74,12 +74,12 @@ const EditRoughDocket = () => {
   // Navigation At the time of Cancel
   const handleAction = () => {
     dispatch(setToggle(true));
-    navigate(-1)
+    navigate(-1);
     // navigate("/manifest/pendingtomanifest");
   };
   const [order_active_btn, setorder_active_btn] = useState("first");
-  const [manifest_data, setmanifest_data] = useState([])
-  const [same_box, setsame_box] = useState(true)
+  const [manifest_data, setmanifest_data] = useState([]);
+  const [same_box, setsame_box] = useState(true);
   // adding extra input fields in Packages
   const [length, setlength] = useState("");
   const [breadth, setbreadth] = useState("");
@@ -128,7 +128,7 @@ const EditRoughDocket = () => {
   const [manifest_no, setmanifest_no] = useState("");
   const [manifest_id, setmanifest_id] = useState("");
   const [total_bags, settotal_bags] = useState(0);
-  const [total_box, settotal_box] = useState(0)
+  const [total_box, settotal_box] = useState(0);
   const [manifest_weight, setmanifest_weight] = useState("");
   const [airway_bill_no, setairway_bill_no] = useState("");
   const [coloader_mode, setcoloader_mode] = useState("");
@@ -147,7 +147,7 @@ const EditRoughDocket = () => {
   ]);
   useLayoutEffect(() => {
     let manifest_data = location_data.state.manifest;
-    setmanifest_data(manifest_data)
+    setmanifest_data(manifest_data);
     setmanifest_no(manifest_data.manifest_no);
     setmanifest_id(manifest_data.id);
     setfrom_branch(toTitleCase(manifest_data.from_branch_n));
@@ -160,6 +160,9 @@ const EditRoughDocket = () => {
     setmanifest_weight(manifest_data.total_weight);
     setairway_bill_no(manifest_data.airwaybill_no);
     setflight_name(toTitleCase(manifest_data.carrier_name));
+    setvehicle_no(manifest_data.vehicle_no);
+    setrental(manifest_data.is_rented_vehcile);
+    // setvendor_id(manifest_data.)
   }, []);
 
   const get_orderof_manifest = () => {
@@ -203,13 +206,16 @@ const EditRoughDocket = () => {
           forwarded: "False",
           manifested: "False",
           departed: "False",
-          is_scanned:same_box ? manifest_data.is_scanned : false,
+          is_scanned: same_box ? manifest_data.is_scanned : false,
           modified_by: user_id,
           forwarded_branch_name: "",
           forwarded_branch: null,
           manifest_packages: row,
           manifest_no: manifest_no,
           deleted_packages: deleted_packages_id,
+          vehicle_no:vehicle_no,
+          vehcile_no_f:vendor_id,
+          is_rented_vehcile:rental ? "True" :"False",
         },
         {
           headers: {
@@ -233,14 +239,16 @@ const EditRoughDocket = () => {
       });
   };
 
- 
   useEffect(() => {
-    if (total_bags == manifest_data.bag_count && total_box == manifest_data.box_count) {
-      setsame_box(true)
+    if (
+      total_bags == manifest_data.bag_count &&
+      total_box == manifest_data.box_count
+    ) {
+      setsame_box(true);
+    } else {
+      setsame_box(false);
     }
-    else {
-      setsame_box(false)
-    }
+    
 
   }, [total_bags, total_box, manifest_data])
  
@@ -255,7 +263,7 @@ const EditRoughDocket = () => {
   const [vendor_data, setvendor_data] = useState([]);
   const [rental, setrental] = useState(false);
   const [vehicle_no, setvehicle_no] = useState("");
-//  For getting Vehcile number
+  //  For getting Vehcile number
   const get_vehcile_no = () => {
     let vendor_temp = [];
     let data = [];
@@ -269,7 +277,7 @@ const EditRoughDocket = () => {
       )
       .then((response) => {
         data = response.data.results;
-        console.log("data printing",data)
+        console.log("data printing", data);
         setvendor_data(data);
         if (response.data.results.length > 0) {
           if (vendor_n_page == 1) {
@@ -291,11 +299,9 @@ const EditRoughDocket = () => {
       });
   };
 
- 
   useLayoutEffect(() => {
     get_vehcile_no();
   }, [vendor_n_page, search_vendor_name, refresh_r]);
-
 
   return (
     <>
@@ -321,7 +327,7 @@ const EditRoughDocket = () => {
         >
           <div className="mt-3">
             <PageTitle page={"Edit Manifest"} />
-            <Title title={"Edit Manifest"} parent_title="Manifests" />
+            <Title title={"Edit Manifest "} parent_title="Manifests" />
           </div>
 
           {/* Company Info */}
@@ -392,14 +398,13 @@ const EditRoughDocket = () => {
                             <FormFeedback type="invalid">
                               Total Bages is required
                             </FormFeedback>
-                            
                           ) : null}
                         </div>
                       </Col>
 
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
-                          <Label className="header-child">Total Bags </Label>
+                          <Label className="header-child">Total Boxes </Label>
                           <Input
                             value={total_box}
                             onChange={(e) => {
@@ -414,56 +419,65 @@ const EditRoughDocket = () => {
                         </div>
                       </Col>
                       <Col lg={4} md={8} sm={8}>
-                    <div className="mb-2">
-                      <Label className="header-child">Vehcile No* :</Label>
-                      {
-                        rental ? 
-                        null :
-                        <SearchInput
-                        data_list={vendor_list}
-                        setdata_list={setvendor_list}
-                        data_item_s={vendor_name}
-                        set_data_item_s={setvendor_name}
-                        set_id={setvendor_id}
-                        page={vendor_n_page}
-                        setpage={setvendor_n_page}
-                        search_item={search_vendor_name}
-                        setsearch_item={setsearch_vendor_name}
-                        error_message={"Please Select Any Vechile Number"}
-                        error_s={vendor_error}
-                      />
+                        <div className="mb-2">
+                          {
+                            rental ? 
+                            <Label className="header-child"> Market Vehcile No* :</Label>
+                            :
+                            <Label className="header-child">Vehcile No* :</Label>
+                          }
+                          {rental ? null : (
+                            <SearchInput
+                              data_list={vendor_list}
+                              setdata_list={setvendor_list}
+                              data_item_s={vendor_name}
+                              set_data_item_s={setvendor_name}
+                              set_id={setvendor_id}
+                              page={vendor_n_page}
+                              setpage={setvendor_n_page}
+                              search_item={search_vendor_name}
+                              setsearch_item={setsearch_vendor_name}
+                              error_message={"Please Select Any Vechile Number"}
+                              error_s={vendor_error}
+                            />
+                          )}
 
-                      }
-                     
-       {rental &&
- <Input
- name="vehicle_no"
- type="text"
- id="input"
- maxLength={10}
- value={vehicle_no}
- onChange={(e) => {
-   setvehicle_no(e.target.value);
- }}
-/>
-       }
-                     
-                    </div>
-                  </Col>
-                  <Col>
-                  <div className="mb-2" style={{marginTop:"25px"}}>
-                      <Label className="header-child">Rentend Vehcile :</Label>
-                  {rental ?
-        <FiCheckSquare size={20} onClick={()=>{
-          setrental(false);
-        }}/>
-        :
-        <FiSquare size={20} onClick={()=>{
-          setrental(true);
-        }}/> 
-        }
-        </div>
-        </Col>
+                          {rental && (
+                            <Input
+                              name="vehicle_no"
+                              type="text"
+                              id="input"
+                              maxLength={10}
+                              value={vehicle_no}
+                              onChange={(e) => {
+                                setvehicle_no(e.target.value);
+                              }}
+                            />
+                          )}
+                        </div>
+                      </Col>
+                      <Col>
+                        <div className="mb-2" style={{ marginTop: "25px" }}>
+                          <Label className="header-child">
+                            Market Vehcile:
+                          </Label>
+                          {rental ? (
+                            <FiCheckSquare
+                              size={20}
+                              onClick={() => {
+                                setrental(false);
+                              }}
+                            />
+                          ) : (
+                            <FiSquare
+                              size={20}
+                              onClick={() => {
+                                setrental(true);
+                              }}
+                            />
+                          )}
+                        </div>
+                      </Col>
                     </Row>
                   </CardBody>
                 ) : null}

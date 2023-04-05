@@ -395,6 +395,7 @@ const BoxDetail =React.lazy(()=>import("./screens/manifest/incomingVehcile/BoxDe
 const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"))
 const Vehcile=React.lazy(()=>import("./screens/master/vehcile/vehcile.js"))
 const AddVehcile=React.lazy(()=>import("./screens/master/vehcile/add_Vehcile.js"))
+// const CheckerMaster= React.lazy(()=>import ("./screen"))
 const auth_routes = [
   { path: "/signin", element: <SignIn /> },
   { path: "/", exact: true, element: <Navigate to="/signin" /> },

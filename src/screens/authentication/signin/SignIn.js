@@ -406,32 +406,32 @@ const SignIn = () => {
           ],
           trigger: false,
         },
-        {
-          id: 2,
-          dropdown: "VMS",
-          dropdownMenu: [
-            ["Vehicle Model", "/vehicleModel/Model"],
-            ["Vehicle Engine", "/vehicleEngine/AddVehicleEngine"],
-            ["Vehicle Dimension", "/vehicleDimension/AddVehicleDimension"],
-            [
-              "Vehicle Model Performance",
-              "/VehicleModelPerformance/AddModelPerformance",
-            ],
-            [
-              "Vehicle Model Fuel Economy ",
-              "/VehicleModelFuelEconomy/AddModelFuelEconomy",
-            ],
-            ["Vehicle Model Weight", "/vehicleModelWeight/AddModelWeight"],
-            ["Vehicle Inspection", "/vehicleInspection/AddVehicleInspection"],
-            [
-              "Vehicle Transmission ",
-              "/vehicleTransmission/AddVehicleTransmission",
-            ],
-            ["Vehicle Wheels", "/vehicleWheels/AddVehicleWheel"],
-            ["Vehicle", "/Vehicle/Vehicle"],
-          ],
-          trigger: false,
-        },
+        // {
+        //   id: 2,
+        //   dropdown: "VMS",
+        //   dropdownMenu: [
+        //     ["Vehicle Model", "/vehicleModel/Model"],
+        //     ["Vehicle Engine", "/vehicleEngine/AddVehicleEngine"],
+        //     ["Vehicle Dimension", "/vehicleDimension/AddVehicleDimension"],
+        //     [
+        //       "Vehicle Model Performance",
+        //       "/VehicleModelPerformance/AddModelPerformance",
+        //     ],
+        //     [
+        //       "Vehicle Model Fuel Economy ",
+        //       "/VehicleModelFuelEconomy/AddModelFuelEconomy",
+        //     ],
+        //     ["Vehicle Model Weight", "/vehicleModelWeight/AddModelWeight"],
+        //     ["Vehicle Inspection", "/vehicleInspection/AddVehicleInspection"],
+        //     [
+        //       "Vehicle Transmission ",
+        //       "/vehicleTransmission/AddVehicleTransmission",
+        //     ],
+        //     ["Vehicle Wheels", "/vehicleWheels/AddVehicleWheel"],
+        //     ["Vehicle", "/Vehicle/Vehicle"],
+        //   ],
+        //   trigger: false,
+        // },
         // {
         //   id: 3,
         //   dropdown: "Trip",

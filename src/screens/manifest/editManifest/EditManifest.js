@@ -385,8 +385,8 @@ const EditManifest = () => {
           }}
         >
           <div className="mt-3">
-            <PageTitle page={"Edit Manifest"} />
-            <Title title={"Edit Manifest"} parent_title="Manifests" />
+            <PageTitle page={"Market Hired "} />
+            <Title title={"Market Hired "} parent_title="Manifests" />
           </div>
 
           {/* Company Info */}
