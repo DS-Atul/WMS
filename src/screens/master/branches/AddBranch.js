@@ -1283,7 +1283,7 @@ const AddBranch = () => {
           </div>
 
           {/* Location info */}
-          <div className="m-3" id="location_info">Location info
+          <div className="m-3" id="location_info">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">

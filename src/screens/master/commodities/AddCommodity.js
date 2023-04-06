@@ -330,7 +330,7 @@ const Add_Commodity = () => {
       setother_commodity_type("");
     }
     if(other_commodity_type){
-      add_como_err(false);
+      setadd_como_err(false);
     }
   }, [commodity_type],[other_commodity_type]);
 
@@ -698,6 +698,9 @@ const Add_Commodity = () => {
                             id="input"
                             placeholder="Enter Commodity Type"
                           />
+                          <FormFeedback type="invalid">
+                            Please Enter Commodity Type
+                          </FormFeedback>
                         </div>
                       </Col>
                     ) : null}

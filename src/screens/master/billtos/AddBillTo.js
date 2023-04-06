@@ -209,7 +209,7 @@ const AddClient = () => {
         .max(10, "Phone number must 10 digit long")
         .required("Phone number is required"),
       authorised_person_name: Yup.string().required(
-        "authorised person name is required"
+        "Authorised person name is required"
       ),
       authorised_email: Yup.string()
         .email("Invalid email format")
@@ -1527,7 +1527,7 @@ const AddClient = () => {
                     <Col lg={4} md="6" sm="6">
                       <div className="mb-3">
                         <Label className="header-child">
-                          Authorised Person Name:
+                          Authorised Person Name
                         </Label>
                         <Input
                           onChange={validation.handleChange}

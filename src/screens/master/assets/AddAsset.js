@@ -49,7 +49,6 @@ const AddAsset = () => {
   const [circle_btn1, setcircle_btn1] = useState(true);
   const [isupdating, setisupdating] = useState(false);
   const location_data = useLocation();
-  console.log("location_data----", location_data)
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const [null_value, setnull_value] = useState(false)
@@ -117,7 +116,6 @@ const AddAsset = () => {
     "Temperature Control Box",
   ]);
   const [asset_type, setasset_type] = useState("");
-  console.log("asset_type-----", asset_type)
   const [asset_type_short, setasset_type_short] = useState("");
   const [branch_list, setbranch_list] = useState([]);
   const [branch_short_id, setbranch_short_id] = useState("");
@@ -128,7 +126,6 @@ const AddAsset = () => {
 
   const [isChecked, setisChecked] = useState(true);
   const [is_defective, setis_defective] = useState(false)
-  console.log("is_defective-----", is_defective)
   const [purchase_date, setpurchase_date] = useState("");
   const [expiry_date, setexpiry_date] = useState("");
   const [logger_box_no, setlogger_box_no] = useState("");
@@ -153,7 +150,6 @@ const AddAsset = () => {
 
 
   const [deleted_calibration_id, setdeleted_calibration_id] = useState([])
-  console.log("deleted_calibration_id----", deleted_calibration_id)
   const [refresh, setrefresh] = useState(false);
   let dimensiton_list = [
     callibration_from_date,
@@ -317,7 +313,6 @@ const AddAsset = () => {
         alert(`Error Happen while posting Manufacture Data ${error}`);
       });
   };
-  console.log("----------", is_defective)
   const get_branch = () => {
     axios
       .get(
@@ -440,6 +435,7 @@ const AddAsset = () => {
         }
       )
       .then(function (response) {
+        console.log("response", response.data)
         if (response.data.status === "success") {
           dispatch(setToggle(true));
           dispatch(setShowAlert(true));
@@ -570,7 +566,7 @@ const AddAsset = () => {
       });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (box_type !== "") {
       setbox_type_error(false);
     }
@@ -645,7 +641,6 @@ const AddAsset = () => {
     }
   }, [manufacture_type]);
 
-  console.log("row----", row)
 
   useEffect(() => {
     let a = row[row.length - 1];
@@ -796,7 +791,7 @@ const AddAsset = () => {
           }
 
         {/* Branch Info */}
-        <div className="m-3">
+        <div className="m-3" id="asset_info">
           <Col lg={12}>
             <Card className="shadow bg-white rounded">
               <CardTitle className="mb-1 header">
@@ -1036,7 +1031,7 @@ const AddAsset = () => {
         </div>
 
         {/* Asset Details */}
-        <div className="m-3">
+        <div className="m-3" id="asset_details">
           <Col lg={12}>
             <Card className="shadow bg-white rounded">
               <CardTitle className="mb-1 header">
@@ -1406,42 +1401,34 @@ const AddAsset = () => {
                 className={isupdating && (user.user_department_name === "ADMIN") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
                 onClick={() => {
 
-                //   if(asset_type ===""){
-                //     setasset_type_error(true);
-                //   }
-                //  else if(logger_box_type === ""){
-                //     setlogger_box_type_error(true);
-                //   }
-                //  else if(manufacture_type === ""){
-                //     setmanufacture_type_error(true);
-                //   }
-                //  else if(temperature_log_type === ""){
-                //     settemperature_log_type_error(true);
-                //   }
-                //   else if(other_manufacture_type ===""){
-                //     setAdd_manufacture_err(true);
-                //   }
-                //  else if(logger_box_no === ""){
-                //     setlogger_number_error(true);
-                //   }
-                //  else  if(branch_selected === ""){
-                //     setbranch_error(true);
-                //   }
-                  // if (today == "") {
-                  //   setexpire_date_error(true);
-                  // }
-                  // if (callibration_from_date == "") {
-                  //   setcallibration_from_date_error(true);
-                  // }
-                  // if (callibration_to_date == "") {
-                  //   setcallibration_to_date_error(true);
-                  // }
-                  // if(from_date === ""){
-                  //   alert("---------")
-                  // }
-                  // if (asset_type == "") {
-                  //   setasset_type_error(true);
-                  // } else {
+                  if (asset_type === "") {
+                    setasset_type_error(true);
+                    document.getElementById("asset_info").scrollIntoView();
+                  } 
+
+                  if(manufacture_type === "") {
+                    setmanufacture_type_error(true);
+                  }
+                  else if(asset_type === "Logger"){
+if(logger_box_type === "") {
+  setlogger_box_type_error(true);
+  document.getElementById("asset_info").scrollIntoView();
+
+}
+
+                  } else if(asset_type === "Temperature Control Box") {
+alert("Temp")
+                  } 
+
+                  if(branch_selected === "") {
+                    setbranch_error(true);
+                    document.getElementById("asset_details").scrollIntoView();
+
+                  }
+                  else {
+                    isupdating ? updateAsset() : add_asset();
+                  }
+                  // else {
                   //   if (asset_type === "Temperature Control Box") {
                   //     if (box_type == "") {
                   //       setbox_type_error(true);
@@ -1474,9 +1461,7 @@ const AddAsset = () => {
                   //  else if (purchase_date === "" & expiry_date === "" & asset_type === "Logger") {
                   //   alert("You Can Not Send Asset Callibration info Blank")
                   // }
-                  // else {
-                    isupdating ? updateAsset() : add_asset();
-                  // }
+               
                 }}
               >
            {isupdating && (user.user_department_name === "ADMIN" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}

@@ -348,10 +348,10 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {
                   asset.cm_current_status === "APPROVED" ?
-                    <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-success btn-rounded"} onClick={() => { handleModalCM(asset) }}>Approved</button>
+                    <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-success btn-rounded"} onClick={() => { handleModalCM(asset) }}>Approved</button>
                     :
                     asset.cm_current_status === "REJECTED" && asset.cm_transit_status === "NOT APPROVED" ? <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-danger btn-rounded"} onClick={() => { handleModal(asset) }}>Reject <HiQuestionMarkCircle size={15} /></button>
-                      : <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-warning btn-rounded"} onClick={() => { handleModalCM(asset) }}>Status <HiQuestionMarkCircle size={15} /></button>
+                      : <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-warning btn-rounded"} onClick={() => { handleModalCM(asset) }}>Status <HiQuestionMarkCircle size={15} /></button>
                 }
               </td>
             </tr>
