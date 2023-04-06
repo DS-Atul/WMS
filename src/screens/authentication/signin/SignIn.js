@@ -506,7 +506,13 @@ const SignIn = () => {
           dropdown: "Organisation",
           dropdownMenu: [["Organiation", "/organization/organization"]],
           trigger: false,
-        }
+        },
+        {
+          id: 10,
+          dropdown: "Analytics",
+          dropdownMenu: [["Reports", "/analytics/reports"]],
+          trigger: false,
+        },
       );
       dispatch(setNavigationList(navigation_list));
       dispatch(setPermission(true));

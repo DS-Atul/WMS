@@ -25,6 +25,21 @@ const Page_Not_Found = React.lazy(() =>
   import("./screens/utilities/page404/Page404.js")
 );
 
+// Analytics
+const Report = React.lazy(() => import('./screens/analytics/reports/Report.js'));
+const MisDetailedReport = React.lazy(() => import('./screens/analytics/reports/MisDetailedReport/MisDetailedReport.js'));
+const LocalRunsheetReport = React.lazy(() => import('./screens/analytics/reports/RunsheetReport/LocalRunsheetReport.js'));
+const IncomingDetailReport = React.lazy(() => import('./screens/analytics/reports/IncomingDetailReport/IncomingDetailReport.js'))
+const VendorReport = React.lazy(() => import('./screens/analytics/reports/VendorReport/VendorReport.js'))
+const BranchReport = React.lazy(() => import('./screens/analytics/reports/BranchReport/BranchReport.js'))
+const ColoaderReport = React.lazy(() => import('./screens/analytics/reports/ColoaderReport/ColoaderReport.js'))
+const WeightDiffReport = React.lazy(() => import('./screens/analytics/reports/WeightDiffReport/WeightDiffReport.js'))
+
+const AirportOrderReport = React.lazy(() => import('./screens/analytics/reports/AirportOrderReport/AirportOrderReport.js'))
+const UserReport = React.lazy(() => import('./screens/analytics/reports/UserReport/UserReport.js'))
+
+const PendingStatusReport = React.lazy(() => import('./screens/analytics/reports/PendingStatusReport/PendingStatusReport.js'))
+
 // EMS
 const LoginDetails = React.lazy(() =>
   import("./screens/ems/loginDetails/LoginDetails.js")
@@ -513,6 +528,53 @@ const routes = [
     path: "/vehicleWheels/AddVehicleWheel",
     element: <AddVehicleWheel />,
   },
+
+  // Reports
+  {
+    path: "/analytics/reports",
+    element: <Report />
+  },
+  {
+    path: "/analytics/reports/MisDetailedReport",
+    element: <MisDetailedReport />
+  },
+  {
+    path: "/analytics/reports/IncomingDetailReport",
+    element: <IncomingDetailReport />
+  },
+  {
+    path: "/analytics/reports/VendorReport",
+    element: <VendorReport />
+  },
+  {
+    path: "/analytics/reports/UserReport",
+    element: <UserReport />
+  },
+  {
+    path: "/analytics/reports/BranchReport",
+    element: <BranchReport />
+  },
+  {
+    path: "/analytics/reports/ColoaderReport",
+    element: <ColoaderReport />
+  },
+  {
+    path: "/analytics/reports/WeightDiffReport",
+    element: <WeightDiffReport />
+  },
+  {
+    path: "/analytics/reports/PendingStatusReport",
+    element: <PendingStatusReport />
+  },
+  {
+    path: "/analytics/reports/AirportOrderReport",
+    element: <AirportOrderReport />
+  },
+  {
+    path: "/analytics/reports/RunsheetReport/LocalRunsheetReport",
+    element: <LocalRunsheetReport />
+  },
+
 
   //vms
   {
