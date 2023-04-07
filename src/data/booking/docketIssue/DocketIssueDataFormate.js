@@ -6,6 +6,8 @@ import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import { setIsDeleted, setToggle } from "../../../store/pagination/Pagination";
 import { HiQuestionMarkCircle } from "react-icons/hi";
+import correct from "../../../assets/images/bookings/check-mark.png";
+import cross from "../../../assets/images/bookings/remove.png";
 import Modal from 'react-bootstrap/Modal';
 import {
   setClose,
@@ -222,10 +224,22 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
               {/* <td>{order.manifest_no}</td> */}
               <td>{toTitleCase(order.universal_type)}</td>
               <td>{toTitleCase(order.issue_location)}</td>
+              <td>{toTitleCase(order.issue)}</td>
               <td>{l_fdate}</td>
               {/* <td>{order.issue_type}</td> */}
               <td>{order.barcode}</td>
               <td>{toTitleCase(order.barcode_type)}</td>
+              <td>
+                {order.is_solved ? (
+                  <div>
+                    <img src={correct} width="16" height="16" />
+                  </div>
+                ) : (
+                  <div>
+                    <img src={cross} width="16" height="16" />
+                  </div>
+                )}
+              </td>
             </tr>
           );
         })

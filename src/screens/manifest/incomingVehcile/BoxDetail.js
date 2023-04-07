@@ -28,12 +28,13 @@ const BoxDetail = () => {
   const [docket_no, setdocket_no] = useState("")
   const [order_id, setorder_id] = useState()
   const [selected_id, setselected_id] = useState([]);
+  const [is_issue, setis_issue] = useState(false);
   const [remarks, setremarks] = useState("")
   const [local_cal_type, setlocal_cal_type] = useState("")
 
   console.log("docket_no------", docket_no)
   console.log("data len=========", data.length)
-  console.log("selected_id len========", selected_id)
+  console.log("selected_id ========", selected_id)
   // // Permissions
   useEffect(() => {
     dispatch(setToggle(false));
@@ -128,7 +129,7 @@ const BoxDetail = () => {
   const handleShow = () => setShow(true);
   return (
     <>
-      <Modal
+      {/* <Modal
         show={show}
         onHide={handleClose}
         backdrop="static"
@@ -156,7 +157,7 @@ const BoxDetail = () => {
           </Button>
           <Button variant="primary" onClick={()=> add_order_status()}>Save</Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
 
 
       <PageTitle page="PacketsDetail" />
@@ -179,18 +180,20 @@ const BoxDetail = () => {
           {/* DataTable */}
           <PacketsDataFormat
             data={data}
-            selected_id={selected_id}
-            setselected_id={setselected_id}
+            is_issue={is_issue}
+            setis_issue={setis_issue}
+            received={selected_id}
+            setReceived={setselected_id}
           />
           <div style={{ textAlign: "right" }}>
             <Button variant="success"
               onClick={() =>{
-                if (selected_id.length>0) {
-                  handleShow()               
-                }
-                else {
+                // if (selected_id.length>0) {
+                //   handleShow()               
+                // }
+                // else {
                   add_order_status()
-                }
+                // }
               } }
             >Save</Button>
             <Button variant="danger" style={{ margin: "10px" }} onClick={() => navigate(-1)}>Cancel</Button>

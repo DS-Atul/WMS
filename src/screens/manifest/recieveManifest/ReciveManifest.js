@@ -46,7 +46,13 @@ const RecieveManifest = ({ depart }) => {
   const location_data = useLocation();
   const navigate = useNavigate();
   const order_id = useSelector((state) => state.manifest.order_id);
-  console.log("location_data Mnaaaa-----", location_data)
+  console.log("receivedqqqq Mnaaaa-----", received)
+  // useEffect(() => {
+  //   console.log("--------------------------------------------------------------", received)
+  //   let a = received.filter((v)=>v.issueType !=="None")
+  //   console.log("a-------+++++++++", a)
+  // }, [received])
+  
   const issue_id = useSelector((state) => state.manifest.issueorder_id);
   const loaded = useSelector((state) => state.manifest.loaded);
 

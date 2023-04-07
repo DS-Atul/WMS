@@ -70,7 +70,7 @@ const RecieveHubDataFormat = ({
     // }
     const orderInfo = { universal_no, issueType, remarks, universal_type, barcode, issue_location, barcode_type, issue_image};
 
-    if (["Broken", "Damage", "Not Received", "Custom Check Failed", "Other"].includes(issueType)) {
+    if (["Broken", "Damage", "Not Received","None", "Custom Check Failed", "Other"].includes(issueType)) {
       setReceived((prevReceived) => {
         const newReceived = [...prevReceived];
         newReceived[index] = orderInfo;
@@ -175,18 +175,15 @@ const RecieveHubDataFormat = ({
                           }
                         >
                           <option defaultChecked>Select...</option>
-                          {!going_hub_id.includes(order.id) && !selected_id.includes(order.id) &&
-                            <option value="Not Received">Not Received</option>
-                          }
+                            <option value="Not Received">Not Received</option>                    
                           <option value="Broken">Broken</option>
                           <option value="Damage">Damage</option>
-                          {!going_hub_id.includes(order.id) && !selected_id.includes(order.id) && <>
                             <option value="Custom Check Failed">
                               Custom Check Failed
                             </option>
                             <option value="Other">Other</option>
-                          </>
-                          }
+                            <option value="None">None</option>
+                       
                         </select>
                       </td>
 
@@ -230,8 +227,7 @@ const RecieveHubDataFormat = ({
                                 style={{ width: "12vw" }}
                               />
                             </td>
-                          )}
-                    
+                          )}                    
                   
                       {received[index] &&
                           received[index]["issueType"] === "Other" && (

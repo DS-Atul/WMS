@@ -158,15 +158,15 @@ const BreakManifest = ({
 
   // const [is_issue, setis_issue] = useState(false);
   // e, universal_no, index, universal_type, issue_location, barcode)
-  function handleIssueTypeChange(e, universal_no, index, universal_type, barcode, issue_location, barcode_type) {
+  function handleIssueTypeChange(e, universal_no, index, universal_type, barcode, issue_location, barcode_type, issue_image) {
     setis_issue(true);
     const issueType = e.target.value;
     let remarks = "";
     // if (issueType === "Other") {
     //   remarks = prompt("Enter remarks:");
     // }
-    const orderInfo = { universal_no, issueType, remarks, universal_type, barcode, issue_location, barcode_type};
-    if (["Broken", "Damage", "Not Received", "Custom Check Failed", "Other"].includes(issueType)) {
+    const orderInfo = { universal_no, issueType, remarks, universal_type, barcode, issue_location, barcode_type, issue_image};
+    if (["Broken", "Damage", "Not Received", "None", "Custom Check Failed", "Other"].includes(issueType)) {
       setReceived((prevReceived) => {
         const newReceived = [...prevReceived];
         newReceived[index] = orderInfo;
@@ -321,7 +321,7 @@ const BreakManifest = ({
                       <td>
                         <select
                           onChange={(e) =>
-                            handleIssueTypeChange(e, order.docket_no, index, "BOOKING",order.barcode_no, "ON BREAK", "PKT")
+                            handleIssueTypeChange(e, order.docket_no, index, "BOOKING",order.barcode_no, "ON BREAK", "PKT", '')
                           }
                         >
                           <option defaultChecked>Select Issue</option>
@@ -330,6 +330,7 @@ const BreakManifest = ({
                           <option value="Damage">Damage</option>
                           <option value="Custom Check Failed">Custom Check Failed</option>
                           <option value="Other">Other</option>
+                          <option value="None">None</option>
                         </select>
                       </td>
 
@@ -356,6 +357,46 @@ const BreakManifest = ({
                           placeholder="Enter Issue"
                         />
                       </td>} */}
+                                            {received[index] &&
+                        received[index]["issueType"] === "Broken" && (
+                          <td>
+                            <Input
+                              type="file"
+                              name="file"
+                              id="exampleFile"
+                              size={"sm"}
+                              style={{ width: "12vw" }}
+                            />
+                          </td>
+                        )}
+
+
+                      {received[index] &&
+                        received[index]["issueType"] === "Custom Check Failed" && (
+                          <td>
+                            <Input
+                              type="file"
+                              name="file"
+                              id="exampleFile"
+                              size={"sm"}
+                              style={{ width: "12vw" }}
+                            />
+                          </td>
+                        )}
+
+
+                      {received[index] &&
+                        received[index]["issueType"] === "Other" && (
+                          <td>
+                            <Input
+                              type="file"
+                              name="file"
+                              id="exampleFile"
+                              size={"sm"}
+                              style={{ width: "12vw" }}
+                            />
+                          </td>
+                        )}
                     </tr>
                     {received[index] &&
                       received[index]["issueType"] === "Other" && (
