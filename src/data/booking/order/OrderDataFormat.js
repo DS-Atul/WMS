@@ -340,6 +340,7 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
               </td>
               <td>{toTitleCase(order.shipper_name)}</td>
               <td>{toTitleCase(order.consignee_name)}</td>
+              <td><span style={{ color: order.current_status === "SHORT DELIVERED" && "red"}}>{toTitleCase(order.current_status)}</span></td>
               <td>
                 <div>
                   <Link

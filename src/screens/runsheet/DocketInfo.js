@@ -119,6 +119,8 @@ const DocketInfo = ({ runsheet_no }) => {
                         toTitleCase(rn_order.consignee_city)}
                     </td>
                     <td>{rn_order.total_quantity}</td>
+                    <td>{(rn_order.issue).length}</td>
+                    <td>{(rn_order.issue_notreceived).length}</td>
                     <td>{rn_order.actual_weight}</td>
                     <td>{rn_order_date}</td>
                     <td>{toTitleCase(rn_order.current_status)}</td>

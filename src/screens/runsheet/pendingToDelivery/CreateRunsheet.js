@@ -74,7 +74,10 @@ const [close, setclose] = useState(false)
 
   const awb_no_list = awb_numbers;
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false)
+    setclose(false)
+  };
   const handleShow = () => setShow(true);
   const handleSuccess = () => {
     // send_runsheet_data();
@@ -344,11 +347,11 @@ const [close, setclose] = useState(false)
                     />
                   )}
 
-                  {route_error && (
+                  {/* {route_error && (
                     <div className="mt-1 error-text" color="danger">
                       Please Select Route
                     </div>
-                  )}
+                  )} */}
                 </div>
                 <div style={{ marginTop: "10px" }}>
                   <Label> Contract Based Vehicle :
@@ -435,14 +438,15 @@ const [close, setclose] = useState(false)
                   </div>
                 }
               </>
-
-              : <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces are Damaged and "${issuenon_received_total}" are not Received`}</div>}
+              :
+               <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces is Damaged and "${issuenon_received_total}" is not Received`}</div>
+               }
           </Modal.Body>
 
           <Modal.Footer>
             {(issuereceived_total === 0 && issuereceived_total === 0) || close ?
               <Button type="submit">
-                Save1
+                Save
               </Button>
               :
               <Button type="button" onClick={()=>setclose(true)}>

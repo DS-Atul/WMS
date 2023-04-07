@@ -8,6 +8,7 @@ const OrderDataTitle = [
   "Destination",
   "Shipper*",
   "Consignee*",
+  "Order Status", 
   "Genrate Pdf",
   "	Manifest Pdf",
   "Runsheet No.",

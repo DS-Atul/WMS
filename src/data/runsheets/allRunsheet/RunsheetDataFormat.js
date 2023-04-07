@@ -154,13 +154,13 @@ const RunsheetDataFormat = ({can_delete, data, data1 }) => {
           let time_tt = String(or_date_t[1]).substring(0, 8);
           let rn_date = date_t + "  " + time_tt;
 
-          let or_date_t_u =
-            runsheet.modified_at !== null && runsheet.modified_at;
-          let date_t_u = or_date_t_u;
-          let time_tt_u = String(or_date_t_u[1]).substring(0, 8);
-          // let rn_date_u = date_t_u + "  " + time_tt_u;
-          let rn_date_u = or_date_t_u
-          // let can_delete = false;
+          // let or_date_t_u =
+          //   runsheet.modified_at !== null && runsheet.modified_at;
+          // let date_t_u = or_date_t_u.split("T");
+          // let time_tt_u = String(or_date_t_u[1]).substring(0, 8);
+          // // let rn_date_u = date_t_u + "  " + time_tt_u;
+          // let rn_date_u = or_date_t_u
+          // // let can_delete = false;
           let rn_ords = runsheet.orders;
 
           for (let index = 0; index < rn_ords.length; index++) {
@@ -201,7 +201,7 @@ const RunsheetDataFormat = ({can_delete, data, data1 }) => {
 
                 <td>{runsheet.orders.length}</td>
                 <td>{rn_date}</td>
-                <td>{runsheet.modified_at}</td>
+                {/* <td>{runsheet.modified_at}</td> */}
                 <td>{runsheet.is_defined_route ? toTitleCase(runsheet.defined_route_name) : toTitleCase(runsheet.route_name)}</td>
                 <td>
                   { runsheet.vehicle_number}

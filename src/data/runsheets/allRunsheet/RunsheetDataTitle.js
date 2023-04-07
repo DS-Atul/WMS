@@ -2,7 +2,7 @@ const RunsheetDataTitle = [
   "Runsheet No. ",
   "Total Orders",
   "Date & Time",
-  "Updated Date",
+  // "Updated Date",
   "Route",
   "Route	Vehicle No.",
   "Driver",
