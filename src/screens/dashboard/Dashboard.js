@@ -52,7 +52,7 @@ const Dashboard = () => {
         dispatch(setUserDepartment(response.data[0]));
       })
       .catch((err) => {
-        alert(`Error Occur in Get , ${err}`);
+        // alert(`Error Occur in Get , ${err}`);
       });
   };
 

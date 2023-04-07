@@ -191,7 +191,7 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
               )}
               <td>
                 {/* {can_update || user.is_superuser  ? ( */}
-                {can_update || user.is_superuser ? (
+                {/* {can_update || user.is_superuser ? (
 
                   <Link
                     to="/booking/updatedeliveryinfo"
@@ -200,9 +200,9 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
                     {toTitleCase(order.docket_no)}
                   </Link>
 
-                ) : (
-                  toTitleCase(order.docket_no)
-                )}
+                ) : ( */}
+                  {toTitleCase(order.docket_no)}
+                {/* )} */}
               </td>
               <td>{order.signature_person_name}</td>
               <td>

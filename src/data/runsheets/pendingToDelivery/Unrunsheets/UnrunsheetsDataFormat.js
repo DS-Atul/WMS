@@ -60,6 +60,8 @@ const UnrunsheetsDataFormat = ({ Manifest_list, remove_list }) => {
                     </td>
                     <td>{Manifest.actual_weight}</td>
                     <td>{Manifest.total_quantity}</td>
+                    <td>{(Manifest.issue).length}</td>
+                    <td>{(Manifest.issue_notreceived).length}</td>
                     <td>{toTitleCase(Manifest.delivery_type)}</td>
                     {/* <td>
                       <div>

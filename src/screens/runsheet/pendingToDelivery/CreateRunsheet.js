@@ -23,7 +23,11 @@ import {
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 
-function CreateRunsheet({ awb_numbers }) {
+function CreateRunsheet({ awb_numbers, issuereceived_total, issuenon_received_total, total_pieces }) {
+  console.log("awb_numbers------", awb_numbers)
+  console.log("issuereceived_total--------", issuereceived_total)
+  console.log("issuenon_received_total--------", issuenon_received_total)
+  console.log("total_pieces-----", total_pieces)
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [show, setShow] = useState(false);
@@ -48,7 +52,7 @@ function CreateRunsheet({ awb_numbers }) {
   const [vehicle_no, setvehicle_no] = useState("");
   const [vehicle_id, setvehicle_id] = useState(0);
   const [search_vehicle_no, setsearch_vehicle_no] = useState("");
-
+const [close, setclose] = useState(false)
   //Driver
   const [driver_list, setdriver_list] = useState([]);
   const [driver_name, setdriver_name] = useState("");
@@ -251,191 +255,202 @@ function CreateRunsheet({ awb_numbers }) {
         >
           <Modal.Body>
             {/* <Label>Is Defined Row</Label> */}
-            <div >
-              <Label>
-                Vehicle Type
-              </Label>
-              <Row>
-                <Col md={4} sm={5}>
-                  <div className="form-check mb-2">
-                    <Input
-                      className="form-check-input"
-                      type="radio"
-                      name="vehicle_type"
-                      id="exampleRadios3"
-                      value="TRUCK"
-                      onClick={() => {
-                        setvehicle_type("TRUCK");
-                      }}
-                      checked={vehicle_type === "TRUCK"}
-                      readOnly={true}
-                    />
-                    <Label
-                      className="form-check-label input-box"
-                      htmlFor="exampleRadios2"
-                    >
-                      Truck
-                    </Label>
-                  </div>
-                </Col>
-                <Col md={6} sm={7}>
-                  <div className="form-check mb-2">
-                    <Input
-                      className="form-check-input"
-                      type="radio"
-                      name="vehicle_type"
-                      id="exampleRadios4"
-                      value="BIKE"
-                      onClick={() => {
-                        setvehicle_type("BIKE");
-                      }}
-                      checked={vehicle_type === "BIKE"}
-                      readOnly={true}
-                    />
+            {(issuereceived_total === 0 && issuereceived_total === 0) || close ?
+              <>
+                <div >
+                  <Label>
+                    Vehicle Type
+                  </Label>
+                  <Row>
+                    <Col md={4} sm={5}>
+                      <div className="form-check mb-2">
+                        <Input
+                          className="form-check-input"
+                          type="radio"
+                          name="vehicle_type"
+                          id="exampleRadios3"
+                          value="TRUCK"
+                          onClick={() => {
+                            setvehicle_type("TRUCK");
+                          }}
+                          checked={vehicle_type === "TRUCK"}
+                          readOnly={true}
+                        />
+                        <Label
+                          className="form-check-label input-box"
+                          htmlFor="exampleRadios2"
+                        >
+                          Truck
+                        </Label>
+                      </div>
+                    </Col>
+                    <Col md={6} sm={7}>
+                      <div className="form-check mb-2">
+                        <Input
+                          className="form-check-input"
+                          type="radio"
+                          name="vehicle_type"
+                          id="exampleRadios4"
+                          value="BIKE"
+                          onClick={() => {
+                            setvehicle_type("BIKE");
+                          }}
+                          checked={vehicle_type === "BIKE"}
+                          readOnly={true}
+                        />
 
-                    <Label
-                      className="form-check-label input-box"
-                      htmlFor="exampleRadios1"
-                    >
-                      Bike
-                    </Label>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-            <div style={{ marginTop: "10px" }}>
-              <Label>
-                {" "}
-                Route (Is Defined Route{" "}
-                <span onClick={() => setdefined_route(!defined_route)}>
-                  {defined_route ? (
-                    <FiCheckSquare size={15} />
-                  ) : (
-                    <FiSquare size={15} />
-                  )}
-                </span>
-                )
-              </Label>
-
-              {defined_route ? (
-                <SearchInput
-                  data_list={route_list}
-                  data_item_s={defined_route_name}
-                  set_data_item_s={setdefined_route_name}
-                  set_id={setroute_id}
-                  setsearch_item={setsearch_route}
-                />
-              ) : (
-                <Input
-                  value={route}
-                  onChange={(val) => {
-                    setroute(val.target.value);
-                  }}
-                  type="text"
-                  className="form-control-md"
-                  id="input"
-                  placeholder="Enter route"
-                />
-              )}
-
-              {route_error && (
-                <div className="mt-1 error-text" color="danger">
-                  Please Select Route
+                        <Label
+                          className="form-check-label input-box"
+                          htmlFor="exampleRadios1"
+                        >
+                          Bike
+                        </Label>
+                      </div>
+                    </Col>
+                  </Row>
                 </div>
-              )}
-            </div>
-            <div style={{ marginTop: "10px" }}>
-              <Label> Contract Based Vehicle :
-                <span onClick={() => setis_contract_based(!is_contract_based)}>
-                  {is_contract_based ? (
-                    <FiCheckSquare size={15} />
-                  ) : (
-                    <FiSquare size={15} />
-                  )}
-                </span>
-              </Label>
-            </div>
+                <div style={{ marginTop: "10px" }}>
+                  <Label>
+                    {" "}
+                    Route (Is Defined Route{" "}
+                    <span onClick={() => setdefined_route(!defined_route)}>
+                      {defined_route ? (
+                        <FiCheckSquare size={15} />
+                      ) : (
+                        <FiSquare size={15} />
+                      )}
+                    </span>
+                    )
+                  </Label>
 
-            {is_contract_based ? (
-              <div>
-                <SearchInput
-                  data_list={veh_list}
-                  data_item_s={vehicle_no}
-                  set_data_item_s={setvehicle_no}
-                  set_id={setvehicle_id}
-                  setsearch_item={setsearch_vehicle_no}
-                />
-                {contract_base_vehicle_error && (
-                  <div className="mt-1 error-text" color="danger">
-                    Please Select Vehicle
+                  {defined_route ? (
+                    <SearchInput
+                      data_list={route_list}
+                      data_item_s={defined_route_name}
+                      set_data_item_s={setdefined_route_name}
+                      set_id={setroute_id}
+                      setsearch_item={setsearch_route}
+                    />
+                  ) : (
+                    <Input
+                      value={route}
+                      onChange={(val) => {
+                        setroute(val.target.value);
+                      }}
+                      type="text"
+                      className="form-control-md"
+                      id="input"
+                      placeholder="Enter route"
+                    />
+                  )}
+
+                  {route_error && (
+                    <div className="mt-1 error-text" color="danger">
+                      Please Select Route
+                    </div>
+                  )}
+                </div>
+                <div style={{ marginTop: "10px" }}>
+                  <Label> Contract Based Vehicle :
+                    <span onClick={() => setis_contract_based(!is_contract_based)}>
+                      {is_contract_based ? (
+                        <FiCheckSquare size={15} />
+                      ) : (
+                        <FiSquare size={15} />
+                      )}
+                    </span>
+                  </Label>
+                </div>
+
+                {is_contract_based ? (
+                  <div>
+                    <SearchInput
+                      data_list={veh_list}
+                      data_item_s={vehicle_no}
+                      set_data_item_s={setvehicle_no}
+                      set_id={setvehicle_id}
+                      setsearch_item={setsearch_vehicle_no}
+                    />
+                    {contract_base_vehicle_error && (
+                      <div className="mt-1 error-text" color="danger">
+                        Please Select Vehicle
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ) : (
-              <div>
-                <Input
-                  value={vehicle_no}
-                  onChange={(val) => {
-                    setvehicle_no(val.target.value);
-                  }}
-                  type="text"
-                  className="form-control-md"
-                  id="input"
-                  placeholder="Enter Vehicle Number"
-                />
-                {/* <SearchInput
+                ) : (
+                  <div>
+                    <Input
+                      value={vehicle_no}
+                      onChange={(val) => {
+                        setvehicle_no(val.target.value);
+                      }}
+                      type="text"
+                      className="form-control-md"
+                      id="input"
+                      placeholder="Enter Vehicle Number"
+                    />
+                    {/* <SearchInput
                   data_list={veh_list}
                   data_item_s={vehicle_no}
                   set_data_item_s={setvehicle_no}
                   set_id={setvehicle_id}
                   setsearch_item={setsearch_vehicle_no}
                 /> */}
-                {vehicle_no_error && (
-                  <div className="mt-1 error-text" color="danger">
-                    Please Select Vehicle
+                    {vehicle_no_error && (
+                      <div className="mt-1 error-text" color="danger">
+                        Please Select Vehicle
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
 
-            <div style={{ marginTop: "10px" }}>
-              <Label> Driver :</Label>
-              <SearchInput
-                data_list={driver_list}
-                data_item_s={driver_name}
-                set_data_item_s={setdriver_name}
-                set_id={setdriver_id}
-                setsearch_item={setsearch_driver_name}
-              />
-              {driver_name_error && (
-                <div className="mt-1 error-text" color="danger">
-                  Please Select Driver
+                <div style={{ marginTop: "10px" }}>
+                  <Label> Driver :</Label>
+                  <SearchInput
+                    data_list={driver_list}
+                    data_item_s={driver_name}
+                    set_data_item_s={setdriver_name}
+                    set_id={setdriver_id}
+                    setsearch_item={setsearch_driver_name}
+                  />
+                  {driver_name_error && (
+                    <div className="mt-1 error-text" color="danger">
+                      Please Select Driver
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            {vehicle_type === "TRUCK" &&
-              <div style={{ marginTop: "10px" }}>
-                <Label> Delivery Staff :</Label>
-                <Input
-                  value={delivery_staff}
-                  onChange={(val) => {
-                    setdelivery_staff(val.target.value);
-                  }}
-                  type="text"
-                  className="form-control-md"
-                  id="input"
-                  placeholder="Enter Staff Name"
-                />
-              </div>
-            }
-          </Modal.Body>
-          <Modal.Footer>
-            <Button type="submit" onClick={handleSuccess}>
-              Save
-            </Button>
+                {vehicle_type === "TRUCK" &&
+                  <div style={{ marginTop: "10px" }}>
+                    <Label> Delivery Staff :</Label>
+                    <Input
+                      value={delivery_staff}
+                      onChange={(val) => {
+                        setdelivery_staff(val.target.value);
+                      }}
+                      type="text"
+                      className="form-control-md"
+                      id="input"
+                      placeholder="Enter Staff Name"
+                    />
+                  </div>
+                }
+              </>
 
+              : <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces are Damaged and "${issuenon_received_total}" are not Received`}</div>}
+          </Modal.Body>
+
+          <Modal.Footer>
+            {(issuereceived_total === 0 && issuereceived_total === 0) || close ?
+              <Button type="submit">
+                Save1
+              </Button>
+              :
+              <Button type="button" onClick={()=>setclose(true)}>
+                Yes
+              </Button>
+            }
             <Button type="button" variant="secondary" onClick={handleClose}>
-              Close
+            {(issuereceived_total === 0 && issuereceived_total === 0) ? "Close" : "No"}
             </Button>
           </Modal.Footer>
         </form>

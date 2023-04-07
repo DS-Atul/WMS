@@ -296,11 +296,11 @@ const PendingDepartDataFormat = ({ data, data1, can_delete }) => {
               {(can_update || user.is_superuser) && (
               <td>
                 {/* /manifest/editraughdocket */}
-                <Link to="/manifest/editmanifest" state={{ depart: depart }}>
+                {/* <Link to="/manifest/editmanifest" state={{ depart: depart }}>
                   <Button size="sm" outline type="button" color="warning">
                     Edit
                   </Button>
-                </Link>
+                </Link> */}
                 <Button
                   style={{ marginLeft: "15px" }}
                   size="sm"

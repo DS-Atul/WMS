@@ -30,6 +30,7 @@ const BoxDetail = () => {
   const [selected_id, setselected_id] = useState([]);
   const [remarks, setremarks] = useState("")
   const [local_cal_type, setlocal_cal_type] = useState("")
+
   console.log("docket_no------", docket_no)
   console.log("data len=========", data.length)
   console.log("selected_id len========", selected_id)
@@ -48,7 +49,7 @@ const BoxDetail = () => {
     (state) => state.authentication.userpermission
   );
 
-  const asd = (no) => {
+  const getOrderBarcode = (no) => {
     axios.get(ServerAddress + `booking/orderboxqrcodecheck/${no}`, {
 
       headers: { Authorization: `Bearer ${accessToken}` }
@@ -57,15 +58,29 @@ const BoxDetail = () => {
       console.log("ress", res)
       setdata(res.data);
       setdocket_no(res.data[0].docket_no)
-      setorder_id(res.data[0].order)
+      // setorder_id(res.data[0].order)
       setlocal_cal_type(res.data[0].local_cal_type)
+      let data=[]
+      // for (let index = 0; index < res.data.length; index++) {
+      //   const element = res.data[index];
+      //   a.push(element.order)
+        
+      // }
+      for (let index = 0; index < res.data.length; index++) {
+        const element = res.data[index];
+        if (!data.includes(element.order)) {
+          data.push(element.order);
+        }
+      }
+      setorder_id(data)
+      console.log("data==========",data)
     }).catch((err) => {
       console.log("errrrrr", err)
     })
   }
 
   useLayoutEffect(() => {
-    asd(location_data.state.order.vehicle_no);
+    getOrderBarcode(location_data.state.order.vehicle_no);
     setdata([])
   }, [])
 
@@ -76,7 +91,8 @@ const BoxDetail = () => {
         {
           cal_type: local_cal_type,
           status: "SHIPMENT ARRIVED AT HUB",
-          transit_status: null,
+          transit_status: "",
+          transit_remarks:"",
           docket: order_id,
           docket_no: docket_no,
           notreceived_pkt: selected_id,

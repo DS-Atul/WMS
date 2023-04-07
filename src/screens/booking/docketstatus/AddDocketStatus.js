@@ -226,8 +226,8 @@ const AddDocketStatus = () => {
           transit_branch: transit_to_branch_id,
           transit_remarks: values.remarks,
           docket: location.state.order.docket
-            ? location.state.order.docket
-            : location.state.order.id,
+            ? [location.state.order.docket]
+            : [location.state.order.id],
         },
         {
           headers: {

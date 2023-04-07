@@ -5,8 +5,8 @@ const IncomingManifestTitle = [
   "Total Orders",
   "Coloader",
   "Total Bags",
-  "Is Open Box",
-  "Box Qnty",
+  // "Is Open Box",
+  "Total Box",
   "Total Weight",
   "Action",
 ];

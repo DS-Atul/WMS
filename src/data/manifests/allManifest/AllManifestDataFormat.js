@@ -29,6 +29,7 @@ import Modal from "react-bootstrap/Modal";
 import cross from "../../../assets/images/ComponentsIcon/cross.png";
 import correct from "../../../assets/images/ComponentsIcon/check-mark.png";
 import { BsPrinterFill } from "react-icons/bs";
+import pdf from "../../../assets/images/Pdf/printer.png";
 
 const AllManifestDataFormat = ({ data, data1, can_delete }) => {
   console.log("data----", data);
@@ -207,7 +208,18 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
               <td>{toTitleCase(manifest.orgin_branch_n)}</td>
               <td>{toTitleCase(manifest.destination_branch_n)}</td>
               <td>{toTitleCase(manifest.coloader_name)}</td>
+              <td>
+                <div>
+                  <Link
+                    to="/manifest/roughmanfest"
+                    state={{ manifest: manifest }}
+                  >
+                    <img src={pdf} width="20" height="20" />
+                  </Link>
+                </div>
+              </td>
               <td>{manifest.bag_count}</td>
+              <td>{manifest.box_count}</td>
               <td>{manifest.total_weight}</td>
              
             </tr>

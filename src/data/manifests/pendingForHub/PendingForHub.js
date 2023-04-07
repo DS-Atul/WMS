@@ -279,11 +279,11 @@ useEffect(() => {
               <td>{hub.orders.length}</td>
               {(can_update || user.is_superuser) && (
               <td>
-                <Link to="/manifest/edithub" state={{ hub: hub }}>
+                {/* <Link to="/manifest/edithub" state={{ hub: hub }}>
                   <Button size="sm" outline type="button" color="warning">
                     Edit
                   </Button>
-                </Link>
+                </Link> */}
                 <Button
                   style={{ marginLeft: "15px" }}
                   size="sm"

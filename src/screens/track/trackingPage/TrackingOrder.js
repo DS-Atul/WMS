@@ -137,7 +137,7 @@ setget_status(last);
                           <div className="col">
                             {" "}
                             <strong style={{ fontSize: "19px" }}>
-                              Origin:
+                              Origin222:
                             </strong>
                             <br />
                             {toTitleCase(last_ele.orgin_locality)}{","} {toTitleCase(last_ele.orgin_city)}{","} {toTitleCase(last_ele.orgin_pincode)}

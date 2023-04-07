@@ -121,10 +121,10 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
     }
   }, [order.booking_at]);
 
-  const Mycompoment =() =>{
-    const htmlString = `<div><img src="${order.qrcode}" /></div>`;
-    return {__html: htmlString};
-  }
+  // const Mycompoment =() =>{
+  //   const htmlString = `<div><img src="${order.qrcode}" /></div>`;
+  //   return {__html: htmlString};
+  // }
   return (
     <div className="m-2" ref={ref} id={"invoice_div"}>
       {/* {pkg_list.length != 8 && ( */}
@@ -169,13 +169,13 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
               </div>
             </td>
             <td colSpan={4} rowSpan={2}>
-            <div dangerouslySetInnerHTML={ Mycompoment ()} > 
-                {/* <img  src={order.qrcode}
-                      height="150"
-                      width="150"
-                      
-                /> */}
-              </div>
+            {/* <div >  */}
+                <img  src={order.qrcode}
+                      height="200"
+                      width="200"
+                                        
+                />
+              {/* </div> */}
             </td>
             <td colSpan={4}>
               <b style={{ color: "blue", lineHeight: "1em" }}>

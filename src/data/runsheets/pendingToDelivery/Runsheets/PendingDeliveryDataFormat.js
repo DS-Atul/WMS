@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import pdf from "../../../../assets/images/Pdf/printer.png";
 import { Link } from "react-router-dom";
@@ -11,6 +11,12 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
   const searchData = useSelector((state) => state.searchbar.search_item);
   const [data_title, setdata_title] = useState(PendingDeliveryDataTitle);
   console.log("local_list----", local_list);
+  useEffect(() => {
+    let a = local_list.map((v) => v.issue_location)
+    console.log("a-------------", a)
+  }, [local_list])
+
+
   return (
     <>
       <div className="table">
@@ -77,6 +83,10 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
                       </td>
                       <td>{local.actual_weight}</td>
                       <td>{local.total_quantity}</td>
+
+                      <td>{(local.issue).length}</td>
+                      <td>{(local.issue_notreceived).length}</td>
+
                       <td>{toTitleCase(local.delivery_type)}</td>
                       <td>
                         {" "}

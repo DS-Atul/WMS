@@ -145,7 +145,13 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
               </div>
             </td>
             <td colSpan={4} rowSpan={2}>
-              <div dangerouslySetInnerHTML={{ __html: order.qrcode }}></div>
+              {/* <div dangerouslySetInnerHTML={{ __html: order.qrcode }}></div> */}
+              <img  src={pdf_li.qrcode}
+                      height="200"
+                      width="200"
+                                        
+                />
+              
             </td>
             <td colSpan={4}>
               <b style={{ color: "blue", lineHeight: "1em" }}>

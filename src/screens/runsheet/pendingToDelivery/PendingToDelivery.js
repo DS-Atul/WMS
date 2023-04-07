@@ -24,6 +24,9 @@ const PendingToDelivery = () => {
   const [local_list, setlocal_list] = useState([]);
 
   const [createRunsheet_list, setcreateRunsheet_list] = useState([]);
+  const [issuereceived_total, setreceived_total] = useState()
+  const [issuenon_received_total, setissuenon_received_total] = useState()
+  const [total_pieces, settotal_pieces] = useState()
 
   const [awbno_list, setawbno_list] = useState([]);
 
@@ -66,14 +69,41 @@ const PendingToDelivery = () => {
   useEffect(() => {
     if (createRunsheet_list.length !== 0) {
       let awb_no_list = [];
+      let received = []
+      let sum_received = []
+      let non_received = []
+      let sum_nonreceived = []
+      let total_pkt=[]
+
+      console.log("createRunsheet_list======", createRunsheet_list)
       for (let index = 0; index < createRunsheet_list.length; index++) {
         const loc = createRunsheet_list[index];
         awb_no_list.push(loc.id);
+        received.push(loc.issue)
+        non_received.push(loc.issue_notreceived)
+        total_pkt.push(loc.total_quantity)
       }
+      console.log("a---len-------", received)
+      for (let index = 0; index < received.length; index++) {
+        const element = received[index];
+        sum_received.push(element.length)
+      }
+      for (let index = 0; index < non_received.length; index++) {
+        const element = non_received[index];
+        sum_nonreceived.push(element.length)
+      }
+      const sumrec = sum_received.reduce((acc, curr) => acc + curr, 0);
+      const sumnonrec = sum_nonreceived.reduce((acc, curr) => acc + curr, 0);
+      const total_pcs = total_pkt.reduce((acc, curr) => acc + curr, 0);
+      console.log("total_pcs--------", total_pcs)
+      setreceived_total(sumrec)
+      setissuenon_received_total(sumnonrec)
       setawbno_list(awb_no_list);
+      settotal_pieces(total_pcs)
     } else {
       setawbno_list([]);
     }
+
   }, [createRunsheet_list, local_list]);
 
   return (
@@ -134,7 +164,7 @@ const PendingToDelivery = () => {
             <CardBody style={{ paddingTop: "5px" }}>
               <Row>
                 <Col lg={4}>
-                  <CreateRunsheet awb_numbers={awbno_list} />
+                  <CreateRunsheet awb_numbers={awbno_list} issuereceived_total={issuereceived_total} issuenon_received_total={issuenon_received_total} total_pieces={total_pieces}/>
                 </Col>
               </Row>
 

@@ -24,7 +24,7 @@ const Manifest_pdf = () => {
     axios
       .get(
         ServerAddress +
-          `manifest/get_hub_orders/?manifest_no=${manifest_no}`,
+          `manifest/get_hub_orders/?hub_no=${manifest_no}`,
 
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -263,7 +263,7 @@ const Manifest_pdf = () => {
 
 export const ComponentToPrint = React.forwardRef((props, ref) => {
   const { manifest, mn_orders } = props;
-
+console.log("manifest---pdf----", manifest)
   return (
     <div ref={ref}>
       {/* Manifest {value} */}
@@ -298,14 +298,14 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
           fontSize: "15px",
         }}
       >
-        <a>Manifest Created Date : {manifest.manifest_date} </a>
+        <a>Manifest Created Date : {(manifest.created_at).split("T")[0]} </a>
         <br />
         <a>From: {manifest.from_branch_n} </a> <br />
         <a>Manifest No: {manifest.hub_transfer_no}</a> <br />
-        <a>Origin: {manifest.orgin_branch_n} </a> <br />
-        <a>Manifest Actual Weight:{""}</a> <br />
-        <a>Chargeable Weight : {""} </a> <br />
-        <a>Flight Name & No : {"-"} </a> <br />
+        <a>Origin: {manifest.orgin_branch_name} </a> <br />
+        <a>Manifest Actual Weight:{manifest.total_weight}</a> <br />
+        <a>Chargeable Weight : {manifest.chargeable_weight} </a> <br />
+        {/* <a>Flight Name & No : {manifest.} </a> <br /> */}
       </div>
 
       <div
@@ -318,23 +318,24 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
       >
         <a>
           Coloader No. / AirwayBill No. :{" "}
-          {manifest.airwaybill_number ? manifest.airwaybill_number : "-"}
+          {manifest.airwaybill_no ? manifest.airwaybill_no : "-"}
         </a>{" "}
         <br />
         <a>
           Manifest Forwarding Date :{" "}
-          {manifest.manifest_forwarding_date
-            ? manifest.manifest_forwarding_date
+          {manifest.forwarded_at
+            ? manifest.forwarded_at
             : "-"}
         </a>{" "}
         <br />
         <a>To : {manifest.to_branch_n}</a> <br />
-        <a>Destination : {manifest.destination_n}</a> <br />
+        <a>Destination : {manifest.destination_branch_name}</a> <br />
         <a>
-          Co-loader Name : {manifest.coloader ? manifest.coloader : "-"}
+          Co-loader Name : {manifest.coloader_name ? manifest.coloader_name : "-"}
         </a>{" "}
         <br />
-        <a>No of Bags : {manifest.bag_count ? manifest.bag_count : "-"}</a>{" "}
+        <a>No of Bags : {manifest.bag_count ? manifest.bag_count : "-"}</a>{" , "}
+        <a>Box : {manifest.box_count ? manifest.box_count : "-"}</a>{" "}
         <br />
         <br />
         <br />
@@ -379,6 +380,11 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
 
         <tbody>
           {mn_orders.map((val, key) => {
+            let f_date_f = val.created_at.split("T");
+            let f_date = f_date_f[0];
+            let f_time_r = String(f_date_f[1]).substring(0, 5);
+            let l_fdate = f_date + " " + f_time_r;
+  
             return (
               <tr
                 key={key}
@@ -389,7 +395,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
                 }}
               >
                 <td>{key + 1}</td>
-                <td>{val.created_at}</td>
+                <td>{l_fdate}</td>
                 <td>{val.docket_no}</td>
                 <td>{val.consignee_city}</td>
                 <td>{val.shipper_name}</td>

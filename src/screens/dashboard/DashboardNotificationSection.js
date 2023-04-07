@@ -29,7 +29,7 @@ const DashboardNotificationSection = ({
 console.log("Notice res",response)
       })
       .catch((err) => {
-        alert(`Error Occur in Get , ${err}`);
+        // alert(`Error Occur in Get , ${err}`);
       });
   };
   useLayoutEffect(() => {

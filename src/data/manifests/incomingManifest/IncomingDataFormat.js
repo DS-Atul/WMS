@@ -291,18 +291,18 @@ const IncomingManifestDataFormat = ({ data, data1, can_delete }) => {
               <td>{toTitleCase(depart.destination_branch_n)}</td>
               <td>{depart.orders.length}</td>
               <td>{toTitleCase(depart.coloader_name)}</td>
-              <td>{depart.bag_count}</td>
-              <td>{depart.open_box
+              <td>{depart.bag_count ? depart.bag_count : "-"}</td>
+              {/* <td>{depart.open_box
               ?
               <div>
                     <img src={correct} width="18" height="18" />
                   </div> : <div>
                     <img src={cross} width="18" height="18" />
                   </div>
-              }</td>
+              }</td> */}
               <td>{depart.box_count
               ?
-              depart.box_count : "--"
+              depart.box_count : "-"
               }</td>
               <td>{depart.total_weight}</td>
 

@@ -85,7 +85,7 @@ const AllManifest = () => {
 
           {/* DataTable */}
           <DataList
-          can_delete={can_delete}
+            can_delete={can_delete}
             Data_Title={AllManifestTitle}
             Data_Format={AllManifestDataFormat}
             path={`manifest/all_manifest/?search=${search}&p=${page_num}&records=${data_len}`}

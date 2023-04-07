@@ -4,7 +4,9 @@ const AllManifestTitle = [
   "Orgin",
   "Destination",
   "Coloader",
+  "PDF",
   "Total Bags",
+  "Total Box",
   "Weight",
 ];
 
