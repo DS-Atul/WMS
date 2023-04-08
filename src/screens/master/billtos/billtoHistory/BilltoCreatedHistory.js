@@ -63,7 +63,7 @@ setbillto_data(n_data);
                 <span>Associated Branch</span> <span>{billto_data.branches}</span>
               </div>
               <div className="container_element">
-                <span>Credit Limit</span> <span>{billto_data.credit_amount}</span>
+                <span>Credit Limit Amount</span> <span>{billto_data.credit_amount}</span>
               </div>
             </div>
           </CardBody>

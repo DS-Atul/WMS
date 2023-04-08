@@ -2163,7 +2163,15 @@ useEffect(() => {
   }
 }, [showOrder,same_as])
 
-  
+    // Used for History
+    const handlClk = () => {
+      navigate(
+        "/booking/orders/orderHistory/OrderHistoryPage",
+       {
+        state: { Booking: order },
+      });
+    };
+    
   return (
     <div>
       <Modal show={showOrder} onHide={handleCloseOrder}>
@@ -2221,7 +2229,7 @@ useEffect(() => {
         encType="multipart/form-data"
       >
       
-        {/* Booking type */}
+              {/* Booking type */}
 
         <div className="m-3">
           <div
@@ -2250,6 +2258,19 @@ useEffect(() => {
                 </Button>
               </div>
             } */}
+
+{isupdating && (
+            <div style={{ justifyContent: "right", display: "flex" }}>
+              <Button
+                type="button"
+                onClick={() => {
+                  handlClk();
+                }}
+              >
+                History
+              </Button>
+            </div>
+          )}
           </div>
           <Col lg={12}>
             <Card className="shadow bg-white rounded" id="doc_no">

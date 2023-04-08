@@ -23,6 +23,7 @@ const BilltoHistoryTableFormate = ({table_data}) => {
             <td>{new_data.email ? new_data.email : "-"}</td>
             <td>{new_data.phone_number ? new_data.phone_number : "-"}</td>
             <td>{new_data.branches? new_data.branches : "-"}</td>
+            <td>{new_data.credit_amount ? new_data.credit_amount: "-"}</td>
             <td>{new_data.pan_no ? new_data.pan_no : "-"}</td>
             <td>{new_data.address_line ? new_data.address_line : "-"}</td>
             <td>{new_data.state_name ? new_data.state_name: "-"}</td>

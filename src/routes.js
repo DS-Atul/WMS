@@ -233,6 +233,8 @@ const OrderInvoicePdf = React.lazy(() =>
   import("./screens/booking/orders/OrderInvoicePdf.js")
 );
 
+const OrderHistoryPage = React.lazy(() => import("./screens/booking/orders/orderHistory/OrderHistoryPage.js"));
+
 //Delivery Info
 
 const DeliveryInfo = React.lazy(() =>
@@ -760,6 +762,10 @@ const routes = [
   {
     path: "/booking/orders/OrderInvoicePdf",
     element: <OrderInvoicePdf />,
+  },
+  {
+    path : "/booking/orders/orderHistory/OrderHistoryPage",
+    element : <OrderHistoryPage/>,
   },
   {
     path: "/booking/orders/adddocketstatus",

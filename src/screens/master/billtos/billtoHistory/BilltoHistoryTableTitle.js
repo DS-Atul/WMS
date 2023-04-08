@@ -5,6 +5,7 @@ const BilltoHistoryTableTitle = [
     "Email",
     "Phone number",
     "Associated Branch",
+    "Credit Limit Amount",
     "PAN Number",
     "Address Line",
     "State",
