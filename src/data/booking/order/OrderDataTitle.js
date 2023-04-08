@@ -3,6 +3,7 @@ const OrderDataTitle = [
   "Booking Date",
   "Current Status",
   "Navigate To",
+  "Order Type",
   "Client",
   "Origin",
   "Destination",

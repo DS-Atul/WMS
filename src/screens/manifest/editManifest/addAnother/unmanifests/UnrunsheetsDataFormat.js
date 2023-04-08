@@ -6,7 +6,7 @@ import remove from "../../../../../assets/images/Pdf/trash.png";
 import toTitleCase from "../../../../../lib/titleCase/TitleCase";
 const EditUnmanifestDataFormat = ({ Manifest_list, remove_list }) => {
   const [data_title, setdata_title] = useState(Unrunsheets_Data_title);
-console.log("Manifest_list----",Manifest_list)
+  console.log("Manifest_list----", Manifest_list)
   return (
     <>
       <div className="table">
@@ -52,6 +52,8 @@ console.log("Manifest_list----",Manifest_list)
                     <td>{toTitleCase(Manifest.consignee_city)}</td>
                     <td>{Manifest.actual_weight}</td>
                     <td>{Manifest.total_quantity}</td>
+                    <td>{(Manifest.issue).length}</td>
+                    <td>{(Manifest.issue_notreceived).length}</td>
                     <td>{toTitleCase(Manifest.delivery_type)}</td>
                     {/* <td>
                       <div>

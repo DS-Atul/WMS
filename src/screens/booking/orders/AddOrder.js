@@ -85,7 +85,6 @@ const AddOrder = () => {
   const [clicked, setclicked] = useState(false);
 
   //For order type
-  const [order_type, setorder_type] = useState("NORMAL_ORDER");
   //local delivery_type
   const [delivery_type, setdelivery_type] = useState("LOCAL");
 
@@ -619,6 +618,14 @@ const AddOrder = () => {
   const [same_as, setsame_as] = useState(false)
   const [showOrder, setShowOrder] = useState(false);
   const [toggle_order, settoggle_order] = useState(false)
+  const [linked_order, setlinked_order] = useState("")
+  const [order_type_list, setorder_type_list] = useState([
+    "Normal",
+    "Return",
+    "Issue",
+  ])
+  const [order_type, setorder_type] = useState(order_type_list[0])
+  console.log("order_type---------", order_type)
 
   // validation
   const validation = useFormik({
@@ -1062,6 +1069,7 @@ const AddOrder = () => {
           cold_chain: cold_chain ? true : false,
           actual_weight: actual_weigth,
           total_quantity: values.total_quantity,
+          prev_total_quantity: values.total_quantity,
           cod: String(d_cod).toUpperCase(),
           transportation_cost: d_cod === "Yes" ? transportation_cost : null,
           remarks: values.remarks,
@@ -1110,6 +1118,8 @@ const AddOrder = () => {
           is_docket_entry: user.is_docket_entry ? user.is_docket_entry : false,
           starting_docket_no: user.starting_docket_no ? user.starting_docket_no : "",
           barcode_no: row6,
+          linked_order:order_type === "Normal" ? null : linked_order,
+          order_type:order_type === "Normal" ? null :  order_type.toUpperCase(),
 
           cm_current_department: user.user_department,
           cm_current_status: (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? 'NOT APPROVED' : (cm_current_status).toUpperCase(),
@@ -1132,7 +1142,7 @@ const AddOrder = () => {
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Order  ${docket_no_value} Added sucessfully`));
           dispatch(setAlertType("success"));
-          setShowOrder(true);          
+          setShowOrder(true);
         }
       })
       .catch((error) => {
@@ -1175,7 +1185,8 @@ const AddOrder = () => {
       shipper_state: shipper_state,
       total_quantity: values.total_quantity,
       transportation_mode: transport_mode,
-
+      linked_order:linked_order,
+      order_type: order_type.toUpperCase(),
       // billto_name: billto,
     });
 
@@ -1211,6 +1222,7 @@ const AddOrder = () => {
           cold_chain: cold_chain,
           actual_weight: actual_weigth,
           total_quantity: values.total_quantity,
+          prev_total_quantity: values.total_quantity,
           cod: String(d_cod).toUpperCase(),
           transportation_cost: d_cod === "Yes" ? transportation_cost : null,
           remarks: values.remarks,
@@ -1263,6 +1275,8 @@ const AddOrder = () => {
           assetdeleted_ids: assetdeleted_ids,
           assetold_ids: assetold_ids,
           assetnew_ids: assetnew_ids,
+          linked_order:order_type === "Normal" ? null : linked_order,
+          order_type:order_type === "Normal" ? null :  order_type.toUpperCase(),
 
           cm_transit_status: status_toggle === true ? cm_current_status : "",
           cm_current_status: (cm_current_status).toUpperCase(),
@@ -1580,7 +1594,7 @@ const AddOrder = () => {
 
   useEffect(() => {
     if (billto_id !== 0) {
-      if (!isupdating) {
+      if (!isupdating && returned_data.length === 0) {
         setclient("");
         setclient_id("");
       }
@@ -1598,10 +1612,10 @@ const AddOrder = () => {
   }, [order_id]);
 
   useEffect(() => {
-    if ((data === true) & (isupdating === true)) {
+    if (data === true && isupdating === true && returned_data.length === 0) {
       setclient_id(order.client);
     }
-    if (location.state === null) {
+    if (location.state === null && returned_data.length === 0) {
       setorigincity("");
       setorigincity_id("");
       setshipper_id("");
@@ -1670,7 +1684,7 @@ const AddOrder = () => {
   }, [consignee_details]);
 
   useEffect(() => {
-    if (location.state === null) {
+    if (location.state === null && returned_data.length === 0) {
       setshipper("");
       setshipper_state("");
       setshipper_city("");
@@ -1718,7 +1732,8 @@ const AddOrder = () => {
           setorder_active_btn("second");
         }
       }
-      setorder(location.state.order);
+      // setorder(location.state.order);
+      setlinked_order(order_data.linked_order_value);
       setcurrent_status(order_data.current_status);
       setdocket_no_value(order_data.docket_no);
       setisupdating(true);
@@ -1730,9 +1745,10 @@ const AddOrder = () => {
       settransport_mode(toTitleCase(order_data.transportation_mode));
       // setdelivery_mode(order_data.delivery_mode);
       settransportation_cost(order_data.transportation_cost);
-
+      setorder_type(toTitleCase(order_data.order_type));
+      
       setcommodity(order_data.commodity_name);
-      setcommodity_id(order.commodity);
+      setcommodity_id(order_data.commodity);
       setd_cod(toTitleCase(order_data.cod));
       if (order_data.cod === "Yes") {
         settransportation_cost(order_data.transportation_cost);
@@ -1968,7 +1984,7 @@ const AddOrder = () => {
   }, [cold_chain]);
 
   useEffect(() => {
-    if (cold_chain && location.state === null) {
+    if (cold_chain && location.state === null && returned_data.length === 0) {
       setcold_chain(true);
       setnonecold_chain(false);
 
@@ -1976,7 +1992,7 @@ const AddOrder = () => {
   }, [cold_chain]);
 
   useEffect(() => {
-    if (nonecold_chain && location.state === null) {
+    if (nonecold_chain && location.state === null && returned_data.length === 0) {
       setnonecold_chain(true);
       setcold_chain(false);
     }
@@ -2016,16 +2032,16 @@ const AddOrder = () => {
   }
 
   useEffect(() => {
-    if (delivery_type === "LOCAL" && location.state === null) {
+    if (delivery_type === "LOCAL" && location.state === null && returned_data.length === 0  && returned_data.length === 0) {
       settransport_mode("LOCAL")
     }
-    else if (delivery_type === "DOMESTIC" && location.state === null) {
+    else if (delivery_type === "DOMESTIC" && location.state === null && returned_data.length === 0  && returned_data.length === 0) {
       settransport_mode("")
     }
   }, [delivery_type])
 
   useEffect(() => {
-    if (!asset_prov && location.state == null) {
+    if (!asset_prov && location.state == null && returned_data.length === 0) {
       setasset_info_selected("")
     }
   }, [asset_prov])
@@ -2139,29 +2155,197 @@ const AddOrder = () => {
   //   settoggle_order(false)
   // }
 
-  const handleSubmitOrder = ()=>{
+  const handleSubmitOrder = () => {
     // setShowOrder(false);
     settoggle_order(true)
     setsame_as(true)
   }
-  const handleClsOrder=()=>{
+  const handleClsOrder = () => {
     settoggle_order(true)
     setShowOrder(false);
   }
 
-//   useEffect(() => {
-// if(toggle_order===true){
-//   alert("111111")
-// }
-//   }, [toggle_order])
-console.log("showOrder-----", showOrder)
-console.log("same_as------", same_as)
+  //   useEffect(() => {
+  // if(toggle_order===true){
+  //   alert("111111")
+  // }
+  //   }, [toggle_order])
+  console.log("showOrder-----", showOrder)
+  console.log("same_as------", same_as)
 
+  useEffect(() => {
+    if (same_as && showOrder) {
+      navigate("/booking/orders");
+    }
+  }, [showOrder, same_as])
+
+// Get Return Order
+const [returned_data, setreturned_data] = useState([])
+  const getReturnOrder= () => {
+    let temp2 = [];
+    let data = [];
+    axios
+      .get(
+        ServerAddress +
+        `booking/get_return_order/?docket_no=${linked_order}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        console.log("Return Ord Res============", response.data.results)
+
+        if(response.data.results.length===0){
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Docket Number Does not Exist`));
+          dispatch(setAlertType("warning"));
+        }
+        else{
+          setreturned_data(response.data.results)
+        }
+
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Data ${err}`);
+      });
+  };
 useEffect(() => {
-  if(same_as && showOrder){
-    navigate("/booking/orders");
+  console.log("returned_datareturned_datareturned_data", returned_data)
+  if(returned_data.length !== 0 && order_type === "Return")
+  {
+    // alert()
+    
+  setorder(returned_data[0]);
+  settransport_mode(toTitleCase(returned_data[0].transportation_mode));
+  setorder_type("Return");
+  setcurrent_status(returned_data[0].current_status);
+  // setdocket_no_value(returned_data[0].docket_no);
+  // setisupdating(true);
+  setorder_id(returned_data[0].id);
+  setdocket_no_value(returned_data[0].docket_no);
+  dispatch(setCurOrderId(returned_data[0].id));
+  dispatch(setCurOrderDocketNo(returned_data[0].docket_no));
+  settype_of_booking(toTitleCase(returned_data[0].booking_type));
+    
+  // setdelivery_mode(returned_data[0].delivery_mode);
+  settransportation_cost(returned_data[0].transportation_cost);
+  
+  setcommodity(returned_data[0].commodity_name);
+  setcommodity_id(returned_data[0].commodity);
+  setd_cod(toTitleCase(returned_data[0].cod));
+  if (returned_data[0].cod === "Yes") {
+    settransportation_cost(returned_data[0].transportation_cost);
   }
-}, [showOrder,same_as])
+  setcold_chain(returned_data[0].cold_chain);
+  setdelivery_type(returned_data[0].delivery_type);
+  setentry_type_btn(returned_data[0].entry_type);
+  setactual_weigth(returned_data[0].actual_weight);
+  setcommodity(toTitleCase(returned_data[0].commodity_name));
+  setclient(toTitleCase(returned_data[0].client_name));
+  setclient_id(returned_data[0].client);
+  setbillto(toTitleCase(returned_data[0].billto_name));
+  setbillto_id(returned_data[0].billto);
+  // setclient_id(returned_data[0].client)
+  setshipper(toTitleCase(returned_data[0].shipper_name));
+  setshipper_id(returned_data[0].shipper);
+  setshipper_state(toTitleCase(returned_data[0].shipper_state));
+  setshipper_city(toTitleCase(returned_data[0].shipper_city));
+  setshipper_pincode(returned_data[0].shipper_pincode);
+  setshipper_add_2(toTitleCase(returned_data[0].shipper_address_line_2));
+  setorigincity(toTitleCase(returned_data[0].shipper_city));
+  setorigincity_id(toTitleCase(returned_data[0].shipper_city_id));
+  setshipper_locality(toTitleCase(returned_data[0].shipper_locality));
+
+  setconsignee(toTitleCase(returned_data[0].consignee_name));
+  setconsignee_id(returned_data[0].consignee);
+  setconsignee_state(toTitleCase(returned_data[0].consignee_state));
+  setconsignee_city(toTitleCase(returned_data[0].consignee_city));
+  setconsignee_pincode(returned_data[0].consignee_pincode);
+  setconsignee_add_1(toTitleCase(returned_data[0].consignee_address_line));
+  setconsignee_locality(toTitleCase(returned_data[0].consignee_locality));
+  setconsignee_add_2(toTitleCase(returned_data[0].consignee_address_line_2));
+  setlocal_delivery_type(toTitleCase(returned_data[0].local_delivery_type));
+  setasset_info_selected(toTitleCase(returned_data[0].asset_type));
+  if (returned_data[0].asset_type === "NONE") {
+    setasset_prov(false)
+  }
+  else {
+    setasset_prov(true)
+  }
+  setcal_type(returned_data[0].local_cal_type);
+
+
+  setshipper_add_1(toTitleCase(returned_data[0].shipper_address_line));
+  setdestinationcity(toTitleCase(returned_data[0].consignee_city));
+  setdestinationcity_id(toTitleCase(returned_data[0].consignee_city_id));
+  }
+else{
+    
+  setorder([]);
+  settransport_mode("");
+  setcurrent_status("");
+  // setdocket_no_value(returned_data[0].docket_no);
+  // setisupdating(true);
+  setorder_id("");
+  setdocket_no_value("");
+  settype_of_booking(type_of_booking_list[1]);
+
+  // setdelivery_mode(returned_data[0].delivery_mode);
+  settransportation_cost("");
+  
+  setcommodity("");
+  setcommodity_id("");
+  setd_cod(toTitleCase(""));
+
+  setcold_chain(false);
+  setdelivery_type("LOCAL");
+  setentry_type_btn("AUTO GENERATE");
+  setactual_weigth("0");
+  setcommodity("");
+  setclient("");
+  setclient_id("");
+  setbillto("");
+  setbillto_id("");
+  // setclient_id(returned_data[0].client)
+  setshipper("");
+  setshipper_id("");
+  setshipper_state("");
+  setshipper_city("");
+  setshipper_pincode("");
+  setshipper_add_2("");
+  setorigincity("");
+  setorigincity_id("");
+  setshipper_locality("");
+
+  setconsignee("");
+  setconsignee_id("");
+  setconsignee_state("");
+  setconsignee_city("");
+  setconsignee_pincode("");
+  setconsignee_add_1("");
+  setconsignee_locality("");
+  setconsignee_add_2("");
+  setlocal_delivery_type("");
+  setasset_info_selected("");
+  // if (returned_data[0].asset_type === "NONE") {
+  //   setasset_prov(false)
+  // }
+  // else {
+  //   setasset_prov(true)
+  // }
+  setcal_type("");
+
+
+  setshipper_add_1("");
+  setdestinationcity("");
+  setdestinationcity_id("");
+  }
+}, [returned_data, order_type])
+useEffect(() => {
+  if(linked_order.length >=6 && order_type === "Return"){
+    getReturnOrder()
+  }
+}, [linked_order])
 
     // Used for History
     const handlClk = () => {
@@ -2297,9 +2481,37 @@ useEffect(() => {
                   {/* Booking Info */}
 
                   <Row>
+                    <Col lg={(order_type == "Return" || order_type == "Issue") ? 2 : 4} md={6} sm={6}>
+                      <Label className="header-child">Booking For</Label>
+                      <div className="">
+                        <NSearchInput
+                          data_list={order_type_list}
+                          data_item_s={order_type}
+                          show_search={false}
+                          set_data_item_s={setorder_type}
+                        />
+                      </div>
+                    </Col>
+                    {(order_type == "Return" || order_type == "Issue") &&
+                      <Col lg={2} md={6} sm={6}>
+                         <Label className="header-child">Refrence Docket No</Label>
+                        <div className="">
+                          <Input
+                            type="number"
+                            className="form-control-md"
+                            id="input"
+                            value={linked_order}
+                            onChange={(e) =>
+                              setlinked_order(e.target.value)
+                            }
+                            placeholder="Enter Docket Number"
+                          />
+                        </div>
+                      </Col>
+                    }
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">Booking Through</Label>
+                        <Label className="header-child">With EwayBill</Label>
                         <Row>
                           <Col lg={5} md={6} sm={6}>
                             <div className="form-check mb-2">
@@ -2342,7 +2554,6 @@ useEffect(() => {
                         </Row>
                       </div>
                     </Col>
-
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">Delivery Type</Label>
@@ -2543,7 +2754,7 @@ useEffect(() => {
                       </Col>
                     ) : null}
                     {(user.view_coldchain || user.is_superuser) &&
-                      <Col lg={2} md={2} sm={6}>
+                      <Col lg={2} md={6} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">Cold Chain</Label>
                           <br />
@@ -2562,7 +2773,7 @@ useEffect(() => {
                         </div>
                       </Col>
                     }
-                    <Col lg={(user.view_coldchain || user.is_superuser) ? 2 : 4} md={2} sm={6}>
+                    <Col lg={(user.view_coldchain || user.is_superuser) ? 2 : 4} md={6} sm={6}>
                       <div className="mb-3">
                         <Label className="header-child">Non Cold Chain</Label>
                         <br />
@@ -3420,16 +3631,15 @@ useEffect(() => {
                               type="button"
                               className="btn btn-info mx-1 cu_btn "
                               onClick={() => {
-                                if(order.current_status === "SHIPMENT PICKED UP")
-                                {
-                                  navigate("/manifest/pickeduporders")                                  
+                                if (order.current_status === "SHIPMENT PICKED UP") {
+                                  navigate("/manifest/pickeduporders")
                                 }
-                                else{
+                                else {
                                   navigate("/booking/orders/adddocketstatus", {
                                     state: { order: order, type: "add" },
                                   });
                                 }
-                                
+
                               }}
                             >
                               Add Status
@@ -4491,7 +4701,7 @@ useEffect(() => {
                 <Button
                   type="submit"
                   className={isupdating && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
-                  onClick={()=> setsame_as(false)}
+                  onClick={() => setsame_as(false)}
                 >
                   {isupdating && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
                 </Button>

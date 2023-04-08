@@ -284,19 +284,19 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {
                   (selected.includes(order.id) || order.cm_transit_status == "APPROVED") && !user.is_superuser ? (
-                  <><span>Packages</span><br/><span>Status Info</span><br/><span>Images</span></>  
+                    <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
                   )
                     : (order.cm_current_status !== "NOT APPROVED" && order.cm_current_status !== "REJECTED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
-                      ? <><span>Packages</span><br/><span>Status Info</span><br/><span>Images</span></>  
+                      ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
                       : (order.cm_current_status == "REJECTED" && (order.cm_transit_status == "VERIFIED OPERATION MANAGER" || order.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER") && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
-                        ?  <><span>Packages</span><br/><span>Status Info</span><br/><span>Images</span></>  
+                        ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
                         : (order.cm_current_status !== "NOT APPROVED" && order.cm_current_status !== "REJECTED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
-                          ?  <><span>Packages</span><br/><span>Status Info</span><br/><span>Images</span></>  
+                          ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
                           : (order.cm_current_status !== "REJECTED" && (order.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER" || order.cm_transit_status == "VERIFIED OPERATION MANAGER" || order.cm_transit_status == "VERIFIED ACCOUNTANT" || order.cm_transit_status == "VERIFIED ACCOUNT MANAGER" || order.cm_transit_status == "VERIFIED ACCOUNT MANAGER")
                             && (user.user_department_name + " " + user.designation_name === "OPERATION MANAGER" || user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER"))
-                            ?  <><span>Packages</span><br/><span>Status Info</span><br/><span>Images</span></>  
+                            ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
                             : (order.cm_current_status !== "REJECTED" && (order.cm_transit_status == "VERIFIED ACCOUNTANT" || order.cm_transit_status == "VERIFIED ACCOUNT MANAGER") && (user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER"))
-                              ?  <><span>Packages</span><br/><span>Status Info</span><br/><span>Images</span></>  
+                              ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
                               :
                               <>
                                 <HashLink
@@ -323,114 +323,137 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                               </>
                 }
               </td>
+              <td>{toTitleCase(order.order_type)}</td>
               <td>{toTitleCase(order.client_name)}</td>
               <td>
-                {toTitleCase(order.shipper_city) +
-                  ", " +
-                  toTitleCase(order.shipper_state) +
-                  ", " +
-                  toTitleCase(order.shipper_locality)}
+                {order.order_type === "RETURN" ?
+                  <>
+                    {toTitleCase(order.consignee_city) +
+                      ", " +
+                      toTitleCase(order.consignee_state) +
+                      ", " +
+                      toTitleCase(order.consignee_locality)}
+                  </>
+                  : <> {toTitleCase(order.shipper_city) +
+                    ", " +
+                    toTitleCase(order.shipper_state) +
+                    ", " +
+                    toTitleCase(order.shipper_locality)}
+                  </>
+                }
               </td>
               <td>
-                {toTitleCase(order.consignee_city) +
-                  ", " +
-                  toTitleCase(order.consignee_state) +
-                  ", " +
-                  toTitleCase(order.consignee_locality)}
-              </td>
-              <td>{toTitleCase(order.shipper_name)}</td>
-              <td>{toTitleCase(order.consignee_name)}</td>
-              <td><span style={{ color: order.current_status === "SHORT DELIVERED" && "red"}}>{toTitleCase(order.current_status)}</span></td>
-              <td>
-                <div>
-                  <Link
-                    to="/booking/orders/OrderInvoicePdf"
-                    state={{ order: order }}
-                  >
-                    <img src={pdf} width="18" height="18" />
-                  </Link>
-                </div>
-              </td>
-              <td>
-                {order.manifest_no == null ? (
-                  "-"
-                ) : (
-                  <Link
-                    to="/manifests/manifest-pdf"
-                    state={{ manifest_no: order.manifest_no }}
-                  >
-                    {order.manifest_no}
-                  </Link>
-                )}
-              </td>
-              <td>
-                {order.runsheet_no == null ? (
-                  <div>-</div>
-                ) : (
-                  <Link
-                    to="/runsheet/runsheet-pdf"
-                    state={{ rn_no: order.runsheet_no }}
-                  >
-                    {order.runsheet_no}
-                  </Link>
-                )}
-              </td>
-              <td>{toTitleCase(order.order_created_by)}</td>
-              <td>
-                {order.is_completed ? (
+                {order.order_type === "RETURN" ?
+                  <>
+                   {toTitleCase(order.shipper_city) +
+                    ", " +
+                    toTitleCase(order.shipper_state) +
+                    ", " +
+                    toTitleCase(order.shipper_locality)}
+                  </>
+                  :
+                  <>
+                    {toTitleCase(order.consignee_city) +
+                      ", " +
+                      toTitleCase(order.consignee_state) +
+                      ", " +
+                      toTitleCase(order.consignee_locality)}
+                      </>
+              }
+                  </td>
+                <td>{order.order_type === "RETURN" ? toTitleCase(order.consignee_name) : toTitleCase(order.shipper_name)}</td>
+                <td>{order.order_type === "RETURN" ? toTitleCase(order.shipper_name) : toTitleCase(order.consignee_name)}</td>
+                <td><span style={{ color: order.current_status === "SHORT DELIVERED" && "red" }}>{toTitleCase(order.current_status)}</span></td>
+                <td>
                   <div>
-                    <img src={correct} width="18" height="18" />
+                    <Link
+                      to="/booking/orders/OrderInvoicePdf"
+                      state={{ order: order }}
+                    >
+                      <img src={pdf} width="18" height="18" />
+                    </Link>
                   </div>
-                ) : (
-                  <div>
-                    <img src={cross} width="18" height="18" />
-                  </div>
-                )}
-              </td>
-              <td>
-                {order.cold_chain ? (
-                  <div>
-                    <img src={correct} width="18" height="18" />
-                  </div>
-                ) : (
-                  <div>
-                    <img src={cross} width="18" height="18" />
-                  </div>
-                )}
-              </td>
-              <td>
-                {order.is_delivered ? (
-                  <div>
-                    <img src={correct} width="18" height="18" />
-                    <br />
-                    {/* <HashLink
+                </td>
+                <td>
+                  {order.manifest_no == null ? (
+                    "-"
+                  ) : (
+                    <Link
+                      to="/manifests/manifest-pdf"
+                      state={{ manifest_no: order.manifest_no }}
+                    >
+                      {order.manifest_no}
+                    </Link>
+                  )}
+                </td>
+                <td>
+                  {order.runsheet_no == null ? (
+                    <div>-</div>
+                  ) : (
+                    <Link
+                      to="/runsheet/runsheet-pdf"
+                      state={{ rn_no: order.runsheet_no }}
+                    >
+                      {order.runsheet_no}
+                    </Link>
+                  )}
+                </td>
+                <td>{toTitleCase(order.order_created_by)}</td>
+                <td>
+                  {order.is_completed ? (
+                    <div>
+                      <img src={correct} width="18" height="18" />
+                    </div>
+                  ) : (
+                    <div>
+                      <img src={cross} width="18" height="18" />
+                    </div>
+                  )}
+                </td>
+                <td>
+                  {order.cold_chain ? (
+                    <div>
+                      <img src={correct} width="18" height="18" />
+                    </div>
+                  ) : (
+                    <div>
+                      <img src={cross} width="18" height="18" />
+                    </div>
+                  )}
+                </td>
+                <td>
+                  {order.is_delivered ? (
+                    <div>
+                      <img src={correct} width="18" height="18" />
+                      <br />
+                      {/* <HashLink
                       to="/bookings/orders/addorders#order_delivery_info"
                       state={{ order: order, hash: "order_delivery_info" }}
                     >
                       Delivered Info
                     </HashLink> */}
-                  </div>
-                ) : (
-                  <div>
-                    <img src={cross} width="18" height="18" />
-                  </div>
-                )}
-              </td>
-              <td>{order.total_quantity}</td>
-              <td>{toTitleCase(order.branch_name)}</td>
-              <td>{toTitleCase(order.entry_type)}</td>
-              <td>
-                {order.is_manifested ? (
-                  <div>
-                    <img src={correct} width="18" height="18" />
-                  </div>
-                ) : (
-                  <div>
-                    <img src={cross} width="18" height="18" />
-                  </div>
-                )}
-              </td>
-              <td>{toTitleCase(order.delivery_type)}</td>
+                    </div>
+                  ) : (
+                    <div>
+                      <img src={cross} width="18" height="18" />
+                    </div>
+                  )}
+                </td>
+                <td>{order.total_quantity}</td>
+                <td>{toTitleCase(order.branch_name)}</td>
+                <td>{toTitleCase(order.entry_type)}</td>
+                <td>
+                  {order.is_manifested ? (
+                    <div>
+                      <img src={correct} width="18" height="18" />
+                    </div>
+                  ) : (
+                    <div>
+                      <img src={cross} width="18" height="18" />
+                    </div>
+                  )}
+                </td>
+                <td>{toTitleCase(order.delivery_type)}</td>
             </tr>
           );
         })

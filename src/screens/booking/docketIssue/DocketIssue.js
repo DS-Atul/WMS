@@ -80,15 +80,15 @@ const DocketIssue = () => {
                 className="text-sm-end"
                 onClick={() => dispatch(setPageNumber(1))}
               >
-                {(can_add || user.is_superuser) && (
+                {/* {(can_add || user.is_superuser) && (
                   <Nav_Btn
                     btn_name="Add Docket Issues"
                     icon={<MdAdd size={15} />}
                     form_path="/booking/docketIssue/AddDocketIssue"
                   />
-                )}
+                )} */}
                 {/* Filter Tool */}
-                <Filter type={"commodity"} />
+                {/* <Filter type={"commodity"} /> */}
               </div>
             </div>
             {(user.user_department_name === "ADMIN" || user.user_department_name === "ACCOUNTANT" ||  user.user_department_name+" "+ user.designation_name === "ACCOUNT MANAGER") &&

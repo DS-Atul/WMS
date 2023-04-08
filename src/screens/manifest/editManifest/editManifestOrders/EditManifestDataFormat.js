@@ -146,6 +146,8 @@ const EditManifestDataFormat = ({ Manifest_list }) => {
                     <td>{toTitleCase(order.shipper_name)}</td>
                     <td>{toTitleCase(order.consignee_name)}</td>
                     <td>{order.total_quantity}</td>
+                    <td>{(order.issue).length}</td>
+                    <td>{(order.issue_notreceived).length}</td>
                     <td>{order.actual_weight}</td>
                     <td>{booking_date_n}</td>
                     <td>{toTitleCase(order.current_status)}</td>

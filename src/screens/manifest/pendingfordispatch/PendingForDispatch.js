@@ -45,7 +45,14 @@ const PendingForDispatch = () => {
   const search = useSelector((state) => state.searchbar.search_item);
   const [refresh, setrefresh] = useState(false);
   const [toggle, settoggle] = useState(false);
-
+  const [awbno_list, setawbno_list] = useState([])
+  const [issuereceived_total, setreceived_total] = useState()
+  const [issuenon_received_total, setissuenon_received_total] = useState()
+  const [total_pieces, settotal_pieces] = useState()
+  console.log("total_pieces----------", total_pieces)
+  console.log("issuereceived_total-----------", issuereceived_total)
+  console.log("issuenon_received_total--------", issuenon_received_total)
+  console.log("awbno_list--1qqq--------", awbno_list)
   const user = useSelector((state) => state.authentication);
   const user_homebranch_id = useSelector(
     (state) => state.authentication.userdetails.home_branch
@@ -183,19 +190,19 @@ const PendingForDispatch = () => {
   }, []);
 
   const send_manifest_data = () => {
-    let data1 = createRunsheet_list;
-    let id = [];
-    for (let index = 0; index < data1.length; index++) {
-      const element = data1[index];
-      id.push(element.id);
-    }
+    // let data1 = createRunsheet_list;
+    // let id = [];
+    // for (let index = 0; index < data1.length; index++) {
+    //   const element = data1[index];
+    //   id.push(element.id);
+    // }
     axios
       .post(
         ServerAddress + "manifest/add_manifest/",
         {
           from_branch: user_homebranch_id,
           to_branch: branch_type_short,
-          awb_no_list: id,
+          awb_no_list: awbno_list,
           orgin_branch_name: user_home_branch,
           origin_city: user_home_branch_city,
           steps: "FIRST",
@@ -214,6 +221,7 @@ const PendingForDispatch = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
+          setShow(false)
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
           getPendindOrders();
@@ -227,12 +235,12 @@ const PendingForDispatch = () => {
   };
 
   const send_hub_data = () => {
-    let data1 = createRunsheet_list;
-    let id = [];
-    for (let index = 0; index < data1.length; index++) {
-      const element = data1[index];
-      id.push(element.id);
-    }
+    // let data1 = createRunsheet_list;
+    // let id = [];
+    // for (let index = 0; index < data1.length; index++) {
+    //   const element = data1[index];
+    //   id.push(element.id);
+    // }
     axios
       .post(
         ServerAddress + "manifest/add_hub_manifest/",
@@ -241,7 +249,7 @@ const PendingForDispatch = () => {
           destination_branch: branch_type_short,
           origin_location: user_home_branch_location_id,
           destination_location: branch_dest_id,
-          awb_no_list: id,
+          awb_no_list: awbno_list,
           created_by: user.id,
           destination_branch_name: branch_selected.toUpperCase(),
           origin_location_name: user_home_branch_city,
@@ -255,6 +263,7 @@ const PendingForDispatch = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
+          setShow(false)
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
           getPendindOrders();
@@ -275,8 +284,74 @@ const PendingForDispatch = () => {
     }
   }, [createRunsheet_list, branch_selected, unmanifest_list]);
 
+  useEffect(() => {
+    if (createRunsheet_list.length !== 0) {
+      let awb_no_list = [];
+      let received = []
+      let sum_received = []
+      let non_received = []
+      let sum_nonreceived = []
+      let total_pkt = []
+
+      for (let index = 0; index < createRunsheet_list.length; index++) {
+        const element = createRunsheet_list[index];
+        awb_no_list.push(element.id);
+        received.push(element.issue)
+        non_received.push(element.issue_notreceived)
+        total_pkt.push(element.total_quantity)
+      }
+      for (let index = 0; index < received.length; index++) {
+        const element = received[index];
+        sum_received.push(element.length)
+      }
+      for (let index = 0; index < non_received.length; index++) {
+        const element = non_received[index];
+        sum_nonreceived.push(element.length)
+      }
+      const sumrec = sum_received.reduce((acc, curr) => acc + curr, 0);
+      const sumnonrec = sum_nonreceived.reduce((acc, curr) => acc + curr, 0);
+      const total_pcs = total_pkt.reduce((acc, curr) => acc + curr, 0);
+      setreceived_total(sumrec)
+      setissuenon_received_total(sumnonrec)
+      setawbno_list(awb_no_list);
+      settotal_pieces(total_pcs)
+    }
+  }, [createRunsheet_list, local_list, unmanifest_list])
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{manifest_type === "Create_Manifest"
+                ? "Create Manifest" : "Create Hub Manifest"}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces is Damaged and "${issuenon_received_total}" is not Received`}</div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary"
+            onClick={() =>{
+              manifest_type === "Create_Manifest"
+                ? send_manifest_data()
+                : send_hub_data();
+          }}
+          
+          >Save</Button>
+      </Modal.Footer>
+    </Modal >
+
       <form>
 
         <Navigate />
@@ -415,9 +490,15 @@ const PendingForDispatch = () => {
                       className="btn btn-info m-1 cu_btn"
                       disabled={toggle === false}
                       onClick={() => {
-                        manifest_type === "Create_Manifest"
+                        if(issuereceived_total === 0 && issuereceived_total === 0) {
+                          manifest_type === "Create_Manifest"
                           ? send_manifest_data()
-                          :  send_hub_data();
+                          : send_hub_data();
+                        }
+                        else{
+                          handleShow()
+                        }                      
+                      
                       }}
                     >
                       {manifest_type === "Create_Manifest"

@@ -4,7 +4,9 @@ const CreatedDocketDataTitle = [
   "Origin",
   "Destination",
   "Weight",
-  "Quantity",
+  "Total Quantity",
+  "Damaged",
+  "Not Received",
   "Delivery Type",
   "Action",
 ];

@@ -4,7 +4,9 @@ const UnmanifestDataTitle = [
   "Orgin",
   "Destination",
   "Weight",
-  "Quantity",
+  "Total Quantity",
+  "Damaged",
+  "Not Received",
   "Delivery Type",
   "Remove",
 ];

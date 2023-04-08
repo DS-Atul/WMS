@@ -61,6 +61,8 @@ const CreatedDocketDataFormat = ({ sel_rn_list, remove_list }) => {
                   </td>
                   <td>{rn_sel_order.actual_weight}</td>
                   <td>{rn_sel_order.total_quantity}</td>
+                  <td>{(rn_sel_order.issue).length}</td>
+                  <td>{(rn_sel_order.issue_notreceived).length}</td>
                   <td>{toTitleCase(rn_sel_order.delivery_type)}</td>
 
                   <td>

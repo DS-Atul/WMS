@@ -67,6 +67,8 @@ const EditDeliveryDataFormat = ({ check, local_list }) => {
                       <td>{local.consignee_city}</td>
                       <td>{local.actual_weight}</td>
                       <td>{local.total_quantity}</td>
+                      <td>{(local.issue).length}</td>
+                      <td>{(local.issue_notreceived).length}</td>
                       <td>{local.delivery_type}</td>
 
                       <td>

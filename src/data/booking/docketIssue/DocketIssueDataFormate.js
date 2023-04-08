@@ -8,6 +8,7 @@ import { setIsDeleted, setToggle } from "../../../store/pagination/Pagination";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import correct from "../../../assets/images/bookings/check-mark.png";
 import cross from "../../../assets/images/bookings/remove.png";
+import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import {
   setClose,
@@ -22,9 +23,12 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-
+import {
+  Label,
+  Input,
+} from "reactstrap";
 const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
-  console.log("Issue data",data)
+  console.log("Issue data", data)
   const dispatch = useDispatch();
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -33,10 +37,10 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
   const user = useSelector((state) => state.authentication.userdetails);
 
   // For Delete Commodity
-  const delete_commidity_row = (id) => {
+  const delete_issue = (id) => {
     axios
       .post(
-        ServerAddress + "master/delete_commodity/",
+        ServerAddress + "booking/delete_issue/",
         {
           data: id,
         },
@@ -103,7 +107,7 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
 
   useEffect(() => {
     if (delete_id === true) {
-      delete_commidity_row(ids);
+      delete_issue(ids);
     }
   }, [delete_id]);
 
@@ -120,9 +124,21 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
 
   useEffect(() => {
     if (index === 0) {
-      dispatch(setIndexValue("commodity_name"));
+      dispatch(setIndexValue("universal_no"));
     } else if (index === 1) {
-      dispatch(setIndexValue("commodity_type"));
+      dispatch(setIndexValue("universal_type"));
+    }else if (index === 2) {
+      dispatch(setIndexValue("issue_location"));
+    }else if (index === 3) {
+      dispatch(setIndexValue("issue"));
+    }else if (index === 4) {
+      dispatch(setIndexValue("created_at"));
+    }else if (index === 5) {
+      dispatch(setIndexValue("barcode"));
+    }else if (index === 6) {
+      dispatch(setIndexValue("barcode_type"));
+    }else if (index === 7) {
+      dispatch(setIndexValue("is_solved"));
     }
   }, [index]);
 
@@ -142,30 +158,116 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
     }
   }, [userpermission]);
 
-  //For C&M
-  const [showM, setShowM] = useState(false);
 
-  const handleCloseM = () => setShowM(false);
-  const handleShowM = () => setShowM(true);
-  const [reject_resion, setreject_resion] = useState("")
+  const [show, setShow] = useState(false);
 
-  const handleModal = (commodity) => {
-    console.log("NOT APPROVED-----", commodity)
-    handleShowM()
-    setreject_resion(commodity)
-    console.log("reject_resion----", reject_resion)
+  const handleClose = () => 
+  {
+    settoggle(false);
+    setShow(false);
   }
+  const handleShow = () => setShow(true);
+  const [remarks, setremarks] = useState("")
+  const [is_resolved, setis_resolved] = useState(false)
+  const [toggle, settoggle] = useState(false)
+
+  const update_issue = (id) => {
+
+    axios
+      .put(
+        ServerAddress + "booking/update_issue/" + id,
+        {
+          is_solved: is_resolved,
+          remarks: toTitleCase(remarks).toUpperCase(),
+          change_fields: { 'is_solved': is_resolved, 'remarks':remarks, 'solved_by': user.username }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          // dispatch(Toggle(true))
+          dispatch(setToggle(true));
+          setShow(false)
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Status Updated sucessfully`));
+          dispatch(setAlertType("info"));
+          settoggle(false);
+        }
+      })
+      .catch(function (err) {
+        alert(`rror While  Updateing Coloader ${err}`);
+      });
+  };
+  const [issue_id, setissue_id] = useState()
+  console.log("issue_id=========", issue_id)
+  const handleSubmit = (id, issue, remarks) =>{
+    setissue_id(id)
+    setis_resolved(issue)
+    setremarks(remarks)
+    handleShow()
+  }
+
+  useEffect(() => {
+    if(toggle && issue_id !==""){
+      update_issue(issue_id)
+    }
+
+  }, [toggle,issue_id])
+  
 
   return (
     <>
-      <Modal show={showM} onHide={handleCloseM}>
-        <Modal.Header closeButton>
-          <Modal.Title>Status</Modal.Title>
+
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header >
+          <Modal.Title>Issue</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div style={{ fontSize: "15px" }}>Status : {toTitleCase(reject_resion.cm_current_status)}</div>
-          {reject_resion.cm_current_status === "REJECTED" && <div style={{ fontSize: "15px" }}>Resion: {toTitleCase(reject_resion.cm_remarks)}</div>}
+          <div className="mb-3">
+            <Label className="header-child">Is Resolved</Label>
+            <br />
+            <Input
+              className="form-check-input-sm"
+              type="checkbox"
+              // value="false"
+              id="defaultCheck1"
+              onClick={() => {
+                setis_resolved(!is_resolved);
+              }}
+              readOnly={true}
+              checked={is_resolved}
+            />
+          </div>
+          <div className="mb-2">
+            <Label className="header-child">
+              Remarks
+            </Label>
+            <Input
+              value={remarks}
+              onChange={(e)=>setremarks(e.target.value)
+              }
+              type="text"
+              className="form-control-md"
+              id="input"
+              placeholder="Enter Remarks"
+            />
+          </div>
         </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={()=>settoggle(true)}>Save</Button>
+        </Modal.Footer>
       </Modal>
 
       {(list_toggle === true ? data1 : data).length === 0 ? (
@@ -207,14 +309,13 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
                 {/* {can_update || user.is_superuser  ? ( */}
                 {(can_update && order.cm_current_status !== "APPROVED") || user.is_superuser ? (
 
-                  <Link
-                    to="/booking/docketIssue/AddDocketIssue"
-                    state={{ order: order }}
+                  <a style={{ color: "blue" }}
+                    onClick={() => handleSubmit(order.id, order.is_solved, order.remarks)}
                   >
                     {/* {toTitleCase(order.docket_no)} */}
                     {order.universal_no}
-                    
-                  </Link>
+
+                  </a>
 
                 ) : (
                   // toTitleCase(order.commodity_name)
