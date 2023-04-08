@@ -136,8 +136,8 @@ const BreakManifest = ({ depart }) => {
           remarks: remarks,
           issue_recieved_order: received,
           issue_notrecieved_order: notReceived,
-          vehicle_no: toTitleCase(vehicle_no).toUpperCase(),
-          transport_mode: trans_mode_selected.toUpperCase(),
+          vehicle_no: vehicle_no,
+          transport_mode: trans_mode_selected,
           step: steps,
           issue_recieved_order_rec: receivedrec,
           issue_notrecieved_order_rec: notReceivedrec,
@@ -166,11 +166,11 @@ const BreakManifest = ({ depart }) => {
         alert(`Error While  Updateing Manifest ${err}`);
       });
   };
-  useEffect(() => {
-    if (is_submit) {
-      RecieveManifest();
-    }
-  }, [is_submit]);
+  // useEffect(() => {
+  //   if (is_submit) {
+  //     RecieveManifest();
+  //   }
+  // }, [is_submit]);
 
   const [show, setShow] = useState(false);
 console.log("[][]data",data)

@@ -19,6 +19,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { Button } from "reactstrap";
 
 const StatusInfoDataFormat = ({ order_id, data }) => {
+  console.log("order_id---------", order_id)
   const dispatch = useDispatch();
   const success = useSelector((state) => state.alert.show_alert);
   const user = useSelector((state) => state.authentication.userdetails);

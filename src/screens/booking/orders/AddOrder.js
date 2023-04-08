@@ -673,10 +673,12 @@ const AddOrder = () => {
       ) {
         setdocket_error(true);
         doc_no_scroll.scrollIntoView();
-      } else if (transport_mode === "") {
-        settransport_mode_error(true);
-        doc_no_scroll.scrollIntoView();
-      } else if (billto === "") {
+      }
+      //  else if (transport_mode === "") {
+      //   settransport_mode_error(true);
+      //   doc_no_scroll.scrollIntoView();
+      // }
+       else if (billto === "") {
         setbillto_error(true);
       } else if (client === "") {
         setclient_error(true);
@@ -1275,8 +1277,8 @@ const AddOrder = () => {
           assetdeleted_ids: assetdeleted_ids,
           assetold_ids: assetold_ids,
           assetnew_ids: assetnew_ids,
-          linked_order:order_type === "Normal" ? null : linked_order,
-          order_type:order_type === "Normal" ? null :  order_type.toUpperCase(),
+          linked_order:linked_order,
+          order_type:order_type.toUpperCase(),
 
           cm_transit_status: status_toggle === true ? cm_current_status : "",
           cm_current_status: (cm_current_status).toUpperCase(),
@@ -1725,6 +1727,7 @@ const AddOrder = () => {
   useLayoutEffect(() => {
     try {
       let order_data = location.state.order;
+      console.log("order_data================", order_data)
       if (location.state.hash) {
         sethash(location.state.hash);
         let hsh = location.state.hash;
@@ -1732,8 +1735,10 @@ const AddOrder = () => {
           setorder_active_btn("second");
         }
       }
-      // setorder(location.state.order);
-      setlinked_order(order_data.linked_order_value);
+      setorder(location.state.order);
+      setorder_type(toTitleCase(order_data.order_type))
+      setlinked_order((order_data.order_type === "RETURN" || order_data.order_type === "ISSUE") ? order_data.linked_order_value : "");
+   
       setcurrent_status(order_data.current_status);
       setdocket_no_value(order_data.docket_no);
       setisupdating(true);
@@ -1745,7 +1750,6 @@ const AddOrder = () => {
       settransport_mode(toTitleCase(order_data.transportation_mode));
       // setdelivery_mode(order_data.delivery_mode);
       settransportation_cost(order_data.transportation_cost);
-      setorder_type(toTitleCase(order_data.order_type));
       
       setcommodity(order_data.commodity_name);
       setcommodity_id(order_data.commodity);
@@ -2279,68 +2283,73 @@ useEffect(() => {
   setdestinationcity(toTitleCase(returned_data[0].consignee_city));
   setdestinationcity_id(toTitleCase(returned_data[0].consignee_city_id));
   }
-else{
-    
-  setorder([]);
-  settransport_mode("");
-  setcurrent_status("");
-  // setdocket_no_value(returned_data[0].docket_no);
-  // setisupdating(true);
-  setorder_id("");
-  setdocket_no_value("");
-  settype_of_booking(type_of_booking_list[1]);
 
-  // setdelivery_mode(returned_data[0].delivery_mode);
-  settransportation_cost("");
+}, [returned_data, order_type, ])
+
+useEffect(() => {
   
-  setcommodity("");
-  setcommodity_id("");
-  setd_cod(toTitleCase(""));
+  if(location.state === null && order_type !== "Return"){ 
+      setorder([]);
+      settransport_mode("");
+      setcurrent_status("");
+      // setdocket_no_value(returned_data[0].docket_no);
+      // setisupdating(true);
+      setorder_id("");
+      setdocket_no_value("");
+      settype_of_booking(type_of_booking_list[1]);
+    
+      // setdelivery_mode(returned_data[0].delivery_mode);
+      settransportation_cost("");
+      
+      setcommodity("");
+      setcommodity_id("");
+      setd_cod(toTitleCase(""));
+    
+      setcold_chain(false);
+      setdelivery_type("LOCAL");
+      setentry_type_btn("AUTO GENERATE");
+      setactual_weigth("0");
+      setcommodity("");
+      setclient("");
+      setclient_id("");
+      setbillto("");
+      setbillto_id("");
+      // setclient_id(returned_data[0].client)
+      setshipper("");
+      setshipper_id("");
+      setshipper_state("");
+      setshipper_city("");
+      setshipper_pincode("");
+      setshipper_add_2("");
+      setorigincity("");
+      setorigincity_id("");
+      setshipper_locality("");
+    
+      setconsignee("");
+      setconsignee_id("");
+      setconsignee_state("");
+      setconsignee_city("");
+      setconsignee_pincode("");
+      setconsignee_add_1("");
+      setconsignee_locality("");
+      setconsignee_add_2("");
+      setlocal_delivery_type("");
+      setasset_info_selected("");
+      // if (returned_data[0].asset_type === "NONE") {
+      //   setasset_prov(false)
+      // }
+      // else {
+      //   setasset_prov(true)
+      // }
+      setcal_type("");
+    
+    
+      setshipper_add_1("");
+      setdestinationcity("");
+      setdestinationcity_id("");
+      }
+  }, [returned_data, order_type])
 
-  setcold_chain(false);
-  setdelivery_type("LOCAL");
-  setentry_type_btn("AUTO GENERATE");
-  setactual_weigth("0");
-  setcommodity("");
-  setclient("");
-  setclient_id("");
-  setbillto("");
-  setbillto_id("");
-  // setclient_id(returned_data[0].client)
-  setshipper("");
-  setshipper_id("");
-  setshipper_state("");
-  setshipper_city("");
-  setshipper_pincode("");
-  setshipper_add_2("");
-  setorigincity("");
-  setorigincity_id("");
-  setshipper_locality("");
-
-  setconsignee("");
-  setconsignee_id("");
-  setconsignee_state("");
-  setconsignee_city("");
-  setconsignee_pincode("");
-  setconsignee_add_1("");
-  setconsignee_locality("");
-  setconsignee_add_2("");
-  setlocal_delivery_type("");
-  setasset_info_selected("");
-  // if (returned_data[0].asset_type === "NONE") {
-  //   setasset_prov(false)
-  // }
-  // else {
-  //   setasset_prov(true)
-  // }
-  setcal_type("");
-
-
-  setshipper_add_1("");
-  setdestinationcity("");
-  setdestinationcity_id("");
-  }
-}, [returned_data, order_type])
 useEffect(() => {
   if(linked_order.length >=6 && order_type === "Return"){
     getReturnOrder()
@@ -2355,7 +2364,7 @@ useEffect(() => {
         state: { Booking: order },
       });
     };
-    
+
   return (
     <div>
       <Modal show={showOrder} onHide={handleCloseOrder}>
@@ -3757,8 +3766,8 @@ useEffect(() => {
                       }}
                       className="btn1 footer-text"
                       onClick={() => {
-                        setorder_active_btn("first");
-                        updateCurrentStep(1);
+                        // setorder_active_btn("first");
+                        // updateCurrentStep(1);
                       }}
                     >
                       Packages
@@ -3772,8 +3781,8 @@ useEffect(() => {
                       }}
                       className="btn2 footer-text"
                       onClick={() => {
-                        setorder_active_btn("second");
-                        updateCurrentStep(2);
+                        // setorder_active_btn("second");
+                        // updateCurrentStep(2);
                       }}
                     >
                       Order Images
@@ -3785,8 +3794,8 @@ useEffect(() => {
                       }}
                       className="btn3 footer-text"
                       onClick={() => {
-                        setorder_active_btn("third");
-                        updateCurrentStep(3);
+                        // setorder_active_btn("third");
+                        // updateCurrentStep(3);
                       }}
                     >
                       Invoices
