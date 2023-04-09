@@ -357,7 +357,7 @@ const AddClient = (props) => {
   const [commodities_search_txt, setcommodities_search_txt] = useState("")
   const [commodities_error, setcommodities_error] = useState(false);
 const [commodities_loaded, setcommodities_loaded] = useState(false);
-const [commodities_count, setcommodities_count] = useState(1)
+const [commodities_count, setcommodities_count] = useState(1);
 
 
   // Card Control

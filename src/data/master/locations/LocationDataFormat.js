@@ -220,10 +220,10 @@ const LocationDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {
                   location.cm_current_status === "APPROVED" ?
-                    <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-success btn-rounded"} onClick={() => { handleModal(location) }}>Approved</button>
+                    <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-success btn-rounded"} onClick={() => { handleModal(location) }}>Approved</button>
                     :
                     location.cm_current_status === "REJECTED" && location.cm_transit_status === "NOT APPROVED" ? <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-danger btn-rounded"} onClick={() => { handleModal(location) }}>Reject <HiQuestionMarkCircle size={15} /></button>
-                      : <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-warning btn-rounded"} onClick={() => { handleModal(location) }}>Status <HiQuestionMarkCircle size={15} /></button>
+                      : <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-warning btn-rounded"} onClick={() => { handleModal(location) }}>Status <HiQuestionMarkCircle size={15} /></button>
                 }
               </td>
             </tr>

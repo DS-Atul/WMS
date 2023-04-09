@@ -219,10 +219,10 @@ const ChargesDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {
                   charge.cm_current_status === "APPROVED" ?
-                    <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-success btn-rounded"} onClick={() => { handleModal(charge) }}>Approved</button>
+                    <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-success btn-rounded"} onClick={() => { handleModal(charge) }}>Approved</button>
                     :
                     charge.cm_current_status === "REJECTED" && charge.cm_transit_status === "NOT APPROVED" ? <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-danger btn-rounded"} onClick={() => { handleModal(charge) }}>Reject <HiQuestionMarkCircle size={15} /></button>
-                      : <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-warning btn-rounded"} onClick={() => { handleModal(charge) }}>Status <HiQuestionMarkCircle size={15} /></button>
+                      : <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-warning btn-rounded"} onClick={() => { handleModal(charge) }}>Status <HiQuestionMarkCircle size={15} /></button>
                 }
               </td>
             </tr>

@@ -14,10 +14,10 @@ import {
   Input,
   FormFeedback,
   Form,
-  FormGroup
+  FormGroup,
 } from "reactstrap";
 import { IconContext } from "react-icons";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -99,7 +99,9 @@ const AddVendor = () => {
 
   const [msme_registerd, setmsme_registerd] = useState(false);
   const [msme_registerd_number, setmsme_registerd_number] = useState("");
-  const [msme_registerd_number_error, setmsme_registerd_number_error] = useState(false);
+  const [msme_registerd_number_error, setmsme_registerd_number_error] =
+    useState(false);
+  const [msme_No_length, setmsme_No_length] = useState(false);
   const [msme_certificate, setmsme_certificate] = useState("");
   //Service Offered
   const [by_air, setby_air] = useState([]);
@@ -140,9 +142,8 @@ const AddVendor = () => {
   const [airway_bill, setairway_bill] = useState(false);
   const [console_connect, setconsole_connect] = useState(false);
 
-  const [emptyregisterd_number_errr, setemptyregisterd_number_errr] = useState(false);
-
-  
+  const [emptyregisterd_number_errr, setemptyregisterd_number_errr] =
+    useState(false);
 
   const [direct_vehicle, setdirect_vehicle] = useState(false);
   const [part_load_vehicle, setpart_load_vehicle] = useState(false);
@@ -234,14 +235,14 @@ const AddVendor = () => {
     }),
 
     onSubmit: (values) => {
-      if(msme_registerd === true && msme_registerd_number === "") {
-        setmsme_registerd_number_error(true);
-      } 
-     else if (company_type === "") {
+      if (company_type === "") {
+        document.getElementById("vendor_servies").scrollIntoView();
         setcompany_type_error(true);
       } else if (business_selected === "") {
+        document.getElementById("vendor_servies").scrollIntoView();
         setbusiness_line_error(true);
       } else if (service_region_selected === "") {
+        document.getElementById("vendor_servies").scrollIntoView();
         setservice_region_selected_error(true);
       } else if (
         Select_forward_by_air === false &&
@@ -250,14 +251,14 @@ const AddVendor = () => {
         channel_partner === false &&
         delivery_partner === false &&
         Select_other_service_offerd === false
-      ) { 
+      ) {
         alert("Please Select Any Service Offered");
-      }
-       else {
+      } else {
         isupdating ? update_vendor(values) : add_vendor(values);
       }
     },
   });
+
 
   const [forwarding_by_air_value, setforwarding_by_air_value] = useState("");
   useEffect(() => {
@@ -266,11 +267,11 @@ const AddVendor = () => {
     }
   }, [airway_bill, console_connect, forward_by_air]);
 
-  useEffect(()=>{
-    if(msme_registerd_number){
-      setemptyregisterd_number_errr(false)
+  useEffect(() => {
+    if (msme_registerd_number) {
+      setemptyregisterd_number_errr(false);
     }
-  },[msme_registerd_number])
+  }, [msme_registerd_number]);
 
   // Post Vendor
   const add_vendor = (values) => {
@@ -313,8 +314,14 @@ const AddVendor = () => {
           gst_address: row,
           //For C&M
           cm_current_department: user.user_department,
-          cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
-          cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+          cm_current_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
+          cm_transit_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
         },
         {
           headers: {
@@ -424,8 +431,8 @@ const AddVendor = () => {
           change_fields: change_fields,
           //For C&M
           cm_transit_status: status_toggle === true ? current_status : "",
-          cm_current_status: (current_status).toUpperCase(),
-          cm_remarks: ""
+          cm_current_status: current_status.toUpperCase(),
+          cm_remarks: "",
         },
         {
           headers: {
@@ -658,12 +665,14 @@ const AddVendor = () => {
     }
   }, [isupdating]);
 
-
-  useEffect(()=>{
-    if(msme_registerd_number){
-      setmsme_registerd_number_error();
+  useLayoutEffect(() => {
+    if (msme_registerd === true && msme_registerd_number !== "") {
+      setmsme_registerd_number_error(false);
     }
-  })
+    if (msme_registerd_number !== "" && msme_registerd_number.length === 12) {
+      setmsme_No_length(false);
+    }
+  }, [msme_registerd, msme_registerd_number]);
 
   useEffect(() => {
     if (other_list_id !== "") {
@@ -745,7 +754,6 @@ const AddVendor = () => {
     active,
   ];
   const [row, setrow] = useState([dimension_list]);
-  console.log("row-----", row);
   // console.log("selected---", selected)
 
   const addGST = () => {
@@ -1004,7 +1012,8 @@ const AddVendor = () => {
   const [Select_forward_by_road_direct, setSelect_forward_by_road_direct] =
     useState(false);
   const [Select_forward_by_road, setSelect_forward_by_road] = useState(false);
-  const [Select_other_service_offerd, setSelect_other_service_offerd] = useState(false);
+  const [Select_other_service_offerd, setSelect_other_service_offerd] =
+    useState(false);
   useLayoutEffect(() => {
     //Forwarding By Air
     if (
@@ -1031,7 +1040,8 @@ const AddVendor = () => {
     // Forwarding By Road
     if (
       (forward_by_road && part_load_vehicle) ||
-      (forward_by_road && kg_wise) || (forward_by_road && direct_vehicle) 
+      (forward_by_road && kg_wise) ||
+      (forward_by_road && direct_vehicle)
     ) {
       setSelect_forward_by_road(true);
       console.log("By Road Selected", Select_forward_by_road);
@@ -1039,13 +1049,16 @@ const AddVendor = () => {
       setSelect_forward_by_road(false);
     }
 
-    if(others_services_offerd === true && row1[0] !== "" ) {
+    if (others_services_offerd === true && row1[0].length===0) {
       setSelect_other_service_offerd(true);
-    }  else {
+    } else {
       setSelect_other_service_offerd(false);
     }
-    console.log("Other service data ===>>",row1[0] == "" ? "ram" :"sita", Select_other_service_offerd);
-
+    console.log(
+      "Other service data ===>>",
+      row1[0] == "" ? "ram" : "sita",
+      Select_other_service_offerd
+    );
   }, [
     forward_by_air,
     airway_bill,
@@ -1065,43 +1078,42 @@ const AddVendor = () => {
   ]);
   //For Checker Maker
   const [current_status, setcurrent_status] = useState("");
-  const [status_toggle, setstatus_toggle] = useState(false)
-  const [message, setmessage] = useState("")
+  const [status_toggle, setstatus_toggle] = useState(false);
+  const [message, setmessage] = useState("");
   const [message_error, setmessage_error] = useState(false);
-
 
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => {
-    setShow(true)
-    setmessage_error(false)
+    setShow(true);
+    setmessage_error(false);
   };
 
   useEffect(() => {
     if (user.user_department_name === "ADMIN") {
-      setcurrent_status("NOT APPROVED")
-      setstatus_toggle(true)
-    }
-
-    else if (user.user_department_name === "ACCOUNTANT" || user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER" || user.is_superuser) {
-      setcurrent_status("APPROVED")
-      setstatus_toggle(true)
-    }
-    else {
-      setcurrent_status("NOT APPROVED")
+      setcurrent_status("NOT APPROVED");
+      setstatus_toggle(true);
+    } else if (
+      user.user_department_name === "ACCOUNTANT" ||
+      user.user_department_name === "ACCOUNTANT" ||
+      user.user_department_name + " " + user.designation_name ===
+        "ACCOUNT MANAGER" ||
+      user.is_superuser
+    ) {
+      setcurrent_status("APPROVED");
+      setstatus_toggle(true);
+    } else {
+      setcurrent_status("NOT APPROVED");
       // setstatus_toggle(false)
     }
-
-  }, [user, isupdating])
+  }, [user, isupdating]);
 
   const update_vendorstatus = (id) => {
-
     axios
       .put(
         ServerAddress + "master/update_vendor/" + id,
         {
-
           cm_current_status: "REJECTED",
           cm_remarks: toTitleCase(message).toUpperCase(),
           change_fields: {},
@@ -1129,15 +1141,13 @@ const AddVendor = () => {
   const handleSubmit = () => {
     if (message == "") {
       setmessage_error(true);
+    } else {
+      update_vendorstatus(vendor_data.id);
+      setShow(false);
     }
-    else {
-      update_vendorstatus(vendor_data.id)
-      setShow(false)
-    }
-  }
+  };
   const handlClk = () => {
-    navigate("/master/vendor/vendorHistory/VendorHistoryPage",
-     {
+    navigate("/master/vendor/vendorHistory/VendorHistoryPage", {
       state: { vendor: vendor_data },
     });
   };
@@ -1145,41 +1155,73 @@ const AddVendor = () => {
   return (
     <>
       <div>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Reject Resion</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <FormGroup>
-            <Label for="exampleText">
-              Text Area
-            </Label>
-            <Input
-              id="exampleText"
-              name="text"
-              type="textarea"
-              style={{ height: "90px" }}
-              onChange={(e) => {
-                setmessage(e.target.value)
-              }}
-            />
-            <div className="mt-1 error-text" color="danger">
-              {message_error ? "Please Enter Reject Resion" : null}
-            </div>
-          </FormGroup>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={() => handleSubmit()}>
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Reject Resion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <FormGroup>
+              <Label for="exampleText">Text Area</Label>
+              <Input
+                id="exampleText"
+                name="text"
+                type="textarea"
+                style={{ height: "90px" }}
+                onChange={(e) => {
+                  setmessage(e.target.value);
+                }}
+              />
+              <div className="mt-1 error-text" color="danger">
+                {message_error ? "Please Enter Reject Resion" : null}
+              </div>
+            </FormGroup>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={() => handleSubmit()}>
+              Save
+            </Button>
+          </Modal.Footer>
+        </Modal>
         <Form
           onSubmit={(e) => {
             e.preventDefault();
+
+            let all_state = Object.entries(validation.values);
+            let filter_value = all_state.filter(
+              (v) => v[1] === "" || v[1] === 0
+            );
+            let map_value = filter_value.map((m) => m[0]);
+            let all_value = map_value[0];
+
+            let filed1 = ["vendor_name"];
+            let field2 = ["vendor_email", "vendor_ph_no"];
+            let field3 = ["pan_number"];
+
+            if (filed1.includes(all_value)) {
+              document.getElementById("vendor_info").scrollIntoView();
+            }
+
+            if (field2.includes(all_value)) {
+              document.getElementById("contact_info").scrollIntoView();
+            }
+
+            if (field3.includes(all_value)) {
+              document.getElementById("vendor_servies").scrollIntoView();
+            }
+            if (msme_registerd === true && msme_registerd_number === "") {
+              setmsme_registerd_number_error(true);
+              document.getElementById("vendor_info").scrollIntoView();
+            }
+            if (
+              msme_registerd_number !== "" &&
+              msme_registerd_number.length !== 12
+            ) {
+              document.getElementById("vendor_info").scrollIntoView();
+              setmsme_No_length(true);
+            }
             validation.handleSubmit(e.values);
             return false;
           }}
@@ -1194,19 +1236,20 @@ const AddVendor = () => {
 
           {/* Vendor Info */}
           <div className="m-3">
-          {isupdating ? (
-            <div style={{ justifyContent: "right", display: "flex" }}>
-              <Button
-                type="button"
-                onClick={() => {
-                  handlClk();
-                }}
-              >
-                History
-              </Button>
-            </div>
-           ) : null} 
-            <Col lg={12}>
+            {isupdating ? (
+              <div style={{ justifyContent: "right", display: "flex" }}>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    handlClk();
+                  }}
+                >
+                  History
+                </Button>
+              </div>
+            ) : null}
+
+            <Col lg={12} id="vendor_info">
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
                   <div className="header-text-icon header-text">
@@ -1338,13 +1381,21 @@ const AddVendor = () => {
                                 placeholder="Enter Registration Number"
                                 value={msme_registerd_number}
                                 onChange={(val) => {
-                                  setmsme_registerd_number(val.target.value)
+                                  setmsme_registerd_number(val.target.value);
                                 }}
                                 invalid={msme_registerd_number_error}
                               />
                               <div className="mt-1 error-text" color="danger">
-                                {msme_registerd_number_error ? " invalid number" : null} 
-                              </div> 
+                                {msme_registerd_number_error
+                                  ? " MSME No is required"
+                                  : null}
+                              </div>
+
+                              {msme_No_length && (
+                                <div className="mt-1 error-text" color="danger">
+                                  MSME number must 12 digit long
+                                </div>
+                              )}
                             </div>
                           </Col>
 
@@ -1377,7 +1428,7 @@ const AddVendor = () => {
           </div>
 
           {/* Vendor Registered Office Contact info */}
-          <div className="m-3">
+          <div className="m-3" id="contact_info">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
@@ -1460,7 +1511,9 @@ const AddVendor = () => {
 
                       <Col lg={6} md={6} sm={6}>
                         <div className="mb-2">
-                          <Label className="header-child">Vendor Email </Label>
+                          <Label className="header-child">
+                            Vendor Email 2{" "}
+                          </Label>
                           <Input
                             onChange={validation.handleChange}
                             value={validation.values.vendor_email1 || ""}
@@ -1496,8 +1549,8 @@ const AddVendor = () => {
           </div>
 
           {/* Vendor Services/ Address Info */}
-          <div className="m-3">
-            <Col lg={12}>
+          <div className="m-3" id="address_info">
+            <Col lg={12} id="vendor_servies">
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
                   <div className="header-text-icon header-text">
@@ -1630,7 +1683,7 @@ const AddVendor = () => {
                                         ) {
                                           getGstStates(
                                             itm[0] + itm[1],
-                                            "state_code"
+                                            "gst_code"
                                           );
                                         } else if (
                                           item[0].length > 10 &&
@@ -1745,7 +1798,6 @@ const AddVendor = () => {
                               >
                                 <Label className="header-child">H.O</Label>
                                 {row.map((item, index) => {
-                                  console.log("index----", index);
                                   return (
                                     <div
                                       onClick={() => {
@@ -2318,22 +2370,35 @@ const AddVendor = () => {
           <div className="m-3">
             <Col lg={12}>
               <div className="mb-1 footer_btn">
-              <button
-                type="submit"
-                className={isupdating && (user.user_department_name === "ADMIN") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
-              >
-                {isupdating && (user.user_department_name === "ADMIN" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
-              </button>
-
-              {isupdating && (user.user_department_name !== "ADMIN" && !user.is_superuser) &&
                 <button
-                  type="button"
-                  className="btn btn-danger m-1"
-                  onClick={handleShow}
+                  type="submit"
+                  className={
+                    isupdating && user.user_department_name === "ADMIN"
+                      ? "btn btn-info m-1"
+                      : !isupdating
+                      ? "btn btn-info m-1"
+                      : "btn btn-success m-1"
+                  }
                 >
-                  Rejected
+                  {isupdating &&
+                  (user.user_department_name === "ADMIN" || user.is_superuser)
+                    ? "Update"
+                    : !isupdating
+                    ? "Save"
+                    : "Approved"}
                 </button>
-              }
+
+                {isupdating &&
+                  user.user_department_name !== "ADMIN" &&
+                  !user.is_superuser && (
+                    <button
+                      type="button"
+                      className="btn btn-danger m-1"
+                      onClick={handleShow}
+                    >
+                      Rejected
+                    </button>
+                  )}
 
                 <Button
                   type="button"

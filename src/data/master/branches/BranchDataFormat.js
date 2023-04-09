@@ -235,10 +235,10 @@ const BranchDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {
                   branch.cm_current_status === "APPROVED" ?
-                    <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-success btn-rounded"} onClick={() => { handleModal(branch) }}>Approved</button>
+                    <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-success btn-rounded"} onClick={() => { handleModal(branch) }}>Approved</button>
                     :
                     branch.cm_current_status === "REJECTED" && branch.cm_transit_status === "NOT APPROVED" ? <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-danger btn-rounded"} onClick={() => { handleModal(branch) }}>Reject <HiQuestionMarkCircle size={15} /></button>
-                      : <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-warning btn-rounded"} onClick={() => { handleModal(branch) }}>Status <HiQuestionMarkCircle size={15} /></button>
+                      : <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-warning btn-rounded"} onClick={() => { handleModal(branch) }}>Status <HiQuestionMarkCircle size={15} /></button>
                 }
               </td>
             </tr>

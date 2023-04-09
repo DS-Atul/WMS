@@ -86,9 +86,9 @@ const DashboardChartSection = () => {
         shipper_wise_disribution,
         consignee_wise_disribution,
       } = resp.data;
-      setlocal_order_data(delivery_type[0].total_count);
-      setdomestic_order_data(delivery_type[1].total_count);
-      setinternational_order_data(delivery_type[2].total_count);
+      setlocal_order_data(delivery_type[0] ? delivery_type[0].total_count : 0);
+      setdomestic_order_data(delivery_type[1] ? delivery_type[1].total_count : 0);
+      setinternational_order_data(delivery_type[2] ? delivery_type[2].total_count : 0);
 
       console.log("billto", billto);
       setbillto_arr(billto.map(({ total_count }) => total_count).slice(0, 5));

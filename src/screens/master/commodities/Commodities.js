@@ -64,7 +64,7 @@ const Commodities = () => {
     }
   }, [userpermission]);
 
-  console.log("user.user_department_name----", user.user_department_name)
+  // console.log("user.user_department_name----", user.user_department_name)
   return (
     <>
       <PageTitle page="Commodities" />

@@ -85,6 +85,8 @@ const AddClient = () => {
   const [state_error, setstate_error] = useState(false);
   const [state_page, setstate_page] = useState(1);
   const [state_search_item, setstate_search_item] = useState("");
+  const [state_loaded, setstate_loaded] = useState(false);
+  const [state_count, setstate_count] = useState(1);
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -92,6 +94,8 @@ const AddClient = () => {
   const [city_error, setcity_error] = useState(false);
   const [city_page, setcity_page] = useState(1);
   const [city_search_item, setcity_search_item] = useState("");
+  const [city_loaded, setcity_loaded] = useState(false);
+  const [city_count, setcity_count] = useState(1);
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -103,6 +107,8 @@ const AddClient = () => {
   const [pincode_page, setpincode_page] = useState(1);
   const [pincode_search_item, setpincode_search_item] = useState("");
   const [pincode_id, setpincode_id] = useState(0);
+  const [loaded_pincode, setloaded_pincode] = useState(false);
+  const [pincode_count, setpincode_count] = useState(1);
 
   const [locality, setlocality] = useState("");
   const [pincode_loaded, setpincode_loaded] = useState(false);
@@ -240,6 +246,12 @@ const AddClient = () => {
         }
       )
       .then((resp) => {
+
+        if(resp.data.next ===null) {
+          setstate_loaded(false);
+        } else {
+          setstate_loaded(true);
+        }
         if (resp.data.results.length > 0) {
           if (state_page == 1) {
             state_list = resp.data.results.map((v) => [
@@ -254,7 +266,7 @@ const AddClient = () => {
             ];
           }
         }
-
+setstate_count(state_count+2);
         setcity_list_s([]);
         setstate_list_s(state_list);
       })
@@ -279,6 +291,12 @@ const AddClient = () => {
         }
       )
       .then((resp) => {
+
+        if(resp.data.next ===null) {
+          setcity_loaded(false);
+        } else {
+          setcity_loaded(true);
+        }
         if (resp.data.results.length > 0) {
           if (city_page == 1) {
             cities_list = resp.data.results.map((v) => [
@@ -291,6 +309,7 @@ const AddClient = () => {
               ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
             ];
           }
+          setcity_count(city_count+2);
           setcity_list_s(cities_list);
         } else {
           setcity_list_s([]);
@@ -316,6 +335,13 @@ const AddClient = () => {
         }
       )
       .then((resp) => {
+        
+        if(resp.data.next ===null){
+          setloaded_pincode(false);
+        } else {
+          setloaded_pincode(true);
+        }
+
         if (filter_by !== "pincode") {
           if (pincode_page == 1) {
             pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
@@ -325,7 +351,7 @@ const AddClient = () => {
               ...resp.data.results.map((v) => [v.id, v.pincode]),
             ];
           }
-
+setpincode_count(pincode_count+2);
           setpincode_list_s(pincode_list);
         } else if (resp.data.results.length > 0) {
           setcity(toTitleCase(resp.data.results[0].city_name));
@@ -597,7 +623,7 @@ const AddClient = () => {
   // Location Functions Call
   useEffect(() => {
     if (state_id !== 0 && by_pincode === false) {
-      setcity_page(1);
+      // setcity_page(1);
       getCities(state_id, "state");
       // setpincode("");
       setpincode_list_s([]);
@@ -1294,6 +1320,8 @@ const AddClient = () => {
                           error_s={state_error}
                           search_item={state_search_item}
                           setsearch_item={setstate_search_item}
+                          loaded={state_loaded}
+                          count={state_count}
                         />
                       </span>
                       {/* <div className="mt-1 error-text" color="danger">
@@ -1318,6 +1346,8 @@ const AddClient = () => {
                         error_s={city_error}
                         search_item={city_search_item}
                         setsearch_item={setcity_search_item}
+                        loaded={city_loaded}
+                        count={city_count}
                       />
                       {/* <div className="mt-1 error-text" color="danger">
                         {city_error ? "Please Select Any City" : null}
@@ -1342,6 +1372,8 @@ const AddClient = () => {
                           error_s={select_pincode_error}
                           search_item={pincode_search_item}
                           setsearch_item={setpincode_search_item}
+                          loaded={loaded_pincode}
+                          count={pincode_count}
                         />
                       </div>
                     ) : (

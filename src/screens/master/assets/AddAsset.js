@@ -121,6 +121,8 @@ const AddAsset = () => {
   const [branch_short_id, setbranch_short_id] = useState("");
   const [branch_selected, setbranch_selected] = useState("");
   const [search_branch, setsearch_branch] = useState("");
+  const [branch_loaded, setbranch_loaded] = useState(false);
+  const [branch_count, setbranch_count] = useState(1);
 
   const [useproduct_id, setuseproduct_id] = useState("");
 
@@ -314,6 +316,7 @@ const AddAsset = () => {
       });
   };
   const get_branch = () => {
+    let branch_list_is = [];
     axios
       .get(
         ServerAddress +
@@ -325,14 +328,36 @@ const AddAsset = () => {
         }
       )
       .then((response) => {
-        let temp = [];
-        let temp2 = [...branch_list];
-        temp = response.data.results;
-        for (let index = 0; index < temp.length; index++) {
-          temp2.push([temp[index].id, toTitleCase(temp[index].name)]);
-        }
-        temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
-        setbranch_list(temp2);
+
+        console.log("State is ===>",response.data)
+if(resp.data.next === null){
+  setbranch_loaded(false);
+} else {
+  setbranch_loaded(true);
+}
+if (response.data.results.length > 0) {
+  if (page == 1) {
+    branch_list_is = response.data.results.map((v) => [
+      v.id,
+      toTitleCase(v.name),
+    ]);
+  } else {
+    branch_list_is = [
+      ...vendor_list,
+      ...response.data.results.map((v) => [v.id, v.name]),
+    ];
+  }
+}
+setbranch_count(branch_count+2);
+setbranch_list(branch_list_is);
+        // let temp = [];
+        // let temp2 = [...branch_list];
+        // temp = response.data.results;
+        // for (let index = 0; index < temp.length; index++) {
+        //   temp2.push([temp[index].id, toTitleCase(temp[index].name)]);
+        // }
+        // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+        // setbranch_list(temp2);
       })
       .catch((err) => {
         alert(`Error While Loading Client , ${err}`);
@@ -1072,6 +1097,8 @@ const AddAsset = () => {
                           setsearch_item={setsearch_branch}
                           error_message={"Please select Assign Branch"}
                           error_s={branch_error}
+                          loaded={branch_loaded}
+                          count={branch_count}
                         />
                         {/* <div className="mt-1 error-text" color="danger">
                           {branch_error ? "Please Select Any Branch" : null}

@@ -57,6 +57,8 @@ const AddOrderOrigin = () => {
   const [temp_state, settemp_state] = useState("");
   const [city_page, setcity_page] = useState(1);
   const [city_search_item, setcity_search_item] = useState("");
+  const [city_loaded, setcity_loaded] = useState(false);
+  const [city_count, setcity_count] = useState(1);
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -66,6 +68,8 @@ const AddOrderOrigin = () => {
   const [pincode_search_item, setpincode_search_item] = useState("");
   const [pincode_id, setpincode_id] = useState(0);
   const [pincode_loaded, setpincode_loaded] = useState(false);
+  const [loaded_pincode, setloaded_pincode] = useState(false);
+  const [pincode_count, setpincode_count] = useState(1);
 
   const [locality, setlocality] = useState("");
   const [locality_list_s, setlocality_list_s] = useState([]);
@@ -78,12 +82,16 @@ const AddOrderOrigin = () => {
   const [billto_id, setbillto_id] = useState(0);
   const [billto_page, setbillto_page] = useState(1);
   const [billto_search_item, setbillto_search_item] = useState("");
+  const [billto_loaded, setbillto_loaded] = useState(false);
+  const [billto_count, setbillto_count] = useState(1);
 
   const [client_list_s, setclient_list_s] = useState([]);
   const [client, setclient] = useState("");
   const [client_id, setclient_id] = useState(0);
   const [client_page, setclient_page] = useState(1);
   const [client_search_item, setclient_search_item] = useState("");
+  const [client_loaded, setclient_loaded] = useState(false);
+  const [client_count, setclient_count] = useState(1);
 
   //error state
   const [bill_to_error, setbill_to_error] = useState(false);
@@ -145,6 +153,12 @@ const AddOrderOrigin = () => {
       .then((resp) => {
         setcitydata(resp.data.results);
         setdata(true);
+        if(resp.data.next === null) {
+          setcity_loaded(false);
+        } else {
+          setcity_loaded(true);
+        }
+
         if (resp.data.results.length > 0) {
           if (city_page === 1) {
             cities_list = resp.data.results.map((v) => [
@@ -165,6 +179,7 @@ const AddOrderOrigin = () => {
           // setcity("");
           setpincode_loaded(true);
           // setpincode("");
+          setcity_count(city_count +2);
           setcity_list_s(cities_list);
         } else {
           setcity("");
@@ -276,8 +291,9 @@ const AddOrderOrigin = () => {
   };
 
   const getBillto = () => {
-    let b_temp2 = [...billto_list_s];
-    let b_data = [];
+    // let b_temp2 = [...billto_list_s];
+    // let b_data = [];
+    let billto_list = [];
     axios
       .get(
         ServerAddress +
@@ -287,14 +303,35 @@ const AddOrderOrigin = () => {
         }
       )
       .then((response) => {
-        b_data = response.data.results;
-        for (let index = 0; index < b_data.length; index++) {
-          b_temp2.push([b_data[index].id, toTitleCase(b_data[index].name)]);
+        if(response.data.next === null) {
+          setbillto_loaded(false);
+        } else {
+          setbillto_loaded(true);
         }
-        b_temp2 = [...new Set(b_temp2.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        setbillto_list_s(b_temp2);
+
+        if(response.data.results.length > 0) {
+          if(billto_page == 1) {
+            billto_list = response.data.results.map((v) => [
+              v.id, v.name,
+            ]);
+          }
+          else   {
+            billto_list = [
+              ...billto_list_s,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+        } 
+        setbillto_count(billto_count +2);
+        setbillto_list_s(billto_list);
+        // b_data = response.data.results;
+        // for (let index = 0; index < b_data.length; index++) {
+        //   b_temp2.push([b_data[index].id, toTitleCase(b_data[index].name)]);
+        // }
+        // b_temp2 = [...new Set(b_temp2.map((v) => `${v}`))].map((v) =>
+        //   v.split(",")
+        // );
+        // setbillto_list_s(b_temp2);
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
@@ -302,8 +339,9 @@ const AddOrderOrigin = () => {
   };
 
   const getClient = () => {
-    let temp2 = [];
-    let data = [];
+    // let temp2 = [];
+    // let data = [];
+    let client_list = [];
     axios
       .get(
         ServerAddress +
@@ -313,12 +351,37 @@ const AddOrderOrigin = () => {
         }
       )
       .then((response) => {
-        data = response.data.results;
-        for (let index = 0; index < data.length; index++) {
-          temp2.push([data[index].id, toTitleCase(data[index].name)]);
-        }
-        temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
-        setclient_list_s(temp2);
+
+if(response.data.next === null) {
+  setclient_loaded(false);
+} else {
+  setclient_loaded(true);
+}
+
+if(response.data.results.length > 0) {
+  if(client_page == 1) {
+client_list = response.data.results.map((v) => [
+  v.id,v.name,
+]);
+  } 
+  else {
+    client_list = [
+      ...client_list_s ,
+      ...response.data.results.map((v) => [
+        v.id,v.name,
+      ])
+    ]
+  }
+setclient_count(client_count +2);
+  setclient_list_s(client_list);
+}
+
+        // data = response.data.results;
+        // for (let index = 0; index < data.length; index++) {
+        //   temp2.push([data[index].id, toTitleCase(data[index].name)]);
+        // }
+        // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+        // setclient_list_s(temp2);
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
@@ -746,6 +809,8 @@ const AddOrderOrigin = () => {
                           error_message={"Please Select Bill To"}
                           setsearch_item={setbillto_search_item}
                           error_s={bill_to_error}
+                          loaded={billto_loaded}
+                          count={billto_count}
                         />
                       </div>
                     </Col>
@@ -764,6 +829,8 @@ const AddOrderOrigin = () => {
                             error_message={"Please Select Client"}
                             setsearch_item={setclient_search_item}
                             error_s={client_error}
+                            loaded={client_loaded}
+                            count={client_count}
                           />
                         </div>
                       </Col>
@@ -783,6 +850,8 @@ const AddOrderOrigin = () => {
                           error_message={"Please Select Any City"}
                           setsearch_item={setcity_search_item}
                           error_s={city_error}
+                          loaded={city_loaded}
+                          count={city_count}
                         />
                       </div>
                     </Col>

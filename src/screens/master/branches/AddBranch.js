@@ -95,6 +95,8 @@ const AddBranch = () => {
   const [state_error, setstate_error] = useState(false);
   const [state_page, setstate_page] = useState(1);
   const [state_search_item, setstate_search_item] = useState("");
+  const [state_loaded, setstate_loaded] = useState(false);
+  const [state_count, setstate_count] = useState(1);
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -102,6 +104,9 @@ const AddBranch = () => {
   const [city_error, setcity_error] = useState(false);
   const [city_page, setcity_page] = useState(1);
   const [city_search_item, setcity_search_item] = useState("");
+const [city_loaded, setcity_loaded] = useState(false);
+const [city_count, setcity_count] = useState(1);
+
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -113,6 +118,8 @@ const AddBranch = () => {
   const [pincode_search_item, setpincode_search_item] = useState("");
   const [pincode_id, setpincode_id] = useState(0);
   const [pincode_loaded, setpincode_loaded] = useState(false);
+  const [load_pincode, setload_pincode] = useState(false);
+  const [pincode_count, setpincode_count] = useState(1);
 
   const [pincode_list_error, setpincode_list_error] = useState(false);
 
@@ -135,6 +142,8 @@ const AddBranch = () => {
 
   const [op_city_page, setop_city_page] = useState(1);
   const [search_op_city, setsearch_op_city] = useState("");
+  const [operating_city_loaded, setoperating_city_loaded] = useState(false);
+  const [operating_city_count, setoperating_city_count] = useState(1);
   // Error State
   const [branch_type_error, setbranch_type_error] = useState(false);
   const [vendor_error, setvendor_error] = useState(false);
@@ -433,6 +442,13 @@ const AddBranch = () => {
         }
       )
       .then((resp) => {
+
+        if(resp.data.next === null) {
+          setstate_loaded(false);
+        } else {
+setstate_loaded(true);
+        }
+
         if (resp.data.results.length > 0) {
           if (state_page == 1) {
             state_list = resp.data.results.map((v) => [
@@ -446,6 +462,7 @@ const AddBranch = () => {
             ];
           }
         }
+        setstate_count(state_count+2);
         setstate_list_s(state_list);
       })
       .catch((err) => {
@@ -469,6 +486,13 @@ const AddBranch = () => {
         }
       )
       .then((resp) => {
+
+        if(resp.data.next === null) {
+          setcity_loaded(false);
+        } else {
+          setcity_loaded(true);
+        }
+
         if (resp.data.results.length > 0) {
           if (city_page == 1) {
             cities_list = resp.data.results.map((v) => [
@@ -484,6 +508,7 @@ const AddBranch = () => {
               ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
             ];
           }
+          setcity_count(city_count +2);
           setcity_list_s(cities_list);
         } 
         else {
@@ -511,6 +536,13 @@ const AddBranch = () => {
       .then((response) => {
         temp = response.data.results;
         if (temp.length > 0) {
+console.log("resp of op city", response.data.results)
+          if(response.data.next === null) {
+            setoperating_city_loaded(false);
+          } else {
+            setoperating_city_loaded(true);
+          }
+
           temp_2 = temp.map((v) => [v.id, toTitleCase(v.city)]);
           try {
             let client_up = location_data.state.branch;
@@ -528,11 +560,14 @@ const AddBranch = () => {
               );
               setoperating_city_list2(cl_brncs);
               setoperating_city_list(f_brnch);
+              setoperating_city_count(operating_city_count+2);
             } else {
               setoperating_city_list(temp_2);
+              setoperating_city_count(operating_city_count+2);
             }
           } catch (err) {
             setoperating_city_list(temp_2);
+            setoperating_city_count(operating_city_count+2);
           }
         }
       });
@@ -1374,6 +1409,8 @@ const AddBranch = () => {
                               error_s={state_error}
                               search_item={state_search_item}
                               setsearch_item={setstate_search_item}
+                              loaded={state_loaded}
+                              count={state_count}
                             />
                           </span>
                           {/* <div className="mt-1 error-text" color="danger">
@@ -1398,6 +1435,8 @@ const AddBranch = () => {
                             error_s={city_error}
                             search_item={city_search_item}
                             setsearch_item={setcity_search_item}
+                            loaded={city_loaded}
+                            count={city_count}
                           />
                           {/* <div className="mt-1 error-text" color="danger">
                             {city_error ? "Please Select Any City" : null}
@@ -1540,6 +1579,8 @@ const AddBranch = () => {
                         page={op_city_page}
                         setpage={setop_city_page}
                         setsearch_item={setsearch_op_city}
+                        loaded={operating_city_loaded}
+                        count={operating_city_count}
                       />
                       {operating_city_error ? (
                         <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>

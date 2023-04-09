@@ -1536,7 +1536,7 @@ const AddOrganization = () => {
                                       let itm = item[0]
 
                                       if (item[0].length == 15 && gst_val == itm[0] + itm[1] + validation.values.pan_no) {
-                                        getGstStates(itm[0] + itm[1], "state_code")
+                                        getGstStates(itm[0] + itm[1], "gst_code")
                                       }
                                       else if (item[0].length > 10 && row.length - 1 === index) {
                                         dispatch(setShowAlert(true));
