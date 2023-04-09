@@ -490,7 +490,7 @@ const PendingForDispatch = () => {
                       className="btn btn-info m-1 cu_btn"
                       disabled={toggle === false}
                       onClick={() => {
-                        if(issuereceived_total === 0 && issuereceived_total === 0) {
+                        if(issuereceived_total === 0 && issuenon_received_total === 0) {
                           manifest_type === "Create_Manifest"
                           ? send_manifest_data()
                           : send_hub_data();

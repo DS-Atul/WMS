@@ -127,7 +127,7 @@ const TrackingOrder = () => {
                             <b style={{ fontSize: "15px" }}>Docket Number :</b>{" "}
                             {last_ele.docket_no}
                           </div>
-                          {(last_ele.issue_notreceived).length !== 0 &&
+                          {(last_ele.issue_notreceived).length !== 0 && last_ele.status!=="SHIPMENT DELIVERED"&&
                             <div>
                               <b style={{ fontSize: "15px" }}>Not Received Packets :</b>{" "} {(last_ele.issue_notreceived).length}
                             </div>

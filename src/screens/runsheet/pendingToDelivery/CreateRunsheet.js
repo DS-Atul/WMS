@@ -258,7 +258,7 @@ const [close, setclose] = useState(false)
         >
           <Modal.Body>
             {/* <Label>Is Defined Row</Label> */}
-            {(issuereceived_total === 0 && issuereceived_total === 0) || close ?
+            {(issuereceived_total === 0 && issuenon_received_total === 0) || close ?
               <>
                 <div >
                   <Label>
@@ -444,7 +444,7 @@ const [close, setclose] = useState(false)
           </Modal.Body>
 
           <Modal.Footer>
-            {(issuereceived_total === 0 && issuereceived_total === 0) || close ?
+            {(issuereceived_total === 0 && issuenon_received_total === 0) || close ?
               <Button type="submit">
                 Save
               </Button>
@@ -454,7 +454,7 @@ const [close, setclose] = useState(false)
               </Button>
             }
             <Button type="button" variant="secondary" onClick={handleClose}>
-            {(issuereceived_total === 0 && issuereceived_total === 0) ? "Close" : "No"}
+            {(issuereceived_total === 0 && issuenon_received_total === 0) ? "Close" : "Cancel"}
             </Button>
           </Modal.Footer>
         </form>

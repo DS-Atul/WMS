@@ -70,10 +70,10 @@ const AddOrder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [page, setpage] = useState(1);
-
+  const [returned_data, setreturned_data] = useState([])
+  const [total_delivered_pcs, settotal_delivered_pcs] = useState(0)
   //Get Updated Location Data
   const [order, setorder] = useState([]);
-  console.log("orderorderorderorder", order)
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
@@ -107,7 +107,6 @@ const AddOrder = () => {
   const [nonecold_chain, setnonecold_chain] = useState(false);
   const [cod_list, setcod_list] = useState(["Yes", "No"]);
   const [asset_prov, setasset_prov] = useState(false)
-  console.log("----------asset_prov", asset_prov)
   const [d_cod, setd_cod] = useState("No");
   //Type of Booking
   const [type_of_booking_list, setype_of_booking_list] = useState([
@@ -171,6 +170,7 @@ const AddOrder = () => {
   const [shipper_pincode, setshipper_pincode] = useState("");
   const [shipper_locality, setshipper_locality] = useState("");
   const [shipper_locality_id, setshipper_locality_id] = useState(0);
+
   const [shipper_add_1, setshipper_add_1] = useState("");
   const [shipper_add_2, setshipper_add_2] = useState("");
   const [search_shipper, setsearch_shipper] = useState("");
@@ -625,7 +625,6 @@ const AddOrder = () => {
     "Issue",
   ])
   const [order_type, setorder_type] = useState(order_type_list[0])
-  console.log("order_type---------", order_type)
 
   // validation
   const validation = useFormik({
@@ -639,7 +638,7 @@ const AddOrder = () => {
       consignee_city: "",
       consignee_state: "",
       consignee_pin_code: "",
-      total_quantity: order.total_quantity || "0",
+      total_quantity: (order_type == "Issue" && returned_data.length !== 0) ? returned_data[0].issue_notreceived.length : order.total_quantity || "0",
       chargeable_weight: order.chargeable_weight || "0",
       e_way_bill_no: order.e_waybill_number || "",
       e_Way_Billpart_two: order.e_waybill_number_part_b || "",
@@ -733,15 +732,12 @@ const AddOrder = () => {
   const [box_bq, setbox_bq] = useState("")
   let dimension_list8 = [box_bq];
   const [row6, setrow6] = useState([dimension_list8])
-  console.log("row6--------------------------", row6)
-  console.log("validation.values.total_quantity", validation.values.total_quantity)
+
   useEffect(() => {
     if (validation.values.total_quantity !== 0) {
       let val = validation.values.total_quantity
-      console.log("val----", val)
       let val_box = []
       for (let index = 0; index < val; index++) {
-        console.log("val--------", index)
         // const element = val[index];
         // console.log("element----", element)
         val_box.push([""])
@@ -929,6 +925,7 @@ const AddOrder = () => {
         }
       )
       .then((response) => {
+        console.log("response----shipp------", response)
         setshipperdata(response.data.results);
         shipperlist = response.data.results.map((v) => [
           v.id,
@@ -1024,7 +1021,6 @@ const AddOrder = () => {
         }
       }
 
-      console.log("docket_imageform----------", row4.length)
       axios
         .post(ServerAddress + "booking/add-order-images/", docket_imageform, {
           headers: {
@@ -1350,10 +1346,7 @@ const AddOrder = () => {
       .then((response) => {
         data = response.data.results;
 
-        console.log("clients data", data)
-
         let com_list_cl = data.map(v => [v.id, v.commodities])
-        console.log('com_list_cl', com_list_cl)
         setclients_commidities_lists(com_list_cl)
         for (let index = 0; index < data.length; index++) {
           temp2.push([data[index].id, toTitleCase(data[index].name)]);
@@ -1381,7 +1374,6 @@ const AddOrder = () => {
       .then((response) => {
         if (response.data.results.length > 0) {
           data = response.data.results;
-          console.log("data-------", data)
           for (let index = 0; index < data.length; index++) {
             temp3.push([
               data[index].id,
@@ -1617,7 +1609,7 @@ const AddOrder = () => {
     if (data === true && isupdating === true && returned_data.length === 0) {
       setclient_id(order.client);
     }
-    if (location.state === null && returned_data.length === 0) {
+    if (location.state === null && order_type == "Normal") {
       setorigincity("");
       setorigincity_id("");
       setshipper_id("");
@@ -1628,14 +1620,12 @@ const AddOrder = () => {
     // Setting Client Commidities After Selecting Client
     if (client_id != 0 && clients_commidities_lists.length !== 0) {
       let sel_com = clients_commidities_lists.find(v => v[0] == client_id)[1]
-      console.log("commodity_data_list", commodity_data_list)
-      console.log("sel_com", sel_com)
+
       let tmp_com_data_list = commodity_data_list.filter(v => sel_com.includes(parseInt(v[0])))
 
-      console.log("tmp_com_data_list", tmp_com_data_list)
       setclient_commidities_list(tmp_com_data_list)
     }
-  }, [client_id, data, clients_commidities_lists]);
+  }, [client_id, data, clients_commidities_lists, order_type]);
 
   useEffect(() => {
     setcustomer([]);
@@ -1645,25 +1635,32 @@ const AddOrder = () => {
       setcustomer(temp);
     });
   }, [selectClient]);
-
+  
+  console.log("shipper_locality_id--111------", shipper_locality_id)
   useLayoutEffect(() => {
+    console.log("shipper_locality_id--------", shipper_locality_id)
+    console.log("shipper_id----------------", shipper_id)
+    console.log("shipperdata------------------", shipperdata)
+    console.log("client_id-------", client_id)
+    console.log("origincity_id----------", origincity_id)
     if (shipper_id !== "") {
       let selected_shipper = shipperdata.filter(
         (value) => value.id === shipper_id
       );
       setshipper_details(selected_shipper[0]);
     }
-  }, [shipper_id]);
+  }, [shipper_id,shipperdata]);
 
   useEffect(() => {
     let selected_consignee = consigneedata.filter(
       (val) => val.id === consignee_id
     );
     setconsignee_details(selected_consignee[0]);
-  }, [consignee_id]);
+  }, [consignee_id,consigneedata]);
 
 
   useLayoutEffect(() => {
+
     if (shipper_details) {
       setshipper_state(toTitleCase(shipper_details.state_name));
       setshipper_city(toTitleCase(shipper_details.city_name));
@@ -1683,7 +1680,7 @@ const AddOrder = () => {
       setconsignee_locality(toTitleCase(consignee_details.locality_name));
       setconsignee_locality_id(consignee_details.location);
     }
-  }, [consignee_details]);
+  }, [consignee_details, consignee_id]);
 
   useEffect(() => {
     if (location.state === null && returned_data.length === 0) {
@@ -1727,7 +1724,6 @@ const AddOrder = () => {
   useLayoutEffect(() => {
     try {
       let order_data = location.state.order;
-      console.log("order_data================", order_data)
       if (location.state.hash) {
         sethash(location.state.hash);
         let hsh = location.state.hash;
@@ -1929,13 +1925,13 @@ const AddOrder = () => {
     if (client_id && origincity_id) {
       get_client_shipper(client_id, origincity_id);
     }
-  }, [client_id, origincity_id, shipper_page, shipper_search_item]);
+  }, [client_id, origincity_id, shipper_page, shipper_search_item, order_type]);
 
   useEffect(() => {
     if (client_id && destinationcity_id) {
       get_client_consignee(client_id, destinationcity_id);
     }
-  }, [client_id, destinationcity_id, consignee_page, consignee_search_item]);
+  }, [client_id, destinationcity_id, consignee_page, consignee_search_item, order_type]);
 
   // useLayoutEffect(() => {
   //   if (!isupdating) {
@@ -1975,7 +1971,7 @@ const AddOrder = () => {
   //  }, [cold_chain])
 
   useEffect(() => {
-    if (location.state !== null) {
+    if (location.state !== null || returned_data.length !== 0) {
       if (cold_chain) {
         setcold_chain(true);
         setnonecold_chain(false);
@@ -1985,7 +1981,7 @@ const AddOrder = () => {
         setcold_chain(false);
       }
     }
-  }, [cold_chain]);
+  }, [cold_chain,returned_data]);
 
   useEffect(() => {
     if (cold_chain && location.state === null && returned_data.length === 0) {
@@ -2146,10 +2142,7 @@ const AddOrder = () => {
   //If Same Client
   // const [same_as, setsame_as] = useState(false)
   // const [showOrder, setShowOrder] = useState(false);
-  // const [toggle_order, settoggle_order] = useState(false)
-  console.log("showOrder-----", showOrder)
-  console.log("same_as----", same_as)
-  console.log("toggle_order----", toggle_order)
+  // const [toggle_order, settoggle_order] = useState(false
 
   const handleCloseOrder = () => setShowOrder(false);
 
@@ -2174,9 +2167,6 @@ const AddOrder = () => {
   //   alert("111111")
   // }
   //   }, [toggle_order])
-  console.log("showOrder-----", showOrder)
-  console.log("same_as------", same_as)
-
   useEffect(() => {
     if (same_as && showOrder) {
       navigate("/booking/orders");
@@ -2184,7 +2174,7 @@ const AddOrder = () => {
   }, [showOrder, same_as])
 
 // Get Return Order
-const [returned_data, setreturned_data] = useState([])
+
   const getReturnOrder= () => {
     let temp2 = [];
     let data = [];
@@ -2197,8 +2187,6 @@ const [returned_data, setreturned_data] = useState([])
         }
       )
       .then((response) => {
-        console.log("Return Ord Res============", response.data.results)
-
         if(response.data.results.length===0){
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Docket Number Does not Exist`));
@@ -2214,14 +2202,11 @@ const [returned_data, setreturned_data] = useState([])
       });
   };
 useEffect(() => {
-  console.log("returned_datareturned_datareturned_data", returned_data)
-  if(returned_data.length !== 0 && order_type === "Return")
+  if(returned_data.length !== 0 && (order_type === "Return" || order_type === "Issue") && location.state === null)
   {
-    // alert()
-    
   setorder(returned_data[0]);
   settransport_mode(toTitleCase(returned_data[0].transportation_mode));
-  setorder_type("Return");
+  setorder_type(order_type === "Issue" ? "Issue" : "Return");
   setcurrent_status(returned_data[0].current_status);
   // setdocket_no_value(returned_data[0].docket_no);
   // setisupdating(true);
@@ -2240,6 +2225,7 @@ useEffect(() => {
   if (returned_data[0].cod === "Yes") {
     settransportation_cost(returned_data[0].transportation_cost);
   }
+  settotal_delivered_pcs(parseInt(returned_data[0].total_quantity)-(returned_data[0].issue_notreceived.length))
   setcold_chain(returned_data[0].cold_chain);
   setdelivery_type(returned_data[0].delivery_type);
   setentry_type_btn(returned_data[0].entry_type);
@@ -2288,7 +2274,7 @@ useEffect(() => {
 
 useEffect(() => {
   
-  if(location.state === null && order_type !== "Return"){ 
+  if(location.state === null && order_type !== "Return" && order_type !== "Issue"){ 
       setorder([]);
       settransport_mode("");
       setcurrent_status("");
@@ -2351,7 +2337,7 @@ useEffect(() => {
   }, [returned_data, order_type])
 
 useEffect(() => {
-  if(linked_order.length >=6 && order_type === "Return"){
+  if(linked_order.length >=6 && (order_type === "Return" || order_type === "Issue") && location.state === null){
     getReturnOrder()
   }
 }, [linked_order])
@@ -2498,6 +2484,7 @@ useEffect(() => {
                           data_item_s={order_type}
                           show_search={false}
                           set_data_item_s={setorder_type}
+                          disable_me={isupdating}
                         />
                       </div>
                     </Col>
@@ -2514,6 +2501,7 @@ useEffect(() => {
                               setlinked_order(e.target.value)
                             }
                             placeholder="Enter Docket Number"
+                            disabled={isupdating}
                           />
                         </div>
                       </Col>
@@ -2763,7 +2751,7 @@ useEffect(() => {
                       </Col>
                     ) : null}
                     {(user.view_coldchain || user.is_superuser) &&
-                      <Col lg={2} md={6} sm={6}>
+                      <Col lg={2} md={3} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">Cold Chain</Label>
                           <br />
@@ -2782,7 +2770,7 @@ useEffect(() => {
                         </div>
                       </Col>
                     }
-                    <Col lg={(user.view_coldchain || user.is_superuser) ? 2 : 4} md={6} sm={6}>
+                    <Col lg={(user.view_coldchain || user.is_superuser) ? 2 : 4} md={3} sm={6}>
                       <div className="mb-3">
                         <Label className="header-child">Non Cold Chain</Label>
                         <br />
@@ -3555,6 +3543,21 @@ useEffect(() => {
                         ) : null}
                       </div>
                     </Col>
+                    {order_type == "Issue" && returned_data.length !== 0 &&
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header-child">Total Delivered PCS</Label>
+                        <Input
+                          value={total_delivered_pcs}
+                          type="number"
+                          name="total_delivered_pcs"
+                          className="form-control-md"
+                          id="input"
+                          disabled
+                        />
+                      </div>
+                    </Col>
+}
 
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
@@ -4106,7 +4109,6 @@ useEffect(() => {
                               key={index1}
                             >
 
-                              {console.log("222222222222222222222222", item1)}
                               <select
                                 disabled={item1[2] ? true : false}
                                 style={{
@@ -4193,7 +4195,6 @@ useEffect(() => {
                                       onClick={() => {
                                         if (item1[2]) {
                                           deleteOrderImg(item1)
-                                          console.log("11111111111111", item1[2])
                                         } else {
                                           deleteimage(item1)
                                           setSelectedFile(
@@ -4468,7 +4469,6 @@ useEffect(() => {
                                     <div
                                       onClick={() => {
                                         if (item2[4]) {
-                                          console.log("item2aaaaaaaaaaaaa", item2[4])
                                           deleteInvoiceImg(item2)
                                         } else {
                                           deleteinvoice(item2);
@@ -4545,7 +4545,6 @@ useEffect(() => {
                           <div className="mb-3">
                             <Label className="header-child">Upload Report</Label>
                             {row5.map((item, index) => {
-                              console.log("row5---log----", row5)
                               return (
                                 <Input
                                   min={0}
@@ -4651,7 +4650,6 @@ useEffect(() => {
                           <div className="mb-2">
                             <Label className="header-child">Enter Value*</Label>
                             {row6.map((item, index) => {
-                              console.log("item-------", item)
                               return (
                                 <Input
                                   min={0}
