@@ -23,13 +23,13 @@ import {
   Input,
   FormFeedback,
   Form,
-  FormGroup
+  FormGroup,
 } from "reactstrap";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { setToggle } from "../../../store/pagination/Pagination";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import { Button } from "react-bootstrap";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 
@@ -58,7 +58,7 @@ const AddLocation = () => {
   const [other_city_error, setother_city_error] = useState(false);
   const [other_pincode, setother_pincode] = useState("");
   const [other_pincode_error, setother_pincode_error] = useState(false);
-const [pincode_len_error, setpincode_len_error] = useState(false);
+  const [pincode_len_error, setpincode_len_error] = useState(false);
   // Location Info
   const [state_list_s, setstate_list_s] = useState([]);
   const [state, setstate] = useState("");
@@ -105,8 +105,17 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
   const [pincode_error, setpincode_error] = useState(false);
 
   // For Loading Data
-  const [city_loaded, setcity_loaded] = useState(false)
-  const [city_count, setcity_count] = useState(1)
+  const [city_loaded, setcity_loaded] = useState(false);
+  const [city_count, setcity_count] = useState(1);
+
+  const [country_loaded, setcountry_loaded] = useState(false);
+  const [country_count, setcountry_count] = useState(1);
+
+  const [state_loaded, setstate_loaded] = useState(false);
+  const [state_count, setstate_count] = useState(1);
+
+  const [pincode_loaded, setpincode_loaded] = useState(false);
+  const [pincode_count, setpincode_count] = useState(1);
 
   let district_list = [];
 
@@ -141,8 +150,16 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
         }
       )
       .then((resp) => {
+        console.log("Countary===>", resp.data);
+
+        if (resp.data.next === null) {
+          setcountry_loaded(false);
+        } else {
+          setcountry_loaded(true);
+        }
+
         if (resp.data.results.length > 0) {
-          console.log("resp.data.results", resp.data);
+          // console.log("resp.data.results", resp.data);
           if (country_page === 1) {
             console.log("state_page", state_page);
             country_list = resp.data.results.map((v) => [
@@ -165,14 +182,13 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
           v.split(",")
         );
 
-        if(country_search_item !== "") {
-          setcountry_list_s(country_list);
-        } else {
-          country_list.push("Add New");
-
-          setcountry_list_s(country_list);
-        }
-       
+        // if(country_search_item !== "") {
+        //   setcountry_list_s(country_list);
+        // } else {
+        country_list.push("Add New");
+        setcountry_count(country_count + 2);
+        setcountry_list_s(country_list);
+        // }
       })
       .catch((err) => {
         alert(`Error Occur in Get States, ${err}`);
@@ -243,6 +259,13 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
       )
       .then((resp) => {
         settogstate(true);
+
+        if (resp.data.next === null) {
+          setstate_loaded(false);
+        } else {
+          setstate_loaded(true);
+        }
+
         if (resp.data.results.length > 0) {
           if (state_page === 1) {
             state_list = resp.data.results.map((v) => [
@@ -266,7 +289,7 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
           v.split(",")
         );
         state_list.push("Add New");
-
+        setstate_count(state_count + 2);
         setstate_list_s(state_list);
       })
       .catch((err) => {
@@ -340,11 +363,11 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
       )
       .then((resp) => {
         settogcity(true);
-        if(resp.data.next===null){
-          setcity_loaded(false)
-        }
-        else{
-          setcity_loaded(true)
+        console.log("City ===>>", resp.data);
+        if (resp.data.next === null) {
+          setcity_loaded(false);
+        } else {
+          setcity_loaded(true);
         }
 
         if (resp.data.results.length > 0) {
@@ -368,8 +391,8 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
           v.split(",")
         );
         cities_list.push("Add New");
-       
-        setcity_count(city_count+2)
+
+        setcity_count(city_count + 2);
         setcity_list_s(cities_list);
       })
       .catch((err) => {
@@ -393,13 +416,20 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
         }
       )
       .then((resp) => {
+        if (resp.data.next === null) {
+          setpincode_loaded(false);
+        } else {
+          setpincode_loaded(true);
+        }
+
         if (resp.data.results.length > 0) {
           if (pincode_page === 1) {
             pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
           } else {
             pincode_list = [
               ...pincode_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.pincode)]),
+              ...resp.data.results.map((v) => [v.id, v.pincode]),
+              // ...resp.data.results.map((v) => [v.id, toTitleCase(v.pincode)]),
             ];
           }
         }
@@ -411,7 +441,7 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
           v.split(",")
         );
         pincode_list.push("Add New");
-
+        setpincode_count(pincode_count + 2);
         setpincode_list_s(pincode_list);
       })
       .catch((err) => {
@@ -560,8 +590,8 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
           change_fields: change_fields,
           //For C&M
           cm_transit_status: status_toggle === true ? current_status : "",
-          cm_current_status: (current_status).toUpperCase(),
-          cm_remarks: ""
+          cm_current_status: current_status.toUpperCase(),
+          cm_remarks: "",
         },
         {
           headers: {
@@ -612,8 +642,14 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
           created_by: user_id,
           //For C&M
           cm_current_department: user.user_department,
-          cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
-          cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+          cm_current_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
+          cm_transit_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
         },
         {
           headers: {
@@ -622,7 +658,7 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
         }
       )
       .then(function (response) {
-        console.log("Location resp",response.data);
+        console.log("Location resp", response.data);
         if (response.data.status === "data_exist") {
           dispatch(setToggle(true));
           dispatch(setAlertType("warning"));
@@ -663,7 +699,7 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
   useLayoutEffect(() => {
     getCountry();
     // setstate_list_s([])
-  }, [country_page, country_search_item,other_country]);
+  }, [country_page, country_search_item, other_country]);
 
   useLayoutEffect(() => {
     if (country !== "") {
@@ -733,121 +769,116 @@ const [pincode_len_error, setpincode_len_error] = useState(false);
       setother_city("");
     }
   }, [city]);
-  
-//For Checker Maker
-const [current_status, setcurrent_status] = useState("");
-const [status_toggle, setstatus_toggle] = useState(false)
-const [message, setmessage] = useState("")
-const [message_error, setmessage_error] = useState(false);
 
+  //For Checker Maker
+  const [current_status, setcurrent_status] = useState("");
+  const [status_toggle, setstatus_toggle] = useState(false);
+  const [message, setmessage] = useState("");
+  const [message_error, setmessage_error] = useState(false);
 
-const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
 
-const handleClose = () => setShow(false);
-const handleShow = () => {
-  setShow(true)
-  setmessage_error(false)
-};
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+    setmessage_error(false);
+  };
 
-useEffect(() => {
-  if (user.user_department_name === "ADMIN") {
-    setcurrent_status("NOT APPROVED")
-    setstatus_toggle(true)
-  }
+  useEffect(() => {
+    if (user.user_department_name === "ADMIN") {
+      setcurrent_status("NOT APPROVED");
+      setstatus_toggle(true);
+    } else if (
+      user.user_department_name === "ACCOUNTANT" ||
+      user.user_department_name === "ACCOUNTANT" ||
+      user.user_department_name + " " + user.designation_name ===
+        "ACCOUNT MANAGER" ||
+      user.is_superuser
+    ) {
+      setcurrent_status("APPROVED");
+      setstatus_toggle(true);
+    } else {
+      setcurrent_status("NOT APPROVED");
+      // setstatus_toggle(false)
+    }
+  }, [user, isupdating]);
 
-  else if (user.user_department_name === "ACCOUNTANT" || user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER" || user.is_superuser) {
-    setcurrent_status("APPROVED")
-    setstatus_toggle(true)
-  }
-  else {
-    setcurrent_status("NOT APPROVED")
-    // setstatus_toggle(false)
-  }
-
-}, [user, isupdating])
-
-const update_locationstatus = (id) => {
-
-  axios
-    .put(
-      ServerAddress + "master/update_location/" + id,
-      {
-
-        cm_current_status: "REJECTED",
-        cm_remarks: toTitleCase(message).toUpperCase(),
-        change_fields: {},
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+  const update_locationstatus = (id) => {
+    axios
+      .put(
+        ServerAddress + "master/update_location/" + id,
+        {
+          cm_current_status: "REJECTED",
+          cm_remarks: toTitleCase(message).toUpperCase(),
+          change_fields: {},
         },
-      }
-    )
-    .then(function (response) {
-      if (response.data.status === "success") {
-        // dispatch(Toggle(true))
-        dispatch(setShowAlert(true));
-        dispatch(setDataExist(`Status Updated sucessfully`));
-        dispatch(setAlertType("info"));
-        navigate("/master/locations");
-      }
-    })
-    .catch(function (err) {
-      alert(`rror While  Updateing Coloader ${err}`);
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          // dispatch(Toggle(true))
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Status Updated sucessfully`));
+          dispatch(setAlertType("info"));
+          navigate("/master/locations");
+        }
+      })
+      .catch(function (err) {
+        alert(`rror While  Updateing Coloader ${err}`);
+      });
+  };
+
+  const handleSubmit = () => {
+    if (message == "") {
+      setmessage_error(true);
+    } else {
+      update_locationstatus(location.id);
+      setShow(false);
+    }
+  };
+  const handlClk = () => {
+    navigate("/locations/locationHistory/LocationHistoryPage", {
+      state: { location: location },
     });
-};
+  };
 
-const handleSubmit = () => {
-  if (message == "") {
-    setmessage_error(true);
-  }
-  else {
-    update_locationstatus(location.id)
-    setShow(false)
-  }
-}
-const handlClk = () => {
-  navigate("/locations/locationHistory/LocationHistoryPage", {
-    state: { location: location },
-  });
-};
+  //for validation
+  useLayoutEffect(() => {
+    if (other_state !== "") {
+      setother_state_error(false);
+    }
+    if (other_city !== "") {
+      setother_city_error(false);
+    }
+    if (other_pincode !== "") {
+      setother_pincode_error(false);
+    }
+    if (other_pincode.length === 6) {
+      setpincode_len_error(false);
+    }
+  }, [other_state, other_city, other_pincode]);
 
-
-//for validation 
-useLayoutEffect(() => {
-  if(other_state !== "") {
-    setother_state_error(false);
-  }
-  if(other_city !== "") {
-    setother_city_error(false);
-  }
-  if(other_pincode !== "") {
-    setother_pincode_error(false);
-  }
-  if(other_pincode.length === 6) {
-    setpincode_len_error(false);
-  }
-}, [other_state,other_city,other_pincode])
-
-console.log("pintype",other_pincode, typeof other_pincode);
+  console.log("pintype", other_pincode, typeof other_pincode);
   return (
     <div>
-            <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <FormGroup>
-            <Label for="exampleText">
-              Text Area
-            </Label>
+            <Label for="exampleText">Text Area</Label>
             <Input
               id="exampleText"
               name="text"
               type="textarea"
               style={{ height: "90px" }}
               onChange={(e) => {
-                setmessage(e.target.value)
+                setmessage(e.target.value);
               }}
             />
             <div className="mt-1 error-text" color="danger">
@@ -864,441 +895,468 @@ console.log("pintype",other_pincode, typeof other_pincode);
           </Button>
         </Modal.Footer>
       </Modal>
- 
-    <Form
-      onSubmit={(e) => {
-        e.preventDefault();
-        if(country === "") {
-          setcountry_error(true);
-        }
-       else if (country !== "" && state === "") {
-          setempty_state(true);
-        }
-        else if(state === "Add New" && zone === "") {
-          setzone_error(true);
-        }
-        else if(state === "Add New" && zone !== "" && other_state ==="") {
-          setother_state_error(true);
-        }
-        
-        else if (state !== "" && city === "") {
-          setempty_city(true);
-        } else if(city === "Add New" && other_city === "") {
-setother_city_error(true);
-        }
-        
-        
-        else if(city !== "" && pincode === "") {
-setpincode_error(true);
-        } else if(pincode === "Add New" && other_pincode === "") {
-          setother_pincode_error(true);
-        }
-//         else if(pincode === "Add New" && other_pincode !== "" && other_pincode.length !== 6){
-// setpincode_len_error(true);
-//         }
-        else {
-          validation.handleSubmit(e.values);
-        }
-        return false;
-      }}
-    >
-      {/* Locations */}
-      <div className="mt-3">
-        <PageTitle page={isupdating ? "Update Locations" : "Add Locations"} />
-        <Title
-          title={isupdating ? "Update Locations" : "Add Locations"}
-          parent_title="Masters"
-        />
-      </div>
-       {/* Add For History Button  */}
-       {isupdating && 
-            <div style={{ justifyContent: "right", display: "flex" }}>
-              <Button
-                type="button"
-                onClick={() => {
-                  handlClk();
-                }}
-              >
-                History
-              </Button>
-            </div>
+
+      <Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (country === "") {
+            setcountry_error(true);
+          } else if (country !== "" && state === "") {
+            setempty_state(true);
+          } else if (state === "Add New" && zone === "") {
+            setzone_error(true);
+          } else if (state === "Add New" && zone !== "" && other_state === "") {
+            setother_state_error(true);
+          } else if (state !== "" && city === "") {
+            setempty_city(true);
+          } else if (city === "Add New" && other_city === "") {
+            setother_city_error(true);
+          } else if (city !== "" && pincode === "") {
+            setpincode_error(true);
+          } else if (pincode === "Add New" && other_pincode === "") {
+            setother_pincode_error(true);
           }
-      <div className="m-3">
-        <Col lg={12}>
-          <Card className="shadow bg-white rounded">
-            <CardTitle className="mb-1 header">
-              <div className="header-text-icon header-text">
-                <div></div>
-                <IconContext.Provider
-                  value={{
-                    className: "header-add-icon",
-                  }}
-                >
-                  <div onClick={toggle_circle}>
-                    {circle_btn ? (
-                      <MdRemoveCircleOutline />
-                    ) : (
-                      <MdAddCircleOutline />
-                    )}
-                  </div>
-                </IconContext.Provider>
-              </div>
-            </CardTitle>
-            {circle_btn ? (
-              <CardBody>
-                <Row>
-                  <Col lg={4} md={4} sm={4}>
-                    <div className="mb-3">
-                      <Label className="header-child">Country*</Label>
-                      <SearchInput
-                        data_list={country_list_s}
-                        setdata_list={setcountry_list_s}
-                        data_item_s={country}
-                        set_data_item_s={setcountry}
-                        setsearch_item={setcountry_search_item}
-                        set_id={setcountry_id}
-                        page={country_page}
-                        setpage={setcountry_page}
-                        disable_me={isupdating}
-                        // with_add={26}
-                        add_nav={"/master/locations"}
-                        error_message={"Please Select Any Country"}
-                        error_s={country_error}
-                        // add_nav={'/master/locations/addlocation'}
-                      />
+          //         else if(pincode === "Add New" && other_pincode !== "" && other_pincode.length !== 6){
+          // setpincode_len_error(true);
+          //         }
+          else {
+            validation.handleSubmit(e.values);
+          }
+          return false;
+        }}
+      >
+        {/* Locations */}
+        <div className="mt-3">
+          <PageTitle page={isupdating ? "Update Locations" : "Add Locations"} />
+          <Title
+            title={isupdating ? "Update Locations" : "Add Locations"}
+            parent_title="Masters"
+          />
+        </div>
+        {/* Add For History Button  */}
+        {isupdating && (
+          <div style={{ justifyContent: "right", display: "flex" }}>
+            <Button
+              type="button"
+              onClick={() => {
+                handlClk();
+              }}
+            >
+              History
+            </Button>
+          </div>
+        )}
+        <div className="m-3">
+          <Col lg={12}>
+            <Card className="shadow bg-white rounded">
+              <CardTitle className="mb-1 header">
+                <div className="header-text-icon header-text">
+                  <div></div>
+                  <IconContext.Provider
+                    value={{
+                      className: "header-add-icon",
+                    }}
+                  >
+                    <div onClick={toggle_circle}>
+                      {circle_btn ? (
+                        <MdRemoveCircleOutline />
+                      ) : (
+                        <MdAddCircleOutline />
+                      )}
                     </div>
-                    <div className="mt-1 error-text" color="danger">
-                      {empty_country ? "Please Select Any Country" : null}
-                    </div>
-                  </Col>
-
-                  {country === "Add New" ? (
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">Add Country*</Label>
-                        <Input
-                          onChange={(val) => {
-                            setother_country(val.target.value)
-                          }
-                          }
-                          onBlur={() => {
-                            if (other_country !== "") {
-                              if (
-                                window.confirm(
-                                  `Do you want to add country ${toTitleCase(
-                                    other_country
-                                  )}?`
-                                )
-                              ) {
-                                setCountry();
-                              } else {
-                                setcountry("");
-                              }
-                            }
-                          }}
-                          value={other_country}
-                          type="text"
-                          name="other_country"
-                          className="form-control-md"
-                          id="input"
-                          placeholder="Enter Other State"
-                        />
-                      </div>
-                    </Col>
-                  ) : null}
-
-                  {country !== "Add New" && country ? (
+                  </IconContext.Provider>
+                </div>
+              </CardTitle>
+              {circle_btn ? (
+                <CardBody>
+                  <Row>
                     <Col lg={4} md={4} sm={4}>
                       <div className="mb-3">
-                        <Label className="header-child">State*</Label>
+                        <Label className="header-child">Country*</Label>
                         <SearchInput
-                          data_list={state_list_s}
-                          setdata_list={setstate_list_s}
-                          data_item_s={state}
-                          set_data_item_s={setstate}
-                          setsearch_item={setstate_search_item}
-                          set_id={setstate_id}
-                          page={state_page}
-                          setpage={setstate_page}
-                          error_message={"Please Select Any State"}
-                          error_s={empty_state}
+                          data_list={country_list_s}
+                          setdata_list={setcountry_list_s}
+                          data_item_s={country}
+                          set_data_item_s={setcountry}
+                          setsearch_item={setcountry_search_item}
+                          set_id={setcountry_id}
+                          page={country_page}
+                          setpage={setcountry_page}
+                          disable_me={isupdating}
+                          // with_add={26}
+                          add_nav={"/master/locations"}
+                          error_message={"Please Select Any Country"}
+                          error_s={country_error}
+                          loaded={country_loaded}
+                          count={country_count}
+                          // add_nav={'/master/locations/addlocation'}
                         />
-                        {/* <div className="mt-1 error-text" color="danger">
-                          {empty_state ? "Please Select Any State" : null}
-                        </div> */}
+                      </div>
+                      <div className="mt-1 error-text" color="danger">
+                        {empty_country ? "Please Select Any Country" : null}
                       </div>
                     </Col>
-                  ) : (
-                    ""
-                  )}
 
-                  {state === "Add New" && country ? (
-                    <>
-                      <Col lg={4} md={6} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child">Select Zone*</Label>
-                          <NSearchInput
-                            data_list={zone_list}
-                            data_item_s={zone}
-                            set_data_item_s={setzone}
-                            show_search={false}
-                            error_message={"Zone is required"}
-                            error_s={zone_error}
-                          />
-                          {/* <div className="mt-1 error-text" color="danger">
-                            {zone_error ? "Zone is required" : null}
-                          </div> */}
-                        </div>
-                      </Col>
-
+                    {country === "Add New" ? (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
-                          <Label className="header-child">Add State*</Label>
+                          <Label className="header-child">Add Country*</Label>
                           <Input
-                            onChange={(val) => setother_state(val.target.value)}
+                            onChange={(val) => {
+                              setother_country(val.target.value);
+                            }}
                             onBlur={() => {
-                              if (other_state !== "" && zone !== "") {
+                              if (other_country !== "") {
                                 if (
                                   window.confirm(
-                                    `Do You Want To Add State ${toTitleCase(
-                                      other_state
+                                    `Do you want to add country ${toTitleCase(
+                                      other_country
                                     )}?`
                                   )
                                 ) {
-                                  setState();
+                                  setCountry();
                                 } else {
-                                  setstate("");
+                                  setcountry("");
                                 }
                               }
                             }}
-                            value={other_state}
+                            value={other_country}
                             type="text"
-                            name="other_city"
+                            name="other_country"
                             className="form-control-md"
                             id="input"
                             placeholder="Enter Other State"
                           />
-                          {other_state_error ? 
-                          <div style={{fontSize: "10.5px",
-                            color: "#f46a6a"}}>
-                            Please Enter State
-                          </div> :null}
                         </div>
                       </Col>
-                    </>
-                  ) : null}
+                    ) : null}
 
-                  {state !== "Add New" && state ? (
-                    <Col lg={4} md={4} sm={4}>
-                      <div className="mb-3">
-                        <Label className="header-child">City*</Label>
-                        <SearchInput
-                          data_list={city_list_s}
-                          setdata_list={setcity_list_s}
-                          data_item_s={city}
-                          set_data_item_s={setcity}
-                          set_id={setcity_id}
-                          page={city_page}
-                          setpage={setcity_page}
-                          setsearch_item={setcity_search_item}
-                          error_message={"Please Select Any City"}
-                          error_s={empty_city}
-                          loaded={city_loaded}
-                          count={city_count}
-                        />
-                      </div>
-                      {/* <div className="mt-1 error-text" color="danger"> */}
-                        {/* {empty_district ? "Please Select Any District" : null} */}
-                      {/* </div> */}
-                    </Col>
-                  ) : null}
-
-                  {city === "Add New" ? (
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">Add City*</Label>
-                        <Input
-                          onChange={(val) => setother_city(val.target.value)}
-                          onBlur={() => {
-                            if (other_city !== "") {
-                              if (
-                                window.confirm(
-                                  `Do you Want To Add City ${toTitleCase(
-                                    other_city
-                                  )} in ${toTitleCase(state)} ?`
-                                )
-                              ) {
-                                setCity();
-                              } else {
-                                if (isupdating === false) {
-                                  setcity("");
-                                }
-                              }
-                            }
-                          }}
-                          value={other_city}
-                          type="text"
-                          name="other_district"
-                          className="form-control-md"
-                          id="input"
-                          placeholder="Enter Other City"
-                        />
-
-                        {other_city_error ?
-                        <div style={{fontSize: "10.5px",
-                        color: "#f46a6a"}}>Please Enter City</div>
-                        : null}
-                      </div>
-                    </Col>
-                  ) : null}
-
-                  {city !== "Add New" && city && state ? (
-                    <Col lg={4} md={4} sm={4}>
-                      <div className="mb-3">
-                        <Label className="header-child">Pin Code*</Label>
-                        <SearchInput
-                          data_list={pincode_list_s}
-                          setdata_list={setpincode_list_s}
-                          data_item_s={pincode}
-                          set_data_item_s={setpincode}
-                          set_id={setpincode_id}
-                          page={pincode_page}
-                          setpage={setpincode_page}
-                          setsearch_item={setpincode_search_item}
-                          error_message={"Please Select Any Pincode"}
-                          error_s={pincode_error}
-                        />
-                      </div>
-                      <div className="mt-1 error-text" color="danger">
-                        {/* {empty_district ? "Please Select Any District" : null} */}
-                      </div>
-                    </Col>
-                  ) : null}
-
-                  {pincode === "Add New" ? (
-                    <>
-                      <Col lg={4} md={6} sm={6}>
+                    {country !== "Add New" && country ? (
+                      <Col lg={4} md={4} sm={4}>
                         <div className="mb-3">
-                          <Label className="header-child">Add Pin Code*</Label>
-                          <Input
-                            onChange={(val) =>
-                              setother_pincode(val.target.value)
-                            }
-                            onBlur={() => {
-                              if (other_pincode !== "" && other_pincode.length == 6 ) {
-                                if (
-                                  window.confirm(
-                                    `Do You Want To Add Pin Code ${toTitleCase(
-                                      other_pincode
-                                    )} ?`
-                                  )
-                                ) {
-                                  setPicode();
-                                } else {
-                                  if (isupdating === false) {
-                                    setPicode("");
+                          <Label className="header-child">State*</Label>
+                          <SearchInput
+                            data_list={state_list_s}
+                            setdata_list={setstate_list_s}
+                            data_item_s={state}
+                            set_data_item_s={setstate}
+                            setsearch_item={setstate_search_item}
+                            set_id={setstate_id}
+                            page={state_page}
+                            setpage={setstate_page}
+                            error_message={"Please Select Any State"}
+                            error_s={empty_state}
+                            loaded={state_loaded}
+                            count={state_count}
+                          />
+                          {/* <div className="mt-1 error-text" color="danger">
+                          {empty_state ? "Please Select Any State" : null}
+                        </div> */}
+                        </div>
+                      </Col>
+                    ) : (
+                      ""
+                    )}
+
+                    {state === "Add New" && country ? (
+                      <>
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-3">
+                            <Label className="header-child">Select Zone*</Label>
+                            <NSearchInput
+                              data_list={zone_list}
+                              data_item_s={zone}
+                              set_data_item_s={setzone}
+                              show_search={false}
+                              error_message={"Zone is required"}
+                              error_s={zone_error}
+                            />
+                            {/* <div className="mt-1 error-text" color="danger">
+                            {zone_error ? "Zone is required" : null}
+                          </div> */}
+                          </div>
+                        </Col>
+
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">Add State*</Label>
+                            <Input
+                              onChange={(val) =>
+                                setother_state(val.target.value)
+                              }
+                              onBlur={() => {
+                                if (other_state !== "" && zone !== "") {
+                                  if (
+                                    window.confirm(
+                                      `Do You Want To Add State ${toTitleCase(
+                                        other_state
+                                      )}?`
+                                    )
+                                  ) {
+                                    setState();
+                                  } else {
+                                    setstate("");
                                   }
                                 }
-                              } else {
-                                setpincode_len_error(true);
+                              }}
+                              value={other_state}
+                              type="text"
+                              name="other_city"
+                              className="form-control-md"
+                              id="input"
+                              placeholder="Enter Other State"
+                            />
+                            {other_state_error ? (
+                              <div
+                                style={{ fontSize: "10.5px", color: "#f46a6a" }}
+                              >
+                                Please Enter State
+                              </div>
+                            ) : null}
+                          </div>
+                        </Col>
+                      </>
+                    ) : null}
+
+                    {state !== "Add New" && state ? (
+                      <Col lg={4} md={4} sm={4}>
+                        <div className="mb-3">
+                          <Label className="header-child">City*</Label>
+                          <SearchInput
+                            data_list={city_list_s}
+                            setdata_list={setcity_list_s}
+                            data_item_s={city}
+                            set_data_item_s={setcity}
+                            set_id={setcity_id}
+                            page={city_page}
+                            setpage={setcity_page}
+                            setsearch_item={setcity_search_item}
+                            error_message={"Please Select Any City"}
+                            error_s={empty_city}
+                            loaded={city_loaded}
+                            count={city_count}
+                          />
+                        </div>
+                        {/* <div className="mt-1 error-text" color="danger"> */}
+                        {/* {empty_district ? "Please Select Any District" : null} */}
+                        {/* </div> */}
+                      </Col>
+                    ) : null}
+
+                    {city === "Add New" ? (
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Add City*</Label>
+                          <Input
+                            onChange={(val) => setother_city(val.target.value)}
+                            onBlur={() => {
+                              if (other_city !== "") {
+                                if (
+                                  window.confirm(
+                                    `Do you Want To Add City ${toTitleCase(
+                                      other_city
+                                    )} in ${toTitleCase(state)} ?`
+                                  )
+                                ) {
+                                  setCity();
+                                } else {
+                                  if (isupdating === false) {
+                                    setcity("");
+                                  }
+                                }
                               }
                             }}
-                            value={other_pincode}
-                            type="number"
-                            name="other_pincode"
+                            value={other_city}
+                            type="text"
+                            name="other_district"
                             className="form-control-md"
                             id="input"
-                            placeholder="Enter Other Pin Code"
+                            placeholder="Enter Other City"
                           />
-                          {other_pincode_error ? 
-                        <div style={{fontSize: "10.5px",
-                        color: "#f46a6a"}}>Please Enter Pincode</div>  
-                        : null}
 
-{pincode_len_error ? 
-                        <div style={{fontSize: "10.5px",
-                        color: "#f46a6a"}}>Please Enter a Valid Pincode</div>  
-                        : null}
+                          {other_city_error ? (
+                            <div
+                              style={{ fontSize: "10.5px", color: "#f46a6a" }}
+                            >
+                              Please Enter City
+                            </div>
+                          ) : null}
                         </div>
                       </Col>
-                    </>
-                  ) : null}
+                    ) : null}
 
-                  {city &&
-                  state &&
-                  pincode &&
-                  city !== "Add New" &&
-                  state !== "Add New" &&
-                  pincode !== "Add New" ? (
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-3">
-                        <Label className="header-child">Locality*</Label>
-                        <Input
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.locality || ""}
-                          invalid={
-                            validation.touched.locality &&
-                            validation.errors.locality
-                              ? true
-                              : false
-                          }
-                          type="text"
-                          name="locality"
-                          className="form-control-md"
-                          id="input"
-                          placeholder="Enter Locality"
-                        />
-                        {validation.touched.locality &&
-                        validation.errors.locality ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.locality}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
-                    </Col>
-                  ) : (
-                    ""
-                  )}
-                </Row>
-              </CardBody>
-            ) : null}
-          </Card>
-        </Col>
-      </div>
+                    {city !== "Add New" && city && state ? (
+                      <Col lg={4} md={4} sm={4}>
+                        <div className="mb-3">
+                          <Label className="header-child">Pin Code*</Label>
+                          <SearchInput
+                            data_list={pincode_list_s}
+                            setdata_list={setpincode_list_s}
+                            data_item_s={pincode}
+                            set_data_item_s={setpincode}
+                            set_id={setpincode_id}
+                            page={pincode_page}
+                            setpage={setpincode_page}
+                            setsearch_item={setpincode_search_item}
+                            error_message={"Please Select Any Pincode"}
+                            error_s={pincode_error}
+                            loaded={pincode_loaded}
+                            count={pincode_count}
+                          />
+                        </div>
+                        <div className="mt-1 error-text" color="danger">
+                          {/* {empty_district ? "Please Select Any District" : null} */}
+                        </div>
+                      </Col>
+                    ) : null}
 
-      {/*Button */}
-      <div className=" m-3">
-        <Col lg={12}>
-          <div className="mb-1 footer_btn">
-          <button
+                    {pincode === "Add New" ? (
+                      <>
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-3">
+                            <Label className="header-child">
+                              Add Pin Code*
+                            </Label>
+                            <Input
+                              onChange={(val) =>
+                                setother_pincode(val.target.value)
+                              }
+                              onBlur={() => {
+                                if (
+                                  other_pincode !== "" &&
+                                  other_pincode.length == 6
+                                ) {
+                                  if (
+                                    window.confirm(
+                                      `Do You Want To Add Pin Code ${toTitleCase(
+                                        other_pincode
+                                      )} ?`
+                                    )
+                                  ) {
+                                    setPicode();
+                                  } else {
+                                    if (isupdating === false) {
+                                      setPicode("");
+                                    }
+                                  }
+                                } else {
+                                  setpincode_len_error(true);
+                                }
+                              }}
+                              value={other_pincode}
+                              type="number"
+                              name="other_pincode"
+                              className="form-control-md"
+                              id="input"
+                              placeholder="Enter Other Pin Code"
+                            />
+                            {other_pincode_error ? (
+                              <div
+                                style={{ fontSize: "10.5px", color: "#f46a6a" }}
+                              >
+                                Please Enter Pincode
+                              </div>
+                            ) : null}
+
+                            {pincode_len_error ? (
+                              <div
+                                style={{ fontSize: "10.5px", color: "#f46a6a" }}
+                              >
+                                Please Enter a Valid Pincode
+                              </div>
+                            ) : null}
+                          </div>
+                        </Col>
+                      </>
+                    ) : null}
+
+                    {city &&
+                    state &&
+                    pincode &&
+                    city !== "Add New" &&
+                    state !== "Add New" &&
+                    pincode !== "Add New" ? (
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">Locality*</Label>
+                          <Input
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.locality || ""}
+                            invalid={
+                              validation.touched.locality &&
+                              validation.errors.locality
+                                ? true
+                                : false
+                            }
+                            type="text"
+                            name="locality"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Locality"
+                          />
+                          {validation.touched.locality &&
+                          validation.errors.locality ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.locality}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                      </Col>
+                    ) : (
+                      ""
+                    )}
+                  </Row>
+                </CardBody>
+              ) : null}
+            </Card>
+          </Col>
+        </div>
+
+        {/*Button */}
+        <div className=" m-3">
+          <Col lg={12}>
+            <div className="mb-1 footer_btn">
+              <button
                 type="submit"
-                className={isupdating && (user.user_department_name === "ADMIN") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
+                className={
+                  isupdating && user.user_department_name === "ADMIN"
+                    ? "btn btn-info m-1"
+                    : !isupdating
+                    ? "btn btn-info m-1"
+                    : "btn btn-success m-1"
+                }
               >
-                {isupdating && (user.user_department_name === "ADMIN" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
+                {isupdating &&
+                (user.user_department_name === "ADMIN" || user.is_superuser)
+                  ? "Update"
+                  : !isupdating
+                  ? "Save"
+                  : "Approved"}
               </button>
 
-              {isupdating && (user.user_department_name !== "ADMIN" && !user.is_superuser) &&
-                <button
-                  type="button"
-                  className="btn btn-danger m-1"
-                  onClick={handleShow}
-                >
-                  Rejected
-                </button>
-              }
-            <Button
-              className="btn btn-info m-1 cu_btn"
-              type="button"
-              onClick={handleAction}
-            >
-              Cancel
-            </Button>
-          </div>
-        </Col>
-      </div>
-    </Form>
-
+              {isupdating &&
+                user.user_department_name !== "ADMIN" &&
+                !user.is_superuser && (
+                  <button
+                    type="button"
+                    className="btn btn-danger m-1"
+                    onClick={handleShow}
+                  >
+                    Rejected
+                  </button>
+                )}
+              <Button
+                className="btn btn-info m-1 cu_btn"
+                type="button"
+                onClick={handleAction}
+              >
+                Cancel
+              </Button>
+            </div>
+          </Col>
+        </div>
+      </Form>
     </div>
   );
 };

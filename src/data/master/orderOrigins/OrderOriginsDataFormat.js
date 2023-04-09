@@ -25,6 +25,7 @@ import { HiQuestionMarkCircle } from "react-icons/hi";
 import Modal from 'react-bootstrap/Modal';
 
 const OrderOriginsDataFormat = ({ data, data1, can_delete }) => {
+  console.log("==========",data)
   // Permissions
 
   const dispatch = useDispatch();

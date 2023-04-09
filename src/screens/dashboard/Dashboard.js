@@ -9,20 +9,9 @@ import { setUserDepartment } from "../../store/authentication/Authentication";
 import useWindowDimensions from "./ScreenSize";
 import BirthdayModal from "./BirthdayModal";
 import {
-  Card,
-  Col,
-  Row,
-  CardBody,
-  CardTitle,
-  Label,
-  Input,
-  FormFeedback,
-  Form,
-  FormGroup,
   Button,
 } from "reactstrap";
 import Modal from "react-bootstrap/Modal";
-
 import DashboardChartSection from "./DashboardChartSection";
 import ClientDashboard from "./DashboardTypes/ClientDashboard";
 import CheckerDashboard from "./DashboardTypes/CheckerDashboard";
