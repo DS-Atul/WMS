@@ -95,7 +95,7 @@ const BoxDetail = () => {
           transit_status: "",
           transit_remarks:"",
           docket: order_id,
-          docket_no: docket_no,
+          // docket_no: docket_no,
           notreceived_pkt: selected_id,
           remarks: toTitleCase(remarks).toUpperCase(),
         },
