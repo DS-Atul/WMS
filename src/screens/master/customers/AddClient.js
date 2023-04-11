@@ -58,6 +58,8 @@ const AddClient = (props) => {
   const [state_error, setstate_error] = useState(false);
   const [state_page, setstate_page] = useState(1);
   const [state_search_item, setstate_search_item] = useState("");
+  const [state_loaded, setstate_loaded] = useState(false);
+  const [state_count, setstate_count] = useState(1);
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -65,6 +67,8 @@ const AddClient = (props) => {
   const [city_error, setcity_error] = useState(false);
   const [city_page, setcity_page] = useState(1);
   const [city_search_item, setcity_search_item] = useState("");
+  const [city_loaded, setcity_loaded] = useState(false);
+  const [city_count, setcity_count] = useState(1);
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -567,6 +571,12 @@ const [commodities_count, setcommodities_count] = useState(1);
         }
       )
       .then((resp) => {
+
+if(resp.data.next === null){
+  setstate_loaded(false);
+} else {
+  setstate_loaded(true);
+}
         if (resp.data.results.length > 0) {
           if (state_page === 1) {
             state_list = resp.data.results.map((v) => [
@@ -581,6 +591,7 @@ const [commodities_count, setcommodities_count] = useState(1);
           }
         }
         setcity_list_s([]);
+        setstate_count(state_count+2);
         setstate_list_s(state_list);
       })
       .catch((err) => {
@@ -604,6 +615,12 @@ const [commodities_count, setcommodities_count] = useState(1);
         }
       )
       .then((resp) => {
+
+        if(resp.data.next === null){
+          setcity_loaded(false);
+        } else {
+          setcity_loaded(true);
+        }
         if (resp.data.results.length > 0) {
           if (city_page === 1) {
             cities_list = resp.data.results.map((v) => [
@@ -616,7 +633,7 @@ const [commodities_count, setcommodities_count] = useState(1);
               ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
             ];
           }
-
+setcity_count(city_count+2);
           setcity_list_s(cities_list);
         } else {
           setcity_list_s([]);
@@ -2184,7 +2201,7 @@ const addClientDoc = (client_id) => {
   // Location Functions Call
   useEffect(() => {
     if (state_id !== 0 && by_pincode === false) {
-      setcity_page(1);
+      // setcity_page(1);
       getCities(state_id, "state");
       setpincode_list_s([]);
       setlocality_list_s([]);
@@ -2776,6 +2793,8 @@ const addClientDoc = (client_id) => {
                           error_s={state_error}
                           search_item={state_search_item}
                           setsearch_item={setstate_search_item}
+                          loaded={state_loaded}
+                          count={state_count}
                         />
                       </span>
                       {/* <div className="mt-1 error-text" color="danger">
@@ -2800,6 +2819,8 @@ const addClientDoc = (client_id) => {
                         error_s={city_error}
                         search_item={city_search_item}
                         setsearch_item={setcity_search_item}
+                        loaded={city_loaded}
+                        count={city_count}
                       />
                       {/* <div className="mt-1 error-text" color="danger">
                         {city_error ? "Please Select Any City" : null}

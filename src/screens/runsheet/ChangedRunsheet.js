@@ -298,7 +298,7 @@ const ChangedRusheet = () => {
               </CardTitle>
               {circle_btn ? (
                 <CardBody>
-                  <Form>
+                  {/* <Form> */}
                     <Row>
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-3">
@@ -438,7 +438,7 @@ const ChangedRusheet = () => {
                         </div>
                       </Col>
                     </Row>
-                  </Form>
+                  {/* </Form> */}
                 </CardBody>
               ) : null}
             </Card>

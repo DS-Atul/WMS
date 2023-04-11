@@ -850,7 +850,7 @@ function AddDepartment() {
 
                         <tbody>
                           {permission_title_list.map((item, idx) => {
-                            console.log("ersssssssssssssssssssss",permission_title_list)
+                            // console.log("ersssssssssssssssssssss",permission_title_list)
                             return (
                               <>
                               {!showRow.includes(idx)?<tr

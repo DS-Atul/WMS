@@ -278,10 +278,10 @@ const BillTosDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {
                   client.cm_current_status === "APPROVED" ?
-                    <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-success btn-rounded"} onClick={() => { handleModal(client) }}>Approved</button>
+                    <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-success btn-rounded"} onClick={() => { handleModal(client) }}>Approved</button>
                     :
                     client.cm_current_status === "REJECTED" && client.cm_transit_status === "NOT APPROVED" ? <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-danger btn-rounded"} onClick={() => { handleModal(client) }}>Reject <HiQuestionMarkCircle size={15} /></button>
-                      : <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-warning btn-rounded"} onClick={() => { handleModal(client) }}>Status <HiQuestionMarkCircle size={15} /></button>
+                      : <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-warning btn-rounded"} onClick={() => { handleModal(client) }}>Status <HiQuestionMarkCircle size={15} /></button>
                 }
               </td>
             </tr>

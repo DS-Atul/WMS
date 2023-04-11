@@ -525,7 +525,10 @@ const SignIn = () => {
         <title> SignIn | {company_details.WebApp_Name}</title>
       </Helmet>
       <div style={{textAlign:"right",margin:"10px",fontWeight:"600"}}>
-        <Link to="/track/trackingPage/TrackingOrder">Track Order</Link>
+        <p style={{cursor:"pointer"}} onClick={() => {
+          navigate("/track/trackingPage/TrackingOrder")
+        }}>Track Order</p>
+        {/* <Link to="/track/trackingPage/TrackingOrder">Track Order</Link> */}
       </div>
       <div className="account-pages my-5 pt-sm-5">
         <Container style={{ maxWidth: "810px" }}>

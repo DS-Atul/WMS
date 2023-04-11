@@ -11,6 +11,7 @@ import Attendance from "./Logo/Attendance.png";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import {TiPlus} from "react-icons/ti";
+import {ServerAddress} from "../../constants/ServerAddress";
 
 const DashboardNotificationSection = ({
   show,
@@ -23,7 +24,7 @@ const DashboardNotificationSection = ({
   const getdepartment = () => {
     axios
       .get(
-        `http://192.168.29.82:7000/notice_board/get-Category/?&p=${1}&records=${10}`
+        ServerAddress + `notice_board/get-Category/?&p=${1}&records=${10}`
         )
       .then((response) => {
 console.log("Notice res",response)
@@ -42,11 +43,11 @@ console.log("Notice res",response)
     <>
       <div>
 
-        <div  style={{display:"flex",justifyContent:"space-between"}}>
+        <div  style={{display:"flex",justifyContent:"space-between",background:"#f1eeee"}}>
         <div>
         <h4 className="timline_heading">Timeline</h4>
         </div>
-        <div style={{cursor:"pointer"}} onClick={() => {
+        <div style={{cursor:"pointer",margin:"10px 10px 10px 15px"}} onClick={() => {
           navigate("/dashboard/Notification/Notification");
         }}><TiPlus/></div>
         </div>

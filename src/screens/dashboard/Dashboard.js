@@ -73,6 +73,13 @@ const Dashboard = () => {
     "OERATIONAL",
   ]);
 
+  const [dashboard_time_frame_list, setdashboard_time_frame_list] = useState([
+    "Monthly",
+    "Half Monthly",
+    "Weekly",
+  ]);
+  const [dashboard_time_frame, setdashboard_time_frame] = useState("");
+
   // Modal funcation
   const [show, setShow] = useState(false);
 
@@ -156,6 +163,15 @@ const Dashboard = () => {
               >
                 <FaCrosshairs />
               </div>
+            </div>
+            <div>
+            <NSearchInput
+                data_list={dashboard_time_frame_list}
+                data_item_s={dashboard_time_frame}
+                set_data_item_s={setdashboard_time_frame}
+                current_width={"120px"}
+                show_search={false}
+              />
             </div>
             <div>
               <NSearchInput

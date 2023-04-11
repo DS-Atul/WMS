@@ -142,7 +142,16 @@ const AddOrganization = () => {
   const [local_err, setlocal_err] = useState(false);
   const [local_err2, setlocal_err2] = useState(false);
 
-  // ForBilling Address
+  const [state_loded, setstate_loded] = useState(false);
+  const [state_count, setstate_count] = useState(1);
+
+  const [city_loaded, setcity_loaded] = useState(false);
+  const [city_count, setcity_count] = useState(1);
+
+  const [load_office_pincode, setload_office_pincode] = useState(false);
+  const [office_pincode_count, setoffice_pincode_count] = useState(1);
+
+  // Billing Address
   const [bill_color, setbill_color] = useState(false);
   const [billing_add_line1, setbilling_add_line1] = useState("");
   const [billing_add_line2, setbilling_add_line2] = useState("");
@@ -165,8 +174,14 @@ const AddOrganization = () => {
   const [billing_locality, setbilling_locality] = useState("");
   const [billing_locality_list, setbilling_locality_list] = useState([]);
   const [billing_locality_id, setbilling_locality_id] = useState("");
-  const [billing_locality_page, setbilling_locality_page] = useState(1)
-  const [billing_locality_search_item, setbilling_locality_search_item] = useState("")
+  const [billing_locality_page, setbilling_locality_page] = useState(1);
+  const [billing_locality_search_item, setbilling_locality_search_item] = useState("");
+
+  const [billing_city_loaded, setbilling_city_loaded] = useState(false);
+  const [billing_city_count, setbilling_city_count] = useState(1);
+
+  const [loaded_billing_pincode, setloaded_billing_pincode] = useState(false);
+  const [billing_pincode_count, setbilling_pincode_count] = useState(1);
 
   //data Load
   const [billing_pincode_loaded, setbilling_pincode_loaded] = useState(false);
@@ -429,6 +444,12 @@ const AddOrganization = () => {
         }
       )
       .then((resp) => {
+
+        if(resp.data.next === null) {
+          setstate_loded(false);
+        } else {
+          setstate_loded(true);
+        }
         if (resp.data.results.length > 0) {
           if (billing_state_page == 1) {
             state_list = resp.data.results.map((v) => [
@@ -442,6 +463,7 @@ const AddOrganization = () => {
             ];
           }
         }
+        setstate_count(state_count+2);
         setstate_list_s(state_list);
       })
       .catch((err) => {
@@ -465,6 +487,14 @@ const AddOrganization = () => {
         }
       )
       .then((resp) => {
+        if(resp.data.next === null){
+          setcity_loaded(false);
+          setbilling_city_loaded(false);
+        } else {
+          setcity_loaded(true);
+          setbilling_city_loaded(true);
+        }
+        
         if (resp.data.results.length > 0) {
           if (city_page == 1) {
             cities_list = resp.data.results.map((v) => [
@@ -485,8 +515,10 @@ const AddOrganization = () => {
             }
           }
           if (state_type === "billing_state_id") {
+            setbilling_city_count(billing_city_count+2);
             setbilling_city_list(cities_list);
           } else {
+            setcity_count(city_count +2);
             setoffice_city_list(cities_list);
           }
         } else {
@@ -515,6 +547,12 @@ const AddOrganization = () => {
         }
       )
       .then((resp) => {
+
+        if(resp.data.next === null){
+          setload_office_pincode(false);
+        } else {
+          setload_office_pincode(true);
+        }
         if (filter_by !== "pincode") {
           if (pincode_page == 1) {
             pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
@@ -533,8 +571,10 @@ const AddOrganization = () => {
           }
 
           if (city_type == "billin_city") {
+            setbilling_pincode_count(billing_pincode_count+2);
             setbilling_pincode_list(pincode_list);
           } else {
+            setoffice_pincode_count(office_pincode_count+2);
             setoffice_pincode_list(pincode_list);
           }
         } else if (city_type == "billin_city") {
@@ -1294,7 +1334,7 @@ const AddOrganization = () => {
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">
-                            Toll Free Number:*
+                            Toll Free Number*
                           </Label>
                           <Input
                             onChange={validation.handleChange}
@@ -1311,7 +1351,7 @@ const AddOrganization = () => {
                             className="form-control-md"
                             id="input"
                             name="toll_free_number"
-                            placeholder="Enter Registeration Number"
+                            placeholder="Enter Toll Free Number"
                           />
                           {validation.touched.toll_free_number &&
                             validation.errors.toll_free_number ? (
@@ -1881,6 +1921,8 @@ const AddOrganization = () => {
                                   setsearch_item={setbilling_state_search_item}
                                   error_message={"Please Select Any State"}
                                   error_s={state_error}
+                                  loaded={state_loded}
+                                  count={state_count}
                                 />
                               </span>
                               {/* <div className="mt-1 error-text" color="danger">
@@ -1904,6 +1946,8 @@ const AddOrganization = () => {
                                 setsearch_item={setcity_search_item}
                                 error_message={"Please Select Any City"}
                                 error_s={city_error}
+                                loaded={city_loaded}
+                                count={city_count}
                               />
                               {/* <div className="mt-1 error-text" color="danger">
                                 {city_error ? "Please Select Any City" : null}
@@ -1930,6 +1974,8 @@ const AddOrganization = () => {
                                   setsearch_item={setpincode_search_item}
                                   error_message={"Please add Code"}
                                   error_s={pincode_error}
+                                  loaded={load_office_pincode}
+                                  count={office_pincode_count}
                                 />
                               </div>
                             ) : (
@@ -2154,6 +2200,8 @@ const AddOrganization = () => {
                                     setsearch_item={setbilling_state_search_item}
                                     error_message={"Please Select Any State"}
                                     error_s={state_error1}
+                                    loaded={state_loded}
+                                    count={state_count}
                                   />
                                 </span>
                                 {/* <div className="mt-1 error-text" color="danger">
@@ -2197,6 +2245,8 @@ const AddOrganization = () => {
                                   setsearch_item={setbilling_city_search_item}
                                   error_message={"Please Select Any City"}
                                   error_s={city_error1}
+                                  loaded={billing_city_loaded}
+                                  count={billing_city_count}
                                 />
                                 {/* <div className="mt-1 error-text" color="danger">
                                   {city_error ? "Please Select Any City" : null}
@@ -2242,6 +2292,8 @@ const AddOrganization = () => {
                                     setsearch_item={setbilling_pincode_search_item}
                                     error_message={"Please Add Pin Code"}
                                     error_s={pincode_error2}
+                                    loaded={loaded_billing_pincode}
+                                    count={billing_pincode_count}
                                   />
                                 </div>
                               ) : (

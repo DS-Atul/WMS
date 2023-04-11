@@ -271,14 +271,14 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {
                   order.cm_current_status === "APPROVED" ?
-                    <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-success btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Approved</button>
+                    <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-success btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Approved</button>
                     :
-                    order.cm_current_status === "REJECTED" && order.cm_transit_status === "NOT APPROVED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-danger btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Reject <HiQuestionMarkCircle size={15} /></button>
+                    order.cm_current_status === "REJECTED" && order.cm_transit_status === "NOT APPROVED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-danger btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Reject <HiQuestionMarkCircle size={15} /></button>
                       : order.cm_current_status === "REJECTED" && (order.cm_transit_status == "VERIFIED OPERATION MANAGER" || order.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER") && (user.user_department_name + " " + user.designation_name === "OPERATION MANAGER" || user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER")
-                        ? <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-danger btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Reject <HiQuestionMarkCircle size={15} /> </button>
+                        ? <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-danger btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Reject <HiQuestionMarkCircle size={15} /> </button>
                         : order.cm_current_status === "REJECTED" && (order.cm_transit_status === "VERIFIED ACCOUNTANT" || order.cm_transit_status == "VERIFIED ACCOUNT MANAGER") && (user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER") ?
-                          <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-danger btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Reject <HiQuestionMarkCircle size={15} /> </button>
-                          : <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-warning btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Status <HiQuestionMarkCircle size={15} /></button>
+                          <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-danger btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Reject <HiQuestionMarkCircle size={15} /> </button>
+                          : <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-warning btn-rounded"} onClick={() => { handleModal(), setreject_resion(order) }}>Status <HiQuestionMarkCircle size={15} /></button>
                 }
               </td>
               <td>

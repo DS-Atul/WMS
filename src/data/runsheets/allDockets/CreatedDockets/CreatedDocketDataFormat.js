@@ -31,6 +31,7 @@ const CreatedDocketDataFormat = ({ sel_rn_list, remove_list }) => {
               })}
             </tr>
           </thead>
+          <tbody>
           {sel_rn_list.length === 0 ? (
             <tr>
               <td>Select Docket To Create Runsheet</td>
@@ -81,7 +82,7 @@ const CreatedDocketDataFormat = ({ sel_rn_list, remove_list }) => {
               );
             })
           )}
-          <tbody></tbody>
+        </tbody>
         </table>
       </div>
     </>

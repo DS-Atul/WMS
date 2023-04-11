@@ -156,7 +156,13 @@ const UsersDataFormat = ({ data, data1, can_delete }) => {
   return (
     <>
       {(list_toggle === true ? data1 : data).length === 0
-        ? " No Data Found"
+        ? (
+          <tr>
+            <td>
+            No Data Found
+            </td>
+          </tr>
+          )
         : (list_toggle === true ? data1 : data).map((user, index) => {
           return (
             <tr

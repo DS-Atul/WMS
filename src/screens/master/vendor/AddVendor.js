@@ -235,7 +235,14 @@ const AddVendor = () => {
     }),
 
     onSubmit: (values) => {
-      if (company_type === "") {
+       if (
+              msme_registerd_number !== "" &&
+              msme_registerd_number.length !== 10
+            ) {
+              document.getElementById("vendor_info").scrollIntoView();
+              setmsme_No_length(true);
+            }
+    else  if (company_type === "") {
         document.getElementById("vendor_servies").scrollIntoView();
         setcompany_type_error(true);
       } else if (business_selected === "") {
@@ -669,7 +676,7 @@ const AddVendor = () => {
     if (msme_registerd === true && msme_registerd_number !== "") {
       setmsme_registerd_number_error(false);
     }
-    if (msme_registerd_number !== "" && msme_registerd_number.length === 12) {
+    if (msme_registerd_number !== "" && msme_registerd_number.length === 10) {
       setmsme_No_length(false);
     }
   }, [msme_registerd, msme_registerd_number]);
@@ -1215,13 +1222,7 @@ const AddVendor = () => {
               setmsme_registerd_number_error(true);
               document.getElementById("vendor_info").scrollIntoView();
             }
-            if (
-              msme_registerd_number !== "" &&
-              msme_registerd_number.length !== 12
-            ) {
-              document.getElementById("vendor_info").scrollIntoView();
-              setmsme_No_length(true);
-            }
+           
             validation.handleSubmit(e.values);
             return false;
           }}
@@ -1393,7 +1394,7 @@ const AddVendor = () => {
 
                               {msme_No_length && (
                                 <div className="mt-1 error-text" color="danger">
-                                  MSME number must 12 digit long
+                                  MSME number must 10 digit long
                                 </div>
                               )}
                             </div>
