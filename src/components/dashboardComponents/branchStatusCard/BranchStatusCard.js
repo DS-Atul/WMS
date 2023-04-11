@@ -11,20 +11,20 @@ const BranchStatusCard = ({
   Total_count = 0,
 }) => {
   return (
-    <div class="brCard-container">
-      <div class="brCard">
+    <div className="brCard-container">
+      <div className="brCard">
         <div className="container_upper" style={{ fontSize: "8px" }}>
           {Upper}
         </div>
        
-        <div class="row">
-          <div class="column">
-            <div class="box box-1">{Cold_chain}</div>
-            <div class="box box-2">{Manifest_order}</div>
+        <div className="tow">
+          <div className="lumn">
+            <div className="box box-1">{Cold_chain}</div>
+            <div className="box box-2">{Manifest_order}</div>
           </div>
-          <div class="column">
-            <div class="box box-3">{Pending_order}</div>
-            <div class="box box-4">{Total_count}</div>
+          <div className="lumn">
+            <div className="box box-3">{Pending_order}</div>
+            <div className="box box-4">{Total_count}</div>
           </div>
         </div>
       </div>

@@ -75,8 +75,12 @@ const HeaderCard = ({
           <div className="card-content1">{Headlogo}</div>
         </div>
         <div className="card-content">
-          <h2 className="card-ti">{title}</h2>
-          <p className="card-description">{description}</p>
+          <span className="card-ti">{title}</span><br/>
+          <span style={{margin:"10px"}} className="card-description">{description}</span>
+          {/* <h2 className="card-ti">{title}</h2>
+          <p 
+          // className="card-description"
+          >{description}</p> */}
         </div>
       </div>
     </>

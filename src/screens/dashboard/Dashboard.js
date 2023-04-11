@@ -82,40 +82,31 @@ const Dashboard = () => {
     // setmessage_error(false)
   };
 
-  const [birthday_list, setbirthday_list] = useState(["","","","","","",""]);
+  const [birthday_list, setbirthday_list] = useState([""]);
 
   console.log("Modal", show);
   return (
     <>
       {/* Birtday Modal */}
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} className="custom_modal" >
         <Modal.Header closeButton>
-          <Modal.Title>Show Today's Birthdays</Modal.Title>
+          <Modal.Title style={{fontFamily:"'Poppins', sans-serif", fontSize:"400"}}> Today's Birthdays</Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ background: "#E9EDC9", }}>
+        <Modal.Body style={{ background: "#454545",}}>
           {birthday_list.length === 0 ? (
-            <div>NO Birthdays Today</div>
+            <div className="birt_day" style={{fontFamily: 'Poppins sans-serif', fontSize:'400'}}>NO Birthdays Today</div>
           ) : (
             <>
               {birthday_list.map((item, idx) => {
-                return (
-                  <BirthdayModal
-                    name={"Sibu Soren"}
-                    Img={`https://www.etechcube.com/wp-content/uploads/2021/03/cropped-cropped-cropped-cropped-color_logo_transparent-1-1-1.png`}
-                  Gender={"Male"}
-                  DOB={"13th of something"}
-                  Age={"87"}
-                  />
-                );
+                return <BirthdayModal />;
               })}
             </>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-         Close
+          <Button variant="secondary" onClick={handleClose}style={{fontFamily:"'Poppins', sans-serif", fontSize:"400"}}>
+            Close
           </Button>
-          
         </Modal.Footer>
       </Modal>
 

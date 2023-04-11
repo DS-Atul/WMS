@@ -24,7 +24,7 @@
     justify-content: center;
     top: -27px;
     right: 21px;
-    width: 109px;
+    width: 140px;
     color: white;
     height: 30px;
     font-family: inherit;
@@ -45,7 +45,7 @@
   }
   
   /* Apply styles to the row container */
-  .row {
+  .tow {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -53,9 +53,9 @@
   }
   
   /* Apply styles to the column container */
-  .column {
+  .lumn {
     flex: 1;
-    margin: -10px;
+    margin: 2px;
   }
   
   /* Apply styles to the boxes */

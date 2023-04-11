@@ -73,6 +73,11 @@ color: #7fdbff;
   border-radius: 6px;
 }
 
+/* .custom_modal {
+  max-width: 180%;
+ 
+} */
+
 @media screen and (max-width: 768px) {
   .notity_card {
     flex-basis: 45%;
