@@ -292,6 +292,7 @@ const PendingDepartDataFormat = ({ data, data1, can_delete }) => {
               <td>{depart.orders.length}</td>
               <td>{toTitleCase(depart.coloader_name)}</td>
               <td>{depart.bag_count}</td>
+              <td>{depart.box_count}</td>
               <td>{depart.total_weight}</td>
               {(can_update || user.is_superuser) && (
               <td>

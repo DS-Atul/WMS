@@ -206,11 +206,11 @@ const EditHubDocket = () => {
   const get_orderof_manifest = () => {
     axios
       // .get(ServerAddress + `manifest/get_hub_orders/?hub_no=${hub_no}`, 
-      .get(ServerAddress + `manifest/get_all_hub_orders/?hub_no=${hub_no}`, 
-      
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
+      .get(ServerAddress + `manifest/get_all_hub_orders/?hub_no=${hub_no}`,
+
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
       .then((response) => {
 
         console.log("responsesss==hub===", response)
@@ -224,7 +224,7 @@ const EditHubDocket = () => {
 
   useLayoutEffect(() => {
     hub_no && get_orderof_manifest();
-  }, [hub_no,success]);
+  }, [hub_no, success]);
 
   const updateManifest = (values) => {
     axios
@@ -241,8 +241,8 @@ const EditHubDocket = () => {
           chargeable_weight: 0,
           coloader_name: coloader_selected.toUpperCase(),
           carrier_name: toTitleCase(values.vehicle_no).toUpperCase(),
-          
-          is_scanned:same_box ? hub_data.is_scanned : false,
+
+          is_scanned: same_box ? hub_data.is_scanned : false,
           update: "True",
           forwarded_by: user_id,
           forwarded: "False",
@@ -254,7 +254,7 @@ const EditHubDocket = () => {
           driver_name: values.driver_name,
           supporting_staff: values.supporting_staff,
           deleted_packages: deleted_packages_id,
-          hubtransfer_no:hub_no,
+          hubtransfer_no: hub_no,
         },
 
         {
@@ -333,21 +333,21 @@ const EditHubDocket = () => {
   const [vendor_data, setvendor_data] = useState([]);
   const [rental, setrental] = useState(false);
   const [vehicle_no, setvehicle_no] = useState("");
-//  For getting Vehcile number
+  //  For getting Vehcile number
   const get_vehcile_no = () => {
     let vendor_temp = [];
     let data = [];
     axios
       .get(
         ServerAddress +
-          `master/all_vehcile/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
+        `master/all_vehcile/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
         data = response.data.results;
-        console.log("data printing",data)
+        console.log("data printing", data)
         setvendor_data(data);
         if (response.data.results.length > 0) {
           if (vendor_n_page == 1) {
@@ -369,7 +369,7 @@ const EditHubDocket = () => {
       });
   };
 
- 
+
   useLayoutEffect(() => {
     get_vehcile_no();
   }, [vendor_n_page, search_vendor_name, refresh_r]);
@@ -479,56 +479,56 @@ const EditHubDocket = () => {
                       </Col>
 
                       <Col lg={4} md={8} sm={8}>
-                    <div className="mb-2">
-                      <Label className="header-child">Vehcile No* :</Label>
-                      {
-                        rental ? 
-                        null :
-                        <SearchInput
-                        data_list={vendor_list}
-                        setdata_list={setvendor_list}
-                        data_item_s={vendor_name}
-                        set_data_item_s={setvendor_name}
-                        set_id={setvendor_id}
-                        page={vendor_n_page}
-                        setpage={setvendor_n_page}
-                        search_item={search_vendor_name}
-                        setsearch_item={setsearch_vendor_name}
-                        error_message={"Please Select Any Vechile Number"}
-                        error_s={vendor_error}
-                      />
+                        <div className="mb-2">
+                          <Label className="header-child">Vehcile No* :</Label>
+                          {
+                            rental ?
+                              null :
+                              <SearchInput
+                                data_list={vendor_list}
+                                setdata_list={setvendor_list}
+                                data_item_s={vendor_name}
+                                set_data_item_s={setvendor_name}
+                                set_id={setvendor_id}
+                                page={vendor_n_page}
+                                setpage={setvendor_n_page}
+                                search_item={search_vendor_name}
+                                setsearch_item={setsearch_vendor_name}
+                                error_message={"Please Select Any Vechile Number"}
+                                error_s={vendor_error}
+                              />
 
-                      }
-                     
-       {rental &&
- <Input
- name="vehicle_no"
- type="text"
- id="input"
- maxLength={10}
- value={vehicle_no}
- onChange={(e) => {
-   setvehicle_no(e.target.value);
- }}
-/>
-       }
-                     
-                    </div>
-                  </Col>
-                  <Col>
-                  <div className="mb-2" style={{marginTop:"25px"}}>
-                      <Label className="header-child">Rentend Vehcile :</Label>
-                  {rental ?
-        <FiCheckSquare size={20} onClick={()=>{
-          setrental(false);
-        }}/>
-        :
-        <FiSquare size={20} onClick={()=>{
-          setrental(true);
-        }}/> 
-        }
-        </div>
-                  </Col>
+                          }
+
+                          {rental &&
+                            <Input
+                              name="vehicle_no"
+                              type="text"
+                              id="input"
+                              maxLength={10}
+                              value={vehicle_no}
+                              onChange={(e) => {
+                                setvehicle_no(e.target.value);
+                              }}
+                            />
+                          }
+
+                        </div>
+                      </Col>
+                      <Col>
+                        <div className="mb-2" style={{ marginTop: "25px" }}>
+                          <Label className="header-child">Rentend Vehcile :</Label>
+                          {rental ?
+                            <FiCheckSquare size={20} onClick={() => {
+                              setrental(false);
+                            }} />
+                            :
+                            <FiSquare size={20} onClick={() => {
+                              setrental(true);
+                            }} />
+                          }
+                        </div>
+                      </Col>
                     </Row>
                   </CardBody>
                 ) : null}

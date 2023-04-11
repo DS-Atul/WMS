@@ -5,6 +5,7 @@ const PendingDepartTitle = [
   "Total Orders",
   "Coloader",
   "Total Bags",
+  "Total Box",
   "Total Quantity",
   "Action",
 ];

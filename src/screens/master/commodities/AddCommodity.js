@@ -39,7 +39,9 @@ const Add_Commodity = () => {
   const userdepartment = useSelector(
     (state) => state.authentication.userdepartment
   );
+  const navigate = useNavigate();
   const location = useLocation();
+  console.log("location--------", location)
   const [isupdating, setisupdating] = useState(false);
   const [commodity, setcommodity] = useState("");
 
@@ -306,7 +308,7 @@ const Add_Commodity = () => {
         });
     });
   };
-  const navigate = useNavigate();
+
   const handleAction = () => {
     dispatch(setToggle(true));
     navigate("/master/commodities");
@@ -316,9 +318,9 @@ const Add_Commodity = () => {
     navigate(
       "/master/commodities/commodityHistory/CommodityHistoryPage",
       // "/utilities/historyPage/HistoryPage",
-     {
-      state: { commodity: commodity },
-    });
+      {
+        state: { commodity: commodity },
+      });
   };
 
   useEffect(() => {
@@ -329,10 +331,10 @@ const Add_Commodity = () => {
     if (commodity_type === "Add New") {
       setother_commodity_type("");
     }
-    if(other_commodity_type){
+    if (other_commodity_type) {
       setadd_como_err(false);
     }
-  }, [commodity_type],[other_commodity_type]);
+  }, [commodity_type], [other_commodity_type]);
 
   useLayoutEffect(() => {
     if (commodity_type !== "") {
@@ -475,8 +477,36 @@ const Add_Commodity = () => {
     }
   }
 
+  {/* For Checker Maker */ }
+  const [table_data, settable_data] = useState(["", "", ""]);
+  const get_orders = () => {
+    axios
+      .get(
+        ServerAddress +
+        `master/all_commodities/?search=${""}&p=${1}&records=${10}&commodity_type=${""}&commodity_name=${""}&data=&value=${"P 24Hr"}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        console.log("com info", response.data.results);
+        settable_data(response.data.results);
+      });
+  };
+
+  useLayoutEffect(() => {
+    if (location.state.type) {
+      get_orders();
+    }
+  }, [location]);
+
+  const set_form_data = (item) => {
+    setcommodity(item);
+    setcommodity_type(toTitleCase(item.type));
+    setcommodity_type_id(item.commodity_type);
+  }
   return (
-    <div>
+    <div style={{ display: location.state.type && "flex" }}>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -511,264 +541,264 @@ const Add_Commodity = () => {
         </Modal.Footer>
       </Modal>
 
-      <Form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (commodity_type == "") {
-            setcommodity_type_error(true);
-          }
-          if(other_commodity_type == ""){
-            setadd_como_err(true);
-          }
-          validation.handleSubmit(e.values);
-          return false;
-        }}
-      >
-        {/* Commodity */}
-        <div className="mt-3">
-          <PageTitle page={isupdating ? "Update Commodity" : "Add Commodity"} />
-          <Title
-            title={isupdating ? "Update Commodity" : "Add Commodity"}
-            parent_title="Masters"
-          />
-        </div>
-
-        <div className="m-3">
-          {/* //Added For History */}
-          {isupdating ? (
-            <div style={{ justifyContent: "right", display: "flex" }}>
-              <Button
-                type="button"
-                onClick={() => {
-                  handlClk();
-                }}
-              >
-                History
-              </Button>
-            </div>
-          ) : (
-            <>
-              {/* this code for import export dont`t remove it  */}
-              {/* <button type="button" onClick={() => downloadExcel(data)}>
-                Download As Excel
-              </button>
-              <button type="button" style={{ maxHeight: 25, marginLeft: 5 }}>
-                <label htmlFor="file-input" className="button">
-                  Upload Excel file
-                </label>
-                <input
-                  id="file-input"
-                  type="file"
-                  accept=".xlsx,.xls,.csv"
-                  onChange={handleFileUpload}
-                  style={{ display: "none" }}
-                />
-              </button>
-              <div style={{flex:1}}>
-              <Modal
-              scrollable={true}
-              fullscreen={'md-down'}
-                size={"md"}
-                isOpen={showModal}
-                toggle={closeModal}
-                // style={{
-                //   display: "flex",
-                //   maxHeight: "80%",
-                //   // maxWidth: "60%",
-                //   overflowY: 'auto',
-                // }}
-              >
-                <ModalHeader toggle={closeModal}>Excel Data</ModalHeader>
-                <ModalBody
+      {/* For Checker Maker */}
+      {location.state.type &&
+        <div
+          style={{
+            width: "15%",
+            // overflowY: "scroll",
+            margin: "18px 10px 5px 20px",
+            zIndex: 1,
+            height: "100%",
+            // border:"1px solid #2CA67A"
+            border: "1px solid #2A3042",
+            borderRadius: "5px"
+          }}
+          className="custom-scrollbars__content"
+        >
+          <div style={{ background: "#f4bc61", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center", cursor: "pointer" }}>History</div>
+          <div style={{ background: "#E6F1FF", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center" }}>Total Pending - 20</div>
+          <table className="table-grid">
+            <thead>
+              <tr style={{ lineHeight: 2, blocalWidth: 1 }}>
+                <th
                   style={{
-                    // maxWidth: "100%",
-                    // maxHeight: "100%",
-                    // overflowY: "auto",
-                    // margin: "auto",
+                    width: "8rem",
+                    textAlign: "center",
+                    paddingLeft: "4px",
+                    paddingRight: "4px",
+                    border: "1px solid #E6E9EC"
+                  }}
+                  rowSpan={2}
+                >
+                  Commodity Name
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {table_data.length == 0 ? (
+                <tr>
+                  <td>No Data Found</td>
+                </tr>
+              ) : (
+                table_data.map((item, index) => {
+                  return (
+                    <tr key={index} style={{ border: "1px solid red" }}>
+                      <td style={{ border: "1px solid #E6E9EC", padding: "3px" }}>
+                        <span
+                          style={{ cursor: "pointer", color: "blue", fontSize: "11px" }}
+                          onClick={() => {
+                            set_form_data(item);
+                            // setselected_docket(true);
+                          }}
+                        >
+                          {toTitleCase(item.commodity_name)}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      }
+      {/* For Checker Maker */}
+
+      <div style={{
+
+        width: location.state.type && "85%",
+        // overflowY: "scroll",
+        margin: "2px",
+        zIndex: 1,
+        height: "100%",
+      }}>
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (commodity_type == "") {
+              setcommodity_type_error(true);
+            }
+            if (other_commodity_type == "") {
+              setadd_como_err(true);
+            }
+            validation.handleSubmit(e.values);
+            return false;
+          }}
+        >
+          {/* Commodity */}
+          {!location.state.type &&
+            <div className="mt-3">
+              <PageTitle page={isupdating ? "Update Commodity" : "Add Commodity"} />
+              <Title
+                title={isupdating ? "Update Commodity" : "Add Commodity"}
+                parent_title="Masters"
+              />
+            </div>
+          }
+          <div className="m-3">
+            {isupdating && !location.state.type &&(
+              <div style={{ justifyContent: "right", display: "flex" }}>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    handlClk();
                   }}
                 >
-                  {jsonData.length !== 0 ? (
-                    <table>
-                      <thead>
-                        <tr>
-                          {Object.keys(jsonData[0]).map((key) => (
-                            <th key={key}>{key}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {jsonData.map((row, index) => (
-                          <tr key={index}>
-                            {Object.values(row).map((value, index) => (
-                              <td key={index}>{value}</td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <p>No data to display</p>
-                  )}
-                </ModalBody>
-                <ModalFooter>
-                  <Button color="primary" onClick={handleSave}>
-                    Save
-                  </Button>
-                  <Button color="secondary" onClick={closeModal}>
-                    Cancel
-                  </Button>
-                </ModalFooter>
-              </Modal>
-              </div> */}
-            </>
-          )}
+                  History
+                </Button>
+              </div>
+            )}
 
-          {/* //Added For History */}
+            {/* //Added For History */}
 
-          <Col lg={12}>
-            <Card className="shadow bg-white rounded">
-              <CardTitle className="mb-1 header">
-                <div className="header-text-icon header-text">
-                  <div></div>
-                  <IconContext.Provider
-                    value={{
-                      className: "header-add-icon",
-                    }}
-                  >
-                    <div onClick={toggle_circle}>
-                      {circle_btn ? (
-                        <MdRemoveCircleOutline />
-                      ) : (
-                        <MdAddCircleOutline />
-                      )}
-                    </div>
-                  </IconContext.Provider>
-                </div>
-              </CardTitle>
-              {circle_btn ? (
-                <CardBody>
-                  <Row>
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-3">
-                        <Label className="header-child">Commidity Type*</Label>
-                        <SearchInput
-                          data_list={commodity_type_list}
-                          setdata_list={setcommodity_type_list}
-                          data_item_s={commodity_type}
-                          set_data_item_s={setcommodity_type}
-                          set_id={setcommodity_type_id}
-                          page={commodity_type_page}
-                          setpage={setcommodity_type_page}
-                          setsearch_item={setcommodity_type_search_item}
-                          error_message={"Please Select Commidity Type"}
-                          error_s={commodity_type_error}
-                        />
+            <Col lg={12}>
+              <Card className="shadow bg-white rounded">
+                <CardTitle className="mb-1 header">
+                  <div className="header-text-icon header-text">
+                    <div></div>
+                    <IconContext.Provider
+                      value={{
+                        className: "header-add-icon",
+                      }}
+                    >
+                      <div onClick={toggle_circle}>
+                        {circle_btn ? (
+                          <MdRemoveCircleOutline />
+                        ) : (
+                          <MdAddCircleOutline />
+                        )}
                       </div>
-                    </Col>
-                    {commodity_type === "Add New" ? (
+                    </IconContext.Provider>
+                  </div>
+                </CardTitle>
+                {circle_btn ? (
+                  <CardBody>
+                    <Row>
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">
-                            Add Commodity Type*
-                          </Label>
-                          <Input
-                            onChange={(val) =>
-                              setother_commodity_type(val.target.value)
-                            }
-                            onBlur={() => {
-                              if (other_commodity_type != "") {
-                                if (
-                                  window.confirm(
-                                    `Are you want to add commodity type ${toTitleCase(
-                                      other_commodity_type
-                                    )}?`
-                                  )
-                                ) {
-                                  setCommodityType();
-                                } else {
-                                  setcommodity_type("");
-                                }
-                              }
-                            }}
-                            value={other_commodity_type}
-                            invalid={add_como_err}
-                            type="text"
-                            name="other_commodity_type"
-                            className="form-control-md"
-                            id="input"
-                            placeholder="Enter Commodity Type"
+                        <div className="mb-3">
+                          <Label className="header-child">Commidity Type*</Label>
+                          <SearchInput
+                            data_list={commodity_type_list}
+                            setdata_list={setcommodity_type_list}
+                            data_item_s={commodity_type}
+                            set_data_item_s={setcommodity_type}
+                            set_id={setcommodity_type_id}
+                            page={commodity_type_page}
+                            setpage={setcommodity_type_page}
+                            setsearch_item={setcommodity_type_search_item}
+                            error_message={"Please Select Commidity Type"}
+                            error_s={commodity_type_error}
                           />
-                          <FormFeedback type="invalid">
-                            Please Enter Commodity Type
-                          </FormFeedback>
                         </div>
                       </Col>
-                    ) : null}
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">Commodity Name*</Label>
-                        <Input
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.commodity_name}
-                          invalid={
-                            validation.touched.commodity_name &&
-                              validation.errors.commodity_name
-                              ? true
-                              : false
-                          }
-                          type="text"
-                          name="commodity_name"
-                          className="form-control-md"
-                          id="input"
-                          placeholder="Enter Commodity name"
-                          disabled={approved_entry}
-                        />
-                        {validation.touched.commodity_name &&
-                          validation.errors.commodity_name ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.commodity_name}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-              ) : null}
-            </Card>
-          </Col>
-        </div>
-        {/*Button */}
-        <div className="m-3">
-          <Col lg={12}>
-            <div className="mb-1 footer_btn">
-              <button
-                type="submit"
-                className={isupdating && (user.user_department_name === "ADMIN") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
-              >
-                {isupdating && (user.user_department_name === "ADMIN" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
-              </button>
-
-              {isupdating && (user.user_department_name !== "ADMIN" && !user.is_superuser) &&
+                      {commodity_type === "Add New" ? (
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">
+                              Add Commodity Type*
+                            </Label>
+                            <Input
+                              onChange={(val) =>
+                                setother_commodity_type(val.target.value)
+                              }
+                              onBlur={() => {
+                                if (other_commodity_type != "") {
+                                  if (
+                                    window.confirm(
+                                      `Are you want to add commodity type ${toTitleCase(
+                                        other_commodity_type
+                                      )}?`
+                                    )
+                                  ) {
+                                    setCommodityType();
+                                  } else {
+                                    setcommodity_type("");
+                                  }
+                                }
+                              }}
+                              value={other_commodity_type}
+                              invalid={add_como_err}
+                              type="text"
+                              name="other_commodity_type"
+                              className="form-control-md"
+                              id="input"
+                              placeholder="Enter Commodity Type"
+                            />
+                            <FormFeedback type="invalid">
+                              Please Enter Commodity Type
+                            </FormFeedback>
+                          </div>
+                        </Col>
+                      ) : null}
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Commodity Name*</Label>
+                          <Input
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.commodity_name}
+                            invalid={
+                              validation.touched.commodity_name &&
+                                validation.errors.commodity_name
+                                ? true
+                                : false
+                            }
+                            type="text"
+                            name="commodity_name"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Commodity name"
+                            disabled={approved_entry}
+                          />
+                          {validation.touched.commodity_name &&
+                            validation.errors.commodity_name ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.commodity_name}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                ) : null}
+              </Card>
+            </Col>
+          </div>
+          {/*Button */}
+          <div className="m-3">
+            <Col lg={12}>
+              <div className="mb-1 footer_btn">
                 <button
-                  type="button"
-                  className="btn btn-danger m-1"
-                  onClick={handleShow}
+                  type="submit"
+                  className={isupdating && (user.user_department_name === "ADMIN") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
                 >
-                  Rejected
+                  {isupdating && (user.user_department_name === "ADMIN" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
                 </button>
-              }
-              <Button
-                className="btn btn-info m-1 cu_btn"
-                type="button"
-                onClick={handleAction}
-              >
-                Cancel
-              </Button>
-            </div>
-          </Col>
-        </div>
-      </Form>
+
+                {isupdating && (user.user_department_name !== "ADMIN" && !user.is_superuser) &&
+                  <button
+                    type="button"
+                    className="btn btn-danger m-1"
+                    onClick={handleShow}
+                  >
+                    Rejected
+                  </button>
+                }
+                <Button
+                  className="btn btn-info m-1 cu_btn"
+                  type="button"
+                  onClick={handleAction}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </Col>
+          </div>
+        </Form>
+
+      </div>
     </div>
   );
 };

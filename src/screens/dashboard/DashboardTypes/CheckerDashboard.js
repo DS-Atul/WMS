@@ -13,8 +13,10 @@ import VerticalBarChart from "../../../components/dashboardComponents/Charts/Ver
 import SpineAreaChart from "../../../components/dashboardComponents/Charts/SpineAreaChart";
 import LineColumnArea from "../../../components/dashboardComponents/Charts/LineColumnArea";
 import { CardBody, CardTitle, Col, Row } from "reactstrap";
-
+import { useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 const CheckerDashboard = () => {
+  const navigate = useNavigate();
   // To get Screen Size
   const { height, width } = useWindowDimensions();
 
@@ -68,23 +70,30 @@ const CheckerDashboard = () => {
             }}
           >
             <CardBody>
-              <div className="d-flex flex-wrap">
-                <div className="me-1">
-                  <h5
-                    className
-                    style={{
-                      color: "white",
-                      fontFamily: "sans-serif",
-                      fontSize: "21px",
-                    }}
-                  >
-                    {" "}
-                    Generated
-                  </h5>
-                </div>
+              <Link
+                to={{
+                  pathname: `/master/commodities/addcommodity`,
+                }}
+                state={{ commodity: "P 24Hr", type:"Commodity"}}
+              >
+                <div className="d-flex flex-wrap">
+                  <div className="me-1">
+                    <h5
+                      className
+                      style={{
+                        color: "white",
+                        fontFamily: "sans-serif",
+                        fontSize: "21px",
+                      }}
+                    >
+                      {" "}
+                      Generated
+                    </h5>
+                  </div>
 
-                <div className="avatar-sm ms-auto"></div>
-              </div>
+                  <div className="avatar-sm ms-auto"></div>
+                </div>
+              </Link>
             </CardBody>
           </Card>
         </Col>
@@ -255,46 +264,46 @@ const CheckerDashboard = () => {
       {/*Line ColumnArea Chart */}
 
       <Row>
-      <Col lg={12}>
-              <Card>
-                <CardBody>
-                  <CardTitle className="mb-4">
-                    
-                  </CardTitle>
-                  <Row className="justify-content-center">
-                    <Col sm={4}>
-                      <div className="text-center">
-                        <h5 className="mb-0 font-size-20">86541</h5>
-                        <p className="text-muted">Activated</p>
-                      </div>
-                    </Col>
-                    <Col sm={4}>
-                      <div className="text-center">
-                        <h5 className="mb-0 font-size-20">2541</h5>
-                        <p className="text-muted">Pending</p>
-                      </div>
-                    </Col>
-                    <Col sm={4}>
-                      <div className="text-center">
-                        <h5 className="mb-0 font-size-20">102030</h5>
-                        <p className="text-muted">Deactivated</p>
-                      </div>
-                    </Col>
-                  </Row>
-                  <LineColumnArea />
-                </CardBody>
-              </Card>
-            </Col>
-            
-          </Row>
+        <Col lg={12}>
+          <Card>
+            <CardBody>
+              <CardTitle className="mb-4">
+
+              </CardTitle>
+              <Row className="justify-content-center">
+                <Col sm={4}>
+                  <div className="text-center">
+                    <h5 className="mb-0 font-size-20">86541</h5>
+                    <p className="text-muted">Activated</p>
+                  </div>
+                </Col>
+                <Col sm={4}>
+                  <div className="text-center">
+                    <h5 className="mb-0 font-size-20">2541</h5>
+                    <p className="text-muted">Pending</p>
+                  </div>
+                </Col>
+                <Col sm={4}>
+                  <div className="text-center">
+                    <h5 className="mb-0 font-size-20">102030</h5>
+                    <p className="text-muted">Deactivated</p>
+                  </div>
+                </Col>
+              </Row>
+              <LineColumnArea />
+            </CardBody>
+          </Card>
+        </Col>
+
+      </Row>
 
       {/* Pie Chart */}
 
       {/* Horizontal Chart */}
 
       {/* Vertical Chart */}
-      
-      
+
+
 
       {/* Spine Area Chart */}
     </>

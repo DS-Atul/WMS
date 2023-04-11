@@ -986,10 +986,10 @@ const AddBranchForward = (manifest) => {
                       }}
                     >
                       <AddAnotherOrder
-                         data2={data2}
+                        data2={data2}
                         id_m={manifest_no}
-                        refresh={refresh}
-                        setrefresh={setrefresh}
+                        refresh2={refresh}
+                        setrefresh2={setrefresh}
                       />
                       <IconContext.Provider
                         value={{

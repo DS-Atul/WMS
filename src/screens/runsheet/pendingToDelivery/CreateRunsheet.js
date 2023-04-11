@@ -439,7 +439,7 @@ const [close, setclose] = useState(false)
                 }
               </>
               :
-               <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces is Damaged and "${issuenon_received_total}" is not Received`}</div>
+               <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces is Damaged and "${issuenon_received_total}" is not Received So, Do you want to Create Runsheet ?`}</div>
                }
           </Modal.Body>
 
