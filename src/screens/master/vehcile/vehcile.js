@@ -66,9 +66,9 @@ const Vehcile = () => {
 
   return (
     <>
-      <PageTitle page="Vehciles" />
+      <PageTitle page="Vehicles" />
 
-      <Title title="Vehciles" parent_title="Masters" />
+      <Title title="Vehicle" parent_title="Masters" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
           <div className="mb-2 row ">
@@ -82,7 +82,7 @@ const Vehcile = () => {
               >
               
                   <NavBtn
-                    btn_name="Add Vehcile"
+                    btn_name="Add Vehicle"
                     icon={<MdAdd />}
                     form_path="/master/Add_Vehcile"
                   />

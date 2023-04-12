@@ -1,3 +1,3 @@
-const VehcileDataTitle = ["Vehcile No","Vehcile Type","Vehcile Model","Active Status"];
+const VehcileDataTitle = ["Vehicle No","Vehicle Type","Vehicle Model","Active Status"];
 
 export default VehcileDataTitle;

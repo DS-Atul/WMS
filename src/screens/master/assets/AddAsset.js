@@ -210,7 +210,7 @@ const AddAsset = () => {
   const [callibration_to_date_error, setcallibration_to_date_error] =
     useState(false);
 
-    const [Add_manufacture_err, setAdd_manufacture_err] = useState(false);
+  const [Add_manufacture_err, setAdd_manufacture_err] = useState(false);
 
   //Used for circle btn
   const toggle_circle = () => {
@@ -329,27 +329,27 @@ const AddAsset = () => {
       )
       .then((response) => {
 
-        console.log("State is ===>",response.data)
-if(resp.data.next === null){
-  setbranch_loaded(false);
-} else {
-  setbranch_loaded(true);
-}
-if (response.data.results.length > 0) {
-  if (page == 1) {
-    branch_list_is = response.data.results.map((v) => [
-      v.id,
-      toTitleCase(v.name),
-    ]);
-  } else {
-    branch_list_is = [
-      ...vendor_list,
-      ...response.data.results.map((v) => [v.id, v.name]),
-    ];
-  }
-}
-setbranch_count(branch_count+2);
-setbranch_list(branch_list_is);
+        console.log("State is ===>", response.data)
+        if (response.data.next === null) {
+          setbranch_loaded(false);
+        } else {
+          setbranch_loaded(true);
+        }
+        if (response.data.results.length > 0) {
+          if (page == 1) {
+            branch_list_is = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            branch_list_is = [
+              ...vendor_list,
+              ...response.data.results.map((v) => [v.id, v.name]),
+            ];
+          }
+        }
+        setbranch_count(branch_count + 2);
+        setbranch_list(branch_list_is);
         // let temp = [];
         // let temp2 = [...branch_list];
         // temp = response.data.results;
@@ -394,21 +394,21 @@ setbranch_list(branch_list_is);
       setasset(asset_u);
       setasset_type(toTitleCase(asset_u.asset_type));
       setbranch_short_id(asset_u.assigned_branch);
-      
+
       setbox_cap(toTitleCase(asset_u.box_capacities));
       settemperature_type_box(asset_u.temperature_type);
-   
+
       setmanufacture_type(toTitleCase(asset_u.manufacturer_name));
       settemperature_log_type(asset_u.temperature_type);
       // settoday(asset_u.expiry_date);
       // setfrom_date(asset_u.purchase_date);
       // if (asset_type === "Temperature Control Box") {
-        setuseproduct_id(asset_u.product_id);
-        setbox_type(toTitleCase(asset_u.box_type));
+      setuseproduct_id(asset_u.product_id);
+      setbox_type(toTitleCase(asset_u.box_type));
       // }
       // else {
-        setlogger_box_no(asset_u.product_id)
-        setlogger_box_type(toTitleCase(asset_u.box_type));
+      setlogger_box_no(asset_u.product_id)
+      setlogger_box_type(toTitleCase(asset_u.box_type));
       // }
       setbranch_selected(toTitleCase(asset_u.assigned_branch_n));
       setisChecked(asset_u.is_checked);
@@ -445,7 +445,7 @@ setbranch_list(branch_list_is);
           current_branch: user.home_branch, // It will updated according to the Branch
           is_checked: isChecked,
           created_by: user_id,
-          purchase_date:asset_type === "Logger" ? purchase_date : null,
+          purchase_date: asset_type === "Logger" ? purchase_date : null,
           expiry_date: asset_type === "Logger" ? expiry_date : null,
           asset_callibration: asset_type === "Logger" ? row : [],
           //For C&M
@@ -545,7 +545,7 @@ setbranch_list(branch_list_is);
           current_branch: user.home_branch, // It will updated accordind to the Branch
           is_checked: isChecked,
           modified_by: user_id,
-          purchase_date:  asset_type === "Logger" ? purchase_date : null,
+          purchase_date: asset_type === "Logger" ? purchase_date : null,
           expiry_date: asset_type === "Logger" ? expiry_date : null,
           asset_callibration: asset_type === "Logger" ? row : [],
           change_fields: change_fields,
@@ -607,7 +607,7 @@ setbranch_list(branch_list_is);
     if (manufacture_type !== "") {
       setmanufacture_type_error(false);
     }
-    if(other_manufacture_type !== ""){
+    if (other_manufacture_type !== "") {
       setAdd_manufacture_err(false);
     }
     if (temperature_log_type !== "") {
@@ -754,13 +754,13 @@ setbranch_list(branch_list_is);
   // for history
   const handlClk = () => {
     navigate("/assets/assetHistory/AssetHistoryPage", {
-      state: { asset : asset },
+      state: { asset: asset },
     });
   };
 
   return (
     <div>
-      
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
@@ -802,18 +802,18 @@ setbranch_list(branch_list_is);
           />
         </div>
         {/* Add For History Button */}
-   {isupdating && 
-            <div style={{ justifyContent: "right", display: "flex" }}>
-              <Button
-                type="button"
-                onClick={() => {
-                  handlClk();
-                }}
-              >
-                History
-              </Button>
-            </div>
-          }
+        {isupdating &&
+          <div style={{ justifyContent: "right", display: "flex" }}>
+            <Button
+              type="button"
+              onClick={() => {
+                handlClk();
+              }}
+            >
+              History
+            </Button>
+          </div>
+        }
 
         {/* Branch Info */}
         <div className="m-3" id="asset_info">
@@ -1431,23 +1431,23 @@ setbranch_list(branch_list_is);
                   if (asset_type === "") {
                     setasset_type_error(true);
                     document.getElementById("asset_info").scrollIntoView();
-                  } 
+                  }
 
-                  if(manufacture_type === "") {
+                  if (manufacture_type === "") {
                     setmanufacture_type_error(true);
                   }
-                  else if(asset_type === "Logger"){
-if(logger_box_type === "") {
-  setlogger_box_type_error(true);
-  document.getElementById("asset_info").scrollIntoView();
+                  else if (asset_type === "Logger") {
+                    if (logger_box_type === "") {
+                      setlogger_box_type_error(true);
+                      document.getElementById("asset_info").scrollIntoView();
 
-}
+                    }
 
-                  } else if(asset_type === "Temperature Control Box") {
-alert("Temp")
-                  } 
+                  } else if (asset_type === "Temperature Control Box") {
+                    alert("Temp")
+                  }
 
-                  if(branch_selected === "") {
+                  if (branch_selected === "") {
                     setbranch_error(true);
                     document.getElementById("asset_details").scrollIntoView();
 
@@ -1488,10 +1488,10 @@ alert("Temp")
                   //  else if (purchase_date === "" & expiry_date === "" & asset_type === "Logger") {
                   //   alert("You Can Not Send Asset Callibration info Blank")
                   // }
-               
+
                 }}
               >
-           {isupdating && (user.user_department_name === "ADMIN" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
+                {isupdating && (user.user_department_name === "ADMIN" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
               </Button>
               {isupdating && (user.user_department_name !== "ADMIN" && !user.is_superuser) &&
                 <button

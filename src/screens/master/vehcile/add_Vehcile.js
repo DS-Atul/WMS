@@ -107,7 +107,7 @@ const add_vehcile = () => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
-              `Vehcile  "${toTitleCase(
+              `Vehicle  "${toTitleCase(
                 vehcile_no
               )}" Added sucessfully`
             )
@@ -118,7 +118,7 @@ const add_vehcile = () => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
-              `Vehcile No "${toTitleCase(
+              `Vehicle No "${toTitleCase(
                 vehcile_no
               )}" already exists`
             )
@@ -127,7 +127,7 @@ const add_vehcile = () => {
         }
       })
       .catch((error) => {
-        alert(`Error Happen while posting Vehcile  Data ${error}`);
+        alert(`Error Happen while posting Vehicle  Data ${error}`);
       });
   };
 
@@ -176,9 +176,9 @@ const add_vehcile = () => {
       <Form>
         {/* Commodity */}
         <div className="mt-3">
-          <PageTitle page={is_updating ? "Update Vehcile" : "Add Vehcile"} />
+          <PageTitle page={is_updating ? "Update Vehicle" : "Add Vehicle"} />
           <Title
-            title={is_updating ? "Update Vehcile" : "Add  Vehcile"}
+            title={is_updating ? "Update Vehicle" : "Add  Vehicle"}
             parent_title="Masters"
           />
         </div>
@@ -207,7 +207,7 @@ const add_vehcile = () => {
                 <Row>
                   <Col lg={3} md={4} sm={4}>
                     <div className="mb-3">
-                      <Label className="header-child">Vehcile Type*</Label>
+                      <Label className="header-child">Vehicle Type*</Label>
                       <NSearchInput
                         data_list={vehcile_type}
                         data_item_s={vehcile_type_s}
@@ -238,7 +238,7 @@ const add_vehcile = () => {
                 }
                 <Col lg={3} md={4} sm={4}>
                  <div className="mb-3">
-                   <Label className="header-child">Vehcile Number*</Label>
+                   <Label className="header-child">Vehicle Number*</Label>
                    <Input
                      name="VEHCILE_NUMBER"
                      type="text"
@@ -254,7 +254,7 @@ const add_vehcile = () => {
              
                  <Col lg={3} md={4} sm={4}>
                  <div className="mb-3">
-                   <Label className="header-child">Vehcile Model*</Label>
+                   <Label className="header-child">Vehicle Model*</Label>
                    <Input
                      name="VEHCILE_MODEL"
                      type="text"
@@ -269,7 +269,7 @@ const add_vehcile = () => {
                </Col>
                <Col lg={3} md={4} sm={4}>
                  <div className="mb-3">
-                   <Label className="header-child">Vehcile Image*</Label>
+                   <Label className="header-child">Vehicle Image*</Label>
                    <Input
                      type="file" name="file" id="exampleFile"
                    />

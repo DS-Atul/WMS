@@ -454,7 +454,7 @@ const SignIn = () => {
             ["Assets", "/master/assets"],
             ["Routes", "/master/routes"],
             ["Vendors", "/master/vendor/Vendor"],
-            ["Vehcile", "/master/Vehcile"],
+            ["Vehicle", "/master/Vehcile"],
           ],
           trigger: false,
         },
@@ -503,8 +503,8 @@ const SignIn = () => {
         },
         {
           id: 9,
-          dropdown: "Organisation",
-          dropdownMenu: [["Organiation", "/organization/organization"]],
+          dropdown: "Organization",
+          dropdownMenu: [["Organization", "/organization/organization"]],
           trigger: false,
         },
         {

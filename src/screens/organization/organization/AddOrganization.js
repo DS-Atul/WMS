@@ -288,7 +288,7 @@ const AddOrganization = () => {
           dispatch(setToggle(true));
           dispatch(
             setDataExist(
-              `Organisation "${values.organisation_name}" Created Sucessfully`
+              `Organization "${values.organisation_name}" Created Sucessfully`
             )
           );
           dispatch(setAlertType("success"));
@@ -1248,7 +1248,7 @@ const AddOrganization = () => {
             </div>
           }
 
-          {/* organisation Info */}
+          {/* organization Info */}
           <div className="m-3">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
