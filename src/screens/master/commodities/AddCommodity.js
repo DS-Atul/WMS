@@ -493,11 +493,18 @@ const Add_Commodity = () => {
         settable_data(response.data.results);
       });
   };
-
+  
+  const [data_type, setdata_type] = useState(false);
   useLayoutEffect(() => {
-    if (location.state.type) {
+    try{
+    if(location.state.type) {
+      setdata_type(true)
       get_orders();
     }
+  }
+  catch{
+    setdata_type(false)
+  }
   }, [location]);
 
   const set_form_data = (item) => {
@@ -506,7 +513,7 @@ const Add_Commodity = () => {
     setcommodity_type_id(item.commodity_type);
   }
   return (
-    <div style={{ display: location.state.type && "flex" }}>
+    <div style={{ display: data_type && "flex" }}>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -542,7 +549,7 @@ const Add_Commodity = () => {
       </Modal>
 
       {/* For Checker Maker */}
-      {location.state.type &&
+      {data_type &&
         <div
           style={{
             width: "15%",
@@ -603,12 +610,13 @@ const Add_Commodity = () => {
             </tbody>
           </table>
         </div>
-      }
+       } 
       {/* For Checker Maker */}
 
       <div style={{
 
-        width: location.state.type && "85%",
+        width: data_type && "85%",
+        // width: "85%",
         // overflowY: "scroll",
         margin: "2px",
         zIndex: 1,
@@ -628,7 +636,7 @@ const Add_Commodity = () => {
           }}
         >
           {/* Commodity */}
-          {!location.state.type &&
+          {!data_type &&
             <div className="mt-3">
               <PageTitle page={isupdating ? "Update Commodity" : "Add Commodity"} />
               <Title
@@ -636,9 +644,10 @@ const Add_Commodity = () => {
                 parent_title="Masters"
               />
             </div>
-          }
+           } 
           <div className="m-3">
-            {isupdating && !location.state.type &&(
+            {isupdating && !data_type&&(
+            // {isupdating &&(
               <div style={{ justifyContent: "right", display: "flex" }}>
                 <Button
                   type="button"
