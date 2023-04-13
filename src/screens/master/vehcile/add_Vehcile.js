@@ -107,13 +107,8 @@ const add_vehcile = () => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
-<<<<<<< Updated upstream
-              `Vehicle  "${toTitleCase(
-                vehcile_no
-=======
               `Vehcile  "${(
                 vehcile_no.toUpperCase()
->>>>>>> Stashed changes
               )}" Added sucessfully`
             )
           );
@@ -123,13 +118,8 @@ const add_vehcile = () => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
-<<<<<<< Updated upstream
-              `Vehicle No "${toTitleCase(
-                vehcile_no
-=======
               `Vehcile No "${(
                 vehcile_no.toUpperCase()
->>>>>>> Stashed changes
               )}" already exists`
             )
           );
