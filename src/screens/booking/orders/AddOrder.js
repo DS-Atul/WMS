@@ -394,7 +394,7 @@ const AddOrder = () => {
   const [client_error, setclient_error] = useState(false);
   const [billto_error, setbillto_error] = useState(false);
   const [transport_mode_error, settransport_mode_error] = useState(false);
-
+  const [order_hist,setorder_hist] = useState();
   const [origin_city_error, setorigin_city_error] = useState(false);
   const [destination_city_error, setdestination_city_error] = useState(false);
   const [shipper_error, setshipper_error] = useState(false);
@@ -2416,6 +2416,19 @@ useEffect(() => {
             style={{ display: "flex", justifyContent: "space-between" }}
           >
             <div>{isupdating ? "Update Order" : "Add Order"}</div>
+            {isupdating ? (
+              <div style={{ justifyContent: "right", display: "flex" }}>
+              <Button
+              type="button"
+              onClick={() => {
+                handlClk();
+              }}
+              >History</Button>
+            </div>
+            ):(
+              <></>
+            )}
+            
             {/* 
             <div>
               <Button
@@ -2438,7 +2451,7 @@ useEffect(() => {
               </div>
             } */}
 
-{isupdating && (
+              {isupdating && (
             <div style={{ justifyContent: "right", display: "flex" }}>
               <Button
                 type="button"

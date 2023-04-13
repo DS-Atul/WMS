@@ -197,7 +197,7 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
                     to="/master/Add_Vehcile"
                     state={{vehcile:vehcile  }}
                   >
-                    {toTitleCase(vehcile.vehcile_no)}
+                    {((vehcile.vehcile_no).toUpperCase())}
                   </Link>
                 
           

@@ -228,6 +228,10 @@ const AddVendor = () => {
         .min(10, "Phone number must 10 digit long")
         .max(10, "Phone number must 10 digit long")
         .required("Vendor Phone No is require"),
+      vendor_ph_no1: Yup.string()
+        .min(10, "Phone number must 10 digit long")
+        .max(10, "Phone number must 10 digit long")
+        .required("Vendor Phone No is require"),
       pan_number: Yup.string()
         .min(10, "Pan number must be 10 characters")
         .max(10, "Pan number must be 10 characters")
@@ -1532,7 +1536,14 @@ const AddVendor = () => {
                           <Label className="header-child">Vendor Ph.No 2</Label>
                           <Input
                             onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
                             value={validation.values.vendor_ph_no1 || ""}
+                            invalid={
+                              validation.touched.vendor_ph_no1 &&
+                              validation.errors.vendor_ph_no1
+                                ? true
+                                : false
+                            }
                             type="number"
                             min={0}
                             className="form-control-md"
@@ -1541,6 +1552,12 @@ const AddVendor = () => {
                             placeholder="Enter Phone Number"
                           />
                         </div>
+                        {validation.touched.vendor_ph_no1 &&
+                          validation.errors.vendor_ph_no1 ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.vendor_ph_no1}
+                            </FormFeedback>
+                          ) : null}
                       </Col>
                     </Row>
                   </CardBody>

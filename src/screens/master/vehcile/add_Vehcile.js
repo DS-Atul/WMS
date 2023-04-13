@@ -57,7 +57,7 @@ const [vendor_list, setvendor_list] = useState([]);
     "ACTIVE",
     "UNACTIVE",
   ]);
-  const [active_selected, setactive_selected] = useState("");
+  const [active_selected, setactive_selected] = useState(active_list);
   const [vehcile_type_s, setvehcile_type_s] = useState("");
   const [trans_name, settrans_name] = useState("");
   const [vehcile_no, setvehcile_no] = useState("");
@@ -73,7 +73,7 @@ useEffect(() => {
         setvehcile_type_s(vehicle_data.vehcile_type)
         setvehcile_no(vehicle_data.vehcile_no)
         setvehcile_model(vehicle_data.vehcile_model)
-        
+        setactive_selected(vehicle_data.active_selected)
       }
     
  } catch (error) {
@@ -89,7 +89,7 @@ const add_vehcile = () => {
         ServerAddress + "master/add_vehcile/",
         {
          
-            vehcile_no:vehcile_no,
+            vehcile_no:vehcile_no.toUpperCase(),
             vehcile_model:vehcile_model,
             vehcile_status:active_selected === "Active" ? "True" :"False",
             vehcile_type:vehcile_type_s,
@@ -107,8 +107,13 @@ const add_vehcile = () => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
+<<<<<<< Updated upstream
               `Vehicle  "${toTitleCase(
                 vehcile_no
+=======
+              `Vehcile  "${(
+                vehcile_no.toUpperCase()
+>>>>>>> Stashed changes
               )}" Added sucessfully`
             )
           );
@@ -118,8 +123,13 @@ const add_vehcile = () => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
+<<<<<<< Updated upstream
               `Vehicle No "${toTitleCase(
                 vehcile_no
+=======
+              `Vehcile No "${(
+                vehcile_no.toUpperCase()
+>>>>>>> Stashed changes
               )}" already exists`
             )
           );

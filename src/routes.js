@@ -222,6 +222,8 @@ const AddOrganization = React.lazy(() =>
 // Booking
 const Orders = React.lazy(() => import("./screens/booking/orders/Orders.js"));
 
+// const BookingHistoryPage = React.lazy(() => import("./screens/booking/OpBookingHistory/BookingHistoryPage.js"));
+
 const AddOrder = React.lazy(() =>
   import("./screens/booking/orders/AddOrder.js")
 );
@@ -759,6 +761,10 @@ const routes = [
     path: "/booking/orders/addorder",
     element: <AddOrder />,
   },
+  // {
+  //   path: "/booking/OpBookingHistory/BookingHistoryPage",
+  //   element: <BookingHistoryPage/>,
+  // },
   {
     path: "/booking/orders/OrderInvoicePdf",
     element: <OrderInvoicePdf />,

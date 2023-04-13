@@ -210,8 +210,8 @@ const AddOrganization = () => {
 
     validationSchema: Yup.object({
       organisation_name: Yup.string().required("Organisation Name is required"),
-      registeration_number: Yup.string().min(12, "Number must be 12 digit").max(12, "Number must be 12 digit").required(
-        "Registeratin Number is required"
+      registeration_number: Yup.string().min(21, "Number must be 21 digit").max(21, "Number must be 21 digit").required(
+        "Registeration Number is required"
       ),
       toll_free_number: Yup.string().min(11, "Number must be 11 digit")
       .max(11, "Number must be 11 digit").required("Toll Free Number is required"),
@@ -2596,6 +2596,9 @@ const AddOrganization = () => {
                   type="submit"
                   name="submit"
                   className="btn btn-info m-1 cu_btn"
+                  onClick={() => {
+                    navigate(-1);
+                  }}
                 >
                   {isupdating ? "Update" : "Save"}
                 </Button>

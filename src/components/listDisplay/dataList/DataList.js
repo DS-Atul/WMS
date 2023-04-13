@@ -305,6 +305,7 @@ const DataList = ({
               background: "#DCEDFC",
               borderRadius: "5px",
               marginBottom: "2px",
+              
               height: "39px",
               border: "1px solid #cde3f7",
               padding: "11px",
@@ -382,7 +383,7 @@ const DataList = ({
             </tr>
           </thead>
 
-          <tbody style={{ fontSize: "12px" }}>
+          <tbody style={{ fontSize: "12px", textAlign:"left" }}>
             <Data_Format
               data={data}
               datab={datab}

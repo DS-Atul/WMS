@@ -135,6 +135,7 @@ const AddCharge = () => {
         if (j === fields_names.length - 1) resolve();
       }
     });
+    
     prom.then(() => {
       axios
         .put(
@@ -149,6 +150,7 @@ const AddCharge = () => {
             cm_current_status: (current_status).toUpperCase(),
             cm_remarks: ""
           },
+          
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -164,6 +166,7 @@ const AddCharge = () => {
             );
             dispatch(setAlertType("info"));
             navigate("/master/charges");
+            
           } else if (response.data == "duplicate") {
             dispatch(setShowAlert(true));
             dispatch(
@@ -175,12 +178,15 @@ const AddCharge = () => {
             );
             dispatch(setAlertType("warning"));
           }
+          
         })
         .catch(function (err) {
           alert(`Error While  Updateing Charge ${err}`);
         });
+        
     });
   };
+  
 
   useLayoutEffect(() => {
     try {

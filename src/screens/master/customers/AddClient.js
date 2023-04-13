@@ -31,7 +31,7 @@ import { FiCheckSquare, FiSquare } from "react-icons/fi";
 import Tab from "../../../components/formComponent/clientComponent/tab/Tab";
 import BillingTab from "../../../components/formComponent/clientComponent/tab/BillingTab";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-import { setAirCal, setLocalCal } from "../../../store/master/client/Client";
+import { setAirCal, setLocalCal, setSurfaceCal } from "../../../store/master/client/Client";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
 
 const AddClient = (props) => {
@@ -92,19 +92,23 @@ const AddClient = (props) => {
   // Calculation Info
   const local_cal = useSelector((state) => state.client.local_cal);
   const air_cal = useSelector((state) => state.client.air_cal);
+  const surface_cal = useSelector((state) => state.client.surface_cal)
   // active Tabs
   let temp_active_tabs = [
     local_cal.cal_type,
     air_cal.cal_type,
+    surface_cal.cal_type,
     "DONT",
     "DONT",
     "DONT",
-    "DONT",
+    
   ];
   const [active_tabs, setactive_tabs] = useState(temp_active_tabs);
   const [activeTab, setactiveTab] = useState("1");
   const [activeAirTab, setactiveAirTab] = useState("02");
+  const[activeSurfaceTab, setactiveSurfaceTab] = useState("03");
   const [is_oda_air, setis_oda_air] = useState(false);
+  const [is_oda_surface, setis_oda_surface] = useState(false);
 
   // Calculation Info Data Error State
   const [local_cal_errd_o, setlocal_cal_errd_o] = useState(false);
@@ -117,10 +121,13 @@ const AddClient = (props) => {
   const [per_charge_list, setper_charge_list] = useState(per_tmp_lst);
 
   // % Of Charge State
+  const [is_per_charge_surfc, setis_per_charge_surfc] = useState(false);
   const [is_per_charge_air, setis_per_charge_air] = useState(false);
   let per_tmp_lst_air = [[["", ""], "", ""]];
   const [per_charge_list_air, setper_charge_list_air] =
     useState(per_tmp_lst_air);
+  let per_tmp_lst_srfc = [[["", ""], "", ""]];
+  const [per_charge_list_surface,setper_charge_list_surface] = useState(per_tmp_lst_srfc)
 
   // Business Info
   const [agreement, setagreement] = useState(false);
@@ -342,13 +349,18 @@ const AddClient = (props) => {
   const [local_datalist, setlocal_datalist] = useState(local_list);
   const [ot_chrg_prv, setot_chrg_prv] = useState([]);
   const [ot_chrg_prv_air, setot_chrg_prv_air] = useState([]);
+  const [ot_chrg_prv_surface, setot_chrg_prv_surface] = useState([]);
   const [ot_chrg_prv_air_zone, setot_chrg_prv_air_zone] = useState([]);
+  const [ot_chrg_prv_surface_zone, setot_chrg_prv_surface_zone] = useState([]);
 
   const [asso_del_ids, setasso_del_ids] = useState([]);
   const [dom_rt_del_ids_air, setdom_rt_del_ids_air] = useState([]);
+  const [dom_rt_del_ids_surface, setdom_rt_del_ids_surface] = useState([]);
   const [dom_rt_del_ids_zone_air, setdom_rt_del_ids_zone_air] = useState([]);
+  const [dom_rt_del_ids_zone_surface, setdom_rt_del_ids_zone_surface] = useState([]);
   const [per_del_ids, setper_del_ids] = useState([]);
   const [per_del_ids_air, setper_del_ids_air] = useState([]);
+  const [per_del_ids_surfc, setper_del_ids_surfc] = useState([]);
 
   // local rate category
   const [dom_rate_type_local, setdom_rate_type_local] = useState("Flat");
@@ -439,6 +451,27 @@ const [commodities_count, setcommodities_count] = useState(1);
 
     dispatch(
       setAirCal({
+        cal_type: "DONT",
+        dimn: {
+          cft: "",
+          divided_by: "",
+          from_date: new Date().toISOString().split("T")[0],
+          to_date: new Date(new Date().setMonth(new Date().getMonth() + 1))
+            .toISOString()
+            .split("T")[0],
+        },
+        box_cal: {
+          box_value: "",
+          from_date: new Date().toISOString().split("T")[0],
+          to_date: new Date(new Date().setMonth(new Date().getMonth() + 1))
+            .toISOString()
+            .split("T")[0],
+        },
+      })
+    );
+
+    dispatch(
+      setSurfaceCal({
         cal_type: "DONT",
         dimn: {
           cft: "",
@@ -565,7 +598,7 @@ const [commodities_count, setcommodities_count] = useState(1);
     axios
       .get(
         ServerAddress +
-          `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
+          `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -605,7 +638,7 @@ if(resp.data.next === null){
     axios
       .get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${city_page}&records=${20}&city_search=${city_search_item}` +
+          `master/all_cities/?search=${""}&p=${city_page}&records=${20}&city_search=${city_search_item}&data=all` +
           "&place_id=" +
           place_id +
           "&filter_by=" +
@@ -649,7 +682,7 @@ setcity_count(city_count+2);
     axios
       .get(
         ServerAddress +
-          `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
+          `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}&data=all` +
           "&place_id=" +
           place_id +
           "&filter_by=" +
@@ -786,6 +819,7 @@ const addClientDoc = (client_id) => {
           agreement_end_date: agreement_end_date,
           current_billing_mode_local: local_cal.cal_type,
           current_billing_mode_air: air_cal.cal_type,
+          current_billing_mode_surface: surface_cal.cal_type,
         },
         {
           headers: {
@@ -800,7 +834,7 @@ const addClientDoc = (client_id) => {
             addClientDoc(resp.data.data.id);
           }
 
-          if (local_cal.cal_type !== "DONT" || air_cal.cal_type !== "DONT") {
+          if (local_cal.cal_type !== "DONT" || air_cal.cal_type !== "DONT" || surface_cal.cal_type !== "DONT") {
             addCalculation(
               resp.data.data.id,
               toTitleCase(values.customer_name)
@@ -838,6 +872,7 @@ const addClientDoc = (client_id) => {
       bill_to: client_id,
       current_billing_mode_local: local_cal.cal_type,
       current_billing_mode_air: air_cal.cal_type,
+      current_billing_mode_surface : surface_cal.cal_type,
     });
     // To Check Any Changes Happen or Not
     let change_fields = {};
@@ -872,6 +907,7 @@ const addClientDoc = (client_id) => {
           commodities : commidity_lst,
           current_billing_mode_local: local_cal.cal_type,
           current_billing_mode_air: air_cal.cal_type,
+          current_billing_mode_surface: surface_cal.cal_type,
           modified_by: user_id,
           change_fields: change_fields,
         },
@@ -883,7 +919,7 @@ const addClientDoc = (client_id) => {
       )
       .then(function (resp) {
         if (resp.data.status === "success") {
-          if (local_cal.cal_type != "DONT" || air_cal.cal_type != "DONT") {
+          if (local_cal.cal_type != "DONT" || air_cal.cal_type != "DONT" || surface_cal.cal_type !== "DONT") {
             if (update_cal) {
               updateCalculation(values.customer_name);
             } else {
@@ -917,6 +953,7 @@ const addClientDoc = (client_id) => {
     let tmp_cal_info_data = {
       local: local_cal,
       air: air_cal,
+      surface: surface_cal,
     };
 
     axios
@@ -958,6 +995,17 @@ const addClientDoc = (client_id) => {
               addDomesticZoneRates(cust_id, name);
             }
           }
+
+          if (surface_cal.cal_type !== "DONT") {
+            if (dom_rate_category == "City to City") {
+              addDomesticCityRates(cust_id, name);
+            } else if (dom_rate_category == "Zone to Zone") {
+              addDomesticZoneRates(cust_id, name);
+            } else {
+              addDomesticCityRates(cust_id, name);
+              addDomesticZoneRates(cust_id, name);
+            }
+          }
         }
       })
       .catch((error) => {
@@ -976,6 +1024,10 @@ const addClientDoc = (client_id) => {
       tmp_cal_info_data.push({ air: air_cal });
     }
 
+    if (is_surface) {
+      tmp_cal_info_data.push({ surface: surface_cal });
+    }
+
     let cust_up = up_params.customer;
     // To Filter Calculation Data acording to calculation Tab
     let local_cals = cust_up.cal_infos_cust.filter(
@@ -984,12 +1036,16 @@ const addClientDoc = (client_id) => {
     let air_cals = cust_up.cal_infos_cust.filter(
       (v) => v.transportation_mode === "AIR"
     );
+    let surface_cals = cust_up.cal_infos_cust.filter(
+      (v) => v.transportation_mode === "SURFACE"
+    );
 
     let pr_cals = [];
 
     // push calculation data
     pr_cals.push(local_cals[0]);
     pr_cals.push(air_cals[0]);
+    pr_cals.push(surface_cals[0]);
 
     let change_fields_list = [];
 
@@ -1071,6 +1127,43 @@ const addClientDoc = (client_id) => {
           change_fields_list.push("No Change");
         }
       }
+
+      if (pr_cal.transportation_mode === "SURFACE") {
+        let change_fields = {};
+        let field_nm = [];
+        if (surface_cal.cal_type == "DIMENSION") {
+          let fields_names_dimn = Object.entries({
+            cft: surface_cal.dimn.cft,
+            divided_by: surface_cal.dimn.divided_by,
+            from_date: surface_cal.dimn.from_date,
+            to_date: surface_cal.dimn.to_date,
+          });
+          field_nm = fields_names_dimn;
+        } else {
+          let fields_names_box = Object.entries({
+            box_value: surface_cal.box_cal.box_value,
+            from_date: surface_cal.box_cal.from_date,
+            to_date: surface_cal.box_cal.to_date,
+          });
+          field_nm = fields_names_box;
+        }
+
+        for (let j = 0; j < field_nm.length; j++) {
+          const ele = field_nm[j];
+          let prev = pr_cal[`${ele[0]}`];
+          let new_v = ele[1];
+
+          if (prev !== new_v) {
+            change_fields[`${ele[0]}`] = new_v;
+          }
+        }
+
+        if (!!Object.keys(change_fields).length) {
+          change_fields_list.push(change_fields);
+        } else {
+          change_fields_list.push("No Change");
+        }
+      }
     }
 
     // To Check If its have any changes or Goto UpdateAssociated Charges
@@ -1104,6 +1197,14 @@ const addClientDoc = (client_id) => {
                 updateDomesticZoneRates(name);
               }
             }
+
+            if (surface_cal.cal_type !== "DONT") {
+              if (dom_rate_category == "City to City") {
+                updateDomesticCityRates(name);
+              } else {
+                updateDomesticZoneRates(name);
+              }
+            }
           }
         })
         .catch((error) => {
@@ -1115,6 +1216,10 @@ const addClientDoc = (client_id) => {
       }
 
       if (air_cal.cal_type !== "DONT") {
+        updateDomesticCityRates(name);
+      }
+
+      if (surface_cal.cal_type !== "DONT") {
         updateDomesticCityRates(name);
       }
     }
@@ -1246,8 +1351,10 @@ const addClientDoc = (client_id) => {
           client: cust_id,
           per_charge_list: per_charge_list,
           per_charge_list_air: per_charge_list_air,
+          per_charge_list_surface: per_charge_list_surface,
           local_cal_type: local_cal.cal_type,
           air_cal_type: air_cal.cal_type,
+          surface_cal_type: surface_cal.cal_type,
         },
         {
           headers: {
@@ -1263,7 +1370,8 @@ const addClientDoc = (client_id) => {
             cust_id,
             asschrg_ids,
             resp.data.perchrg_ids,
-            resp.data.perchrg_ids_air
+            resp.data.perchrg_ids_air,
+            resp.data.perchrg_ids_surface,
           );
         }
       })
@@ -1340,7 +1448,8 @@ const addClientDoc = (client_id) => {
               name,
               asschrg_ids,
               resp.data.perchrg_ids,
-              resp.data.perchrg_ids_air
+              resp.data.perchrg_ids_air,
+              resp.data.perchrg_ids_surface,
             );
           }
         })
@@ -1441,6 +1550,96 @@ const addClientDoc = (client_id) => {
     }
   };
 
+  const updatePerChargesSurface = (name, domrts_ids = []) => {
+    let cust_up_per = up_params.customer.per_chrg_client;
+
+    let tmp_per_list = per_charge_list_surface.filter((v) => v[0][0] != "");
+
+    let chng_list = [];
+    let chng_list_surface = [];
+    let f_per_chrg_list_surface_add = [];
+    let f_per_chrg_list_surface = [];
+
+    for (let m of tmp_per_list) {
+      if (m.length > 3) {
+        let prev_per = cust_up_per.find((v) => v.id == m[3]);
+        let prev_per_fields = Object.entries({
+          rate_percentage: m[2],
+          charge: m[0][0],
+        });
+
+        let change_fields = {};
+        for (let j = 0; j < prev_per_fields.length; j++) {
+          const ele = prev_per_fields[j];
+          let prev = prev_per[`${ele[0]}`];
+          let new_v = ele[1];
+
+          if (prev !== new_v) {
+            change_fields[`${ele[0]}`] = new_v;
+          }
+        }
+
+        if (Object.keys(change_fields).length > 0) {
+          f_per_chrg_list_surface.push(m);
+          chng_list_surface.push(change_fields);
+        }
+      } else {
+        f_per_chrg_list_surface_add.push(m);
+      }
+    }
+
+    // To Check percenate final charge list of either branch or any percentge charge delete To Call api
+    if (
+      f_per_chrg_list_surface.length > 0 ||
+      per_del_ids_surfc.length > 0 ||
+      f_per_chrg_list_surface_add.length > 0
+    ) {
+      axios
+        .put(
+          ServerAddress + "master/update_percentage_charge_surface/",
+          {
+            bill_to: client_id,
+            client: customer.id,
+            per_charge_list_surface: f_per_chrg_list_surface,
+            surface_cal_type: surface_cal.cal_type,
+            chng_list_surface: chng_list_surface,
+            f_per_chrg_list_surface_add: f_per_chrg_list_surface_add,
+            per_del_ids_surface: per_del_ids_surfc,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(function (resp) {
+          // console.log('update per air resp', resp)
+          if (resp.status == 200) {
+            if (dom_rate_category == "City to City") {
+              updateOthChargesSurface(name, domrts_ids, resp.data.perchrg_ids_surface);
+            
+            } else if (dom_rate_category == "Zone to Zone") {
+              updateOthChargesSurfaceZone(
+                name,
+                domrts_ids,
+                resp.data.perchrg_ids_surface
+              );
+            }
+          }
+        })
+        .catch((error) => {
+          alert(`Error Happen while Updating Percentage Charges ${error}`);
+        });
+    } else {
+      if (dom_rate_category == "City to City") {
+        updateOthChargesSurface(name, domrts_ids, []);
+      } else if (dom_rate_category == "Zone to Zone") {
+        updateOthChargesSurfaceZone(name, domrts_ids, []);
+      }
+      // updateOthChargesAir(name, domrts_ids, []);
+    }
+  };
+
   const addPerChargesAir = (cust_id, name, domrts_ids = []) => {
     let tmp_per_list = per_charge_list_air.filter((v) => v[0][0] !== "");
 
@@ -1473,6 +1672,58 @@ const addClientDoc = (client_id) => {
               );
             } else if (dom_rate_category == "Zone to Zone") {
               addOthChargesAirZone(
+                name,
+                cust_id,
+                domrts_ids,
+                resp.data.perchrg_ids_air
+              );
+            }
+          }
+        })
+        .catch((error) => {
+          alert(`Error Happen while add_percentage_charge ${error}`);
+        });
+    } else {
+      if (dom_rate_category == "City to City") {
+        addOthChargesAir(name, cust_id, domrts_ids, []);
+      } else if (dom_rate_category == "Zone to Zone") {
+        addOthChargesAirZone(name, cust_id, domrts_ids, []);
+      }
+    }
+  };
+
+  const addPerChargesSurface = (cust_id, name, domrts_ids = []) => {
+    let tmp_per_list = per_charge_list_surface.filter((v) => v[0][0] !== "");
+
+    if (tmp_per_list.length > 0) {
+      axios
+        .post(
+          ServerAddress + "master/add_percentage_charge_surface/",
+          {
+            bill_to: client_id,
+            client: cust_id,
+            per_charge_list_surface: tmp_per_list,
+            surface_cal_type: surface_cal.cal_type,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(function (resp) {
+          // console.log("per air resp", resp);
+
+          if (resp.status == 201) {
+            if (dom_rate_category == "City to City") {
+              addOthChargesSurface(
+                name,
+                cust_id,
+                domrts_ids,
+                resp.data.perchrg_ids_air
+              );
+            } else if (dom_rate_category == "Zone to Zone") {
+              addOthChargesSurfaceZone(
                 name,
                 cust_id,
                 domrts_ids,
@@ -1525,6 +1776,7 @@ const addClientDoc = (client_id) => {
             oth_char_list: n_list,
             local_cal_type: local_cal.cal_type,
             air_cal_type: air_cal.cal_type,
+            surface_cal_type: surface_cal.cal_type,
             bill_to: client_id,
             client: cust_id,
           },
@@ -1537,6 +1789,10 @@ const addClientDoc = (client_id) => {
         .then(function (resp) {
           console.log("add oth resp", resp);
           if (air_cal.cal_type == "DONT") {
+            
+            setAllAdd()
+          }
+          if (surface_cal.cal_type == "DONT") {
             
             setAllAdd()
           }
@@ -1600,6 +1856,60 @@ const addClientDoc = (client_id) => {
     }
   };
 
+  const addOthChargesSurface = (
+    name,
+    cust_id,
+    domrts_ids = [],
+    perchrg_ids = []
+  ) => {
+    let n_list = [];
+    let cl_datalist = datalist.filter((v) => v[0][0][0] != "");
+
+    for (let t = 0; t < perchrg_ids.length; t++) {
+      let k = 0;
+      for (let a = 0; a < cl_datalist.length; a++) {
+        const ld = cl_datalist[a];
+
+        if (ld[0][0] != "") {
+          n_list.push([
+            ld[1][4 + t],
+            ld[2][4 + t],
+            perchrg_ids[t],
+            domrts_ids[k],
+          ]);
+        }
+        k += 1;
+      }
+    }
+
+    if (n_list.length > 0) {
+      axios
+        .post(
+          ServerAddress + "master/add_other_charge_surface/",
+          {
+            oth_char_list: n_list,
+            local_cal_type: local_cal.cal_type,
+            air_cal_type: air_cal.cal_type,
+            surface_cal_type: surface_cal.cal_type,
+            bill_to: client_id,
+            client: cust_id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(function (resp) {
+          // console.log("oth chrgs air resp", resp)
+          setAllAdd()
+        })
+        .catch((error) => {
+          alert(`Error Happen while add_other_charge ${error}`);
+        });
+    }
+  };
+
   const addOthChargesAirZone = (
     name,
     cust_id,
@@ -1634,6 +1944,60 @@ const addClientDoc = (client_id) => {
             oth_char_list: n_list,
             local_cal_type: local_cal.cal_type,
             air_cal_type: air_cal.cal_type,
+            bill_to: client_id,
+            client: cust_id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(function (resp) {
+          // console.log("oth chrgs z air resp", resp);
+          setAllAdd()
+        })
+        .catch((error) => {
+          alert(`Error Happen while add_other_charge ${error}`);
+        });
+    }
+  };
+
+  const addOthChargesSurfaceZone = (
+    name,
+    cust_id,
+    domrts_ids = [],
+    perchrg_ids = []
+  ) => {
+    let n_list = [];
+    let cl_datalist = datalist1.filter((v) => v[0][0][0] != "");
+
+    for (let t = 0; t < perchrg_ids.length; t++) {
+      let k = 0;
+      for (let a = 0; a < cl_datalist.length; a++) {
+        const ld = cl_datalist[a];
+
+        if (ld[0][0] != "") {
+          n_list.push([
+            ld[1][4 + t],
+            ld[2][4 + t],
+            perchrg_ids[t],
+            domrts_ids[k],
+          ]);
+        }
+        k += 1;
+      }
+    }
+
+    if (n_list.length > 0) {
+      axios
+        .post(
+          ServerAddress + "master/add_other_charge_zone_surface/",
+          {
+            oth_char_list: n_list,
+            local_cal_type: local_cal.cal_type,
+            air_cal_type: air_cal.cal_type,
+            surface_cal_type: surface_cal.cal_type,
             bill_to: client_id,
             client: cust_id,
           },
@@ -1727,6 +2091,7 @@ const addClientDoc = (client_id) => {
             n_list: n_list,
             local_cal_type: local_cal.cal_type,
             air_cal_type: air_cal.cal_type,
+            surface_cal_type: surface_cal.cal_type,
             chng_list: chng_list,
             bill_to: client_id,
             client: customer.id,
@@ -1742,12 +2107,20 @@ const addClientDoc = (client_id) => {
             
             setAllUpdate()
           }
+          if (!is_surface) {
+            
+            setAllUpdate()
+          }
         })
         .catch((error) => {
           alert(`Error Happen while add_other_charge ${error}`);
         });
     } else {
       if (!is_air) {
+        
+        setAllUpdate()
+      }
+      if (!is_surface) {
         
         setAllUpdate()
       }
@@ -1825,6 +2198,102 @@ const addClientDoc = (client_id) => {
       axios
         .put(
           ServerAddress + "master/update_other_charge_air/",
+          {
+            oth_char_list: up_oth_chrgs,
+            n_list: n_list,
+            chng_list: chng_list,
+            bill_to: client_id,
+            client: customer.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(function (resp) {
+          // console.log('up dom oth chrg resp', resp)
+          setAllUpdate()
+        })
+        .catch((error) => {
+          alert(`Error Happen while add_other_charge ${error}`);
+        });
+    } else {
+      setAllUpdate()
+    }
+  };
+
+  const updateOthChargesSurface = (
+    name,
+    domrts_ids = [],
+    perchrg_ids_surface = [],
+    del_perchrg_ids = []
+  ) => {
+    let up_oth_chrgs = [];
+    let c_list = [];
+    let p_list = [];
+
+    let n_list = [];
+    let chng_list = [];
+
+    let per_otch_tmp = per_charge_list_surface.filter(
+      (v) => v[1] === "% of other charges"
+    );
+
+    let cl_datalist = datalist.filter((v) => v[0][0][0] != "");
+
+    for (let t = 0; t < per_otch_tmp.length; t++) {
+      const pel = per_otch_tmp[t];
+
+      let k = 0;
+      for (let a = 0; a < cl_datalist.length; a++) {
+        const ld = cl_datalist[a];
+
+        if (ld[1].length > 3 && ld[0][0] != "") {
+          if (ld.length > 3) {
+            // Format for updated data
+            c_list.push([ld[1][4 + t], ld[2][4 + t], pel[3], ld[3]]);
+          } else {
+            // Format for new data
+            n_list.push([ld[1][4 + t], ld[2][4 + t], pel[3], domrts_ids[k]]);
+            k += 1;
+          }
+        }
+      }
+
+      for (let b = 0; b < ot_chrg_prv_surface.length; b++) {
+        const od = ot_chrg_prv_surface[b];
+
+        if (od.length > 3) {
+          // Previous Data Format to compare
+          p_list.push([od[1][4 + t], od[2][4 + t], pel[3], od[3]]);
+        }
+      }
+    }
+
+    if (c_list.length == p_list.length) {
+      for (let p = 0; p < c_list.length; p++) {
+        let nw = c_list[p];
+        let pw = p_list[p];
+        let change_fields = {};
+        // To Check Changes
+        if (nw[0] != pw[0] || nw[1] != pw[1]) {
+          if (nw[0] != pw[0]) {
+            change_fields["cc_rate_percentage"] = nw[0];
+          }
+          if (nw[1] != pw[1]) {
+            change_fields["nc_rate_percentage"] = nw[1];
+          }
+          chng_list.push(change_fields);
+          up_oth_chrgs.push(nw);
+        }
+      }
+    }
+
+    if (up_oth_chrgs.length > 0 || n_list.length > 0) {
+      axios
+        .put(
+          ServerAddress + "master/update_other_charge_surface/",
           {
             oth_char_list: up_oth_chrgs,
             n_list: n_list,
@@ -1946,6 +2415,102 @@ const addClientDoc = (client_id) => {
     }
   };
 
+  const updateOthChargesSurfaceZone = (
+    name,
+    domrts_ids = [],
+    perchrg_ids_surface = [],
+    del_perchrg_ids = []
+  ) => {
+    let up_oth_chrgs = [];
+    let c_list = [];
+    let p_list = [];
+
+    let n_list = [];
+    let chng_list = [];
+
+    let per_otch_tmp = per_charge_list_surface.filter(
+      (v) => v[1] === "% of other charges"
+    );
+
+    let cl_datalist = datalist1.filter((v) => v[0][0][0] != "");
+
+    for (let t = 0; t < per_otch_tmp.length; t++) {
+      const pel = per_otch_tmp[t];
+
+      let k = 0;
+      for (let a = 0; a < cl_datalist.length; a++) {
+        const ld = cl_datalist[a];
+
+        if (ld[1].length > 3 && ld[0][0] != "") {
+          if (ld.length > 3) {
+            // Format for updated data
+            c_list.push([ld[1][4 + t], ld[2][4 + t], pel[3], ld[3]]);
+          } else {
+            // Format for new data
+            n_list.push([ld[1][4 + t], ld[2][4 + t], pel[3], domrts_ids[k]]);
+            k += 1;
+          }
+        }
+      }
+
+      for (let b = 0; b < ot_chrg_prv_surface_zone.length; b++) {
+        const od = ot_chrg_prv_surface_zone[b];
+
+        if (od.length > 3) {
+          // Previous Data Format to compare
+          p_list.push([od[1][4 + t], od[2][4 + t], pel[3], od[3]]);
+        }
+      }
+    }
+
+    if (c_list.length == p_list.length) {
+      for (let p = 0; p < c_list.length; p++) {
+        let nw = c_list[p];
+        let pw = p_list[p];
+        let change_fields = {};
+        // To Check Changes
+        if (nw[0] != pw[0] || nw[1] != pw[1]) {
+          if (nw[0] != pw[0]) {
+            change_fields["cc_rate_percentage"] = nw[0];
+          }
+          if (nw[1] != pw[1]) {
+            change_fields["nc_rate_percentage"] = nw[1];
+          }
+          chng_list.push(change_fields);
+          up_oth_chrgs.push(nw);
+        }
+      }
+    }
+
+    if (up_oth_chrgs.length > 0 || n_list.length > 0) {
+      axios
+        .put(
+          ServerAddress + "master/update_other_charge_zone_surface/",
+          {
+            oth_char_list: up_oth_chrgs,
+            n_list: n_list,
+            chng_list: chng_list,
+            bill_to: client_id,
+            client: customer.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(function (resp) {
+          // console.log('up dom z oth chrg resp', resp)
+          setAllUpdate()
+        })
+        .catch((error) => {
+          alert(`Error Happen while add_other_charge ${error}`);
+        });
+    } else {
+      setAllUpdate()
+    }
+  };
+
   // Air / Domestic Rates Funcions
   const addDomesticCityRates = (cust_id, name) => {
     let temp_as_list = datalist.filter((v) => v[0][0][0] !== "");
@@ -1958,6 +2523,7 @@ const addClientDoc = (client_id) => {
           client: cust_id,
           domestic_rates_list: temp_as_list,
           air_cal_type: air_cal.cal_type,
+          surface_cal_type : surface_cal.cal_type,
           rate_category: dom_rate_type,
         },
         {
@@ -1970,6 +2536,7 @@ const addClientDoc = (client_id) => {
         if (resp.status === 201) {
           // console.log("domrts_ids ", resp.data.domrts_ids)
           addPerChargesAir(cust_id, name, resp.data.domrts_ids);
+          addPerChargesSurface(cust_id, name, resp.data.domrts_ids)
         }
       })
       .catch((error) => {
@@ -1989,6 +2556,7 @@ const addClientDoc = (client_id) => {
             client: cust_id,
             domestic_zone_rates_list: temp_as_list,
             air_cal_type: air_cal.cal_type,
+            surface_cal_type: surface_cal.cal_type,
             rate_category: dom_rate_type,
           },
           {
@@ -2002,8 +2570,10 @@ const addClientDoc = (client_id) => {
             // console.log("add zone resp", resp);
             if (dom_rate_category != "Both") {
               addPerChargesAir(cust_id, name, resp.data.domrts_ids);
+              addPerChargesSurface(cust_id, name, resp.data.domrts_ids);
             } else {
               addOthChargesAirZone(name, cust_id, resp.data.domrts_ids, []);
+              addOthChargesSurfaceZone(name, cust_id, resp.data.domrts_ids, []);
             }
           }
         })
@@ -2031,7 +2601,7 @@ const addClientDoc = (client_id) => {
         const prv_itm = cust_up_dom.find((v) => v.id == itm[3]);
 
         let dom_city_fields = Object.entries({
-          calculation_type: air_cal.cal_type,
+          calculation_type: air_cal.cal_type || surface_cal.cal_type,
           rate_type: dom_rate_type.toUpperCase(),
           cc_min_box: itm[1][1],
           nc_min_box: itm[2][1],
@@ -2062,11 +2632,12 @@ const addClientDoc = (client_id) => {
         add_datalist.push(itm);
       }
     }
+    
 
     if (
       f_datalist.length > 0 ||
       add_datalist.length > 0 ||
-      dom_rt_del_ids_air.length > 0
+      dom_rt_del_ids_air.length > 0 || dom_rt_del_ids_surface.length>0
     ) {
       axios
         .put(
@@ -2079,7 +2650,9 @@ const addClientDoc = (client_id) => {
             chng_list: chng_list,
             rate_type: dom_rate_type,
             air_cal_type: air_cal.cal_type,
+            surface_cal_type: surface_cal.cal_type,
             dom_rt_del_ids_air: dom_rt_del_ids_air,
+            dom_rt_del_ids_surface: dom_rt_del_ids_surface,
           },
           {
             headers: {
@@ -2091,6 +2664,7 @@ const addClientDoc = (client_id) => {
           // console.log("domestic city rate resp",resp)
           if (resp.status == 201) {
             updatePerChargesAir(name, resp.data.domrts_ids);
+            updatePerChargesSurface(name, resp.data.domrts_ids);
           }
         })
         .catch((error) => {
@@ -2098,6 +2672,7 @@ const addClientDoc = (client_id) => {
         });
     } else {
       updatePerChargesAir(name, []);
+      updatePerChargesSurface(name, []);
     }
   };
 
@@ -2116,7 +2691,7 @@ const addClientDoc = (client_id) => {
       if (itm.length > 3) {
         const prv_itm = cust_up_dom.find((v) => v.id == itm[3]);
         let dom_city_fields = Object.entries({
-          calculation_type: air_cal.cal_type,
+          calculation_type: air_cal.cal_type || surface_cal.cal_type,
           rate_type: dom_rate_type.toUpperCase(),
           cc_min_box: itm[1][1],
           nc_min_box: itm[2][1],
@@ -2151,7 +2726,7 @@ const addClientDoc = (client_id) => {
     if (
       f_datalist.length > 0 ||
       add_datalist.length > 0 ||
-      dom_rt_del_ids_zone_air.length > 0
+      dom_rt_del_ids_zone_air.length > 0 || dom_rt_del_ids_zone_surface.length > 0
     ) {
       axios
         .put(
@@ -2164,7 +2739,9 @@ const addClientDoc = (client_id) => {
             chng_list: chng_list,
             rate_type: dom_rate_type,
             air_cal_type: air_cal.cal_type,
+            surface_cal_type: surface_cal.cal_type,
             dom_rt_del_ids_air: dom_rt_del_ids_zone_air,
+            dom_rt_del_ids_surface: dom_rt_del_ids_zone_surface,
           },
           {
             headers: {
@@ -2177,11 +2754,17 @@ const addClientDoc = (client_id) => {
           if (resp.status == 201) {
             if (dom_rate_category != "Both") {
               updatePerChargesAir(name, resp.data.domrts_ids);
+              updatePerChargesSurface(name, resp.data.domrts_ids);
             } else {
               updateOthChargesAirZone(
                 name,
                 resp.data.domrts_ids,
                 resp.data.perchrg_ids_air
+              );
+              updateOthChargesSurfaceZone(
+                name,
+                resp.data.domrts_ids,
+                resp.data.perchrg_ids_surface
               );
             }
           }
@@ -2192,8 +2775,10 @@ const addClientDoc = (client_id) => {
     } else {
       if (dom_rate_category != "Both") {
         updatePerChargesAir(name, []);
+        updatePerChargesSurface(name,[]);
       } else {
         updateOthChargesAirZone(name, [], []);
+        updateOthChargesSurfaceZone(name, [])
       }
     }
   };
@@ -2302,11 +2887,13 @@ const addClientDoc = (client_id) => {
         //  Domestic City Air Datalist  started for update
         let dom_chrg = cust_up.client_dom_city;
         let tmplist_air = [];
+        let tmplist_surface =[];
         if (dom_chrg.length > 0) {
           setdom_rate_type(toTitleCase(dom_chrg[0].rate_type));
 
           if (dom_chrg[0].cc_oda_rate != "") {
             setis_oda_air(true);
+            setis_per_charge_surfc(true);
           }
 
           for (const chr of dom_chrg) {
@@ -2321,18 +2908,21 @@ const addClientDoc = (client_id) => {
             ];
 
             tmplist_air.push(tmpl);
+            tmplist_surface.push(tmpl);
           }
         }
 
         //  Domestic Zone Air Datalist  started for update
         let dom_chrg_zone = cust_up.client_dom_zone;
         let tmplist_air_zone = [];
+        let tmplist_surface_zone =[];
         if (dom_chrg_zone.length > 0) {
           setdom_rate_category("Zone to Zone");
           setdom_rate_type(toTitleCase(dom_chrg_zone[0].rate_type));
 
           if (dom_chrg_zone[0].cc_oda_rate != "") {
             setis_oda_air(true);
+            setis_oda_surface(true);
           }
 
           for (const chr of dom_chrg_zone) {
@@ -2347,21 +2937,38 @@ const addClientDoc = (client_id) => {
             ];
 
             tmplist_air_zone.push(tmpl);
+            tmplist_surface_zone.push(tmpl);
+          }
+          for (const chr of dom_chrg_zone) {
+            let tmpl1 = [
+              [
+                [chr.origin_zone, chr.origin_zone],
+                [chr.destination_zone, chr.destination_zone],
+              ],
+              [chr.cc_rate, chr.cc_min_box, chr.cc_min_amount, chr.cc_oda_rate],
+              [chr.nc_rate, chr.nc_min_box, chr.nc_min_amount, chr.nc_oda_rate],
+              chr.id,
+            ];
+
+            tmplist_surface_zone.push(tmpl1);
           }
         }
      
         // Percentage Charge Setting Local
         let ptmp_lst = [];
         let ptmp_lst_air = [];
+        let ptmp_lst_surface = [];
         let cl_per_chrg = cust_up.per_chrg_client;
 
         let asso_set = false;
         let asso_set_air = false;
+        let asso_set_surface = false;
 
         let local_per = cl_per_chrg.filter(
           (v) => v.transportation_mode == "LOCAL"
         );
         let air_per = cl_per_chrg.filter((v) => v.transportation_mode == "AIR");
+        let surface_per= cl_per_chrg.filter((v) => v.transportation_mode == "SURFACE")
 
         if (local_per.length > 0) {
           setis_per_charge(true);
@@ -2393,8 +3000,9 @@ const addClientDoc = (client_id) => {
           }
         }
         // // Setting Domestic Percebtage Charge
-        if (air_per.length > 0) {
+        if (air_per.length > 0 || surface_per.length >0) {
           setis_per_charge_air(true);
+          setis_per_charge_surfc(true);
           for (let v = 0; v < air_per.length; v++) {
             const pela = air_per[v];
 
@@ -2434,10 +3042,50 @@ const addClientDoc = (client_id) => {
               }
             }
           }
+          for (let v = 0; v < surface_per.length; v++) {
+            const pela = surface_per[v];
+
+            let ptmp = [
+              [pela.charge, pela.charge_name],
+              pela.category,
+              pela.rate_percentage,
+              pela.id,
+            ];
+            ptmp_lst_surface.push(ptmp);
+
+            if (pela.category != "% of client invoice") {
+              let ot_chg_list = pela.other_percentage_charge;
+
+              for (let g = 0; g < ot_chg_list.length; g++) {
+                let otchg = ot_chg_list[g];
+                let ldtemp = [];
+                if (tmplist_surface.length > 0) {
+                  ldtemp = [...tmplist_surface];
+                  let ldi = ldtemp[g];
+                  ldi[1].push(otchg.cc_rate_percentage);
+                  ldi[2].push(otchg.nc_rate_percentage);
+                  setdatalist(ldtemp);
+                  let sn_list = structuredClone(ldtemp);
+                  setot_chrg_prv_surface(sn_list);
+                } else {
+                  ldtemp = [...tmplist_surface_zone];
+                  let ldi = ldtemp[g];
+                  ldi[1].push(otchg.cc_rate_percentage);
+                  ldi[2].push(otchg.nc_rate_percentage);
+                  setdatalist1(ldtemp);
+                  let sn_list = structuredClone(ldtemp);
+                  setot_chrg_prv_surface_zone(sn_list);
+                }
+
+                asso_set_surface = true;
+              }
+            }
+          }
         }
 
         setper_charge_list(ptmp_lst);
         setper_charge_list_air(ptmp_lst_air);
+        setper_charge_list_surface(ptmp_lst_surface);
 
         if (asso_set == false) {
           setlocal_datalist(temp_lis);
@@ -2445,6 +3093,10 @@ const addClientDoc = (client_id) => {
         if (asso_set_air == false) {
           setdatalist(tmplist_air);
           setdatalist1(tmplist_air_zone);
+        }
+        if (asso_set_surface == false) {
+          setdatalist(tmplist_surface);
+          setdatalist1(tmplist_surface_zone);
         }
 
        
@@ -2457,6 +3109,9 @@ const addClientDoc = (client_id) => {
             let air_cals = cust_up.cal_infos_cust.filter(
               (v) => v.transportation_mode == "AIR"
               );
+              let surface_cals = cust_up.cal_infos_cust.filter(
+                (v) => v.transportation_mode == "SURFACE"
+                );
               
           if (local_cals[0].calculation_type != "DONT") {
             setis_local(true);
@@ -2515,6 +3170,40 @@ const addClientDoc = (client_id) => {
               dispatch(
                 setAirCal({
                   ...air_cal,
+                  id: cal.id,
+                  cal_type: "BOX",
+                  box_cal: {
+                    box_value: cal.box_value,
+                    from_date: cal.from_date,
+                    to_date: cal.to_date,
+                  },
+                })
+              );
+            }
+          }
+
+          if (surface_cals[0].calculation_type != "DONT") {
+            setis_surface(true);
+            setactiveTab("3");
+            let cal = surface_cals[surface_cals.length - 1];
+            if (cal.calculation_type == "DIMENSION") {
+              dispatch(
+                setSurfaceCal({
+                  ...surface_cal,
+                  id: cal.id,
+                  cal_type: "DIMENSION",
+                  dimn: {
+                    cft: cal.cft,
+                    divided_by: cal.divided_by,
+                    from_date: cal.from_date,
+                    to_date: cal.to_date,
+                  },
+                })
+              );
+            } else {
+              dispatch(
+                setSurfaceCal({
+                  ...surface_cal,
                   id: cal.id,
                   cal_type: "BOX",
                   box_cal: {
@@ -3397,6 +4086,8 @@ const addClientDoc = (client_id) => {
                                   setactiveTab={setactiveTab}
                                   activeAirTab={activeAirTab}
                                   setactiveAirTab={setactiveAirTab}
+                                  activeSurfaceTab ={activeSurfaceTab}
+                                  setactiveSurfaceTab={setactiveSurfaceTab}
                                   // Percentage Charges
                                   is_per_charge={is_per_charge}
                                   setis_per_charge={setis_per_charge}
@@ -3406,9 +4097,13 @@ const addClientDoc = (client_id) => {
                                   setper_charge_list_air={
                                     setper_charge_list_air
                                   }
+                                  per_charge_list_surface={per_charge_list_surface}
+                                  setper_charge_list_surface={setper_charge_list_surface}
                                   // Charge Type Air
                                   is_per_charge_air={is_per_charge_air}
                                   setis_per_charge_air={setis_per_charge_air}
+                                  is_per_charge_surfc={is_per_charge_surfc}
+                                  setis_per_charge_surfc={setis_per_charge_surfc}
                                   // Checkis
                                   is_local={is_local}
                                   is_air={is_air}
@@ -3451,9 +4146,13 @@ const addClientDoc = (client_id) => {
                                   }
                                   per_del_ids_air={per_del_ids_air}
                                   setper_del_ids_air={setper_del_ids_air}
+                                  per_del_ids_surfc={per_del_ids_surfc}
+                                  setper_del_ids_surfc={setper_del_ids_surfc}
                                   isupdating={isupdating}
                                   is_oda_air={is_oda_air}
                                   setis_oda_air={setis_oda_air}
+                                  is_oda_surface={is_oda_surface}
+                                  setis_oda_surface={setis_oda_surface}
                                 />
                               </Col>
                             </Row>
