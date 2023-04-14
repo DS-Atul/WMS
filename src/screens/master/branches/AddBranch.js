@@ -154,6 +154,9 @@ const [city_count, setcity_count] = useState(1);
 
   const [own_pan_number, setown_pan_number] = useState("");
 
+
+  const [address_line, setaddress_line] = useState("");
+  const [address_line_err, setaddress_line_err] = useState(false);
   const [isupdating, setisupdating] = useState(false);
   // Save an add button
   const [save_clickd, setsave_clickd] = useState(false);
@@ -169,7 +172,7 @@ const [city_count, setcity_count] = useState(1);
       branch_name: toTitleCase(branch.name) || "",
       branch_email: branch.email || "",
       branch_phone_number: branch.contact_number || "",
-      address_line_1: toTitleCase(branch.address_line_1) || "",
+      // address_line_1: toTitleCase(branch.address_line_1) || "",
       branch_head: toTitleCase(branch.head) || "",
       branch_head_email: branch.head_email || "",
       branch_head_phone_number: branch.head_phone_number || "",
@@ -185,7 +188,7 @@ const [city_count, setcity_count] = useState(1);
         .max(10, "Branch Phone Number must be at most 10")
         .required("Branch Phone number is required"),
 
-      address_line_1: Yup.string().required("Address Line 1 is required"),
+      // address_line_1: Yup.string().required("Address Line 1 is required"),
       branch_head: Yup.string().required("Branch head name is required"),
       branch_head_email: Yup.string()
         .email("Invalid email format")
@@ -268,7 +271,7 @@ const [city_count, setcity_count] = useState(1);
               ? toTitleCase(gst_number).toUpperCase()
               : toTitleCase(select_gst).toUpperCase(),
           created_by: user.id,
-          address_line_1: toTitleCase(values.address_line_1).toUpperCase(),
+          address_line_1: toTitleCase(address_line).toUpperCase(),
           pincode: pincode_id,
           location: locality_id,
           operating_city: op_city_id_list,
@@ -302,7 +305,7 @@ const [city_count, setcity_count] = useState(1);
             validation.values.branch_name = "";
             validation.values.branch_email = "";
             validation.values.branch_phone_number = "";
-            validation.values.address_line_1 = "";
+            // validation.values.address_line_1 = "";
             validation.values.gst_number = "";
             validation.values.branch_head = "";
             validation.values.branch_head_email = "";
@@ -388,7 +391,7 @@ const [city_count, setcity_count] = useState(1);
             branch_type === "Own Branch"
               ? toTitleCase(gst_number).toUpperCase()
               : toTitleCase(select_gst).toUpperCase(),
-          address_line_1: toTitleCase(values.address_line_1).toUpperCase(),
+          address_line_1: toTitleCase(address_line).toUpperCase(),
           pincode: pincode_id,
           location: locality_id,
           operating_city: opcity_ids,
@@ -725,6 +728,15 @@ console.log("resp of op city", response.data.results)
     }
   }, [operating_city_list2, refresh]);
 
+  useEffect(() => {
+    if(state){
+      setstate_error(false);
+    }
+    if(city){
+      setcity_error(false);
+    }
+  }, [state,city]);
+
   useLayoutEffect(() => {
     // if (vendor_name != "") {
     //   setvendor_error(false);
@@ -732,7 +744,12 @@ console.log("resp of op city", response.data.results)
     if (own_pan_number != "") {
       setown_pan_error(false);
     }
-
+if(address_line !== "") {
+  setaddress_line_err(false);
+}
+if(same_as_gst) {
+  setaddress_line(gstaddress);
+}
     // if (state != "") {
     //   setstate_error(false);
     // }
@@ -744,6 +761,8 @@ console.log("resp of op city", response.data.results)
     }
   }, [
     // vendor_name,
+    address_line,
+    gstaddress,
      state,
       // city,
       //  gst_number,
@@ -765,6 +784,7 @@ console.log("resp of op city", response.data.results)
         setvendor_pan_no(location_data.state.branch.pan_no);
         setselect_gst(location_data.state.branch.gst_no);
       }
+      setaddress_line(location_data.state.branch.address_line_1);
       setstate(toTitleCase(location_data.state.branch.state_name));
       setstate_id(location_data.state.branch.state_id);
       setcity_id(location_data.state.branch.city_id);
@@ -1008,58 +1028,83 @@ console.log("resp of op city", response.data.results)
         <Form
           onSubmit={(e) => {
             e.preventDefault();
+            let shaw= Object.entries(validation.values);
+            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0 );
+            let map_value = filter_value.map((m) => m[0]);
+            let all_value = map_value[0];
+
+           let fields=[
+           "branch_name",
+           "branch_email",
+           "branch_phone_number",
+           ]
+ 
             if (branch_type == "") {
               setbranch_type_error(true);
               document.getElementById("branch_info").scrollIntoView();
 
             }
-            if (branch_type === "Vendor" && vendor_name === "") {
+         else   if (branch_type === "Vendor" && vendor_name === "") {
               setvendor_error(true);
               document.getElementById("branch_info").scrollIntoView();
 
             }
-            if(branch_type === "Vendor" && select_gst === "") {
+            else if(fields.includes(all_value)){
+              document.getElementById("branch_info").scrollIntoView();
+            }
+          else  if(branch_type === "Vendor" && select_gst === "") {
               setselect_gst_error(true);
               document.getElementById("branch_info").scrollIntoView();
 
             }
-            if (branch_type === "Own Branch" && own_pan_number == "") {
+          else  if (branch_type === "Own Branch" && own_pan_number == "") {
               setown_pan_error(true);
+              document.getElementById("branch_info").scrollIntoView();
             }
-            if(branch_type === "Own Branch" && gst_number === "") {
+          else  if(branch_type === "Own Branch" && gst_number === "") {
               setown_gst_error(true);
+              document.getElementById("branch_info").scrollIntoView();
             }
-            if (operating_city_list2.length === 0) {
-              setoperating_city_error(true);
-              document.getElementById("operating_city").scrollIntoView();
-
-            }
+            else  if(address_line === "") {
+              setaddress_line_err(true);
+              document.getElementById("location_info").scrollIntoView();
+              }
+           
+            else
             if (state === "") {
               setstate_error(true);
               document.getElementById("location_info").scrollIntoView();
 
             }
+            else
             if (city === "") {
               setcity_error(true);
               document.getElementById("location_info").scrollIntoView();
 
             }
-            if (pincode === "") {
-              setpincode_error(true);
-              document.getElementById("location_info").scrollIntoView();
-
-            }
-            if(pincode_loaded && pincode === "") {
+            else if (pincode_loaded && pincode === "") {
               setpincode_list_error(true);
               document.getElementById("location_info").scrollIntoView();
 
             }
-            if(pincode_loaded && locality === "") {
+          else  if(pincode_loaded === false && pincode === "") {
+              setpincode_error(true);
+              document.getElementById("location_info").scrollIntoView();
+
+            }
+          else  if(pincode_loaded && locality === "") {
               setlocality_error(true);
               document.getElementById("location_info").scrollIntoView();
 
             }
-            validation.handleSubmit(e.values);
+            else
+            if (operating_city_list2.length === 0) {
+              setoperating_city_error(true);
+              document.getElementById("operating_city").scrollIntoView();
+
+            } 
+              validation.handleSubmit(e.values);
+            
             return false;
           }}
         >
@@ -1072,7 +1117,7 @@ console.log("resp of op city", response.data.results)
           </div>
 
           {/* Branch Info */}
-          <div className="m-3" id="branch_info">
+          <div className="m-3" >
             {/* Add For History Button */}
             {isupdating && 
             <div style={{ justifyContent: "right", display: "flex" }}>
@@ -1111,7 +1156,7 @@ console.log("resp of op city", response.data.results)
                   <CardBody>
                     <Row>
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
+                        <div className="mb-2" id="branch_info">
                           <Label className="header-child">Branch Type*</Label>
                           <NSearchInput
                             data_list={branch_type_list}
@@ -1127,7 +1172,7 @@ console.log("resp of op city", response.data.results)
 
                       {branch_type === "Vendor" && (
                         <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
+                          <div className="mb-2" id="branch_info">
                             <Label className="header-child">
                               Vendor Name *
                             </Label>
@@ -1152,7 +1197,7 @@ console.log("resp of op city", response.data.results)
                       )}
 
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
+                        <div className="mb-2" id="branch_info">
                           <Label className="header-child">Branch Name*</Label>
                           <Input
                             onChange={validation.handleChange}
@@ -1180,7 +1225,7 @@ console.log("resp of op city", response.data.results)
                       </Col>
 
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
+                        <div className="mb-2" id="branch_info">
                           <Label className="header-child">Branch Email*</Label>
                           <Input
                             onChange={validation.handleChange}
@@ -1208,7 +1253,7 @@ console.log("resp of op city", response.data.results)
                       </Col>
 
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
+                        <div className="mb-2" id="branch_info">
                           <Label className="header-child">
                             Branch Phone Number*
                           </Label>
@@ -1240,8 +1285,8 @@ console.log("resp of op city", response.data.results)
 
                       {branch_type === "Vendor" ? (
                         <>
-                          <Col lg={4} md={6} sm={6}>
-                            <div className="mb-2">
+                          <Col lg={4} md={6} sm={6} >
+                            <div className="mb-2" id="branch_info">
                               <Label className="header-child">
                                 Vendor PAN No*.
                               </Label>
@@ -1255,6 +1300,7 @@ console.log("resp of op city", response.data.results)
                           </Col>
 
                           <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2" id="branch_info">
                             <Label className="header-child">
                               Vendor GST Number *
                             </Label>
@@ -1268,6 +1314,7 @@ console.log("resp of op city", response.data.results)
                               error_message={"Please Select Vendor GST No"}
                               error_s={select_gst_error}
                             />
+                            </div>
                           </Col>
                         </>
                       ) : null}
@@ -1275,7 +1322,7 @@ console.log("resp of op city", response.data.results)
                       {branch_type === "Own Branch" ? (
                         <>
                           <Col lg={4} md={6} sm={6}>
-                            <div className="mb-2">
+                            <div className="mb-2" id="branch_info">
                               <Label className="header-child">
                                 {" "}
                                 PAN Number*{" "}
@@ -1296,7 +1343,8 @@ console.log("resp of op city", response.data.results)
                           </Col>
 
                           <Col lg={4} md={6} sm={6}>
-                            <Label className="header-child">GST Number *</Label>
+                          <div className="mb-2" id="branch_info">
+                            <Label className="header-child" >GST Number *</Label>
                             <SearchInput
                               data_list={gst_data_list}
                               setdata_list={setgst_data_list}
@@ -1307,6 +1355,7 @@ console.log("resp of op city", response.data.results)
                               error_message={"Please Select GST"}
                               error_s={own_gst_error}
                             />
+                            </div>
                           </Col>
                         </>
                       ) : null}
@@ -1363,31 +1412,24 @@ console.log("resp of op city", response.data.results)
                         <div className="mb-2">
                           <Label className="header-child">Address Line *</Label>
                           <Input
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={
-                              validation.values.address_line_1 ||
-                              gstaddress ||
-                              ""
-                            }
-                            invalid={
-                              validation.touched.address_line_1 &&
-                              validation.errors.address_line_1
-                                ? true
-                                : false
-                            }
+                   
+                            value={address_line}
+                            invalid={address_line_err}
+                            onChange={(val) => {
+                              setaddress_line(val.target.value)
+                            }}
                             type="text"
                             className="form-control-md"
                             id="input"
                             name="address_line_1"
                             placeholder="Enter Address Line 1"
                           />
-                          {validation.touched.address_line_1 &&
-                          validation.errors.address_line_1 ? (
-                            <FormFeedback type="invalid">
-                              {validation.errors.address_line_1}
-                            </FormFeedback>
-                          ) : null}
+                         
+                          <div className="mt-1 error-text" color="danger">
+                                  {address_line_err ? "Address Field  is required" : null}
+                                </div>
+                     
+                         
                         </div>
                       </Col>
 
@@ -1494,12 +1536,7 @@ console.log("resp of op city", response.data.results)
                                 }
                               }}
                               value={pincode}
-                              // invalid={
-                              //   validation.touched.pincode &&
-                              //   validation.errors.pincode
-                              //     ? true
-                              //     : false
-                              // }
+                           
 
                               type="number"
                               className="form-control-md"

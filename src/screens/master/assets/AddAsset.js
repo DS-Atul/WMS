@@ -47,6 +47,7 @@ const AddAsset = () => {
   const [circle_btn, setcircle_btn] = useState(true);
 
   const [circle_btn1, setcircle_btn1] = useState(true);
+   const [circle_btn2, setcircle_btn2] = useState(true);
   const [isupdating, setisupdating] = useState(false);
   const location_data = useLocation();
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -212,6 +213,7 @@ const AddAsset = () => {
 
   const [Add_manufacture_err, setAdd_manufacture_err] = useState(false);
 
+
   //Used for circle btn
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
@@ -219,6 +221,10 @@ const AddAsset = () => {
 
   const toggle_circle1 = () => {
     setcircle_btn1(!circle_btn1);
+  };
+
+  const toggle_circle2 = () => {
+    setcircle_btn2(!circle_btn2);
   };
 
   const getManifacturer = () => {
@@ -343,7 +349,7 @@ const AddAsset = () => {
             ]);
           } else {
             branch_list_is = [
-              ...vendor_list,
+              ...branch_list,
               ...response.data.results.map((v) => [v.id, v.name]),
             ];
           }
@@ -661,10 +667,25 @@ const AddAsset = () => {
   }, [calibration_id_list, calibration_ids]);
 
   useEffect(() => {
+    if(manufacture_type){
+      setmanufacture_type_error(false);
+    }
     if (manufacture_type === "Add New") {
       setother_manufacture_type("");
     }
+   
   }, [manufacture_type]);
+  useEffect(() => {
+     if(other_manufacture_type){
+      setAdd_manufacture_err(false);
+    }
+  }, [other_manufacture_type]);
+  
+useEffect(() => {
+  if(logger_box_no){
+    setlogger_number_error(false);
+  }
+}, [logger_box_no]);
 
 
   useEffect(() => {
@@ -861,7 +882,7 @@ const AddAsset = () => {
                     {asset_type == "Logger" && (
                       <>
                         <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
+                          <div className="mb-2" id="log">
                             <Label className="header-child">Logger Type *</Label>
                             <NSearchInput
                               data_list={logger_box_list}
@@ -875,7 +896,7 @@ const AddAsset = () => {
                         </Col>
 
                         <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
+                          <div className="mb-2" id="log1">
                             <Label className="header-child">
                               Manufacture Name *
                             </Label>
@@ -920,6 +941,9 @@ const AddAsset = () => {
                                       setmanufacture_type("");
                                     }
                                   }
+                                  if(other_manufacture_type === ""){
+                                    setAdd_manufacture_err(true);
+                                   }
                                 }}
                                 value={other_manufacture_type}
                                 invalid={Add_manufacture_err}
@@ -930,6 +954,9 @@ const AddAsset = () => {
                                 placeholder="Enter Manufacture Name"
                               />
                             </div>
+                            <div className="mt-1 error-text" color="danger">
+                                  {Add_manufacture_err ? "Add manufacture name" : null}
+                                </div>
                           </Col>
                         ) : null}
 
@@ -965,14 +992,21 @@ const AddAsset = () => {
                               }}
                               onBlur={() => {
                                 setlogger_number_error(true);
-                              }}
-                              invalid={logger_box_no == "" && logger_number_error}
+                              
+                              if(logger_box_no){
+                                  setlogger_number_error(false);   
+                              }
+                            }}
+                              invalid={logger_number_error}
                             />
+                            {/* <div className="mt-1 error-text" color="danger">
+                                  {logger_number_error ? "Logger Number  is required" : null}
+                                </div> */}
                             {logger_box_no == "" && logger_number_error ? (
                               <FormFeedback type="invalid">
                                 Logger Number is required
-                              </FormFeedback>
-                            ) : null}
+                              </FormFeedback> 
+                             ) : null}
                           </div>
                         </Col>
                       </>
@@ -982,7 +1016,7 @@ const AddAsset = () => {
                     {/* Temp control Box TYpe Fields Stated */}
                     {asset_type == "Temperature Control Box" && (
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
+                        <div className="mb-2" id="box">
                           <Label className="header-child">Box Type * </Label>
                           <NSearchInput
                             data_list={box_type_list}
@@ -1217,8 +1251,8 @@ const AddAsset = () => {
                         className: "header-add-icon",
                       }}
                     >
-                      <div onClick={toggle_circle1}>
-                        {circle_btn1 ? (
+                      <div onClick={toggle_circle2}>
+                        {circle_btn2 ? (
                           <MdRemoveCircleOutline />
                         ) : (
                           <MdAddCircleOutline />
@@ -1227,7 +1261,7 @@ const AddAsset = () => {
                     </IconContext.Provider>
                   </div>
                 </CardTitle>
-                {circle_btn1 ? (
+                {circle_btn2 ? (
                   <CardBody>
                     <Row>
                       <Col lg={2} md={6} sm={6}>
@@ -1290,6 +1324,7 @@ const AddAsset = () => {
                                 style={{ marginBottom: "10px" }}
                                 key={index}
                                 value={item[2]}
+                              
                                 type="text"
                                 className="form-control-md"
                                 id="input"
@@ -1298,6 +1333,7 @@ const AddAsset = () => {
                                   item[2] = val.target.value;
                                   setrefresh(!refresh);
                                 }}
+                              
                               />
                             );
                           })}
@@ -1332,7 +1368,7 @@ const AddAsset = () => {
                         <div className="mb-3">
                           <Label className="header-child">
                             {/* Callibration */}
-                            Certificate *
+                            Certificate 
                           </Label>
                           {row.map((item, index) => {
                             return (
@@ -1433,20 +1469,52 @@ const AddAsset = () => {
                     document.getElementById("asset_info").scrollIntoView();
                   }
 
-                  if (manufacture_type === "") {
-                    setmanufacture_type_error(true);
-                  }
-                  else if (asset_type === "Logger") {
+                  else if (asset_type === "Logger")
+                   {
+
                     if (logger_box_type === "") {
                       setlogger_box_type_error(true);
-                      document.getElementById("asset_info").scrollIntoView();
-
+                      
+                      document.getElementById("log").scrollIntoView();
+                    
                     }
+                    
+                  else if (manufacture_type === "") {
+                    setmanufacture_type_error(true);
+                    document.getElementById("asset_info").scrollIntoView();
+                  }
+                 
+                   else if(temperature_log_type === ""){
+                    settemperature_log_type_error(true);
+                   }
+                   else if(logger_box_no == ""){
+                    setlogger_number_error(true);
+                   }
+                   else if(row[row.length - 1][0] === ""){
+                    alert("Please Add Callibration info")
+                   }
+                   if(other_manufacture_type === ""){
+                    setAdd_manufacture_err(true);
+                   }
 
-                  } else if (asset_type === "Temperature Control Box") {
-                    alert("Temp")
+                  }
+                   else if (asset_type === "Temperature Control Box") {
+                  
+                    if(box_type === ""){
+                      setbox_type_error(true);
+                      document.getElementById("box").scrollIntoView();
+                    }
+                    else if(temperature_type_box === ""){
+                      settemperature_type_box_error(true);
+                    }
+                    else if(box_cap === "")
+                    {
+                      setbox_capacity_error(true);
+                    }
                   }
 
+            
+           
                   if (branch_selected === "") {
                     setbranch_error(true);
                     document.getElementById("asset_details").scrollIntoView();

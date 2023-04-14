@@ -164,6 +164,7 @@ const AddVendor = () => {
   const [updated_gstaddress, setupdated_gstaddress] = useState([]);
 
   //used for others services
+  const [other_err, setother_err] = useState(false);
   const [other_service, setother_service] = useState("");
   let others_list = [other_service];
   const [row1, setrow1] = useState([others_list]);
@@ -228,10 +229,10 @@ const AddVendor = () => {
         .min(10, "Phone number must 10 digit long")
         .max(10, "Phone number must 10 digit long")
         .required("Vendor Phone No is require"),
-      vendor_ph_no1: Yup.string()
-        .min(10, "Phone number must 10 digit long")
-        .max(10, "Phone number must 10 digit long")
-        .required("Vendor Phone No is require"),
+      // vendor_ph_no1: Yup.string()
+      //   .min(10, "Phone number must 10 digit long")
+      //   .max(10, "Phone number must 10 digit long")
+      //   .required("Vendor Phone No is require"),
       pan_number: Yup.string()
         .min(10, "Pan number must be 10 characters")
         .max(10, "Pan number must be 10 characters")
@@ -680,7 +681,7 @@ const AddVendor = () => {
     if (msme_registerd === true && msme_registerd_number !== "") {
       setmsme_registerd_number_error(false);
     }
-    if (msme_registerd_number !== "" && msme_registerd_number.length === 10) {
+    if (msme_registerd_number !== "" && msme_registerd_number.length === 12) {
       setmsme_No_length(false);
     }
   }, [msme_registerd, msme_registerd_number]);
@@ -1225,12 +1226,19 @@ const AddVendor = () => {
             if (msme_registerd === true && msme_registerd_number === "") {
               setmsme_registerd_number_error(true);
               document.getElementById("vendor_info").scrollIntoView();
+            } if(msme_registerd_number === ""){
+              setmsme_registerd_number_error(true);
             }
-           
+            if( msme_registerd_number !== "" && msme_registerd_number.length !== 12){
+              setmsme_No_length(true);
+            }
+           if(others_services_offerd === true && row1[0] == ""){
+            setother_err(true);
+           }
             validation.handleSubmit(e.values);
             return false;
           }}
-        >
+        >s
           <div className="mt-3">
             <PageTitle page={"Add Vendor"} />
             <Title
@@ -1388,19 +1396,24 @@ const AddVendor = () => {
                                 onChange={(val) => {
                                   setmsme_registerd_number(val.target.value);
                                 }}
-                                invalid={msme_registerd_number_error}
+                                invalid={msme_registerd_number_error || msme_No_length}
                               />
                               <div className="mt-1 error-text" color="danger">
                                 {msme_registerd_number_error
                                   ? " MSME No is required"
                                   : null}
                               </div>
+                              <div className="mt-1 error-text" color="danger">
+                                {msme_No_length
+                                  ? "MSME number must 12 digit long"
+                                  : null}
+                              </div>
 
-                              {msme_No_length && (
+                              {/* {msme_No_length && (
                                 <div className="mt-1 error-text" color="danger">
                                   MSME number must 10 digit long
                                 </div>
-                              )}
+                              )} */}
                             </div>
                           </Col>
 
@@ -1535,15 +1548,15 @@ const AddVendor = () => {
                         <div className="mb-2">
                           <Label className="header-child">Vendor Ph.No 2</Label>
                           <Input
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
+                            // onChange={validation.handleChange}
+                            // onBlur={validation.handleBlur}
                             value={validation.values.vendor_ph_no1 || ""}
-                            invalid={
-                              validation.touched.vendor_ph_no1 &&
-                              validation.errors.vendor_ph_no1
-                                ? true
-                                : false
-                            }
+                            // invalid={
+                            //   validation.touched.vendor_ph_no1 &&
+                            //   validation.errors.vendor_ph_no1
+                            //     ? true
+                            //     : false
+                            // }
                             type="number"
                             min={0}
                             className="form-control-md"
@@ -1552,12 +1565,12 @@ const AddVendor = () => {
                             placeholder="Enter Phone Number"
                           />
                         </div>
-                        {validation.touched.vendor_ph_no1 &&
+                        {/* {validation.touched.vendor_ph_no1 &&
                           validation.errors.vendor_ph_no1 ? (
                             <FormFeedback type="invalid">
                               {validation.errors.vendor_ph_no1}
                             </FormFeedback>
-                          ) : null}
+                          ) : null} */}
                       </Col>
                     </Row>
                   </CardBody>
@@ -2222,6 +2235,7 @@ const AddVendor = () => {
                                             // min={0}
                                             key={index}
                                             value={item[0]}
+                                            invalid={other_err}
                                             className="form-control-md d"
                                             id="input"
                                             style={{ marginBottom: "15px" }}
@@ -2236,6 +2250,9 @@ const AddVendor = () => {
                                         );
                                       })}
                                     </div>
+                                    <div className="mt-1 error-text" color="danger">
+                                  {other_err ? "Services is required" : null}
+                                </div>
                                   </Col>
 
                                   <Col lg={1}>

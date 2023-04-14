@@ -1052,7 +1052,7 @@ setpincode_count(pincode_count+2);
                           name="credit_amount"
                           className="form-control-md"
                           id="input"
-                          placeholder="Enter Name"
+                          placeholder="Enter Amount"
                         />
                       </div>
                     </Col>
@@ -1161,6 +1161,7 @@ setpincode_count(pincode_count+2);
                               onChange={(val) => {
                                 // setbreadth(val.target.value);
                                 item[1] = val.target.value;
+                                setrefresh(!refresh);
                               }}
                             />
                           ))}
@@ -1174,7 +1175,7 @@ setpincode_count(pincode_count+2);
                               min={0}
                               key={index}
                               value={item[2]}
-                              type="number"
+                              type="text"
                               className="form-control-md d"
                               id="input"
                               style={{ marginBottom: "15px" }}
@@ -1182,6 +1183,7 @@ setpincode_count(pincode_count+2);
                               onChange={(val) => {
                                 // setheight(val.target.value);
                                 item[2] = val.target.value;
+                                setrefresh(!refresh);
                               }}
                             />
                           ))}
