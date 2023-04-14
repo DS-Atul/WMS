@@ -9,11 +9,7 @@ import {
   MdDeleteForever,
   MdAdd,
 } from "react-icons/md";
-import {
-  BiSkipNext,
-  BiSkipPrevious
-
-} from "react-icons/bi";
+import { BiSkipNext, BiSkipPrevious } from "react-icons/bi";
 import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -38,7 +34,10 @@ import {
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
-import { bucket_address, ServerAddress } from "../../../constants/ServerAddress";
+import {
+  bucket_address,
+  ServerAddress,
+} from "../../../constants/ServerAddress";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import StatusInfoDataTitle from "../../../data/booking/statusInfo/StatusInfoDataTitle";
@@ -54,6 +53,12 @@ import Main_c from "../.././../components/crop/main";
 import { CleanHands } from "@mui/icons-material";
 import DeliveryInfoDataTitle from "../../../data/booking/deliveryInfo/DeliveryInfoDataTitle";
 import DeliveryInfoDataFormat from "../../../data/booking/deliveryInfo/DeliveryInfoDataFormat";
+import {
+  setBAccessToken,
+  setEAccessToken,
+  setOrgs,
+} from "../../../store/ewayBill/EwayBill";
+import { gstin_no } from "../../../constants/CompanyDetails";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -70,10 +75,10 @@ const AddOrder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [page, setpage] = useState(1);
-  const [returned_data, setreturned_data] = useState([])
-  const [total_delivered_pcs, settotal_delivered_pcs] = useState(0)
+
   //Get Updated Location Data
   const [order, setorder] = useState([]);
+  console.log("orderorderorderorder", order);
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
@@ -85,6 +90,7 @@ const AddOrder = () => {
   const [clicked, setclicked] = useState(false);
 
   //For order type
+  const [order_type, setorder_type] = useState("NORMAL_ORDER");
   //local delivery_type
   const [delivery_type, setdelivery_type] = useState("LOCAL");
 
@@ -106,8 +112,42 @@ const AddOrder = () => {
   const [cold_chain, setcold_chain] = useState(false);
   const [nonecold_chain, setnonecold_chain] = useState(false);
   const [cod_list, setcod_list] = useState(["Yes", "No"]);
-  const [asset_prov, setasset_prov] = useState(false)
+  const [asset_prov, setasset_prov] = useState(false);
+  console.log("----------asset_prov", asset_prov);
   const [d_cod, setd_cod] = useState("No");
+
+  const [state_list_c, setstate_list_c] = useState([]);
+  const [state_s_c, setstate_s_c] = useState("");
+  const [state_id_f_c, setstate_id_f_c] = useState(0);
+  const [state_error_c, setstate_error_c] = useState(false);
+  const [state_page_c, setstate_page_c] = useState(1);
+  const [state_search_item_c, setstate_search_item_c] = useState("");
+  const [city_list__c, setcity_list__c] = useState([]);
+  const [city_c, setcity_c] = useState("");
+  const [city_id_c, setcity_id_c] = useState(0);
+  const [city_error_c, setcity_error_c] = useState(false);
+  const [city_page_c, setcity_page_c] = useState(1);
+  const [city_search_item_c, setcity_search_item_c] = useState("");
+  const [by_pincode_f_c, setby_pincode_f_c] = useState(false);
+  const [pincode_list_f_c, setpincode_list_f_c] = useState([]);
+  const [pincode_f_c, setpincode_f_c] = useState("");
+  const [pin_code_error_c, setpin_code_error_c] = useState(false);
+  const [pincode_error_f_c, setpincode_error_f_c] = useState(false);
+  const [pincode_error2_f_c, setpincode_error2_f_c] = useState(false);
+  const [pincode_page_c, setpincode_page_c] = useState(1);
+  const [pincode_search_item_c, setpincode_search_item_c] = useState("");
+  const [pincode_id_c, setpincode_id_c] = useState(0);
+  const [pincode_loaded_f_c, setpincode_loaded_f_c] = useState(false);
+  const [pincode_list_error_c, setpincode_list_error_c] = useState(false);
+  const [locality_c, setlocality_c] = useState("");
+  const [locality_list_s_c, setlocality_list_s_c] = useState([]);
+  const [locality_page_c, setlocality_page_c] = useState(1);
+  const [locality_search_item_c, setlocality_search_item_c] = useState("");
+  const [locality_id_f_c, setlocality_id_f_c] = useState(0);
+  const [locality_error_c, setlocality_error_c] = useState(false);
+  const [locality_error2_c, setlocality_error2_c] = useState(false);
+  const [refresh_c, setrefresh_c] = useState(false);
+
   //Type of Booking
   const [type_of_booking_list, setype_of_booking_list] = useState([
     "Priority",
@@ -124,8 +164,8 @@ const AddOrder = () => {
   //Delivery Mode
   const [delivery_mode_list, setdelivery_mode_list] = useState([]);
   const [delivery_mode, setdelivery_mode] = useState("Door To Door");
-  const [booking_through, setbooking_through] = useState(false)
-  const [ewaybill_no, setewaybill_no] = useState("")
+  const [booking_through, setbooking_through] = useState(false);
+  const [ewaybill_no, setewaybill_no] = useState("");
 
   //Client
   const [client_list, setclient_list] = useState([]);
@@ -136,8 +176,10 @@ const AddOrder = () => {
   const [client_page, setclient_page] = useState(1);
 
   // Clients Commidities Lists
-  const [clients_commidities_lists, setclients_commidities_lists] = useState([])
-  const [client_commidities_list, setclient_commidities_list] = useState([])
+  const [clients_commidities_lists, setclients_commidities_lists] = useState(
+    []
+  );
+  const [client_commidities_list, setclient_commidities_list] = useState([]);
 
   //Billto
   const [billto_list, setbillto_list] = useState([]);
@@ -170,7 +212,6 @@ const AddOrder = () => {
   const [shipper_pincode, setshipper_pincode] = useState("");
   const [shipper_locality, setshipper_locality] = useState("");
   const [shipper_locality_id, setshipper_locality_id] = useState(0);
-
   const [shipper_add_1, setshipper_add_1] = useState("");
   const [shipper_add_2, setshipper_add_2] = useState("");
   const [search_shipper, setsearch_shipper] = useState("");
@@ -203,9 +244,7 @@ const AddOrder = () => {
     "With Logger",
     "With Box + With Logger",
   ]);
-  const [asset_info_selected, setasset_info_selected] = useState(
-    ""
-  );
+  const [asset_info_selected, setasset_info_selected] = useState("");
   const [box, setbox] = useState([]);
   const [logger, setlogger] = useState([]);
   const [both, setboth] = useState([]);
@@ -250,7 +289,8 @@ const AddOrder = () => {
   const [commodity, setcommodity] = useState("");
   const [commodity_id, setcommodity_id] = useState(0);
   const [search_commodity, setsearch_commodity] = useState("");
-
+  const e_acess_token = useSelector((state) => state.eway_bill.e_access_token);
+  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
   //Transportation cost
   const [transportation_cost, settransportation_cost] = useState("");
 
@@ -259,11 +299,10 @@ const AddOrder = () => {
 
   // Status Info
   const [current_status, setcurrent_status] = useState("");
-  console.log("current_status------oo----", current_status)
+  console.log("current_status------oo----", current_status);
 
   //Multi Field List(Packages----)
   const [order_active_btn, setorder_active_btn] = useState("first");
-
 
   // adding extra input fields in Packages
   const [length, setlength] = useState("");
@@ -381,7 +420,7 @@ const AddOrder = () => {
     setcircle_btn_pod(!circle_btn_pod);
   };
 
-  const [circle_del_btn, setcircle_del_btn] = useState(true)
+  const [circle_del_btn, setcircle_del_btn] = useState(true);
   const toggle_circle_del = () => {
     setcircle_del_btn(!circle_del_btn);
   };
@@ -452,79 +491,100 @@ const AddOrder = () => {
     setpackage_id_list(temp_2);
   };
 
-
-
   // Order Images
 
   const getOrderImages = () => {
-    axios.get(ServerAddress + `booking/get-order-images/${location.state.order.id}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }).then((res) => {
-      let data = res.data.Data
-      if (data) {
-        let aa = []
-        let aaa = []
+    axios
+      .get(
+        ServerAddress + `booking/get-order-images/${location.state.order.id}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((res) => {
+        let data = res.data.Data;
+        if (data) {
+          let aa = [];
+          let aaa = [];
 
-        data?.map((e) => {
-          let addImg = [bucket_address + e.image, e.caption, e.id]
-          aa.unshift(addImg)
-          aaa.unshift(["", "", e.id])
-        })
-        setrow1(aa)
-        setrow3(aaa)
-      }
-    }).catch((err) => {
-      // console.log("errrrrrrrrrrrrrankit----", err)
-    })
-  }
+          data?.map((e) => {
+            let addImg = [bucket_address + e.image, e.caption, e.id];
+            aa.unshift(addImg);
+            aaa.unshift(["", "", e.id]);
+          });
+          setrow1(aa);
+          setrow3(aaa);
+        }
+      })
+      .catch((err) => {
+        // console.log("errrrrrrrrrrrrrankit----", err)
+      });
+  };
 
   const deleteOrderImg = (item1) => {
-    axios.delete(ServerAddress + `booking/delete-order-images/${item1[2]}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }).then((res) => {
-      if (res.data.message === "Image deleted successfully.") {
-        deleteimage(item1);
-      } else {
-        alert(res.data.message)
-      }
-    }).catch((err) => {
-      // console.log(console.log("err----delete---Order--", err))
-    })
-  }
+    axios
+      .delete(ServerAddress + `booking/delete-order-images/${item1[2]}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((res) => {
+        if (res.data.message === "Image deleted successfully.") {
+          deleteimage(item1);
+        } else {
+          alert(res.data.message);
+        }
+      })
+      .catch((err) => {
+        // console.log(console.log("err----delete---Order--", err))
+      });
+  };
   const deleteInvoiceImg = (item2) => {
-    axios.delete(ServerAddress + `booking/delete-invoice-images/${item2[4]}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }).then((res) => {
-      deleteinvoice(item2);
-    }).catch((err) => {
-      // console.log(console.log("err----delete---invoice--", err))
-    })
-  }
+    axios
+      .delete(ServerAddress + `booking/delete-invoice-images/${item2[4]}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((res) => {
+        deleteinvoice(item2);
+      })
+      .catch((err) => {
+        // console.log(console.log("err----delete---invoice--", err))
+      });
+  };
 
   const getInvoiceImages = () => {
-    axios.get(ServerAddress + `booking/get-invoice-images/${location.state.order.id}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }).then((res) => {
-      let data = res.data.Data
-      let aa = []
-      data.map((e) => {
-        let addImg = [bucket_address + e.invoice_image, e.invoice_at.split("T")[0], e.invoice_no, e.invoice_amount, e.id]
-        aa.unshift(addImg)
+    axios
+      .get(
+        ServerAddress + `booking/get-invoice-images/${location.state.order.id}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((res) => {
+        let data = res.data.Data;
+        let aa = [];
+        data.map((e) => {
+          let addImg = [
+            bucket_address + e.invoice_image,
+            e.invoice_at.split("T")[0],
+            e.invoice_no,
+            e.invoice_amount,
+            e.id,
+          ];
+          aa.unshift(addImg);
+        });
+        setrow2(aa);
       })
-      setrow2(aa)
-
-    }).catch((err) => {
-      // console.log("errrrrrrrrrrrrrankit----", err)
-    })
-  }
+      .catch((err) => {
+        // console.log("errrrrrrrrrrrrrankit----", err)
+      });
+  };
 
   useLayoutEffect(() => {
-    if (isupdating && order_active_btn === 'second') {
-      getOrderImages()
-    } else if (isupdating && order_active_btn === 'third') {
-      getInvoiceImages()
+    if (isupdating && order_active_btn === "second") {
+      getOrderImages();
+    } else if (isupdating && order_active_btn === "third") {
+      getInvoiceImages();
     }
-  }, [order_active_btn])
+  }, [order_active_btn]);
 
   const addorderimage = () => {
     setSelectedFile("");
@@ -573,24 +633,23 @@ const AddOrder = () => {
 
   //Logger PDF
 
-  const [logger_pdf, setlogger_pdf] = useState("")
-  const [text, settext] = useState("")
-  const dimension_list5 = [logger_pdf, text]
-  const [row5, setrow5] = useState([dimension_list5])
+  const [logger_pdf, setlogger_pdf] = useState("");
+  const [text, settext] = useState("");
+  const dimension_list5 = [logger_pdf, text];
+  const [row5, setrow5] = useState([dimension_list5]);
 
   useEffect(() => {
     if (Logger_Selected.length > 0) {
-      let temp_log = []
+      let temp_log = [];
       for (let index = 0; index < Logger_Selected.length; index++) {
         const element = Logger_Selected[index];
-        temp_log.push(["", element[1]])
-
+        temp_log.push(["", element[1]]);
       }
-      setrow5(temp_log)
+      setrow5(temp_log);
     }
-  }, [Logger_Selected])
+  }, [Logger_Selected]);
 
-  const [logger_id_list, setlogger_id_list] = useState([])
+  const [logger_id_list, setlogger_id_list] = useState([]);
   let log = row.length - 1;
   const addLogger = () => {
     setlogger_pdf("");
@@ -615,16 +674,9 @@ const AddOrder = () => {
     setlogger_id_list(temp_2);
   };
 
-  const [same_as, setsame_as] = useState(false)
+  const [same_as, setsame_as] = useState(false);
   const [showOrder, setShowOrder] = useState(false);
-  const [toggle_order, settoggle_order] = useState(false)
-  const [linked_order, setlinked_order] = useState("")
-  const [order_type_list, setorder_type_list] = useState([
-    "Normal",
-    "Return",
-    "Issue",
-  ])
-  const [order_type, setorder_type] = useState(order_type_list[0])
+  const [toggle_order, settoggle_order] = useState(false);
 
   // validation
   const validation = useFormik({
@@ -638,7 +690,7 @@ const AddOrder = () => {
       consignee_city: "",
       consignee_state: "",
       consignee_pin_code: "",
-      total_quantity: (order_type == "Issue" && returned_data.length !== 0) ? returned_data[0].issue_notreceived.length : order.total_quantity || "0",
+      total_quantity: order.total_quantity || "0",
       chargeable_weight: order.chargeable_weight || "0",
       e_way_bill_no: order.e_waybill_number || "",
       e_Way_Billpart_two: order.e_waybill_number_part_b || "",
@@ -665,87 +717,81 @@ const AddOrder = () => {
       let doc_no_scroll = window.document.getElementById("doc_no");
       // let shipper = window.document.getElementById("shipper");
 
-      if (
-        entry_type_btn === "MANUALLY" &&
-        docket_no_value.length < 6
-        // || (entry_type_btn === "MANUALLY" && docket_no_value.length < 6)
-      ) {
-        setdocket_error(true);
-        doc_no_scroll.scrollIntoView();
-      }
-      //  else if (transport_mode === "") {
+      // if (
+      //   entry_type_btn === "MANUALLY" &&
+      //   docket_no_value.length < 6
+      //   // || (entry_type_btn === "MANUALLY" && docket_no_value.length < 6)
+      // ) {
+      //   setdocket_error(true);
+      //   doc_no_scroll.scrollIntoView();
+      // } else if (transport_mode === "") {
       //   settransport_mode_error(true);
       //   doc_no_scroll.scrollIntoView();
+      // } else if (billto === "") {
+      //   setbillto_error(true);
+      // } else if (client === "") {
+      //   setclient_error(true);
+      //   doc_no_scroll.scrollIntoView();
       // }
-       else if (billto === "") {
-        setbillto_error(true);
-      } else if (client === "") {
-        setclient_error(true);
-        doc_no_scroll.scrollIntoView();
-      } else if (origincity === "") {
-        document.getElementById("shipper").scrollIntoView();
-        setorigin_city_error(true);
-      } else if (shipper === "") {
-        setshipper_error(true);
-        document.getElementById("shipper").scrollIntoView();
-      } else if (destinationcity === "") {
-        setdestination_city_error(true);
-        document.getElementById("consignee").scrollIntoView();
-      } else if (consignee === "") {
-        setconsignee_error(true);
-        document.getElementById("consignee").scrollIntoView();
-      } else if (commodity === "") {
-        setcommodity_error(true);
-      } else if (delivery_type === "LOCAL" && local_delivery_type === "") {
-        setlocal_delivery_type_error(true);
-      } else if (d_cod === "") {
-        setd_cod_error(true);
-      } else if (
-        cal_type === "DIMENSION" &&
-        (length === "" || breadth === "" || height === "" || pieces === "")
-      ) {
-        alert("Please Add Pakage Details");
-      } else if (
-        (length !== "" || breadth !== "" || height !== "" || pieces !== "") &&
-        (length === "" || breadth === "" || height === "" || pieces === "")
-      ) {
-        alert(
-          "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
-        );
-      } else if (total_no_of_pieces !== parseInt(values.total_quantity)) {
-        alert(
-          "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
-        );
-      } else if (d_cod === "Yes" && transportation_cost === "") {
-        settransportation_cost_err(true);
-      } else if (booking_date === "") {
-        alert("Please Add Booking Date");
-      } else {
-        // setShowOrder(!isupdating && true);
-        // aa(values)
-        isupdating ? update_order(values) : send_order_data(values);
-      }
+
+      //  else if (commodity === "") {
+      //   setcommodity_error(true);
+      // } else if (delivery_type === "LOCAL" && local_delivery_type === "") {
+      //   setlocal_delivery_type_error(true);
+      // } else if (d_cod === "") {
+      //   setd_cod_error(true);
+      // } else if (
+      //   cal_type === "DIMENSION" &&
+      //   (length === "" || breadth === "" || height === "" || pieces === "")
+      // ) {
+      //   alert("Please Add Pakage Details");
+      // } else if (
+      //   (length !== "" || breadth !== "" || height !== "" || pieces !== "") &&
+      //   (length === "" || breadth === "" || height === "" || pieces === "")
+      // ) {
+      //   alert(
+      //     "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
+      //   );
+      // } else if (total_no_of_pieces !== parseInt(values.total_quantity)) {
+      //   alert(
+      //     "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
+      //   );
+      // } else if (d_cod === "Yes" && transportation_cost === "") {
+      //   settransportation_cost_err(true);
+      // } else if (booking_date === "") {
+      //   alert("Please Add Booking Date");
+      // } else {
+      //   // setShowOrder(!isupdating && true);
+      //   // aa(values)
+      isupdating ? update_order(values) : send_order_data(values);
+      console.log("hello ji");
+      // }
     },
   });
 
   //Barcode Box
-  const [box_bq, setbox_bq] = useState("")
+  const [box_bq, setbox_bq] = useState("");
   let dimension_list8 = [box_bq];
-  const [row6, setrow6] = useState([dimension_list8])
-
+  const [row6, setrow6] = useState([dimension_list8]);
+  console.log("row6--------------------------", row6);
+  console.log(
+    "validation.values.total_quantity",
+    validation.values.total_quantity
+  );
   useEffect(() => {
     if (validation.values.total_quantity !== 0) {
-      let val = validation.values.total_quantity
-      let val_box = []
+      let val = validation.values.total_quantity;
+      console.log("val----", val);
+      let val_box = [];
       for (let index = 0; index < val; index++) {
+        console.log("val--------", index);
         // const element = val[index];
         // console.log("element----", element)
-        val_box.push([""])
-
+        val_box.push([""]);
       }
-      setrow6(val_box)
+      setrow6(val_box);
     }
-  }, [validation.values.total_quantity])
+  }, [validation.values.total_quantity]);
 
   // Get Packages
   const get_packages = () => {
@@ -808,11 +854,11 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_cities/?search=${""}&p=${origincity_page}&records=${10}&city_search=${origincity_search_item}` +
-        "&place_id=" +
-        place_id +
-        "&filter_by=" +
-        filter_by,
+          `master/all_cities/?search=${""}&p=${origincity_page}&records=${10}&city_search=${origincity_search_item}` +
+          "&place_id=" +
+          place_id +
+          "&filter_by=" +
+          filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -864,11 +910,11 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_cities/?search=${""}&p=${destinationcity_page}&records=${10}&city_search=${destinationcity_search_item}` +
-        "&place_id=" +
-        place_id +
-        "&filter_by=" +
-        filter_by,
+          `master/all_cities/?search=${""}&p=${destinationcity_page}&records=${10}&city_search=${destinationcity_search_item}` +
+          "&place_id=" +
+          place_id +
+          "&filter_by=" +
+          filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -919,13 +965,12 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/get_client_shipperconsignee/?client_id=${client_id}&city_id=${origin_id}&p=${shipper_page}&records=${10}&name_search=${shipper_search_item}`,
+          `master/get_client_shipperconsignee/?client_id=${client_id}&city_id=${origin_id}&p=${shipper_page}&records=${10}&name_search=${shipper_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
-        console.log("response----shipp------", response)
         setshipperdata(response.data.results);
         shipperlist = response.data.results.map((v) => [
           v.id,
@@ -943,7 +988,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/get_client_shipperconsignee/?client_id=${client_id}&city_id=${destination_id}&p=${consignee_page}&records=${10}&name_search=${consignee_search_item}`,
+          `master/get_client_shipperconsignee/?client_id=${client_id}&city_id=${destination_id}&p=${consignee_page}&records=${10}&name_search=${consignee_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -983,14 +1028,14 @@ const AddOrder = () => {
 
   //Post Order Image
   const send_order_image = (awb) => {
-
-    let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "")
+    let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "");
     const docket_imageform = new FormData();
     if (newrow3.length !== 0) {
-
-
       docket_imageform.append(`awb_no`, awb);
-      docket_imageform.append("docketcount", newrow3[0][0] !== "" ? newrow3.length : 0);
+      docket_imageform.append(
+        "docketcount",
+        newrow3[0][0] !== "" ? newrow3.length : 0
+      );
       if (newrow3.length !== 0 && newrow3[0][0] !== "") {
         for (let index = 0; index < newrow3.length; index++) {
           // docket_imageform.append("docketcount", row3[0][0] !== "" ? row3.length : 0);
@@ -1002,12 +1047,18 @@ const AddOrder = () => {
             newrow3[index][0],
             newrow3[index][0]?.name
           );
-          docket_imageform.append(`DocketImageCaption${index}`, newrow3[index][1]);
+          docket_imageform.append(
+            `DocketImageCaption${index}`,
+            newrow3[index][1]
+          );
           docket_imageform.append(`id`, 0);
         }
       }
 
-      docket_imageform.append("invoice_count", row4[0][0] !== "" ? row4.length : 0);
+      docket_imageform.append(
+        "invoice_count",
+        row4[0][0] !== "" ? row4.length : 0
+      );
       if (row4.length !== 0 && row4[0][0] !== "") {
         for (let index = 0; index < row4.length; index++) {
           docket_imageform.append(
@@ -1021,6 +1072,7 @@ const AddOrder = () => {
         }
       }
 
+      console.log("docket_imageform----------", row4.length);
       axios
         .post(ServerAddress + "booking/add-order-images/", docket_imageform, {
           headers: {
@@ -1039,8 +1091,7 @@ const AddOrder = () => {
             // console.log("Ankkiii");
           }
         })
-        .catch((err) => {
-        });
+        .catch((err) => {});
     }
   };
 
@@ -1054,20 +1105,22 @@ const AddOrder = () => {
           entry_type: entry_type_btn,
           delivery_type: String(delivery_type).toUpperCase(),
           order_created_branch: user.home_branch,
-          transportation_mode: delivery_type === "LOCAL" ? "LOCAL" : String(transport_mode).toUpperCase(),
+          transportation_mode:
+            delivery_type === "LOCAL"
+              ? "LOCAL"
+              : String(transport_mode).toUpperCase(),
           // delivery_mode: delivery_type === "LOCAL" ? "LOCAL" : String(delivery_mode).toUpperCase(),
           delivery_mode: "DOOR TO DOOR",
           order_channel: "WEB APP",
           billto: billto_id,
           client: client_id,
-          shipper: shipper_id,
-          consignee: consignee_id,
+          shipper: eway_confirm ? eway_list.fromTrdName : shipper_n,
+          consignee: eway_confirm ? eway_list.shipToTradeName : consignee_n,
           booking_at: booking_date,
           local_delivery_type: String(local_delivery_type).toUpperCase(),
           cold_chain: cold_chain ? true : false,
           actual_weight: actual_weigth,
           total_quantity: values.total_quantity,
-          prev_total_quantity: values.total_quantity,
           cod: String(d_cod).toUpperCase(),
           transportation_cost: d_cod === "Yes" ? transportation_cost : null,
           remarks: values.remarks,
@@ -1077,21 +1130,23 @@ const AddOrder = () => {
           packageList: row,
           InvoiceList: [],
           notification: true,
-          asset_type: asset_prov ? String(asset_info_selected).toUpperCase() : "NONE",
+          asset_type: asset_prov
+            ? String(asset_info_selected).toUpperCase()
+            : "NONE",
           asset:
             asset_info_selected === "With Box" &&
-              asset_info_selected !== "None" &&
-              cold_chain
+            asset_info_selected !== "None" &&
+            cold_chain
               ? box
               : asset_info_selected === "With Logger" &&
                 asset_info_selected !== "None" &&
                 cold_chain
-                ? logger
-                : asset_info_selected === "With Box + With Logger" &&
-                  asset_info_selected !== "None" &&
-                  cold_chain
-                  ? both
-                  : [],
+              ? logger
+              : asset_info_selected === "With Box + With Logger" &&
+                asset_info_selected !== "None" &&
+                cold_chain
+              ? both
+              : [],
           current_branch: home_branch_id,
           client_name: client.toUpperCase(),
           branch_name: user.branch_nm ? user.branch_nm : "BRANCH NOT SET",
@@ -1099,29 +1154,52 @@ const AddOrder = () => {
           consignee_name: consignee.toUpperCase(),
           commodity_name: commodity.toUpperCase(),
           shipper_address: shipper_add_1.toUpperCase(),
-          shipper_location: shipper_locality_id,
-          consignee_location: consignee_locality_id,
+          shipper_location: eway_confirm ? locality_id : locality_id_f,
+          consignee_location: eway_confirm ? locality_id_to :locality_id_f_c,
+          with_ewayBill: eway_confirm ? "True" : "False",
+          eway_bill_no: ewaybill_no,
+          consignee_address1: eway_confirm
+            ? eway_list.toAddr1.toUpperCase()
+            : consignee_address.toUpperCase(),
+          shipper_address1: eway_confirm
+            ? eway_list.fromAddr1.toUpperCase()
+            : shipper_address.toUpperCase(),
+
+          billto_name: billto.toUpperCase(),
           consignee_address: consignee_add_1.toUpperCase(),
           order_origin: all_shipper_details.toUpperCase(),
           order_destination: all_consignee_details.toUpperCase(),
           origin_city: origincity.toUpperCase(),
           origin_state: shipper_state.toUpperCase(),
-          origin_pincode: shipper_pincode.toUpperCase(),
-          origin_locality: shipper_locality.toUpperCase(),
-          destination_city: destinationcity.toUpperCase(),
+          origin_pincode: shipper_pincode,
+          origin_locality: shipper_locality,
+          destination_city: destinationcity,
           destination_state: consignee_state.toUpperCase(),
-          destination_pincode: consignee_pincode.toUpperCase(),
-          destination_locality: consignee_locality.toUpperCase(),
+          destination_pincode: consignee_pincode,
+          destination_locality: consignee_locality,
           billto_name: billto.toUpperCase(),
+          eway_detail:eway_confirm ? eway_detail_l : null,
           is_docket_entry: user.is_docket_entry ? user.is_docket_entry : false,
-          starting_docket_no: user.starting_docket_no ? user.starting_docket_no : "",
+          starting_docket_no: user.starting_docket_no
+            ? user.starting_docket_no
+            : "",
           barcode_no: row6,
-          linked_order:order_type === "Normal" ? null : linked_order,
-          order_type:order_type === "Normal" ? null :  order_type.toUpperCase(),
 
           cm_current_department: user.user_department,
-          cm_current_status: (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? 'NOT APPROVED' : (cm_current_status).toUpperCase(),
-          cm_transit_status: (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? 'NOT APPROVED' : (cm_current_status).toUpperCase(),
+          cm_current_status:
+            user.user_department_name + " " + user.designation_name ===
+              "DATA ENTRY OPERATOR" ||
+            user.user_department_name + " " + user.designation_name ===
+              "CUSTOMER SERVICE EXECUTIVE"
+              ? "NOT APPROVED"
+              : cm_current_status.toUpperCase(),
+          cm_transit_status:
+            user.user_department_name + " " + user.designation_name ===
+              "DATA ENTRY OPERATOR" ||
+            user.user_department_name + " " + user.designation_name ===
+              "CUSTOMER SERVICE EXECUTIVE"
+              ? "NOT APPROVED"
+              : cm_current_status.toUpperCase(),
         },
         {
           headers: {
@@ -1163,13 +1241,13 @@ const AddOrder = () => {
       cod: d_cod,
       cold_chain: cold_chain,
       commodity_name: commodity,
-      consignee_address_line: consignee_add_1,//
+      consignee_address_line: consignee_add_1, //
       consignee_city: destinationcity,
       consignee_locality: consignee_locality,
       consignee_name: consignee,
       consignee_pincode: consignee_pincode,
       // delivery_mode: delivery_mode,
-      delivery_type: (delivery_type).toUpperCase(),
+      delivery_type: delivery_type.toUpperCase(),
       entry_type: entry_type_btn,
 
       local_delivery_type: local_delivery_type,
@@ -1183,8 +1261,7 @@ const AddOrder = () => {
       shipper_state: shipper_state,
       total_quantity: values.total_quantity,
       transportation_mode: transport_mode,
-      linked_order:linked_order,
-      order_type: order_type.toUpperCase(),
+
       // billto_name: billto,
     });
 
@@ -1207,20 +1284,22 @@ const AddOrder = () => {
           entry_type: entry_type_btn,
           delivery_type: String(delivery_type).toUpperCase(),
           order_created_branch: user.home_branch,
-          transportation_mode: delivery_type === "LOCAL" ? "LOCAL" : String(transport_mode).toUpperCase(),
+          transportation_mode:
+            delivery_type === "LOCAL"
+              ? "LOCAL"
+              : String(transport_mode).toUpperCase(),
           // delivery_mode: delivery_type === "LOCAL" ? "LOCAL" : String(delivery_mode).toUpperCase(),
           delivery_mode: "DOOR TO DOOR",
           order_channel: "WEB APP",
           billto: billto_id,
           client: client_id,
-          shipper: shipper_id,
-          consignee: consignee_id,
+          // shipper: eway_confirm ? eway_list.fromTrdName : shipper_n,
+          // consignee: eway_confirm ?eway_list.,
           booking_at: booking_date,
           local_delivery_type: String(local_delivery_type).toUpperCase(),
           cold_chain: cold_chain,
           actual_weight: actual_weigth,
           total_quantity: values.total_quantity,
-          prev_total_quantity: values.total_quantity,
           cod: String(d_cod).toUpperCase(),
           transportation_cost: d_cod === "Yes" ? transportation_cost : null,
           remarks: values.remarks,
@@ -1237,18 +1316,18 @@ const AddOrder = () => {
               : "NONE",
           asset:
             asset_info_selected === "With Box" &&
-              asset_info_selected !== "None" &&
-              cold_chain
+            asset_info_selected !== "None" &&
+            cold_chain
               ? box
               : asset_info_selected === "With Logger" &&
                 asset_info_selected !== "None" &&
                 cold_chain
-                ? logger
-                : asset_info_selected === "With Box + With Logger" &&
-                  asset_info_selected !== "None" &&
-                  cold_chain
-                  ? both
-                  : [],
+              ? logger
+              : asset_info_selected === "With Box + With Logger" &&
+                asset_info_selected !== "None" &&
+                cold_chain
+              ? both
+              : [],
 
           client_name: client.toUpperCase(),
           branch_name: user.branch_nm ? user.branch_nm : "BRANCH NOT SET",
@@ -1273,11 +1352,9 @@ const AddOrder = () => {
           assetdeleted_ids: assetdeleted_ids,
           assetold_ids: assetold_ids,
           assetnew_ids: assetnew_ids,
-          linked_order:linked_order,
-          order_type:order_type.toUpperCase(),
 
           cm_transit_status: status_toggle === true ? cm_current_status : "",
-          cm_current_status: (cm_current_status).toUpperCase(),
+          cm_current_status: cm_current_status.toUpperCase(),
           cm_remarks: toTitleCase(message).toUpperCase(),
         },
         {
@@ -1288,11 +1365,9 @@ const AddOrder = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          send_order_image(order.docket_no)
+          send_order_image(order.docket_no);
           dispatch(setToggle(true));
-          dispatch(
-            setDataExist(`Order Updated Sucessfully`)
-          );
+          dispatch(setDataExist(`Order Updated Sucessfully`));
           dispatch(setAlertType("info"));
           dispatch(setShowAlert(true));
           navigate("/booking/orders");
@@ -1312,7 +1387,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${search_billto}&data=all`,
+          `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${search_billto}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1338,7 +1413,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_clients/?bill_to=${billto_id}&search=${""}&p=${client_page}&records=${10}&name_search=${search_client}`,
+          `master/all_clients/?bill_to=${billto_id}&search=${""}&p=${client_page}&records=${10}&name_search=${search_client}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1346,8 +1421,11 @@ const AddOrder = () => {
       .then((response) => {
         data = response.data.results;
 
-        let com_list_cl = data.map(v => [v.id, v.commodities])
-        setclients_commidities_lists(com_list_cl)
+        console.log("clients data", data);
+
+        let com_list_cl = data.map((v) => [v.id, v.commodities]);
+        console.log("com_list_cl", com_list_cl);
+        setclients_commidities_lists(com_list_cl);
         for (let index = 0; index < data.length; index++) {
           temp2.push([data[index].id, toTitleCase(data[index].name)]);
         }
@@ -1366,7 +1444,11 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_commodities/?search=${""}&p=${page}&records=${10}&commodity_type=${[""]}&commodity_name=${[""]}&commodity_name_search=${search_commodity}&data=all`,
+          `master/all_commodities/?search=${""}&p=${page}&records=${10}&commodity_type=${[
+            "",
+          ]}&commodity_name=${[
+            "",
+          ]}&commodity_name_search=${search_commodity}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1374,6 +1456,7 @@ const AddOrder = () => {
       .then((response) => {
         if (response.data.results.length > 0) {
           data = response.data.results;
+          console.log("data-------", data);
           for (let index = 0; index < data.length; index++) {
             temp3.push([
               data[index].id,
@@ -1396,7 +1479,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/get_orderasset/?order_id=${order_id}&p=1&records=10`,
+          `master/get_orderasset/?order_id=${order_id}&p=1&records=10`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1411,20 +1494,20 @@ const AddOrder = () => {
             temp.push([
               order_asset.asset,
               order_asset.asset_id +
-              "-" +
-              order_asset.box_type +
-              "-" +
-              order_asset.product_id,
+                "-" +
+                order_asset.box_type +
+                "-" +
+                order_asset.product_id,
             ]);
             deleted_id.push(order_asset.asset);
           } else {
             temp2.push([
               order_asset.asset,
               order_asset.asset_id +
-              "-" +
-              order_asset.box_type +
-              "-" +
-              order_asset.manufacturer_name,
+                "-" +
+                order_asset.box_type +
+                "-" +
+                order_asset.manufacturer_name,
             ]);
             deleted_id.push(order_asset.asset);
           }
@@ -1479,9 +1562,11 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/get_asset_details/?p=${asset_info_selected === "With Logger" ? Logger_page : box_list_page}&records=${10}&asset_type=${String(
-          asset_info_selected
-        ).toUpperCase()}&product_id_search=${search_logger}`,
+          `master/get_asset_details/?p=${
+            asset_info_selected === "With Logger" ? Logger_page : box_list_page
+          }&records=${10}&asset_type=${String(
+            asset_info_selected
+          ).toUpperCase()}&product_id_search=${search_logger}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1494,28 +1579,26 @@ const AddOrder = () => {
             box.push([
               element.id,
               element.asset_id +
-              "-" +
-              element.box_type +
-              "-" +
-              element.product_id,
+                "-" +
+                element.box_type +
+                "-" +
+                element.product_id,
             ]);
           } else {
             logger.push([
               element.id,
               element.asset_id +
-              "-" +
-              element.box_type +
-              "-" +
-              element.manufacturer_name,
+                "-" +
+                element.box_type +
+                "-" +
+                element.manufacturer_name,
             ]);
           }
         }
         logger = [...new Set(logger.map((v) => `${v}`))].map((v) =>
           v.split(",")
         );
-        box = [...new Set(box.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
+        box = [...new Set(box.map((v) => `${v}`))].map((v) => v.split(","));
         setbox_list_1(box);
         setLogger_list(logger);
         if (isupdating && order_id !== "") {
@@ -1588,7 +1671,7 @@ const AddOrder = () => {
 
   useEffect(() => {
     if (billto_id !== 0) {
-      if (!isupdating && returned_data.length === 0) {
+      if (!isupdating) {
         setclient("");
         setclient_id("");
       }
@@ -1606,10 +1689,10 @@ const AddOrder = () => {
   }, [order_id]);
 
   useEffect(() => {
-    if (data === true && isupdating === true && returned_data.length === 0) {
+    if ((data === true) & (isupdating === true)) {
       setclient_id(order.client);
     }
-    if (location.state === null && order_type == "Normal") {
+    if (location.state === null) {
       setorigincity("");
       setorigincity_id("");
       setshipper_id("");
@@ -1619,13 +1702,17 @@ const AddOrder = () => {
     }
     // Setting Client Commidities After Selecting Client
     if (client_id != 0 && clients_commidities_lists.length !== 0) {
-      let sel_com = clients_commidities_lists.find(v => v[0] == client_id)[1]
+      let sel_com = clients_commidities_lists.find((v) => v[0] == client_id)[1];
+      console.log("commodity_data_list", commodity_data_list);
+      console.log("sel_com", sel_com);
+      let tmp_com_data_list = commodity_data_list.filter((v) =>
+        sel_com.includes(parseInt(v[0]))
+      );
 
-      let tmp_com_data_list = commodity_data_list.filter(v => sel_com.includes(parseInt(v[0])))
-
-      setclient_commidities_list(tmp_com_data_list)
+      console.log("tmp_com_data_list", tmp_com_data_list);
+      setclient_commidities_list(tmp_com_data_list);
     }
-  }, [client_id, data, clients_commidities_lists, order_type]);
+  }, [client_id, data, clients_commidities_lists]);
 
   useEffect(() => {
     setcustomer([]);
@@ -1635,32 +1722,24 @@ const AddOrder = () => {
       setcustomer(temp);
     });
   }, [selectClient]);
-  
-  console.log("shipper_locality_id--111------", shipper_locality_id)
+
   useLayoutEffect(() => {
-    console.log("shipper_locality_id--------", shipper_locality_id)
-    console.log("shipper_id----------------", shipper_id)
-    console.log("shipperdata------------------", shipperdata)
-    console.log("client_id-------", client_id)
-    console.log("origincity_id----------", origincity_id)
     if (shipper_id !== "") {
       let selected_shipper = shipperdata.filter(
         (value) => value.id === shipper_id
       );
       setshipper_details(selected_shipper[0]);
     }
-  }, [shipper_id,shipperdata]);
+  }, [shipper_id]);
 
   useEffect(() => {
     let selected_consignee = consigneedata.filter(
       (val) => val.id === consignee_id
     );
     setconsignee_details(selected_consignee[0]);
-  }, [consignee_id,consigneedata]);
-
+  }, [consignee_id]);
 
   useLayoutEffect(() => {
-
     if (shipper_details) {
       setshipper_state(toTitleCase(shipper_details.state_name));
       setshipper_city(toTitleCase(shipper_details.city_name));
@@ -1680,10 +1759,10 @@ const AddOrder = () => {
       setconsignee_locality(toTitleCase(consignee_details.locality_name));
       setconsignee_locality_id(consignee_details.location);
     }
-  }, [consignee_details, consignee_id]);
+  }, [consignee_details]);
 
   useEffect(() => {
-    if (location.state === null && returned_data.length === 0) {
+    if (location.state === null) {
       setshipper("");
       setshipper_state("");
       setshipper_city("");
@@ -1720,10 +1799,33 @@ const AddOrder = () => {
   //   }
   // }, [isupdating,order]);
 
-
   useLayoutEffect(() => {
     try {
       let order_data = location.state.order;
+      console.log("Haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",order_data)
+      setshipper_n(order_data.shipper);
+      setstate(order_data.shipper_state);
+      setlocality_id_f(order_data.shipper_location);
+      setcity(order_data.shipper_city);
+      setconsignee_n(order_data.consignee);
+      setpincode(order_data.shipper_pincode);
+      setconsginee_st(order_data.consignee_state);
+      setlocality_sel_to(order_data.consignee_locality);
+      setlocality_id_to(order_data.consignee_location);
+      setlocality_sel(order_data.shipper_locality);
+      setlocality_id(order_data.shipper_location);
+      setconsignee_address(order_data.consignee_address1);
+      setconsginee_c(order_data.consignee_city);
+      setconsignee_pincode(order_data.consignee_pincode);
+      setlocality_c(order_data.consignee_locality);
+      setlocality_id_f_c(order_data.consignee_location);
+      setlocality(order_data.shipper_locality);
+      setshipper_address(order_data.shipper_address1)
+      setewaybill_no(order_data.eway_bill_no);
+      setbooking_through(order_data.with_ewayBill);
+      seteway_confirm(order_data.with_ewayBill);
+      seteway_detail_l(order_data);
+      // seteway_confirm(order_data)
       if (location.state.hash) {
         sethash(location.state.hash);
         let hsh = location.state.hash;
@@ -1732,9 +1834,6 @@ const AddOrder = () => {
         }
       }
       setorder(location.state.order);
-      setorder_type(toTitleCase(order_data.order_type))
-      setlinked_order((order_data.order_type === "RETURN" || order_data.order_type === "ISSUE") ? order_data.linked_order_value : "");
-   
       setcurrent_status(order_data.current_status);
       setdocket_no_value(order_data.docket_no);
       setisupdating(true);
@@ -1746,9 +1845,9 @@ const AddOrder = () => {
       settransport_mode(toTitleCase(order_data.transportation_mode));
       // setdelivery_mode(order_data.delivery_mode);
       settransportation_cost(order_data.transportation_cost);
-      
+
       setcommodity(order_data.commodity_name);
-      setcommodity_id(order_data.commodity);
+      setcommodity_id(order.commodity);
       setd_cod(toTitleCase(order_data.cod));
       if (order_data.cod === "Yes") {
         settransportation_cost(order_data.transportation_cost);
@@ -1784,21 +1883,19 @@ const AddOrder = () => {
       setlocal_delivery_type(toTitleCase(order_data.local_delivery_type));
       setasset_info_selected(toTitleCase(order_data.asset_type));
       if (order_data.asset_type === "NONE") {
-        setasset_prov(false)
-      }
-      else {
-        setasset_prov(true)
+        setasset_prov(false);
+      } else {
+        setasset_prov(true);
       }
       setcal_type(order_data.local_cal_type);
-
 
       setshipper_add_1(toTitleCase(order_data.shipper_address_line));
       setdestinationcity(toTitleCase(order_data.consignee_city));
       setdestinationcity_id(toTitleCase(order_data.consignee_city_id));
-
-    } catch (error) { }
+    } catch (error) {}
   }, []);
 
+  
   useEffect(() => {
     // if (delivery_mode !== "") {
     //   setdelivery_mode_error(false);
@@ -1925,13 +2022,13 @@ const AddOrder = () => {
     if (client_id && origincity_id) {
       get_client_shipper(client_id, origincity_id);
     }
-  }, [client_id, origincity_id, shipper_page, shipper_search_item, order_type]);
+  }, [client_id, origincity_id, shipper_page, shipper_search_item]);
 
   useEffect(() => {
     if (client_id && destinationcity_id) {
       get_client_consignee(client_id, destinationcity_id);
     }
-  }, [client_id, destinationcity_id, consignee_page, consignee_search_item, order_type]);
+  }, [client_id, destinationcity_id, consignee_page, consignee_search_item]);
 
   // useLayoutEffect(() => {
   //   if (!isupdating) {
@@ -1971,28 +2068,26 @@ const AddOrder = () => {
   //  }, [cold_chain])
 
   useEffect(() => {
-    if (location.state !== null || returned_data.length !== 0) {
+    if (location.state !== null) {
       if (cold_chain) {
         setcold_chain(true);
         setnonecold_chain(false);
-      }
-      else {
+      } else {
         setnonecold_chain(true);
         setcold_chain(false);
       }
     }
-  }, [cold_chain,returned_data]);
+  }, [cold_chain]);
 
   useEffect(() => {
-    if (cold_chain && location.state === null && returned_data.length === 0) {
+    if (cold_chain && location.state === null) {
       setcold_chain(true);
       setnonecold_chain(false);
-
     }
   }, [cold_chain]);
 
   useEffect(() => {
-    if (nonecold_chain && location.state === null && returned_data.length === 0) {
+    if (nonecold_chain && location.state === null) {
       setnonecold_chain(true);
       setcold_chain(false);
     }
@@ -2008,65 +2103,60 @@ const AddOrder = () => {
   //   }
   // }, [nonecold_chain,]);
 
-
   // useEffect(() => {
   //   if(delivery_type === "LOCAL"){
   //     settransport_mode("LOCAL")
   //   }
   // }, [delivery_type])
 
-  const labelArray = ['Step 1', 'Step 2', 'Step 3']
+  const labelArray = ["Step 1", "Step 2", "Step 3"];
   const [currentStep, updateCurrentStep] = useState(1);
 
   function updateStep(step) {
     if (step === 1) {
-      setorder_active_btn("first")
-    }
-    else if (step === 2) {
+      setorder_active_btn("first");
+    } else if (step === 2) {
       setorder_active_btn("second");
-    }
-    else {
+    } else {
       setorder_active_btn("third");
     }
     updateCurrentStep(step);
   }
 
   useEffect(() => {
-    if (delivery_type === "LOCAL" && location.state === null && returned_data.length === 0  && returned_data.length === 0) {
-      settransport_mode("LOCAL")
+    if (delivery_type === "LOCAL" && location.state === null) {
+      settransport_mode("LOCAL");
+    } else if (delivery_type === "DOMESTIC" && location.state === null) {
+      settransport_mode("");
     }
-    else if (delivery_type === "DOMESTIC" && location.state === null && returned_data.length === 0  && returned_data.length === 0) {
-      settransport_mode("")
-    }
-  }, [delivery_type])
+  }, [delivery_type]);
 
   useEffect(() => {
-    if (!asset_prov && location.state == null && returned_data.length === 0) {
-      setasset_info_selected("")
+    if (!asset_prov && location.state == null) {
+      setasset_info_selected("");
     }
-  }, [asset_prov])
+  }, [asset_prov]);
 
   //For Checker & Maker
-  const [toggle_rejected, settoggle_rejected] = useState(false)
-  const [message, setmessage] = useState("")
+  const [toggle_rejected, settoggle_rejected] = useState(false);
+  const [message, setmessage] = useState("");
   const [message_error, setmessage_error] = useState(false);
-  const [status_toggle, setstatus_toggle] = useState(false)
+  const [status_toggle, setstatus_toggle] = useState(false);
   const [cm_current_status, setcm_current_status] = useState("");
 
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => {
-    setShow(true)
-    setmessage_error(false)
+    setShow(true);
+    setmessage_error(false);
   };
 
   useEffect(() => {
-    settoggle_rejected(false)
-  }, [])
+    settoggle_rejected(false);
+  }, []);
 
   const update_orderstatus = (id) => {
-
     axios
       .put(
         ServerAddress + "booking/reject_order/" + id,
@@ -2074,7 +2164,7 @@ const AddOrder = () => {
           cm_current_status: "REJECTED",
           cm_remarks: toTitleCase(message).toUpperCase(),
           // transit_status: current_status,
-          change_fields: { 'cm_current_status': 'REJECTED' }
+          change_fields: { cm_current_status: "REJECTED" },
         },
         {
           headers: {
@@ -2096,53 +2186,61 @@ const AddOrder = () => {
       });
   };
 
-
   const handleSubmit = () => {
     if (message == "") {
       setmessage_error(true);
+    } else {
+      update_orderstatus(order.id);
+      setShow(false);
     }
-    else {
-      update_orderstatus(order.id)
-      setShow(false)
-    }
-  }
+  };
 
   useEffect(() => {
-    if (user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE" || user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR") {
-      setcm_current_status("NOT APPROVED")
-      setstatus_toggle(true)
-    }
-    else if (user.user_department_name + " " + user.designation_name === "OPERATION MANAGER") {
-      setcm_current_status("VERIFIED OPERATION MANAGER")
-      setstatus_toggle(true)
-    }
-    else if (user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER") {
-      setcm_current_status("VERIFIED CUSTOMER SUPPORT MANAGER")
-      setstatus_toggle(true)
-    }
-    else if (user.user_department_name === "ACCOUNTANT") {
-      setcm_current_status("VERIFIED ACCOUNTANT")
-      setstatus_toggle(true)
-    }
-    else if (user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER") {
-      setcm_current_status("VERIFIED ACCOUNT MANAGER")
-      setstatus_toggle(true)
-    }
-    else if (user.user_department_name === "ADMIN" || user.is_superuser) {
-      setcm_current_status("APPROVED")
-      setstatus_toggle(true)
-    }
-    else {
-      setcm_current_status("NOT APPROVED")
+    if (
+      user.user_department_name + " " + user.designation_name ===
+        "CUSTOMER SERVICE EXECUTIVE" ||
+      user.user_department_name + " " + user.designation_name ===
+        "DATA ENTRY OPERATOR"
+    ) {
+      setcm_current_status("NOT APPROVED");
+      setstatus_toggle(true);
+    } else if (
+      user.user_department_name + " " + user.designation_name ===
+      "OPERATION MANAGER"
+    ) {
+      setcm_current_status("VERIFIED OPERATION MANAGER");
+      setstatus_toggle(true);
+    } else if (
+      user.user_department_name + " " + user.designation_name ===
+      "CUSTOMER SUPPORT MANAGER"
+    ) {
+      setcm_current_status("VERIFIED CUSTOMER SUPPORT MANAGER");
+      setstatus_toggle(true);
+    } else if (user.user_department_name === "ACCOUNTANT") {
+      setcm_current_status("VERIFIED ACCOUNTANT");
+      setstatus_toggle(true);
+    } else if (
+      user.user_department_name + " " + user.designation_name ===
+      "ACCOUNT MANAGER"
+    ) {
+      setcm_current_status("VERIFIED ACCOUNT MANAGER");
+      setstatus_toggle(true);
+    } else if (user.user_department_name === "ADMIN" || user.is_superuser) {
+      setcm_current_status("APPROVED");
+      setstatus_toggle(true);
+    } else {
+      setcm_current_status("NOT APPROVED");
       // setstatus_toggle(false)
     }
-
-  }, [user, isupdating])
+  }, [user, isupdating]);
 
   //If Same Client
   // const [same_as, setsame_as] = useState(false)
   // const [showOrder, setShowOrder] = useState(false);
-  // const [toggle_order, settoggle_order] = useState(false
+  // const [toggle_order, settoggle_order] = useState(false)
+  console.log("showOrder-----", showOrder);
+  console.log("same_as----", same_as);
+  console.log("toggle_order----", toggle_order);
 
   const handleCloseOrder = () => setShowOrder(false);
 
@@ -2154,203 +2252,678 @@ const AddOrder = () => {
 
   const handleSubmitOrder = () => {
     // setShowOrder(false);
-    settoggle_order(true)
-    setsame_as(true)
-  }
+    settoggle_order(true);
+    setsame_as(true);
+  };
   const handleClsOrder = () => {
-    settoggle_order(true)
+    settoggle_order(true);
     setShowOrder(false);
-  }
+  };
 
   //   useEffect(() => {
   // if(toggle_order===true){
   //   alert("111111")
   // }
   //   }, [toggle_order])
+  console.log("showOrder-----", showOrder);
+  console.log("same_as------", same_as);
+
   useEffect(() => {
     if (same_as && showOrder) {
       navigate("/booking/orders");
     }
-  }, [showOrder, same_as])
+  }, [showOrder, same_as]);
 
-// Get Return Order
-
-  const getReturnOrder= () => {
-    let temp2 = [];
-    let data = [];
+  //  step 1
+  const [eway_confirm, seteway_confirm] = useState(false);
+  const [eway_list, seteway_list] = useState([]);
+  const [from_address, setfrom_address] = useState([]);
+  const [to_address, setto_address] = useState([]);
+  const [locality_list, setlocality_list] = useState([]);
+  const [locality_id, setlocality_id] = useState("");
+  const [locality_sel, setlocality_sel] = useState("");
+  const step_1 = () => {
     axios
-      .get(
-        ServerAddress +
-        `booking/get_return_order/?docket_no=${linked_order}`,
+      .post(
+        "https://dev.api.easywaybill.in/ezewb/v1/auth/initlogin",
+
         {
-          headers: { Authorization: `Bearer ${accessToken}` },
+          userid: "test.easywaybill@gmail.com",
+          password: "Abcd@12345",
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       )
-      .then((response) => {
-        if(response.data.results.length===0){
-          dispatch(setShowAlert(true));
-          dispatch(setDataExist(`Docket Number Does not Exist`));
-          dispatch(setAlertType("warning"));
-        }
-        else{
-          setreturned_data(response.data.results)
-        }
+      .then(function (response) {
+        console.log("response-------eway bill step 1", response.data.response);
+        console.log("token", response.data);
+        dispatch(setEAccessToken(response.data.response.token));
+        dispatch(setOrgs(response.data.response.orgs));
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
 
+  const business_token = () => {
+    axios
+      .post(
+        "https://dev.api.easywaybill.in/ezewb/v1/auth/completelogin",
+        {
+          token: `${e_acess_token}`,
+          orgid: "4",
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("responseblogin", response.data);
+        console.log("token", response.data.response.token);
+        dispatch(setBAccessToken(response.data.response.token));
+      })
+      .catch((error) => {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Eway Bill Server Is Currently Down`));
+        dispatch(setAlertType("danger"));
+      });
+  };const [eway_detail_l, seteway_detail_l] = useState([])
+
+  const get_eway_detail = (eway) => {
+    axios
+      .get(
+        `https://dev.api.easywaybill.in/ezewb/v1/ewb/data?ewbNo=${eway}&gstin=${gstin_no}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${b_acess_token}`,
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("response=======eway bill detail", response.data.response);
+        seteway_detail_l(response.data.response);
+        seteway_confirm(true);
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Eway Bill nO Details Matched`));
+        dispatch(setAlertType("success"));
+        seteway_list(response.data.response);
+        gefilterlocalityfrom(response.data.response.fromPincode);
+        gefilterlocalityto(response.data.response.toPincode);
+      })
+      .catch((error) => {
+        seteway_confirm(false);
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Entered EwayBill No Is Wrong`));
+        dispatch(setAlertType("danger"));
+      });
+  };
+
+  const gefilterlocalityfrom = (pincode) => {
+    let locality_from = [];
+    axios
+      .get(ServerAddress + `master/filter_locality/?pincode=${pincode}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((response) => {
+        setfrom_address(response.data[0]);
+        for (let index = 0; index < response.data.length; index++) {
+          const element = [response.data[index].id, response.data[index].name];
+          locality_from.push(element);
+        }
+        setlocality_list(locality_from);
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
       });
   };
-useEffect(() => {
-  if(returned_data.length !== 0 && (order_type === "Return" || order_type === "Issue") && location.state === null)
-  {
-  setorder(returned_data[0]);
-  settransport_mode(toTitleCase(returned_data[0].transportation_mode));
-  setorder_type(order_type === "Issue" ? "Issue" : "Return");
-  setcurrent_status(returned_data[0].current_status);
-  // setdocket_no_value(returned_data[0].docket_no);
-  // setisupdating(true);
-  setorder_id(returned_data[0].id);
-  setdocket_no_value(returned_data[0].docket_no);
-  dispatch(setCurOrderId(returned_data[0].id));
-  dispatch(setCurOrderDocketNo(returned_data[0].docket_no));
-  settype_of_booking(toTitleCase(returned_data[0].booking_type));
-    
-  // setdelivery_mode(returned_data[0].delivery_mode);
-  settransportation_cost(returned_data[0].transportation_cost);
-  
-  setcommodity(returned_data[0].commodity_name);
-  setcommodity_id(returned_data[0].commodity);
-  setd_cod(toTitleCase(returned_data[0].cod));
-  if (returned_data[0].cod === "Yes") {
-    settransportation_cost(returned_data[0].transportation_cost);
-  }
-  settotal_delivered_pcs(parseInt(returned_data[0].total_quantity)-(returned_data[0].issue_notreceived.length))
-  setcold_chain(returned_data[0].cold_chain);
-  setdelivery_type(returned_data[0].delivery_type);
-  setentry_type_btn(returned_data[0].entry_type);
-  setactual_weigth(returned_data[0].actual_weight);
-  setcommodity(toTitleCase(returned_data[0].commodity_name));
-  setclient(toTitleCase(returned_data[0].client_name));
-  setclient_id(returned_data[0].client);
-  setbillto(toTitleCase(returned_data[0].billto_name));
-  setbillto_id(returned_data[0].billto);
-  // setclient_id(returned_data[0].client)
-  setshipper(toTitleCase(returned_data[0].shipper_name));
-  setshipper_id(returned_data[0].shipper);
-  setshipper_state(toTitleCase(returned_data[0].shipper_state));
-  setshipper_city(toTitleCase(returned_data[0].shipper_city));
-  setshipper_pincode(returned_data[0].shipper_pincode);
-  setshipper_add_2(toTitleCase(returned_data[0].shipper_address_line_2));
-  setorigincity(toTitleCase(returned_data[0].shipper_city));
-  setorigincity_id(toTitleCase(returned_data[0].shipper_city_id));
-  setshipper_locality(toTitleCase(returned_data[0].shipper_locality));
 
-  setconsignee(toTitleCase(returned_data[0].consignee_name));
-  setconsignee_id(returned_data[0].consignee);
-  setconsignee_state(toTitleCase(returned_data[0].consignee_state));
-  setconsignee_city(toTitleCase(returned_data[0].consignee_city));
-  setconsignee_pincode(returned_data[0].consignee_pincode);
-  setconsignee_add_1(toTitleCase(returned_data[0].consignee_address_line));
-  setconsignee_locality(toTitleCase(returned_data[0].consignee_locality));
-  setconsignee_add_2(toTitleCase(returned_data[0].consignee_address_line_2));
-  setlocal_delivery_type(toTitleCase(returned_data[0].local_delivery_type));
-  setasset_info_selected(toTitleCase(returned_data[0].asset_type));
-  if (returned_data[0].asset_type === "NONE") {
-    setasset_prov(false)
-  }
-  else {
-    setasset_prov(true)
-  }
-  setcal_type(returned_data[0].local_cal_type);
-
-
-  setshipper_add_1(toTitleCase(returned_data[0].shipper_address_line));
-  setdestinationcity(toTitleCase(returned_data[0].consignee_city));
-  setdestinationcity_id(toTitleCase(returned_data[0].consignee_city_id));
-  }
-
-}, [returned_data, order_type, ])
-
-useEffect(() => {
-  
-  if(location.state === null && order_type !== "Return" && order_type !== "Issue"){ 
-      setorder([]);
-      settransport_mode("");
-      setcurrent_status("");
-      // setdocket_no_value(returned_data[0].docket_no);
-      // setisupdating(true);
-      setorder_id("");
-      setdocket_no_value("");
-      settype_of_booking(type_of_booking_list[1]);
-    
-      // setdelivery_mode(returned_data[0].delivery_mode);
-      settransportation_cost("");
-      
-      setcommodity("");
-      setcommodity_id("");
-      setd_cod(toTitleCase(""));
-    
-      setcold_chain(false);
-      setdelivery_type("LOCAL");
-      setentry_type_btn("AUTO GENERATE");
-      setactual_weigth("0");
-      setcommodity("");
-      setclient("");
-      setclient_id("");
-      setbillto("");
-      setbillto_id("");
-      // setclient_id(returned_data[0].client)
-      setshipper("");
-      setshipper_id("");
-      setshipper_state("");
-      setshipper_city("");
-      setshipper_pincode("");
-      setshipper_add_2("");
-      setorigincity("");
-      setorigincity_id("");
-      setshipper_locality("");
-    
-      setconsignee("");
-      setconsignee_id("");
-      setconsignee_state("");
-      setconsignee_city("");
-      setconsignee_pincode("");
-      setconsignee_add_1("");
-      setconsignee_locality("");
-      setconsignee_add_2("");
-      setlocal_delivery_type("");
-      setasset_info_selected("");
-      // if (returned_data[0].asset_type === "NONE") {
-      //   setasset_prov(false)
-      // }
-      // else {
-      //   setasset_prov(true)
-      // }
-      setcal_type("");
-    
-    
-      setshipper_add_1("");
-      setdestinationcity("");
-      setdestinationcity_id("");
-      }
-  }, [returned_data, order_type])
-
-useEffect(() => {
-  if(linked_order.length >=6 && (order_type === "Return" || order_type === "Issue") && location.state === null){
-    getReturnOrder()
-  }
-}, [linked_order])
-
-    // Used for History
-    const handlClk = () => {
-      navigate(
-        "/booking/orders/orderHistory/OrderHistoryPage",
-       {
-        state: { Booking: order },
+  const [locslity_to_list, setlocslity_to_list] = useState([]);
+  const [locality_sel_to, setlocality_sel_to] = useState("");
+  const [locality_id_to, setlocality_id_to] = useState("");
+  const gefilterlocalityto = (pincode) => {
+    let localityto = [];
+    axios
+      .get(ServerAddress + `master/filter_locality/?pincode=${pincode}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((response) => {
+        setto_address(response.data[0]);
+        for (let index = 0; index < response.data.length; index++) {
+          const element = [response.data[index].id, response.data[index].name];
+          console.log("Element{{{{{}}}}}}", element);
+          localityto.push(element);
+        }
+        console.log("localityto+++++++++++", localityto);
+        setlocslity_to_list(localityto);
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Data ${err}`);
       });
-    };
+  };
+  //  For Step 1 Eway bill
+  useLayoutEffect(() => {
+    step_1();
+  }, []);
 
+  // For Step 2 Eway Bill
+  useLayoutEffect(() => {
+    if (e_acess_token != "") {
+      business_token();
+    }
+  }, [e_acess_token]);
+
+  // Location Info
+  // Address Line 1 Shipper and consignee started
+  const [shipper_n, setshipper_n] = useState("");
+  const [consignee_n, setconsignee_n] = useState("");
+  const [consignee_address, setconsignee_address] = useState("");
+  const [shipper_address, setshipper_address] = useState("");
+  // Address Line 1 Shipper and consignee Ended
+  const [state_error, setstate_error] = useState(false);
+  const [state_page, setstate_page] = useState(1);
+  const [state_search_item, setstate_search_item] = useState("");
+  const [city_list_s, setcity_list_s] = useState([]);
+  const [city, setcity] = useState("");
+  const [city_id, setcity_id] = useState(0);
+  const [city_error, setcity_error] = useState(false);
+  const [city_page, setcity_page] = useState(1);
+  const [city_search_item, setcity_search_item] = useState("");
+  const [pincode_page, setpincode_page] = useState(1);
+  const [pincode_search_item, setpincode_search_item] = useState("");
+  const [pincode_id, setpincode_id] = useState(0);
+  const [pincode_list_error, setpincode_list_error] = useState(false);
+  const [locality, setlocality] = useState("");
+  const [locality_list_s, setlocality_list_s] = useState([]);
+  const [locality_page, setlocality_page] = useState(1);
+  const [locality_search_item, setlocality_search_item] = useState("");
+  const [locality_id_f, setlocality_id_f] = useState(0);
+  const [locality_error, setlocality_error] = useState(false);
+  const [refresh, setrefresh] = useState(false);
+  const [consginee_st, setconsginee_st] = useState("");
+  const [consginee_c, setconsginee_c] = useState("");
+  const [consignee_p_id, setconsignee_p_id] = useState(0);
+
+  const getStates = () => {
+    // let state_list = [...state_list_s];
+    let state_list = [];
+    axios
+      .get(
+        ServerAddress +
+          `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (resp.data.results.length > 0) {
+          if (state_page == 1) {
+            state_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.state),
+            ]);
+          } else {
+            state_list = [
+              ...state_list_s,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
+            ];
+          }
+        }
+        setstate_list_s(state_list);
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get States, ${err}`);
+      });
+  };
+
+  const getCities_r = (place_id, filter_by, val) => {
+    setby_pincode(false);
+    let cities_list = [];
+    axios
+      .get(
+        ServerAddress +
+          `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
+          "&place_id=" +
+          place_id +
+          "&filter_by=" +
+          filter_by,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (resp.data.results.length > 0) {
+          if(val==="Shipper")
+          {
+          if (city_page == 1) {
+            cities_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.city),
+            ]);
+          }
+          setcity_list_s(cities_list);
+        }
+        else{
+          if (city_page_c == 1) {
+            cities_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.city),
+            ]);
+          }
+          setcity_list__c(cities_list);
+        }
+        } 
+        
+        else {
+          setcity_list_s([]);
+          setcity_list__c([])
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get City, ${err}`);
+      });
+  };
+
+  const getPincode = (place_id, filter_by, val) => {
+    let pincode_list = [];
+    axios
+      .get(
+        ServerAddress +
+          `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
+          "&place_id=" +
+          place_id +
+          "&filter_by=" +
+          filter_by,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (filter_by !== "pincode") {
+          if(val==="Shipper")
+          {
+          if (pincode_page == 1) {
+            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+          } else {
+            pincode_list = [
+              ...pincode_list_s,
+              ...resp.data.results.map((v) => [v.id, v.pincode]),
+            ];
+          }
+          setpincode_list_s(pincode_list);
+        }
+        else{
+          if (pincode_page_c == 1) {
+            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+          } else {
+            pincode_list = [
+              ...pincode_list_f_c,
+              ...resp.data.results.map((v) => [v.id, v.pincode]),
+            ];
+          }
+          setpincode_list_f_c(pincode_list);
+        }
+        } else if (resp.data.results.length > 0) {
+          setcity(toTitleCase(resp.data.results[0].city_name));
+          setcity_id(resp.data.results[0].city);
+          setstate(toTitleCase(resp.data.results[0].state_name));
+          setstate_id(resp.data.results[0].state);
+          setpincode(resp.data.results[0].pincode);
+          setpincode_id(resp.data.results[0].id);
+        } else {
+          dispatch(
+            setDataExist(
+              "You entered invalid pincode or pincode not available in database"
+            )
+          );
+          dispatch(setAlertType("warning"));
+          dispatch(setShowAlert(true));
+          setcity("");
+          setcity_id("");
+          // setstate("");
+          setstate_id("");
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get City, ${err}`);
+      });
+  };
+
+  const getLocality = (place_id, filter_by, val) => {
+    let locality_list = [];
+    axios
+      .get(
+        ServerAddress +
+          `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
+          `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (filter_by !== "locality") {
+          if(val==="Shipper")
+          {
+          if (pincode_page == 1) {
+            locality_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            locality_list = [
+              ...locality_list_s,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+
+          locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+            (v) => v.split(",")
+          );
+          setlocality_list_s(locality_list);
+          }
+          else{
+           
+            if (pincode_page_c == 1) {
+              locality_list = resp.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.name),
+              ]);
+            } else {
+              locality_list = [
+                ...locality_list_s_c,
+                ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+              ];
+            }
+  
+            locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+              (v) => v.split(",")
+            );
+            setlocality_list_s_c(locality_list); 
+            console.log("locality_list=c========", locality_list)
+          }
+        } else if (resp.data.results.length > 0) {
+          setlocality(toTitleCase(resp.data.results[0].name));
+          setlocality_id(resp.data.results[0].id);
+          setcity(toTitleCase(resp.data.results[0].city_name));
+          setstate(toTitleCase(resp.data.results[0].state_name));
+          setpincode(resp.data.results[0].pincode_name);
+          setpincode_id(resp.data.results[0].pincode);
+        } else {
+          dispatch(setDataExist("You entered invalid Locality"));
+          dispatch(setAlertType("warning"));
+          dispatch(setShowAlert(true));
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Pincode , ${err}`);
+      });
+  };
+
+  useEffect(() => {
+    if (state_id !== "" && by_pincode === false) {
+      setcity_page(1);
+      getCities_r(state_id, "state", "Shipper");
+      // setpincode("");
+      setpincode_list_s([]);
+      // setlocality("")
+      setlocality_list_s([]);
+    }
+  }, [state_id, city_page, city_search_item]);
+
+  useEffect(() => {
+    if (state_id_f_c !== "" && by_pincode_f_c === false) {
+      setcity_page_c(1);
+      getCities_r(state_id_f_c, "state", "Consignee");
+      // setpincode("");
+      setpincode_list_f_c([]);      
+      // setlocality("")
+      setlocality_list_s_c([]);
+      
+    }
+  }, [state_id_f_c, city_page_c, state_search_item_c]);
+
+  useLayoutEffect(() => {
+    if (state != "") {
+      setpincode_loaded(true);
+    }
+  }, [state]);
+  useLayoutEffect(() => {
+    if (consginee_st != "") {
+      setpincode_loaded_f_c(true);      
+    }
+  }, [consginee_st]);
+
+  useEffect(() => {
+    if (pincode_id !== 0) {
+      setlocality_page(1);
+      getLocality(pincode_id, "pincode",'Shipper');
+    }
+  }, [pincode_id, locality_page, locality_search_item]);
+
+  console.log("consignee_p_id-------",consignee_p_id)
+  useEffect(() => {
+    if (consignee_p_id !== 0) {
+      setlocality_page_c(1);
+      getLocality(consignee_p_id, "pincode",'Consignee');
+    }
+  }, [consignee_p_id, locality_page_c, locality_search_item_c]);
+
+  useLayoutEffect(() => {
+    getStates();
+    setcity_list_s([]);
+  }, [state_page, state_search_item, refresh]);
+
+
+  const getStates_c = () => {
+    // let state_list = [...state_list_s];
+    let state_list = [];
+    axios
+      .get(
+        ServerAddress +
+          `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page_c}&records=${10}&state_search=${state_search_item_c}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (resp.data.results.length > 0) {
+          if (state_page_c == 1) {
+            state_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.state),
+            ]);
+          } else {
+            state_list = [
+              ...state_list_c,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
+            ];
+          }
+        }
+        setstate_list_c(state_list);
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get States, ${err}`);
+      });
+  };
+
+  const getCities__c = (place_id, filter_by) => {
+    setby_pincode(false);
+    let cities_list = [];
+    axios
+      .get(
+        ServerAddress +
+          `master/all_cities/?search=${""}&p=${city_page_c}&records=${10}&city_search=${city_search_item_c}` +
+          "&place_id=" +
+          place_id +
+          "&filter_by=" +
+          filter_by,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (resp.data.results.length > 0) {
+          if (city_page_c == 1) {
+            cities_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.city),
+            ]);
+          }
+          setlocality_list_s_c(cities_list);
+        } else {
+          setlocality_list_s_c([]);
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get City, ${err}`);
+      });
+  };
+
+  const getPincode_c = (place_id, filter_by, val) => {
+    let pincode_list = [];
+    axios
+      .get(
+        ServerAddress +
+          `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
+          "&place_id=" +
+          place_id +
+          "&filter_by=" +
+          filter_by,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (filter_by !== "pincode") {
+          if (pincode_page == 1) {
+            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+          } else {
+            pincode_list = [
+              ...pincode_list_s,
+              ...resp.data.results.map((v) => [v.id, v.pincode]),
+            ];
+          }
+          setpincode_list_s(pincode_list);
+        } else if (resp.data.results.length > 0) {
+          setcity(toTitleCase(resp.data.results[0].city_name));
+          setcity_id(resp.data.results[0].city);
+          setstate(toTitleCase(resp.data.results[0].state_name));
+          setstate_id(resp.data.results[0].state);
+          setpincode(resp.data.results[0].pincode);
+          setpincode_id(resp.data.results[0].id);
+        } else {
+          dispatch(
+            setDataExist(
+              "You entered invalid pincode or pincode not available in database"
+            )
+          );
+          dispatch(setAlertType("warning"));
+          dispatch(setShowAlert(true));
+          setcity("");
+          setcity_id("");
+          // setstate("");
+          setstate_id("");
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get City, ${err}`);
+      });
+  };
+
+  const getLocality_co = (place_id, filter_by) => {
+    let locality_list = [];
+    axios
+      .get(
+        ServerAddress +
+          `master/all_locality/?search=${""}&p=${locality_page_c}&records=${10}` +
+          `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item_c}&state=&city=&name=&data=all`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (filter_by !== "locality") {
+          if (pincode_page_c == 1) {
+            locality_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            locality_list = [
+              ...locality_list_s,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+
+          locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+            (v) => v.split(",")
+          );
+          setlocality_list_s_c(locality_list);
+        } else if (resp.data.results.length > 0) {
+          setlocality_c(toTitleCase(resp.data.results[0].name));
+          setlocality_id_f_c(resp.data.results[0].id);
+          setcity_c(toTitleCase(resp.data.results[0].city_name));
+          setstate_s_c(toTitleCase(resp.data.results[0].state_name));
+          setpincode_f_c(resp.data.results[0].pincode_name);
+          setpincode_id_c(resp.data.results[0].pincode);
+        } else {
+          dispatch(setDataExist("You entered invalid Locality"));
+          dispatch(setAlertType("warning"));
+          dispatch(setShowAlert(true));
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Pincode , ${err}`);
+      });
+  };
+  useEffect(() => {
+    if (state_id_f_c !== "" && by_pincode === false) {
+      setcity_page(1);
+      getCities__c(state_id_f_c, "state");
+      // setpincode("");
+      setpincode_list_s([]);
+      // setlocality("")
+      setlocality_list_s([]);
+    }
+  }, [state_id_f_c, city_page_c, city_search_item_c]);
+  useLayoutEffect(() => {
+    if (state != "") {
+      setpincode_loaded(true);
+    }
+  }, [state_s_c]);
+  useEffect(() => {
+    if (pincode_id_c !== 0) {
+      setlocality_page_c(1);
+      getLocality_co(pincode_id_c, "pincode");
+    }
+  }, [pincode_id_c, locality_page_c, locality_search_item_c]);
+
+  useLayoutEffect(() => {
+    getStates_c();
+    setcity_list_s([]);
+  }, [state_page_c, state_search_item_c, refresh_c]);
+  ////////
+  useEffect(() => {
+    if (city_id !== 0 && by_pincode === false) {
+      setpincode_page(1);
+      getPincode(city_id, "city", "Shipper");
+      // setpincode("")
+    }
+  }, [city_id, pincode_page, pincode_search_item]);
+  useEffect(() => {
+    if (city_id_c !== 0 && by_pincode_f_c === false) {
+      setpincode_page_c(1);
+      getPincode(city_id_c, "city", "Consignee");
+      // setpincode("")
+    }
+  }, [city_id_c, pincode_page_c, pincode_search_item_c]);
   return (
     <div>
       <Modal show={showOrder} onHide={handleCloseOrder}>
@@ -2373,16 +2946,14 @@ useEffect(() => {
         </Modal.Header>
         <Modal.Body>
           <FormGroup>
-            <Label for="exampleText">
-              Text Area
-            </Label>
+            <Label for="exampleText">Text Area</Label>
             <Input
               id="exampleText"
               name="text"
               type="textarea"
               style={{ height: "90px" }}
               onChange={(e) => {
-                setmessage(e.target.value)
+                setmessage(e.target.value);
               }}
             />
             <div className="mt-1 error-text" color="danger">
@@ -2407,8 +2978,7 @@ useEffect(() => {
         }}
         encType="multipart/form-data"
       >
-      
-              {/* Booking type */}
+        {/* Booking type */}
 
         <div className="m-3">
           <div
@@ -2416,7 +2986,7 @@ useEffect(() => {
             style={{ display: "flex", justifyContent: "space-between" }}
           >
             <div>{isupdating ? "Update Order" : "Add Order"}</div>
-            {isupdating ? (
+            {/* {isupdating ? (
               <div style={{ justifyContent: "right", display: "flex" }}>
               <Button
               type="button"
@@ -2427,7 +2997,7 @@ useEffect(() => {
             </div>
             ):(
               <></>
-            )}
+            )} */}
             
             {/* 
             <div>
@@ -2450,7 +3020,7 @@ useEffect(() => {
                 </Button>
               </div>
             } */}
-
+{/* 
               {isupdating && (
             <div style={{ justifyContent: "right", display: "flex" }}>
               <Button
@@ -2462,7 +3032,7 @@ useEffect(() => {
                 History
               </Button>
             </div>
-          )}
+          )} */}
           </div>
           <Col lg={12}>
             <Card className="shadow bg-white rounded" id="doc_no">
@@ -2489,39 +3059,52 @@ useEffect(() => {
                   {/* Booking Info */}
 
                   <Row>
-                    <Col lg={(order_type == "Return" || order_type == "Issue") ? 2 : 4} md={6} sm={6}>
-                      <Label className="header-child">Booking For</Label>
-                      <div className="">
-                        <NSearchInput
-                          data_list={order_type_list}
-                          data_item_s={order_type}
-                          show_search={false}
-                          set_data_item_s={setorder_type}
-                          disable_me={isupdating}
-                        />
-                      </div>
+                    <Col lg={4} md={6} sm={6}>
+                      <Label className="header-child">Bill To*</Label>
+                      <SearchInput
+                        data_list={billto_list}
+                        setdata_list={setbillto_list}
+                        data_item_s={billto}
+                        set_data_item_s={setbillto}
+                        set_id={setbillto_id}
+                        disable_me={isupdating}
+                        page={billto_page}
+                        setpage={setbillto_page}
+                        setsearch_item={setsearch_billto}
+                        error_message={"Plesae Select Any Bill To"}
+                        error_s={billto_error}
+                      />
+                      {/* <div className="mt-1 error-text" color="danger">
+                        {billto_error ? "Please Select Client " : null}
+                      </div> */}
                     </Col>
-                    {(order_type == "Return" || order_type == "Issue") &&
-                      <Col lg={2} md={6} sm={6}>
-                         <Label className="header-child">Refrence Docket No</Label>
-                        <div className="">
-                          <Input
-                            type="number"
-                            className="form-control-md"
-                            id="input"
-                            value={linked_order}
-                            onChange={(e) =>
-                              setlinked_order(e.target.value)
-                            }
-                            placeholder="Enter Docket Number"
-                            disabled={isupdating}
-                          />
-                        </div>
+
+                    {billto && (
+                      <Col lg={4} md={6} sm={6}>
+                        <Label className="header-child">Client *</Label>
+                        <SearchInput
+                          data_list={client_list}
+                          setdata_list={setclient_list}
+                          data_item_s={client}
+                          set_data_item_s={setclient}
+                          // error_message="Select Client "
+                          set_id={setclient_id}
+                          disable_me={isupdating}
+                          page={client_page}
+                          setpage={setclient_page}
+                          setsearch_item={setsearch_client}
+                          error_message={"Plesae Select Any Client"}
+                          error_s={client_error}
+                        />
+                        {/* <div className="mt-1 error-text" color="danger">
+                          {client_error ? "Please Select Client " : null}
+                        </div> */}
                       </Col>
-                    }
+                    )}
+
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">With EwayBill</Label>
+                        <Label className="header-child">Booking Through</Label>
                         <Row>
                           <Col lg={5} md={6} sm={6}>
                             <div className="form-check mb-2">
@@ -2545,25 +3128,35 @@ useEffect(() => {
                               </label>
                             </div>
                           </Col>
-                          {booking_through &&
+                          {booking_through && (
                             <Col lg={7} md={6} sm={6}>
                               <div className="">
                                 <Input
                                   type="number"
                                   className="form-control-md"
                                   id="input"
+                                  maxLength="12"
                                   value={ewaybill_no}
-                                  onChange={(e) =>
-                                    setewaybill_no(e.target.value)
-                                  }
+                                  onChange={(e) => {
+                                    console.log("maxlength", e.target.value);
+                                    if (e.target.value.length === 12) {
+                                      setewaybill_no(e.target.value);
+                                      get_eway_detail(e.target.value);
+                                    } else if (e.target.value.length < 12) {
+                                      setewaybill_no(e.target.value);
+                                    }
+                                  }}
                                   placeholder="Enter Eway Bill Number"
+                                  // onMouseLeave={()=>{
+                                  // }}
                                 />
                               </div>
                             </Col>
-                          }
+                          )}
                         </Row>
                       </div>
                     </Col>
+
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">Delivery Type</Label>
@@ -2763,8 +3356,8 @@ useEffect(() => {
                         </div>
                       </Col>
                     ) : null}
-                    {(user.view_coldchain || user.is_superuser) &&
-                      <Col lg={2} md={3} sm={6}>
+                    {(user.view_coldchain || user.is_superuser) && (
+                      <Col lg={2} md={2} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">Cold Chain</Label>
                           <br />
@@ -2782,8 +3375,12 @@ useEffect(() => {
                           />
                         </div>
                       </Col>
-                    }
-                    <Col lg={(user.view_coldchain || user.is_superuser) ? 2 : 4} md={3} sm={6}>
+                    )}
+                    <Col
+                      lg={user.view_coldchain || user.is_superuser ? 2 : 4}
+                      md={2}
+                      sm={6}
+                    >
                       <div className="mb-3">
                         <Label className="header-child">Non Cold Chain</Label>
                         <br />
@@ -2867,10 +3464,12 @@ useEffect(() => {
                       </div>
                     </Col>
 
-                    {delivery_type !== "LOCAL" &&
+                    {delivery_type !== "LOCAL" && (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-3">
-                          <Label className="header-child">Transport Mode *</Label>
+                          <Label className="header-child">
+                            Transport Mode *
+                          </Label>
                           <NSearchInput
                             data_list={transport_mode_data_list}
                             data_item_s={transport_mode}
@@ -2881,49 +3480,8 @@ useEffect(() => {
                           />
                         </div>
                       </Col>
-                    }
-
-                    <Col lg={4} md={6} sm={6}>
-                      <Label className="header-child">Bill To*</Label>
-                      <SearchInput
-                        data_list={billto_list}
-                        setdata_list={setbillto_list}
-                        data_item_s={billto}
-                        set_data_item_s={setbillto}
-                        set_id={setbillto_id}
-                        disable_me={isupdating}
-                        page={billto_page}
-                        setpage={setbillto_page}
-                        setsearch_item={setsearch_billto}
-                        error_message={"Plesae Select Any Bill To"}
-                        error_s={billto_error}
-                      />
-                      {/* <div className="mt-1 error-text" color="danger">
-                        {billto_error ? "Please Select Client " : null}
-                      </div> */}
-                    </Col>
-                    {billto && (
-                      <Col lg={4} md={6} sm={6}>
-                        <Label className="header-child">Client *</Label>
-                        <SearchInput
-                          data_list={client_list}
-                          setdata_list={setclient_list}
-                          data_item_s={client}
-                          set_data_item_s={setclient}
-                          // error_message="Select Client "
-                          set_id={setclient_id}
-                          disable_me={isupdating}
-                          page={client_page}
-                          setpage={setclient_page}
-                          setsearch_item={setsearch_client}
-                          error_message={"Plesae Select Any Client"}
-                          error_s={client_error}
-                        />
-                        {/* <div className="mt-1 error-text" color="danger">
-                          {client_error ? "Please Select Client " : null}
-                        </div> */}
-                      </Col>
                     )}
+
                     {/* <Col lg={4} md={6} sm={6}>
                       <div className="mb-3">
                         <Label className="header-child">By Ewaybill</Label>
@@ -2948,8 +3506,8 @@ useEffect(() => {
           </Col>
         </div>
 
-        {/* Shipper Info*/}
-        {client ? (
+        {/*Manually Entry through  Shipper Info*/}
+        {eway_confirm ? null : (
           <div className="m-3" id="shipper">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
@@ -2977,101 +3535,188 @@ useEffect(() => {
                       <>
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-3">
-                            <Label className="header-child">Origin City*</Label>
-                            <SearchInput
-                              data_list={origincity_list}
-                              setdata_list={setorigincity}
-                              data_item_s={origincity}
-                              set_data_item_s={setorigincity}
-                              set_id={setorigincity_id}
-                              page={origincity_page}
-                              setpage={setorigincity_page}
-                              error_message={"Please Select Any Option"}
-                              error_s={origin_city_error}
-                              setsearch_item={setorigincity_search_item}
-                            />
-                          </div>
-                        </Col>
-
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-3">
                             <Label className="header-child">Shipper *</Label>
-                            <SearchInput
-                              data_list={shipper_list}
-                              setdata_list={setshipper_list}
-                              data_item_s={shipper}
-                              set_data_item_s={setshipper}
-                              set_id={setshipper_id}
-                              page={shipper_page}
-                              setpage={setshipper_page}
-                              error_message={"Please Select Any Option"}
-                              error_s={shipper_error}
-                              search_item={shipper_search_item}
-                              setsearch_item={setshipper_search_item}
+                            <Input
+                              placeholder="Enter shipper name"
+                              value={shipper_n}
+                              onChange={(e) => {
+                                setshipper_n(e.target.value);
+                              }}
                             />
-                            {/* <div className="mt-1 error-text" color="danger">
-                              {shipper_error ? "Please Select Shipper" : null}
-                            </div> */}
                           </div>
                         </Col>
 
-                        {shipper_id && (
-                          <>
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Label className="header-child">State</Label>
-                                <Input
-                                  value={shipper_state}
-                                  type="text"
-                                  className="form-control-md"
-                                  id="input"
-                                  disabled
-                                />
-                              </div>
-                            </Col>
+                        <>
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">State</Label>
+                              <SearchInput
+                                data_list={state_list_s}
+                                setdata_list={setstate_list_s}
+                                data_item_s={state}
+                                set_data_item_s={setstate}
+                                set_id={setstate_id}
+                                page={state_page}
+                                setpage={setstate_page}
+                                error_message={"Please Select Any State"}
+                                error_s={state_error}
+                                search_item={state_search_item}
+                                setsearch_item={setstate_search_item}
+                              />
+                            </div>
+                          </Col>
 
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Label className="header-child">Pincode</Label>
-                                <Input
-                                  value={shipper_pincode}
-                                  type="text"
-                                  className="form-control-md"
-                                  id="input"
-                                  disabled
-                                />
-                              </div>
-                            </Col>
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">City*</Label>
 
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Label className="header-child">Locality</Label>
-                                <Input
-                                  value={shipper_locality}
-                                  type="text"
-                                  className="form-control-md"
-                                  id="input"
-                                  disabled
-                                />
-                              </div>
-                            </Col>
+                              <SearchInput
+                                data_list={city_list_s}
+                                setdata_list={setcity_list_s}
+                                data_item_s={city}
+                                set_data_item_s={setcity}
+                                set_id={setcity_id}
+                                page={city_page}
+                                setpage={setcity_page}
+                                error_message={"Please Select Any City"}
+                                error_s={city_error}
+                                search_item={city_search_item}
+                                setsearch_item={setcity_search_item}
+                              />
+                            </div>
+                          </Col>
 
-                            <Col lg={4} md={6} sm={6}>
+                          <Col lg={4} md={6} sm={6}>
+                            {pincode_loaded ? (
                               <div className="mb-2">
                                 <Label className="header-child">
-                                  Address Line
+                                  Pin Code*
                                 </Label>
-                                <Input
-                                  value={shipper_add_1}
-                                  type="text"
-                                  className="form-control-md"
-                                  id="input"
-                                  disabled
+                                <SearchInput
+                                  data_list={pincode_list_s}
+                                  setdata_list={setpincode_list_s}
+                                  data_item_s={pincode}
+                                  set_data_item_s={setpincode}
+                                  set_id={setpincode_id}
+                                  page={pincode_page}
+                                  setpage={setpincode_page}
+                                  search_item={pincode_search_item}
+                                  setsearch_item={setpincode_search_item}
+                                  error_message={"Please Select Any Pincode"}
+                                  error_s={pincode_list_error}
                                 />
                               </div>
-                            </Col>
-                          </>
-                        )}
+                            ) : (
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Pin Code*
+                                </Label>
+                                <Input
+                                  onChange={(val) => {
+                                    setpincode(val.target.value);
+                                    if (val.target.value.length !== 0) {
+                                      setpincode_error(false);
+                                      if (val.target.value.length === 6) {
+                                        setpincode_error2(false);
+                                      } else {
+                                        setpincode_error2(true);
+                                      }
+                                    } else {
+                                      setpincode_error(true);
+                                    }
+                                  }}
+                                  onBlur={() => {
+                                    if (pincode.length === 0) {
+                                      setpincode_error(true);
+                                    } else {
+                                      if (pincode.length !== 6) {
+                                        setpincode_error(false);
+                                        setpincode_error2(true);
+                                      } else {
+                                        getPincode(pincode, "pincode", "Shipper");
+                                        setpincode_error2(false);
+                                        setby_pincode(true);
+                                      }
+                                    }
+                                  }}
+                                  value={pincode}
+                                  invalid={
+                                    validation.touched.pincode &&
+                                    validation.errors.pincode
+                                      ? true
+                                      : false
+                                  }
+                                  type="number"
+                                  className="form-control-md"
+                                  id="input"
+                                  name="pincode1"
+                                  placeholder="Enter Pin code"
+                                />
+
+                                {pincode_loaded === false &&
+                                pincode_error === true ? (
+                                  <div
+                                    style={{
+                                      color: "#F46E6E",
+                                      fontSize: "11.4px",
+                                    }}
+                                  >
+                                    Please add pincode
+                                  </div>
+                                ) : null}
+
+                                {pincode_loaded === false &&
+                                pincode_error === false &&
+                                pincode_error2 === true ? (
+                                  <div
+                                    style={{
+                                      color: "#F46E6E",
+                                      fontSize: "10.4px",
+                                      marginTop: "4px",
+                                    }}
+                                  >
+                                    pincode should 6 digit
+                                  </div>
+                                ) : null}
+                              </div>
+                            )}
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">Locality*</Label>
+                              <SearchInput
+                                data_list={locality_list_s}
+                                setdata_list={setlocality_list_s}
+                                data_item_s={locality}
+                                set_data_item_s={setlocality}
+                                set_id={setlocality_id_f}
+                                page={locality_page}
+                                setpage={setlocality_page}
+                                setsearch_item={setlocality_search_item}
+                                error_message={"Please Select Any Locality"}
+                                error_s={locality_error}
+                              />
+                            </div>
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Address Line
+                              </Label>
+                              <Input
+                                value={shipper_address}
+                                type="text"
+                                className="form-control-md"
+                                id="input"
+                                onChange={(e) => {
+                                  setshipper_address(e.target.value);
+                                }}
+                              />
+                            </div>
+                          </Col>
+                        </>
                       </>
                     </Row>
                   </CardBody>
@@ -3079,10 +3724,10 @@ useEffect(() => {
               </Card>
             </Col>
           </div>
-        ) : null}
+        )}
 
-        {/* Cosignee Info*/}
-        {client ? (
+        {/* Manually Entry Cosignee Info*/}
+        {eway_confirm ? null : (
           <div className="m-3" id="consignee">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
@@ -3108,86 +3753,426 @@ useEffect(() => {
                   <CardBody>
                     <Row>
                       <>
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-3">
-                            <Label className="header-child">
-                              Destination City*
-                            </Label>
-                            <SearchInput
-                              data_list={destinationcity_list}
-                              setdata_list={setdestinationcity_list}
-                              data_item_s={destinationcity}
-                              set_data_item_s={setdestinationcity}
-                              set_id={setdestinationcity_id}
-                              page={destinationcity_page}
-                              setpage={setdestinationcity_page}
-                              error_message={"Please Select Any Option"}
-                              error_s={destination_city_error}
-                              search_item={destinationcity_search_item}
-                              setsearch_item={setdestinationcity_search_item}
-                            />
-                          </div>
-                        </Col>
-
                         <Col lg={4} md="6" sm="6">
                           <div className="mb-3">
                             <Label className="header-child">Consignee *</Label>
-                            <SearchInput
-                              data_list={consignee_list}
-                              setdata_list={setconsignee_list}
-                              data_item_s={consignee}
-                              set_data_item_s={setconsignee}
-                              set_id={setconsignee_id}
-                              page={consignee_page}
-                              setpage={setconsignee_page}
-                              error_message={"Please Select Any Option"}
-                              error_s={consignee_error}
-                              search_item={consignee_search_item}
-                              setsearch_item={setconsignee_search_item}
+                            <Input
+                              value={consignee_n}
+                              onChange={(e) => {
+                                setconsignee_n(e.target.value);
+                              }}
                             />
-                            {/* <div className="mt-1 error-text" color="danger">
-                              {consignee_error ? "Consignee is required" : null}
-                            </div> */}
                           </div>
                         </Col>
 
-                        {consignee_id && (
+                        <>
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">State</Label>
+                              <SearchInput
+                                data_list={state_list_c}
+                                setdata_list={setstate_list_c}
+                                data_item_s={consginee_st}
+                                set_data_item_s={setconsginee_st}
+                                set_id={setstate_id_f_c}
+                                page={state_page_c}
+                                setpage={setstate_page_c}
+                                error_message={"Please Select Any State"}
+                                error_s={state_error}
+                                search_item={state_search_item_c}
+                                setsearch_item={setstate_search_item_c}
+                              />
+                            </div>
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">City*</Label>
+
+                              <SearchInput
+                                data_list={city_list__c}
+                                setdata_list={setcity_list__c}
+                                data_item_s={consginee_c}
+                                set_data_item_s={setconsginee_c}
+                                set_id={setcity_id_c}
+                                page={city_page_c}
+                                setpage={setcity_page_c}
+                                error_message={"Please Select Any City"}
+                                error_s={city_error_c}
+                                search_item={city_search_item_c}
+                                setsearch_item={setcity_search_item_c}
+                              />
+                            </div>
+                          </Col>
+                          <Col lg={4} md={6} sm={6}>
+                            {pincode_loaded_f_c ? (
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Pin Code*
+                                </Label>
+                                <SearchInput
+                                  data_list={pincode_list_f_c}
+                                  setdata_list={setpincode_list_f_c}
+                                  data_item_s={consignee_pincode}
+                                  set_data_item_s={setconsignee_pincode}
+                                  set_id={setconsignee_p_id}
+                                  page={pincode_page_c}
+                                  setpage={setpincode_page_c}
+                                  search_item={pincode_search_item_c}
+                                  setsearch_item={setpincode_search_item_c}
+                                  error_message={"Please Select Any Pincode"}
+                                  error_s={pincode_list_error_c}
+                                />
+                              </div>
+                            ) : (
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Pin Code*
+                                </Label>
+                                <Input
+                                  onChange={(val) => {
+                                    setconsignee_pincode(val.target.value);
+                                    if (val.target.value.length !== 0) {
+                                      setpincode_error(false);
+                                      if (val.target.value.length === 6) {
+                                        setpincode_error2_f_c(false);
+                                      } else {
+                                        setpincode_error2_f_c(true);
+                                      }
+                                    } else {
+                                      setpincode_error_f_c(true);
+                                    }
+                                  }}
+                                  onBlur={() => {
+                                    if (consignee_pincode.length === 0) {
+                                      setpincode_error_f_c(true);
+                                    } else {
+                                      if (consignee_pincode.length !== 6) {
+                                        setpincode_error_f_c(false);
+                                        setpincode_error2_f_c(true);
+                                      } else {
+                                        getPincode(
+                                          consignee_pincode,
+                                          "pincode", "Consignee"
+                                        );
+                                        setpincode_error2_f_c(false);
+                                        setby_pincode_f_c(true);
+                                      }
+                                    }
+                                  }}
+                                  value={consignee_pincode}
+                                  invalid={
+                                    validation.touched.consignee_pincode &&
+                                    validation.errors.consignee_pincode
+                                      ? true
+                                      : false
+                                  }
+                                  type="number"
+                                  className="form-control-md"
+                                  id="input"
+                                  name="pincode1"
+                                  placeholder="Enter Pin code"
+                                />
+
+                                {pincode_loaded === false &&
+                                pincode_error === true ? (
+                                  <div
+                                    style={{
+                                      color: "#F46E6E",
+                                      fontSize: "11.4px",
+                                    }}
+                                  >
+                                    Please add pincode
+                                  </div>
+                                ) : null}
+
+                                {pincode_loaded === false &&
+                                pincode_error === false &&
+                                pincode_error2 === true ? (
+                                  <div
+                                    style={{
+                                      color: "#F46E6E",
+                                      fontSize: "10.4px",
+                                      marginTop: "4px",
+                                    }}
+                                  >
+                                    pincode should 6 digit
+                                  </div>
+                                ) : null}
+                              </div>
+                            )}
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">Locality*</Label>
+                              <SearchInput
+                                data_list={locality_list_s_c}
+                                setdata_list={setlocality_list_s_c}
+                                data_item_s={locality_c}
+                                set_data_item_s={setlocality_c}
+                                set_id={setlocality_id_f_c}
+                                page={locality_page_c}
+                                setpage={setlocality_page_c}
+                                setsearch_item={setlocality_search_item_c}
+                                error_message={"Please Select Any Locality"}
+                                error_s={locality_error}
+                              />
+                            </div>
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Address Line
+                              </Label>
+                              <Input
+                                value={consignee_address}
+                                onChange={(e) => {
+                                  setconsignee_address(e.target.value);
+                                }}
+                              />
+                            </div>
+                          </Col>
+                        </>
+                      </>
+                    </Row>
+                  </CardBody>
+                ) : null}
+              </Card>
+            </Col>
+          </div>
+        )}
+
+        {/*Eway Bill through  Shipper Info*/}
+        {eway_confirm ? (
+          <div className="m-3" id="shipper">
+            <Col lg={12}>
+              <Card className="shadow bg-white rounded">
+                <CardTitle className="mb-1 header">
+                  <div className="header-text-icon header-text">
+                    Shipper Info
+                    <IconContext.Provider
+                      value={{
+                        className: "header-add-icon",
+                      }}
+                    >
+                      <div onClick={toggle_circle12}>
+                        {circle_btn12 ? (
+                          <MdRemoveCircleOutline />
+                        ) : (
+                          <MdAddCircleOutline />
+                        )}
+                      </div>
+                    </IconContext.Provider>
+                  </div>
+                </CardTitle>
+                {circle_btn12 ? (
+                  <CardBody>
+                    <Row>
+                      <>
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-3">
+                            <Label className="header-child">Shipper *</Label>
+                             {
+                              isupdating ? 
+
+                              <Input value={eway_detail_l.shipper} disabled /> :
+
+
+                            <Input value={eway_list?.fromTrdName} disabled />
+                             }
+
+                           
+                          </div>
+                        </Col>
+
+                        <>
+                         
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">State</Label>
+
+                              {
+                                isupdating ?
+<Input
+                                value={eway_detail_l.shipper_state}
+                                type="text"
+                                className="form-control-md"
+                                id="input"
+                                disabled
+                              /> :
+                              <Input
+                                value={from_address.state_name}
+                                type="text"
+                                className="form-control-md"
+                                id="input"
+                                disabled
+                              />
+
+                              }
+                              
+                            </div>
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">Pincode</Label>
+                              {isupdating ?
+                              
+                            <Input value={eway_detail_l.shipper_pincode} disabled />
+
+                            :
+                            <Input
+                            value={from_address.pincode_name}
+                            type="text"
+                            className="form-control-md"
+                            id="input"
+                            disabled
+                          />
+                            }
+                              
+                            </div>
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">Locality shipper</Label>
+
+                              
+                              <NSearchInput
+                                data_list={locality_list}
+                                data_item_s={locality_sel}
+                                set_data_item_s={setlocality_sel}
+                                set_id={setlocality_id}
+                                show_search={false}
+                                error_message={"Please Select Locality Type"}
+                                // error_s={branch_type_error}
+                              />
+                            </div>
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Address Line
+                              </Label>
+                              {isupdating ?
+                             
+                              
+                              <div style={{border:"1px solid",padding:"8px",backgroundColor:"#eff2f7",borderRadius:5,borderColor:'#aaa'}}>
+                              {eway_detail_l.shipper_address1}
+                            </div>
+                            
+                               :
+                               <div style={{border:"1px solid",padding:"8px",backgroundColor:"#eff2f7",borderRadius:5,borderColor:'#aaa'}}>
+                                {eway_list.fromAddr1 + "," + eway_list.fromAddr2}
+                              </div>
+// {/* <Input
+
+//                                 value={eway_list.fromAddr1 + eway_list.fromAddr2}
+//                                 type="text"
+//                                 className="w-100" 
+//                                 id="input"
+//                                 disabled
+//                               /> */}
+                              
+                            
+                            }
+                              
+                            </div>
+                          </Col>
+                        </>
+                      </>
+                    </Row>
+                  </CardBody>
+                ) : null}
+              </Card>
+            </Col>
+          </div>
+        ) : null}
+
+        {/* Eway Bill Through Cosignee Info*/}
+        {eway_confirm ? (
+          <div className="m-3" id="consignee">
+            <Col lg={12}>
+              <Card className="shadow bg-white rounded">
+                <CardTitle className="mb-1 header">
+                  <div className="header-text-icon header-text">
+                    Consignee Info
+                    <IconContext.Provider
+                      value={{
+                        className: "header-add-icon",
+                      }}
+                    >
+                      <div onClick={toggle_circle1}>
+                        {circle_btn1 ? (
+                          <MdRemoveCircleOutline />
+                        ) : (
+                          <MdAddCircleOutline />
+                        )}
+                      </div>
+                    </IconContext.Provider>
+                  </div>
+                </CardTitle>
+                {circle_btn1 ? (
+                  <CardBody>
+                    <Row>
+                      <>
+                        <Col lg={4} md="6" sm="6">
+                          <div className="mb-3">
+                            <Label className="header-child">Consignee *</Label>
+                            {
+                              isupdating ? <Input value={eway_detail_l.consignee} disabled />
+                              :
+                              <Input
+                            
+                              value={eway_list?.shipToTradeName}
+                              disabled
+                            />
+                            }
+                           
+                          </div>
+                        </Col>
+
+                        {eway_list && (
                           <>
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
                                 <Label className="header-child">State</Label>
-                                <Input
-                                  value={consignee_state}
-                                  type="text"
-                                  className="form-control-md"
-                                  id="input"
-                                  disabled
-                                />
+                                {isupdating ? <Input value={eway_detail_l.consignee_state} disabled />  :  <Input value={to_address.state_name} disabled /> }
+                               
+
                               </div>
                             </Col>
 
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
                                 <Label className="header-child">Pincode</Label>
-                                <Input
-                                  value={consignee_pincode}
-                                  type="text"
-                                  className="form-control-md"
-                                  id="input"
-                                  disabled
-                                />
+                                {
+                                  isupdating ? 
+                                  <Input value={eway_detail_l.consignee_pincode} disabled /> 
+                                  :
+                                  <Input
+                                    value={to_address.pincode_name}
+                                    disabled
+                                  />
+
+                                }
                               </div>
                             </Col>
 
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
                                 <Label className="header-child">Locality</Label>
-                                <Input
-                                  value={consignee_locality}
-                                  type="text"
-                                  className="form-control-md"
-                                  id="input"
-                                  disabled
+                                <NSearchInput
+                                  data_list={locslity_to_list}
+                                  data_item_s={locality_sel_to}
+                                  set_data_item_s={setlocality_sel_to}
+                                  set_id={setlocality_id_to}
+                                  show_search={false}
+                                  error_message={"Please Select Locality Type"}
+                                  // error_s={branch_type_error}
                                 />
                               </div>
                             </Col>
@@ -3197,13 +4182,13 @@ useEffect(() => {
                                 <Label className="header-child">
                                   Address Line
                                 </Label>
-                                <Input
-                                  value={consignee_add_1}
-                                  type="text"
-                                  className="form-control-md"
-                                  id="input"
-                                  disabled
-                                />
+                                {
+                                  isupdating ?  <Input value={eway_detail_l.consignee_address1} disabled />:
+                                  // <Input value={eway_list?.toAddr1} disabled />
+                                  <div style={{border:"1px solid",padding:"8px",backgroundColor:"#eff2f7",borderRadius:5,borderColor:'#aaa'}}>
+                                  {eway_list.toAddr1 + "," + eway_list.toAddr2}
+                                </div>
+                                }
                               </div>
                             </Col>
                           </>
@@ -3245,7 +4230,9 @@ useEffect(() => {
                     <Row>
                       <Col lg={2} md={2} sm={6}>
                         <div className="mb-3">
-                          <Label className="header-child">Qil Provide Asset</Label>
+                          <Label className="header-child">
+                            Qil Provide Asset
+                          </Label>
                           <br />
                           <Input
                             className="form-check-input-sm"
@@ -3261,7 +4248,7 @@ useEffect(() => {
                           />
                         </div>
                       </Col>
-                      {asset_prov &&
+                      {asset_prov && (
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">Asset Type *</Label>
@@ -3273,7 +4260,7 @@ useEffect(() => {
                             />
                           </div>
                         </Col>
-                      }
+                      )}
                       {asset_info_selected === "With Box" ? (
                         <>
                           <Col lg={12} md={6} sm={6}>
@@ -3286,7 +4273,7 @@ useEffect(() => {
                               page={box_list_page}
                               setpage={setbox_list_page}
                               setsearch_item={setsearch_logger}
-                            // setlist_id={}
+                              // setlist_id={}
                             />
                           </Col>
                         </>
@@ -3304,7 +4291,7 @@ useEffect(() => {
                               page={Logger_page}
                               setpage={setLogger_page}
                               setsearch_item={setsearch_logger}
-                            // setlist_id={}
+                              // setlist_id={}
                             />
                           </Col>
                         </>
@@ -3327,7 +4314,7 @@ useEffect(() => {
                                 setpage={setLogger_page}
                                 setsearch_item={setsearch_logger}
                                 width={"width"}
-                              // setlist_id={}
+                                // setlist_id={}
                               />
                             </div>
                           </Col>
@@ -3344,7 +4331,7 @@ useEffect(() => {
                                 page={box_list_page}
                                 setpage={setbox_list_page}
                                 setsearch_item={setsearch_logger}
-                              // setlist_id={}
+                                // setlist_id={}
                               />
                             </div>
                           </Col>
@@ -3538,7 +4525,7 @@ useEffect(() => {
                           value={validation.values.total_quantity || ""}
                           invalid={
                             validation.touched.total_quantity &&
-                              validation.errors.total_quantity
+                            validation.errors.total_quantity
                               ? true
                               : false
                           }
@@ -3549,28 +4536,13 @@ useEffect(() => {
                           placeholder="Enter Total Quantity"
                         />
                         {validation.touched.total_quantity &&
-                          validation.errors.total_quantity ? (
+                        validation.errors.total_quantity ? (
                           <FormFeedback type="invalid">
                             {validation.errors.total_quantity}
                           </FormFeedback>
                         ) : null}
                       </div>
                     </Col>
-                    {order_type == "Issue" && returned_data.length !== 0 &&
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">Total Delivered PCS</Label>
-                        <Input
-                          value={total_delivered_pcs}
-                          type="number"
-                          name="total_delivered_pcs"
-                          className="form-control-md"
-                          id="input"
-                          disabled
-                        />
-                      </div>
-                    </Col>
-}
 
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
@@ -3656,15 +4628,15 @@ useEffect(() => {
                               type="button"
                               className="btn btn-info mx-1 cu_btn "
                               onClick={() => {
-                                if (order.current_status === "SHIPMENT PICKED UP") {
-                                  navigate("/manifest/pickeduporders")
-                                }
-                                else {
+                                if (
+                                  order.current_status === "SHIPMENT PICKED UP"
+                                ) {
+                                  navigate("/manifest/pickeduporders");
+                                } else {
                                   navigate("/booking/orders/adddocketstatus", {
                                     state: { order: order, type: "add" },
                                   });
                                 }
-
                               }}
                             >
                               Add Status
@@ -3713,7 +4685,7 @@ useEffect(() => {
         ) : null}
 
         {/*Delivery Info */}
-        {(isupdating && user.is_superuser && order.is_delivered) ? (
+        {isupdating && user.is_superuser && order.is_delivered ? (
           <div className="m-3">
             <Col lg={12}>
               <Card className="shadow bg-white rounded" id="status_info">
@@ -3782,8 +4754,8 @@ useEffect(() => {
                       }}
                       className="btn1 footer-text"
                       onClick={() => {
-                        // setorder_active_btn("first");
-                        // updateCurrentStep(1);
+                        setorder_active_btn("first");
+                        updateCurrentStep(1);
                       }}
                     >
                       Packages
@@ -3797,8 +4769,8 @@ useEffect(() => {
                       }}
                       className="btn2 footer-text"
                       onClick={() => {
-                        // setorder_active_btn("second");
-                        // updateCurrentStep(2);
+                        setorder_active_btn("second");
+                        updateCurrentStep(2);
                       }}
                     >
                       Order Images
@@ -3810,13 +4782,13 @@ useEffect(() => {
                       }}
                       className="btn3 footer-text"
                       onClick={() => {
-                        // setorder_active_btn("third");
-                        // updateCurrentStep(3);
+                        setorder_active_btn("third");
+                        updateCurrentStep(3);
                       }}
                     >
                       Invoices
                     </div>
-                    {cold_chain &&
+                    {cold_chain && (
                       <div
                         style={{
                           background:
@@ -3830,8 +4802,8 @@ useEffect(() => {
                       >
                         Logger Report
                       </div>
-                    }
-                    {validation.values.total_quantity > 0 &&
+                    )}
+                    {validation.values.total_quantity > 0 && (
                       <div
                         style={{
                           background:
@@ -3845,7 +4817,7 @@ useEffect(() => {
                       >
                         Box Barcode
                       </div>
-                    }
+                    )}
                   </div>
                   <div className="btn-icon">
                     <IconContext.Provider
@@ -3872,7 +4844,7 @@ useEffect(() => {
                       <Row className="hide">
                         <Col md={3} sm={3}>
                           <div className="mb-3">
-                            <Label className="header-child">Length</Label>
+                            <Label className="header-child">Length (Cm)</Label>
                             {row.map((item, index) => {
                               return (
                                 <Input
@@ -3898,7 +4870,7 @@ useEffect(() => {
                         </Col>
                         <Col md={3} sm={3}>
                           <div className="mb-3">
-                            <Label className="header-child">Breadth</Label>
+                            <Label className="header-child">Breadth (Cm)</Label>
                             {row.map((item, index) => (
                               <Input
                                 min={0}
@@ -3919,7 +4891,7 @@ useEffect(() => {
                         </Col>
                         <Col md={3} sm={3}>
                           <div className="mb-3">
-                            <Label className="header-child">Height</Label>
+                            <Label className="header-child">Height (Cm)</Label>
                             {row.map((item, index) => (
                               <Input
                                 min={0}
@@ -4044,30 +5016,30 @@ useEffect(() => {
                           ))} */}
                           {row1[row1.length - 1][0] !== ""
                             ? row1
-                              .filter((e) => e[0] !== "")
-                              .map((item1, index1) => {
-                                // console.log("item!1111111111111111111111111111111111",item1)
-                                return (
-                                  <div style={{ width: "100%" }} key={index1}>
-                                    <img
-                                      src={item1[0]}
-                                      style={{
-                                        height: "110px",
-                                        width: "110px",
-                                        borderRadius: "10px",
-                                        padding: 20,
-                                      }}
-                                      onClick={() => {
-                                        // setshowModalOrder({
-                                        //   ...showModalOrder,
-                                        //   value: true,
-                                        //   ind: index1,
-                                        // });
-                                      }}
-                                    />
-                                  </div>
-                                );
-                              })
+                                .filter((e) => e[0] !== "")
+                                .map((item1, index1) => {
+                                  // console.log("item!1111111111111111111111111111111111",item1)
+                                  return (
+                                    <div style={{ width: "100%" }} key={index1}>
+                                      <img
+                                        src={item1[0]}
+                                        style={{
+                                          height: "110px",
+                                          width: "110px",
+                                          borderRadius: "10px",
+                                          padding: 20,
+                                        }}
+                                        onClick={() => {
+                                          // setshowModalOrder({
+                                          //   ...showModalOrder,
+                                          //   value: true,
+                                          //   ind: index1,
+                                          // });
+                                        }}
+                                      />
+                                    </div>
+                                  );
+                                })
                             : null}
 
                           {row1[row1.length - 1][0] === "" ? (
@@ -4121,7 +5093,7 @@ useEffect(() => {
                               style={{ height: "110px", paddingTop: 35 }}
                               key={index1}
                             >
-
+                              {console.log("222222222222222222222222", item1)}
                               <select
                                 disabled={item1[2] ? true : false}
                                 style={{
@@ -4207,9 +5179,13 @@ useEffect(() => {
                                     <div
                                       onClick={() => {
                                         if (item1[2]) {
-                                          deleteOrderImg(item1)
+                                          deleteOrderImg(item1);
+                                          console.log(
+                                            "11111111111111",
+                                            item1[2]
+                                          );
                                         } else {
-                                          deleteimage(item1)
+                                          deleteimage(item1);
                                           setSelectedFile(
                                             row1[row1.length - 1][0]
                                           );
@@ -4238,7 +5214,10 @@ useEffect(() => {
                         <span
                           className="link-text"
                           onClick={() => {
-                            if (row1[row1.length - 1][0] && row1[row1.length - 1][1]) {
+                            if (
+                              row1[row1.length - 1][0] &&
+                              row1[row1.length - 1][1]
+                            ) {
                               setshowModalOrder({
                                 ...showModalOrder,
                                 value: false,
@@ -4316,29 +5295,29 @@ useEffect(() => {
                           ))} */}
                           {row2[row2.length - 1][0] !== ""
                             ? row2
-                              .filter((e) => e[0] !== "")
-                              .map((item1, index1) => {
-                                return (
-                                  <div style={{ width: "100%" }} key={index1}>
-                                    <img
-                                      src={item1[0]}
-                                      style={{
-                                        height: "110px",
-                                        width: "110px",
-                                        borderRadius: "10px",
-                                        padding: 20,
-                                      }}
-                                      onClick={() => {
-                                        setshowModalInvoice({
-                                          ...showModalInvoice,
-                                          value: true,
-                                          ind: index1,
-                                        });
-                                      }}
-                                    />
-                                  </div>
-                                );
-                              })
+                                .filter((e) => e[0] !== "")
+                                .map((item1, index1) => {
+                                  return (
+                                    <div style={{ width: "100%" }} key={index1}>
+                                      <img
+                                        src={item1[0]}
+                                        style={{
+                                          height: "110px",
+                                          width: "110px",
+                                          borderRadius: "10px",
+                                          padding: 20,
+                                        }}
+                                        onClick={() => {
+                                          setshowModalInvoice({
+                                            ...showModalInvoice,
+                                            value: true,
+                                            ind: index1,
+                                          });
+                                        }}
+                                      />
+                                    </div>
+                                  );
+                                })
                             : null}
                           {row2[row2.length - 1][0] === "" ? (
                             <div style={{ height: "110px", paddingTop: 35 }}>
@@ -4482,7 +5461,11 @@ useEffect(() => {
                                     <div
                                       onClick={() => {
                                         if (item2[4]) {
-                                          deleteInvoiceImg(item2)
+                                          console.log(
+                                            "item2aaaaaaaaaaaaa",
+                                            item2[4]
+                                          );
+                                          deleteInvoiceImg(item2);
                                         } else {
                                           deleteinvoice(item2);
                                           setinvoice_img(
@@ -4496,7 +5479,6 @@ useEffect(() => {
                                             row2[row2.length - 1][3]
                                           );
                                         }
-
                                       }}
                                     >
                                       <MdDeleteForever
@@ -4553,11 +5535,13 @@ useEffect(() => {
                   {order_active_btn === "forth" && cold_chain ? (
                     <>
                       <Row className="hide">
-
                         <Col lg={3} md={3} sm={3}>
                           <div className="mb-3">
-                            <Label className="header-child">Upload Report</Label>
+                            <Label className="header-child">
+                              Upload Report
+                            </Label>
                             {row5.map((item, index) => {
+                              console.log("row5---log----", row5);
                               return (
                                 <Input
                                   min={0}
@@ -4655,36 +5639,39 @@ useEffect(() => {
                     ""
                   )}
 
-                  {order_active_btn === "fifth" && validation.values.total_quantity > 0 &&
-                    <>
-                      <Row className="hide">
-
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">Enter Value*</Label>
-                            {row6.map((item, index) => {
-                              return (
-                                <Input
-                                  min={0}
-                                  key={index}
-                                  value={item[0]}
-                                  type="text"
-                                  className="form-control-md"
-                                  id="input"
-                                  style={{ marginBottom: "15px" }}
-                                  placeholder="Enter Value"
-                                  onChange={(val) => {
-                                    setbox_bq(val.target.value);
-                                    item[0] = val.target.value;
-                                  }}
-                                />
-                              );
-                            })}
-                          </div>
-                        </Col>
-                      </Row>
-                    </>
-                  }
+                  {order_active_btn === "fifth" &&
+                    validation.values.total_quantity > 0 && (
+                      <>
+                        <Row className="hide">
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Enter Value*
+                              </Label>
+                              {row6.map((item, index) => {
+                                console.log("item-------", item);
+                                return (
+                                  <Input
+                                    min={0}
+                                    key={index}
+                                    value={item[0]}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    style={{ marginBottom: "15px" }}
+                                    placeholder="Enter Value"
+                                    onChange={(val) => {
+                                      setbox_bq(val.target.value);
+                                      item[0] = val.target.value;
+                                    }}
+                                  />
+                                );
+                              })}
+                            </div>
+                          </Col>
+                        </Row>
+                      </>
+                    )}
                 </CardBody>
               ) : null}
             </Card>
@@ -4696,7 +5683,7 @@ useEffect(() => {
         <div className="page-control m-3">
           <Col lg={12}>
             <div className="mb-1 footer_btn">
-              {currentStep !== 1 &&
+              {currentStep !== 1 && (
                 <Button
                   type="button"
                   className="btn btn-info m-1 cu_btn"
@@ -4705,9 +5692,8 @@ useEffect(() => {
                 >
                   <BiSkipPrevious size={18} /> Previous
                 </Button>
-              }
-              {currentStep !== labelArray.length
-                &&
+              )}
+              {currentStep !== labelArray.length && (
                 <Button
                   type="button"
                   className="btn btn-info m-1 cu_btn"
@@ -4716,26 +5702,53 @@ useEffect(() => {
                 >
                   Next <BiSkipNext size={18} />
                 </Button>
-              }
-              {currentStep === labelArray.length &&
+              )}
+              {currentStep === labelArray.length && (
                 <Button
                   type="submit"
-                  className={isupdating && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
+                  className={
+                    isupdating &&
+                    (user.user_department_name + " " + user.designation_name ===
+                      "DATA ENTRY OPERATOR" ||
+                      user.user_department_name +
+                        " " +
+                        user.designation_name ===
+                        "CUSTOMER SERVICE EXECUTIVE")
+                      ? "btn btn-info m-1"
+                      : !isupdating
+                      ? "btn btn-info m-1"
+                      : "btn btn-success m-1"
+                  }
                   onClick={() => setsame_as(false)}
                 >
-                  {isupdating && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
+                  {isupdating &&
+                  (user.user_department_name + " " + user.designation_name ===
+                    "DATA ENTRY OPERATOR" ||
+                    user.user_department_name + " " + user.designation_name ===
+                      "CUSTOMER SERVICE EXECUTIVE" ||
+                    user.is_superuser)
+                    ? "Update"
+                    : !isupdating
+                    ? "Save"
+                    : "Approved"}
                 </Button>
-              }
+              )}
 
-              {isupdating && (user.user_department_name + " " + user.designation_name !== "DATA ENTRY OPERATOR" && user.user_department_name + " " + user.designation_name !== "CUSTOMER SERVICE EXECUTIVE" && !user.is_superuser) && currentStep === labelArray.length &&
-                <button
-                  type="button"
-                  className="btn btn-danger m-1"
-                  onClick={handleShow}
-                >
-                  Rejected
-                </button>
-              }
+              {isupdating &&
+                user.user_department_name + " " + user.designation_name !==
+                  "DATA ENTRY OPERATOR" &&
+                user.user_department_name + " " + user.designation_name !==
+                  "CUSTOMER SERVICE EXECUTIVE" &&
+                !user.is_superuser &&
+                currentStep === labelArray.length && (
+                  <button
+                    type="button"
+                    className="btn btn-danger m-1"
+                    onClick={handleShow}
+                  >
+                    Rejected
+                  </button>
+                )}
 
               <Button
                 type="button"
