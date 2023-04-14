@@ -286,101 +286,274 @@ const AddVendor = () => {
   }, [msme_registerd_number]);
 
   // Post Vendor
-  const add_vendor = (values) => {
+  // const add_vendor = (values) => {
+  //   let vendor_other_data = [];
+  //   for (let i = 0; i < row1.length; i++) {
+  //     vendor_other_data.push([String(row1[i]).toUpperCase()]);
+  //   }
+  //   axios
+  //     .post(
+  //       ServerAddress + "master/add_vendor/",
+  //       {
+  //         name: toTitleCase(values.vendor_name).toUpperCase(),
+  //         is_msme_regitered: msme_registerd,
+
+  //         emailp: values.vendor_email,
+  //         mobile_numberp: values.vendor_ph_no,
+
+  //         emails: values.vendor_email1,
+  //         mobile_numbers:
+  //           values.vendor_ph_no1 !== "" ? values.vendor_ph_no1 : null,
+
+  //         company_type: company_type.toUpperCase(),
+  //         lob: business_selected.toUpperCase(),
+  //         service_region: service_region_selected.toUpperCase(),
+  //         pan_no: toTitleCase(values.pan_number).toUpperCase(),
+  //         created_by: user_id,
+  //         msme_registration_no: msme_registerd_number,
+  //         service_offered: [
+  //           by_air.length !== 0 && by_air,
+  //           by_air2.length !== 0 && by_air2,
+  //           by_road.length !== 0 && by_road,
+  //           by_road1.length !== 0 && by_road1,
+  //           by_road2.length !== 0 && by_road2,
+  //           by_road3.length !== 0 && by_road3,
+  //           by_train.length !== 0 && by_train,
+  //           by_channel.length !== 0 && by_channel,
+  //           by_patner.length !== 0 && by_patner,
+  //         ],
+  //         others: others_services_offerd && vendor_other_data,
+  //         gst_address: row,
+  //         //For C&M
+  //         cm_current_department: user.user_department,
+  //         cm_current_status:
+  //           user.user_department_name === "ADMIN"
+  //             ? "NOT APPROVED"
+  //             : current_status.toUpperCase(),
+  //         cm_transit_status:
+  //           user.user_department_name === "ADMIN"
+  //             ? "NOT APPROVED"
+  //             : current_status.toUpperCase(),
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       console.log("response----", response);
+  //       if (response.statusText === "Created") {
+  //         dispatch(setToggle(true));
+  //         dispatch(
+  //           setDataExist(`New Vendor "${values.vendor_name}" Added Sucessfully`)
+  //         );
+  //         dispatch(setAlertType("success"));
+  //         dispatch(setShowAlert(true));
+  //         navigate(-1);
+  //       } else if (response.data === "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `Vendor Name "${toTitleCase(values.vendor_name)}" already exists`
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       } else if (
+  //         response.data.data.pan_no &&
+  //         response.data.data.pan_no[0] ===
+  //           "vendor with this PAN Number already exists."
+  //       ) {
+  //         dispatch(setDataExist(`"${values.pan_number}" already exists`));
+  //         dispatch(setAlertType("warning"));
+  //         dispatch(setShowAlert(true));
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error Happen while posting Braches Data ${error}`);
+  //     });
+  // };
+
+  const add_vendor = async (values) => {
     let vendor_other_data = [];
     for (let i = 0; i < row1.length; i++) {
       vendor_other_data.push([String(row1[i]).toUpperCase()]);
     }
-    axios
-      .post(
-        ServerAddress + "master/add_vendor/",
-        {
-          name: toTitleCase(values.vendor_name).toUpperCase(),
-          is_msme_regitered: msme_registerd,
-
-          emailp: values.vendor_email,
-          mobile_numberp: values.vendor_ph_no,
-
-          emails: values.vendor_email1,
-          mobile_numbers:
-            values.vendor_ph_no1 !== "" ? values.vendor_ph_no1 : null,
-
-          company_type: company_type.toUpperCase(),
-          lob: business_selected.toUpperCase(),
-          service_region: service_region_selected.toUpperCase(),
-          pan_no: toTitleCase(values.pan_number).toUpperCase(),
-          created_by: user_id,
-          msme_registration_no: msme_registerd_number,
-          service_offered: [
-            by_air.length !== 0 && by_air,
-            by_air2.length !== 0 && by_air2,
-            by_road.length !== 0 && by_road,
-            by_road1.length !== 0 && by_road1,
-            by_road2.length !== 0 && by_road2,
-            by_road3.length !== 0 && by_road3,
-            by_train.length !== 0 && by_train,
-            by_channel.length !== 0 && by_channel,
-            by_patner.length !== 0 && by_patner,
-          ],
-          others: others_services_offerd && vendor_other_data,
-          gst_address: row,
-          //For C&M
-          cm_current_department: user.user_department,
-          cm_current_status:
-            user.user_department_name === "ADMIN"
-              ? "NOT APPROVED"
-              : current_status.toUpperCase(),
-          cm_transit_status:
-            user.user_department_name === "ADMIN"
-              ? "NOT APPROVED"
-              : current_status.toUpperCase(),
+    try {
+      const response = await axios.post(ServerAddress + "master/add_vendor/", {
+        name: toTitleCase(values.vendor_name).toUpperCase(),
+        is_msme_regitered: msme_registerd,
+  
+        emailp: values.vendor_email,
+        mobile_numberp: values.vendor_ph_no,
+  
+        emails: values.vendor_email1,
+        mobile_numbers:
+          values.vendor_ph_no1 !== "" ? values.vendor_ph_no1 : null,
+  
+        company_type: company_type.toUpperCase(),
+        lob: business_selected.toUpperCase(),
+        service_region: service_region_selected.toUpperCase(),
+        pan_no: toTitleCase(values.pan_number).toUpperCase(),
+        created_by: user_id,
+        msme_registration_no: msme_registerd_number,
+        service_offered: [
+          by_air.length !== 0 && by_air,
+          by_air2.length !== 0 && by_air2,
+          by_road.length !== 0 && by_road,
+          by_road1.length !== 0 && by_road1,
+          by_road2.length !== 0 && by_road2,
+          by_road3.length !== 0 && by_road3,
+          by_train.length !== 0 && by_train,
+          by_channel.length !== 0 && by_channel,
+          by_patner.length !== 0 && by_patner,
+        ],
+        others: others_services_offerd && vendor_other_data,
+        gst_address: row,
+        //For C&M
+        cm_current_department: user.user_department,
+        cm_current_status:
+          user.user_department_name === "ADMIN"
+            ? "NOT APPROVED"
+            : current_status.toUpperCase(),
+        cm_transit_status:
+          user.user_department_name === "ADMIN"
+            ? "NOT APPROVED"
+            : current_status.toUpperCase(),
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then(function (response) {
-        console.log("response----", response);
-        if (response.statusText === "Created") {
-          dispatch(setToggle(true));
-          dispatch(
-            setDataExist(`New Vendor "${values.vendor_name}" Added Sucessfully`)
-          );
-          dispatch(setAlertType("success"));
-          dispatch(setShowAlert(true));
-          navigate(-1);
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Vendor Name "${toTitleCase(values.vendor_name)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        } else if (
-          response.data.data.pan_no &&
-          response.data.data.pan_no[0] ===
-            "vendor with this PAN Number already exists."
-        ) {
-          dispatch(setDataExist(`"${values.pan_number}" already exists`));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting Braches Data ${error}`);
       });
+      console.log("response----", response);
+      if (response.statusText === "Created") {
+        dispatch(setToggle(true));
+        dispatch(setDataExist(`New Vendor "${values.vendor_name}" Added Sucessfully`));
+        dispatch(setAlertType("success"));
+        dispatch(setShowAlert(true));
+        navigate(-1);
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Vendor Name "${toTitleCase(values.vendor_name)}" already exists`));
+        dispatch(setAlertType("warning"));
+      } else if (response.data.data.pan_no && response.data.data.pan_no[0] === "vendor with this PAN Number already exists.") {
+        dispatch(setDataExist(`"${values.pan_number}" already exists`));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      }
+    } catch (error) {
+      alert(`Error Happen while posting Braches Data ${error}`);
+    }
   };
-
+  
   //update Vendor
-  const update_vendor = (values) => {
+  // const update_vendor = (values) => {
+  //   let vendor_other_data = [];
+  //   for (let i = 0; i < row1.length; i++) {
+  //     vendor_other_data.push([String(row1[i][0]).toUpperCase(), row1[i][1]]);
+  //   }
+
+  //   let fields_names = Object.entries({
+  //     company_type: company_type,
+  //     emailp: values.vendor_email,
+  //     emails: values.vendor_email1,
+  //     is_msme_regitered: msme_registerd,
+  //     lob: business_selected,
+  //     mobile_numberp: values.vendor_ph_no,
+  //     mobile_numbers: values.vendor_ph_no1,
+  //     name: values.vendor_name,
+  //     pan_no: values.pan_number,
+  //     service_region: service_region_selected,
+  //   });
+
+  //   let change_fields = {};
+
+  //   for (let j = 0; j < fields_names.length; j++) {
+  //     const ele = fields_names[j];
+  //     let prev = location_data.state.vendor[`${ele[0]}`];
+  //     let new_v = ele[1];
+  //     if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+  //       change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+  //     }
+  //   }
+  //   axios
+  //     .put(
+  //       ServerAddress + "master/update_vendor/" + vendor_data.id,
+
+  //       {
+  //         name: toTitleCase(values.vendor_name).toUpperCase(),
+  //         is_msme_regitered: msme_registerd,
+
+  //         emailp: values.vendor_email,
+  //         mobile_numberp: values.vendor_ph_no,
+
+  //         emails: values.vendor_email1,
+  //         mobile_numbers:
+  //           values.vendor_ph_no1 !== "" ? values.vendor_ph_no1 : null,
+  //         msme_registration_no: msme_registerd_number,
+  //         company_type: company_type.toUpperCase(),
+  //         lob: business_selected.toUpperCase(),
+  //         service_region: service_region_selected.toUpperCase(),
+  //         pan_no: toTitleCase(values.pan_number).toUpperCase(),
+  //         modified_by: user_id,
+  //         service_offered: [
+  //           by_air.length !== 0 && by_air,
+  //           by_air2.length !== 0 && by_air2,
+  //           by_road.length !== 0 && by_road,
+  //           by_road1.length !== 0 && by_road1,
+  //           by_road2.length !== 0 && by_road2,
+  //           by_road3.length !== 0 && by_road3,
+  //           by_train.length !== 0 && by_train,
+  //           by_channel.length !== 0 && by_channel,
+  //           by_patner.length !== 0 && by_patner,
+  //         ],
+  //         deleted_id: del_id,
+  //         others: others_services_offerd && vendor_other_data,
+  //         other_deleted_id: other_deletedid,
+  //         gst_address: row,
+  //         deleted_gst: deleted_gst_id,
+  //         change_fields: change_fields,
+  //         //For C&M
+  //         cm_transit_status: status_toggle === true ? current_status : "",
+  //         cm_current_status: current_status.toUpperCase(),
+  //         cm_remarks: "",
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.data.status === "success") {
+  //         dispatch(setToggle(true));
+  //         dispatch(
+  //           setDataExist(`Vendor "${values.vendor_name}" Updated Sucessfully`)
+  //         );
+  //         dispatch(setAlertType("info"));
+  //         dispatch(setShowAlert(true));
+  //         navigate(-1);
+  //       } else if (response.data === "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `Vendor Name "${toTitleCase(values.vendor_name)}" already exists`
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error Happen while posting Braches Data ${error}`);
+  //     });
+  // };
+
+  const update_vendor = async (values) => {
     let vendor_other_data = [];
     for (let i = 0; i < row1.length; i++) {
       vendor_other_data.push([String(row1[i][0]).toUpperCase(), row1[i][1]]);
     }
-
+  
     let fields_names = Object.entries({
       company_type: company_type,
       emailp: values.vendor_email,
@@ -393,9 +566,9 @@ const AddVendor = () => {
       pan_no: values.pan_number,
       service_region: service_region_selected,
     });
-
+  
     let change_fields = {};
-
+  
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.vendor[`${ele[0]}`];
@@ -404,17 +577,15 @@ const AddVendor = () => {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
-    axios
-      .put(
+  
+    try {
+      const response = await axios.put(
         ServerAddress + "master/update_vendor/" + vendor_data.id,
-
         {
           name: toTitleCase(values.vendor_name).toUpperCase(),
           is_msme_regitered: msme_registerd,
-
           emailp: values.vendor_email,
           mobile_numberp: values.vendor_ph_no,
-
           emails: values.vendor_email1,
           mobile_numbers:
             values.vendor_ph_no1 !== "" ? values.vendor_ph_no1 : null,
@@ -441,7 +612,6 @@ const AddVendor = () => {
           gst_address: row,
           deleted_gst: deleted_gst_id,
           change_fields: change_fields,
-          //For C&M
           cm_transit_status: status_toggle === true ? current_status : "",
           cm_current_status: current_status.toUpperCase(),
           cm_remarks: "",
@@ -451,31 +621,30 @@ const AddVendor = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          dispatch(setToggle(true));
-          dispatch(
-            setDataExist(`Vendor "${values.vendor_name}" Updated Sucessfully`)
-          );
-          dispatch(setAlertType("info"));
-          dispatch(setShowAlert(true));
-          navigate(-1);
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Vendor Name "${toTitleCase(values.vendor_name)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting Braches Data ${error}`);
-      });
-  };
+      );
+      if (response.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(
+          setDataExist(`Vendor "${values.vendor_name}" Updated Sucessfully`)
+        );
+        dispatch(setAlertType("info"));
+        dispatch(setShowAlert(true));
+        navigate(-1);
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Vendor Name "${toTitleCase(values.vendor_name)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+              alert(`Error Happen while posting Braches Data ${error}`);
 
+    }
+  };
+  
   // Navigation At the time of Cancel
   const handleAction = () => {
     dispatch(setToggle(true));
@@ -791,36 +960,96 @@ const AddVendor = () => {
     setgst_id_list(temp_2);
   };
 
-  const getGstStates = (place_id, filter_by) => {
-    // let state_list = [...state_list_s];
-    let state_list = [];
-    axios
-      .get(
+  // const getGstStates = (place_id, filter_by) => {
+  //   // let state_list = [...state_list_s];
+  //   let state_list = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${1}&records=${10}&state_search=${""}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+  //       if (resp.data.results.length > 0) {
+  //         (state_list = resp.data.results.map((v) => [
+  //           v.id,
+  //           toTitleCase(v.state),
+  //         ])),
+  //           setgst_state_list(state_list);
+  //         setgst_state_id(resp.data.results[0].id);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get States, ${err}`);
+  //     });
+  // };
+  const getGstStates = async (place_id, filter_by) => {
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${1}&records=${10}&state_search=${""}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.results.length > 0) {
-          (state_list = resp.data.results.map((v) => [
-            v.id,
-            toTitleCase(v.state),
-          ])),
-            setgst_state_list(state_list);
-          setgst_state_id(resp.data.results[0].id);
-        }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get States, ${err}`);
-      });
+      );
+      if (resp.data.results.length > 0) {
+        const state_list = resp.data.results.map((v) => [v.id, toTitleCase(v.state)]);
+        setgst_state_list(state_list);
+        setgst_state_id(resp.data.results[0].id);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get States, ${err}`);
+    }
   };
+  
 
-  const getGstCities = (place_id, filter_by) => {
-    let cities_list = [...gst_city_list];
-    axios
-      .get(
+  // const getGstCities = (place_id, filter_by) => {
+  //   let cities_list = [...gst_city_list];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `master/all_cities/?search=${""}&p=${gst_city_page}&records=${10}&city_search=${gst_city_search_item}` +
+  //         "&place_id=" +
+  //         place_id +
+  //         "&filter_by=" +
+  //         filter_by,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+  //       if (resp.data.results.length > 0) {
+  //         if (gst_city_page === 1) {
+  //           cities_list = resp.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
+  //             v.state,
+  //           ]);
+  //         } else {
+  //           cities_list = [
+  //             ...gst_city_list,
+  //             ...resp.data.results.map((v) => [
+  //               v.id,
+  //               toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
+  //               v.state,
+  //             ]),
+  //           ];
+  //         }
+  //         setgst_city_list(cities_list);
+  //       } else {
+  //         setgst_city_list([]);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get City11111111, ${err}`);
+  //     });
+  // };
+
+  const getGstCities = async (place_id, filter_by) => {
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_cities/?search=${""}&p=${gst_city_page}&records=${10}&city_search=${gst_city_search_item}` +
           "&place_id=" +
@@ -830,110 +1059,184 @@ const AddVendor = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.results.length > 0) {
-          if (gst_city_page === 1) {
-            cities_list = resp.data.results.map((v) => [
+      );
+      if (resp.data.results.length > 0) {
+        let cities_list = [];
+        if (gst_city_page === 1) {
+          cities_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
+            v.state,
+          ]);
+        } else {
+          cities_list = [
+            ...gst_city_list,
+            ...resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
               v.state,
-            ]);
-          } else {
-            cities_list = [
-              ...gst_city_list,
-              ...resp.data.results.map((v) => [
-                v.id,
-                toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
-                v.state,
-              ]),
-            ];
-          }
-          setgst_city_list(cities_list);
-        } else {
-          setgst_city_list([]);
+            ]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City11111111, ${err}`);
-      });
+        setgst_city_list(cities_list);
+      } else {
+        setgst_city_list([]);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get City11111111, ${err}`);
+    }
   };
+  
 
-  const getPincode = (place_id, filter_by) => {
+  // const getPincode = (place_id, filter_by) => {
+  //   let pincode_list = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `master/all_pincode/?search=${""}&p=${gst_pincodepage}&records=${10}&pincode_search=${gst_pincode_search}` +
+  //         "&place_id=" +
+  //         place_id +
+  //         "&filter_by=" +
+  //         filter_by,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+  //       if (filter_by !== "pincode") {
+  //         if (gst_pincodepage == 1) {
+  //           pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+  //         } else {
+  //           pincode_list = [
+  //             ...gstpincode_list,
+  //             ...resp.data.results.map((v) => [v.id, v.pincode]),
+  //           ];
+  //         }
+  //         setgstpincode_list(pincode_list);
+  //       } else {
+  //         dispatch(
+  //           setDataExist(
+  //             "You entered invalid pincode or pincode not available in database"
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //         dispatch(setShowAlert(true));
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get City, ${err}`);
+  //     });
+  // };
+
+  const getPincode = async (place_id, filter_by) => {
     let pincode_list = [];
-    axios
-      .get(
+    try {
+      const response = await axios.get(
         ServerAddress +
-          `master/all_pincode/?search=${""}&p=${gst_pincodepage}&records=${10}&pincode_search=${gst_pincode_search}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_pincode/?search=${""}&p=${gst_pincodepage}&records=${10}&pincode_search=${gst_pincode_search}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (filter_by !== "pincode") {
-          if (gst_pincodepage == 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-          } else {
-            pincode_list = [
-              ...gstpincode_list,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
-          }
-          setgstpincode_list(pincode_list);
+      );
+  
+      if (filter_by !== "pincode") {
+        if (gst_pincodepage == 1) {
+          pincode_list = response.data.results.map((v) => [v.id, v.pincode]);
         } else {
-          dispatch(
-            setDataExist(
-              "You entered invalid pincode or pincode not available in database"
-            )
-          );
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
+          pincode_list = [
+            ...gstpincode_list,
+            ...response.data.results.map((v) => [v.id, v.pincode]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+        setgstpincode_list(pincode_list);
+      } else {
+        dispatch(
+          setDataExist(
+            "You entered invalid pincode or pincode not available in database"
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      }
+    } catch (error) {
+      alert(`Error Occur in Get City, ${error}`);
+    }
   };
-
-  const getLocality = (place_id, filter_by) => {
+  
+  // const getLocality = (place_id, filter_by) => {
+  //   let locality_list = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `master/all_locality/?search=${""}&p=${gst_localitypage}&records=${10}` +
+  //         `&place_id=${place_id}&filter_by=${filter_by}&name_search=${gst_locality_search}&state=&city=&name=&data=all`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+  //       if (filter_by !== "locality") {
+  //         if (gst_localitypage == 1) {
+  //           locality_list = resp.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.name),
+  //           ]);
+  //         } else {
+  //           locality_list = [
+  //             ...gst_locality_list,
+  //             ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+  //           ];
+  //         }
+  //         setgst_locality_list(locality_list);
+  //       } else {
+  //         dispatch(setDataExist("You entered invalid Locality"));
+  //         dispatch(setAlertType("warning"));
+  //         dispatch(setShowAlert(true));
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get Pincode , ${err}`);
+  //     });
+  // };
+  const getLocality = async (place_id, filter_by) => {
     let locality_list = [];
-    axios
-      .get(
+    try {
+      const response = await axios.get(
         ServerAddress +
-          `master/all_locality/?search=${""}&p=${gst_localitypage}&records=${10}` +
-          `&place_id=${place_id}&filter_by=${filter_by}&name_search=${gst_locality_search}&state=&city=&name=&data=all`,
+        `master/all_locality/?search=${""}&p=${gst_localitypage}&records=${10}` +
+        `&place_id=${place_id}&filter_by=${filter_by}&name_search=${gst_locality_search}&state=&city=&name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (filter_by !== "locality") {
-          if (gst_localitypage == 1) {
-            locality_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            locality_list = [
-              ...gst_locality_list,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-          setgst_locality_list(locality_list);
+      );
+  
+      if (filter_by !== "locality") {
+        if (gst_localitypage == 1) {
+          locality_list = response.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+          ]);
         } else {
-          dispatch(setDataExist("You entered invalid Locality"));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
+          locality_list = [
+            ...gst_locality_list,
+            ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Pincode , ${err}`);
-      });
+        setgst_locality_list(locality_list);
+      } else {
+        dispatch(setDataExist("You entered invalid Locality"));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      }
+    } catch (error) {
+      alert(`Error Occur in Get Pincode , ${error}`);
+    }
   };
+  
 
   useEffect(() => {
     if (gst_state_id !== "") {
@@ -1121,9 +1424,38 @@ const AddVendor = () => {
     }
   }, [user, isupdating]);
 
-  const update_vendorstatus = (id) => {
-    axios
-      .put(
+  // const update_vendorstatus = (id) => {
+  //   axios
+  //     .put(
+  //       ServerAddress + "master/update_vendor/" + id,
+  //       {
+  //         cm_current_status: "REJECTED",
+  //         cm_remarks: toTitleCase(message).toUpperCase(),
+  //         change_fields: {},
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.data.status === "success") {
+  //         // dispatch(Toggle(true))
+  //         dispatch(setShowAlert(true));
+  //         dispatch(setDataExist(`Status Updated sucessfully`));
+  //         dispatch(setAlertType("info"));
+  //         navigate(-1);
+  //       }
+  //     })
+  //     .catch(function (err) {
+  //       alert(`rror While  Updateing Coloader ${err}`);
+  //     });
+  // };
+
+  const update_vendorstatus = async (id) => {
+    try {
+      const response = await axios.put(
         ServerAddress + "master/update_vendor/" + id,
         {
           cm_current_status: "REJECTED",
@@ -1135,21 +1467,19 @@ const AddVendor = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          // dispatch(Toggle(true))
-          dispatch(setShowAlert(true));
-          dispatch(setDataExist(`Status Updated sucessfully`));
-          dispatch(setAlertType("info"));
-          navigate(-1);
-        }
-      })
-      .catch(function (err) {
-        alert(`rror While  Updateing Coloader ${err}`);
-      });
+      );
+  
+      if (response.data.status === "success") {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Status Updated sucessfully`));
+        dispatch(setAlertType("info"));
+        navigate(-1);
+      }
+    } catch (error) {
+      alert(`rror While  Updateing Coloader ${error}`);
+    }
   };
-
+  
   const handleSubmit = () => {
     if (message == "") {
       setmessage_error(true);

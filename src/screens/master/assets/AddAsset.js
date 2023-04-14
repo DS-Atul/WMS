@@ -227,135 +227,113 @@ const AddAsset = () => {
     setcircle_btn2(!circle_btn2);
   };
 
-  const getManifacturer = () => {
+  const getManifacturer = async () => {
     let manufacture_list = [...manufacture_name_list];
-    let data = [];
-    axios
-      .get(
-        ServerAddress +
-        `master/all_asset_manufacture/?search=${""}&p=${manufacture_type_page}&records=${10}&name_search=${manufacture_type_search}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((resp) => {
-        if (resp.data.results.length > 0) {
-          if (manufacture_type_page == 1) {
-            manufacture_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            manufacture_list = [
-              ...manufacture_name_list,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-        }
-        let a_index = manufacture_list.indexOf("Add New");
-        if (a_index != -1) {
-          manufacture_list.splice(a_index, 1);
-        }
-        manufacture_list = [...new Set(manufacture_list.map((v) => `${v}`))].map(
-          (v) => v.split(",")
-        );
-        manufacture_list.push("Add New");
-
-        setmanufacture_name_list(manufacture_list);
-
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Commodity Type, ${err}`);
+    try {
+      const resp = await axios.get(ServerAddress + `master/all_asset_manufacture/?search=${""}&p=${manufacture_type_page}&records=${10}&name_search=${manufacture_type_search}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
-  };
-
-  const setManufactureName = () => {
-    axios
-      .post(
-        ServerAddress + "master/add_asset_manufacture/",
-        {
-          name: toTitleCase(other_manufacture_type).toUpperCase(),
-          created_by: user_id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then(function (response) {
-        if (response.data.status !== "duplicated") {
-          if (response.statusText === "Created") {
-            setmanufacture_type_id(response.data.manufacture_id);
-            dispatch(setShowAlert(true));
-            dispatch(
-              setDataExist(
-                `Manufacture Name ${toTitleCase(
-                  other_manufacture_type
-                )} Added Sucessfully`
-              )
-            );
-            dispatch(setAlertType("success"));
-            setmanufacture_type(toTitleCase(other_manufacture_type));
-            getManifacturer();
-            // getDistrict();
-          }
+      if (resp.data.results.length > 0) {
+        if (manufacture_type_page == 1) {
+          manufacture_list = resp.data.results.map((v) => [v.id, toTitleCase(v.name)]);
         } else {
+          manufacture_list = [
+            ...manufacture_name_list,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
+        }
+      }
+      let a_index = manufacture_list.indexOf("Add New");
+      if (a_index != -1) {
+        manufacture_list.splice(a_index, 1);
+      }
+      manufacture_list = [...new Set(manufacture_list.map((v) => `${v}`))].map((v) => v.split(","));
+      manufacture_list.push("Add New");
+      setmanufacture_name_list(manufacture_list);
+    } catch (err) {
+      alert(`Error Occur in Get Commodity Type, ${err}`);
+    }
+  };
+  
+
+  const setManufactureName = async () => {
+    try {
+      const response = await axios.post(ServerAddress + "master/add_asset_manufacture/", {
+        name: toTitleCase(other_manufacture_type).toUpperCase(),
+        created_by: user_id,
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (response.data.status !== "duplicated") {
+        if (response.statusText === "Created") {
+          setmanufacture_type_id(response.data.manufacture_id);
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
-              `Manifacturer Name ${toTitleCase(
-                other_manufacture_type
-              )} Already Exist`
+              `Manufacture Name ${toTitleCase(other_manufacture_type)} Added Sucessfully`
             )
           );
-          dispatch(setAlertType("warning"));
-          if (isupdating) {
-            setmanufacture_type(toTitleCase(location_data.name));
-          } else {
-            setmanufacture_type("");
-          }
+          dispatch(setAlertType("success"));
+          setmanufacture_type(toTitleCase(other_manufacture_type));
+          await getManifacturer();
+          // getDistrict();
         }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting Manufacture Data ${error}`);
-      });
+      } else {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Manifacturer Name ${toTitleCase(other_manufacture_type)} Already Exist`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        if (isupdating) {
+          setmanufacture_type(toTitleCase(location_data.name));
+        } else {
+          setmanufacture_type("");
+        }
+      }
+    } catch (error) {
+      alert(`Error Happen while posting Manufacture Data ${error}`);
+    }
   };
-  const get_branch = () => {
-    let branch_list_is = [];
-    axios
-      .get(
+  
+
+  const get_branch = async () => {
+    try {
+      let branch_list_is = [];
+      const response = await axios.get(
         ServerAddress +
-        `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
-          "",
-        ]}&branch_city=${[""]}&vendor=${[""]}&branch_search=${search_branch}&data=all`,
+          `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
+            "",
+          ]}&branch_city=${[""]}&vendor=${[""]}&branch_search=${search_branch}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((response) => {
-
-        console.log("State is ===>", response.data)
-        if (response.data.next === null) {
-          setbranch_loaded(false);
+      );
+  
+      console.log("State is ===>", response.data);
+      if (response.data.next === null) {
+        setbranch_loaded(false);
+      } else {
+        setbranch_loaded(true);
+      }
+      if (response.data.results.length > 0) {
+        if (page == 1) {
+          branch_list_is = response.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+          ]);
         } else {
-          setbranch_loaded(true);
+          branch_list_is = [
+            ...branch_list,
+            ...response.data.results.map((v) => [v.id, v.name]),
+          ];
         }
-        if (response.data.results.length > 0) {
-          if (page == 1) {
-            branch_list_is = response.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            branch_list_is = [
-              ...branch_list,
-              ...response.data.results.map((v) => [v.id, v.name]),
-            ];
-          }
-        }
-        setbranch_count(branch_count + 2);
-        setbranch_list(branch_list_is);
+      }
+      setbranch_count(branch_count + 2);
+      setbranch_list(branch_list_is);
         // let temp = [];
         // let temp2 = [...branch_list];
         // temp = response.data.results;
@@ -364,11 +342,11 @@ const AddAsset = () => {
         // }
         // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
         // setbranch_list(temp2);
-      })
-      .catch((err) => {
-        alert(`Error While Loading Client , ${err}`);
-      });
+    } catch (err) {
+      alert(`Error While Loading Client , ${err}`);
+    }
   };
+  
 
   useLayoutEffect(() => {
     get_branch();
@@ -423,9 +401,9 @@ const AddAsset = () => {
     } catch (error) { }
   }, []);
 
-  const add_asset = () => {
-    axios
-      .post(
+  const add_asset = async () => {
+    try {
+      const response = await axios.post(
         ServerAddress + "master/add_asset/",
         {
           is_damaged: is_defective,
@@ -444,7 +422,6 @@ const AddAsset = () => {
             asset_type == "Logger"
               ? logger_box_no.toUpperCase()
               : useproduct_id.toUpperCase(),
-
           assigned_branch: branch_short_id,
           created_branch: user.home_branch, // It will not updated
           checked_by: isChecked ? user_id : null,
@@ -464,38 +441,35 @@ const AddAsset = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        console.log("response", response.data)
-        if (response.data.status === "success") {
-          dispatch(setToggle(true));
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Asset Id  "${response.data.data.asset_id}" Added sucessfully`
-            )
-          );
-          dispatch(setAlertType("success"));
-          navigate(-1);
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Commodity Name "${toTitleCase(
-                values.asset_name
-              )}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-
-      .catch((error) => {
-        alert(`Error while posting Data ${error}`);
-      });
+      );
+      console.log("response", response.data);
+      if (response.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Asset Id  "${response.data.data.asset_id}" Added sucessfully`
+          )
+        );
+        dispatch(setAlertType("success"));
+        navigate(-1);
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Commodity Name "${toTitleCase(
+              values.asset_name
+            )}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert(`Error while posting Data ${error}`);
+    }
   };
-
-  const updateAsset = () => {
+  
+  const updateAsset = async () => {
 
     let fields_names = Object.entries({
       asset_type: asset_type,
@@ -512,9 +486,9 @@ const AddAsset = () => {
       temperature_type:
         asset_type === "Logger" ? temperature_log_type : temperature_type_box,
     });
-
+  
     let change_fields = {};
-
+  
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.asset[`${ele[0]}`];
@@ -523,12 +497,11 @@ const AddAsset = () => {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
-
-    axios
-      .put(
+  
+    try {
+      const response = await axios.put(
         ServerAddress + "master/update_asset/" + asset.id,
         {
-
           asset_type: asset_type.toUpperCase(),
           box_type:
             asset_type == "Logger"
@@ -544,7 +517,7 @@ const AddAsset = () => {
             asset_type == "Logger"
               ? logger_box_no.toUpperCase()
               : useproduct_id.toUpperCase(),
-
+  
           assigned_branch: branch_short_id,
           created_branch: user.home_branch, // It will not updated
           checked_by: isChecked ? user_id : null,
@@ -562,40 +535,39 @@ const AddAsset = () => {
           cm_current_status: (current_status).toUpperCase(),
           cm_remarks: ""
         },
-
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          dispatch(setToggle(true));
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Asset Id  "${response.data.data.asset_id}" Updated sucessfully`
-            )
-          );
-          dispatch(setAlertType("info"));
-          navigate(-1);
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Commodity Name "${toTitleCase(
-                values.asset_name
-              )}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch(function (err) {
-        alert(`Error While  Updateing Asset ${err}`);
-      });
+      );
+  
+      if (response.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Asset Id  "${response.data.data.asset_id}" Updated sucessfully`
+          )
+        );
+        dispatch(setAlertType("info"));
+        navigate(-1);
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Commodity Name "${toTitleCase(
+              values.asset_name
+            )}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (err) {
+      alert(`Error While  Updateing Asset ${err}`);
+    }
   };
+  
 
   useLayoutEffect(() => {
     if (box_type !== "") {

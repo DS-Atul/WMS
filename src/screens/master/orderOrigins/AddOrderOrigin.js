@@ -125,8 +125,8 @@ const AddOrderOrigin = () => {
       address_line_1: Yup.string().required("Address is required"),
       email: Yup.string().email().required("Email is required"),
       phone_number: Yup.string()
-        .min(10)
-        .max(10)
+        .min(10,"Phone number must be at least 10 characters")
+        .max(10,"Phone number must be at most 10 characters")
         .required("Phone number is required"),
     }),
 
@@ -135,263 +135,523 @@ const AddOrderOrigin = () => {
     },
   });
 
-  const getCities = (place_id, filter_by) => {
+  // const getCities = (place_id, filter_by) => {
+  //   setby_pincode(false);
+  //   let cities_list = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //       `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
+  //       "&place_id=" +
+  //       place_id +
+  //       "&filter_by=" +
+  //       filter_by,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+  //       setcitydata(resp.data.results);
+  //       setdata(true);
+  //       if(resp.data.next === null) {
+  //         setcity_loaded(false);
+  //       } else {
+  //         setcity_loaded(true);
+  //       }
+
+  //       if (resp.data.results.length > 0) {
+  //         if (city_page === 1) {
+  //           cities_list = resp.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.city),
+  //             toTitleCase(v.state_name),
+  //           ]);
+  //         } else {
+  //           cities_list = [
+  //             ...city_list_s,
+  //             ...resp.data.results.map((v) => [
+  //               v.id,
+  //               toTitleCase(v.city),
+  //               toTitleCase(v.state_name),
+  //             ]),
+  //           ];
+  //         }
+  //         // setcity("");
+  //         setpincode_loaded(true);
+  //         // setpincode("");
+  //         setcity_count(city_count +2);
+  //         setcity_list_s(cities_list);
+  //       } else {
+  //         setcity("");
+  //         setpincode("");
+  //         setcity_list_s([]);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get City, ${err}`);
+  //     });
+  // };
+  const getCities = async (place_id, filter_by) => {
     setby_pincode(false);
     let cities_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
-        `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
-        "&place_id=" +
-        place_id +
-        "&filter_by=" +
-        filter_by,
+          `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
+          "&place_id=" +
+          place_id +
+          "&filter_by=" +
+          filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        setcitydata(resp.data.results);
-        setdata(true);
-        if(resp.data.next === null) {
-          setcity_loaded(false);
+      );
+      setcitydata(resp.data.results);
+      setdata(true);
+      if (resp.data.next === null) {
+        setcity_loaded(false);
+      } else {
+        setcity_loaded(true);
+      }
+  
+      if (resp.data.results.length > 0) {
+        if (city_page === 1) {
+          cities_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.city),
+            toTitleCase(v.state_name),
+          ]);
         } else {
-          setcity_loaded(true);
-        }
-
-        if (resp.data.results.length > 0) {
-          if (city_page === 1) {
-            cities_list = resp.data.results.map((v) => [
+          cities_list = [
+            ...city_list_s,
+            ...resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
               toTitleCase(v.state_name),
-            ]);
-          } else {
-            cities_list = [
-              ...city_list_s,
-              ...resp.data.results.map((v) => [
-                v.id,
-                toTitleCase(v.city),
-                toTitleCase(v.state_name),
-              ]),
-            ];
-          }
-          // setcity("");
-          setpincode_loaded(true);
-          // setpincode("");
-          setcity_count(city_count +2);
-          setcity_list_s(cities_list);
-        } else {
-          setcity("");
-          setpincode("");
-          setcity_list_s([]);
+            ]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+        // setcity("");
+        setpincode_loaded(true);
+        // setpincode("");
+        setcity_count(city_count + 2);
+        setcity_list_s(cities_list);
+      } else {
+        setcity("");
+        setpincode("");
+        setcity_list_s([]);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
+  
 
-  const getPincode = (place_id, filter_by) => {
+  // const getPincode = (place_id, filter_by) => {
+  //   let pincode_list = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //       `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
+  //       "&place_id=" +
+  //       place_id +
+  //       "&filter_by=" +
+  //       filter_by,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+  //       if (filter_by !== "pincode") {
+  //         if (pincode_page === 1) {
+  //           pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+  //         } else {
+  //           pincode_list = [
+  //             ...pincode_list_s,
+  //             ...resp.data.results.map((v) => [v.id, v.pincode]),
+  //           ];
+  //         }
+
+  //         setpincode_list_s(pincode_list);
+  //       } else if (resp.data.results.length > 0) {
+  //         setcity(toTitleCase(resp.data.results[0].city_name));
+  //         setcity_id(resp.data.results[0].city);
+  //         setstate(toTitleCase(resp.data.results[0].state_name));
+  //         setstate_id(resp.data.results[0].state);
+  //         setpincode(resp.data.results[0].pincode);
+  //         setpincode_id(resp.data.results[0].id);
+  //       } else {
+  //         dispatch(
+  //           setDataExist(
+  //             "You entered invalid pincode or pincode not available in database"
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //         dispatch(setShowAlert(true));
+  //         setcity("");
+  //         setcity_id("");
+  //         // setstate("");
+  //         setstate_id("");
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get City, ${err}`);
+  //     });
+  // };
+  const getPincode = async (place_id, filter_by) => {
     let pincode_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
-        `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
-        "&place_id=" +
-        place_id +
-        "&filter_by=" +
-        filter_by,
+          `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
+          "&place_id=" +
+          place_id +
+          "&filter_by=" +
+          filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (filter_by !== "pincode") {
-          if (pincode_page === 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-          } else {
-            pincode_list = [
-              ...pincode_list_s,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
-          }
-
-          setpincode_list_s(pincode_list);
-        } else if (resp.data.results.length > 0) {
-          setcity(toTitleCase(resp.data.results[0].city_name));
-          setcity_id(resp.data.results[0].city);
-          setstate(toTitleCase(resp.data.results[0].state_name));
-          setstate_id(resp.data.results[0].state);
-          setpincode(resp.data.results[0].pincode);
-          setpincode_id(resp.data.results[0].id);
+      );
+      if (filter_by !== "pincode") {
+        if (pincode_page === 1) {
+          pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
         } else {
-          dispatch(
-            setDataExist(
-              "You entered invalid pincode or pincode not available in database"
-            )
-          );
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-          setcity("");
-          setcity_id("");
-          // setstate("");
-          setstate_id("");
+          pincode_list = [          ...pincode_list_s,          ...resp.data.results.map((v) => [v.id, v.pincode]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+  
+        setpincode_list_s(pincode_list);
+      } else if (resp.data.results.length > 0) {
+        setcity(toTitleCase(resp.data.results[0].city_name));
+        setcity_id(resp.data.results[0].city);
+        setstate(toTitleCase(resp.data.results[0].state_name));
+        setstate_id(resp.data.results[0].state);
+        setpincode(resp.data.results[0].pincode);
+        setpincode_id(resp.data.results[0].id);
+      } else {
+        dispatch(
+          setDataExist(
+            "You entered invalid pincode or pincode not available in database"
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+        setcity("");
+        setcity_id("");
+        // setstate("");
+        setstate_id("");
+      }
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
-
-  const getLocality = (place_id, filter_by) => {
-    let locality_list = [...locality_list_s];
-    axios
-      .get(
+  
+  // const getLocality = (place_id, filter_by) => {
+  //   let locality_list = [...locality_list_s];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //       `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
+  //       `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+  //       if (filter_by !== "locality") {
+  //         if (pincode_page === 1) {
+  //           locality_list = resp.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.name),
+  //           ]);
+  //         } else {
+  //           locality_list = [
+  //             ...locality_list_s,
+  //             ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+  //           ];
+  //         }
+  //         locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+  //           (v) => v.split(",")
+  //         );
+  //         setlocality_list_s(locality_list);
+  //       } else if (resp.data.results.length > 0) {
+  //         setlocality(toTitleCase(resp.data.results[0].name));
+  //         setlocality_id(resp.data.results[0].id);
+  //         setcity(toTitleCase(resp.data.results[0].city_name));
+  //         setstate(toTitleCase(resp.data.results[0].state_name));
+  //         setpincode(resp.data.results[0].pincode_name);
+  //         setpincode_id(resp.data.results[0].pincode);
+  //       } else {
+  //         dispatch(setDataExist("You entered invalid Locality"));
+  //         dispatch(setAlertType("warning"));
+  //         dispatch(setShowAlert(true));
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get Pincode , ${err}`);
+  //     });
+  // };
+  const getLocality = async (place_id, filter_by) => {
+    try {
+      let locality_list = [...locality_list_s];
+      const response = await axios.get(
         ServerAddress +
         `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
         `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (filter_by !== "locality") {
-          if (pincode_page === 1) {
-            locality_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            locality_list = [
-              ...locality_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-          locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
-            (v) => v.split(",")
-          );
-          setlocality_list_s(locality_list);
-        } else if (resp.data.results.length > 0) {
-          setlocality(toTitleCase(resp.data.results[0].name));
-          setlocality_id(resp.data.results[0].id);
-          setcity(toTitleCase(resp.data.results[0].city_name));
-          setstate(toTitleCase(resp.data.results[0].state_name));
-          setpincode(resp.data.results[0].pincode_name);
-          setpincode_id(resp.data.results[0].pincode);
+      );
+      if (filter_by !== "locality") {
+        if (pincode_page === 1) {
+          locality_list = response.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+          ]);
         } else {
-          dispatch(setDataExist("You entered invalid Locality"));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
+          locality_list = [
+            ...locality_list_s,
+            ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Pincode , ${err}`);
-      });
+        locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+          (v) => v.split(",")
+        );
+        setlocality_list_s(locality_list);
+      } else if (response.data.results.length > 0) {
+        setlocality(toTitleCase(response.data.results[0].name));
+        setlocality_id(response.data.results[0].id);
+        setcity(toTitleCase(response.data.results[0].city_name));
+        setstate(toTitleCase(response.data.results[0].state_name));
+        setpincode(response.data.results[0].pincode_name);
+        setpincode_id(response.data.results[0].pincode);
+      } else {
+        dispatch(setDataExist("You entered invalid Locality"));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      }
+    } catch (err) {
+      alert(`Error Occur in Get Pincode , ${err}`);
+    }
   };
+  
+  // const getBillto = () => {
+  //   // let b_temp2 = [...billto_list_s];
+  //   // let b_data = [];
+  //   let billto_list = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //       `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${billto_search_item}&data=all`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       if(response.data.next === null) {
+  //         setbillto_loaded(false);
+  //       } else {
+  //         setbillto_loaded(true);
+  //       }
 
-  const getBillto = () => {
-    // let b_temp2 = [...billto_list_s];
-    // let b_data = [];
+  //       if(response.data.results.length > 0) {
+  //         if(billto_page == 1) {
+  //           billto_list = response.data.results.map((v) => [
+  //             v.id, v.name,
+  //           ]);
+  //         }
+  //         else   {
+  //           billto_list = [
+  //             ...billto_list_s,
+  //             ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+  //           ];
+  //         }
+  //       } 
+  //       setbillto_count(billto_count +2);
+  //       setbillto_list_s(billto_list);
+  //       // b_data = response.data.results;
+  //       // for (let index = 0; index < b_data.length; index++) {
+  //       //   b_temp2.push([b_data[index].id, toTitleCase(b_data[index].name)]);
+  //       // }
+  //       // b_temp2 = [...new Set(b_temp2.map((v) => `${v}`))].map((v) =>
+  //       //   v.split(",")
+  //       // );
+  //       // setbillto_list_s(b_temp2);
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get Data ${err}`);
+  //     });
+  // };
+  const getBillto = async () => {
     let billto_list = [];
-    axios
-      .get(
+  
+    try {
+      const response = await axios.get(
         ServerAddress +
-        `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${billto_search_item}&data=all`,
+          `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${billto_search_item}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((response) => {
-        if(response.data.next === null) {
-          setbillto_loaded(false);
+      );
+  
+      if (response.data.next === null) {
+        setbillto_loaded(false);
+      } else {
+        setbillto_loaded(true);
+      }
+  
+      if (response.data.results.length > 0) {
+        if (billto_page == 1) {
+          billto_list = response.data.results.map((v) => [v.id, v.name]);
         } else {
-          setbillto_loaded(true);
+          billto_list = [
+            ...billto_list_s,
+            ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
         }
-
-        if(response.data.results.length > 0) {
-          if(billto_page == 1) {
-            billto_list = response.data.results.map((v) => [
-              v.id, v.name,
-            ]);
-          }
-          else   {
-            billto_list = [
-              ...billto_list_s,
-              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-        } 
-        setbillto_count(billto_count +2);
-        setbillto_list_s(billto_list);
-        // b_data = response.data.results;
-        // for (let index = 0; index < b_data.length; index++) {
-        //   b_temp2.push([b_data[index].id, toTitleCase(b_data[index].name)]);
-        // }
-        // b_temp2 = [...new Set(b_temp2.map((v) => `${v}`))].map((v) =>
-        //   v.split(",")
-        // );
-        // setbillto_list_s(b_temp2);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Data ${err}`);
-      });
+      }
+      setbillto_count(billto_count + 2);
+      setbillto_list_s(billto_list);
+    } catch (err) {
+      alert(`Error Occur in Get Data ${err}`);
+    }
   };
 
-  const getClient = () => {
-    // let temp2 = [];
-    // let data = [];
-    let client_list = [];
-    axios
-      .get(
-        ServerAddress +
+  
+//   const getClient = () => {
+//     // let temp2 = [];
+//     // let data = [];
+//     let client_list = [];
+//     axios
+//       .get(
+//         ServerAddress +
+//         `master/all_clients/?bill_to=${billto_id}&search=${""}&p=${client_page}&records=${10}&name_search=${client_search_item}`,
+//         {
+//           headers: { Authorization: `Bearer ${accessToken}` },
+//         }
+//       )
+//       .then((response) => {
+
+// if(response.data.next === null) {
+//   setclient_loaded(false);
+// } else {
+//   setclient_loaded(true);
+// }
+
+// if(response.data.results.length > 0) {
+//   if(client_page == 1) {
+// client_list = response.data.results.map((v) => [
+//   v.id,v.name,
+// ]);
+//   } 
+//   else {
+//     client_list = [
+//       ...client_list_s ,
+//       ...response.data.results.map((v) => [
+//         v.id,v.name,
+//       ])
+//     ]
+//   }
+// setclient_count(client_count +2);
+//   setclient_list_s(client_list);
+// }
+
+//         // data = response.data.results;
+//         // for (let index = 0; index < data.length; index++) {
+//         //   temp2.push([data[index].id, toTitleCase(data[index].name)]);
+//         // }
+//         // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+//         // setclient_list_s(temp2);
+//       })
+//       .catch((err) => {
+//         alert(`Error Occur in Get Data ${err}`);
+//       });
+//   };
+const getClient = async () => {
+  let client_list = [];
+
+  try {
+    const response = await axios.get(
+      ServerAddress +
         `master/all_clients/?bill_to=${billto_id}&search=${""}&p=${client_page}&records=${10}&name_search=${client_search_item}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((response) => {
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
 
-if(response.data.next === null) {
-  setclient_loaded(false);
-} else {
-  setclient_loaded(true);
-}
+    if (response.data.next === null) {
+      setclient_loaded(false);
+    } else {
+      setclient_loaded(true);
+    }
 
-if(response.data.results.length > 0) {
-  if(client_page == 1) {
-client_list = response.data.results.map((v) => [
-  v.id,v.name,
-]);
-  } 
-  else {
-    client_list = [
-      ...client_list_s ,
-      ...response.data.results.map((v) => [
-        v.id,v.name,
-      ])
-    ]
+    if (response.data.results.length > 0) {
+      if (client_page == 1) {
+        client_list = response.data.results.map((v) => [v.id, v.name]);
+      } else {
+        client_list = [
+          ...client_list_s,
+          ...response.data.results.map((v) => [v.id, v.name]),
+        ];
+      }
+      setclient_count(client_count + 2);
+      setclient_list_s(client_list);
+    }
+  } catch (err) {
+    alert(`Error Occur in Get Data ${err}`);
   }
-setclient_count(client_count +2);
-  setclient_list_s(client_list);
-}
+};
 
-        // data = response.data.results;
-        // for (let index = 0; index < data.length; index++) {
-        //   temp2.push([data[index].id, toTitleCase(data[index].name)]);
-        // }
-        // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
-        // setclient_list_s(temp2);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Data ${err}`);
-      });
-  };
 
   //Add Origin
-  const addOrderOrigin = (values) => {
-    axios
-      .post(
+  // const addOrderOrigin = (values) => {
+  //   axios
+  //     .post(
+  //       ServerAddress + "master/add_shipperconsignee/",
+  //       {
+  //         name: toTitleCase(values.name).toUpperCase(),
+  //         address_line1: toTitleCase(values.address_line_1).toUpperCase(),
+  //         location: locality_id,
+  //         bill_to: billto_id,
+  //         client: client_id,
+  //         created_by: user.id,
+  //         email: values.email,
+  //         phone_number: values.phone_number,
+  //         pincode: pincode_id,
+  //         //For C&M
+  //         cm_current_department: user.user_department,
+  //         cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //         cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.statusText === "Created") {
+  //         dispatch(setToggle(true));
+  //         dispatch(setDataExist(`"${values.name}" Added Sucessfully`));
+  //         dispatch(setAlertType("success"));
+  //         dispatch(setShowAlert(true));
+  //         navigate("/master/orderorigins");
+  //       } else if (response.data === "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(`Name "${toTitleCase(values.name)}" already exists`)
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error Happen while posting Braches Data ${error}`);
+  //     });
+  // };
+
+  const addOrderOrigin = async (values) => {
+    try {
+      const response = await axios.post(
         ServerAddress + "master/add_shipperconsignee/",
         {
           name: toTitleCase(values.name).toUpperCase(),
@@ -405,63 +665,139 @@ setclient_count(client_count +2);
           pincode: pincode_id,
           //For C&M
           cm_current_department: user.user_department,
-          cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
-          cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+          cm_current_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
+          cm_transit_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
         },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.statusText === "Created") {
-          dispatch(setToggle(true));
-          dispatch(setDataExist(`"${values.name}" Added Sucessfully`));
-          dispatch(setAlertType("success"));
-          dispatch(setShowAlert(true));
-          navigate("/master/orderorigins");
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(`Name "${toTitleCase(values.name)}" already exists`)
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting Braches Data ${error}`);
-      });
-  };
-  // Update Origin
-  const updateOrderOrigin = (values) => {
-    let id = customer.id;
-    let fields_names = Object.entries({
-      address_line1: values.address_line_1,
-      billto_name: billto,
-      city_name: city,
-      client_name: client,
-      email: values.email,
-      locality_name: locality,
-      name: values.name,
-      phone_number: values.phone_number,
-      pincode_name: pincode,
-      state_name: state,
-    });
-
-    let change_fields = {};
-
-    for (let j = 0; j < fields_names.length; j++) {
-      const ele = fields_names[j];
-      let prev = location_data.state.customer[`${ele[0]}`];
-      let new_v = ele[1];
-      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
-        change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+      );
+      if (response.statusText === "Created") {
+        dispatch(setToggle(true));
+        dispatch(setDataExist(`"${values.name}" Added Sucessfully`));
+        dispatch(setAlertType("success"));
+        dispatch(setShowAlert(true));
+        navigate("/master/orderorigins");
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Name "${toTitleCase(values.name)}" already exists`)
+        );
+        dispatch(setAlertType("warning"));
       }
+    } catch (error) {
+      alert(`Error Happen while posting Braches Data ${error}`);
     }
+  };
+  
 
-    axios
-      .put(
+  // Update Origin
+  // const updateOrderOrigin = (values) => {
+  //   let id = customer.id;
+  //   let fields_names = Object.entries({
+  //     address_line1: values.address_line_1,
+  //     billto_name: billto,
+  //     city_name: city,
+  //     client_name: client,
+  //     email: values.email,
+  //     locality_name: locality,
+  //     name: values.name,
+  //     phone_number: values.phone_number,
+  //     pincode_name: pincode,
+  //     state_name: state,
+  //   });
+
+  //   let change_fields = {};
+
+  //   for (let j = 0; j < fields_names.length; j++) {
+  //     const ele = fields_names[j];
+  //     let prev = location_data.state.customer[`${ele[0]}`];
+  //     let new_v = ele[1];
+  //     if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
+  //       change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+  //     }
+  //   }
+
+  //   axios
+  //     .put(
+  //       ServerAddress + "master/update_shipperconsignee/" + id,
+  //       {
+  //         name: toTitleCase(values.name).toUpperCase(),
+  //         address_line1: toTitleCase(values.address_line_1).toUpperCase(),
+  //         location: locality_id,
+  //         bill_to: billto_id,
+  //         client: client_id,
+  //         modified_by: user.id,
+  //         change_fields: change_fields,
+  //         email: values.email,
+  //         phone_number: values.phone_number,
+  //         pincode: pincode_id,
+  //         //For C&M
+  //         cm_transit_status: status_toggle === true ? current_status : "",
+  //         cm_current_status: (current_status).toUpperCase(),
+  //         cm_remarks: ""
+  //       },
+
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.data.status === "success") {
+  //         dispatch(setDataExist(`"${values.name}" Updated Sucessfully`));
+  //         dispatch(setAlertType("info"));
+  //         dispatch(setShowAlert(true));
+  //         navigate("/master/orderorigins");
+  //       } else if (response.data === "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(`"${toTitleCase(values.name)}" already exists`)
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch(function () {
+  //       alert("Error Error While Updateing branches");
+  //     });
+  // };
+  const updateOrderOrigin = async (values) => {
+    try {
+      let id = customer.id;
+      let fields_names = Object.entries({
+        address_line1: values.address_line_1,
+        billto_name: billto,
+        city_name: city,
+        client_name: client,
+        email: values.email,
+        locality_name: locality,
+        name: values.name,
+        phone_number: values.phone_number,
+        pincode_name: pincode,
+        state_name: state,
+      });
+  
+      let change_fields = {};
+  
+      for (let j = 0; j < fields_names.length; j++) {
+        const ele = fields_names[j];
+        let prev = location_data.state.customer[`${ele[0]}`];
+        let new_v = ele[1];
+        if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
+          change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+        }
+      }
+  
+      const response = await axios.put(
         ServerAddress + "master/update_shipperconsignee/" + id,
         {
           name: toTitleCase(values.name).toUpperCase(),
@@ -479,31 +815,30 @@ setclient_count(client_count +2);
           cm_current_status: (current_status).toUpperCase(),
           cm_remarks: ""
         },
-
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          dispatch(setDataExist(`"${values.name}" Updated Sucessfully`));
-          dispatch(setAlertType("info"));
-          dispatch(setShowAlert(true));
-          navigate("/master/orderorigins");
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(`"${toTitleCase(values.name)}" already exists`)
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch(function () {
-        alert("Error Error While Updateing branches");
-      });
+      );
+  
+      if (response.data.status === "success") {
+        dispatch(setDataExist(`"${values.name}" Updated Sucessfully`));
+        dispatch(setAlertType("info"));
+        dispatch(setShowAlert(true));
+        navigate("/master/orderorigins");
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`"${toTitleCase(values.name)}" already exists`)
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert("Error Error While Updateing branches");
+    }
   };
+  
 
   useLayoutEffect(() => {
     getCities("all", "all");

@@ -14,7 +14,7 @@ import {
   Input,
   FormFeedback,
   Form,
-  FormGroup
+  FormGroup,
 } from "reactstrap";
 import { IconContext } from "react-icons";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
@@ -34,7 +34,7 @@ import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import { Button } from "react-bootstrap";
-import Modal from 'react-bootstrap/Modal';
+import Modal from "react-bootstrap/Modal";
 
 const AddBranch = () => {
   //Redux State
@@ -43,7 +43,7 @@ const AddBranch = () => {
 
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("location_data-----", location_data)
+  console.log("location_data-----", location_data);
   const navigate = useNavigate();
 
   //Circle Toogle Btn
@@ -104,9 +104,8 @@ const AddBranch = () => {
   const [city_error, setcity_error] = useState(false);
   const [city_page, setcity_page] = useState(1);
   const [city_search_item, setcity_search_item] = useState("");
-const [city_loaded, setcity_loaded] = useState(false);
-const [city_count, setcity_count] = useState(1);
-
+  const [city_loaded, setcity_loaded] = useState(false);
+  const [city_count, setcity_count] = useState(1);
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -153,7 +152,6 @@ const [city_count, setcity_count] = useState(1);
   const [operating_city_error, setoperating_city_error] = useState(false);
 
   const [own_pan_number, setown_pan_number] = useState("");
-
 
   const [address_line, setaddress_line] = useState("");
   const [address_line_err, setaddress_line_err] = useState(false);
@@ -206,43 +204,164 @@ const [city_count, setcity_count] = useState(1);
 
   const [vendor_data, setvendor_data] = useState([]);
   const [vendor_pan_no, setvendor_pan_no] = useState("");
+
   // Get Vendor
-  const get_vendor = () => {
+  // const get_vendor = () => {
+  //   let vendor_temp = [];
+  //   let data = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `master/all_vendor/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       data = response.data.results;
+  //       setvendor_data(data);
+  //       if (response.data.results.length > 0) {
+  //         if (vendor_n_page == 1) {
+  //           vendor_temp = response.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.name),
+  //           ]);
+  //         } else {
+  //           vendor_temp = [
+  //             ...vendor_list,
+  //             ...response.data.results.map((v) => [v.id, v.name]),
+  //           ];
+  //         }
+  //       }
+  //       setvendor_list(vendor_temp);
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get , ${err}`);
+  //     });
+  // };
+
+  // Get vendor
+  const get_vendor = async () => {
     let vendor_temp = [];
     let data = [];
-    axios
-      .get(
+    try {
+      const response = await axios.get(
         ServerAddress +
           `master/all_vendor/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((response) => {
-        data = response.data.results;
-        setvendor_data(data);
-        if (response.data.results.length > 0) {
-          if (vendor_n_page == 1) {
-            vendor_temp = response.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            vendor_temp = [
-              ...vendor_list,
-              ...response.data.results.map((v) => [v.id, v.name]),
-            ];
-          }
+      );
+      data = response.data.results;
+      setvendor_data(data);
+      if (response.data.results.length > 0) {
+        if (vendor_n_page == 1) {
+          vendor_temp = response.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+          ]);
+        } else {
+          vendor_temp = [
+            ...vendor_list,
+            ...response.data.results.map((v) => [v.id, v.name]),
+          ];
         }
-        setvendor_list(vendor_temp);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get , ${err}`);
-      });
+      }
+      setvendor_list(vendor_temp);
+    } catch (error) {
+      alert(`Error Occur in Get , ${error}`);
+    }
   };
 
   // Post Branch
-  const send_branch_data = (values) => {
+  // const send_branch_data = (values) => {
+  //   const buttonType = window.event.submitter.name;
+  //   let op_city_id = operating_city_list2.map((v) => v[0]);
+
+  //   let op_city_id_list = [...new Set(op_city_id.map((v) => `${v}`))].map((v) =>
+  //     parseInt(v.split(","))
+  //   );
+
+  //   axios
+  //     .post(
+  //       ServerAddress + "master/add_branch/",
+  //       {
+  //         name: toTitleCase(values.branch_name).toUpperCase(),
+  //         type: branch_type_short,
+  //         vendor: branch_type === "Own Branch" ? "" : vendor_id,
+  //         email: values.branch_email,
+  //         contact_number: values.branch_phone_number,
+  //         head: toTitleCase(values.branch_head).toUpperCase(),
+  //         head_email: values.branch_head_email,
+  //         head_phone_number: values.branch_head_phone_number,
+  //         pan_no:
+  //           branch_type === "Own Branch"
+  //             ? toTitleCase(own_pan_number).toUpperCase()
+  //             : toTitleCase(vendor_pan_no).toUpperCase(),
+  //         gst_no:
+  //           branch_type === "Own Branch"
+  //             ? toTitleCase(gst_number).toUpperCase()
+  //             : toTitleCase(select_gst).toUpperCase(),
+  //         created_by: user.id,
+  //         address_line_1: toTitleCase(values.address_line_1).toUpperCase(),
+  //         pincode: pincode_id,
+  //         location: locality_id,
+  //         operating_city: op_city_id_list,
+  //         //For C&M
+  //         cm_current_department: user.user_department,
+  //         cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //         cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.statusText === "Created") {
+  //         dispatch(setToggle(true));
+  //         dispatch(
+  //           setDataExist(`New Branch "${values.branch_name}" Added Sucessfully`)
+  //         );
+  //         dispatch(setAlertType("success"));
+  //         dispatch(setShowAlert(true));
+  //         if (buttonType === "save_add") {
+  //           setrefresh(!refresh);
+  //           setpincode_loaded(false);
+  //           setbranch_type("");
+  //           // setoperating_city_list2([]);
+  //           setstate("");
+  //           // setcity("");
+  //           setpincode("");
+  //           validation.values.branch_name = "";
+  //           validation.values.branch_email = "";
+  //           validation.values.branch_phone_number = "";
+  //           validation.values.address_line_1 = "";
+  //           validation.values.gst_number = "";
+  //           validation.values.branch_head = "";
+  //           validation.values.branch_head_email = "";
+  //           validation.values.branch_head_phone_number = "";
+  //         } else {
+  //           navigate("/master/branches");
+  //         }
+  //       } else if (response.data === "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `Branch Name "${toTitleCase(values.branch_name)}" already exists`
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error Happen while posting Braches Data ${error}`);
+  //     });
+  // };
+
+  //post Branch using async and await
+  const send_branch_data = async (values) => {
     const buttonType = window.event.submitter.name;
     let op_city_id = operating_city_list2.map((v) => v[0]);
 
@@ -250,8 +369,8 @@ const [city_count, setcity_count] = useState(1);
       parseInt(v.split(","))
     );
 
-    axios
-      .post(
+    try {
+      const response = await axios.post(
         ServerAddress + "master/add_branch/",
         {
           name: toTitleCase(values.branch_name).toUpperCase(),
@@ -277,59 +396,168 @@ const [city_count, setcity_count] = useState(1);
           operating_city: op_city_id_list,
           //For C&M
           cm_current_department: user.user_department,
-          cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
-          cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+          cm_current_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
+          cm_transit_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
         },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.statusText === "Created") {
-          dispatch(setToggle(true));
-          dispatch(
-            setDataExist(`New Branch "${values.branch_name}" Added Sucessfully`)
-          );
-          dispatch(setAlertType("success"));
-          dispatch(setShowAlert(true));
-          if (buttonType === "save_add") {
-            setrefresh(!refresh);
-            setpincode_loaded(false);
-            setbranch_type("");
-            // setoperating_city_list2([]);
-            setstate("");
-            // setcity("");
-            setpincode("");
-            validation.values.branch_name = "";
-            validation.values.branch_email = "";
-            validation.values.branch_phone_number = "";
-            // validation.values.address_line_1 = "";
-            validation.values.gst_number = "";
-            validation.values.branch_head = "";
-            validation.values.branch_head_email = "";
-            validation.values.branch_head_phone_number = "";
-          } else {
-            navigate("/master/branches");
-          }
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Branch Name "${toTitleCase(values.branch_name)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
+      );
+      console.log("Response data", response.data);
+      if (response.statusText === "Created") {
+        dispatch(setToggle(true));
+        dispatch(
+          setDataExist(`New Branch "${values.branch_name}" Added Sucessfully`)
+        );
+        dispatch(setAlertType("success"));
+        dispatch(setShowAlert(true));
+        if (buttonType === "save_add") {
+          setrefresh(!refresh);
+          setpincode_loaded(false);
+          setbranch_type("");
+          // setoperating_city_list2([]);
+          setstate("");
+          // setcity("");
+          setpincode("");
+          validation.values.branch_name = "";
+          validation.values.branch_email = "";
+          validation.values.branch_phone_number = "";
+          validation.values.address_line_1 = "";
+          validation.values.gst_number = "";
+          validation.values.branch_head = "";
+          validation.values.branch_head_email = "";
+          validation.values.branch_head_phone_number = "";
+        } else {
+          navigate("/master/branches");
         }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting Braches Data ${error}`);
-      });
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Branch Name "${toTitleCase(values.branch_name)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert(`Error Happen while posting Braches Data ${error}`);
+    }
   };
 
   // Update Branch
-  const update_branch = (values) => {
+  // const update_branch = (values) => {
+  //   let id = branch.id;
+  //   let op_city_id_list = operating_city_list2.map((v) => v[0]);
+
+  //   let opcity_ids = [...new Set(op_city_id_list.map((v) => `${v}`))].map((v) =>
+  //     parseInt(v.split(","))
+  //   );
+
+  //   let fields_names = Object.entries({
+  //     address_line_1: values.address_line_1,
+  //     city_name: city,
+  //     contact_number: values.branch_phone_number,
+  //     email: values.branch_email,
+  //     gst_no:
+  //       branch_type === "Own Branch" ? gst_number.toUpperCase() : select_gst,
+  //     head: values.branch_head,
+  //     head_email: values.branch_head_email,
+  //     head_phone_number: values.branch_head_phone_number,
+  //     locality_name: locality,
+  //     name: values.branch_name,
+  //     operating_city: opcity_ids,
+  //     pan_no:
+  //       branch_type === "Own Branch"
+  //         ? own_pan_number.toUpperCase()
+  //         : vendor_pan_no,
+  //     pincode_name: pincode,
+  //     state_name: state,
+  //     type: branch_type_short,
+  //     vendor_name: vendor_name,
+  //   });
+
+  //   let change_fields = {};
+
+  //   for (let j = 0; j < fields_names.length; j++) {
+  //     const ele = fields_names[j];
+  //     let prev = location_data.state.branch[`${ele[0]}`];
+  //     let new_v = ele[1];
+  //     if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+  //       change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+  //     }
+  //   }
+
+  //   axios
+  //     .put(
+  //       ServerAddress + "master/update_branch/" + id,
+  //       {
+  //         name: toTitleCase(values.branch_name).toUpperCase(),
+  //         type: branch_type_short,
+  //         vendor: branch_type === "Own Branch" ? "" : vendor_id,
+  //         email: values.branch_email,
+  //         contact_number: values.branch_phone_number,
+  //         head: toTitleCase(values.branch_head).toUpperCase(),
+  //         head_email: values.branch_head_email,
+  //         head_phone_number: values.branch_head_phone_number,
+  //         pan_no:
+  //           branch_type === "Own Branch"
+  //             ? toTitleCase(own_pan_number).toUpperCase()
+  //             : toTitleCase(vendor_pan_no).toUpperCase(),
+  //         gst_no:
+  //           branch_type === "Own Branch"
+  //             ? toTitleCase(gst_number).toUpperCase()
+  //             : toTitleCase(select_gst).toUpperCase(),
+  //         address_line_1: toTitleCase(values.address_line_1).toUpperCase(),
+  //         pincode: pincode_id,
+  //         location: locality_id,
+  //         operating_city: opcity_ids,
+  //         modified_by: user.id,
+  //         change_fields: change_fields,
+  //         //For C&M
+  //         cm_transit_status: status_toggle === true ? current_status : "",
+  //         cm_current_status: (current_status).toUpperCase(),
+  //         cm_remarks: ""
+  //       },
+
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.data.status === "success") {
+  //         dispatch(
+  //           setDataExist(`Branch "${values.branch_name}" Updated Sucessfully`)
+  //         );
+  //         dispatch(setAlertType("info"));
+  //         dispatch(setShowAlert(true));
+  //         navigate("/master/branches");
+  //       } else if (response.data === "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `Branch Name "${toTitleCase(values.branch_name)}" already exists`
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch(function () {
+  //       alert("Error Error While Updateing branches");
+  //     });
+  // };
+
+  //update branch with async and await
+  const update_branch = async (values) => {
     let id = branch.id;
     let op_city_id_list = operating_city_list2.map((v) => v[0]);
 
@@ -371,8 +599,8 @@ const [city_count, setcity_count] = useState(1);
       }
     }
 
-    axios
-      .put(
+    try {
+      const response = await axios.put(
         ServerAddress + "master/update_branch/" + id,
         {
           name: toTitleCase(values.branch_name).toUpperCase(),
@@ -399,85 +627,168 @@ const [city_count, setcity_count] = useState(1);
           change_fields: change_fields,
           //For C&M
           cm_transit_status: status_toggle === true ? current_status : "",
-          cm_current_status: (current_status).toUpperCase(),
-          cm_remarks: ""
+          cm_current_status: current_status.toUpperCase(),
+          cm_remarks: "",
         },
-
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          dispatch(
-            setDataExist(`Branch "${values.branch_name}" Updated Sucessfully`)
-          );
-          dispatch(setAlertType("info"));
-          dispatch(setShowAlert(true));
-          navigate("/master/branches");
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Branch Name "${toTitleCase(values.branch_name)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch(function () {
-        alert("Error Error While Updateing branches");
-      });
+      );
+      if (response.data.status === "success") {
+        dispatch(
+          setDataExist(`Branch "${values.branch_name}" Updated Sucessfully`)
+        );
+        dispatch(setAlertType("info"));
+        dispatch(setShowAlert(true));
+        navigate("/master/branches");
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Branch Name "${toTitleCase(values.branch_name)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert("Error Error While Updateing branches");
+    }
   };
 
   // Locations Function
-  const getStates = () => {
-    // let state_list = [...state_list_s];
+  //   const getStates = () => {
+  //     // let state_list = [...state_list_s];
+  //     let state_list = [];
+  //     axios
+  //       .get(
+  //         ServerAddress +
+  //           `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
+  //         {
+  //           headers: { Authorization: `Bearer ${accessToken}` },
+  //         }
+  //       )
+  //       .then((resp) => {
+
+  //         if(resp.data.next === null) {
+  //           setstate_loaded(false);
+  //         } else {
+  // setstate_loaded(true);
+  //         }
+
+  //         if (resp.data.results.length > 0) {
+  //           if (state_page == 1) {
+  //             state_list = resp.data.results.map((v) => [
+  //               v.id,
+  //               toTitleCase(v.state),
+  //             ]);
+  //           } else {
+  //             state_list = [
+  //               ...state_list_s,
+  //               ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
+  //             ];
+  //           }
+  //         }
+  //         setstate_count(state_count+2);
+  //         setstate_list_s(state_list);
+  //       })
+  //       .catch((err) => {
+  //         alert(`Error Occur in Get States, ${err}`);
+  //       });
+  //   };
+  const getStates = async () => {
     let state_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
+      );
 
-        if(resp.data.next === null) {
-          setstate_loaded(false);
+      if (resp.data.next === null) {
+        setstate_loaded(false);
+      } else {
+        setstate_loaded(true);
+      }
+
+      if (resp.data.results.length > 0) {
+        if (state_page == 1) {
+          state_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.state),
+          ]);
         } else {
-setstate_loaded(true);
+          state_list = [
+            ...state_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
+          ];
         }
-
-        if (resp.data.results.length > 0) {
-          if (state_page == 1) {
-            state_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.state),
-            ]);
-          } else {
-            state_list = [
-              ...state_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
-            ];
-          }
-        }
-        setstate_count(state_count+2);
-        setstate_list_s(state_list);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get States, ${err}`);
-      });
+      }
+      setstate_count(state_count + 2);
+      setstate_list_s(state_list);
+    } catch (err) {
+      alert(`Error Occur in Get States, ${err}`);
+    }
   };
 
-  const getCities = (place_id, filter_by) => {
+  // const getCities = (place_id, filter_by) => {
+  //   setby_pincode(false);
+  //   let cities_list = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
+  //         "&place_id=" +
+  //         place_id +
+  //         "&filter_by=" +
+  //         filter_by,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+
+  //       if(resp.data.next === null) {
+  //         setcity_loaded(false);
+  //       } else {
+  //         setcity_loaded(true);
+  //       }
+
+  //       if (resp.data.results.length > 0) {
+  //         if (city_page == 1) {
+  //           cities_list = resp.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.city),
+  //           ]);
+  //           if (get_state_wise_op) {
+  //             setoperating_city_list(cities_list);
+  //           }
+  //         } else {
+  //           cities_list = [
+  //             ...city_list_s,
+  //             ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+  //           ];
+  //         }
+  //         setcity_count(city_count +2);
+  //         setcity_list_s(cities_list);
+  //       }
+  //       else {
+  //         setcity_list_s([]);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get City, ${err}`);
+  //     });
+  // };
+
+  const getCities = async (place_id, filter_by) => {
     setby_pincode(false);
     let cities_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
           "&place_id=" +
@@ -487,43 +798,42 @@ setstate_loaded(true);
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
+      );
 
-        if(resp.data.next === null) {
-          setcity_loaded(false);
-        } else {
-          setcity_loaded(true);
-        }
+      if (resp.data.next === null) {
+        setcity_loaded(false);
+      } else {
+        setcity_loaded(true);
+      }
 
-        if (resp.data.results.length > 0) {
-          if (city_page == 1) {
-            cities_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.city),
-            ]);
-            if (get_state_wise_op) {
-              setoperating_city_list(cities_list);
-            }
-          } else {
-            cities_list = [
-              ...city_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-            ];
+      if (resp.data.results.length > 0) {
+        if (city_page == 1) {
+          cities_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.city),
+          ]);
+          if (get_state_wise_op) {
+            setoperating_city_list(cities_list);
           }
-          setcity_count(city_count +2);
-          setcity_list_s(cities_list);
-        } 
-        else {
-          setcity_list_s([]);
+        } else {
+          cities_list = [
+            ...city_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+        setcity_count(city_count + 2);
+        setcity_list_s(cities_list);
+      } else {
+        setcity_list_s([]);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
-  let temp_2 = [];
+
+  // to get operating citys
   const getop_cities = () => {
+    let temp_2 = [];
     let cities_list = [];
     let temp = [...operating_city_list];
     axios
@@ -539,8 +849,8 @@ setstate_loaded(true);
       .then((response) => {
         temp = response.data.results;
         if (temp.length > 0) {
-console.log("resp of op city", response.data.results)
-          if(response.data.next === null) {
+          console.log("resp of op city", response.data.results);
+          if (response.data.next === null) {
             setoperating_city_loaded(false);
           } else {
             setoperating_city_loaded(true);
@@ -563,22 +873,76 @@ console.log("resp of op city", response.data.results)
               );
               setoperating_city_list2(cl_brncs);
               setoperating_city_list(f_brnch);
-              setoperating_city_count(operating_city_count+2);
+              setoperating_city_count(operating_city_count + 2);
             } else {
               setoperating_city_list(temp_2);
-              setoperating_city_count(operating_city_count+2);
+              setoperating_city_count(operating_city_count + 2);
             }
           } catch (err) {
             setoperating_city_list(temp_2);
-            setoperating_city_count(operating_city_count+2);
+            setoperating_city_count(operating_city_count + 2);
           }
         }
       });
   };
-  const getPincode = (place_id, filter_by) => {
+
+  // get pincode
+  // const getPincode = (place_id, filter_by) => {
+  //   let pincode_list = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
+  //         "&place_id=" +
+  //         place_id +
+  //         "&filter_by=" +
+  //         filter_by,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+  //       if (filter_by !== "pincode") {
+  //         if (pincode_page == 1) {
+  //           pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+  //         } else {
+  //           pincode_list = [
+  //             ...pincode_list_s,
+  //             ...resp.data.results.map((v) => [v.id, v.pincode]),
+  //           ];
+  //         }
+  //         setpincode_list_s(pincode_list);
+  //       } else if (resp.data.results.length > 0) {
+  //         setcity(toTitleCase(resp.data.results[0].city_name));
+  //         setcity_id(resp.data.results[0].city);
+  //         setstate(toTitleCase(resp.data.results[0].state_name));
+  //         setstate_id(resp.data.results[0].state);
+  //         setpincode(resp.data.results[0].pincode);
+  //         setpincode_id(resp.data.results[0].id);
+  //       } else {
+  //         dispatch(
+  //           setDataExist(
+  //             "You entered invalid pincode or pincode not available in database"
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //         dispatch(setShowAlert(true));
+  //         setcity("");
+  //         setcity_id("");
+  //         // setstate("");
+  //         setstate_id("");
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get City, ${err}`);
+  //     });
+  // };
+
+  const getPincode = async (place_id, filter_by) => {
     let pincode_list = [];
-    axios
-      .get(
+
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
           "&place_id=" +
@@ -588,89 +952,134 @@ console.log("resp of op city", response.data.results)
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (filter_by !== "pincode") {
-          if (pincode_page == 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-          } else {
-            pincode_list = [
-              ...pincode_list_s,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
-          }
-          setpincode_list_s(pincode_list);
-        } else if (resp.data.results.length > 0) {
-          setcity(toTitleCase(resp.data.results[0].city_name));
-          setcity_id(resp.data.results[0].city);
-          setstate(toTitleCase(resp.data.results[0].state_name));
-          setstate_id(resp.data.results[0].state);
-          setpincode(resp.data.results[0].pincode);
-          setpincode_id(resp.data.results[0].id);
+      );
+
+      if (filter_by !== "pincode") {
+        if (pincode_page == 1) {
+          pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
         } else {
-          dispatch(
-            setDataExist(
-              "You entered invalid pincode or pincode not available in database"
-            )
-          );
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-          setcity("");
-          setcity_id("");
-          // setstate("");
-          setstate_id("");
+          pincode_list = [
+            ...pincode_list_s,
+            ...resp.data.results.map((v) => [v.id, v.pincode]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+        setpincode_list_s(pincode_list);
+      } else if (resp.data.results.length > 0) {
+        setcity(toTitleCase(resp.data.results[0].city_name));
+        setcity_id(resp.data.results[0].city);
+        setstate(toTitleCase(resp.data.results[0].state_name));
+        setstate_id(resp.data.results[0].state);
+        setpincode(resp.data.results[0].pincode);
+        setpincode_id(resp.data.results[0].id);
+      } else {
+        dispatch(
+          setDataExist(
+            "You entered invalid pincode or pincode not available in database"
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+        setcity("");
+        setcity_id("");
+        setstate(toTitleCase(resp.data.results[0].state_name));
+        setstate_id(resp.data.results[0].state);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
 
-  const getLocality = (place_id, filter_by) => {
-    let locality_list = [];
-    axios
-      .get(
+  // const getLocality = (place_id, filter_by) => {
+  //   let locality_list = [];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
+  //         `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((resp) => {
+  //       if (filter_by !== "locality") {
+  //         if (pincode_page == 1) {
+  //           locality_list = resp.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.name),
+  //           ]);
+  //         } else {
+  //           locality_list = [
+  //             ...locality_list_s,
+  //             ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+  //           ];
+  //         }
+
+  //         locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+  //           (v) => v.split(",")
+  //         );
+  //         setlocality_list_s(locality_list);
+  //       } else if (resp.data.results.length > 0) {
+  //         setlocality(toTitleCase(resp.data.results[0].name));
+  //         setlocality_id(resp.data.results[0].id);
+  //         setcity(toTitleCase(resp.data.results[0].city_name));
+  //         setstate(toTitleCase(resp.data.results[0].state_name));
+  //         setpincode(resp.data.results[0].pincode_name);
+  //         setpincode_id(resp.data.results[0].pincode);
+  //       } else {
+  //         dispatch(setDataExist("You entered invalid Locality"));
+  //         dispatch(setAlertType("warning"));
+  //         dispatch(setShowAlert(true));
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get Pincode , ${err}`);
+  //     });
+  // };
+
+  // get locality
+  const getLocality = async (place_id, filter_by) => {
+    try {
+      let locality_list = [];
+      const resp = await axios.get(
         ServerAddress +
           `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
           `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (filter_by !== "locality") {
-          if (pincode_page == 1) {
-            locality_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            locality_list = [
-              ...locality_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-   
-          locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
-            (v) => v.split(",")
-          );
-          setlocality_list_s(locality_list);
-        } else if (resp.data.results.length > 0) {
-          setlocality(toTitleCase(resp.data.results[0].name));
-          setlocality_id(resp.data.results[0].id);
-          setcity(toTitleCase(resp.data.results[0].city_name));
-          setstate(toTitleCase(resp.data.results[0].state_name));
-          setpincode(resp.data.results[0].pincode_name);
-          setpincode_id(resp.data.results[0].pincode);
+      );
+
+      if (filter_by !== "locality") {
+        if (pincode_page == 1) {
+          locality_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+          ]);
         } else {
-          dispatch(setDataExist("You entered invalid Locality"));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
+          locality_list = [
+            ...locality_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Pincode , ${err}`);
-      });
+        locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+          (v) => v.split(",")
+        );
+        setlocality_list_s(locality_list);
+      } else if (resp.data.results.length > 0) {
+        setlocality(toTitleCase(resp.data.results[0].name));
+        setlocality_id(resp.data.results[0].id);
+        setcity(toTitleCase(resp.data.results[0].city_name));
+        setstate(toTitleCase(resp.data.results[0].state_name));
+        setpincode(resp.data.results[0].pincode_name);
+        setpincode_id(resp.data.results[0].pincode);
+      } else {
+        dispatch(setDataExist("You entered invalid Locality"));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      }
+    } catch (err) {
+      alert(`Error Occur in Get Pincode, ${err}`);
+    }
   };
 
   // Navigation At the time of Cancel
@@ -729,13 +1138,13 @@ console.log("resp of op city", response.data.results)
   }, [operating_city_list2, refresh]);
 
   useEffect(() => {
-    if(state){
+    if (state) {
       setstate_error(false);
     }
-    if(city){
+    if (city) {
       setcity_error(false);
     }
-  }, [state,city]);
+  }, [state, city]);
 
   useLayoutEffect(() => {
     // if (vendor_name != "") {
@@ -744,12 +1153,12 @@ console.log("resp of op city", response.data.results)
     if (own_pan_number != "") {
       setown_pan_error(false);
     }
-if(address_line !== "") {
-  setaddress_line_err(false);
-}
-if(same_as_gst) {
-  setaddress_line(gstaddress);
-}
+    if (address_line !== "") {
+      setaddress_line_err(false);
+    }
+    if (same_as_gst) {
+      setaddress_line(gstaddress);
+    }
     // if (state != "") {
     //   setstate_error(false);
     // }
@@ -763,11 +1172,11 @@ if(same_as_gst) {
     // vendor_name,
     address_line,
     gstaddress,
-     state,
-      // city,
-      //  gst_number,
-        own_pan_number
-      ]);
+    state,
+    // city,
+    //  gst_number,
+    own_pan_number,
+  ]);
 
   useLayoutEffect(() => {
     try {
@@ -837,12 +1246,43 @@ if(same_as_gst) {
       });
   };
 
-  const get_vendorgstDetails = (id) => {
-    let vgst_temp = [];
-    let data = [];
+  //get vendor
+  // const get_vendorgstDetails = (id) => {
+  //   let vgst_temp = [];
+  //   let data = [];
 
-    axios
-      .get(
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `organization/get_gstaddress/?type=${`VENDOR`}&vendor_id=${id}&search=${""}&p=${1}&records=${30}&gst_no_search=${[
+  //           selectgst_search,
+  //         ]}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       data = response.data.results;
+  //       if (response.data.results.length > 0) {
+  //         setvendoegst_alldetails(data);
+  //         let pan_no = response.data.results[0].vandor_pan_no;
+  //         setvendor_pan_no(pan_no);
+
+  //         vgst_temp = response.data.results.map((v) => [v.id, v.gst_no]);
+  //       }
+  //       setgst_list(vgst_temp);
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get , ${err}`);
+  //     });
+  // };
+
+  const get_vendorgstDetails = async (id) => {
+    try {
+      let vgst_temp = [];
+      let data = [];
+
+      const response = await axios.get(
         ServerAddress +
           `organization/get_gstaddress/?type=${`VENDOR`}&vendor_id=${id}&search=${""}&p=${1}&records=${30}&gst_no_search=${[
             selectgst_search,
@@ -850,22 +1290,22 @@ if(same_as_gst) {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((response) => {
-        data = response.data.results;
-        if (response.data.results.length > 0) {
-          setvendoegst_alldetails(data);
-          let pan_no = response.data.results[0].vandor_pan_no;
-          setvendor_pan_no(pan_no);
+      );
 
-          vgst_temp = response.data.results.map((v) => [v.id, v.gst_no]);
-        }
-        setgst_list(vgst_temp);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get , ${err}`);
-      });
+      data = response.data.results;
+      if (response.data.results.length > 0) {
+        setvendoegst_alldetails(data);
+        let pan_no = response.data.results[0].vandor_pan_no;
+        setvendor_pan_no(pan_no);
+
+        vgst_temp = response.data.results.map((v) => [v.id, v.gst_no]);
+      }
+      setgst_list(vgst_temp);
+    } catch (err) {
+      alert(`Error Occur in Get, ${err}`);
+    }
   };
+
   useEffect(() => {
     if (branch_type === "Own Branch") {
       get_gstDetails();
@@ -910,80 +1350,78 @@ if(same_as_gst) {
     }
   }, [gst_id, same_as_gst, selectgst_id]);
 
-   //For Checker Maker
-   const [current_status, setcurrent_status] = useState("");
-   const [status_toggle, setstatus_toggle] = useState(false)
-   const [message, setmessage] = useState("")
-   const [message_error, setmessage_error] = useState(false);
- 
- 
-   const [show, setShow] = useState(false);
- 
-   const handleClose = () => setShow(false);
-   const handleShow = () => {
-     setShow(true)
-     setmessage_error(false)
-   };
- 
-   useEffect(() => {
-     if (user.user_department_name === "ADMIN") {
-       setcurrent_status("NOT APPROVED")
-       setstatus_toggle(true)
-     }
- 
-     else if (user.user_department_name === "ACCOUNTANT" || user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER" || user.is_superuser) {
-       setcurrent_status("APPROVED")
-       setstatus_toggle(true)
-     }
-     else {
-       setcurrent_status("NOT APPROVED")
-       // setstatus_toggle(false)
-     }
- 
-   }, [user, isupdating])
- 
-   const update_commoditystatus = (id) => {
- 
-     axios
-       .put(
-         ServerAddress + "master/update_branch/" + id,
-         {
- 
-           cm_current_status: "REJECTED",
-           cm_remarks: toTitleCase(message).toUpperCase(),
-           change_fields: {},
-         },
-         {
-           headers: {
-             Authorization: `Bearer ${accessToken}`,
-           },
-         }
-       )
-       .then(function (response) {
-         if (response.data.status === "success") {
-           // dispatch(Toggle(true))
-           dispatch(setShowAlert(true));
-           dispatch(setDataExist(`Status Updated sucessfully`));
-           dispatch(setAlertType("info"));
-           navigate("/master/branches");
-         }
-       })
-       .catch(function (err) {
-         alert(`rror While  Updateing Coloader ${err}`);
-       });
-   };
- 
-   const handleSubmit = () => {
-     if (message == "") {
-       setmessage_error(true);
-     }
-     else {
-       update_commoditystatus(branch.id)
-       setShow(false)
-     }
-   }
- 
-   const handlClk = () => {
+  //For Checker Maker
+  const [current_status, setcurrent_status] = useState("");
+  const [status_toggle, setstatus_toggle] = useState(false);
+  const [message, setmessage] = useState("");
+  const [message_error, setmessage_error] = useState(false);
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+    setmessage_error(false);
+  };
+
+  useEffect(() => {
+    if (user.user_department_name === "ADMIN") {
+      setcurrent_status("NOT APPROVED");
+      setstatus_toggle(true);
+    } else if (
+      user.user_department_name === "ACCOUNTANT" ||
+      user.user_department_name === "ACCOUNTANT" ||
+      user.user_department_name + " " + user.designation_name ===
+        "ACCOUNT MANAGER" ||
+      user.is_superuser
+    ) {
+      setcurrent_status("APPROVED");
+      setstatus_toggle(true);
+    } else {
+      setcurrent_status("NOT APPROVED");
+      // setstatus_toggle(false)
+    }
+  }, [user, isupdating]);
+
+  const update_commoditystatus = (id) => {
+    axios
+      .put(
+        ServerAddress + "master/update_branch/" + id,
+        {
+          cm_current_status: "REJECTED",
+          cm_remarks: toTitleCase(message).toUpperCase(),
+          change_fields: {},
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          // dispatch(Toggle(true))
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Status Updated sucessfully`));
+          dispatch(setAlertType("info"));
+          navigate("/master/branches");
+        }
+      })
+      .catch(function (err) {
+        alert(`rror While  Updateing Coloader ${err}`);
+      });
+  };
+
+  const handleSubmit = () => {
+    if (message == "") {
+      setmessage_error(true);
+    } else {
+      update_commoditystatus(branch.id);
+      setShow(false);
+    }
+  };
+
+  const handlClk = () => {
     navigate("/master/branches/branchHistory/BranchHistoryPage", {
       state: { Branch: branch },
     });
@@ -991,120 +1429,89 @@ if(same_as_gst) {
   return (
     <>
       <div>
-
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Reject Resion</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <FormGroup>
-            <Label for="exampleText">
-              Text Area
-            </Label>
-            <Input
-              id="exampleText"
-              name="text"
-              type="textarea"
-              style={{ height: "90px" }}
-              onChange={(e) => {
-                setmessage(e.target.value)
-              }}
-            />
-            <div className="mt-1 error-text" color="danger">
-              {message_error ? "Please Enter Reject Resion" : null}
-            </div>
-          </FormGroup>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={() => handleSubmit()}>
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Reject Resion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <FormGroup>
+              <Label for="exampleText">Text Area</Label>
+              <Input
+                id="exampleText"
+                name="text"
+                type="textarea"
+                style={{ height: "90px" }}
+                onChange={(e) => {
+                  setmessage(e.target.value);
+                }}
+              />
+              <div className="mt-1 error-text" color="danger">
+                {message_error ? "Please Enter Reject Resion" : null}
+              </div>
+            </FormGroup>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={() => handleSubmit()}>
+              Save
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
         <Form
           onSubmit={(e) => {
+            console.log("Second submit Run");
             e.preventDefault();
-            let shaw= Object.entries(validation.values);
-            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0 );
+            let shaw = Object.entries(validation.values);
+            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
             let map_value = filter_value.map((m) => m[0]);
             let all_value = map_value[0];
 
-           let fields=[
-           "branch_name",
-           "branch_email",
-           "branch_phone_number",
-           ]
- 
-            if (branch_type == "") {
+            let fields = ["branch_name", "branch_email", "branch_phone_number"];
+
+            if (branch_type === "") {
               setbranch_type_error(true);
               document.getElementById("branch_info").scrollIntoView();
-
-            }
-         else   if (branch_type === "Vendor" && vendor_name === "") {
+            } else if (branch_type === "Vendor" && vendor_name === "") {
               setvendor_error(true);
               document.getElementById("branch_info").scrollIntoView();
-
-            }
-            else if(fields.includes(all_value)){
+            } else if (fields.includes(all_value)) {
               document.getElementById("branch_info").scrollIntoView();
-            }
-          else  if(branch_type === "Vendor" && select_gst === "") {
+            } else if (branch_type === "Vendor" && select_gst === "") {
               setselect_gst_error(true);
               document.getElementById("branch_info").scrollIntoView();
-
-            }
-          else  if (branch_type === "Own Branch" && own_pan_number == "") {
+            } else if (branch_type === "Own Branch" && own_pan_number == "") {
               setown_pan_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            }
-          else  if(branch_type === "Own Branch" && gst_number === "") {
+            } else if (branch_type === "Own Branch" && gst_number === "") {
               setown_gst_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            }
-            else  if(address_line === "") {
+            } else if (address_line === "") {
               setaddress_line_err(true);
               document.getElementById("location_info").scrollIntoView();
-              }
-           
-            else
-            if (state === "") {
+            } else if (state === "") {
               setstate_error(true);
               document.getElementById("location_info").scrollIntoView();
-
-            }
-            else
-            if (city === "") {
+            } else if (city === "") {
               setcity_error(true);
               document.getElementById("location_info").scrollIntoView();
-
-            }
-            else if (pincode_loaded && pincode === "") {
+            } else if (pincode_loaded && pincode === "") {
               setpincode_list_error(true);
               document.getElementById("location_info").scrollIntoView();
-
-            }
-          else  if(pincode_loaded === false && pincode === "") {
+            } else if (pincode_loaded === false && pincode === "") {
               setpincode_error(true);
               document.getElementById("location_info").scrollIntoView();
-
-            }
-          else  if(pincode_loaded && locality === "") {
+            } else if (pincode_loaded && locality === "") {
               setlocality_error(true);
               document.getElementById("location_info").scrollIntoView();
-
-            }
-            else
-            if (operating_city_list2.length === 0) {
+            } else if (operating_city_list2.length === 0) {
               setoperating_city_error(true);
               document.getElementById("operating_city").scrollIntoView();
+            }
+            validation.handleSubmit(e.values);
 
-            } 
-              validation.handleSubmit(e.values);
-            
             return false;
           }}
         >
@@ -1117,20 +1524,20 @@ if(same_as_gst) {
           </div>
 
           {/* Branch Info */}
-          <div className="m-3" >
+          <div className="m-3">
             {/* Add For History Button */}
-            {isupdating && 
-            <div style={{ justifyContent: "right", display: "flex" }}>
-              <Button
-                type="button"
-                onClick={() => {
-                  handlClk();
-                }}
-              >
-                History
-              </Button>
-            </div>
-          }
+            {isupdating && (
+              <div style={{ justifyContent: "right", display: "flex" }}>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    handlClk();
+                  }}
+                >
+                  History
+                </Button>
+              </div>
+            )}
             {/* Add For History Button */}
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
@@ -1285,7 +1692,7 @@ if(same_as_gst) {
 
                       {branch_type === "Vendor" ? (
                         <>
-                          <Col lg={4} md={6} sm={6} >
+                          <Col lg={4} md={6} sm={6}>
                             <div className="mb-2" id="branch_info">
                               <Label className="header-child">
                                 Vendor PAN No*.
@@ -1300,20 +1707,20 @@ if(same_as_gst) {
                           </Col>
 
                           <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2" id="branch_info">
-                            <Label className="header-child">
-                              Vendor GST Number *
-                            </Label>
-                            <SearchInput
-                              data_list={gst_list}
-                              setdata_list={setgst_list}
-                              data_item_s={select_gst}
-                              set_data_item_s={setselect_gst}
-                              set_id={setselectgst_id}
-                              setsearch_item={setselectgst_search}
-                              error_message={"Please Select Vendor GST No"}
-                              error_s={select_gst_error}
-                            />
+                            <div className="mb-2" id="branch_info">
+                              <Label className="header-child">
+                                Vendor GST Number *
+                              </Label>
+                              <SearchInput
+                                data_list={gst_list}
+                                setdata_list={setgst_list}
+                                data_item_s={select_gst}
+                                set_data_item_s={setselect_gst}
+                                set_id={setselectgst_id}
+                                setsearch_item={setselectgst_search}
+                                error_message={"Please Select Vendor GST No"}
+                                error_s={select_gst_error}
+                              />
                             </div>
                           </Col>
                         </>
@@ -1343,18 +1750,20 @@ if(same_as_gst) {
                           </Col>
 
                           <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2" id="branch_info">
-                            <Label className="header-child" >GST Number *</Label>
-                            <SearchInput
-                              data_list={gst_data_list}
-                              setdata_list={setgst_data_list}
-                              data_item_s={gst_number}
-                              set_data_item_s={setgst_number}
-                              set_id={setgst_id}
-                              setsearch_item={setgst_search}
-                              error_message={"Please Select GST"}
-                              error_s={own_gst_error}
-                            />
+                            <div className="mb-2" id="branch_info">
+                              <Label className="header-child">
+                                GST Number *
+                              </Label>
+                              <SearchInput
+                                data_list={gst_data_list}
+                                setdata_list={setgst_data_list}
+                                data_item_s={gst_number}
+                                set_data_item_s={setgst_number}
+                                set_id={setgst_id}
+                                setsearch_item={setgst_search}
+                                error_message={"Please Select GST"}
+                                error_s={own_gst_error}
+                              />
                             </div>
                           </Col>
                         </>
@@ -1412,11 +1821,10 @@ if(same_as_gst) {
                         <div className="mb-2">
                           <Label className="header-child">Address Line *</Label>
                           <Input
-                   
                             value={address_line}
                             invalid={address_line_err}
                             onChange={(val) => {
-                              setaddress_line(val.target.value)
+                              setaddress_line(val.target.value);
                             }}
                             type="text"
                             className="form-control-md"
@@ -1424,12 +1832,12 @@ if(same_as_gst) {
                             name="address_line_1"
                             placeholder="Enter Address Line 1"
                           />
-                         
+
                           <div className="mt-1 error-text" color="danger">
-                                  {address_line_err ? "Address Field  is required" : null}
-                                </div>
-                     
-                         
+                            {address_line_err
+                              ? "Address Field  is required"
+                              : null}
+                          </div>
                         </div>
                       </Col>
 
@@ -1536,8 +1944,6 @@ if(same_as_gst) {
                                 }
                               }}
                               value={pincode}
-                           
-
                               type="number"
                               className="form-control-md"
                               id="input"
@@ -1547,9 +1953,12 @@ if(same_as_gst) {
 
                             {pincode_loaded === false &&
                             pincode_error === true ? (
-                              <div style={{  
-                                color: "#F46E6E",
-                              fontSize: "11.4px" }}>
+                              <div
+                                style={{
+                                  color: "#F46E6E",
+                                  fontSize: "11.4px",
+                                }}
+                              >
                                 Please add pincode
                               </div>
                             ) : null}
@@ -1570,7 +1979,7 @@ if(same_as_gst) {
                           </div>
                         )}
                       </Col>
-                      
+
                       <Col lg={4} md={6} sm={6}>
                         {pincode_loaded && (
                           <div className="mb-2">
@@ -1606,7 +2015,9 @@ if(same_as_gst) {
                       </div>
                     )}
 
-                    <Label className="header-child" id="operating_city">Operating City* </Label>
+                    <Label className="header-child" id="operating_city">
+                      Operating City*{" "}
+                    </Label>
                     <Col lg={12} md={12} sm={12}>
                       <TransferList
                         list_a={operating_city_list}
@@ -1757,22 +2168,35 @@ if(same_as_gst) {
           <div className="m-3">
             <Col lg={12}>
               <div className="mb-1 footer_btn">
-              <button
-                type="submit"
-                className={isupdating && (user.user_department_name === "ADMIN") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
-              >
-                {isupdating && (user.user_department_name === "ADMIN" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
-              </button>
-
-              {isupdating && (user.user_department_name !== "ADMIN" && !user.is_superuser) &&
                 <button
-                  type="button"
-                  className="btn btn-danger m-1"
-                  onClick={handleShow}
+                  type="submit"
+                  className={
+                    isupdating && user.user_department_name === "ADMIN"
+                      ? "btn btn-info m-1"
+                      : !isupdating
+                      ? "btn btn-info m-1"
+                      : "btn btn-success m-1"
+                  }
                 >
-                  Rejected
+                  {isupdating &&
+                  (user.user_department_name === "ADMIN" || user.is_superuser)
+                    ? "Update"
+                    : !isupdating
+                    ? "Save"
+                    : "Approved"}
                 </button>
-              }
+
+                {isupdating &&
+                  user.user_department_name !== "ADMIN" &&
+                  !user.is_superuser && (
+                    <button
+                      type="button"
+                      className="btn btn-danger m-1"
+                      onClick={handleShow}
+                    >
+                      Rejected
+                    </button>
+                  )}
                 {!isupdating && (
                   <Button
                     type="submit"

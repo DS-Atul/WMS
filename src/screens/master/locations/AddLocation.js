@@ -139,64 +139,62 @@ const AddLocation = () => {
     },
   });
 
-  const getCountry = () => {
-    let country_list = [...country_list_s];
-    axios
-      .get(
+  
+  
+  const getCountry = async () => {
+    try {
+      let country_list = [...country_list_s];
+      const resp = await axios.get(
         ServerAddress +
           `master/all_country/?search=${""}&p=${country_page}&records=${10}&name_search=${country_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        console.log("Countary===>", resp.data);
-
-        if (resp.data.next === null) {
-          setcountry_loaded(false);
+      );
+      console.log("Countary===>", resp.data);
+  
+      if (resp.data.next === null) {
+        setcountry_loaded(false);
+      } else {
+        setcountry_loaded(true);
+      }
+  
+      if (resp.data.results.length > 0) {
+        // console.log("resp.data.results", resp.data);
+        if (country_page === 1) {
+          console.log("state_page", state_page);
+          country_list = resp.data.results.map((v) => [v.id, toTitleCase(v.name)]);
         } else {
-          setcountry_loaded(true);
+          country_list = [
+            ...country_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
         }
-
-        if (resp.data.results.length > 0) {
-          // console.log("resp.data.results", resp.data);
-          if (country_page === 1) {
-            console.log("state_page", state_page);
-            country_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            country_list = [
-              ...country_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-        }
-        // state_list = resp.data.results.map(v => [v.id, toTitleCase(v.state)])\
-        let a_index = country_list.indexOf("Add New");
-        if (a_index !== -1) {
-          country_list.splice(a_index, 1);
-        }
-        country_list = [...new Set(country_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-
-        // if(country_search_item !== "") {
-        //   setcountry_list_s(country_list);
-        // } else {
-        country_list.push("Add New");
-        setcountry_count(country_count + 2);
-        setcountry_list_s(country_list);
-        // }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get States, ${err}`);
-      });
+      }
+      // state_list = resp.data.results.map(v => [v.id, toTitleCase(v.state)])\
+      let a_index = country_list.indexOf("Add New");
+      if (a_index !== -1) {
+        country_list.splice(a_index, 1);
+      }
+      country_list = [...new Set(country_list.map((v) => `${v}`))].map((v) =>
+        v.split(",")
+      );
+  
+      // if(country_search_item !== "") {
+      //   setcountry_list_s(country_list);
+      // } else {
+      country_list.push("Add New");
+      setcountry_count(country_count + 2);
+      setcountry_list_s(country_list);
+      // }
+    } catch (err) {
+      alert(`Error Occur in Get States, ${err}`);
+    }
   };
-  const setCountry = () => {
-    axios
-      .post(
+
+  const setCountry = async () => {
+    try {
+      const response = await axios.post(
         ServerAddress + "master/add_country/",
         {
           name: toTitleCase(other_country).toUpperCase(),
@@ -207,46 +205,43 @@ const AddLocation = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status !== "duplicated") {
-          if (response.statusText === "Created") {
-            setcountry_id(response.data.country_id);
-            dispatch(setShowAlert(true));
-            dispatch(
-              setDataExist(
-                `Country ${toTitleCase(other_country)} Added Sucessfully`
-              )
-            );
-            dispatch(setAlertType("success"));
-            setcountry(toTitleCase(other_country));
-            getCountry();
-            // getDistrict();
-          }
-        } else {
+      );
+      
+      if (response.data.status !== "duplicated") {
+        if (response.statusText === "Created") {
+          setcountry_id(response.data.country_id);
           dispatch(setShowAlert(true));
           dispatch(
-            setDataExist(`Country ${toTitleCase(other_country)} Already Exist`)
+            setDataExist(
+              `Country ${toTitleCase(other_country)} Added Sucessfully`
+            )
           );
-          dispatch(setAlertType("warning"));
-          if (isupdating) {
-            setcountry(toTitleCase(location.name));
-          } else {
-            setcountry("");
-          }
+          dispatch(setAlertType("success"));
+          setcountry(toTitleCase(other_country));
+          await getCountry();
+          // await getDistrict();
         }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting State  Data ${error}`);
-      });
+      } else {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Country ${toTitleCase(other_country)} Already Exist`)
+        );
+        dispatch(setAlertType("warning"));
+        if (isupdating) {
+          setcountry(toTitleCase(location.name));
+        } else {
+          setcountry("");
+        }
+      }
+    } catch (error) {
+      alert(`Error Happen while posting State  Data ${error}`);
+    }
   };
-
-  const getStates = (place_id, filter_by) => {
-    // let state_list = [...state_list_s];
-    // settog(false)
-    let state_list = [...state_list_s];
-    axios
-      .get(
+  
+  const getStates = async (place_id, filter_by) => {
+    try {
+      let state_list = [...state_list_s];
+      const resp = await axios.get(
         ServerAddress +
           `master/all_states/?search=${""}&p=${state_page}&records=${10}&state_search=${state_search_item}` +
           "&place_id=" +
@@ -256,50 +251,49 @@ const AddLocation = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        settogstate(true);
-
-        if (resp.data.next === null) {
-          setstate_loaded(false);
+      );
+      
+      settogstate(true);
+  
+      if (resp.data.next === null) {
+        setstate_loaded(false);
+      } else {
+        setstate_loaded(true);
+      }
+  
+      if (resp.data.results.length > 0) {
+        if (state_page === 1) {
+          state_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.state),
+          ]);
         } else {
-          setstate_loaded(true);
+          state_list = [
+            ...state_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
+          ];
         }
-
-        if (resp.data.results.length > 0) {
-          if (state_page === 1) {
-            state_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.state),
-            ]);
-          } else {
-            state_list = [
-              ...state_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
-            ];
-          }
-        }
-        // state_list = resp.data.results.map(v => [v.id, toTitleCase(v.state)])\
-        let a_index = state_list.indexOf("Add New");
-        if (a_index !== -1) {
-          // setstate_list_s([])
-          state_list.splice(a_index, 1);
-        }
-        state_list = [...new Set(state_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        state_list.push("Add New");
-        setstate_count(state_count + 2);
-        setstate_list_s(state_list);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get States, ${err}`);
-      });
+      }
+      // state_list = resp.data.results.map(v => [v.id, toTitleCase(v.state)])\
+      let a_index = state_list.indexOf("Add New");
+      if (a_index !== -1) {
+        // setstate_list_s([])
+        state_list.splice(a_index, 1);
+      }
+      state_list = [...new Set(state_list.map((v) => `${v}`))].map((v) =>
+        v.split(",")
+      );
+      state_list.push("Add New");
+      setstate_count(state_count + 2);
+      setstate_list_s(state_list);
+    } catch (error) {
+      alert(`Error Occur in Get States, ${error}`);
+    }
   };
-
-  const setState = () => {
-    axios
-      .post(
+  
+  const setState = async () => {
+    try {
+      const response = await axios.post(
         ServerAddress + "master/add_state/",
         {
           country: country_id,
@@ -312,45 +306,43 @@ const AddLocation = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status !== "duplicated") {
-          if (response.statusText === "Created") {
-            setstate_id(response.data.state_id);
-            dispatch(setShowAlert(true));
-            dispatch(
-              setDataExist(
-                `State ${toTitleCase(other_state)} Added Sucessfully`
-              )
-            );
-            dispatch(setAlertType("success"));
-            setstate(toTitleCase(other_state));
-            // getStates();
-            // getDistrict();
-          }
-        } else {
+      );
+  
+      if (response.data.status !== "duplicated") {
+        if (response.statusText === "Created") {
+          setstate_id(response.data.state_id);
           dispatch(setShowAlert(true));
           dispatch(
-            setDataExist(`State ${toTitleCase(other_state)} Already Exist`)
+            setDataExist(
+              `State ${toTitleCase(other_state)} Added Sucessfully`
+            )
           );
-          dispatch(setAlertType("warning"));
-          if (isupdating) {
-            setstate(toTitleCase(location.state_name));
-          } else {
-            setstate("");
-          }
+          dispatch(setAlertType("success"));
+          setstate(toTitleCase(other_state));
+          // getStates();
+          // getDistrict();
         }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting State  Data ${error}`);
-      });
+      } else {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`State ${toTitleCase(other_state)} Already Exist`)
+        );
+        dispatch(setAlertType("warning"));
+        if (isupdating) {
+          setstate(toTitleCase(location.state_name));
+        } else {
+          setstate("");
+        }
+      }
+    } catch (error) {
+      alert(`Error Happen while posting State  Data ${error}`);
+    }
   };
-
-  const getCities = (place_id, filter_by) => {
-    // setby_pincode(false);
-    let cities_list = [...city_list_s];
-    axios
-      .get(
+  
+  const getCities = async (place_id, filter_by) => {
+    try {
+      let cities_list = [...city_list_s];
+      const resp = await axios.get(
         ServerAddress +
           `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
           "&place_id=" +
@@ -360,51 +352,49 @@ const AddLocation = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        settogcity(true);
-        console.log("City ===>>", resp.data);
-        if (resp.data.next === null) {
-          setcity_loaded(false);
+      );
+  
+      settogcity(true);
+      console.log("City ===>>", resp.data);
+  
+      if (resp.data.next === null) {
+        setcity_loaded(false);
+      } else {
+        setcity_loaded(true);
+      }
+  
+      if (resp.data.results.length > 0) {
+        if (city_page === 1) {
+          cities_list = resp.data.results.map((v) => [v.id, toTitleCase(v.city)]);
         } else {
-          setcity_loaded(true);
+          cities_list = [
+            ...city_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+          ];
         }
-
-        if (resp.data.results.length > 0) {
-          if (city_page === 1) {
-            cities_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.city),
-            ]);
-          } else {
-            cities_list = [
-              ...city_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-            ];
-          }
-        }
-        let a_index = cities_list.indexOf("Add New");
-        if (a_index !== -1) {
-          cities_list.splice(a_index, 1);
-        }
-        cities_list = [...new Set(cities_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        cities_list.push("Add New");
-
-        setcity_count(city_count + 2);
-        setcity_list_s(cities_list);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+      }
+  
+      let a_index = cities_list.indexOf("Add New");
+      if (a_index !== -1) {
+        cities_list.splice(a_index, 1);
+      }
+  
+      cities_list = [...new Set(cities_list.map((v) => `${v}`))].map((v) =>
+        v.split(",")
+      );
+      cities_list.push("Add New");
+  
+      setcity_count(city_count + 2);
+      setcity_list_s(cities_list);
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
-
-  const getPincode = (place_id, filter_by) => {
-    // let pincode_list = [...pincode_list_s];
-    let pincode_list = [...pincode_list_s];
-    axios
-      .get(
+  
+  const getPincode = async (place_id, filter_by) => {
+    try {
+      let pincode_list = [...pincode_list_s];
+      const response = await axios.get(
         ServerAddress +
           `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
           "&place_id=" +
@@ -414,104 +404,98 @@ const AddLocation = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.next === null) {
-          setpincode_loaded(false);
+      );
+  
+      if (response.data.next === null) {
+        setpincode_loaded(false);
+      } else {
+        setpincode_loaded(true);
+      }
+  
+      if (response.data.results.length > 0) {
+        if (pincode_page === 1) {
+          pincode_list = response.data.results.map((v) => [v.id, v.pincode]);
         } else {
-          setpincode_loaded(true);
+          pincode_list = [
+            ...pincode_list_s,
+            ...response.data.results.map((v) => [v.id, v.pincode]),
+            // ...response.data.results.map((v) => [v.id, toTitleCase(v.pincode)]),
+          ];
         }
-
-        if (resp.data.results.length > 0) {
-          if (pincode_page === 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-          } else {
-            pincode_list = [
-              ...pincode_list_s,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-              // ...resp.data.results.map((v) => [v.id, toTitleCase(v.pincode)]),
-            ];
-          }
-        }
-        let a_index = pincode_list.indexOf("Add New");
-        if (a_index !== -1) {
-          pincode_list.splice(a_index, 1);
-        }
-        pincode_list = [...new Set(pincode_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        pincode_list.push("Add New");
-        setpincode_count(pincode_count + 2);
-        setpincode_list_s(pincode_list);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+      }
+      let a_index = pincode_list.indexOf("Add New");
+      if (a_index !== -1) {
+        pincode_list.splice(a_index, 1);
+      }
+      pincode_list = [...new Set(pincode_list.map((v) => `${v}`))].map((v) =>
+        v.split(",")
+      );
+      pincode_list.push("Add New");
+      setpincode_count(pincode_count + 2);
+      setpincode_list_s(pincode_list);
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
-
-  const setCity = () => {
-    axios
-      .post(
-        ServerAddress + "master/add-city/",
-        {
-          city: toTitleCase(other_city).toUpperCase(),
-          state: state_id,
-          district: district_id,
-          created_by: user_id,
+  
+  const setCity = async () => {
+    try {
+      const response = await axios.post(ServerAddress + "master/add-city/", {
+        city: toTitleCase(other_city).toUpperCase(),
+        state: state_id,
+        district: district_id,
+        created_by: user_id,
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then(function (response) {
-        if (response.data.status !== "duplicated") {
-          if (response.statusText === "Created") {
-            setcity_id(response.data.city_id);
-
-            dispatch(
-              setDataExist(
-                `City ${toTitleCase(other_city)} in State ${toTitleCase(
-                  other_state
-                )} Added Sucessfully`
-              )
-            );
-
-            dispatch(setAlertType("success"));
-            dispatch(setShowAlert(true));
-            setcity(toTitleCase(other_city));
-            // getCities();
-          }
-        } else {
-          dispatch(setShowAlert(true));
+      });
+  
+      if (response.data.status !== "duplicated") {
+        if (response.statusText === "Created") {
+          setcity_id(response.data.city_id);
+  
           dispatch(
             setDataExist(
-              `City ${toTitleCase(other_city)} in District ${toTitleCase(
-                district
-              )} Already Exist`
+              `City ${toTitleCase(other_city)} in State ${toTitleCase(
+                other_state
+              )} Added Sucessfully`
             )
           );
-
-          dispatch(setAlertType("warning"));
-          // if (isupdating === false) {
-          //   setcity("");
-          // }
-          if (isupdating) {
-            setcity(toTitleCase(location.city_name));
-          } else {
-            setcity("");
-          }
+  
+          dispatch(setAlertType("success"));
+          dispatch(setShowAlert(true));
+          setcity(toTitleCase(other_city));
+          // getCities();
         }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting City Data ${error}`);
-      });
+      } else {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `City ${toTitleCase(other_city)} in District ${toTitleCase(
+              district
+            )} Already Exist`
+          )
+        );
+  
+        dispatch(setAlertType("warning"));
+        // if (isupdating === false) {
+        //   setcity("");
+        // }
+        if (isupdating) {
+          setcity(toTitleCase(location.city_name));
+        } else {
+          setcity("");
+        }
+      }
+    } catch (error) {
+      alert(`Error Happen while posting City Data ${error}`);
+    }
   };
-
-  const setPicode = () => {
-    axios
-      .post(
+  
+  const setPicode = async () => {
+    try {
+      const response = await axios.post(
         ServerAddress + "master/add_pincode/",
         {
           city: city_id,
@@ -523,65 +507,64 @@ const AddLocation = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status !== "duplicated") {
-          if (response.statusText === "Created") {
-            setpincode_id(response.data.pincode_id);
-
-            dispatch(
-              setDataExist(
-                `Pincode ${toTitleCase(other_pincode)} Added Sucessfully`
-              )
-            );
-
-            dispatch(setAlertType("success"));
-            dispatch(setShowAlert(true));
-            setpincode(toTitleCase(other_pincode));
-            // getCities();
-          }
-        } else {
-          dispatch(setShowAlert(true));
+      );
+  
+      if (response.data.status !== "duplicated") {
+        if (response.statusText === "Created") {
+          setpincode_id(response.data.pincode_id);
+  
           dispatch(
-            setDataExist(`Pincode ${toTitleCase(other_pincode)}Already Exist`)
+            setDataExist(
+              `Pincode ${toTitleCase(other_pincode)} Added Sucessfully`
+            )
           );
-
-          dispatch(setAlertType("warning"));
-          // if (isupdating === false) {
-          //   setcity("");
-          // }
-          if (isupdating) {
-            setpincode(toTitleCase(location.pincode));
-          } else {
-            setpincode("");
-          }
+  
+          dispatch(setAlertType("success"));
+          dispatch(setShowAlert(true));
+          setpincode(toTitleCase(other_pincode));
+          // getCities();
         }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting City Data ${error}`);
-      });
-  };
-
-  const update_location = (values) => {
-    let id = location.id;
-    let fields_name = Object.entries({
-      city_name: city,
-      country_name: country,
-      name: values.locality,
-      pincode_name: pincode,
-      state_name: state,
-    });
-    let change_fields = {};
-    for (let j = 0; j < fields_name.length; j++) {
-      const ele = fields_name[j];
-      let prev = location_data.state.location[`${ele[0]}`];
-      let new_v = ele[1];
-      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
-        change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+      } else {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Pincode ${toTitleCase(other_pincode)}Already Exist`)
+        );
+  
+        dispatch(setAlertType("warning"));
+        // if (isupdating === false) {
+        //   setcity("");
+        // }
+        if (isupdating) {
+          setpincode(toTitleCase(location.pincode));
+        } else {
+          setpincode("");
+        }
       }
+    } catch (error) {
+      alert(`Error Happen while posting City Data ${error}`);
     }
-    axios
-      .put(
+  };
+  
+  const update_location = async (values) => {
+    try {
+      let id = location.id;
+      let fields_name = Object.entries({
+        city_name: city,
+        country_name: country,
+        name: values.locality,
+        pincode_name: pincode,
+        state_name: state,
+      });
+      let change_fields = {};
+      for (let j = 0; j < fields_name.length; j++) {
+        const ele = fields_name[j];
+        let prev = location_data.state.location[`${ele[0]}`];
+        let new_v = ele[1];
+        if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
+          change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+        }
+      }
+      const response = await axios.put(
         ServerAddress + "master/update_location/" + id,
         {
           name: toTitleCase(values.locality).toUpperCase(),
@@ -598,43 +581,41 @@ const AddLocation = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          dispatch(setToggle(true));
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Location of ${location.pincode} updated sucessfully ${
-                location.pincode !== values.pincode
-                  ? `by overriding pincode ${values.pincode}`
-                  : ""
-              }`
-            )
-          );
-          dispatch(setAlertType("info"));
-          setoverride(false);
-          navigate("/master/locations");
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Location Name "${toTitleCase(values.locality)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch(function (err) {
-        alert("Error Error While  Updateing LocAtion");
-
-        dispatch(setShowAlert(false));
-      });
+      );
+      if (response.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Location of ${location.pincode} updated sucessfully ${
+              location.pincode !== values.pincode
+                ? `by overriding pincode ${values.pincode}`
+                : ""
+            }`
+          )
+        );
+        dispatch(setAlertType("info"));
+        setoverride(false);
+        navigate("/master/locations");
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Location Name "${toTitleCase(values.locality)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (err) {
+      alert("Error Error While  Updateing LocAtion");
+      dispatch(setShowAlert(false));
+    }
   };
+  
 
-  const send_locality_data = (values) => {
-    axios
-      .post(
+  const send_locality_data = async (values) => {
+    try {
+      const response = await axios.post(
         ServerAddress + "master/add_locality/",
         {
           name: toTitleCase(values.locality).toUpperCase(),
@@ -656,25 +637,24 @@ const AddLocation = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        console.log("Location resp", response.data);
-        if (response.data.status === "data_exist") {
-          dispatch(setToggle(true));
-          dispatch(setAlertType("warning"));
-          dispatch(setDataExist(`${response.data.data} Already Exist`));
-          dispatch(setShowAlert(true));
-        } else if (response.statusText === "Created") {
-          dispatch(setShowAlert(true));
-          dispatch(setDataExist(`New location  Added Sucessfully`));
-          dispatch(setAlertType("success"));
-          navigate("/master/locations");
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting Location  Data ${error}`);
-      });
+      );
+      console.log("Location resp", response.data);
+      if (response.data.status === "data_exist") {
+        dispatch(setToggle(true));
+        dispatch(setAlertType("warning"));
+        dispatch(setDataExist(`${response.data.data} Already Exist`));
+        dispatch(setShowAlert(true));
+      } else if (response.statusText === "Created") {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`New location  Added Sucessfully`));
+        dispatch(setAlertType("success"));
+        navigate("/master/locations");
+      }
+    } catch (error) {
+      alert(`Error Happen while posting Location  Data ${error}`);
+    }
   };
+  
 
   const handleAction = () => {
     dispatch(setToggle(true));
@@ -864,6 +844,7 @@ const AddLocation = () => {
 
   console.log("pintype", other_pincode, typeof other_pincode);
   return (
+
     <div>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>

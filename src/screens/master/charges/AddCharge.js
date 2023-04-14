@@ -70,9 +70,55 @@ const AddCharge = () => {
     },
   });
 
-  const addCharge = (values) => {
-    axios
-      .post(
+  // const addCharge = (values) => {
+  //   axios
+  //     .post(
+  //       ServerAddress + "master/add_charge/",
+  //       {
+  //         charge_category: charge_category.toUpperCase(),
+  //         charge_name: toTitleCase(values.charge_name).toUpperCase(),
+  //         created_by: user_id,
+  //         //For C&M
+  //         cm_current_department: user.user_department,
+  //         cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //         cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (resp) {
+  //       if (resp.data.status === "success") {
+  //         dispatch(setToggle(true));
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `Charge "${toTitleCase(values.charge_name)}" Added sucessfully`
+  //           )
+  //         );
+  //         dispatch(setAlertType("success"));
+  //         navigate("/master/charges");
+  //       } else if (resp.data == "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `Charge Name "${toTitleCase(values.charge_name)}" already exists`
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error Happen while posting Coloder  Data ${error}`);
+  //     });
+  // };
+
+
+  const addCharge = async (values) => {
+    try {
+      const resp = await axios.post(
         ServerAddress + "master/add_charge/",
         {
           charge_category: charge_category.toUpperCase(),
@@ -88,103 +134,164 @@ const AddCharge = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (resp) {
-        if (resp.data.status === "success") {
-          dispatch(setToggle(true));
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Charge "${toTitleCase(values.charge_name)}" Added sucessfully`
-            )
-          );
-          dispatch(setAlertType("success"));
-          navigate("/master/charges");
-        } else if (resp.data == "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Charge Name "${toTitleCase(values.charge_name)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting Coloder  Data ${error}`);
-      });
+      );
+  
+      if (resp.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Charge "${toTitleCase(values.charge_name)}" Added sucessfully`
+          )
+        );
+        dispatch(setAlertType("success"));
+        navigate("/master/charges");
+      } else if (resp.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Charge Name "${toTitleCase(values.charge_name)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert(`Error Happen while posting Coloder  Data ${error}`);
+    }
   };
+  
+  // const updateCharge = (values) => {
+  //   let id = charge.id;
+  //   let fields_names = Object.entries({
+  //     charge_category: charge_category,
+  //     charge_name: values.charge_name,
+  //   });
 
-  const updateCharge = (values) => {
+  //   let change_fields = {};
+  //   var prom = new Promise((resolve, reject) => {
+  //     for (let j = 0; j < fields_names.length; j++) {
+  //       const ele = fields_names[j];
+  //       let prev = location_data.state.charge[`${ele[0]}`];
+  //       let new_v = ele[1];
+
+  //       if (prev !== new_v.toUpperCase()) {
+  //         change_fields[`${ele[0]}`] = new_v.toUpperCase();
+  //       }
+  //       if (j === fields_names.length - 1) resolve();
+  //     }
+  //   });
+    
+  //   prom.then(() => {
+  //     axios
+  //       .put(
+  //         ServerAddress + "master/update_charge/" + charge.id,
+  //         {
+  //           charge_category: charge_category.toUpperCase(),
+  //           charge_name: toTitleCase(values.charge_name).toUpperCase(),
+  //           change_fields: change_fields,
+  //           modified_by: user_id,
+  //           //For C&M
+  //           cm_transit_status: status_toggle === true ? current_status : "",
+  //           cm_current_status: (current_status).toUpperCase(),
+  //           cm_remarks: ""
+  //         },
+          
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${accessToken}`,
+  //           },
+  //         }
+  //       )
+  //       .then(function (response) {
+  //         if (response.data.status === "success") {
+  //           dispatch(setToggle(true));
+  //           dispatch(setShowAlert(true));
+  //           dispatch(
+  //             setDataExist(`Charge "${values.charge_name}" Updated sucessfully`)
+  //           );
+  //           dispatch(setAlertType("info"));
+  //           navigate("/master/charges");
+            
+  //         } else if (response.data == "duplicate") {
+  //           dispatch(setShowAlert(true));
+  //           dispatch(
+  //             setDataExist(
+  //               `Charge Name "${toTitleCase(
+  //                 values.charge_name
+  //               )}" already exists`
+  //             )
+  //           );
+  //           dispatch(setAlertType("warning"));
+  //         }
+          
+  //       })
+  //       .catch(function (err) {
+  //         alert(`Error While  Updateing Charge ${err}`);
+  //       });
+        
+  //   });
+  // };
+  
+  const updateCharge = async (values) => {
     let id = charge.id;
     let fields_names = Object.entries({
       charge_category: charge_category,
       charge_name: values.charge_name,
     });
-
+  
     let change_fields = {};
-    var prom = new Promise((resolve, reject) => {
-      for (let j = 0; j < fields_names.length; j++) {
-        const ele = fields_names[j];
-        let prev = location_data.state.charge[`${ele[0]}`];
-        let new_v = ele[1];
-
-        if (prev !== new_v.toUpperCase()) {
-          change_fields[`${ele[0]}`] = new_v.toUpperCase();
-        }
-        if (j === fields_names.length - 1) resolve();
+    for (let j = 0; j < fields_names.length; j++) {
+      const ele = fields_names[j];
+      let prev = location_data.state.charge[`${ele[0]}`];
+      let new_v = ele[1];
+  
+      if (prev !== new_v.toUpperCase()) {
+        change_fields[`${ele[0]}`] = new_v.toUpperCase();
       }
-    });
-    
-    prom.then(() => {
-      axios
-        .put(
-          ServerAddress + "master/update_charge/" + charge.id,
-          {
-            charge_category: charge_category.toUpperCase(),
-            charge_name: toTitleCase(values.charge_name).toUpperCase(),
-            change_fields: change_fields,
-            modified_by: user_id,
-            //For C&M
-            cm_transit_status: status_toggle === true ? current_status : "",
-            cm_current_status: (current_status).toUpperCase(),
-            cm_remarks: ""
+    }
+  
+    try {
+      const response = await axios.put(
+        ServerAddress + "master/update_charge/" + charge.id,
+        {
+          charge_category: charge_category.toUpperCase(),
+          charge_name: toTitleCase(values.charge_name).toUpperCase(),
+          change_fields: change_fields,
+          modified_by: user_id,
+          //For C&M
+          cm_transit_status: status_toggle === true ? current_status : "",
+          cm_current_status: (current_status).toUpperCase(),
+          cm_remarks: ""
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
-          
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
-        .then(function (response) {
-          if (response.data.status === "success") {
-            dispatch(setToggle(true));
-            dispatch(setShowAlert(true));
-            dispatch(
-              setDataExist(`Charge "${values.charge_name}" Updated sucessfully`)
-            );
-            dispatch(setAlertType("info"));
-            navigate("/master/charges");
-            
-          } else if (response.data == "duplicate") {
-            dispatch(setShowAlert(true));
-            dispatch(
-              setDataExist(
-                `Charge Name "${toTitleCase(
-                  values.charge_name
-                )}" already exists`
-              )
-            );
-            dispatch(setAlertType("warning"));
-          }
-          
-        })
-        .catch(function (err) {
-          alert(`Error While  Updateing Charge ${err}`);
-        });
-        
-    });
+        }
+      );
+  
+      if (response.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Charge "${values.charge_name}" Updated sucessfully`)
+        );
+        dispatch(setAlertType("info"));
+        navigate("/master/charges");
+      } else if (response.data == "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Charge Name "${toTitleCase(
+              values.charge_name
+            )}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert(`Error While  Updateing Charge ${error}`);
+    }
   };
   
 
