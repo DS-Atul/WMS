@@ -22,6 +22,8 @@ import {
 import toTitleCase from "../../lib/titleCase/TitleCase";
 import { Button } from "react-bootstrap";
 import { gstin_no } from "../../constants/CompanyDetails";
+import FileSaver from 'file-saver';
+// import { saveAs } from 'file-saver';
 
 const EwayDocDataFormat = ({ data, data1, can_delete }) => {
     console.log("dataaaaaaaaaa",data)
@@ -68,7 +70,7 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
   const close = useSelector((state) => state.datalist.close);
   const select_all = useSelector((state) => state.datalist.select_all);
   const delete_id = useSelector((state) => state.datalist.delete_id);
-
+  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
   const [selected, setselected] = useState([]);
   const handlefunn = (id) => {
     if (selected.includes(id)) {
@@ -157,6 +159,35 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
   }
   
 
+
+  const downloadEwayBill = (ewb) => {
+    axios({
+      url: `https://dev.api.easywaybill.in/ezewb/v1/reports/generatePdf?gstin=${gstin_no}`,
+      method: 'POST',
+      responseType: 'blob',
+      data: {
+        ewbNo: [ewb],
+        type: 4,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${b_acess_token}`,
+      },
+    })
+      .then(response => {
+        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+        FileSaver.saveAs(pdfBlob, 'eway-bill.pdf');
+        // const contentDisposition = response.headers['content-disposition'];
+        // const filename = contentDisposition.split(';')[1].split('filename')[1].split('=')[1].trim();
+        // const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+        // saveAs(pdfBlob, filename);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+
   return (
     <>
       
@@ -200,7 +231,9 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
               <td>{time}</td>
               <td>{crtime}</td>
               <td>
-                <Button size="sm" variant="success">Download</Button>
+                <Button size="sm" variant="success" onClick={()=>{
+                downloadEwayBill(commodity.ewb_no);
+                }}>Download</Button>
               </td>
              
             </tr>

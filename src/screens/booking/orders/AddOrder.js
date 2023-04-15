@@ -1115,7 +1115,7 @@ const AddOrder = () => {
           billto: billto_id,
           client: client_id,
           shipper: eway_confirm ? eway_list.fromTrdName : shipper_n,
-          consignee: eway_confirm ? eway_list.shipToTradeName : consignee_n,
+          consignee: eway_confirm ? eway_list.toTrdName : consignee_n,
           booking_at: booking_date,
           local_delivery_type: String(local_delivery_type).toUpperCase(),
           cold_chain: cold_chain ? true : false,
@@ -1159,7 +1159,7 @@ const AddOrder = () => {
           with_ewayBill: eway_confirm ? "True" : "False",
           eway_bill_no: ewaybill_no,
           consignee_address1: eway_confirm
-            ? eway_list.toAddr1.toUpperCase()
+            ? eway_list.toAddr1.toUpperCase() + "," + eway_list.toAddr2.toUpperCase()
             : consignee_address.toUpperCase(),
           shipper_address1: eway_confirm
             ? eway_list.fromAddr1.toUpperCase()
@@ -4127,7 +4127,7 @@ const AddOrder = () => {
                               :
                               <Input
                             
-                              value={eway_list?.shipToTradeName}
+                              value={eway_list?.toTrdName}
                               disabled
                             />
                             }
