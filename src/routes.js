@@ -412,6 +412,7 @@ const BoxDetail =React.lazy(()=>import("./screens/manifest/incomingVehcile/BoxDe
 
 // eway bill
 const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"))
+const DocEwayBill =React.lazy(()=>import("./screens/ewayBill/docketEwaybill/DocketEway.js"))
 const Vehcile=React.lazy(()=>import("./screens/master/vehcile/vehcile.js"))
 const AddVehcile=React.lazy(()=>import("./screens/master/vehcile/add_Vehcile.js"))
 // const CheckerMaster= React.lazy(()=>import ("./screen"))
@@ -491,6 +492,13 @@ const routes = [
     name: "Adddesignation",
     element: <AddDesignation />,
   },
+
+  // Eway Bill Path Defined
+  {
+    path: "/ewaybill/docketEwayBill",
+    element: <DocEwayBill />,
+  },
+
   //veicle model
   {
     path: "/vehicleModel/Model",

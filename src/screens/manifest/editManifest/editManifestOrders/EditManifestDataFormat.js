@@ -143,8 +143,8 @@ const EditManifestDataFormat = ({ Manifest_list }) => {
                     }}
                   >
                     <td>{order.docket_no}</td>
-                    <td>{toTitleCase(order.shipper_name)}</td>
-                    <td>{toTitleCase(order.consignee_name)}</td>
+                    <td>{toTitleCase(order.shipper)}</td>
+                    <td>{toTitleCase(order.consignee)}</td>
                     <td>{order.total_quantity}</td>
                     <td>{(order.issue).length}</td>
                     <td>{(order.issue_notreceived).length}</td>

@@ -432,15 +432,14 @@ const SignIn = () => {
         //   ],
         //   trigger: false,
         // },
-        // {
-        //   id: 3,
-        //   dropdown: "Trip",
-        //   dropdownMenu: [
-        //     ["Transporter", "/transporter/Transporter"],
-        //     ["Hired", "/hiredDetails/HiredDetails"],
-        //   ],
-        //   trigger: false,
-        // },
+        {
+          id: 3,
+          dropdown: "EwayBill",
+          dropdownMenu: [
+            ["DocketWithEwayBill", "/ewaybill/docketEwayBill"],
+          ],
+          trigger: false,
+        },
         {
           id: 4,
           dropdown: "Master",

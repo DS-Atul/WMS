@@ -361,8 +361,8 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                       </>
               }
                   </td>
-                <td>{order.order_type === "RETURN" ? toTitleCase(order.consignee_name) : toTitleCase(order.shipper_name)}</td>
-                <td>{order.order_type === "RETURN" ? toTitleCase(order.shipper_name) : toTitleCase(order.consignee_name)}</td>
+                <td>{order.order_type === "RETURN" ? toTitleCase(order.consigne) : toTitleCase(order.shipper)}</td>
+                <td>{order.order_type === "RETURN" ? toTitleCase(order.shipper) : toTitleCase(order.consignee)}</td>
                 <td><span style={{ color: order.current_status === "SHORT DELIVERED" && "red" }}>{toTitleCase(order.current_status)}</span></td>
                 <td>
                   <div>
