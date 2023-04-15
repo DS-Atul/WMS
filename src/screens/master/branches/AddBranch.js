@@ -1163,6 +1163,10 @@ console.log("FIelds name", fields_names)
     if (same_as_gst) {
       setaddress_line(gstaddress);
     }
+    if(!same_as_gst) {
+      setaddress_line("");
+
+    }
     // if (state != "") {
     //   setstate_error(false);
     // }

@@ -227,7 +227,9 @@ const AddOrganization = () => {
         .max(10, "invalid number")
         .required("Phone Number is required"),
       contact_person_name: Yup.string().required("Name is required"),
-      contact_person_email: Yup.string().email("Please Enter a Valid email").required("Email is required"),
+      contact_person_email: Yup.string()
+        .email("Please Enter a Valid email")
+        .required("Email is required"),
       contact_person_ph_no: Yup.string()
         .min(10, "Invalid number")
         .max(10, "invalid number")
@@ -240,16 +242,16 @@ const AddOrganization = () => {
   });
 
   // Post Branch
-  const send_organisation_data = (values) => {
-    axios
-      .post(
+  const send_organisation_data = async (values) => {
+    try {
+      const response = await axios.post(
         ServerAddress + "organization/add_organization/",
         {
           name: toTitleCase(values.organisation_name).toUpperCase(),
           regd_no: values.registeration_number,
           tollfree_no: values.toll_free_number,
           mobile_nop: values.phone_numberp,
-          mobile_nos: values.phone_numbers ? values.phone_numbers : null,
+          mobile_nos: sec_mobile2 !== "" ? sec_mobile2 : null,
           email: values.email,
           description: toTitleCase(descripation).toUpperCase(),
           pan_no: toTitleCase(values.pan_no).toUpperCase(),
@@ -282,49 +284,71 @@ const AddOrganization = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        // console.log("response---", response)
-        if (response.data.status === "success") {
-          dispatch(setToggle(true));
-          dispatch(
-            setDataExist(
-              `Organization "${values.organisation_name}" Created Sucessfully`
-            )
-          );
-          dispatch(setAlertType("success"));
-          dispatch(setShowAlert(true));
-          navigate(-1);
-        } else if (
-          response.data.data.pan_no &&
-          response.data.data.pan_no[0] ===
-            "organization with this PAN Number * already exists."
-        ) {
-          dispatch(setDataExist(`"${values.pan_no}" already exists`));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-        } else if (
-          response.data.data.website &&
-          response.data.data.website[0] ===
-            "organization with this Website Address already exists."
-        ) {
-          dispatch(setDataExist(`"${values.web_url}" already exists`));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-        } else if (
-          response.data.data.website &&
-          response.data.data.website[0] === "Enter a valid URL."
-        ) {
-          dispatch(
-            setDataExist(`Website Address "${values.web_url}" Is Invalid`)
-          );
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting Oranisation  Data ${error}`);
-      });
+      );
+      console.log("Organization ==>>", response.data);
+      if (response.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(
+          setDataExist(
+            `Organization "${values.organisation_name}" Created Sucessfully`
+          )
+        );
+        dispatch(setAlertType("success"));
+        dispatch(setShowAlert(true));
+        navigate(-1);
+      } else if (
+        response.data.data.pan_no &&
+        response.data.data.pan_no[0] ===
+          "organization with this PAN Number * already exists."
+      ) {
+        dispatch(setDataExist(`"${values.pan_no}" already exists`));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      } else if (
+        response.data.data.website &&
+        response.data.data.website[0] ===
+          "organization with this Website Address already exists."
+      ) {
+        dispatch(setDataExist(`"${values.web_url}" already exists`));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      } else if (
+        response.data.data.website &&
+        response.data.data.website[0] === "Enter a valid URL."
+      ) {
+        dispatch(
+          setDataExist(`Website Address "${values.web_url}" Is Invalid`)
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      } else if (
+        response.data.data.name &&
+        response.data.data.name[0] ===
+          "organization with this Organization Name * already exists."
+      ) {
+        dispatch(
+          setDataExist(
+            `Organisation   "${values.organisation_name}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      } else if (
+        response.data.data.regd_no &&
+        response.data.data.regd_no[0] ===
+          "organization with this Registeration Number already exists."
+      ) {
+        dispatch(
+          setDataExist(
+            `Organisation with this  Registeration No  "${values.registeration_number}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      }
+    } catch (error) {
+      alert(`Error Happen while posting Organisation Data ${error}`);
+    }
   };
 
   // Update Branch
@@ -339,7 +363,8 @@ const AddOrganization = () => {
 
       email: values.email,
       mobile_nop: values.phone_numberp,
-      mobile_nos: values.phone_numbers,
+      // mobile_nos: values.phone_numbers,
+      mobile_nos: sec_mobile2,
       name: values.organisation_name,
 
       pan_no: values.pan_no,
@@ -368,7 +393,8 @@ const AddOrganization = () => {
           regd_no: values.registeration_number,
           tollfree_no: values.toll_free_number,
           mobile_nop: values.phone_numberp,
-          mobile_nos: values.phone_numbers ? values.phone_numbers : null,
+          // mobile_nos: values.phone_numbers ? values.phone_numbers : null,
+          mobile_nos: sec_mobile2,
           email: values.email,
           description: toTitleCase(descripation).toUpperCase(),
           pan_no: toTitleCase(values.pan_no).toUpperCase(),
@@ -430,49 +456,46 @@ const AddOrganization = () => {
       });
   };
   // Locations Function
-  const getStates = (place_id, filter_by) => {
-    // let state_list = [...state_list_s];
+  const getStates = async (place_id, filter_by) => {
     let state_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${billing_state_page}&records=${10}&state_search=${billing_state_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.next === null) {
-          setstate_loded(false);
+      );
+      if (resp.data.next === null) {
+        setstate_loded(false);
+      } else {
+        setstate_loded(true);
+      }
+      if (resp.data.results.length > 0) {
+        if (billing_state_page == 1) {
+          state_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.state),
+          ]);
         } else {
-          setstate_loded(true);
+          state_list = [
+            ...state_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
+          ];
         }
-        if (resp.data.results.length > 0) {
-          if (billing_state_page == 1) {
-            state_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.state),
-            ]);
-          } else {
-            state_list = [
-              ...state_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
-            ];
-          }
-        }
-        setstate_count(state_count + 2);
-        setstate_list_s(state_list);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get States, ${err}`);
-      });
+      }
+      setstate_count(state_count + 2);
+      setstate_list_s(state_list);
+    } catch (err) {
+      alert(`Error Occur in Get States, ${err}`);
+    }
   };
 
-  const getCities = (place_id, filter_by, state_type) => {
+  const getCities = async (place_id, filter_by, state_type) => {
     setby_pincode(false);
     let cities_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_cities/?search=${""}&p=${
             active_tab == "first" ? city_page : billing_city_page
@@ -486,57 +509,56 @@ const AddOrganization = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.next === null) {
-          setcity_loaded(false);
-          setbilling_city_loaded(false);
-        } else {
-          setcity_loaded(true);
-          setbilling_city_loaded(true);
-        }
+      );
+      if (resp.data.next === null) {
+        setcity_loaded(false);
+        setbilling_city_loaded(false);
+      } else {
+        setcity_loaded(true);
+        setbilling_city_loaded(true);
+      }
 
-        if (resp.data.results.length > 0) {
-          if (city_page == 1) {
-            cities_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.city),
-            ]);
-          } else {
-            if (state_type === "billing_state_id") {
-              cities_list = [
-                ...billing_city_list,
-                ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-              ];
-            } else {
-              cities_list = [
-                ...office_city_list,
-                ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-              ];
-            }
-          }
-          if (state_type === "billing_state_id") {
-            setbilling_city_count(billing_city_count + 2);
-            setbilling_city_list(cities_list);
-          } else {
-            setcity_count(city_count + 2);
-            setoffice_city_list(cities_list);
-          }
+      if (resp.data.results.length > 0) {
+        if (city_page == 1) {
+          cities_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.city),
+          ]);
         } else {
-          // setcity("");
-          setbilling_city_list([]);
-          setoffice_city_list([]);
+          if (state_type === "billing_state_id") {
+            cities_list = [
+              ...billing_city_list,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+            ];
+          } else {
+            cities_list = [
+              ...office_city_list,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+            ];
+          }
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+        if (state_type === "billing_state_id") {
+          setbilling_city_count(billing_city_count + 2);
+          setbilling_city_list(cities_list);
+        } else {
+          setcity_count(city_count + 2);
+          setoffice_city_list(cities_list);
+        }
+      } else {
+        // setcity("");
+        setbilling_city_list([]);
+        setoffice_city_list([]);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
 
-  const getPincode = (place_id, filter_by, city_type) => {
+  const getPincode = async (place_id, filter_by, city_type) => {
     let pincode_list = [];
-    axios
-      .get(
+
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_pincode/?search=${""}&p=${
             active_tab == "first" ? pincode_page : billing_pincode_page
@@ -552,72 +574,72 @@ const AddOrganization = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.next === null) {
-          setload_office_pincode(false);
-        } else {
-          setload_office_pincode(true);
-        }
-        if (filter_by !== "pincode") {
-          if (pincode_page == 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-          } else {
-            if (city_type == "billin_city") {
-              pincode_list = [
-                ...billing_pincode_list,
-                ...resp.data.results.map((v) => [v.id, v.pincode]),
-              ];
-            } else {
-              pincode_list = [
-                ...office_pincode_list,
-                ...resp.data.results.map((v) => [v.id, v.pincode]),
-              ];
-            }
-          }
+      );
 
+      if (resp.data.next === null) {
+        setload_office_pincode(false);
+      } else {
+        setload_office_pincode(true);
+      }
+
+      if (filter_by !== "pincode") {
+        if (pincode_page == 1) {
+          pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+        } else {
           if (city_type == "billin_city") {
-            setbilling_pincode_count(billing_pincode_count + 2);
-            setbilling_pincode_list(pincode_list);
+            pincode_list = [
+              ...billing_pincode_list,
+              ...resp.data.results.map((v) => [v.id, v.pincode]),
+            ];
           } else {
-            setoffice_pincode_count(office_pincode_count + 2);
-            setoffice_pincode_list(pincode_list);
+            pincode_list = [
+              ...office_pincode_list,
+              ...resp.data.results.map((v) => [v.id, v.pincode]),
+            ];
           }
-        } else if (city_type == "billin_city") {
-          setbilling_state(toTitleCase(resp.data.results[0].state_name));
-          setbilling_state_id(resp.data.results[0].state);
-
-          setbilling_city(toTitleCase(resp.data.results[0].city_name));
-          setbilling_city_id(resp.data.results[0].city);
-
-          setbilling_pincode(resp.data.results[0].pincode);
-          setbilling_pincode_id(resp.data.results[0].id);
-        } else if (city_type == "office_city") {
-          setoffice_state(toTitleCase(resp.data.results[0].state_name));
-          setoffice_state_id(resp.data.results[0].state);
-          setoffice_city(toTitleCase(resp.data.results[0].city_name));
-          setoffice_city_id(resp.data.results[0].city);
-          setoffice_pincode(resp.data.results[0].pincode);
-          setoffice_pincode_id(resp.data.results[0].id);
-        } else {
-          dispatch(
-            setDataExist(
-              "You entered invalid pincode or pincode not available in database"
-            )
-          );
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Pin Code, ${err}`);
-      });
+
+        if (city_type == "billin_city") {
+          setbilling_pincode_count(billing_pincode_count + 2);
+          setbilling_pincode_list(pincode_list);
+        } else {
+          setoffice_pincode_count(office_pincode_count + 2);
+          setoffice_pincode_list(pincode_list);
+        }
+      } else if (city_type == "billin_city") {
+        setbilling_state(toTitleCase(resp.data.results[0].state_name));
+        setbilling_state_id(resp.data.results[0].state);
+
+        setbilling_city(toTitleCase(resp.data.results[0].city_name));
+        setbilling_city_id(resp.data.results[0].city);
+
+        setbilling_pincode(resp.data.results[0].pincode);
+        setbilling_pincode_id(resp.data.results[0].id);
+      } else if (city_type == "office_city") {
+        setoffice_state(toTitleCase(resp.data.results[0].state_name));
+        setoffice_state_id(resp.data.results[0].state);
+        setoffice_city(toTitleCase(resp.data.results[0].city_name));
+        setoffice_city_id(resp.data.results[0].city);
+        setoffice_pincode(resp.data.results[0].pincode);
+        setoffice_pincode_id(resp.data.results[0].id);
+      } else {
+        dispatch(
+          setDataExist(
+            "You entered invalid pincode or pincode not available in database"
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      }
+    } catch (err) {
+      alert(`Error Occur in Get Pin Code, ${err}`);
+    }
   };
 
-  const getLocality = (place_id, filter_by, pincode_type) => {
+  const getLocality = async (place_id, filter_by, pincode_type) => {
     let locality_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_locality/?search=${""}&p=${
             active_tab == "first" ? locality_page : billing_locality_page
@@ -630,42 +652,39 @@ const AddOrganization = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (filter_by !== "locality") {
-          if (pincode_page == 1) {
-            locality_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            if (pincode_type == "billing_pincode") {
-              locality_list = [
-                ...billing_locality_list,
-                ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-              ];
-            } else {
-              locality_list = [
-                ...office_locality_list,
-                ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-              ];
-            }
-          }
-          // setgst_locality_list(locality_list)
-          if (pincode_type == "billing_pincode") {
-            setbilling_locality_list(locality_list);
-          } else {
-            setoffice_locality_list(locality_list);
-          }
+      );
+      if (filter_by !== "locality") {
+        if (pincode_page == 1) {
+          locality_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+          ]);
         } else {
-          dispatch(setDataExist("You entered invalid Locality"));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
+          if (pincode_type == "billing_pincode") {
+            locality_list = [
+              ...billing_locality_list,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          } else {
+            locality_list = [
+              ...office_locality_list,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Locality , ${err}`);
-      });
+        if (pincode_type == "billing_pincode") {
+          setbilling_locality_list(locality_list);
+        } else {
+          setoffice_locality_list(locality_list);
+        }
+      } else {
+        dispatch(setDataExist("You entered invalid Locality"));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      }
+    } catch (err) {
+      alert(`Error Occur in Get Locality , ${err}`);
+    }
   };
 
   useLayoutEffect(() => {
@@ -676,6 +695,7 @@ const AddOrganization = () => {
       setdescripation(
         toTitleCase(location_data.state.organization.description)
       );
+      setsec_mobile2(location_data.state.organization.mobile_nos);
       setoffice_add_line1(
         toTitleCase(
           location_data.state.organization.organization_address[0].address_line1
@@ -901,35 +921,34 @@ const AddOrganization = () => {
       setbilling_locality_id(office_locality_id);
     }
   }, [same_as_billing_add]);
-  const getGstStates = (place_id, filter_by) => {
+
+  // used to fetch data from gst number
+  const getGstStates = async (place_id, filter_by) => {
     let state_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${1}&records=${10}&state_search=${""}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.results.length > 0) {
-          (state_list = resp.data.results.map((v) => [
-            v.id,
-            toTitleCase(v.state),
-          ])),
-            setgst_state_list(state_list);
-          setgst_state_id(resp.data.results[0].id);
-        }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get States, ${err}`);
-      });
+      );
+
+      if (resp.data.results.length > 0) {
+        state_list = resp.data.results.map((v) => [v.id, toTitleCase(v.state)]);
+        setgst_state_list(state_list);
+        setgst_state_id(resp.data.results[0].id);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get States, ${err}`);
+    }
   };
 
-  const getGstCities = (place_id, filter_by) => {
+  const getGstCities = async (place_id, filter_by) => {
     let cities_list = [];
-    axios
-      .get(
+
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_cities/?search=${""}&p=${gst_city_page}&records=${10}&city_search=${gst_city_search_item}` +
           "&place_id=" +
@@ -939,39 +958,39 @@ const AddOrganization = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.results.length > 0) {
-          if (gst_city_page === 1) {
-            cities_list = resp.data.results.map((v) => [
+      );
+
+      if (resp.data.results.length > 0) {
+        if (gst_city_page === 1) {
+          cities_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
+            v.state,
+          ]);
+        } else {
+          cities_list = [
+            ...gst_city_list,
+            ...resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
               v.state,
-            ]);
-          } else {
-            cities_list = [
-              ...gst_city_list,
-              ...resp.data.results.map((v) => [
-                v.id,
-                toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
-                v.state,
-              ]),
-            ];
-          }
-          setgst_city_list(cities_list);
-        } else {
-          setgst_city_list([]);
+            ]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+        setgst_city_list(cities_list);
+      } else {
+        setgst_city_list([]);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
 
-  const getGstPincode = (place_id, filter_by) => {
+  const getGstPincode = async (place_id, filter_by) => {
     let pincode_list = [];
-    axios
-      .get(
+
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_pincode/?search=${""}&p=${gst_pincode_page}&records=${10}&pincode_search=${gst_pincode_search_item}` +
           "&place_id=" +
@@ -981,31 +1000,30 @@ const AddOrganization = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.results.length > 0) {
-          if (gst_pincode_page === 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-          } else {
-            pincode_list = [
-              ...gstpincode_list,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
-          }
-          setgstpincode_list(pincode_list);
+      );
+
+      if (resp.data.results.length > 0) {
+        if (gst_pincode_page === 1) {
+          pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
         } else {
-          setgstpincode_list([]);
+          pincode_list = [
+            ...gstpincode_list,
+            ...resp.data.results.map((v) => [v.id, v.pincode]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+        setgstpincode_list(pincode_list);
+      } else {
+        setgstpincode_list([]);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get Pincode, ${err}`);
+    }
   };
 
-  const getGstLocality = (place_id, filter_by) => {
+  const getGstLocality = async (place_id, filter_by) => {
     let loc_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
           `master/all_locality/?search=${""}&p=${gst_locality_page}&records=${10}&name_search=${gst_locality_search_item}` +
           "&place_id=" +
@@ -1016,28 +1034,23 @@ const AddOrganization = () => {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (resp.data.results.length > 0) {
-          if (gst_pincode_page === 1) {
-            loc_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            loc_list = [
-              ...gst_locality_list,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-          setgst_locality_list(loc_list);
+      );
+      if (resp.data.results.length > 0) {
+        if (gst_pincode_page === 1) {
+          loc_list = resp.data.results.map((v) => [v.id, toTitleCase(v.name)]);
         } else {
-          setgst_locality_list([]);
+          loc_list = [
+            ...gst_locality_list,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+        setgst_locality_list(loc_list);
+      } else {
+        setgst_locality_list([]);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
 
   useEffect(() => {
@@ -1196,20 +1209,22 @@ const AddOrganization = () => {
     billing_locality,
   ]);
 
-
   // added to secondary mobile no
   useLayoutEffect(() => {
     // if(sec_mobile2 !== "") {
     //   setmobile_error(false);
     // }
-     if( sec_mobile2 === "" ) {
-      setmoblie_len_error(false);
-    } 
-    if(sec_mobile2 !=="" && sec_mobile2.length === 10) {
+    if (sec_mobile2 === "") {
       setmoblie_len_error(false);
     }
-  }, [sec_mobile2])
-
+    if (
+      sec_mobile2 !== "" &&
+      sec_mobile2 !== null &&
+      sec_mobile2.length === 10
+    ) {
+      setmoblie_len_error(false);
+    }
+  }, [sec_mobile2]);
 
   return (
     <>
@@ -1245,16 +1260,14 @@ const AddOrganization = () => {
             if (fields1.includes(all_value)) {
               // idd1.scrollIntoView();
               document.getElementById("section1").scrollIntoView();
-            }
-            // else if(sec_mobile2 === ""){
-            //   document.getElementById("section1").scrollIntoView();
-            //   setmobile_error(false);
-            // }
-            else if(sec_mobile2 !== "" && sec_mobile2.length !== 10){
+            } else if (
+              sec_mobile2 !== null &&
+              sec_mobile2 !== "" &&
+              sec_mobile2.length !== 10
+            ) {
               document.getElementById("section1").scrollIntoView();
               setmoblie_len_error(true);
-            }
-            else if (office_add_line1 === "") {
+            } else if (office_add_line1 === "") {
               setoffice_add1_err(true);
               document.getElementById("add").scrollIntoView();
             } else if (office_state === "") {
@@ -1271,48 +1284,48 @@ const AddOrganization = () => {
               document.getElementById("add").scrollIntoView();
             } else if (fields2.includes(all_value)) {
               document.getElementById("section2").scrollIntoView();
-            }
-            
-            // else if (
-            //   office_add_line1 !== "" &&
-            //   office_state !== "" &&
-            //   office_city !== "" &&
-            //   office_pincode !== "" &&
-            //   office_locality !== ""
+            } 
+
+
+            else if (
+              office_add_line1 !== "" &&
+              office_state !== "" &&
+              office_city !== "" &&
+              office_pincode !== "" &&
+              office_locality !== ""
             // ) {
             //   if (
-            //     billing_add_line1 === "" ||
-            //     billing_state === "" ||
-            //     billing_city === "" ||
-            //     billing_pincode === "" ||
-            //     billing_locality === ""
-            //   ) {
-            //     setbill_color(true);
-            //     document.getElementById("add").scrollIntoView();
-            //   } else {
-            //     setbill_color(false);
-            //   }
-            // } else if (billing_add_line1 === "") {
-            //   setbill_add1_err(true);
-            //   // alert("Please Fill the fields of Billing address");
-            //   document.getElementById("add").scrollIntoView();
-            // } else if (billing_state === "") {
-            //   setstate_error1(true);
-            //   // alert("Please Fill the fields of Billing address");
-            //   document.getElementById("add").scrollIntoView();
-            // } else if (billing_city === "") {
-            //   setcity_error1(true);
-            //   // alert("Please Fill the fields of Billing address");
-            //   document.getElementById("add").scrollIntoView();
-            // } else if (billing_pincode === "") {
-            //   setpincode_error2(true);
-            //   document.getElementById("add").scrollIntoView();
-            // } else if (billing_locality === "") {
-            //   setlocal_err2(true);
-            //   // alert("Please Fill the fields of Billing address");
-            //   document.getElementById("add").scrollIntoView();
+              &&
+                billing_add_line1 === "" ||
+                billing_state === "" ||
+                billing_city === "" ||
+                billing_pincode === "" ||
+                billing_locality === ""
+              )
+               {
+                setbill_color(true);
+                document.getElementById("add").scrollIntoView();
+              } 
+              // else {
+              //   setbill_color(false);
+              // }
             // }
-
+            else if (billing_add_line1 === "") {
+              setbill_add1_err(true);
+              document.getElementById("add").scrollIntoView();
+            } else if (billing_state !== "") {
+              setstate_error1(true);
+              document.getElementById("add").scrollIntoView();
+            } else if (billing_city !== "") {
+              setcity_error1(true);
+              document.getElementById("add").scrollIntoView();
+            } else if (billing_pincode !== "") {
+              setpincode_error2(true);
+              document.getElementById("add").scrollIntoView();
+            } else if (billing_locality !== "") {
+              setlocal_err2(true);
+              document.getElementById("add").scrollIntoView();
+            }
             validation.handleSubmit(e.values);
             return false;
           }}
@@ -1560,7 +1573,9 @@ const AddOrganization = () => {
                           />
                           <div className="mt-1 error-text" color="danger">
                             {/* {mobile_error ? " Phone number is required" : null} */}
-                            {moblie_len_error ? "Phone Number must be 10 digit long" :null}
+                            {moblie_len_error
+                              ? "Phone Number must be 10 digit long"
+                              : null}
                           </div>
                         </div>
                       </Col>
