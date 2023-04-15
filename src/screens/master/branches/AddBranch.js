@@ -154,6 +154,7 @@ const AddBranch = () => {
   const [own_pan_number, setown_pan_number] = useState("");
 
   const [address_line, setaddress_line] = useState("");
+  console.log("address is ",address_line);
   const [address_line_err, setaddress_line_err] = useState(false);
   const [isupdating, setisupdating] = useState(false);
   // Save an add button
@@ -566,7 +567,7 @@ const AddBranch = () => {
     );
 
     let fields_names = Object.entries({
-      address_line_1: values.address_line_1,
+      address_line_1: address_line,
       city_name: city,
       contact_number: values.branch_phone_number,
       email: values.branch_email,
@@ -589,13 +590,16 @@ const AddBranch = () => {
     });
 
     let change_fields = {};
-
+console.log("FIelds name", fields_names)
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.branch[`${ele[0]}`];
+
       let new_v = ele[1];
       if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+        // change_fields[`${ele[0]}`] = new_v;
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+
       }
     }
 

@@ -234,53 +234,54 @@ const AddClient = () => {
   });
 
   // Locations Function
-  const getStates = () => {
-    let state_list = [];
 
-    axios
-      .get(
-        ServerAddress +
-        `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((resp) => {
+const getStates = async () => {
+  let state_list = [];
 
-        if(resp.data.next ===null) {
-          setstate_loaded(false);
-        } else {
-          setstate_loaded(true);
-        }
-        if (resp.data.results.length > 0) {
-          if (state_page == 1) {
-            state_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.state),
-            ]);
-          }
-          else {
-            state_list = [
-              ...state_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
-            ];
-          }
-        }
-setstate_count(state_count+2);
-        setcity_list_s([]);
-        setstate_list_s(state_list);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get States, ${err}`);
-      });
-  };
+  try {
+    const resp = await axios.get(ServerAddress +
+      `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
 
-  const getCities = (place_id, filter_by) => {
+    if(resp.data.next ===null) {
+      setstate_loaded(false);
+    } else {
+      setstate_loaded(true);
+    }
+
+    if (resp.data.results.length > 0) {
+      if (state_page == 1) {
+        state_list = resp.data.results.map((v) => [
+          v.id,
+          toTitleCase(v.state),
+        ]);
+      }
+      else {
+        state_list = [
+          ...state_list_s,
+          ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
+        ];
+      }
+    }
+
+    setstate_count(state_count+2);
+    setcity_list_s([]);
+    setstate_list_s(state_list);
+
+  } catch (err) {
+    alert(`Error Occur in Get States, ${err}`);
+  }
+};
+
+  const getCities = async (place_id, filter_by) => {
     setby_pincode(false);
     let cities_list = [];
-    axios
-      .get(
-        ServerAddress +
+  
+    try {
+      const resp = await axios.get(ServerAddress +
         `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
         "&place_id=" +
         place_id +
@@ -289,179 +290,174 @@ setstate_count(state_count+2);
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-
-        if(resp.data.next ===null) {
-          setcity_loaded(false);
+      );
+  
+      if(resp.data.next ===null) {
+        setcity_loaded(false);
+      } else {
+        setcity_loaded(true);
+      }
+  
+      if (resp.data.results.length > 0) {
+        if (city_page == 1) {
+          cities_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.city),
+          ]);
         } else {
-          setcity_loaded(true);
+          cities_list = [
+            ...city_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+          ];
         }
-        if (resp.data.results.length > 0) {
-          if (city_page == 1) {
-            cities_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.city),
-            ]);
-          } else {
-            cities_list = [
-              ...city_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-            ];
-          }
-          setcity_count(city_count+2);
-          setcity_list_s(cities_list);
-        } else {
-          setcity_list_s([]);
-        }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
+        setcity_count(city_count+2);
+        setcity_list_s(cities_list);
+      } else {
+        setcity_list_s([]);
+      }
+  
+    } catch (err) {
+      alert(`Error Occur in Get City, ${err}`);
+    }
   };
+  
+const getPincode = async (place_id, filter_by) => {
+  let pincode_list = [];
+  try {
+    const resp = await axios.get(
+      ServerAddress +
+      `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
+      "&place_id=" +
+      place_id +
+      "&filter_by=" +
+      filter_by,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    
+    if(resp.data.next ===null){
+      setloaded_pincode(false);
+    } else {
+      setloaded_pincode(true);
+    }
 
-  const getPincode = (place_id, filter_by) => {
-    let pincode_list = [];
-    axios
-      .get(
-        ServerAddress +
-        `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
-        "&place_id=" +
-        place_id +
-        "&filter_by=" +
-        filter_by,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((resp) => {
-        
-        if(resp.data.next ===null){
-          setloaded_pincode(false);
-        } else {
-          setloaded_pincode(true);
-        }
+    if (filter_by !== "pincode") {
+      if (pincode_page == 1) {
+        pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+      } else {
+        pincode_list = [          ...pincode_list_s,          ...resp.data.results.map((v) => [v.id, v.pincode]),
+        ];
+      }
+      setpincode_count(pincode_count+2);
+      setpincode_list_s(pincode_list);
+    } else if (resp.data.results.length > 0) {
+      setcity(toTitleCase(resp.data.results[0].city_name));
+      setcity_id(resp.data.results[0].city);
+      setstate(toTitleCase(resp.data.results[0].state_name));
+      setstate_id(resp.data.results[0].state);
+      setpincode(resp.data.results[0].pincode);
+      setpincode_id(resp.data.results[0].id);
+    } else {
+      dispatch(
+        setDataExist(
+          "You entered invalid pincode or pincode not available in database"
+        )
+      );
+      dispatch(setAlertType("warning"));
+      dispatch(setShowAlert(true));
+      setcity("");
+      setcity_id("");
+      // setstate("");
+      setstate_id("");
+    }
+  } catch (err) {
+    alert(`Error Occur in Get City, ${err}`);
+  }
+};
 
-        if (filter_by !== "pincode") {
-          if (pincode_page == 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-          } else {
-            pincode_list = [
-              ...pincode_list_s,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
-          }
-setpincode_count(pincode_count+2);
-          setpincode_list_s(pincode_list);
-        } else if (resp.data.results.length > 0) {
-          setcity(toTitleCase(resp.data.results[0].city_name));
-          setcity_id(resp.data.results[0].city);
-          setstate(toTitleCase(resp.data.results[0].state_name));
-          setstate_id(resp.data.results[0].state);
-          setpincode(resp.data.results[0].pincode);
-          setpincode_id(resp.data.results[0].id);
-        } else {
-          dispatch(
-            setDataExist(
-              "You entered invalid pincode or pincode not available in database"
-            )
-          );
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-          setcity("");
-          setcity_id("");
-          // setstate("");
-          setstate_id("");
-        }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
-  };
-
-  const getLocality = (place_id, filter_by) => {
+  const getLocality = async (place_id, filter_by) => {
     let locality_list = [];
-    axios
-      .get(
+    try {
+      const resp = await axios.get(
         ServerAddress +
-        `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
-        `&place_id=${place_id}&filter_by=${filter_by}&name_serach=${locality_search_item}&state=&city=&name=&data=all`,
+          `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
+          `&place_id=${place_id}&filter_by=${filter_by}&name_serach=${locality_search_item}&state=&city=&name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((resp) => {
-        if (filter_by !== "locality") {
-          if (pincode_page == 1) {
-            locality_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            locality_list = [
-              ...locality_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-
-          setlocality_list_s(locality_list);
-        } else if (resp.data.results.length > 0) {
-          setlocality(toTitleCase(resp.data.results[0].name));
-          setlocality_id(resp.data.results[0].id);
-          setcity(toTitleCase(resp.data.results[0].city_name));
-          setstate(toTitleCase(resp.data.results[0].state_name));
-          setpincode(resp.data.results[0].pincode_name);
-          setpincode_id(resp.data.results[0].pincode);
+      );
+      if (filter_by !== "locality") {
+        if (pincode_page == 1) {
+          locality_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+          ]);
         } else {
-          dispatch(setDataExist("You entered invalid Locality"));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
+          locality_list = [
+            ...locality_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
         }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Pincode , ${err}`);
-      });
+  
+        setlocality_list_s(locality_list);
+      } else if (resp.data.results.length > 0) {
+        setlocality(toTitleCase(resp.data.results[0].name));
+        setlocality_id(resp.data.results[0].id);
+        setcity(toTitleCase(resp.data.results[0].city_name));
+        setstate(toTitleCase(resp.data.results[0].state_name));
+        setpincode(resp.data.results[0].pincode_name);
+        setpincode_id(resp.data.results[0].pincode);
+      } else {
+        dispatch(setDataExist("You entered invalid Locality"));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+      }
+    } catch (err) {
+      alert(`Error Occur in Get Pincode , ${err}`);
+    }
   };
 
+const getBranches = async () => {
   let temp_2 = [];
-  const getBranches = () => {
-    let temp = [];
-    axios
-      .get(
-        ServerAddress +
-        `master/all-branches/?search=${branch_search}&p=${page_num}&records=${data_len}&branch_name=${[
-          "",
-        ]}&branch_city=${[""]}&vendor=&data=all`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((response) => {
-        temp = response.data.results;
-        if (temp.length > 0) {
-          temp_2 = temp.map((v) => [v.id, toTitleCase(v.name)]);
-          try {
-            let client_up = up_params.client;
-            let cl_brncs = [];
-            let f_brnch = [];
-            if (client_up.branches.length > 0) {
-              cl_brncs = temp_2.filter((v) =>
-                client_up.branches.map((b) => b).includes(v[0])
-              );
-              f_brnch = temp_2.filter(
-                (v) => !client_up.branches.map((b) => b).includes(v[0])
-              );
-              setassociate_branch_list_2(cl_brncs);
-              setassociate_branch_list_1(f_brnch);
-            } else {
-              setassociate_branch_list_1(temp_2);
-            }
-          } catch (err) {
-            setassociate_branch_list_1(temp_2);
-          }
-        }
-      });
-  };
+  let temp = [];
+  try {
+    const response = await axios.get(
+      ServerAddress +
+      `master/all-branches/?search=${branch_search}&p=${page_num}&records=${data_len}&branch_name=${[
+        "",
+      ]}&branch_city=${[""]}&vendor=&data=all`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    temp = response.data.results;
+    console.log("resp",response.data)
+    if (temp.length > 0) {
+      temp_2 = temp.map((v) => [v.id, toTitleCase(v.name)]);
+      console.log("temp_2========",temp_2)
+      let client_up = up_params?.client;
+      let cl_brncs = [];
+      let f_brnch = [];
+      if (client_up?.branches.length > 0) {
+        console.log("====================eeeee")
+        cl_brncs = temp_2.filter((v) =>
+          client_up.branches.map((b) => b).includes(v[0])
+        );
+        f_brnch = temp_2.filter(
+          (v) => !client_up.branches.map((b) => b).includes(v[0])
+        );
+        setassociate_branch_list_2(cl_brncs);
+        setassociate_branch_list_1(f_brnch);
+      } else {
+        setassociate_branch_list_1(temp_2);
+      }
+    }
+  } catch (err) {
+    console.log(`Error Occur in Get Branches, ${err}`);
+  }
+};
+console.log("associate_branch_list_1", associate_branch_list_1)
 
   // Bill To API Functions
   const addBillTo = (values) => {

@@ -240,9 +240,14 @@ const AddVendor = () => {
     }),
 
     onSubmit: (values) => {
-       if (
+
+         if (msme_registerd === true && msme_registerd_number === "") {
+              setmsme_registerd_number_error(true);
+              document.getElementById("vendor_info").scrollIntoView();
+            }
+       else if (
               msme_registerd_number !== "" &&
-              msme_registerd_number.length !== 10
+              msme_registerd_number.length !== 12
             ) {
               document.getElementById("vendor_info").scrollIntoView();
               setmsme_No_length(true);
@@ -566,15 +571,18 @@ const AddVendor = () => {
       pan_no: values.pan_number,
       service_region: service_region_selected,
     });
-  
+  console.log("CHnage field ", fields_names );
     let change_fields = {};
   
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.vendor[`${ele[0]}`];
+      console.log("Previous data is",  prev);
       let new_v = ele[1];
+      console.log("new data", new_v);
       if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+        console.log("hnage field ===>>", typeof change_fields )
       }
     }
   
@@ -1553,15 +1561,6 @@ const AddVendor = () => {
             if (field3.includes(all_value)) {
               document.getElementById("vendor_servies").scrollIntoView();
             }
-            if (msme_registerd === true && msme_registerd_number === "") {
-              setmsme_registerd_number_error(true);
-              document.getElementById("vendor_info").scrollIntoView();
-            } if(msme_registerd_number === ""){
-              setmsme_registerd_number_error(true);
-            }
-            if( msme_registerd_number !== "" && msme_registerd_number.length !== 12){
-              setmsme_No_length(true);
-            }
            if(others_services_offerd === true && row1[0] == ""){
             setother_err(true);
            }
@@ -1726,7 +1725,7 @@ const AddVendor = () => {
                                 onChange={(val) => {
                                   setmsme_registerd_number(val.target.value);
                                 }}
-                                invalid={msme_registerd_number_error || msme_No_length}
+                                // invalid={msme_registerd_number_error || msme_No_length}
                               />
                               <div className="mt-1 error-text" color="danger">
                                 {msme_registerd_number_error
