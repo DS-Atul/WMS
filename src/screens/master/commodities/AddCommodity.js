@@ -35,15 +35,16 @@ import * as XLSX from "xlsx";
 const Add_Commodity = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authentication.userdetails);
+  const alert = useSelector((state) => state.alert.show_alert);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const userdepartment = useSelector(
     (state) => state.authentication.userdepartment
   );
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("location--------", location)
+
   const [isupdating, setisupdating] = useState(false);
-  const [commodity, setcommodity] = useState("");
+  const [commodity, setcommodity] = useState([]);
 
   // Commodity
   const [commodity_type_id, setcommodity_type_id] = useState(0);
@@ -72,6 +73,8 @@ const Add_Commodity = () => {
       isupdating ? update_commodity(values) : add_commodity(values);
     },
   });
+  console.log("location--commodity------", commodity.length)
+  console.log("location--commodity------", typeof(commodity))
   const [circle_btn, setcircle_btn] = useState(true);
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
@@ -290,7 +293,9 @@ const Add_Commodity = () => {
               )
             );
             dispatch(setAlertType("info"));
-            navigate("/master/commodities");
+            if (!data_type) {
+              navigate("/master/commodities");
+            }
           } else if (response.data === "duplicate") {
             dispatch(setShowAlert(true));
             dispatch(
@@ -459,7 +464,9 @@ const Add_Commodity = () => {
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Status Updated sucessfully`));
           dispatch(setAlertType("info"));
-          navigate("/master/commodities");
+          if (!data_type) {
+            navigate("/master/commodities");
+          }
         }
       })
       .catch(function (err) {
@@ -479,6 +486,7 @@ const Add_Commodity = () => {
 
   {/* For Checker Maker */ }
   const [table_data, settable_data] = useState(["", "", ""]);
+  const [table_count, settable_count] = useState(0);
   const get_orders = () => {
     axios
       .get(
@@ -489,23 +497,27 @@ const Add_Commodity = () => {
         }
       )
       .then((response) => {
-        console.log("com info", response.data.results);
+        console.log("com info", response.data);
+        settable_count(response.data.count)
         settable_data(response.data.results);
       });
   };
-  
+
   const [data_type, setdata_type] = useState(false);
   useLayoutEffect(() => {
-    try{
-    if(location.state.type) {
-      setdata_type(true)
-      get_orders();
+    try {
+      if (location.state.type) {
+        setdata_type(true)
+        setcommodity([])
+        setcommodity_type("")
+        setcommodity_type_id(0)
+        get_orders();
+      }
     }
-  }
-  catch{
-    setdata_type(false)
-  }
-  }, [location]);
+    catch {
+      setdata_type(false)
+    }
+  }, [location, alert]);
 
   const set_form_data = (item) => {
     setcommodity(item);
@@ -563,8 +575,12 @@ const Add_Commodity = () => {
           }}
           className="custom-scrollbars__content"
         >
-          <div style={{ background: "#f4bc61", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center", cursor: "pointer" }}>History</div>
-          <div style={{ background: "#E6F1FF", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center" }}>Total Pending - 20</div>
+          <div style={{ background: "#f4bc61", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center", cursor: "pointer" }} onClick={() => {
+            if (typeof(commodity) === "object") {
+              handlClk();
+            }
+          }}>History</div>
+          <div style={{ background: "#E6F1FF", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center" }}>Total Pending - {table_count}</div>
           <table className="table-grid">
             <thead>
               <tr style={{ lineHeight: 2, blocalWidth: 1 }}>
@@ -610,7 +626,7 @@ const Add_Commodity = () => {
             </tbody>
           </table>
         </div>
-       } 
+      }
       {/* For Checker Maker */}
 
       <div style={{
@@ -644,10 +660,10 @@ const Add_Commodity = () => {
                 parent_title="Masters"
               />
             </div>
-           } 
+          }
           <div className="m-3">
-            {isupdating && !data_type&&(
-            // {isupdating &&(
+            {isupdating && !data_type && (
+              // {isupdating &&(
               <div style={{ justifyContent: "right", display: "flex" }}>
                 <Button
                   type="button"

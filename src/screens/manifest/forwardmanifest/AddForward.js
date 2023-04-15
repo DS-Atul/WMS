@@ -637,7 +637,7 @@ const AddForward = (manifest) => {
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">
-                              Co-loader No / Airway bill no* :
+                              Co-loader/Airway bill no* :
                             </Label>
                             <Input
                               onChange={validation.handleChange}

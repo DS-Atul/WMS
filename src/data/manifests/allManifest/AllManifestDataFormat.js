@@ -186,7 +186,7 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
                 borderWidth: 1,
               }}
             >
-               {/* {(can_delete || user.is_superuser) && (
+              {/* {(can_delete || user.is_superuser) && (
               <td
                 className="selection-cell"
                 onClick={() => {
@@ -203,7 +203,16 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
                 )}
               </td>
                )} */}
-                <td>{manifest.manifest_no}</td>
+              <td>
+                <Link
+                  to={{
+                    pathname: `/manifest/updatemanifest`,
+                  }}
+                  state={{ manifest: manifest }}
+                >
+                  {manifest.manifest_no}
+                </Link>
+              </td>
               <td>{l_fdate}</td>
               <td>{toTitleCase(manifest.orgin_branch_n)}</td>
               <td>{toTitleCase(manifest.destination_branch_n)}</td>
@@ -221,7 +230,7 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
               <td>{manifest.bag_count}</td>
               <td>{manifest.box_count}</td>
               <td>{manifest.total_weight}</td>
-             
+
             </tr>
           );
         })
