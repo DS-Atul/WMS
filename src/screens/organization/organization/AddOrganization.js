@@ -52,6 +52,7 @@ const AddOrganization = () => {
 
   const dispatch = useDispatch();
   const location_data = useLocation();
+  console.log("Organisation data 000",location_data);
   const navigate = useNavigate();
 
   //Circle Toogle Btn
@@ -237,7 +238,44 @@ const AddOrganization = () => {
       // phone_numbers: Yup.string().min(10,"invalid").max(10,"invalid").required("Number is required"),
     }),
     onSubmit: (values) => {
+         if (
+              office_add_line1 !== "" &&
+              office_state !== "" &&
+              office_city !== "" &&
+              office_pincode !== "" &&
+              office_locality !== ""
+            
+              &&
+                billing_add_line1 === "" ||
+                billing_state === "" ||
+                billing_city === "" ||
+                billing_pincode === "" ||
+                billing_locality === ""
+              )
+               {
+                setbill_color(true);
+                document.getElementById("add").scrollIntoView();
+              } 
+             
+            else if (billing_add_line1 === "") {
+              setbill_add1_err(true);
+              document.getElementById("add").scrollIntoView();
+            } else if (billing_state === "") {
+              setstate_error1(true);
+              document.getElementById("add").scrollIntoView();
+            } else if (billing_city === "") {
+              setcity_error1(true);
+              document.getElementById("add").scrollIntoView();
+            } else if (billing_pincode === "") {
+              setpincode_error2(true);
+              document.getElementById("add").scrollIntoView();
+            } else if (billing_locality === "") {
+              setlocal_err2(true);
+              document.getElementById("add").scrollIntoView();
+            } else {
       isupdating ? update_organisation(values) : send_organisation_data(values);
+
+            }
     },
   });
 
@@ -261,6 +299,7 @@ const AddOrganization = () => {
           contact_person_mobile: values.contact_person_ph_no,
           logo_uploaded_by: user.id,
           created_by: user.id,
+          is_same: same_as_billing_add,
           address: [
             [
               "HEAD OFFICE ADDRESS",
@@ -403,6 +442,7 @@ const AddOrganization = () => {
           contact_person_email: values.contact_person_email,
           contact_person_mobile: values.contact_person_ph_no,
           logo_uploaded_by: user.id,
+          is_same: same_as_billing_add,
           address: [
             [
               "HEAD OFFICE ADDRESS",
@@ -691,6 +731,7 @@ const AddOrganization = () => {
     try {
       setOrganization(location_data.state.organization);
       setisupdating(true);
+      setsame_as_billing_add(location_data.state.organization.is_same);
       setOrganizationname(toTitleCase(location_data.state.organization.name));
       setdescripation(
         toTitleCase(location_data.state.organization.description)
@@ -737,15 +778,17 @@ const AddOrganization = () => {
         )
       );
       setoffice_id(location_data.state.organization.organization_address[0].id);
-      console.log(
-        "location_data.state.organization.organization_gst1111111----",
-        location_data.state.organization
-      );
+      // console.log(
+      //   "location_data.state.organization.organization_gst1111111----",
+      //   location_data.state.organization
+      // );
       setbilling_add_line1(
         toTitleCase(
           location_data.state.organization.organization_address[1].address_line1
         )
       );
+      console.log("location address==>",           location_data.state.organization.organization_address[1].address_line1
+      )
       // console.log("location_data.state.organization.organization_gst55555----", location_data.state.organization.organization_address[0])
       setbilling_add_line2(
         toTitleCase(
@@ -917,8 +960,21 @@ const AddOrganization = () => {
     if (same_as_billing_add) {
       setbilling_add_line1(office_add_line1);
       setbilling_add_line2(office_add_line2);
+      setbilling_state(office_state);
+      setbilling_city(office_city);
+      setbilling_pincode(office_pincode);
+      setbilling_locality(office_locality);
       setbilling_pincode_id(office_pincode_id);
       setbilling_locality_id(office_locality_id);
+    } else {
+      setbilling_add_line1("");
+      setbilling_add_line2("");
+      setbilling_state("");
+      setbilling_city("");
+      setbilling_pincode("");
+      setbilling_locality("");
+      setbilling_pincode_id("");
+      setbilling_locality_id(""); 
     }
   }, [same_as_billing_add]);
 
@@ -1195,6 +1251,24 @@ const AddOrganization = () => {
     if (billing_locality) {
       setlocal_err2(false);
     }
+
+  if  (
+      office_add_line1 !== "" &&
+      office_state !== "" &&
+      office_city !== "" &&
+      office_pincode !== "" &&
+      office_locality !== ""
+   
+      &&
+        billing_add_line1 !== "" &&
+        billing_state !== "" &&
+        billing_city !== "" &&
+        billing_pincode !== "" &&
+        billing_locality !== ""
+      ) {
+setbill_color(false);
+
+      }
   }, [
     dimension_list,
     office_add_line1,
@@ -1226,6 +1300,8 @@ const AddOrganization = () => {
     }
   }, [sec_mobile2]);
 
+
+  console.log("Address =>",billing_add_line1 ,billing_state,billing_city,billing_pincode,billing_locality )
   return (
     <>
       <div>
@@ -1258,7 +1334,6 @@ const AddOrganization = () => {
             ];
 
             if (fields1.includes(all_value)) {
-              // idd1.scrollIntoView();
               document.getElementById("section1").scrollIntoView();
             } else if (
               sec_mobile2 !== null &&
@@ -1287,45 +1362,45 @@ const AddOrganization = () => {
             } 
 
 
-            else if (
-              office_add_line1 !== "" &&
-              office_state !== "" &&
-              office_city !== "" &&
-              office_pincode !== "" &&
-              office_locality !== ""
-            // ) {
-            //   if (
-              &&
-                billing_add_line1 === "" ||
-                billing_state === "" ||
-                billing_city === "" ||
-                billing_pincode === "" ||
-                billing_locality === ""
-              )
-               {
-                setbill_color(true);
-                document.getElementById("add").scrollIntoView();
-              } 
-              // else {
-              //   setbill_color(false);
-              // }
+            // else if (
+            //   office_add_line1 !== "" &&
+            //   office_state !== "" &&
+            //   office_city !== "" &&
+            //   office_pincode !== "" &&
+            //   office_locality !== ""
+            // // ) {
+            // //   if (
+            //   &&
+            //     billing_add_line1 === "" ||
+            //     billing_state === "" ||
+            //     billing_city === "" ||
+            //     billing_pincode === "" ||
+            //     billing_locality === ""
+            //   )
+            //    {
+            //     setbill_color(true);
+            //     document.getElementById("add").scrollIntoView();
+            //   } 
+            //   // else {
+            //   //   setbill_color(false);
+            //   // }
+            // // }
+            // else if (billing_add_line1 === "") {
+            //   setbill_add1_err(true);
+            //   document.getElementById("add").scrollIntoView();
+            // } else if (billing_state !== "") {
+            //   setstate_error1(true);
+            //   document.getElementById("add").scrollIntoView();
+            // } else if (billing_city !== "") {
+            //   setcity_error1(true);
+            //   document.getElementById("add").scrollIntoView();
+            // } else if (billing_pincode !== "") {
+            //   setpincode_error2(true);
+            //   document.getElementById("add").scrollIntoView();
+            // } else if (billing_locality !== "") {
+            //   setlocal_err2(true);
+            //   document.getElementById("add").scrollIntoView();
             // }
-            else if (billing_add_line1 === "") {
-              setbill_add1_err(true);
-              document.getElementById("add").scrollIntoView();
-            } else if (billing_state !== "") {
-              setstate_error1(true);
-              document.getElementById("add").scrollIntoView();
-            } else if (billing_city !== "") {
-              setcity_error1(true);
-              document.getElementById("add").scrollIntoView();
-            } else if (billing_pincode !== "") {
-              setpincode_error2(true);
-              document.getElementById("add").scrollIntoView();
-            } else if (billing_locality !== "") {
-              setlocal_err2(true);
-              document.getElementById("add").scrollIntoView();
-            }
             validation.handleSubmit(e.values);
             return false;
           }}
@@ -2731,4 +2806,3 @@ const AddOrganization = () => {
 };
 
 export default AddOrganization;
-``;

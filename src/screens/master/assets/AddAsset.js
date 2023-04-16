@@ -704,13 +704,12 @@ useEffect(() => {
 
   }, [user, isupdating])
 
-  const update_assetstatus = (id) => {
 
-    axios
-      .put(
+  const update_assetstatus = async (id) => {
+    try {
+      const response = await axios.put(
         ServerAddress + "master/update_asset/" + id,
         {
-
           cm_current_status: "REJECTED",
           cm_remarks: toTitleCase(message).toUpperCase(),
           change_fields: {},
@@ -720,21 +719,18 @@ useEffect(() => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          // dispatch(Toggle(true))
-          dispatch(setShowAlert(true));
-          dispatch(setDataExist(`Status Updated sucessfully`));
-          dispatch(setAlertType("info"));
-          navigate("/master/commodities");
-        }
-      })
-      .catch(function (err) {
-        alert(`rror While  Updateing Coloader ${err}`);
-      });
+      );
+      if (response.data.status === "success") {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Status Updated successfully`));
+        dispatch(setAlertType("info"));
+        navigate("/master/commodities");
+      }
+    } catch (err) {
+      alert(`Error while updating Coloader ${err}`);
+    }
   };
-
+  
   const handleSubmit = () => {
     if (message == "") {
       setmessage_error(true);
@@ -1485,8 +1481,6 @@ useEffect(() => {
                     }
                   }
 
-            
-           
                   if (branch_selected === "") {
                     setbranch_error(true);
                     document.getElementById("asset_details").scrollIntoView();

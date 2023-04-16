@@ -117,10 +117,44 @@ function AddRoute() {
   };
 
   // Get Operating City
-  const get_locations = () => {
+  // const get_locations = () => {
+  //   let temp = [...location_list];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `master/all_pincode/?search=${""}&p=${page_num}&records=${data_len}&pincode_search=${[
+  //           location_search,
+  //         ]}&place_id=all&filter_by=all`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       for (let index = 0; index < response.data.results.length; index++) {
+  //         const loc = response.data.results[index];
+  //         temp.push([
+  //           loc.id,
+  //           toTitleCase(loc.city_name) +
+  //             "-" +
+  //             toTitleCase(loc.state_name) +
+  //             "-" +
+  //             loc.pincode,
+  //         ]);
+  //       }
+  //       temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
+  //       setlocation_list(temp);
+  //       try {
+  //         get_route_cities(location_data.state.route.id, temp);
+  //       } catch (error) {}
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get , ${err}`);
+  //     });
+  // };
+  const get_locations = async () => {
     let temp = [...location_list];
-    axios
-      .get(
+    try {
+      const response = await axios.get(
         ServerAddress +
           `master/all_pincode/?search=${""}&p=${page_num}&records=${data_len}&pincode_search=${[
             location_search,
@@ -128,34 +162,79 @@ function AddRoute() {
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      )
-      .then((response) => {
-        for (let index = 0; index < response.data.results.length; index++) {
-          const loc = response.data.results[index];
-          temp.push([
-            loc.id,
-            toTitleCase(loc.city_name) +
-              "-" +
-              toTitleCase(loc.state_name) +
-              "-" +
-              loc.pincode,
-          ]);
-        }
-        temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
-        setlocation_list(temp);
-        try {
-          get_route_cities(location_data.state.route.id, temp);
-        } catch (error) {}
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get , ${err}`);
-      });
+      );
+      for (let index = 0; index < response.data.results.length; index++) {
+        const loc = response.data.results[index];
+        temp.push([
+          loc.id,
+          toTitleCase(loc.city_name) +
+            "-" +
+            toTitleCase(loc.state_name) +
+            "-" +
+            loc.pincode,
+        ]);
+      }
+      temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
+      setlocation_list(temp);
+      try {
+        get_route_cities(location_data.state.route.id, temp);
+      } catch (error) {}
+    } catch (err) {
+      alert(`Error Occur in Get , ${err}`);
+    }
   };
+  
 
   // Post Route Data
-  const add_route = (values) => {
-    axios
-      .post(
+  // const add_route = (values) => {
+  //   axios
+  //     .post(
+  //       ServerAddress + "master/add_route/",
+  //       {
+  //         name: String(values.name).toUpperCase(),
+  //         pincode: location_id,
+  //         created_by: user.id,
+  //         //For C&M
+  //         cm_current_department: user.user_department,
+  //         cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //         cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //       },
+
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.data.status === "success") {
+  //         dispatch(setToggle(true));
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `Route  "${toTitleCase(values.name)}" Added sucessfully`
+  //           )
+  //         );
+  //         dispatch(setAlertType("success"));
+  //         navigate("/master/routes");
+  //       } else if (response.data === "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `Route Name "${toTitleCase(values.name)}" already exists`
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error Happen while posting Commodity  Data ${error}`);
+  //     });
+  // };
+
+  const add_route = async (values) => {
+    try {
+      const response = await axios.post(
         ServerAddress + "master/add_route/",
         {
           name: String(values.name).toUpperCase(),
@@ -163,44 +242,118 @@ function AddRoute() {
           created_by: user.id,
           //For C&M
           cm_current_department: user.user_department,
-          cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
-          cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+          cm_current_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
+          cm_transit_status:
+            user.user_department_name === "ADMIN"
+              ? "NOT APPROVED"
+              : current_status.toUpperCase(),
         },
-
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          dispatch(setToggle(true));
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Route  "${toTitleCase(values.name)}" Added sucessfully`
-            )
-          );
-          dispatch(setAlertType("success"));
-          navigate("/master/routes");
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Route Name "${toTitleCase(values.name)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while posting Commodity  Data ${error}`);
-      });
+      );
+  
+      if (response.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Route  "${toTitleCase(values.name)}" Added sucessfully`)
+        );
+        dispatch(setAlertType("success"));
+        navigate("/master/routes");
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Route Name "${toTitleCase(values.name)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert(`Error Happen while posting Commodity  Data ${error}`);
+    }
   };
+  
 
   // Update Branch
-  const update_route = (values) => {
+  // const update_route = (values) => {
+  //   let id = routedata.id;
+  //   let op_city_id_list2 = [];
+  //   let temp_lis2 = [];
+  //   console.log("location-111--", location);
+  //   for (let index = 0; index < location.length; index++) {
+  //     const op_city_id = location[index];
+  //     op_city_id_list2.push(op_city_id[0]);
+  //   }
+  //   temp_lis2 = [...new Set(location.map((v) => `${v}`))].map((v) =>
+  //     parseInt(v.split(","))
+  //   );
+
+  //   let city_id_list = temp_lis2.flat();
+  //   let fields_names = Object.entries({
+  //     name: values.name,
+  //     pincode: city_id_list,
+  //   });
+
+  //   let change_fields = {};
+
+  //   for (let j = 0; j < fields_names.length; j++) {
+  //     const ele = fields_names[j];
+  //     let prev = location_data.state.route[`${ele[0]}`];
+  //     let new_v = ele[1];
+  //     if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+  //       change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
+  //     }
+  //   }
+
+  //   axios
+  //     .put(
+  //       ServerAddress + "master/update_route/" + id,
+  //       {
+  //         name: String(values.name).toUpperCase(),
+  //         pincode: city_id_list,
+  //         modified_by: user.id,
+  //         change_fields: change_fields,
+  //         //For C&M
+  //         cm_transit_status: status_toggle === true ? current_status : "",
+  //         cm_current_status: (current_status).toUpperCase(),
+  //         cm_remarks: ""
+  //       },
+
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.data.status === "success") {
+  //         dispatch(setDataExist(`Branch "${values.name}" Updated Sucessfully`));
+  //         dispatch(setAlertType("info"));
+  //         dispatch(setShowAlert(true));
+  //         navigate("/master/routes");
+  //       } else if (response.data === "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `Route name "${toTitleCase(values.name)}" already exists`
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch(function () {
+  //       alert("Error Error While Updateing branches");
+  //     });
+  // };
+
+  const update_route = async (values) => {
     let id = routedata.id;
     let op_city_id_list2 = [];
     let temp_lis2 = [];
@@ -212,15 +365,15 @@ function AddRoute() {
     temp_lis2 = [...new Set(location.map((v) => `${v}`))].map((v) =>
       parseInt(v.split(","))
     );
-
+  
     let city_id_list = temp_lis2.flat();
     let fields_names = Object.entries({
       name: values.name,
       pincode: city_id_list,
     });
-
+  
     let change_fields = {};
-
+  
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.route[`${ele[0]}`];
@@ -229,9 +382,9 @@ function AddRoute() {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
-
-    axios
-      .put(
+  
+    try {
+      const response = await axios.put(
         ServerAddress + "master/update_route/" + id,
         {
           name: String(values.name).toUpperCase(),
@@ -241,35 +394,35 @@ function AddRoute() {
           //For C&M
           cm_transit_status: status_toggle === true ? current_status : "",
           cm_current_status: (current_status).toUpperCase(),
-          cm_remarks: ""
+          cm_remarks: "",
         },
-
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          dispatch(setDataExist(`Branch "${values.name}" Updated Sucessfully`));
-          dispatch(setAlertType("info"));
-          dispatch(setShowAlert(true));
-          navigate("/master/routes");
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Route name "${toTitleCase(values.name)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch(function () {
-        alert("Error Error While Updateing branches");
-      });
+      );
+      if (response.data.status === "success") {
+        dispatch(
+          setDataExist(`Branch "${values.name}" Updated Sucessfully`)
+        );
+        dispatch(setAlertType("info"));
+        dispatch(setShowAlert(true));
+        navigate("/master/routes");
+      } else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Route name "${toTitleCase(values.name)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert("Error Error While Updateing branches");
+    }
   };
+  
 
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
@@ -345,36 +498,62 @@ function AddRoute() {
 
   }, [user, isupdating])
 
-  const update_routestatus = (id) => {
 
-    axios
-      .put(
-        ServerAddress + "master/update_route/" + id,
-        {
+  // This funcation is for update the status
+  // const update_routestatus = (id) => {
 
-          cm_current_status: "REJECTED",
-          cm_remarks: toTitleCase(message).toUpperCase(),
-          change_fields: {},
+  //   axios
+  //     .put(
+  //       ServerAddress + "master/update_route/" + id,
+  //       {
+
+  //         cm_current_status: "REJECTED",
+  //         cm_remarks: toTitleCase(message).toUpperCase(),
+  //         change_fields: {},
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.data.status === "success") {
+  //         // dispatch(Toggle(true))
+  //         dispatch(setShowAlert(true));
+  //         dispatch(setDataExist(`Status Updated sucessfully`));
+  //         dispatch(setAlertType("info"));
+  //         navigate("/master/routes");
+  //       }
+  //     })
+  //     .catch(function (err) {
+  //       alert(`rror While  Updateing Coloader ${err}`);
+  //     });
+  // };
+
+  const update_routestatus = async (id) => {
+    try {
+      const response = await axios.put(ServerAddress + "master/update_route/" + id, {
+        cm_current_status: "REJECTED",
+        cm_remarks: toTitleCase(message).toUpperCase(),
+        change_fields: {},
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then(function (response) {
-        if (response.data.status === "success") {
-          // dispatch(Toggle(true))
-          dispatch(setShowAlert(true));
-          dispatch(setDataExist(`Status Updated sucessfully`));
-          dispatch(setAlertType("info"));
-          navigate("/master/routes");
-        }
-      })
-      .catch(function (err) {
-        alert(`rror While  Updateing Coloader ${err}`);
       });
+  
+      if (response.data.status === "success") {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Status Updated successfully`));
+        dispatch(setAlertType("info"));
+        navigate("/master/routes");
+      }
+    } catch (err) {
+      alert(`Error while updating Coloader ${err}`);
+    }
   };
+  
 
   const handleSubmit = () => {
     if (message == "") {

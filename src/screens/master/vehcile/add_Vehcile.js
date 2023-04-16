@@ -1,4 +1,4 @@
-import React, { useState,useEffect,useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   Card,
   Col,
@@ -20,22 +20,22 @@ import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import {
-    setAlertType,
-    setDataExist,
-    setShowAlert,
-  } from "../../../store/alert/Alert";
-  import { ServerAddress } from "../../../constants/ServerAddress";
-  import { setToggle } from "../../../store/pagination/Pagination";
+  setAlertType,
+  setDataExist,
+  setShowAlert,
+} from "../../../store/alert/Alert";
+import { ServerAddress } from "../../../constants/ServerAddress";
+import { setToggle } from "../../../store/pagination/Pagination";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { useLocation, useNavigate } from "react-router-dom";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 
 const Add_Vehcile = () => {
-    const navigate=useNavigate();
-const dispatch= useDispatch();
-const location_data=useLocation();
-// vendor State
-const [vendor_list, setvendor_list] = useState([]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location_data = useLocation();
+  // vendor State
+  const [vendor_list, setvendor_list] = useState([]);
   const [vendor_name, setvendor_name] = useState("");
   const [vendor_id, setvendor_id] = useState("");
   const [vendor_n_page, setvendor_n_page] = useState(1);
@@ -53,47 +53,39 @@ const [vendor_list, setvendor_list] = useState([]);
     "OWNED VEHCILE",
     "PARTNER VEHCILE",
   ]);
-  const [active_list, setactive_list] = useState([
-    "ACTIVE",
-    "UNACTIVE",
-  ]);
-  const [active_selected, setactive_selected] = useState(active_list);
+  const [active_list, setactive_list] = useState(["ACTIVE", "UNACTIVE"]);
+  const [active_selected, setactive_selected] = useState("ACTIVE");
   const [vehcile_type_s, setvehcile_type_s] = useState("");
   const [trans_name, settrans_name] = useState("");
   const [vehcile_no, setvehcile_no] = useState("");
   const [vehcile_model, setvehcile_model] = useState("");
   const [vendor_data, setvendor_data] = useState([]);
 
-useEffect(() => {
+  useEffect(() => {
     try {
-      console.log("hello jiii",location_data.state.vehcile);
+      console.log("hello jiii", location_data.state.vehcile);
       if (location_data.state.vehcile) {
-          setis_updating(true)
-       let vehicle_data=location_data.state.vehcile
-        setvehcile_type_s(vehicle_data.vehcile_type)
-        setvehcile_no(vehicle_data.vehcile_no)
-        setvehcile_model(vehicle_data.vehcile_model)
-        setactive_selected(vehicle_data.active_selected)
+        setis_updating(true);
+        let vehicle_data = location_data.state.vehcile;
+        setvehcile_type_s(vehicle_data.vehcile_type);
+        setvehcile_no(vehicle_data.vehcile_no);
+        setvehcile_model(vehicle_data.vehcile_model);
+        setactive_selected(vehicle_data.active_selected);
       }
-    
- } catch (error) {
-    
- }
-}, [])
+    } catch (error) {}
+  }, []);
 
-
-//   Api For Posting Data
-const add_vehcile = () => {
+  //   Api For Posting Data
+  const add_vehcile = () => {
     axios
       .post(
         ServerAddress + "master/add_vehcile/",
         {
-         
-            vehcile_no:vehcile_no.toUpperCase(),
-            vehcile_model:vehcile_model,
-            vehcile_status:active_selected === "Active" ? "True" :"False",
-            vehcile_type:vehcile_type_s,
-            transporter_name:vendor_id,
+          vehcile_no: vehcile_no.toUpperCase(),
+          vehcile_model: vehcile_model,
+          vehcile_status: active_selected === "Active" ? "True" : "False",
+          vehcile_type: vehcile_type_s,
+          transporter_name: vendor_id,
         },
         {
           headers: {
@@ -107,9 +99,7 @@ const add_vehcile = () => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
-              `Vehcile  "${(
-                vehcile_no.toUpperCase()
-              )}" Added sucessfully`
+              `Vehcile  "${vehcile_no.toUpperCase()}" Added sucessfully`
             )
           );
           dispatch(setAlertType("success"));
@@ -118,9 +108,7 @@ const add_vehcile = () => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
-              `Vehcile No "${(
-                vehcile_no.toUpperCase()
-              )}" already exists`
+              `Vehcile No "${vehcile_no.toUpperCase()}" already exists`
             )
           );
           dispatch(setAlertType("warning"));
@@ -144,7 +132,7 @@ const add_vehcile = () => {
       )
       .then((response) => {
         data = response.data.results;
-        console.log("data printing",data)
+        console.log("data printing", data);
         setvendor_data(data);
         if (response.data.results.length > 0) {
           if (vendor_n_page == 1) {
@@ -166,11 +154,35 @@ const add_vehcile = () => {
       });
   };
 
- 
   useLayoutEffect(() => {
     get_vendor();
   }, [vendor_n_page, search_vendor_name, refresh]);
-  
+
+  // used for error
+  const [vehicle_type_error, setvehicle_type_error] = useState(false);
+  const [vehicle_number_error, setvehicle_number_error] = useState(false);
+  const [vehicle_model_error, setvehicle_model_error] = useState(false);
+  const [vehicle_len_error, setvehicle_len_error] = useState(false);
+  useEffect(() => {
+    if (vehcile_type_s !== "") {
+      setvehicle_type_error(false);
+    }
+    if (vehcile_type_s === "PARTNER VEHCILE" && vendor_name !== "") {
+      setvendor_error(false);
+    }
+    if (vehcile_no !== "") {
+      setvehicle_number_error(false);
+    }
+    if (vehcile_model !== "") {
+      setvehicle_model_error(false);
+    }
+    if (vehcile_no !== "" && vehcile_no.length !== 10) {
+      setvehicle_len_error(true);
+    } else {
+      setvehicle_len_error(false);
+    }
+  }, [vehcile_type_s, vehcile_no, vehcile_model]);
+
   return (
     <div>
       <Form>
@@ -213,69 +225,87 @@ const add_vehcile = () => {
                         data_item_s={vehcile_type_s}
                         set_data_item_s={setvehcile_type_s}
                         show_search={false}
+                        error_message={"Please Select Vehicle Type"}
+                        error_s={vehicle_type_error}
                       />
                     </div>
                   </Col>
-                  {vehcile_type_s === "PARTNER VEHCILE" &&
-                 <Col lg={3} md={4} sm={4}>
-                 <div className="mb-3">
-                   <Label className="header-child">Transporter Name*</Label>
-                   <SearchInput
-                              data_list={vendor_list}
-                              setdata_list={setvendor_list}
-                              data_item_s={vendor_name}
-                              set_data_item_s={setvendor_name}
-                              set_id={setvendor_id}
-                              page={vendor_n_page}
-                              setpage={setvendor_n_page}
-                              search_item={search_vendor_name}
-                              setsearch_item={setsearch_vendor_name}
-                              error_message={"Please Select Any Vendor"}
-                              error_s={vendor_error}
-                            />
-                 </div>
-               </Col>  
-                }
-                <Col lg={3} md={4} sm={4}>
-                 <div className="mb-3">
-                   <Label className="header-child">Vehicle Number*</Label>
-                   <Input
-                     name="VEHCILE_NUMBER"
-                     type="text"
-                     id="input"
-                     maxLength={40}
-                     value={vehcile_no}
-                     onChange={(e) => {
-                       setvehcile_no(e.target.value);
-                     }}
-                   />
-                 </div>
-                 </Col>
-             
-                 <Col lg={3} md={4} sm={4}>
-                 <div className="mb-3">
-                   <Label className="header-child">Vehicle Model*</Label>
-                   <Input
-                     name="VEHCILE_MODEL"
-                     type="text"
-                     id="input"
-                     maxLength={40}
-                     value={vehcile_model}
-                     onChange={(e) => {
-                       setvehcile_model(e.target.value);
-                     }}
-                   />
-                 </div>
-               </Col>
-               <Col lg={3} md={4} sm={4}>
-                 <div className="mb-3">
-                   <Label className="header-child">Vehicle Image*</Label>
-                   <Input
-                     type="file" name="file" id="exampleFile"
-                   />
-                 </div>
-               </Col>
-               <Col lg={3} md={4} sm={4}>
+                  {vehcile_type_s === "PARTNER VEHCILE" && (
+                    <Col lg={3} md={4} sm={4}>
+                      <div className="mb-3">
+                        <Label className="header-child">
+                          Transporter Name*
+                        </Label>
+                        <SearchInput
+                          data_list={vendor_list}
+                          setdata_list={setvendor_list}
+                          data_item_s={vendor_name}
+                          set_data_item_s={setvendor_name}
+                          set_id={setvendor_id}
+                          page={vendor_n_page}
+                          setpage={setvendor_n_page}
+                          search_item={search_vendor_name}
+                          setsearch_item={setsearch_vendor_name}
+                          error_message={"Please Select Any Vendor"}
+                          error_s={vendor_error}
+                        />
+                      </div>
+                    </Col>
+                  )}
+
+                  <Col lg={3} md={4} sm={4}>
+                    <div className="mb-3">
+                      <Label className="header-child">Vehicle Number*</Label>
+                      <Input
+                        name="VEHCILE_NUMBER"
+                        type="text"
+                        id="input"
+                        maxLength={40}
+                        value={vehcile_no}
+                        onChange={(e) => {
+                          setvehcile_no(e.target.value);
+                        }}
+                        invalid={vehicle_number_error}
+                      />
+                      <FormFeedback type="invalid">
+                        Please Enter Vehicle No.
+                      </FormFeedback>
+                      {vehicle_len_error && (
+                        <div style={{ fontSize: "10.5px", color: "#f46a6a" }}>
+                          Please Enter a valid Vehicle No.
+                        </div>
+                      )}
+                    </div>
+                  </Col>
+
+                  <Col lg={3} md={4} sm={4}>
+                    <div className="mb-3">
+                      <Label className="header-child">Vehicle Model*</Label>
+                      <Input
+                        name="VEHCILE_MODEL"
+                        type="text"
+                        id="input"
+                        maxLength={40}
+                        value={vehcile_model}
+                        onChange={(e) => {
+                          setvehcile_model(e.target.value);
+                        }}
+                        invalid={vehicle_model_error}
+                      />
+                      <FormFeedback type="invalid">
+                        Please Enter Vehicle Model
+                      </FormFeedback>
+                    </div>
+                  </Col>
+
+                  <Col lg={3} md={4} sm={4}>
+                    <div className="mb-3">
+                      <Label className="header-child">Vehicle Image*</Label>
+                      <Input type="file" name="file" id="exampleFile" />
+                    </div>
+                  </Col>
+
+                  <Col lg={3} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">Active Status</Label>
                       <NSearchInput
@@ -286,7 +316,6 @@ const add_vehcile = () => {
                       />
                     </div>
                   </Col>
-             
                 </Row>
               </CardBody>
             ) : null}
@@ -298,16 +327,28 @@ const add_vehcile = () => {
           <Col lg={12}>
             <div className="mb-1 footer_btn">
               <Button
-              className="btn btn-info m-1 cu_btn"
-              type="button"
-              onClick={()=>{
-                add_vehcile()
-              }}
+                className="btn btn-info m-1 cu_btn"
+                type="button"
+                onClick={() => {
+                  if (vehcile_type_s === "") {
+                    setvehicle_type_error(true);
+                  } else if (
+                    vehcile_type_s === "PARTNER VEHCILE" &&
+                    vendor_name === ""
+                  ) {
+                    setvendor_error(true);
+                  } else if (vehcile_no === "") {
+                    setvehicle_number_error(true);
+                  } else if (vehcile_model === "") {
+                    setvehicle_model_error(true);
+                  } else {
+                    add_vehcile();
+                  }
+                }}
               >
                 Save
               </Button>
 
-              
               <Button
                 className="btn btn-info m-1 cu_btn"
                 type="button"
@@ -317,7 +358,7 @@ const add_vehcile = () => {
               </Button>
             </div>
           </Col>
-          </div>
+        </div>
       </Form>
     </div>
   );

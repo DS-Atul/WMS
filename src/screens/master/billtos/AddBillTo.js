@@ -460,11 +460,69 @@ const getBranches = async () => {
 console.log("associate_branch_list_1", associate_branch_list_1)
 
   // Bill To API Functions
-  const addBillTo = (values) => {
-    let branches_id_list = associate_branch_list_2.map((v) => v[0]);
+  // const addBillTo = (values) => {
+  //   let branches_id_list = associate_branch_list_2.map((v) => v[0]);
 
-    axios
-      .post(
+  //   axios
+  //     .post(
+  //       ServerAddress + "master/add_billto/",
+  //       {
+  //         email: values.email,
+  //         name: toTitleCase(values.name).toUpperCase(),
+  //         phone_number: values.phone_number,
+  //         address_line: toTitleCase(values.address_line_1).toUpperCase(),
+  //         location: locality_id,
+  //         authorised_person_name: toTitleCase(
+  //           values.authorised_person_name
+  //         ).toUpperCase(),
+  //         authorised_person_email: values.authorised_email,
+  //         authorised_person_number: values.authorised_number,
+  //         branches: branches_id_list,
+
+  //         pan_no: toTitleCase(values.pan_no).toUpperCase(),
+  //         credit_limit: credit_limit,
+  //         credit_amount: values.credit_amount,
+  //         created_by: user_id,
+  //         //For C&M
+  //         cm_current_department: user.user_department,
+  //         cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //         cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (resp) {
+  //       if (resp.status === 201) {
+  //         navigate("/master/billtos");
+  //         dispatch(
+  //           setDataExist(
+  //             `New BillTo '${toTitleCase(values.name)}' Added Successfully`
+  //           )
+  //         );
+  //         dispatch(setAlertType("success"));
+  //         dispatch(setShowAlert(true));
+  //       } else if (resp.data == "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `BillTo Name "${toTitleCase(values.name)}" already exists`
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error Happen while adding client  ${error}`);
+  //     });
+  // };
+
+  const addBillTo = async (values) => {
+    try {
+      let branches_id_list = associate_branch_list_2.map((v) => v[0]);
+      const resp = await axios.post(
         ServerAddress + "master/add_billto/",
         {
           email: values.email,
@@ -478,7 +536,7 @@ console.log("associate_branch_list_1", associate_branch_list_1)
           authorised_person_email: values.authorised_email,
           authorised_person_number: values.authorised_number,
           branches: branches_id_list,
-
+  
           pan_no: toTitleCase(values.pan_no).toUpperCase(),
           credit_limit: credit_limit,
           credit_amount: values.credit_amount,
@@ -493,74 +551,183 @@ console.log("associate_branch_list_1", associate_branch_list_1)
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (resp) {
-        if (resp.status === 201) {
-          navigate("/master/billtos");
-          dispatch(
-            setDataExist(
-              `New BillTo '${toTitleCase(values.name)}' Added Successfully`
-            )
-          );
-          dispatch(setAlertType("success"));
-          dispatch(setShowAlert(true));
-        } else if (resp.data == "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `BillTo Name "${toTitleCase(values.name)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while adding client  ${error}`);
-      });
-  };
-
-  const updateBillTo = (values) => {
-    let branches_id_list = associate_branch_list_2.map((v) => v[0]);
-    let client_up = up_params.client;
-
-    let fields_names = Object.entries({
-      email: values.email,
-      name: toTitleCase(values.name).toUpperCase(),
-      phone_number: values.phone_number,
-      address_line: toTitleCase(values.address_line_1).toUpperCase(),
-      location: locality_id,
-      authorised_person_name: toTitleCase(
-        values.authorised_person_name
-      ).toUpperCase(),
-      authorised_person_email: values.authorised_email,
-      authorised_person_number: values.authorised_number,
-      branches: branches_id_list,
-
-      // Additional Field Data
-      // sac_code: toTitleCase(values.sac_code).toUpperCase(),
-      // sac_service: toTitleCase(values.sac_service).toUpperCase(),
-      pan_no: toTitleCase(values.pan_no).toUpperCase(),
-      credit_limit: credit_limit,
-      credit_amount: values.credit_amount,
-    });
-
-    let change_fields = {};
-
-    if (!branches_id_list.every((ele) => client_up["branches"].includes(ele))) {
-      change_fields[`branches`] = branches_id_list;
-    }
-
-    for (let j = 0; j < fields_names.length; j++) {
-      const ele = fields_names[j];
-      let prev = client_up[`${ele[0]}`];
-      let new_v = ele[1];
-      if (String(prev) !== String(new_v)) {
-        change_fields[`${ele[0]}`] = new_v;
+      );
+      if (resp.status === 201) {
+        navigate("/master/billtos");
+        dispatch(
+          setDataExist(
+            `New BillTo '${toTitleCase(values.name)}' Added Successfully`
+          )
+        );
+        dispatch(setAlertType("success"));
+        dispatch(setShowAlert(true));
+      } 
+      else if (resp.data == "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `BillTo Name "${toTitleCase(values.name)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
       }
+      else if (resp.data.data.email[0] === "BillTo with this Email *  already exists.") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `BillTo With This Email "${toTitleCase(values.email)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert(`Error Happened while adding client ${error}`);
     }
+  };
+  
 
-    axios
-      .put(
+  // const updateBillTo = (values) => {
+  //   let branches_id_list = associate_branch_list_2.map((v) => v[0]);
+  //   let client_up = up_params.client;
+
+  //   let fields_names = Object.entries({
+  //     email: values.email,
+  //     name: toTitleCase(values.name).toUpperCase(),
+  //     phone_number: values.phone_number,
+  //     address_line: toTitleCase(values.address_line_1).toUpperCase(),
+  //     location: locality_id,
+  //     authorised_person_name: toTitleCase(
+  //       values.authorised_person_name
+  //     ).toUpperCase(),
+  //     authorised_person_email: values.authorised_email,
+  //     authorised_person_number: values.authorised_number,
+  //     branches: branches_id_list,
+
+  //     // Additional Field Data
+  //     // sac_code: toTitleCase(values.sac_code).toUpperCase(),
+  //     // sac_service: toTitleCase(values.sac_service).toUpperCase(),
+  //     pan_no: toTitleCase(values.pan_no).toUpperCase(),
+  //     credit_limit: credit_limit,
+  //     credit_amount: values.credit_amount,
+  //   });
+
+  //   let change_fields = {};
+
+  //   if (!branches_id_list.every((ele) => client_up["branches"].includes(ele))) {
+  //     change_fields[`branches`] = branches_id_list;
+  //   }
+
+  //   for (let j = 0; j < fields_names.length; j++) {
+  //     const ele = fields_names[j];
+  //     let prev = client_up[`${ele[0]}`];
+  //     let new_v = ele[1];
+  //     if (String(prev) !== String(new_v)) {
+  //       change_fields[`${ele[0]}`] = new_v;
+  //     }
+  //   }
+
+  //   axios
+  //     .put(
+  //       ServerAddress + "master/update_billto/" + client.id,
+  //       {
+  //         email: values.email,
+  //         name: toTitleCase(values.name).toUpperCase(),
+  //         phone_number: values.phone_number,
+  //         address_line: toTitleCase(values.address_line_1).toUpperCase(),
+  //         location: locality_id,
+  //         authorised_person_name: toTitleCase(
+  //           values.authorised_person_name
+  //         ).toUpperCase(),
+  //         authorised_person_email: values.authorised_email,
+  //         authorised_person_number: values.authorised_number,
+  //         branches: branches_id_list,
+
+  //         // Additional Field Data
+  //         // sac_code: toTitleCase(values.sac_code).toUpperCase(),
+  //         // sac_service: toTitleCase(values.sac_service).toUpperCase(),
+  //         pan_no: toTitleCase(values.pan_no).toUpperCase(),
+  //         credit_limit: credit_limit,
+  //         credit_amount: values.credit_amount,
+  //         modified_by: user_id,
+  //         change_fields: change_fields,
+  //         //For C&M
+  //         cm_transit_status: status_toggle === true ? current_status : "",
+  //         cm_current_status: (current_status).toUpperCase(),
+  //         cm_remarks: ""
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (resp) {
+  //       // console.log("billto update resp", resp);
+  //       if (resp.data.status === "success") {
+  //         navigate("/master/billtos");
+  //         dispatch(setDataExist(`BillTo '${values.name}' Updated Sucessfully`));
+  //         dispatch(setAlertType("info"));
+  //         dispatch(setShowAlert(true));
+  //       } else if (resp.data == "duplicate") {
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(
+  //             `BillTo Name "${toTitleCase(values.name)}" already exists`
+  //           )
+  //         );
+  //         dispatch(setAlertType("warning"));
+  //       }
+  //     })
+  //     .catch(function () {
+  //       alert("Error Error While  Updating client");
+  //     });
+  // };
+
+
+  // Location Functions Call
+  
+  const updateBillTo = async (values) => {
+    try {
+      let branches_id_list = associate_branch_list_2.map((v) => v[0]);
+      let client_up = up_params.client;
+  
+      let fields_names = Object.entries({
+        email: values.email,
+        name: toTitleCase(values.name).toUpperCase(),
+        phone_number: values.phone_number,
+        address_line: toTitleCase(values.address_line_1).toUpperCase(),
+        location: locality_id,
+        authorised_person_name: toTitleCase(
+          values.authorised_person_name
+        ).toUpperCase(),
+        authorised_person_email: values.authorised_email,
+        authorised_person_number: values.authorised_number,
+        branches: branches_id_list,
+  
+        // Additional Field Data
+        // sac_code: toTitleCase(values.sac_code).toUpperCase(),
+        // sac_service: toTitleCase(values.sac_service).toUpperCase(),
+        pan_no: toTitleCase(values.pan_no).toUpperCase(),
+        credit_limit: credit_limit,
+        credit_amount: values.credit_amount,
+      });
+  
+      let change_fields = {};
+  
+      if (!branches_id_list.every((ele) => client_up["branches"].includes(ele))) {
+        change_fields[`branches`] = branches_id_list;
+      }
+  
+      for (let j = 0; j < fields_names.length; j++) {
+        const ele = fields_names[j];
+        let prev = client_up[`${ele[0]}`];
+        let new_v = ele[1];
+        if (String(prev) !== String(new_v)) {
+          change_fields[`${ele[0]}`] = new_v;
+        }
+      }
+  
+      const resp = await axios.put(
         ServerAddress + "master/update_billto/" + client.id,
         {
           email: values.email,
@@ -574,7 +741,7 @@ console.log("associate_branch_list_1", associate_branch_list_1)
           authorised_person_email: values.authorised_email,
           authorised_person_number: values.authorised_number,
           branches: branches_id_list,
-
+  
           // Additional Field Data
           // sac_code: toTitleCase(values.sac_code).toUpperCase(),
           // sac_service: toTitleCase(values.sac_service).toUpperCase(),
@@ -586,37 +753,35 @@ console.log("associate_branch_list_1", associate_branch_list_1)
           //For C&M
           cm_transit_status: status_toggle === true ? current_status : "",
           cm_current_status: (current_status).toUpperCase(),
-          cm_remarks: ""
+          cm_remarks: "",
         },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      )
-      .then(function (resp) {
-        // console.log("billto update resp", resp);
-        if (resp.data.status === "success") {
-          navigate("/master/billtos");
-          dispatch(setDataExist(`BillTo '${values.name}' Updated Sucessfully`));
-          dispatch(setAlertType("info"));
-          dispatch(setShowAlert(true));
-        } else if (resp.data == "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `BillTo Name "${toTitleCase(values.name)}" already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch(function () {
-        alert("Error Error While  Updating client");
-      });
+      );
+  
+      if (resp.data.status === "success") {
+        navigate("/master/billtos");
+        dispatch(setDataExist(`BillTo '${values.name}' Updated Sucessfully`));
+        dispatch(setAlertType("info"));
+        dispatch(setShowAlert(true));
+      } else if (resp.data == "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `BillTo Name "${toTitleCase(values.name)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+    } catch (error) {
+      alert("Error Error While  Updating client");
+    }
   };
+  
 
-  // Location Functions Call
   useEffect(() => {
     if (state_id !== 0 && by_pincode === false) {
       // setcity_page(1);

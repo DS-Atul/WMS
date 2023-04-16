@@ -1372,7 +1372,7 @@ const AddVendor = () => {
       setSelect_forward_by_road(false);
     }
 
-    if (others_services_offerd === true && row1[0].length===0) {
+    if (others_services_offerd === true && row1[0].length ===0) {
       setSelect_other_service_offerd(true);
     } else {
       setSelect_other_service_offerd(false);

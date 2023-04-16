@@ -1164,7 +1164,7 @@ console.log("FIelds name", fields_names)
       setaddress_line(gstaddress);
     }
     if(!same_as_gst) {
-      setaddress_line("");
+      setaddress_line(address_line);
 
     }
     // if (state != "") {
@@ -1825,6 +1825,7 @@ console.log("FIelds name", fields_names)
                     </Col>
 
                     <Row>
+
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">Address Line *</Label>
@@ -1833,11 +1834,12 @@ console.log("FIelds name", fields_names)
                             invalid={address_line_err}
                             onChange={(val) => {
                               setaddress_line(val.target.value);
+                              console.log("Address is", address_line);
                             }}
                             type="text"
                             className="form-control-md"
                             id="input"
-                            name="address_line_1"
+                            name="address_line"
                             placeholder="Enter Address Line 1"
                           />
 

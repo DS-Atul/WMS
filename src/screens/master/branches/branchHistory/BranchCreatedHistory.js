@@ -49,23 +49,34 @@ setbranch_data(n_data);
             </CardTitle>
             <CardBody>
               <div className="body_container">
-                <div className="container_element">
-                  <span>Branch Type</span> <span>{branch_data.code}</span>
+              <div className="container_element">
+                  <span>Branch Code</span> <span>{branch_data.code}</span>
                 </div>
+
                 <div className="container_element">
-                  <span>Branch Name</span> <span>{branch_data.type}</span>
+                  <span>Branch Type</span> <span>{branch_data.type}</span>
+                </div>
+
+{branch_data.type === "VB" && 
+  <div className="container_element">
+  <span>Vendor Name</span> <span>{branch_data.vendor}</span>
+</div>
+}
+              
+                <div className="container_element">
+                  <span>Branch Name</span> <span>{branch_data.name}</span>
                 </div>
                 <div className="container_element">
                   <span>Branch Email</span> <span>{branch_data.email}</span>
                 </div>
                 <div className="container_element">
-                  <span>Branch Phone Number*</span> <span>{branch_data.contact_number}</span>
+                  <span>Branch Phone Number</span> <span>{branch_data.contact_number}</span>
                 </div>
                 <div className="container_element">
-                  <span>PAN Number*</span> <span>{branch_data.pan_no}</span>
+                  <span>PAN Number</span> <span>{branch_data.pan_no}</span>
                 </div>
                 <div className="container_element">
-                  <span>GST Number *</span> <span>{branch_data.gst_no}</span>
+                  <span>GST Number </span> <span>{branch_data.gst_no}</span>
                 </div>
               </div>
             </CardBody>

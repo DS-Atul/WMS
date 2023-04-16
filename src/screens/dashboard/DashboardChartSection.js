@@ -164,6 +164,7 @@ const DashboardChartSection = () => {
     }
   `}</style>
       </Col>
+
       <Col lg={12} md={6} sm={6}>
         <div
           style={{
@@ -173,7 +174,7 @@ const DashboardChartSection = () => {
           }}
         >
           <Col lg={6} md={12} sm={12}>
-            <Card className="shadow bg-white rounded" style={{ margin: "5px" ,backgroundColor:'yellow' }}>
+            <Card className="shadow bg-white rounded" style={{ margin: "5px" }}>
               <CardTitle
                 style={{
                   display: "flex",

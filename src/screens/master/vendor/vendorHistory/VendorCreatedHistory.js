@@ -3,7 +3,7 @@ import {Col,Card,CardTitle,CardBody} from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
 const VendorCreatedHistory = ({page_data}) => {
-
+console.log("Page data is", page_data);
   const [vendor_data, setvendor_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -49,13 +49,15 @@ setvendor_data(n_data);
                 <span>Vendor Name </span> <span> {vendor_data.name} </span>
               </div>
               <div className="container_element">
-                <span>MSME Registered</span> <span>{vendor_data.is_msme_regitered}</span>
+                <span>MSME Registered</span> <span>{vendor_data.is_msme_regitered === true ? "Yes" : "No"}</span>
               </div>
+              {vendor_data.is_msme_regitered === true &&
+               <div className="container_element">
+               <span>MSME Registered No.</span> <span>{vendor_data.msme_registration_no}</span>
+             </div>
+              }
               <div className="container_element">
-                <span>MSME Registered No.</span> <span>{vendor_data.msme_registration_no}</span>
-              </div>
-              <div className="container_element">
-                <span>Vendor Email</span>{vendor_data.emailp} <span></span>
+                <span>Vendor Email</span> <span>{vendor_data.emailp}</span>
               </div>
               <div className="container_element">
                 <span>Vendor Ph.No</span> <span>{vendor_data.mobile_numberp}</span>
