@@ -9,7 +9,7 @@ const CommodityHistoryPage = () => {
   const location = useLocation();
   console.log(location)
   const [commodity_id, setcommodity_id] = useState(location.state.commodity.id);
-  console.log("commodity=-=-=-=->>",commodity_id)
+
   return (
     <div>
         <NewHistoryTab

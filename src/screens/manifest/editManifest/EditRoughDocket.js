@@ -39,10 +39,13 @@ import { setToggle } from "../../../store/pagination/Pagination";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import EditManifestDataFormat from "./editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "./AddAnotherOrder";
+import { gstin_no } from "../../../constants/CompanyDetails";
 
 const EditRoughDocket = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const user_id = useSelector((state) => state.authentication.userdetails.id);
+  const user_l_state = useSelector((state) => state.authentication.userdetails.branch_location_state);
+  const user_l_statecode = useSelector((state) => state.authentication.userdetails.branch_location_state_code);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const success = useSelector((state) => state.alert.show_alert);
 
@@ -85,8 +88,6 @@ const EditRoughDocket = () => {
   const [breadth, setbreadth] = useState("");
   const [height, setheight] = useState("");
   const [pieces, setpieces] = useState("");
-  const [package_id_list, setpackage_id_list] = useState("");
-  const [packages_id, setpackages_id] = useState([]);
   const [deleted_packages_id, setdeleted_packages_id] = useState([]);
 
   let dimension_list = [length, breadth, height, pieces];
@@ -120,9 +121,8 @@ const EditRoughDocket = () => {
   const [coloader_list, setcoloader_list] = useState([]);
   const [coloader_selected, setcoloader_selected] = useState("");
   const [coloader_id, setcoloader_id] = useState("");
-  const [search, setsearch] = useState("");
-  const [page, setpage] = useState(1);
-
+  
+  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
   const [from_branch, setfrom_branch] = useState("");
   const [to_branch, setto_branch] = useState("");
   const [manifest_no, setmanifest_no] = useState("");
@@ -188,6 +188,89 @@ const EditRoughDocket = () => {
   useLayoutEffect(() => {
     manifest_no && get_orderof_manifest();
   }, [manifest_no, success, refresh]);
+
+const [ewb_no_l, setewb_no_l] = useState([]);
+useEffect(() => {
+  let ord_ewb=[]
+  for (let index = 0; index < data.length; index++) {
+    const element = data[index].eway_bill_no;
+    ord_ewb.push(element);
+    console.log("ord_ewb{{{{}}}}}}}}}}",ord_ewb)
+ }
+ let filtered= ord_ewb.filter(function(el){
+  return el != ""
+})
+console.log("ewbbbb nolllllllll",filtered)
+setewb_no_l(filtered);
+
+}, [])
+
+
+const update_eway_b = (values) => {
+ 
+  axios
+    .post(
+      `https://dev.api.easywaybill.in/ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
+ 
+      {
+          
+        "fromPlace": user_l_state,
+        "fromState": user_l_statecode,
+        "vehicleNo": rental ? vehicle_no :vendor_name,
+        "transMode": "1",
+        "transDocNo": null,
+        "transDocDate": null, 
+        "ewbNos": ewb_no_l,
+        "userGstin": gstin_no,
+       },
+
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${b_acess_token}`,
+        },
+  
+
+        }
+      
+    )
+    .then(function (response) {
+
+      console.log("response=======eway bill detail", response);
+      if (response.data.status === 1) {
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Updated  ${ewb_no_l}sucessfully`)
+        )
+        dispatch(setAlertType("success"));
+         
+          updateManifest(values)
+      }else{
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Updated  ${ewb_no_l} Failed `)
+        )
+        dispatch(setAlertType("danger"));
+         
+          updateManifest()
+      }
+     
+    })
+    .catch((error) => {
+      dispatch(setToggle(true));
+      dispatch(setShowAlert(true));
+      dispatch(
+        setDataExist(`Updated  ${ewb_no_l} Failed `)
+      )
+      dispatch(setAlertType("danger"));
+        setShow(false)
+        updateManifest()
+   
+    })
+};
+
 
   const updateManifest = () => {
     axios
@@ -418,6 +501,28 @@ const EditRoughDocket = () => {
                           />
                         </div>
                       </Col>
+                      <Col>
+                        <div className="mb-2" style={{ marginTop: "25px" }}>
+                          <Label className="header-child">
+                            Market Vehcile:
+                          </Label>
+                          {rental ? (
+                            <FiCheckSquare
+                              size={20}
+                              onClick={() => {
+                                setrental(false);
+                              }}
+                            />
+                          ) : (
+                            <FiSquare
+                              size={20}
+                              onClick={() => {
+                                setrental(true);
+                              }}
+                            />
+                          )}
+                        </div>
+                      </Col>
                       <Col lg={4} md={8} sm={8}>
                         <div className="mb-2">
                           {
@@ -456,28 +561,7 @@ const EditRoughDocket = () => {
                           )}
                         </div>
                       </Col>
-                      <Col>
-                        <div className="mb-2" style={{ marginTop: "25px" }}>
-                          <Label className="header-child">
-                            Market Vehcile:
-                          </Label>
-                          {rental ? (
-                            <FiCheckSquare
-                              size={20}
-                              onClick={() => {
-                                setrental(false);
-                              }}
-                            />
-                          ) : (
-                            <FiSquare
-                              size={20}
-                              onClick={() => {
-                                setrental(true);
-                              }}
-                            />
-                          )}
-                        </div>
-                      </Col>
+                     
                     </Row>
                   </CardBody>
                 ) : null}
@@ -538,7 +622,8 @@ const EditRoughDocket = () => {
                   type="button"
                   className="btn btn-info m-1 cu_btn"
                   onClick={() => {
-                    updateManifest();
+                    // updateManifest();
+                    update_eway_b()
                   }}
                 >
                   Save

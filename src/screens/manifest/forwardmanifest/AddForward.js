@@ -3,7 +3,6 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-// import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -32,14 +31,11 @@ import {
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-import PageTitle from "../../../components/pageTitle/PageTitle";
-import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
 import Main_c from "../../../components/crop/main";
-import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
-import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import EditManifestDataFormat from "../editManifest/editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "../editManifest/AddAnotherOrder";
+import { gstin_no } from "../../../constants/CompanyDetails";
 
 const AddForward = (manifest) => {
   console.log("manifest--yyy---", manifest)
@@ -54,7 +50,7 @@ const AddForward = (manifest) => {
   const [data2, setdata2] = useState([])
   // const location= useLocation
   const success = useSelector((state) => state.alert.show_alert);
-
+  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
   const dispatch = useDispatch();
   const location_data = useLocation();
   console.log("location_data-----", location_data);
@@ -163,6 +159,25 @@ const AddForward = (manifest) => {
     setrow([...row, dimension_list]);
   };
 
+  const [ewb_no, setewb_no] = useState([])
+useEffect(() => {
+  let eway_bill_no=manifest.manifest.orders
+  let ewb =[]
+  console.log("eway_bill_no////////",eway_bill_no)
+  for (let index = 0; index < eway_bill_no.length; index++) {
+    const element = eway_bill_no[index].eway_bill_no;
+    console.log("elementttttttttttttttttttt?????????",element)
+    ewb.push(element)
+  }
+  let filtered= ewb.filter(function(el){
+    return el != ""
+  })
+  console.log("ewbbbb nolllllllll",filtered)
+  setewb_no(filtered)
+
+ 
+}, [])
+
   const deletePackage = (item) => {
     setlength("length");
     setbreadth("breadth");
@@ -205,12 +220,14 @@ const AddForward = (manifest) => {
 
     onSubmit: (values) => {
       if (docket_weight + 5 >= values.actual_weight) {
-        updateManifest(values);
+        // updateManifest(values);
+        update_eway_b(values);
       }
       else {
         const result = window.confirm('Docket Weight Is Not Equal To Coloader Actual Weight Are you sure you want to proceed?');
         if (result) {
-          updateManifest(values);
+          // updateManifest(values);
+          update_eway_b(values);
         }
       }
     },
@@ -478,6 +495,78 @@ const AddForward = (manifest) => {
     dispatch(setToggle(false));
   }, [alert])
 
+  const user_l_state = useSelector((state) => state.authentication.userdetails.branch_location_state);
+  const user_l_statecode = useSelector((state) => state.authentication.userdetails.branch_location_state_code);
+  const update_eway_b = (values) => { 
+    const dateString = '2023-04-16T16:45';
+const date = new Date(dateString);
+const day = String(date.getDate()).padStart(2, '0');
+const month = String(date.getMonth() + 1).padStart(2, '0');
+const year = date.getFullYear();
+const formattedDate = `${day}/${month}/${year}`;
+    axios
+      .post(
+        `https://dev.api.easywaybill.in/ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
+   
+        {
+            
+          "fromPlace":user_l_state,
+          "fromState": user_l_statecode,
+          "vehicleNo": null,
+          "transMode": "3",
+          "transDocNo": values.coloader_no,
+          "transDocDate": formattedDate, 
+          "ewbNos": ewb_no,
+          "userGstin": gstin_no,
+         },
+  
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${b_acess_token}`,
+          },
+    
+  
+          }
+        
+      )
+      .then(function (response) {
+  
+        console.log("response=======eway bill detail", response);
+        if (response.data.status === 1) {
+          dispatch(setToggle(true));
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(`Updated  ${ewb_no}sucessfully`)
+          )
+          dispatch(setAlertType("success"));
+            setShow(false)
+            updateManifest(values)
+        }else{
+          dispatch(setToggle(true));
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(`Updated  ${ewb_no} Failed `)
+          )
+          dispatch(setAlertType("danger"));
+            setShow(false)
+            updateManifest(values)
+        }
+       
+      })
+      .catch((error) => {
+        console.log("eroorrrrrrrr",error)
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Updated  ${ewb_no} Failed `)
+        )
+        dispatch(setAlertType("danger"));
+          setShow(false)
+          updateManifest(values)
+     
+      })
+  };
   return (
     <>
       <Button size="sm" outline color="primary" type="button" onClick={() => setShow(true)}>

@@ -391,7 +391,7 @@ const RecieveManifest = ({ depart }) => {
         <Col lg={12}>
           <Card className="shadow bg-white rounded">
             <CardBody style={{ paddingTop: "0px" }}>
-              <Row>
+              <Row> 
                 <div
                   className="container-fluid"
                   style={{ background: "white" }}

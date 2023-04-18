@@ -2,6 +2,7 @@ const EditManifestTitle = [
   "Docket No",
   "Shipper",
   "Consignee",
+  "Eway Bill No.",
   "Total Pcs",
   "Damaged",
   "Not Received",

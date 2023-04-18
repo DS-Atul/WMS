@@ -437,6 +437,7 @@ const SignIn = () => {
           dropdown: "EwayBill",
           dropdownMenu: [
             ["DocketWithEwayBill", "/ewaybill/docketEwayBill"],
+            ["Eway Dashboard", "/ewaybill/dashboard"],
           ],
           trigger: false,
         },

@@ -412,7 +412,8 @@ const BoxDetail =React.lazy(()=>import("./screens/manifest/incomingVehcile/BoxDe
 // Routes
 
 // eway bill
-const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"))
+const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"));
+const EDashboard =React.lazy(()=>import("./screens/ewayBill/dashboard/Dashboard.js"));
 const DocEwayBill =React.lazy(()=>import("./screens/ewayBill/docketEwaybill/DocketEway.js"))
 const Vehcile=React.lazy(()=>import("./screens/master/vehcile/vehcile.js"))
 const AddVehcile=React.lazy(()=>import("./screens/master/vehcile/add_Vehcile.js"))
@@ -499,7 +500,10 @@ const routes = [
     path: "/ewaybill/docketEwayBill",
     element: <DocEwayBill />,
   },
-
+  {
+    path: "/ewaybill/dashboard",
+    element: <EDashboard />,
+  },
   //veicle model
   {
     path: "/vehicleModel/Model",

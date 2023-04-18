@@ -966,6 +966,36 @@ const AddOrder = () => {
       });
   };
 
+
+  const check_ewb_attached = (ewb_no) => {
+   
+    axios
+      .get(ServerAddress + "analytic/check_exits_eway/?ewb_no=" + ewb_no, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then(function (response) {
+       console.log("exitssssss or notttttt",response.data.result);
+       if (response.data.result === true) {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`${ewb_no} Is Already Attached To Some Docket`));
+        dispatch(setAlertType("danger"));
+       }
+       else {
+ get_eway_detail(ewb_no);
+       }
+
+      
+      })
+      .catch((error) => {
+        alert(`Error Happen while Getting data  Data ${error}`);
+      });
+  };
+
+// useLayoutEffect(() => {
+//   check_ewb_attached();
+// }, [])
   // Get Client Shipper & Consignee
   const get_client_shipper = (client_id, origin_id) => {
     let shipperlist = [];
@@ -1169,7 +1199,7 @@ const AddOrder = () => {
             ? eway_list.toAddr1.toUpperCase() + "," + eway_list.toAddr2.toUpperCase()
             : consignee_address.toUpperCase(),
           shipper_address1: eway_confirm
-            ? eway_list.fromAddr1.toUpperCase()
+            ? eway_list.fromAddr1.toUpperCase() + "," +eway_list.fromAddr2
             : shipper_address.toUpperCase(),
 
           billto_name: billto.toUpperCase(),
@@ -3381,7 +3411,8 @@ const AddOrder = () => {
                                     console.log("maxlength", e.target.value);
                                     if (e.target.value.length === 12) {
                                       setewaybill_no(e.target.value);
-                                      get_eway_detail(e.target.value);
+                                      check_ewb_attached(e.target.value);
+                                      // get_eway_detail(e.target.value);
                                     } else if (e.target.value.length < 12) {
                                       setewaybill_no(e.target.value);
                                     }

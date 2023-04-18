@@ -145,6 +145,16 @@ const EditManifestDataFormat = ({ Manifest_list }) => {
                     <td>{order.docket_no}</td>
                     <td>{toTitleCase(order.shipper)}</td>
                     <td>{toTitleCase(order.consignee)}</td>
+                    <td>
+                      {
+                        order.eway_bill_no ?
+                        toTitleCase(order.eway_bill_no)
+
+                        :
+                        <div style={{color:"red"}}>No EwayBill</div>
+                      }
+                      
+                      </td>
                     <td>{order.total_quantity}</td>
                     <td>{(order.issue).length}</td>
                     <td>{(order.issue_notreceived).length}</td>
