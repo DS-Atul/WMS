@@ -24,6 +24,7 @@ const App = () => {
   const [s_route, sets_route] = useState(auth_routes);
   const dispatch = useDispatch();
 
+
   useLayoutEffect(() => {
     if (userData != null && setpermission === true) {
       sets_route(routes);
@@ -42,7 +43,7 @@ const App = () => {
   }, [setpermission]);
 
 
-
+  
 
   return (
     <>

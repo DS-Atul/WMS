@@ -55,10 +55,15 @@ const Department = React.lazy(() =>
 const Designation = React.lazy(() =>
   import("./screens/ems/designation/Designation.js")
 );
+const AddECreditanls = React.lazy(() =>
+  import("./screens/ems/ewaybillcreditanls/AddEwayCreditanls.js")
+);
+const ECreditanls = React.lazy(() =>
+  import("./screens/ems/ewaybillcreditanls/Creditanls.js")
+);
 const AddDesignation = React.lazy(() =>
   import("./screens/ems/designation/AddDesignation.js")
 );
-
 //Profile
 
 const Profile = React.lazy(() => import("./screens/authentication/userProfile/Profile.js"));
@@ -417,6 +422,9 @@ const EDashboard =React.lazy(()=>import("./screens/ewayBill/dashboard/Dashboard.
 const DocEwayBill =React.lazy(()=>import("./screens/ewayBill/docketEwaybill/DocketEway.js"))
 const Vehcile=React.lazy(()=>import("./screens/master/vehcile/vehcile.js"))
 const AddVehcile=React.lazy(()=>import("./screens/master/vehcile/add_Vehcile.js"))
+const Extent_eway=React.lazy(()=>import("./screens/ewayBill/ewayTable/EwbExpiredYesterday.js"))
+const Assign_eway=React.lazy(()=>import("./screens/ewayBill/ewayTable/AssignedEwayBill.js"))
+
 // const CheckerMaster= React.lazy(()=>import ("./screen"))
 const auth_routes = [
   { path: "/signin", element: <SignIn /> },
@@ -480,6 +488,16 @@ const routes = [
     element: <AddDepertment />,
   },
   {
+    path: "/ems/ewaybill/addcredit",
+    name: "AddECreditanls",
+    element: <AddECreditanls />,
+  },
+  {
+    path: "/ems/department/adddepartment",
+    name: "ECreditanls",
+    element: <ECreditanls />,
+  },
+  {
     path: "/ems/department",
     name: "Department",
     element: <Department />,
@@ -501,8 +519,16 @@ const routes = [
     element: <DocEwayBill />,
   },
   {
+    path: "/ewaybill/extendEway",
+    element: <Extent_eway/>,
+  },
+  {
     path: "/ewaybill/dashboard",
     element: <EDashboard />,
+  },
+  {
+    path: "/ewaybill/assignedEwaybill",
+    element: <Assign_eway />,
   },
   //veicle model
   {

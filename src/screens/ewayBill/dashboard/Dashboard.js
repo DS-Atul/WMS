@@ -101,11 +101,79 @@ const [part_b_12, setpart_b_12] = useState("");
       })
       .catch((error) => {});
   };
+const [today_date, settoday_date] = useState("");
+const [prev_date, setprev_date] = useState("");
+const [assigned, setassigned] = useState("");
+useEffect(() => {
+  const currentDate = new Date();
+
+  // Get date 48 hours before current date
+  const beforeDate = new Date(currentDate.getTime() - (72 * 60 * 60 * 1000));
+  
+  // Format dates as strings with slashes
+  const currentDateStr = currentDate.toISOString().slice(0, 10).replace(/-/g, '/');
+  const beforeDateStr = beforeDate.toISOString().slice(0, 10).replace(/-/g, '/');
+  settoday_date(currentDateStr);
+  setprev_date(beforeDateStr)
+  console.log("Current date:", currentDateStr);
+  console.log("48 hours before date:", beforeDateStr);
+}, [])
+
+
+
+  const get_assigned_to_me= () => {
+    axios
+      .post(
+        `https://dev.api.easywaybill.in/ezewb/v1/ewb/count?gstin=${gstin_no}`,
+        {
+     
+ "type": "MY_EWB",
+ "defaultquery": null,
+ "page": "0",
+ "size": 100,
+ "addlquery": {
+ "operator": "and",
+ "criterias": [
+ {
+ "p": "ewbDt",
+ "o": "gte",
+ "v":prev_date,
+ },
+ {
+ "p": "ewbDt",
+ "o": "lte",
+ "v":today_date,
+ }
+ ]
+ }
+},
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${b_acess_token}`,
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("assigned to me",response.data.response)
+        setassigned(response.data.response)
+      })
+      .catch((error) => {});
+  };
   useEffect(() => {
 get_expired_eway();
 get_expiring_eway();
 get_partb_12();
+
   }, []);
+
+useEffect(() => {
+ if (today_date && prev_date) {
+  get_assigned_to_me();
+ }
+}, [today_date && prev_date])
+
 
   return (
     <>
@@ -127,14 +195,17 @@ get_partb_12();
             boxShadow: "0 0 10px rgba(0,0,0,0.3)",
             borderRadius: "10px",
           }}
+          onClick={()=>{
+            navigate("/ewaybill/assignedEwaybill")
+          }}
         >
             <div style={{display:"flex",flexDirection:"column"}}>      
                     <div style={{ position: "relative", bottom: "24px", zIndex: "1000" }}>
             <img src={assign} width="80px" height="70px" />
           </div>
-          <div style={{color:"white",fontWeight:"bold",fontSize:"22px",marginLeft:"18px"}}>36</div>
+          <div style={{color:"white",fontWeight:"bold",fontSize:"20px",marginLeft:"5vw"}}>{assigned}</div>
           </div>
-
+<div>Assigned Eway Bill For Last 48 hrs.</div>
         </div>
         <div style={{ width: "80%", marginLeft: "30px" }}>
           <div
@@ -198,6 +269,9 @@ get_partb_12();
                 height: "30%",
                 borderTopLeftRadius: 10,
                 borderTopRightRadius: 10,
+              }} 
+              onClick={()=>{
+                navigate("/ewaybill/extendEway")
               }}
             >
               <h3

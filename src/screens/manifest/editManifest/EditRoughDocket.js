@@ -190,8 +190,10 @@ const EditRoughDocket = () => {
   }, [manifest_no, success, refresh]);
 
 const [ewb_no_l, setewb_no_l] = useState([]);
-useEffect(() => {
+useLayoutEffect(() => {
   let ord_ewb=[]
+  console.log("data",data)
+  
   for (let index = 0; index < data.length; index++) {
     const element = data[index].eway_bill_no;
     ord_ewb.push(element);
@@ -203,7 +205,7 @@ useEffect(() => {
 console.log("ewbbbb nolllllllll",filtered)
 setewb_no_l(filtered);
 
-}, [])
+}, [data])
 
 
 const update_eway_b = (values) => {

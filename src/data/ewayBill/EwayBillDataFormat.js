@@ -198,8 +198,8 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
         </tr>
       ) : (
         (list_toggle === true ? data1 : data).map((commodity, index) => {
-            var time = new Date(commodity.ewb_valid_upto).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
-            var crtime = new Date(commodity.created_date).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+            var time = new Date(commodity.valid_upto).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+            var crtime = new Date(commodity.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
           return (
             
             <tr

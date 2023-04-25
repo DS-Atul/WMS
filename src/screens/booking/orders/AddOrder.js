@@ -66,6 +66,8 @@ const AddOrder = () => {
     (state) => state.authentication.userdetails.home_branch
   );
 
+  const user_l_state = useSelector((state) => state.authentication.userdetails.branch_location_state);
+  const user_l_statecode = useSelector((state) => state.authentication.userdetails.branch_location_state_code);
   const data_len = useSelector((state) => state.pagination.data_length);
   // const page_num = useSelector((state) => state.pagination.page_number);
   const [page_num, setpage_num] = useState(1);
@@ -82,8 +84,8 @@ const AddOrder = () => {
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
-  const [returned_data, setreturned_data] = useState([])
-  const [total_delivered_pcs, settotal_delivered_pcs] = useState(0)
+  const [returned_data, setreturned_data] = useState([]);
+  const [total_delivered_pcs, settotal_delivered_pcs] = useState(0);
   //Submit Buttom
   const [submit_btn, setsubmit_btn] = useState(false);
 
@@ -334,11 +336,19 @@ const AddOrder = () => {
   const [today, settoday] = useState("");
   const [invoice_no, setinvoice_no] = useState("");
   const [invoice_value, setinvoice_value] = useState("");
+  const [e_waybill_inv, sete_waybill_inv] = useState("");
 
-  let dimension_list2 = [invoice_img, today, invoice_no, invoice_value];
+  let dimension_list2 = [
+    e_waybill_inv,
+    today,
+    invoice_no,
+    invoice_value,
+    invoice_img,
+  ];
   const [row2, setrow2] = useState([dimension_list2]);
   const [row4, setrow4] = useState([["", "", "", ""]]);
 
+  console.log("dimensionnnnnnnnnnnnnnn listttt", row2);
   //For Calculation Info
   const [cal_type, setcal_type] = useState("");
 
@@ -432,7 +442,7 @@ const AddOrder = () => {
   const [client_error, setclient_error] = useState(false);
   const [billto_error, setbillto_error] = useState(false);
   const [transport_mode_error, settransport_mode_error] = useState(false);
-  const [order_hist,setorder_hist] = useState();
+  const [order_hist, setorder_hist] = useState();
   const [origin_city_error, setorigin_city_error] = useState(false);
   const [destination_city_error, setdestination_city_error] = useState(false);
   const [shipper_error, setshipper_error] = useState(false);
@@ -570,7 +580,7 @@ const AddOrder = () => {
           ];
           aa.unshift(addImg);
         });
-        setrow2(aa);
+        // setrow2(aa);
       })
       .catch((err) => {
         // console.log("errrrrrrrrrrrrrankit----", err)
@@ -677,13 +687,13 @@ const AddOrder = () => {
   const [showOrder, setShowOrder] = useState(false);
   const [toggle_order, settoggle_order] = useState(false);
 
-  const [linked_order, setlinked_order] = useState("")
+  const [linked_order, setlinked_order] = useState("");
   const [order_type_list, setorder_type_list] = useState([
     "Normal",
     "Return",
     "Issue",
-  ])
-  const [order_type, setorder_type] = useState(order_type_list[0])
+  ]);
+  const [order_type, setorder_type] = useState(order_type_list[0]);
 
   // validation
   const validation = useFormik({
@@ -966,9 +976,7 @@ const AddOrder = () => {
       });
   };
 
-
   const check_ewb_attached = (ewb_no) => {
-   
     axios
       .get(ServerAddress + "analytic/check_exits_eway/?ewb_no=" + ewb_no, {
         headers: {
@@ -976,26 +984,25 @@ const AddOrder = () => {
         },
       })
       .then(function (response) {
-       console.log("exitssssss or notttttt",response.data.result);
-       if (response.data.result === true) {
-        dispatch(setShowAlert(true));
-        dispatch(setDataExist(`${ewb_no} Is Already Attached To Some Docket`));
-        dispatch(setAlertType("danger"));
-       }
-       else {
- get_eway_detail(ewb_no);
-       }
-
-      
+        console.log("exitssssss or notttttt", response.data.result);
+        if (response.data.result === true) {
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(`${ewb_no} Is Already Attached To Some Docket`)
+          );
+          dispatch(setAlertType("danger"));
+        } else {
+          get_eway_detail(ewb_no);
+        }
       })
       .catch((error) => {
         alert(`Error Happen while Getting data  Data ${error}`);
       });
   };
 
-// useLayoutEffect(() => {
-//   check_ewb_attached();
-// }, [])
+  // useLayoutEffect(() => {
+  //   check_ewb_attached();
+  // }, [])
   // Get Client Shipper & Consignee
   const get_client_shipper = (client_id, origin_id) => {
     let shipperlist = [];
@@ -1192,14 +1199,16 @@ const AddOrder = () => {
           commodity_name: commodity.toUpperCase(),
           shipper_address: shipper_add_1.toUpperCase(),
           shipper_location: eway_confirm ? locality_id : locality_id_f,
-          consignee_location: eway_confirm ? locality_id_to :locality_id_f_c,
+          consignee_location: eway_confirm ? locality_id_to : locality_id_f_c,
           with_ewayBill: eway_confirm ? "True" : "False",
           eway_bill_no: ewaybill_no,
           consignee_address1: eway_confirm
-            ? eway_list.toAddr1.toUpperCase() + "," + eway_list.toAddr2.toUpperCase()
+            ? eway_list.toAddr1.toUpperCase() +
+              "," +
+              eway_list.toAddr2.toUpperCase()
             : consignee_address.toUpperCase(),
           shipper_address1: eway_confirm
-            ? eway_list.fromAddr1.toUpperCase() + "," +eway_list.fromAddr2
+            ? eway_list.fromAddr1.toUpperCase() + "," + eway_list.fromAddr2
             : shipper_address.toUpperCase(),
 
           billto_name: billto.toUpperCase(),
@@ -1215,7 +1224,7 @@ const AddOrder = () => {
           destination_pincode: consignee_pincode,
           destination_locality: consignee_locality,
           billto_name: billto.toUpperCase(),
-          eway_detail:eway_confirm ? eway_detail_l : null,
+          eway_detail: eway_confirm ? eway_detail_l : null,
           is_docket_entry: user.is_docket_entry ? user.is_docket_entry : false,
           starting_docket_no: user.starting_docket_no
             ? user.starting_docket_no
@@ -1248,6 +1257,8 @@ const AddOrder = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
+          // console.log("///////Harshiiiiiiiiittttttttt",response.data)
+          eway_confirm && update_ewayBill(response.data.docket_no,response.data.eway_bill_no)
           if (row3[0][0] !== "" || row4[0][0] !== "") {
             send_order_image(response.data.data.docket_no);
           }
@@ -1303,7 +1314,7 @@ const AddOrder = () => {
 
       // billto_name: billto,
     });
-    console.log("fields_names----============", fields_names)
+    console.log("fields_names----============", fields_names);
     let change_fields = {};
 
     for (let j = 0; j < fields_names.length; j++) {
@@ -1372,20 +1383,20 @@ const AddOrder = () => {
           branch_name: user.branch_nm ? user.branch_nm : "BRANCH NOT SET",
           shipper_name: shipper_n.toUpperCase(),
           consignee_name: consignee_n.toUpperCase(),
-          commodity_name: (commodity).toUpperCase(),
+          commodity_name: commodity.toUpperCase(),
           shipper_address: shipper_address.toUpperCase(),
-          consignee_address: (consignee_address).toUpperCase(),
-          order_origin: (all_shipper_details).toUpperCase(),
-          order_destination: (all_consignee_details).toUpperCase(),
-          origin_city: (origincity).toUpperCase(),
-          origin_state: (shipper_state).toUpperCase(),
-          origin_pincode: (shipper_pincode).toUpperCase(),
-          origin_locality: (shipper_locality).toUpperCase(),
-          destination_city: (destinationcity).toUpperCase(),
-          destination_state: (consignee_state).toUpperCase(),
-          destination_pincode: (consignee_pincode).toUpperCase(),
-          destination_locality: (consignee_locality).toUpperCase(),
-          billto_name: (billto).toUpperCase(),
+          consignee_address: consignee_address.toUpperCase(),
+          order_origin: all_shipper_details.toUpperCase(),
+          order_destination: all_consignee_details.toUpperCase(),
+          origin_city: origincity.toUpperCase(),
+          origin_state: shipper_state.toUpperCase(),
+          origin_pincode: shipper_pincode.toUpperCase(),
+          origin_locality: shipper_locality.toUpperCase(),
+          destination_city: destinationcity.toUpperCase(),
+          destination_state: consignee_state.toUpperCase(),
+          destination_pincode: consignee_pincode.toUpperCase(),
+          destination_locality: consignee_locality.toUpperCase(),
+          billto_name: billto.toUpperCase(),
           shipper_location: shipper_locality_id,
           consignee_location: consignee_locality_id,
           assetdeleted_ids: assetdeleted_ids,
@@ -1400,12 +1411,11 @@ const AddOrder = () => {
           shipper: eway_confirm ? eway_list.fromTrdName : shipper_n,
           consignee: eway_confirm ? eway_list.shipToTradeName : consignee_n,
           shipper_location: eway_confirm ? locality_id : locality_id_f,
-          consignee_location: eway_confirm ? locality_id_to :locality_id_f_c,
+          consignee_location: eway_confirm ? locality_id_to : locality_id_f_c,
           with_ewayBill: eway_confirm ? "True" : "False",
           eway_bill_no: ewaybill_no,
           consignee_address1: consignee_address.toUpperCase(),
           shipper_address1: shipper_address.toUpperCase(),
-
         },
         {
           headers: {
@@ -1787,7 +1797,7 @@ const AddOrder = () => {
       (val) => val.id === consignee_id
     );
     setconsignee_details(selected_consignee[0]);
-  }, [consignee_id,consigneedata]);
+  }, [consignee_id, consigneedata]);
 
   // useLayoutEffect(() => {
   //   if (shipper_details) {
@@ -1798,7 +1808,7 @@ const AddOrder = () => {
   //     setshipper_locality(toTitleCase(shipper_details.locality_name));
   //     setshipper_locality_id(shipper_details.location);
   //   }
-  // }, [shipper_details, shipper_id]); 
+  // }, [shipper_details, shipper_id]);
 
   // useLayoutEffect(() => {
   //   console.log("consignee_details========", consignee_details)
@@ -1853,10 +1863,14 @@ const AddOrder = () => {
   useLayoutEffect(() => {
     try {
       let order_data = location.state.order;
-      console.log("Haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",order_data)
+      console.log("Haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", order_data);
       setshipper_n(order_data.shipper);
-      setorder_type(toTitleCase(order_data.order_type))
-      setlinked_order((order_data.order_type === "RETURN" || order_data.order_type === "ISSUE") ? order_data.linked_order_value : "");
+      setorder_type(toTitleCase(order_data.order_type));
+      setlinked_order(
+        order_data.order_type === "RETURN" || order_data.order_type === "ISSUE"
+          ? order_data.linked_order_value
+          : ""
+      );
 
       setstate(order_data.shipper_state);
       setlocality_id_f(order_data.shipper_location);
@@ -1874,7 +1888,7 @@ const AddOrder = () => {
       setlocality_c(order_data.consignee_locality);
       setlocality_id_f_c(order_data.consignee_location);
       setlocality(order_data.shipper_locality);
-      setshipper_address(order_data.shipper_address1)
+      setshipper_address(order_data.shipper_address1);
       setewaybill_no(order_data.eway_bill_no);
       setbooking_through(order_data.with_ewayBill);
       seteway_confirm(order_data.with_ewayBill);
@@ -1949,7 +1963,6 @@ const AddOrder = () => {
     } catch (error) {}
   }, []);
 
-  
   useEffect(() => {
     // if (delivery_mode !== "") {
     //   setdelivery_mode_error(false);
@@ -2126,8 +2139,7 @@ const AddOrder = () => {
       if (cold_chain) {
         setcold_chain(true);
         setnonecold_chain(false);
-      }
-      else {
+      } else {
         setnonecold_chain(true);
         setcold_chain(false);
       }
@@ -2138,12 +2150,15 @@ const AddOrder = () => {
     if (cold_chain && location.state === null && returned_data.length === 0) {
       setcold_chain(true);
       setnonecold_chain(false);
-
     }
   }, [cold_chain]);
 
   useEffect(() => {
-    if (nonecold_chain && location.state === null && returned_data.length === 0) {
+    if (
+      nonecold_chain &&
+      location.state === null &&
+      returned_data.length === 0
+    ) {
       setnonecold_chain(true);
       setcold_chain(false);
     }
@@ -2180,13 +2195,22 @@ const AddOrder = () => {
   }
 
   useEffect(() => {
-    if (delivery_type === "LOCAL" && location.state === null && returned_data.length === 0 && returned_data.length === 0) {
-      settransport_mode("LOCAL")
+    if (
+      delivery_type === "LOCAL" &&
+      location.state === null &&
+      returned_data.length === 0 &&
+      returned_data.length === 0
+    ) {
+      settransport_mode("LOCAL");
+    } else if (
+      delivery_type === "DOMESTIC" &&
+      location.state === null &&
+      returned_data.length === 0 &&
+      returned_data.length === 0
+    ) {
+      settransport_mode("");
     }
-    else if (delivery_type === "DOMESTIC" && location.state === null && returned_data.length === 0 && returned_data.length === 0) {
-      settransport_mode("")
-    }
-  }, [delivery_type])
+  }, [delivery_type]);
 
   useEffect(() => {
     if (!asset_prov && location.state == null) {
@@ -2391,9 +2415,12 @@ const AddOrder = () => {
         dispatch(setDataExist(`Eway Bill Server Is Currently Down`));
         dispatch(setAlertType("danger"));
       });
-  };const [eway_detail_l, seteway_detail_l] = useState([])
+  };
+
+  const [eway_detail_l, seteway_detail_l] = useState([]);
 
   const get_eway_detail = (eway) => {
+    let inv_list = [];
     axios
       .get(
         `https://dev.api.easywaybill.in/ezewb/v1/ewb/data?ewbNo=${eway}&gstin=${gstin_no}`,
@@ -2406,6 +2433,8 @@ const AddOrder = () => {
       )
       .then(function (response) {
         console.log("response=======eway bill detail", response.data.response);
+        if(response.data.response !== null){
+          
         seteway_detail_l(response.data.response);
         seteway_confirm(true);
         dispatch(setShowAlert(true));
@@ -2414,9 +2443,17 @@ const AddOrder = () => {
         seteway_list(response.data.response);
         gefilterlocalityfrom(response.data.response.fromPincode);
         gefilterlocalityto(response.data.response.toPincode);
+        }
+        else{
+          seteway_confirm(false);
+          seteway_detail_l([])
+          seteway_list([])
+        } 
+        
       })
       .catch((error) => {
         seteway_confirm(false);
+        console.log("response=======eway bill detail", error);
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Entered EwayBill No Is Wrong`));
         dispatch(setAlertType("danger"));
@@ -2557,30 +2594,26 @@ const AddOrder = () => {
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
-          if(val==="Shipper")
-          {
-          if (city_page == 1) {
-            cities_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.city),
-            ]);
+          if (val === "Shipper") {
+            if (city_page == 1) {
+              cities_list = resp.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.city),
+              ]);
+            }
+            setcity_list_s(cities_list);
+          } else {
+            if (city_page_c == 1) {
+              cities_list = resp.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.city),
+              ]);
+            }
+            setcity_list__c(cities_list);
           }
-          setcity_list_s(cities_list);
-        }
-        else{
-          if (city_page_c == 1) {
-            cities_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.city),
-            ]);
-          }
-          setcity_list__c(cities_list);
-        }
-        } 
-        
-        else {
+        } else {
           setcity_list_s([]);
-          setcity_list__c([])
+          setcity_list__c([]);
         }
       })
       .catch((err) => {
@@ -2604,29 +2637,27 @@ const AddOrder = () => {
       )
       .then((resp) => {
         if (filter_by !== "pincode") {
-          if(val==="Shipper")
-          {
-          if (pincode_page == 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+          if (val === "Shipper") {
+            if (pincode_page == 1) {
+              pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+            } else {
+              pincode_list = [
+                ...pincode_list_s,
+                ...resp.data.results.map((v) => [v.id, v.pincode]),
+              ];
+            }
+            setpincode_list_s(pincode_list);
           } else {
-            pincode_list = [
-              ...pincode_list_s,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
+            if (pincode_page_c == 1) {
+              pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+            } else {
+              pincode_list = [
+                ...pincode_list_f_c,
+                ...resp.data.results.map((v) => [v.id, v.pincode]),
+              ];
+            }
+            setpincode_list_f_c(pincode_list);
           }
-          setpincode_list_s(pincode_list);
-        }
-        else{
-          if (pincode_page_c == 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-          } else {
-            pincode_list = [
-              ...pincode_list_f_c,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
-          }
-          setpincode_list_f_c(pincode_list);
-        }
         } else if (resp.data.results.length > 0) {
           setcity(toTitleCase(resp.data.results[0].city_name));
           setcity_id(resp.data.results[0].city);
@@ -2666,27 +2697,24 @@ const AddOrder = () => {
       )
       .then((resp) => {
         if (filter_by !== "locality") {
-          if(val==="Shipper")
-          {
-          if (pincode_page == 1) {
-            locality_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            locality_list = [
-              ...locality_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
+          if (val === "Shipper") {
+            if (pincode_page == 1) {
+              locality_list = resp.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.name),
+              ]);
+            } else {
+              locality_list = [
+                ...locality_list_s,
+                ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+              ];
+            }
 
-          locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
-            (v) => v.split(",")
-          );
-          setlocality_list_s(locality_list);
-          }
-          else{
-           
+            locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+              (v) => v.split(",")
+            );
+            setlocality_list_s(locality_list);
+          } else {
             if (pincode_page_c == 1) {
               locality_list = resp.data.results.map((v) => [
                 v.id,
@@ -2698,12 +2726,12 @@ const AddOrder = () => {
                 ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
               ];
             }
-  
+
             locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
               (v) => v.split(",")
             );
-            setlocality_list_s_c(locality_list); 
-            console.log("locality_list=c========", locality_list)
+            setlocality_list_s_c(locality_list);
+            console.log("locality_list=c========", locality_list);
           }
         } else if (resp.data.results.length > 0) {
           setlocality(toTitleCase(resp.data.results[0].name));
@@ -2739,10 +2767,9 @@ const AddOrder = () => {
       setcity_page_c(1);
       getCities_r(state_id_f_c, "state", "Consignee");
       // setpincode("");
-      setpincode_list_f_c([]);      
+      setpincode_list_f_c([]);
       // setlocality("")
       setlocality_list_s_c([]);
-      
     }
   }, [state_id_f_c, city_page_c, state_search_item_c]);
 
@@ -2753,22 +2780,22 @@ const AddOrder = () => {
   }, [state]);
   useLayoutEffect(() => {
     if (consginee_st != "") {
-      setpincode_loaded_f_c(true);      
+      setpincode_loaded_f_c(true);
     }
   }, [consginee_st]);
 
   useEffect(() => {
     if (pincode_id !== 0) {
       setlocality_page(1);
-      getLocality(pincode_id, "pincode",'Shipper');
+      getLocality(pincode_id, "pincode", "Shipper");
     }
   }, [pincode_id, locality_page, locality_search_item]);
 
-  console.log("consignee_p_id-------",consignee_p_id)
+  console.log("consignee_p_id-------", consignee_p_id);
   useEffect(() => {
     if (consignee_p_id !== 0) {
       setlocality_page_c(1);
-      getLocality(consignee_p_id, "pincode",'Consignee');
+      getLocality(consignee_p_id, "pincode", "Consignee");
     }
   }, [consignee_p_id, locality_page_c, locality_search_item_c]);
 
@@ -2776,7 +2803,6 @@ const AddOrder = () => {
     getStates();
     setcity_list_s([]);
   }, [state_page, state_search_item, refresh]);
-
 
   const getStates_c = () => {
     // let state_list = [...state_list_s];
@@ -2982,15 +3008,14 @@ const AddOrder = () => {
     }
   }, [city_id_c, pincode_page_c, pincode_search_item_c]);
 
-   // Get Return Order
+  // Get Return Order
 
-   const getReturnOrder = () => {
+  const getReturnOrder = () => {
     let temp2 = [];
     let data = [];
     axios
       .get(
-        ServerAddress +
-        `booking/get_return_order/?docket_no=${linked_order}`,
+        ServerAddress + `booking/get_return_order/?docket_no=${linked_order}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -3000,18 +3025,20 @@ const AddOrder = () => {
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Docket Number Does not Exist`));
           dispatch(setAlertType("warning"));
+        } else {
+          setreturned_data(response.data.results);
         }
-        else {
-          setreturned_data(response.data.results)
-        }
-
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
       });
   };
   useEffect(() => {
-    if (returned_data.length !== 0 && (order_type === "Return" || order_type === "Issue") && location.state === null) {
+    if (
+      returned_data.length !== 0 &&
+      (order_type === "Return" || order_type === "Issue") &&
+      location.state === null
+    ) {
       setorder(returned_data[0]);
       settransport_mode(toTitleCase(returned_data[0].transportation_mode));
       setorder_type(order_type === "Issue" ? "Issue" : "Return");
@@ -3033,7 +3060,10 @@ const AddOrder = () => {
       if (returned_data[0].cod === "Yes") {
         settransportation_cost(returned_data[0].transportation_cost);
       }
-      settotal_delivered_pcs(parseInt(returned_data[0].total_quantity) - (returned_data[0].issue_notreceived.length))
+      settotal_delivered_pcs(
+        parseInt(returned_data[0].total_quantity) -
+          returned_data[0].issue_notreceived.length
+      );
       setcold_chain(returned_data[0].cold_chain);
       setdelivery_type(returned_data[0].delivery_type);
       setentry_type_btn(returned_data[0].entry_type);
@@ -3061,17 +3091,17 @@ const AddOrder = () => {
       setconsignee_pincode(returned_data[0].consignee_pincode);
       setconsignee_address(toTitleCase(returned_data[0].consignee_address1));
       setlocality_c(toTitleCase(returned_data[0].consignee_locality));
-      setconsignee_add_2(toTitleCase(returned_data[0].consignee_address_line_2));
+      setconsignee_add_2(
+        toTitleCase(returned_data[0].consignee_address_line_2)
+      );
       setlocal_delivery_type(toTitleCase(returned_data[0].local_delivery_type));
       setasset_info_selected(toTitleCase(returned_data[0].asset_type));
       if (returned_data[0].asset_type === "NONE") {
-        setasset_prov(false)
-      }
-      else {
-        setasset_prov(true)
+        setasset_prov(false);
+      } else {
+        setasset_prov(true);
       }
       setcal_type(returned_data[0].local_cal_type);
-
 
       setshipper_add_1(toTitleCase(returned_data[0].shipper_address1));
       setdestinationcity(toTitleCase(returned_data[0].consignee_city));
@@ -3080,12 +3110,14 @@ const AddOrder = () => {
       setlocality_id_f(returned_data[0].shipper_location);
       setlocality_id_f_c(returned_data[0].consignee_location);
     }
-
-  }, [returned_data, order_type,])
+  }, [returned_data, order_type]);
 
   useEffect(() => {
-
-    if (location.state === null && order_type !== "Return" && order_type !== "Issue") {
+    if (
+      location.state === null &&
+      order_type !== "Return" &&
+      order_type !== "Issue"
+    ) {
       setorder([]);
       settransport_mode("");
       setcurrent_status("");
@@ -3140,26 +3172,78 @@ const AddOrder = () => {
       // }
       setcal_type("");
 
-
       setshipper_add_1("");
       setdestinationcity("");
       setdestinationcity_id("");
     }
-  }, [returned_data, order_type])
+  }, [returned_data, order_type]);
 
   useEffect(() => {
-    if (linked_order.length >= 6 && (order_type === "Return" || order_type === "Issue") && location.state === null) {
-      getReturnOrder()
+    if (
+      linked_order.length >= 6 &&
+      (order_type === "Return" || order_type === "Issue") &&
+      location.state === null
+    ) {
+      getReturnOrder();
     }
-  }, [linked_order])
+  }, [linked_order]);
 
-  
   // Used for History
   const handlClk = () => {
-    navigate(
-      "/booking/orders/orderHistory/OrderHistoryPage",
-      {
-        state: { Booking: order },
+    navigate("/booking/orders/orderHistory/OrderHistoryPage", {
+      state: { Booking: order },
+    });
+  };
+  useEffect(() => {
+    console.log("ewayyy 222222222222222",eway_detail_l)
+    if (eway_detail_l.length !=0) {
+      console.log("ewayyy invoice work done",eway_detail_l)
+      let temp_list = [];
+      temp_list.push([eway_detail_l.ewbNo, eway_detail_l.docDate, eway_detail_l.docNo, eway_detail_l.totInvValue, ""]);
+      setrow2(temp_list);
+      console.log("temp_list=============", temp_list);
+      setinvoice_value(eway_detail_l.docNo);
+    }
+  }, [eway_detail_l]);
+ 
+
+  const update_ewayBill = (dkt_no,eway_no) => {
+    let inv_list = [];
+    axios
+      .put(
+        `https://dev.api.easywaybill.in/ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
+        {
+  
+          "transMode": "1",
+          "fromPlace": user_l_state,
+          "fromState": user_l_statecode,
+          "transDocNo": dkt_no,
+          "transDocDate": null,
+          "vehicleNo" : "MH03YX1234",
+          "reasonCode": "1",
+          "reasonRem": "test",
+          "userGstin": "05AAAAT2562R1Z3",
+          "ewbNo": eway_no
+         },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${b_acess_token}`,
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("response(((((9999999999", response);
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`${eway_no} Sucessfully Attached To Docket No =>${dkt_no}`)
+        )
+        dispatch(setAlertType("success"));
+        
+      })
+      .catch((error) => {
+       
       });
   };
 
@@ -3237,7 +3321,7 @@ const AddOrder = () => {
             ):(
               <></>
             )} */}
-            
+
             {/* 
             <div>
               <Button
@@ -3297,8 +3381,13 @@ const AddOrder = () => {
                   {/* Booking Info */}
 
                   <Row>
-
-                  <Col lg={(order_type == "Return" || order_type == "Issue") ? 2 : 4} md={6} sm={6}>
+                    <Col
+                      lg={
+                        order_type == "Return" || order_type == "Issue" ? 2 : 4
+                      }
+                      md={6}
+                      sm={6}
+                    >
                       <Label className="header-child">Booking For</Label>
                       <div className="">
                         <NSearchInput
@@ -3310,24 +3399,24 @@ const AddOrder = () => {
                         />
                       </div>
                     </Col>
-                    {(order_type == "Return" || order_type == "Issue") &&
+                    {(order_type == "Return" || order_type == "Issue") && (
                       <Col lg={2} md={6} sm={6}>
-                        <Label className="header-child">Refrence Docket No</Label>
+                        <Label className="header-child">
+                          Refrence Docket No
+                        </Label>
                         <div className="">
                           <Input
                             type="number"
                             className="form-control-md"
                             id="input"
                             value={linked_order}
-                            onChange={(e) =>
-                              setlinked_order(e.target.value)
-                            }
+                            onChange={(e) => setlinked_order(e.target.value)}
                             placeholder="Enter Docket Number"
                             disabled={isupdating}
                           />
                         </div>
                       </Col>
-                    }
+                    )}
 
                     <Col lg={4} md={6} sm={6}>
                       <Label className="header-child">Bill To*</Label>
@@ -3905,7 +3994,11 @@ const AddOrder = () => {
                                         setpincode_error(false);
                                         setpincode_error2(true);
                                       } else {
-                                        getPincode(pincode, "pincode", "Shipper");
+                                        getPincode(
+                                          pincode,
+                                          "pincode",
+                                          "Shipper"
+                                        );
                                         setpincode_error2(false);
                                         setby_pincode(true);
                                       }
@@ -4126,7 +4219,8 @@ const AddOrder = () => {
                                       } else {
                                         getPincode(
                                           consignee_pincode,
-                                          "pincode", "Consignee"
+                                          "pincode",
+                                          "Consignee"
                                         );
                                         setpincode_error2_f_c(false);
                                         setby_pincode_f_c(true);
@@ -4248,72 +4342,65 @@ const AddOrder = () => {
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-3">
                             <Label className="header-child">Shipper *</Label>
-                             {
-                              isupdating ? 
-
-                              <Input value={eway_detail_l.shipper} disabled /> :
-
-
-                            <Input value={eway_list?.fromTrdName} disabled />
-                             }
-
-                           
+                            {isupdating ? (
+                              <Input value={eway_detail_l.shipper} disabled />
+                            ) : (
+                              <Input value={eway_list?.fromTrdName} disabled />
+                            )}
                           </div>
                         </Col>
 
                         <>
-                         
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
                               <Label className="header-child">State</Label>
 
-                              {
-                                isupdating ?
-<Input
-                                value={eway_detail_l.shipper_state}
-                                type="text"
-                                className="form-control-md"
-                                id="input"
-                                disabled
-                              /> :
-                              <Input
-                                value={from_address.state_name}
-                                type="text"
-                                className="form-control-md"
-                                id="input"
-                                disabled
-                              />
-
-                              }
-                              
+                              {isupdating ? (
+                                <Input
+                                  value={eway_detail_l.shipper_state}
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  disabled
+                                />
+                              ) : (
+                                <Input
+                                  value={from_address.state_name}
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  disabled
+                                />
+                              )}
                             </div>
                           </Col>
 
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
                               <Label className="header-child">Pincode</Label>
-                              {isupdating ?
-                              
-                            <Input value={eway_detail_l.shipper_pincode} disabled />
-
-                            :
-                            <Input
-                            value={from_address.pincode_name}
-                            type="text"
-                            className="form-control-md"
-                            id="input"
-                            disabled
-                          />
-                            }
-                              
+                              {isupdating ? (
+                                <Input
+                                  value={eway_detail_l.shipper_pincode}
+                                  disabled
+                                />
+                              ) : (
+                                <Input
+                                  value={from_address.pincode_name}
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  disabled
+                                />
+                              )}
                             </div>
                           </Col>
 
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
-                              <Label className="header-child">Locality shipper</Label>
+                              <Label className="header-child">
+                                Locality shipper
+                              </Label>
 
-                              
                               <NSearchInput
                                 data_list={locality_list}
                                 data_item_s={locality_sel}
@@ -4331,29 +4418,43 @@ const AddOrder = () => {
                               <Label className="header-child">
                                 Address Line
                               </Label>
-                              {isupdating ?
-                             
-                              
-                              <div style={{border:"1px solid",padding:"8px",backgroundColor:"#eff2f7",borderRadius:5,borderColor:'#aaa'}}>
-                              {eway_detail_l.shipper_address1}
-                            </div>
-                            
-                               :
-                               <div style={{border:"1px solid",padding:"8px",backgroundColor:"#eff2f7",borderRadius:5,borderColor:'#aaa'}}>
-                                {eway_list.fromAddr1 + "," + eway_list.fromAddr2}
-                              </div>
-// {/* <Input
+                              {
+                                isupdating ? (
+                                  <div
+                                    style={{
+                                      border: "1px solid",
+                                      padding: "8px",
+                                      backgroundColor: "#eff2f7",
+                                      borderRadius: 5,
+                                      borderColor: "#aaa",
+                                    }}
+                                  >
+                                    {eway_detail_l.shipper_address1}
+                                  </div>
+                                ) : (
+                                  <div
+                                    style={{
+                                      border: "1px solid",
+                                      padding: "8px",
+                                      backgroundColor: "#eff2f7",
+                                      borderRadius: 5,
+                                      borderColor: "#aaa",
+                                    }}
+                                  >
+                                    {eway_list.fromAddr1 +
+                                      "," +
+                                      eway_list.fromAddr2}
+                                  </div>
+                                )
+                                // {/* <Input
 
-//                                 value={eway_list.fromAddr1 + eway_list.fromAddr2}
-//                                 type="text"
-//                                 className="w-100" 
-//                                 id="input"
-//                                 disabled
-//                               /> */}
-                              
-                            
-                            }
-                              
+                                //                                 value={eway_list.fromAddr1 + eway_list.fromAddr2}
+                                //                                 type="text"
+                                //                                 className="w-100"
+                                //                                 id="input"
+                                //                                 disabled
+                                //                               /> */}
+                              }
                             </div>
                           </Col>
                         </>
@@ -4396,16 +4497,11 @@ const AddOrder = () => {
                         <Col lg={4} md="6" sm="6">
                           <div className="mb-3">
                             <Label className="header-child">Consignee *</Label>
-                            {
-                              isupdating ? <Input value={eway_detail_l.consignee} disabled />
-                              :
-                              <Input
-                            
-                              value={eway_list?.toTrdName}
-                              disabled
-                            />
-                            }
-                           
+                            {isupdating ? (
+                              <Input value={eway_detail_l.consignee} disabled />
+                            ) : (
+                              <Input value={eway_list?.toTrdName} disabled />
+                            )}
                           </div>
                         </Col>
 
@@ -4414,25 +4510,34 @@ const AddOrder = () => {
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
                                 <Label className="header-child">State</Label>
-                                {isupdating ? <Input value={eway_detail_l.consignee_state} disabled />  :  <Input value={to_address.state_name} disabled /> }
-                               
-
+                                {isupdating ? (
+                                  <Input
+                                    value={eway_detail_l.consignee_state}
+                                    disabled
+                                  />
+                                ) : (
+                                  <Input
+                                    value={to_address.state_name}
+                                    disabled
+                                  />
+                                )}
                               </div>
                             </Col>
 
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
                                 <Label className="header-child">Pincode</Label>
-                                {
-                                  isupdating ? 
-                                  <Input value={eway_detail_l.consignee_pincode} disabled /> 
-                                  :
+                                {isupdating ? (
+                                  <Input
+                                    value={eway_detail_l.consignee_pincode}
+                                    disabled
+                                  />
+                                ) : (
                                   <Input
                                     value={to_address.pincode_name}
                                     disabled
                                   />
-
-                                }
+                                )}
                               </div>
                             </Col>
 
@@ -4456,13 +4561,27 @@ const AddOrder = () => {
                                 <Label className="header-child">
                                   Address Line
                                 </Label>
-                                {
-                                  isupdating ?  <Input value={eway_detail_l.consignee_address1} disabled />:
+                                {isupdating ? (
+                                  <Input
+                                    value={eway_detail_l.consignee_address1}
+                                    disabled
+                                  />
+                                ) : (
                                   // <Input value={eway_list?.toAddr1} disabled />
-                                  <div style={{border:"1px solid",padding:"8px",backgroundColor:"#eff2f7",borderRadius:5,borderColor:'#aaa'}}>
-                                  {eway_list.toAddr1 + "," + eway_list.toAddr2}
-                                </div>
-                                }
+                                  <div
+                                    style={{
+                                      border: "1px solid",
+                                      padding: "8px",
+                                      backgroundColor: "#eff2f7",
+                                      borderRadius: 5,
+                                      borderColor: "#aaa",
+                                    }}
+                                  >
+                                    {eway_list.toAddr1 +
+                                      "," +
+                                      eway_list.toAddr2}
+                                  </div>
+                                )}
                               </div>
                             </Col>
                           </>
@@ -4817,10 +4936,12 @@ const AddOrder = () => {
                         ) : null}
                       </div>
                     </Col>
-                    {order_type == "Issue" && returned_data.length !== 0 &&
+                    {order_type == "Issue" && returned_data.length !== 0 && (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
-                          <Label className="header-child">Total Delivered PCS</Label>
+                          <Label className="header-child">
+                            Total Delivered PCS
+                          </Label>
                           <Input
                             value={total_delivered_pcs}
                             type="number"
@@ -4831,7 +4952,7 @@ const AddOrder = () => {
                           />
                         </div>
                       </Col>
-                    }
+                    )}
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">Actual Weight</Label>
@@ -5564,24 +5685,151 @@ const AddOrder = () => {
                           }}
                         />
                       ) : null}
-                      <Col md={3}>
+                      <Col md={row2.length > 1 ? 3 : 2} sm={2}>
+                        <div className="mb-3">
+                          <Label className="header-child">EwayBill No</Label>
+                          {row2.map((item2, index2) => (
+                            <div
+                              style={{ height: "110px", paddingTop: 35 }}
+                              key={index2}
+                            >
+                              <Input
+                                min={0}
+                                key={index2}
+                                value={item2[0]}
+                                type="number"
+                                className="form-control-md"
+                                id="input"
+                                style={{ marginBottom: "15px" }}
+                                placeholder="Enter EwayBill No"
+                                onChange={(val) => {
+                                  if (val.target.value.length === 13) {
+                                    sete_waybill_inv(val.target.value);
+                                    item2[0] = val.target.value;
+                                    row4[index2][0] = val.target.value;
+                                  } else if (val.target.value.length < 13) {
+                                    sete_waybill_inv(val.target.value);
+                                    item2[0] = val.target.value;
+                                    row4[index2][0] = val.target.value;
+                                  }
+                                }}
+                                disabled={eway_confirm && index2==0}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </Col>
+                      <Col md={2} sm={2}>
+                        <div className="mb-3">
+                          <Label className="header-child">Invoices Date</Label>
+                          {row2.map((item2, index2) => (
+                            <div
+                              key={index2}
+                              style={{ height: "110px", paddingTop: 35 }}
+                            >
+                              <input
+                                style={{ marginBottom: "15px" }}
+                                type="date"
+                                className="form-control d-block form-control-md"
+                                id="input"
+                                value={row2[index2][1]}
+                                onChange={(event) => {
+                                  settoday(event.target.value[1]);
+                                  item2[1] = event.target.value;
+                                  row4[index2][1] = event.target.value;
+                                }}
+                                disabled={eway_confirm && index2==0}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </Col>
+                      <Col md={2} sm={2}>
+                        <div className="mb-3">
+                          <Label className="header-child">Invoice Number</Label>
+                          {row2.map((item2, index2) => {
+                            return (
+                              <div
+                                style={{ height: "110px", paddingTop: 35 }}
+                                key={index2}
+                              >
+                                {console.log("item99999999=======", item2)}
+
+                                {eway_confirm ? (
+                                  <Input
+                                    min={0}
+                                    key={index2}
+                                    value={item2[2]}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    style={{ marginBottom: "15px" }}
+                                    placeholder="Enter Invoice No"
+                                    onChange={(val) => {
+                                      setinvoice_no(val.target.value);
+                                      item2[2] = val.target.value;
+                                      // row4[index2][2] = eway_list.docNo;
+                                    }}
+                                  />
+                                ) : (
+                                  <Input
+                                    min={0}
+                                    key={index2}
+                                    value={item2[2]}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    style={{ marginBottom: "15px" }}
+                                    placeholder="Enter Invoice No"
+                                    onChange={(val) => {
+                                      setinvoice_no(val.target.value);
+                                      item2[2] = val.target.value;
+                                      row4[index2][2] = val.target.value;
+                                    }}
+                                    disabled={eway_confirm && index2==0}
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </Col>
+                      <Col md={2} sm={2}>
+                        <div className="mb-3">
+                          <Label className="header-child">Invoice Amount</Label>
+                          {row2.map((item2, index2) => (
+                            <div
+                              style={{ height: "110px", paddingTop: 35 }}
+                              key={index2}
+                            >
+                              {/* {
+                                row2[0]
+                              } */}
+                              <Input
+                                min={0}
+                                key={index2}
+                                value={item2[3]}
+                                type="number"
+                                className="form-control-md"
+                                id="input"
+                                style={{ marginBottom: "15px" }}
+                                placeholder="Enter Amount"
+                                onChange={(val) => {
+                                  setinvoice_value(val.target.value);
+                                  item2[3] = val.target.value;
+                                  row4[index2][3] = val.target.value;
+                                }}
+                                disabled={eway_confirm && index2==0}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </Col>
+                      <Col md={2} sm={2}>
                         <div className="mb-3">
                           <Label className="header-child">Invoice Images</Label>
-                          {/* {row2.map((item2, index2) => (
-                            <Input
-                              style={{ marginBottom: "15px" }}
-                              key={index2}
-                              className="form-control-md"
-                              type="file"
-                              id="input"
-                              onChange={(event) => {
-                                setinvoice_img(event.target.files[0]);
-
-                                item2[0] = event.target.files;
-                              }}
-                            />
-                          ))} */}
-                          {row2[row2.length - 1][0] !== ""
+                
+                          {/* {row2[row2.length - 1][0] !== ""
                             ? row2
                                 .filter((e) => e[0] !== "")
                                 .map((item1, index1) => {
@@ -5593,7 +5841,7 @@ const AddOrder = () => {
                                           height: "110px",
                                           width: "110px",
                                           borderRadius: "10px",
-                                          padding: 20,
+                                          // padding: 20,
                                         }}
                                         onClick={() => {
                                           setshowModalInvoice({
@@ -5606,7 +5854,7 @@ const AddOrder = () => {
                                     </div>
                                   );
                                 })
-                            : null}
+                            : null} */}
                           {row2[row2.length - 1][0] === "" ? (
                             <div style={{ height: "110px", paddingTop: 35 }}>
                               <div
@@ -5648,84 +5896,6 @@ const AddOrder = () => {
                               </div>
                             </div>
                           ) : null}
-                        </div>
-                      </Col>
-                      <Col md={3} sm={3}>
-                        <div className="mb-3">
-                          <Label className="header-child">Invoices Date</Label>
-                          {row2.map((item2, index2) => (
-                            <div
-                              key={index2}
-                              style={{ height: "110px", paddingTop: 35 }}
-                            >
-                              <input
-                                style={{ marginBottom: "15px" }}
-                                type="date"
-                                className="form-control d-block form-control-md"
-                                id="input"
-                                value={row2[index2][1]}
-                                onChange={(event) => {
-                                  settoday(event.target.value[1]);
-                                  item2[1] = event.target.value;
-                                  row4[index2][1] = event.target.value;
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </Col>
-                      <Col md={3} sm={3}>
-                        <div className="mb-3">
-                          <Label className="header-child">Invoice Number</Label>
-                          {row2.map((item2, index2) => (
-                            <div
-                              style={{ height: "110px", paddingTop: 35 }}
-                              key={index2}
-                            >
-                              <Input
-                                min={0}
-                                key={index2}
-                                value={item2[2]}
-                                type="number"
-                                className="form-control-md"
-                                id="input"
-                                style={{ marginBottom: "15px" }}
-                                placeholder="Enter Invoice No"
-                                onChange={(val) => {
-                                  setinvoice_no(val.target.value);
-                                  item2[2] = val.target.value;
-                                  row4[index2][2] = val.target.value;
-                                }}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </Col>
-                      <Col md={row2.length > 1 ? 2 : 3} sm={4}>
-                        <div className="mb-3">
-                          <Label className="header-child">Invoice Amount</Label>
-                          {row2.map((item2, index2) => (
-                            <div
-                              style={{ height: "110px", paddingTop: 35 }}
-                              key={index2}
-                            >
-                              <Input
-                                min={0}
-                                key={index2}
-                                value={item2[3]}
-                                type="number"
-                                className="form-control-md"
-                                id="input"
-                                style={{ marginBottom: "15px" }}
-                                placeholder="Enter Amount"
-                                onChange={(val) => {
-                                  setinvoice_value(val.target.value);
-                                  item2[3] = val.target.value;
-                                  row4[index2][3] = val.target.value;
-                                }}
-                              />
-                            </div>
-                          ))}
                         </div>
                       </Col>
                       <Col md={1}>
