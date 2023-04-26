@@ -1,9 +1,9 @@
-import React ,{useState, useLayoutEffect} from 'react';
-import {Col,Card,CardTitle,CardBody} from "reactstrap";
+import React, { useState, useLayoutEffect } from 'react';
+import { Col, Card, CardTitle, CardBody } from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
-const OrderOriginsHistoryCreatedPage = ({page_data}) => {
-  console.log("page",page_data)
+const OrderOriginsHistoryCreatedPage = ({ page_data }) => {
+  console.log("page", page_data)
   const [order_data, setorder_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -12,19 +12,19 @@ const OrderOriginsHistoryCreatedPage = ({page_data}) => {
     if (p_data) {
       setuser_name(p_data.name_r)
 
-let data = p_data.change_message;
-let n_data = JSON.parse(data)
-setorder_data(n_data);      
+      let data = p_data.change_message;
+      let n_data = JSON.parse(data)
+      setorder_data(n_data);
     }
   }, [page_data])
 
-  console.log("OrderOrigins data >>>>>",order_data);
-  
+  console.log("OrderOrigins data >>>>>", order_data);
 
-  let time = new Date(order_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+
+  let time = new Date(order_data.created_at).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
   return (
     <>
-        <Col lg={12} md={12} sm={12}>
+      <Col lg={12} md={12} sm={12}>
         <div>
           <Card
             className="h_card"
@@ -47,34 +47,34 @@ setorder_data(n_data);
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Shipper/Consignee</span> <span>Own</span>
+                  <span>Shipper/Consignee</span> <span>{order_data.name}</span>
                 </div>
                 <div className="container_element">
-                  <span>Bill To</span> <span>ABCDE</span>
+                  <span>Bill To</span> <span>{order_data.billto_name}</span>
                 </div>
                 <div className="container_element">
-                  <span>Client</span><span>Raman</span>
+                  <span>Client</span><span>{order_data.client_name}</span>
                 </div>
                 <div className="container_element">
-                  <span>City</span><span>Begusari</span>
+                  <span>City</span><span>{order_data.city_name}</span>
                 </div>
                 <div className="container_element">
-                  <span>PinCode</span><span>851112</span>
+                  <span>PinCode</span><span>{order_data.pincode_name}</span>
                 </div>
                 <div className="container_element">
-                  <span>Locality</span><span>Raman</span>
+                  <span>Locality</span><span>{order_data.locality_name}</span>
                 </div>
                 <div className="container_element">
-                  <span>State</span><span>Bihar</span>
+                  <span>State</span><span>{order_data.state_name}</span>
                 </div>
                 <div className="container_element">
-                  <span>Email</span><span>email@gmail.com</span>
+                  <span>Email</span><span>{order_data.email}</span>
                 </div>
                 <div className="container_element">
-                  <span>Phone NO</span><span>9507712585</span>
+                  <span>Phone NO</span><span>{order_data.phone_number}</span>
                 </div>
                 <div className="container_element">
-                  <span>Address</span><span>ABC</span>
+                  <span>Address</span><span>{order_data.address_line1}</span>
                 </div>
                 <div className="container_element">
                   <span>Created By</span> <span>{user_name}</span>

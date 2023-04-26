@@ -1,9 +1,9 @@
-import React ,{useState, useLayoutEffect} from 'react';
-import {Col,Card,CardTitle,CardBody} from "reactstrap";
+import React, { useState, useLayoutEffect } from 'react';
+import { Col, Card, CardTitle, CardBody } from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
-const OrganizationCreatedHistory = ({page_data}) => {
-  console.log("page  ===>",page_data)
+const OrganizationCreatedHistory = ({ page_data }) => {
+  console.log("page  ===>", page_data)
   const [org_data, setorg_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -12,20 +12,20 @@ const OrganizationCreatedHistory = ({page_data}) => {
     if (p_data) {
       setuser_name(p_data.name_r)
 
-let data = p_data.change_message;
-let n_data = JSON.parse(data)  
-setorg_data(n_data);      
+      let data = p_data.change_message;
+      let n_data = JSON.parse(data)
+      setorg_data(n_data);
     }
   }, [page_data])
 
-  console.log("Organization  data >>>>>",org_data);
-  
+  console.log("Organization  data >>>>>", org_data);
 
-  let time = new Date(org_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
-  
+
+  let time = new Date(org_data.created_at).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
+
   return (
-<>
-<Col lg={12} md={12} sm={12}>
+    <>
+      <Col lg={12} md={12} sm={12}>
         <div>
           <Card
             className="h_card"
@@ -48,28 +48,30 @@ setorg_data(n_data);
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Organization Name </span> <span>ABCDE</span>
+                  <span>Organization Name </span> <span>{org_data.name}</span>
                 </div>
                 <div className="container_element">
-                  <span>Email</span> <span>aeaeqw@gmail.com</span>
+                  <span>Email</span> <span>{org_data.email}</span>
                 </div>
                 <div className="container_element">
-                  <span>Toll Free Number</span> <span>139</span>
+                  <span>Toll Free Number</span> <span>{org_data.tollfree_no}</span>
                 </div>
                 <div className="container_element">
-                  <span>Registration/Incorporation No</span> <span> 12345</span>
+                  <span>Registration/Incorporation No</span> <span>{org_data.regd_no}</span>
                 </div>
                 <div className="container_element">
-                  <span>PAN Number</span> <span>AS33727282</span>
+                  <span>PAN Number</span> <span>{org_data.pan_no}</span>
                 </div>
                 <div className="container_element">
-                  <span>Primary Mobile No </span> <span>9507720843</span>
+                  <span>Primary Mobile No </span> <span>{org_data.mobile_nop}</span>
                 </div>
+                {org_data.mobile_nos === true &&
+                  <div className="container_element">
+                    <span>Secondary Mobile No  </span> <span>{org_data.mobile_nos}</span>
+                  </div>
+                }
                 <div className="container_element">
-                  <span>Secondary Mobile No  </span> <span> 207620456</span>
-                </div>
-                <div className="container_element">
-                  <span>Website Address  </span> <span>wwww.web_url.com</span>
+                  <span>Website Address  </span> <span>{org_data.website}</span>
                 </div>
               </div>
             </CardBody>
@@ -225,13 +227,13 @@ setorg_data(n_data);
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Contact Person  </span> <span>Abhi  </span>
+                  <span>Contact Person  </span> <span>{org_data.contact_person}</span>
                 </div>
                 <div className="container_element">
-                  <span>Contact Person Email </span> <span> abhi@gmail.com </span>
+                  <span>Contact Person Email </span> <span> {org_data.contact_person_email} </span>
                 </div>
                 <div className="container_element">
-                  <span>Contact Person Phone Number </span> <span> 84002112334 </span>
+                  <span>Contact Person Phone Number </span> <span> {org_data.contact_person_mobile} </span>
                 </div>
               </div>
             </CardBody>
@@ -261,7 +263,7 @@ setorg_data(n_data);
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Description </span> <span>Hello India</span>
+                <span>Description </span> <span>{org_data.description}</span>
                 </div>
                 <div className="container_element">
                   <span>Created By</span> <span>{user_name}</span>
@@ -275,7 +277,7 @@ setorg_data(n_data);
         </div>
       </Col>
     </>
-   )
+  )
 }
 
 export default OrganizationCreatedHistory

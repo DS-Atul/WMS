@@ -52,10 +52,38 @@ const ClientsDataFormat = ({ data, data1, can_delete }) => {
   );
 
   const [click, setclick] = useState(true);
+  const delete_client_row = (id) => {
+    axios
+      .post(
+        ServerAddress + "master/delete_client/",
+        {
+          data: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.statusText === "OK") {
+          dispatch(setDeleteId(false));
+          setclick(false);
+          dispatch(setIds([]));
+          dispatch(setSelect(false));
+          setselected([]);
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Data Deleted Sucessfully`));
+          dispatch(setAlertType("danger"));
+          dispatch(setIsDeleted("Yes"));
+          dispatch(setToggle(true));
+        }
+      })
+      .catch((err) => {
+        alert(`Error While delete Client ${err}`);
+      });
+  };
 
-  useEffect(() => {
-    dispatch(setIsDeleted("No"));
-  }, [total_data]);
 
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
 
@@ -132,6 +160,16 @@ const ClientsDataFormat = ({ data, data1, can_delete }) => {
     }
   }, [userpermission]);
 
+  useEffect(() => {
+    if (delete_id == true) {
+      delete_client_row(ids);
+    }
+  }, [delete_id]);
+  
+  useEffect(() => {
+    dispatch(setIsDeleted("No"))
+  }, [total_data])
+  
   return (
     <>
       {(list_toggle === true ? data1 : data).length === 0 ? (

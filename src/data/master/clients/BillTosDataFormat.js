@@ -52,7 +52,7 @@ const BillTosDataFormat = ({ data, data1, can_delete }) => {
   const delete_client_row = (id) => {
     axios
       .post(
-        ServerAddress + "master/delete_client/",
+        ServerAddress + "master/delete_billto/",
         {
           data: id,
         },

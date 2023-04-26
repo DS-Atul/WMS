@@ -90,6 +90,9 @@ const AddBranchForward = (manifest) => {
   const [coloader_selected, setcoloader_selected] = useState("");
   const [search, setsearch] = useState("");
   const [page, setpage] = useState(1);
+  const [coloader_loaded, setcoloader_loaded] = useState(false)
+  const [coloader_count, setcoloader_count] = useState(1)
+
   const [manifest_no, setmanifest_no] = useState("");
   const [forward_branch, setforward_branch] = useState("");
   const [today, settoday] = useState("");
@@ -365,6 +368,7 @@ const AddBranchForward = (manifest) => {
   }, [manifest_no,success,refresh]);
 
   const get_coloader = () => {
+    let coloader_lst = [];
     axios
       .get(
         ServerAddress +
@@ -374,14 +378,31 @@ const AddBranchForward = (manifest) => {
         }
       )
       .then((response) => {
-        let temp = [];
-        let temp2 = [...coloader_list];
-        temp = response.data.results;
-        for (let index = 0; index < temp.length; index++) {
-          temp2.push([temp[index].id, toTitleCase(temp[index].name)]);
+        if (response.data.results.length > 0) {
+            if (response.data.next === null) {
+              setcoloader_loaded(false);
+            } else {
+              setcoloader_loaded(true);
+            }
+            if (page == 1) {
+              coloader_lst = response.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.name),
+              ]);
+            } else {
+              coloader_lst = [
+                ...coloader_list,
+                ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+              ];
+            }
+            setcoloader_count(coloader_count + 2);
+            setcoloader_list(coloader_lst);
+          
         }
-        temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
-        setcoloader_list(temp2);
+
+        else {
+          setcoloader_list([]);
+        }
       })
       .catch((err) => {
         alert(`Error While Loading Client , ${err}`);
@@ -602,6 +623,8 @@ const AddBranchForward = (manifest) => {
                               error_message={"Please Select Colader"}
                               search_item={search}
                               setsearch_item={setsearch}
+                              loaded={coloader_loaded}
+                              count={coloader_count}
                             />
                           </div>
                         </Col>

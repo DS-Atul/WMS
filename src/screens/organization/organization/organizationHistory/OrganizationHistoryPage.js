@@ -13,13 +13,12 @@ const OrganizationHistoryPage = () => {
   console.log("Organization Data>>>>>>>",org_id) 
   return (
     <>
-      
         <NewHistoryTab
         Page={OrganizationCreatedHistory}
         Table_Data_Title={OrganizationHistoryTableTitle}
         Table_Data_Formate={OrganizationHistoryTableFormate}
-        path1={`analytic/get_createdmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["Organization"]}&app_name=${["Organization"]}&object_id=${[org_id]}`}
-        path={`analytic/get_updatedmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["Organization"]}&app_name=${["Organization"]}&object_id=${[org_id]}`}
+        path1={`analytic/get_createdmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["Organization"]}&app_name=${["organization"]}&object_id=${[org_id]}`}
+        path={`analytic/get_updatedmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["Organization"]}&app_name=${["organization"]}&object_id=${[org_id]}`}
         
         />
     </>

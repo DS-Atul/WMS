@@ -21,6 +21,7 @@ const OrganizationHistoryTableTitle = [
     "Contact Person",
     "Person Email",
     "Person Mo.No",
+    "Discription",
     "Modified By",
     "Modified At", 
 ]
