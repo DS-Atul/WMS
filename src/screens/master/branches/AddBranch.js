@@ -102,6 +102,7 @@ const AddBranch = () => {
   const [state_search_item, setstate_search_item] = useState("");
   const [state_loaded, setstate_loaded] = useState(false);
   const [state_count, setstate_count] = useState(1);
+  const [togstate, settogstate] = useState(false)
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -111,6 +112,7 @@ const AddBranch = () => {
   const [city_search_item, setcity_search_item] = useState("");
   const [city_loaded, setcity_loaded] = useState(false);
   const [city_count, setcity_count] = useState(1);
+  const [togcity, settogcity] = useState(false)
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -124,6 +126,7 @@ const AddBranch = () => {
   const [pincode_loaded, setpincode_loaded] = useState(false);
   const [load_pincode, setload_pincode] = useState(false);
   const [pincode_count, setpincode_count] = useState(1);
+  const [togpincode, settogpincode] = useState(false);
 
   const [pincode_list_error, setpincode_list_error] = useState(false);
 
@@ -446,7 +449,7 @@ const AddBranch = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-
+      settogstate(true);
       if (resp.data.next === null) {
         setstate_loaded(false);
       } else {
@@ -488,7 +491,7 @@ const AddBranch = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-
+      settogcity(true);
       if (resp.data.next === null) {
         setcity_loaded(false);
       } else {
@@ -591,57 +594,6 @@ const AddBranch = () => {
       });
   };
 
-  // get pincode
-  // const getPincode = (place_id, filter_by) => {
-  //   let pincode_list = [];
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //         `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
-  //         "&place_id=" +
-  //         place_id +
-  //         "&filter_by=" +
-  //         filter_by,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((resp) => {
-  //       if (filter_by !== "pincode") {
-  //         if (pincode_page == 1) {
-  //           pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-  //         } else {
-  //           pincode_list = [
-  //             ...pincode_list_s,
-  //             ...resp.data.results.map((v) => [v.id, v.pincode]),
-  //           ];
-  //         }
-  //         setpincode_list_s(pincode_list);
-  //       } else if (resp.data.results.length > 0) {
-  //         setcity(toTitleCase(resp.data.results[0].city_name));
-  //         setcity_id(resp.data.results[0].city);
-  //         setstate(toTitleCase(resp.data.results[0].state_name));
-  //         setstate_id(resp.data.results[0].state);
-  //         setpincode(resp.data.results[0].pincode);
-  //         setpincode_id(resp.data.results[0].id);
-  //       } else {
-  //         dispatch(
-  //           setDataExist(
-  //             "You entered invalid pincode or pincode not available in database"
-  //           )
-  //         );
-  //         dispatch(setAlertType("warning"));
-  //         dispatch(setShowAlert(true));
-  //         setcity("");
-  //         setcity_id("");
-  //         // setstate("");
-  //         setstate_id("");
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get City, ${err}`);
-  //     });
-  // };
 
   const getPincode = async (place_id, filter_by) => {
     let pincode_list = [];
@@ -658,6 +610,8 @@ const AddBranch = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
+
+      settogpincode(true)
 
       if (resp.data.next === null) {
         setload_pincode(false);
@@ -917,6 +871,17 @@ const AddBranch = () => {
   }, [state]);
 
   useEffect(() => {
+    if (state !== "" && togstate) {
+      setcity("");
+      setcity_list_s([]);
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [state]);
+
+  useEffect(() => {
     if (!location_data.state && city && !by_pincode && !same_as_gst) {
       setpincode("");
       setpincode_list_s([]);
@@ -926,11 +891,37 @@ const AddBranch = () => {
   }, [city]);
 
   useEffect(() => {
+    if (city !== "" && togcity) {
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [city]);
+
+  
+  useEffect(() => {
+    if (pincode !== "" && togpincode) {
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [pincode]);
+
+  useEffect(() => {
     if (!location_data.state && pincode && !by_pincode && !same_as_gst) {
       setlocality("");
       setlocality_list_s([]);
     }
   }, [pincode]);
+
+  useEffect(() => {
+    if (isupdating) {
+      settogstate(false);
+      settogcity(false);
+      settogpincode(false)
+    }
+  }, []);
+
 
   const [gst_alldetails, setgst_alldetails] = useState([]);
   const [vendoegst_alldetails, setvendoegst_alldetails] = useState([]);

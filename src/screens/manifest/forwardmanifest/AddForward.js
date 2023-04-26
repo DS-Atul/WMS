@@ -441,7 +441,6 @@ useEffect(() => {
           const data = resp.data.vendor_service[index];
 
           if (data.service_type === 'AIRWAY BILL') {
-            console.log("hellllooooooo brother",respz)
             temp.push('Direct AWB')
           }
           // else if (data.service_type === 'DIRECT VEHICLE') {

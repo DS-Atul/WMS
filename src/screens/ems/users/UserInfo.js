@@ -63,6 +63,9 @@ const UserInfo = () => {
   const [designation_page, setdesignation_page] = useState(1)
   const [designation_id, setdesignation_id] = useState(0)
   const [designation_search, setdesignation_search] = useState("")
+  const [designation_loaded, setdesignation_loaded] = useState(false)
+  const [designation_count, setdesignation_count] = useState(1)
+  const [designation_bottom, setdesignation_bottom] = useState(103)
 
   const userid = useSelector((state) => state.authentication.userdetails);
   const username = useSelector(
@@ -90,6 +93,9 @@ const UserInfo = () => {
   const [home_branch_list, sethome_branch_list] = useState([]);
   const [home_branch, sethome_branch] = useState("");
   const [search_branch, setsearch_branch] = useState("");
+  const [branch_count, setbranch_count] = useState(1)
+  const [branch_loaded, setbranch_loaded] = useState(false)
+  const [branch_bottom, setbranch_bottom] = useState(103)
 
   const [user_department_list, setuser_department_list] = useState([]);
   const [user_department, setuser_department] = useState("");
@@ -97,12 +103,17 @@ const UserInfo = () => {
   const [user_department_id, setuser_department_id] = useState(null);
   const [search_user_department, setsearch_user_department] = useState("");
   const [user_department_err, setuser_department_err] = useState(false);
+  const [department_loaded, setdepartment_loaded] = useState(false)
+  const [department_count, setdepartment_count] = useState(1)
+  const [department_bottom, setdepartment_bottom] = useState(103)
 
   // Ass Branch
   const [ass_branch_list, setass_branch_list] = useState([]);
   const [ass_branch_list2, setass_branch_list2] = useState([]);
   const [ass_branch_page, setass_branch_page] = useState(1);
   const [search_ass_branch, setsearch_ass_branch] = useState("");
+  const [ass_branch_list_loaded, setass_branch_list_loaded] = useState(false)
+const [ass_branch_list_count, setass_branch_list_count] = useState(1)
 
   // Ass Branch
   const [ass_department_list, setass_department_list] = useState([]);
@@ -127,7 +138,7 @@ const UserInfo = () => {
 
   const getBranches = () => {
     let temp3 = [];
-    let data = [];
+
     axios
       .get(
         ServerAddress +
@@ -139,20 +150,32 @@ const UserInfo = () => {
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setbranch_loaded(false);
+        } else {
+          setbranch_loaded(true);
+        }
+
         if (response.data.results.length > 0) {
-          data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([data[index].id, toTitleCase(data[index].name)]);
+          if (page === 1) {
+            temp3 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp3 = [
+              ...home_branch_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
+          setbranch_count(branch_count+2)
           sethome_branch_list(temp3);
         }
+        else{
+          sethome_branch_list([]);
+        }
+
       })
-      // .then((resp) => {
-      //   sethome_branch_list(resp.data);
-      // })
       .catch((err) => {
         alert(`Error Occur in Get`, err);
       });
@@ -160,7 +183,6 @@ const UserInfo = () => {
 
   const getDesignations = () => {
     let temp3 = [];
-    let data = [];
     axios
       .get(
         ServerAddress +
@@ -170,16 +192,31 @@ const UserInfo = () => {
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setdesignation_loaded(false);
+        } else {
+          setdesignation_loaded(true);
+        }
+
         if (response.data.results.length > 0) {
-          data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([data[index].id, toTitleCase(data[index].name)]);
+          if (designation_page === 1) {
+            temp3 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp3 = [
+              ...designation_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
+          setdesignation_count(designation_count+2)
           setdesignation_list(temp3);
         }
+        else{
+          setdesignation_list([]);
+        }
+
       })
       // .then((resp) => {
       //   sethome_branch_list(resp.data);
@@ -190,12 +227,12 @@ const UserInfo = () => {
   };
 
   const getAssBranches = () => {
-    let temp3 = [];
-    let data = [];
+    let temp_2 = [];
+    let temp = [...ass_branch_list];
     axios
       .get(
         ServerAddress +
-        `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
+        `master/all-branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_name=${[
           "",
         ]}&branch_city=${[""]}&vendor=${[
           "",
@@ -205,21 +242,36 @@ const UserInfo = () => {
         }
       )
       .then((response) => {
-        console.log("respose value is", response);
-        if (response.data.results.length > 0) {
-          data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([data[index].id, toTitleCase(data[index].name)]);
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (response.data.next === null) {
+            setass_branch_list_loaded(false);
+          } else {
+            setass_branch_list_loaded(true);
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
-          setass_branch_list(temp3);
-          console.log("temp3 value is", temp3);
-          console.log("temp3 value is d", data);
+          if (ass_branch_page === 1) {
+            temp_2 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp_2 = [
+              ...ass_branch_list,
+              ...response.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.name),
+              ]),
+            ];
+          }
+    
+          setass_branch_list_count(ass_branch_list_count + 2);
+          setass_branch_list(temp_2);
+        }
+        else{
+          setass_branch_list([])
         }
         try {
-          get_assupbranch(up_params.user.id, temp3);
+          get_assupbranch(up_params.user.id, temp_2);
         } catch (error) { }
       })
       // .then((resp) => {
@@ -232,7 +284,6 @@ const UserInfo = () => {
 
   const getDepartments = () => {
     let temp3 = [];
-    let data = [];
     axios
       .get(
         ServerAddress +
@@ -244,16 +295,31 @@ const UserInfo = () => {
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setdepartment_loaded(false);
+        } else {
+          setdepartment_loaded(true);
+        }
+
         if (response.data.results.length > 0) {
-          data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([data[index].id, toTitleCase(data[index].name)]);
+          if (user_department_page === 1) {
+            temp3 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp3 = [
+              ...user_department_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
+          setdepartment_count(department_count+2)
           setuser_department_list(temp3);
         }
+        else{
+          setuser_department_list([]);
+        }
+
         try {
           get_assupdepartment(up_params.user.id, temp3);
         } catch (error) { }
@@ -1171,6 +1237,10 @@ const UserInfo = () => {
                           setsearch_item={setsearch_branch}
                           error_message={"Please Select Any Branch"}
                           error_s={home_branch_err}
+                          loaded={branch_loaded}
+                          count={branch_count}
+                          bottom={branch_bottom}
+                          setbottom={setbranch_bottom}
                         />
                       </div>
                       {/* <div className="mt-1 error-text" color="danger">
@@ -1229,6 +1299,10 @@ const UserInfo = () => {
                           setsearch_item={setdesignation_search}
                           error_message={"Please Select Any Designation"}
                           error_s={designation_err}
+                          loaded={designation_loaded}
+                          count={designation_count}
+                          bottom={designation_bottom}
+                          setbottom={setdesignation_bottom}
                         />
                       </div>
                       {/* <div className="mt-1 error-text" color="danger">
@@ -1268,6 +1342,10 @@ const UserInfo = () => {
                             setpage={setuser_department_page}
                             set_id={setuser_department_id}
                             setsearch_item={setsearch_user_department}
+                            loaded={department_loaded}
+                            count={department_count}
+                            bottom={department_bottom}
+                            setbottom={setdepartment_bottom}
                           />
                         </div>
                         <div className="mt-1 error-text" color="danger">
@@ -1386,6 +1464,8 @@ const UserInfo = () => {
                           page={ass_branch_page}
                           setpage={setass_branch_page}
                           setsearch_item={setsearch_ass_branch}
+                          loaded={ass_branch_list_loaded}
+                          count={ass_branch_list_count}
                         // width={"width"}
                         />
                       </div>

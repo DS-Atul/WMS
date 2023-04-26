@@ -85,11 +85,11 @@ const Assets = () => {
               >
                 {(can_add || user.is_superuser) && (
                   <>
-                    <Nav_Btn
+                    {/* <Nav_Btn
                       btn_name="Assign Branch"
                       icon={<MdAdd size={15} />}
                       form_path="/master/assets/assignbranch"
-                    />
+                    /> */}
                     <Nav_Btn
                       btn_name="Add Asset"
                       icon={<MdAdd size={15} />}

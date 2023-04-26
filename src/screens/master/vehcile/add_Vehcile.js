@@ -34,6 +34,7 @@ const Add_Vehcile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location_data = useLocation();
+  console.log("location_data =====================",location_data)
   // vendor State
   const [vendor_list, setvendor_list] = useState([]);
   const [vendor_name, setvendor_name] = useState("");
@@ -50,28 +51,40 @@ const Add_Vehcile = () => {
   const [circle_btn, setcircle_btn] = useState(true);
   //   State For Saving For Data
   const [vehcile_type, setvehcile_type] = useState([
-    "OWNED VEHCILE",
-    "PARTNER VEHCILE",
+    "Owned Vehicle",
+    "Partner Vehicle",
   ]);
-  const [active_list, setactive_list] = useState(["ACTIVE", "UNACTIVE"]);
-  const [active_selected, setactive_selected] = useState("ACTIVE");
+  const [active_list, setactive_list] = useState(["Active", "Unactive"]);
+  const [active_selected, setactive_selected] = useState("Active");
   const [vehcile_type_s, setvehcile_type_s] = useState("");
   const [trans_name, settrans_name] = useState("");
   const [vehcile_no, setvehcile_no] = useState("");
   const [vehcile_model, setvehcile_model] = useState("");
   const [vendor_data, setvendor_data] = useState([]);
+  const [vehcile, setvehicle] = useState([]);
 
   useEffect(() => {
     try {
       console.log("hello jiii", location_data.state.vehcile);
       if (location_data.state.vehcile) {
+       
         setis_updating(true);
         let vehicle_data = location_data.state.vehcile;
-        setvehcile_type_s(vehicle_data.vehcile_type);
+        setvehicle(vehicle_data)
+        setvehcile_type_s(toTitleCase(vehicle_data.vehcile_type));
         setvehcile_no(vehicle_data.vehcile_no);
-        setvehcile_model(vehicle_data.vehcile_model);
+        setvehcile_model(toTitleCase(vehicle_data.vehcile_model));
         setactive_selected(vehicle_data.active_selected);
+        setvendor_name(toTitleCase(vehicle_data.transporter));
+        if(vehicle_data.vehcile_status === true){
+          setactive_selected("Active")
+        }
+        else{
+          setactive_selected("Unactive")
+
+        }
       }
+
     } catch (error) {}
   }, []);
 
@@ -119,6 +132,77 @@ const Add_Vehcile = () => {
       });
   };
 
+  const upadte_vehcile = (values) => {
+    let id = vehcile.id;
+    let fields_names = Object.entries({
+      transporter:vendor_name ? vendor_name : "",
+      vehcile_model: vehcile_model,
+      vehcile_no: vehcile_no,
+      vehcile_type: vehcile_type_s,
+    });
+    let change_fields = {};
+    console.log("fields_names ========", fields_names)
+    var prom = new Promise((resolve, reject) => {
+      for (let j = 0; j < fields_names.length; j++) {
+        const ele = fields_names[j];
+        let prev = location_data.state.vehcile[`${ele[0]}`];
+        let new_v = ele[1];
+        if (prev !== new_v.toUpperCase()) {
+          change_fields[`${ele[0]}`] = new_v.toUpperCase();
+        }
+        if (j === fields_names.length - 1) resolve();
+      }
+    });
+    prom.then(() => {
+      axios
+        .put(
+          ServerAddress + "master/update_vehicle/" + id,
+          {
+            vehcile_no: vehcile_no.toUpperCase(),
+            vehcile_model: vehcile_model,
+            vehcile_status: active_selected === "Active" ? "True" : "False",
+            vehcile_type: vehcile_type_s,
+            transporter_name: vendor_id,
+            change_fields: change_fields,
+
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(function (response) {
+          console.log(response.data)
+          if (response.data.status === "success") {
+            dispatch(setToggle(true));
+            dispatch(setShowAlert(true));
+            dispatch(
+              setDataExist(
+                `"${toTitleCase(
+                  vehcile_no
+                )}" Updated sucessfully`
+              )
+            );
+            dispatch(setAlertType("info"));
+            navigate(-1);
+          } else if (response.data === "duplicate") {
+            dispatch(setShowAlert(true));
+            dispatch(
+              setDataExist(
+                `"${toTitleCase(
+                 vehcile_no
+                )}" already exists`
+              )
+            );
+            dispatch(setAlertType("warning"));
+          }
+        })
+        .catch(function () {
+          alert("Error Error While  Updateing Vehicle");
+        });
+    });
+  };
   const get_vendor = () => {
     let vendor_temp = [];
     let data = [];
@@ -190,7 +274,7 @@ const Add_Vehcile = () => {
         <div className="mt-3">
           <PageTitle page={is_updating ? "Update Vehicle" : "Add Vehicle"} />
           <Title
-            title={is_updating ? "Update Vehicle" : "Add  Vehicle"}
+            title={is_updating ? "Update Vehicle" : "Add Vehicle"}
             parent_title="Masters"
           />
         </div>
@@ -230,7 +314,7 @@ const Add_Vehcile = () => {
                       />
                     </div>
                   </Col>
-                  {vehcile_type_s === "PARTNER VEHCILE" && (
+                  {vehcile_type_s === "Partner Vehicle" && (
                     <Col lg={3} md={4} sm={4}>
                       <div className="mb-3">
                         <Label className="header-child">
@@ -333,7 +417,7 @@ const Add_Vehcile = () => {
                   if (vehcile_type_s === "") {
                     setvehicle_type_error(true);
                   } else if (
-                    vehcile_type_s === "PARTNER VEHCILE" &&
+                    vehcile_type_s === "Partner Vehicle" &&
                     vendor_name === ""
                   ) {
                     setvendor_error(true);
@@ -342,17 +426,21 @@ const Add_Vehcile = () => {
                   } else if (vehcile_model === "") {
                     setvehicle_model_error(true);
                   } else {
+                    is_updating ? upadte_vehcile() : 
                     add_vehcile();
                   }
                 }}
               >
-                Save
+                {is_updating ? "Update" : "Save"
+
+                }
+                
               </Button>
 
               <Button
                 className="btn btn-info m-1 cu_btn"
                 type="button"
-                // onClick={handleAction}
+                onClick={()=>navigate(-1)}
               >
                 Cancel
               </Button>

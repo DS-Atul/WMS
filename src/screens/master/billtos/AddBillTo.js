@@ -91,6 +91,7 @@ const AddClient = () => {
   const [state_loaded, setstate_loaded] = useState(false);
   const [state_count, setstate_count] = useState(1);
   const [state_bottom, setstate_bottom] = useState(103)
+  const [togstate, settogstate] = useState(false)
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -101,6 +102,7 @@ const AddClient = () => {
   const [city_loaded, setcity_loaded] = useState(false);
   const [city_count, setcity_count] = useState(1);
   const [city_bottom, setcity_bottom] = useState(103)
+  const [togcity, settogcity] = useState(false)
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -115,6 +117,7 @@ const AddClient = () => {
   const [loaded_pincode, setloaded_pincode] = useState(false);
   const [pincode_count, setpincode_count] = useState(1);
   const [pincode_bottom, setpincode_bottom] = useState(103)
+  const [togpincode, settogpincode] = useState(false)
 
   const [locality, setlocality] = useState("");
   const [pincode_loaded, setpincode_loaded] = useState(false);
@@ -254,7 +257,7 @@ const getStates = async () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
-
+    settogstate(true);
     if(resp.data.next ===null) {
       setstate_loaded(false);
     } else {
@@ -300,7 +303,7 @@ const getStates = async () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-  
+      settogcity(true);
       if(resp.data.next ===null) {
         setcity_loaded(false);
       } else {
@@ -344,7 +347,7 @@ const getPincode = async (place_id, filter_by) => {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
-    
+    settogpincode(true)
     if(resp.data.next ===null){
       setloaded_pincode(false);
     } else {
@@ -878,7 +881,27 @@ console.log("associate_branch_list_1", associate_branch_list_1)
   }, [state]);
 
   useEffect(() => {
+    if (state !== "" && togstate) {
+      setcity("");
+      setcity_list_s([]);
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [state]);
+
+  useEffect(() => {
     if (!up_params && city && !by_pincode) {
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [city]);
+
+  useEffect(() => {
+    if (city !== "" && togcity) {
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
@@ -893,11 +916,26 @@ console.log("associate_branch_list_1", associate_branch_list_1)
     }
   }, [pincode]);
 
+  useEffect(() => {
+    if (pincode !== "" && togpincode) {
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [pincode]);
+
   useLayoutEffect(() => {
     if (state !== "") {
       setpincode_loaded(true);
     }
   }, [state, city]);
+
+  useEffect(() => {
+    if (isupdating) {
+      settogstate(false);
+      settogcity(false);
+      settogpincode(false)
+    }
+  }, []);
 
   useEffect(() => {
     if (

@@ -2495,6 +2495,7 @@ const AddOrder = () => {
   const [state_loaded, setstate_loaded] = useState(false)
   const [state_count, setstate_count] = useState(1)
   const [state_bottom, setstate_bottom] = useState(103)
+  const [togstate, settogstate] = useState(false)
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -2505,6 +2506,7 @@ const AddOrder = () => {
   const [city_loaded, setcity_loaded] = useState(false)
   const [city_count, setcity_count] = useState(1)
   const [city_bottom, setcity_bottom] = useState(103)
+  const [togcity, settogcity] = useState(false)
 
   const [pincode_page, setpincode_page] = useState(1);
   const [pincode_search_item, setpincode_search_item] = useState("");
@@ -2512,6 +2514,7 @@ const AddOrder = () => {
   const [load_pincode, setload_pincode] = useState(false)
   const [pincode_count, setpincode_count] = useState(1)
   const [pincode_bottom, setpincode_bottom] = useState(103)
+  const [togpincode, settogpincode] = useState(false)
 
   const [pincode_list_error, setpincode_list_error] = useState(false);
   const [locality, setlocality] = useState("");
@@ -2528,6 +2531,10 @@ const AddOrder = () => {
   const [consginee_st, setconsginee_st] = useState("");
   const [consginee_c, setconsginee_c] = useState("");
   const [consignee_p_id, setconsignee_p_id] = useState(0);
+  
+  const [togstate_c, settogstate_c] = useState(false)
+  const [togcity_c, settogcity_c] = useState(false)
+  const [togpincode_c, settogpincode_c] = useState(false)
 
   const getStates = () => {
     // let state_list = [...state_list_s];
@@ -2541,6 +2548,7 @@ const AddOrder = () => {
         }
       )
       .then((resp) => {
+        settogstate(true);
         if (resp.data.results.length > 0) {
           if (resp.data.next === null) {
             setstate_loaded(false);
@@ -2587,6 +2595,7 @@ const AddOrder = () => {
       .then((resp) => {
         if (resp.data.results.length > 0) {
           if (val === "Shipper") {
+            settogcity(true);
             if (resp.data.next === null) {
               setcity_loaded(false);
             } else {
@@ -2607,6 +2616,7 @@ const AddOrder = () => {
             setcity_list_s(cities_list);
           }
           else {
+            settogcity_c(true)
             if (resp.data.next === null) {
               setcityc_loaded(false);
             } else {
@@ -2654,12 +2664,14 @@ const AddOrder = () => {
       )
       .then((resp) => {
         if (filter_by !== "pincode") {
-          if (resp.data.next === null) {
-            setload_pincode(false);
-          } else {
-            setload_pincode(true);
-          }
+  
           if (val === "Shipper") {
+            settogpincode(true)
+            if (resp.data.next === null) {
+              setload_pincode(false);
+            } else {
+              setload_pincode(true);
+            }
             if (pincode_page == 1) {
               pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
             } else {
@@ -2672,6 +2684,7 @@ const AddOrder = () => {
             setpincode_list_s(pincode_list);
           }
           else {
+            settogpincode_c(true)
             if (resp.data.next === null) {
               setloadc_pincode(false);
             } else {
@@ -2917,6 +2930,7 @@ const AddOrder = () => {
         }
       )
       .then((resp) => {
+        settogstate_c(true)
         if (resp.data.results.length > 0) {
           if (resp.data.next === null) {
             setstatec_loaded(false);
@@ -3243,7 +3257,27 @@ const AddOrder = () => {
   }, [state]);
 
   useEffect(() => {
+    if (state !== "" && togstate) {
+      setcity("");
+      setcity_list_s([]);
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [state]);
+
+  useEffect(() => {
     if (!location.state && city && !by_pincode) {
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [city]);
+
+  useEffect(() => {
+    if (city !== "" && togcity) {
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
@@ -3258,10 +3292,35 @@ const AddOrder = () => {
     }
   }, [pincode]);
 
+  useEffect(() => {
+    if (pincode !== "" && togpincode) {
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [pincode]);
+
+  useEffect(() => {
+    if (isupdating) {
+      settogstate(false);
+      settogcity(false);
+      settogpincode(false)
+    }
+  }, []);
 
   useEffect(() => {
     console.log("by_pincode_f_c========", by_pincode_f_c)
     if (!location.state && consginee_st && !by_pincode_f_c) {
+      setconsginee_c("");
+      setcity_list__c([]);
+      setconsignee_pincode("");
+      setpincode_list_f_c([]);
+      setlocality_c("");
+      setlocality_list_s_c([]);
+    }
+  }, [consginee_st]);
+
+  useEffect(() => {
+    if (consginee_st !== "" && togstate_c) {
       setconsginee_c("");
       setcity_list__c([]);
       setconsignee_pincode("");
@@ -3281,11 +3340,35 @@ const AddOrder = () => {
   }, [consginee_c]);
 
   useEffect(() => {
+    if (consginee_c !== "" && togcity_c) {
+      setconsignee_pincode("");
+      setpincode_list_f_c([]);
+      setlocality_c("");
+      setlocality_list_s_c([]);
+    }
+  }, [consginee_c]);
+
+  useEffect(() => {
     if (!location.state && consignee_pincode && !by_pincode_f_c) {
       setlocality_c("");
       setlocality_list_s_c([]);
     }
   }, [consignee_pincode]);
+ 
+  useEffect(() => {
+    if (consignee_pincode !== "" && togpincode_c) {
+      setlocality_c("");
+      setlocality_list_s_c([]);
+    }
+  }, [consignee_pincode]);
+
+  useEffect(() => {
+    if (isupdating) {
+      settogstate_c(false);
+      settogcity_c(false);
+      settogpincode_c(false)
+    }
+  }, []);
 
   return (
     <div>

@@ -206,10 +206,10 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
                <td>{vehcile.vehcile_model}</td>
                <td>{vehcile.vehcile_status  ?
             <div>
-                <img src={cross}  height="18px"  width="18px" /> 
+                <img src={correct}  height="18px"  width="18px" /> 
             </div> :
             <div>
-                <img src={correct} height="18px"  width="18px"/>
+                <img src={cross} height="18px"  width="18px"/>
             </div>  
             }</td>
               

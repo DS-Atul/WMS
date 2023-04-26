@@ -7,6 +7,7 @@ import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import Modal from "react-bootstrap/Modal";
 import {
   Card,
   Col,
@@ -17,7 +18,7 @@ import {
   Form,
   Input,
   Button,
-  FormFeedback,
+  FormGroup,
 } from "reactstrap";
 // import {
 //   runsheetId,
@@ -201,6 +202,9 @@ const ChangedRusheet = () => {
           // vehicle_number: vehicle_no),
           // is_contract_vehicle: is_contract_based,
           contracted_vehicle: runsheet.is_contract_vehicle ? contract_based_vehicle_id : null,
+          cm_transit_status: status_toggle === true ? cm_current_status : "",
+          cm_current_status: cm_current_status.toUpperCase(),
+          cm_remarks: toTitleCase(message).toUpperCase(),
         },
         {
           headers: {
@@ -262,8 +266,136 @@ const ChangedRusheet = () => {
     } catch (error) { }
   }, []);
 
+  const update_runsheetstatus = (id) => {
+
+    axios
+      .put(
+        ServerAddress + "runsheet/update_runsheet/" + id,
+        {
+
+          cm_current_status: "REJECTED",
+          cm_remarks: toTitleCase(message).toUpperCase(),
+          change_fields: {},
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          // dispatch(Toggle(true))
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Status Updated sucessfully`));
+          dispatch(setAlertType("info"));
+            navigate(-1);
+        }
+      })
+      .catch(function (err) {
+        alert(`rror While  Updateing Coloader ${err}`);
+      });
+  };
+
+   //For Checker & Maker
+   const [toggle_rejected, settoggle_rejected] = useState(false);
+   const [message, setmessage] = useState("");
+   const [message_error, setmessage_error] = useState(false);
+   const [status_toggle, setstatus_toggle] = useState(false);
+   const [cm_current_status, setcm_current_status] = useState("");
+ 
+   const [show, setShow] = useState(false);
+ 
+   const handleClose = () => setShow(false);
+   const handleShow = () => {
+     setShow(true);
+     setmessage_error(false);
+   };
+ 
+   useEffect(() => {
+     settoggle_rejected(false);
+   }, []);
+ 
+ 
+   const handleSubmit2 = () => {
+     if (message == "") {
+       setmessage_error(true);
+     } else {
+      update_runsheetstatus(runsheet.id);
+       setShow(false);
+     }
+   };
+ 
+   useEffect(() => {
+     if (
+       user.user_department_name + " " + user.designation_name ===
+         "CUSTOMER SERVICE EXECUTIVE" ||
+       user.user_department_name + " " + user.designation_name ===
+         "DATA ENTRY OPERATOR"
+     ) {
+       setcm_current_status("NOT APPROVED");
+       setstatus_toggle(true);
+     } else if (
+       user.user_department_name + " " + user.designation_name === 
+       "OPERATION MANAGER"
+     ) {
+       setcm_current_status("VERIFIED OPERATION MANAGER");
+       setstatus_toggle(true);
+     } else if (
+       user.user_department_name + " " + user.designation_name ===
+       "CUSTOMER SUPPORT MANAGER"
+     ) {
+       setcm_current_status("VERIFIED CUSTOMER SUPPORT MANAGER");
+       setstatus_toggle(true);
+     } else if (user.user_department_name === "ACCOUNTANT") {
+       setcm_current_status("VERIFIED ACCOUNTANT");
+       setstatus_toggle(true);
+     } else if (
+       user.user_department_name + " " + user.designation_name ===
+       "ACCOUNT MANAGER"
+     ) {
+       setcm_current_status("VERIFIED ACCOUNT MANAGER");
+       setstatus_toggle(true);
+     } else if (user.user_department_name === "ADMIN" || user.is_superuser) {
+       setcm_current_status("APPROVED");
+       setstatus_toggle(true);
+     } else {
+       setcm_current_status("NOT APPROVED");
+       // setstatus_toggle(false)
+     }
+   }, [user, isupdating]);
   return (
     <div>
+         <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reject Resion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormGroup>
+            <Label for="exampleText">Text Area</Label>
+            <Input
+              id="exampleText"
+              name="text"
+              type="textarea"
+              style={{ height: "90px" }}
+              onChange={(e) => {
+                setmessage(e.target.value);
+              }}
+            />
+            <div className="mt-1 error-text" color="danger">
+              {message_error ? "Please Enter Reject Resion" : null}
+            </div>
+          </FormGroup>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={() => handleSubmit2()}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
@@ -489,14 +621,56 @@ const ChangedRusheet = () => {
         <div className="m-3">
           <Col lg={12}>
             <div className="mb-1 footer_btn">
-              <Button
+            <Button
+                  type="submit"
+                  className={
+                    isupdating &&
+                    (user.user_department_name + " " + user.designation_name ===
+                      "DATA ENTRY OPERATOR" ||
+                      user.user_department_name +
+                        " " +
+                        user.designation_name ===
+                        "CUSTOMER SERVICE EXECUTIVE")
+                      ? "btn btn-info m-1"
+                      : !isupdating
+                      ? "btn btn-info m-1"
+                      : "btn btn-success m-1"
+                  }
+                  onClick={() =>handleSubmit()}
+                >
+                  {isupdating &&
+                  (user.user_department_name + " " + user.designation_name ===
+                    "DATA ENTRY OPERATOR" ||
+                    user.user_department_name + " " + user.designation_name ===
+                      "CUSTOMER SERVICE EXECUTIVE" ||
+                    user.is_superuser)
+                    ? "Update"
+                    : !isupdating
+                    ? "Save"
+                    : "Approved"}
+                </Button>
+
+              {/* <Button
                 type="button"
                 className="btn btn-info m-1 cu_btn"
                 onClick={() => handleSubmit()}
               >
                 Update
-              </Button>
-
+              </Button> */}
+              {isupdating &&
+                user.user_department_name + " " + user.designation_name !==
+                  "DATA ENTRY OPERATOR" &&
+                user.user_department_name + " " + user.designation_name !==
+                  "CUSTOMER SERVICE EXECUTIVE" &&
+                !user.is_superuser && (
+                  <button
+                    type="button"
+                    className="btn btn-danger m-1"
+                    onClick={handleShow}
+                  >
+                    Rejected
+                  </button>
+                )}
               <Button
                 type="button"
                 className="btn btn-info m-1 cu_btn"

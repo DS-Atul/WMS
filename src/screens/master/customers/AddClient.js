@@ -62,6 +62,7 @@ const AddClient = (props) => {
   const [state_loaded, setstate_loaded] = useState(false);
   const [state_count, setstate_count] = useState(1);
   const [state_bottom, setstate_bottom] = useState(103)
+  const [togstate, settogstate] = useState(false)
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -72,6 +73,7 @@ const AddClient = (props) => {
   const [city_loaded, setcity_loaded] = useState(false);
   const [city_count, setcity_count] = useState(1);
   const [city_bottom, setcity_bottom] = useState(103)
+  const [togcity, settogcity] = useState(false)
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -85,6 +87,7 @@ const AddClient = (props) => {
   const [load_pincode, setload_pincode] = useState(false)
   const [pincode_count, setpincode_count] = useState(1)
   const [pincode_bottom, setpincode_bottom] = useState(103)
+  const [togpincode, settogpincode] = useState(false)
 
   const [locality, setlocality] = useState("");
   const [pincode_loaded, setpincode_loaded] = useState(false);
@@ -619,7 +622,7 @@ const AddClient = (props) => {
         }
       )
       .then((resp) => {
-
+        settogstate(true);
         if (resp.data.next === null) {
           setstate_loaded(false);
         } else {
@@ -662,7 +665,7 @@ const AddClient = (props) => {
         }
       )
       .then((resp) => {
-
+        settogcity(true);
         if (resp.data.next === null) {
           setcity_loaded(false);
         } else {
@@ -706,7 +709,7 @@ const AddClient = (props) => {
         }
       )
       .then((resp) => {
-
+        settogpincode(true);
         if (resp.data.next === null) {
           setload_pincode(false);
         } else {
@@ -2871,6 +2874,18 @@ const AddClient = (props) => {
     }
   }, [state]);
 
+  
+  useEffect(() => {
+    if (state !== "" && togstate) {
+      setcity("");
+      setcity_list_s([]);
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [state]);
+
   useEffect(() => {
     if (!isupdating && city && !by_pincode) {
       setpincode("");
@@ -2881,11 +2896,35 @@ const AddClient = (props) => {
   }, [city]);
 
   useEffect(() => {
+    if (city !== "" && togcity) {
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [city]);
+
+  useEffect(() => {
+    if (pincode !== "" && togpincode) {
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [pincode]);
+
+  useEffect(() => {
     if (!isupdating && pincode && !by_pincode) {
       setlocality("");
       setlocality_list_s([]);
     }
   }, [pincode]);
+
+  useEffect(() => {
+    if (isupdating) {
+      settogstate(false);
+      settogcity(false);
+      settogpincode(false)
+    }
+  }, []);
 
   useEffect(() => {
     let timeoutId;

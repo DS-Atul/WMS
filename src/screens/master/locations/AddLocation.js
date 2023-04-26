@@ -741,6 +741,7 @@ const AddLocation = () => {
       setpincode("");
     }
   }, [state]);
+  
   useEffect(() => {
     if (city !== "" && togcity) {
       setpincode("");
