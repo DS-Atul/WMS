@@ -39,6 +39,7 @@ const AddClient = (props) => {
   const dispatch = useDispatch();
 
   const { state: up_params } = useLocation();
+  
 
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -60,6 +61,7 @@ const AddClient = (props) => {
   const [state_search_item, setstate_search_item] = useState("");
   const [state_loaded, setstate_loaded] = useState(false);
   const [state_count, setstate_count] = useState(1);
+  const [state_bottom, setstate_bottom] = useState(103)
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -69,6 +71,7 @@ const AddClient = (props) => {
   const [city_search_item, setcity_search_item] = useState("");
   const [city_loaded, setcity_loaded] = useState(false);
   const [city_count, setcity_count] = useState(1);
+  const [city_bottom, setcity_bottom] = useState(103)
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -79,6 +82,9 @@ const AddClient = (props) => {
   const [pincode_page, setpincode_page] = useState(1);
   const [pincode_search_item, setpincode_search_item] = useState("");
   const [pincode_id, setpincode_id] = useState(0);
+  const [load_pincode, setload_pincode] = useState(false)
+  const [pincode_count, setpincode_count] = useState(1)
+  const [pincode_bottom, setpincode_bottom] = useState(103)
 
   const [locality, setlocality] = useState("");
   const [pincode_loaded, setpincode_loaded] = useState(false);
@@ -86,6 +92,9 @@ const AddClient = (props) => {
   const [locality_page, setlocality_page] = useState(1);
   const [locality_search_item, setlocality_search_item] = useState("");
   const [locality_id, setlocality_id] = useState(0);
+  const [locality_loaded, setlocality_loaded] = useState(false)
+  const [locality_count, setlocality_count] = useState(1)
+  const [locality_bottom, setlocality_bottom] = useState(103)
   const [locality_error, setlocality_error] = useState(false);
   const [locality_error2, setlocality_error2] = useState(false);
 
@@ -101,12 +110,12 @@ const AddClient = (props) => {
     "DONT",
     "DONT",
     "DONT",
-    
+
   ];
   const [active_tabs, setactive_tabs] = useState(temp_active_tabs);
   const [activeTab, setactiveTab] = useState("1");
   const [activeAirTab, setactiveAirTab] = useState("02");
-  const[activeSurfaceTab, setactiveSurfaceTab] = useState("03");
+  const [activeSurfaceTab, setactiveSurfaceTab] = useState("03");
   const [is_oda_air, setis_oda_air] = useState(false);
   const [is_oda_surface, setis_oda_surface] = useState(false);
 
@@ -127,7 +136,7 @@ const AddClient = (props) => {
   const [per_charge_list_air, setper_charge_list_air] =
     useState(per_tmp_lst_air);
   let per_tmp_lst_srfc = [[["", ""], "", ""]];
-  const [per_charge_list_surface,setper_charge_list_surface] = useState(per_tmp_lst_srfc)
+  const [per_charge_list_surface, setper_charge_list_surface] = useState(per_tmp_lst_srfc)
 
   // Business Info
   const [agreement, setagreement] = useState(false);
@@ -372,8 +381,8 @@ const AddClient = (props) => {
   const [commodities_page, setcommodities_page] = useState(1)
   const [commodities_search_txt, setcommodities_search_txt] = useState("")
   const [commodities_error, setcommodities_error] = useState(false);
-const [commodities_loaded, setcommodities_loaded] = useState(false);
-const [commodities_count, setcommodities_count] = useState(1);
+  const [commodities_loaded, setcommodities_loaded] = useState(false);
+  const [commodities_count, setcommodities_count] = useState(1);
 
 
   // Card Control
@@ -494,455 +503,295 @@ const [commodities_count, setcommodities_count] = useState(1);
 
 
   // set and navigate function
-  const setAllAdd = () =>{
+  const setAllAdd = () => {
     setEmpty();
-            dispatch(
-              setDataExist(
-                `New Client "${toTitleCase(
-                  validation.values.customer_name
-                )}" Added Successfully`
-              )
-            );
-            dispatch(setAlertType("success"));
-            dispatch(setShowAlert(true));
-            navigate(-1);
-  } 
+    dispatch(
+      setDataExist(
+        `New Client "${toTitleCase(
+          validation.values.customer_name
+        )}" Added Successfully`
+      )
+    );
+    dispatch(setAlertType("success"));
+    dispatch(setShowAlert(true));
+    navigate(-1);
+  }
 
   const setAllUpdate = () => {
-     setEmpty();
-            dispatch(
-              setDataExist(
-                `Client '${validation.values.customer_name}' Updated Sucessfully`
-              )
-            );
-            dispatch(setAlertType("info"));
-            dispatch(setShowAlert(true));
-            navigate(-1);
+    setEmpty();
+    dispatch(
+      setDataExist(
+        `Client '${validation.values.customer_name}' Updated Sucessfully`
+      )
+    );
+    dispatch(setAlertType("info"));
+    dispatch(setShowAlert(true));
+    navigate(-1);
   }
 
 
   // Commodities API Function
-
-  const getCommodities = async () => {
+  const getCommodities = () => {
     let com_list = [];
-    try {
-      const resp = await axios.get(
+    axios
+      .get(
         ServerAddress +
-          `master/all_commodities/?search=${commodities_search_txt}&p=${commodities_page}&records=${10}&commodity_type=${""}&commodity_name=${""}&data=all`,
+        `master/all_commodities/?search=${commodities_search_txt}&p=${commodities_page}&records=${10}&commodity_type=${""}&commodity_name=${""}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      );
-      // console.log("commidity resp", resp)
-      if (resp.data.results.length > 0) {
-        if (resp.data.next === null) {
-          setcommodities_loaded(false);
-        } else {
-          setcommodities_loaded(true);
-        }
-        if (commodities_page === 1) {
-          com_list = resp.data.results.map((v) => [
-            v.id,
-            toTitleCase(v.commodity_name),
-          ]);
-        } else {
-          com_list = [
-            ...commodities_list,
-            ...resp.data.results.map((v) => [
+      )
+      .then((resp) => {
+        // console.log("commidity resp", resp)
+
+        if (resp.data.results.length > 0) {
+          if (resp.data.next === null) {
+            setcommodities_loaded(false)
+          }
+          else {
+            setcommodities_loaded(true)
+          }
+          if (commodities_page === 1) {
+            com_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.commodity_name),
-            ]),
-          ];
+            ]);
+          } else {
+            com_list = [
+              ...commodities_list,
+              ...resp.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.commodity_name),
+              ]),
+            ];
+          }
+          setcommodities_count(commodities_count + 2)
+          setcommodities_list(com_list)
         }
-      }
-      if (
-        !up_params.bill_to_id &&
-        commodities_page === 1 &&
-        commodities_search_txt == ""
-      ) {
-        let cust_up = up_params.customer;
-        console.log("cust_up-----", cust_up);
-        console.log("com_list----", com_list);
+        else{
+          setcommodities_list([])
+        }
         try {
-          let commodities_prv = cust_up.commodities;
-          console.log("commodities_prv----", commodities_prv);
-          let com_list1 = com_list.filter(
-            (v) => !commodities_prv.includes(v[0])
-          );
-          console.log("");
-          let com_list2 = com_list.filter((v) =>
-            commodities_prv.includes(v[0])
-          );
-          setcommodities_count(commodities_count + 2);
-          setcommodities_list(com_list1);
-          setcommodities_list2(com_list2);
-        } catch (error) {
-          setcommodities_count(commodities_count + 2);
-          setcommodities_list(com_list);
-        }
-      } else {
-        setcommodities_count(commodities_count + 2);
-        setcommodities_list(com_list);
-      }
-    } catch (error) {
-      alert(`Error Occur in Get Commidities, ${error}`);
-    }
+          console.log("up_params======++++++", up_params)
+          get_CommodityDetails(up_params.customer.id);
+        } catch (error) { }
+
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Commidities, ${err}`);
+      });
   };
-  
+
+  const get_CommodityDetails = (id) => {
+
+    let commodity_temp = [];
+    let data = [];
+    axios
+      .get(
+        ServerAddress +
+        `master/get_client_commodities/?client_id=${id}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        data = response.data.commodities;
+
+        if (data.length > 0) {
+          commodity_temp = data.map((v) => [v.commodities, toTitleCase(v.commodities__commodity_name)]);
+          setcommodities_list2(commodity_temp)
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Commodity, ${err}`);
+      });
+  };
 
   // Locations API Functions
-//   const getStates = () => {
-//     let state_list = [];
-//     axios
-//       .get(
-//         ServerAddress +
-//           `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}&data=all`,
-//         {
-//           headers: { Authorization: `Bearer ${accessToken}` },
-//         }
-//       )
-//       .then((resp) => {
-
-// if(resp.data.next === null){
-//   setstate_loaded(false);
-// } else {
-//   setstate_loaded(true);
-// }
-//         if (resp.data.results.length > 0) {
-//           if (state_page === 1) {
-//             state_list = resp.data.results.map((v) => [
-//               v.id,
-//               toTitleCase(v.state),
-//             ]);
-//           } else {
-//             state_list = [
-//               ...state_list_s,
-//               ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
-//             ];
-//           }
-//         }
-//         setcity_list_s([]);
-//         setstate_count(state_count+2);
-//         setstate_list_s(state_list);
-//       })
-//       .catch((err) => {
-//         alert(`Error Occur in Get States, ${err}`);
-//       });
-//   };
-
-const getStates = async () => {
-  try {
+  const getStates = () => {
     let state_list = [];
-    const resp = await axios.get(
-      ServerAddress +
+    axios
+      .get(
+        ServerAddress +
         `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}&data=all`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
 
-    if (resp.data.next === null) {
-      setstate_loaded(false);
-    } else {
-      setstate_loaded(true);
-    }
-
-    if (resp.data.results.length > 0) {
-      if (state_page === 1) {
-        state_list = resp.data.results.map((v) => [
-          v.id,
-          toTitleCase(v.state),
-        ]);
-      } else {
-        state_list = [
-          ...state_list_s,
-          ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
-        ];
-      }
-    }
-
-    setcity_list_s([]);
-    setstate_count(state_count + 2);
-    setstate_list_s(state_list);
-  } catch (err) {
-    alert(`Error Occur in Get States, ${err}`);
-  }
-};
-
-
-//   const getCities = (place_id, filter_by) => {
-//     setby_pincode(false);
-//     let cities_list = [];
-//     axios
-//       .get(
-//         ServerAddress +
-//           `master/all_cities/?search=${""}&p=${city_page}&records=${20}&city_search=${city_search_item}&data=all` +
-//           "&place_id=" +
-//           place_id +
-//           "&filter_by=" +
-//           filter_by,
-//         {
-//           headers: { Authorization: `Bearer ${accessToken}` },
-//         }
-//       )
-//       .then((resp) => {
-
-//         if(resp.data.next === null){
-//           setcity_loaded(false);
-//         } else {
-//           setcity_loaded(true);
-//         }
-//         if (resp.data.results.length > 0) {
-//           if (city_page === 1) {
-//             cities_list = resp.data.results.map((v) => [
-//               v.id,
-//               toTitleCase(v.city),
-//             ]);
-//           } else {
-//             cities_list = [
-//               ...city_list_s,
-//               ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-//             ];
-//           }
-// setcity_count(city_count+2);
-//           setcity_list_s(cities_list);
-//         } else {
-//           setcity_list_s([]);
-//         }
-//       })
-//       .catch((err) => {
-//         alert(`Error Occur in Get City, ${err}`);
-//       });
-//   };
-
-
-const getCities = async (place_id, filter_by) => {
-  setby_pincode(false);
-  let cities_list = [];
-
-  try {
-    const resp = await axios.get(ServerAddress +
-      `master/all_cities/?search=${""}&p=${city_page}&records=${20}&city_search=${city_search_item}&data=all` +
-      "&place_id=" +
-      place_id +
-      "&filter_by=" +
-      filter_by, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        if (resp.data.next === null) {
+          setstate_loaded(false);
+        } else {
+          setstate_loaded(true);
+        }
+        if (resp.data.results.length > 0) {
+          if (state_page === 1) {
+            state_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.state),
+            ]);
+          } else {
+            state_list = [
+              ...state_list_s,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
+            ];
+          }
+        }
+        setstate_count(state_count + 2);
+        setstate_list_s(state_list);
+      })
+      .catch((err) => {
+        console.warn(`Error Occur in Get States, ${err}`);
       });
+  };
 
-    if (resp.data.next === null) {
-      setcity_loaded(false);
-    } else {
-      setcity_loaded(true);
-    }
+  const getCities = (place_id, filter_by) => {
+    setby_pincode(false);
+    let cities_list = [];
+    axios
+      .get(
+        ServerAddress +
+        `master/all_cities/?search=${""}&p=${city_page}&records=${20}&city_search=${city_search_item}&data=all` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
 
-    if (resp.data.results.length > 0) {
-      if (city_page === 1) {
-        cities_list = resp.data.results.map((v) => [
-          v.id,
-          toTitleCase(v.city),
-        ]);
-      } else {
-        cities_list = [
-          ...city_list_s,
-          ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-        ];
-      }
-      setcity_count(city_count + 2);
-      setcity_list_s(cities_list);
-    } else {
-      setcity_list_s([]);
-    }
-  } catch (err) {
-    alert(`Error Occur in Get City, ${err}`);
-  }
-};
+        if (resp.data.next === null) {
+          setcity_loaded(false);
+        } else {
+          setcity_loaded(true);
+        }
+        if (resp.data.results.length > 0) {
+          if (city_page === 1) {
+            cities_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.city),
+            ]);
+          } else {
+            cities_list = [
+              ...city_list_s,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+            ];
+          }
+          setcity_count(city_count + 2);
+          setcity_list_s(cities_list);
+        } else {
+          setcity_list_s([]);
+        }
+      })
+      .catch((err) => {
+        console.warn(`Error Occur in Get City, ${err}`);
+      });
+  };
 
-  // const getPincode = (place_id, filter_by) => {
-  //   let pincode_list = [];
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //         `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}&data=all` +
-  //         "&place_id=" +
-  //         place_id +
-  //         "&filter_by=" +
-  //         filter_by,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((resp) => {
-  //       if (filter_by !== "pincode") {
-  //         if (pincode_page === 1) {
-  //           pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-  //         } else {
-  //           pincode_list = [
-  //             ...pincode_list_s,
-  //             ...resp.data.results.map((v) => [v.id, v.pincode]),
-  //           ];
-  //         }
-
-  //         setpincode_list_s(pincode_list);
-  //       } else if (resp.data.results.length > 0) {
-  //         setcity(toTitleCase(resp.data.results[0].city_name));
-  //         setcity_id(resp.data.results[0].city);
-  //         setstate(toTitleCase(resp.data.results[0].state_name));
-  //         setstate_id(resp.data.results[0].state);
-  //         setpincode(resp.data.results[0].pincode);
-  //         setpincode_id(resp.data.results[0].id);
-  //       } else {
-  //         dispatch(
-  //           setDataExist(
-  //             "You entered invalid pincode or pincode not available in database"
-  //           )
-  //         );
-  //         dispatch(setAlertType("warning"));
-  //         dispatch(setShowAlert(true));
-  //         setcity("");
-  //         setcity_id("");
-  //         // setstate("");
-  //         setstate_id("");
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get City, ${err}`);
-  //     });
-  // };
-
-  const getPincode = async (place_id, filter_by) => {
+  const getPincode = (place_id, filter_by) => {
     let pincode_list = [];
-  
-    try {
-      const resp = await axios.get(ServerAddress +
+    axios
+      .get(
+        ServerAddress +
         `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}&data=all` +
         "&place_id=" +
         place_id +
         "&filter_by=" +
-        filter_by, {
+        filter_by,
+        {
           headers: { Authorization: `Bearer ${accessToken}` },
-        });
-  
-      if (filter_by !== "pincode") {
-        if (pincode_page === 1) {
-          pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-        } else {
-          pincode_list = [          ...pincode_list_s,          ...resp.data.results.map((v) => [v.id, v.pincode]),
-          ];
         }
-  
-        setpincode_list_s(pincode_list);
-      } else if (resp.data.results.length > 0) {
-        setcity(toTitleCase(resp.data.results[0].city_name));
-        setcity_id(resp.data.results[0].city);
-        setstate(toTitleCase(resp.data.results[0].state_name));
-        setstate_id(resp.data.results[0].state);
-        setpincode(resp.data.results[0].pincode);
-        setpincode_id(resp.data.results[0].id);
-      } else {
-        dispatch(
-          setDataExist(
-            "You entered invalid pincode or pincode not available in database"
-          )
-        );
-        dispatch(setAlertType("warning"));
-        dispatch(setShowAlert(true));
-        setcity("");
-        setcity_id("");
-        // setstate("");
-        setstate_id("");
-      }
-    } catch (err) {
-      alert(`Error Occur in Get City, ${err}`);
-    }
+      )
+      .then((resp) => {
+
+        if (resp.data.next === null) {
+          setload_pincode(false);
+        } else {
+          setload_pincode(true);
+        }
+        if (filter_by !== "pincode") {
+          if (pincode_page === 1) {
+            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+          } else {
+            pincode_list = [
+              ...pincode_list_s,
+              ...resp.data.results.map((v) => [v.id, v.pincode]),
+            ];
+          }
+          setpincode_count(pincode_count + 2);
+          setpincode_list_s(pincode_list);
+        } else if (resp.data.results.length > 0) {
+          setcity(toTitleCase(resp.data.results[0].city_name));
+          setcity_id(resp.data.results[0].city);
+          setstate(toTitleCase(resp.data.results[0].state_name));
+          setstate_id(resp.data.results[0].state);
+          setpincode(resp.data.results[0].pincode);
+          setpincode_id(resp.data.results[0].id);
+        } else {
+          dispatch(
+            setDataExist(
+              "You entered invalid pincode or pincode not available in database"
+            )
+          );
+          dispatch(setAlertType("warning"));
+          dispatch(setShowAlert(true));
+          setcity("");
+          setcity_id("");
+          // setstate("");
+          setstate_id("");
+        }
+      })
+      .catch((err) => {
+        console.warn(`Error Occur in Get City, ${err}`);
+      });
   };
-  
-  // const getLocality = (place_id, filter_by) => {
-  //   let locality_list = [];
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //         `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
-  //         `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((resp) => {
-  //       if (filter_by !== "locality") {
-  //         if (pincode_page === 1) {
-  //           locality_list = resp.data.results.map((v) => [
-  //             v.id,
-  //             toTitleCase(v.name),
-  //           ]);
-  //         } else {
-  //           locality_list = [
-  //             ...locality_list_s,
-  //             ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-  //           ];
-  //         }
 
-  //         setlocality_list_s(locality_list);
-  //       } else if (resp.data.results.length > 0) {
-  //         setlocality(toTitleCase(resp.data.results[0].name));
-  //         setlocality_id(resp.data.results[0].id);
-  //         setcity(toTitleCase(resp.data.results[0].city_name));
-  //         setstate(toTitleCase(resp.data.results[0].state_name));
-  //         setpincode(resp.data.results[0].pincode_name);
-  //         setpincode_id(resp.data.results[0].pincode);
-  //       } else {
-  //         dispatch(setDataExist("You entered invalid Locality"));
-  //         dispatch(setAlertType("warning"));
-  //         dispatch(setShowAlert(true));
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get Pincode , ${err}`);
-  //     });
-  // };
+  const getLocality = (place_id, filter_by) => {
+    let locality_list = [];
+    axios
+      .get(
+        ServerAddress +
+        `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
+        `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (resp.data.next === null) {
+          setlocality_loaded(false);
+        } else {
+          setlocality_loaded(true);
+        }
+        if (resp.data.results.length > 0) {
+          if (locality_page === 1) {
+            locality_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            locality_list = [
+              ...locality_list_s,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setlocality_count(locality_count + 2);
+          setlocality_list_s(locality_list);
+        }
+        else {
+          setlocality_list_s([]);
+        }
+      })
+      .catch((err) => {
+        console.warn(`Error Occur in Get Pincode , ${err}`);
+      });
+  };
 
-// Client Document Api Function
-
-const getLocality = async (place_id, filter_by) => {
-  let locality_list = [];
-  try {
-    const resp = await axios.get(ServerAddress +
-      `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
-      `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
-      { headers: { Authorization: `Bearer ${accessToken}` } });
-
-    if (filter_by !== "locality") {
-      if (pincode_page === 1) {
-        locality_list = resp.data.results.map((v) => [
-          v.id,
-          toTitleCase(v.name),
-        ]);
-      } else {
-        locality_list = [
-          ...locality_list_s,
-          ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-        ];
-      }
-
-      setlocality_list_s(locality_list);
-    } else if (resp.data.results.length > 0) {
-      setlocality(toTitleCase(resp.data.results[0].name));
-      setlocality_id(resp.data.results[0].id);
-      setcity(toTitleCase(resp.data.results[0].city_name));
-      setstate(toTitleCase(resp.data.results[0].state_name));
-      setpincode(resp.data.results[0].pincode_name);
-      setpincode_id(resp.data.results[0].pincode);
-    } else {
-      dispatch(setDataExist("You entered invalid Locality"));
-      dispatch(setAlertType("warning"));
-      dispatch(setShowAlert(true));
-    }
-  } catch (err) {
-    alert(`Error Occur in Get Pincode , ${err}`);
-  }
-};
-
-const addClientDoc = (client_id) => {
+  // Client Document Api Function
+  const addClientDoc = (client_id) => {
     const docket_imageform = new FormData();
     docket_imageform.append(`client_id`, client_id);
     let ind = 0;
@@ -963,13 +812,17 @@ const addClientDoc = (client_id) => {
           "content-type": "multipart/form-data",
         },
       })
-      .then(function (resp) {})
+      .then(function (resp) { })
       .catch((err) => alert(`Error occur while add client doc , ${err}`));
   };
 
   // Client API Functions
   const addClient = (values) => {
-    let commidity_lst = commodities_list2.map((v) => v[0]);
+    let commodity_id = commodities_list2.map((v) => v[0]);
+
+    let commidity_lst = [...new Set(commodity_id.map((v) => `${v}`))].map((v) =>
+      parseInt(v.split(","))
+    );
     axios
       .post(
         ServerAddress + "master/add_client/",
@@ -1008,7 +861,7 @@ const addClientDoc = (client_id) => {
               toTitleCase(values.customer_name)
             );
           } else {
-            
+
             setAllAdd()
           }
         } else if (resp.data === "duplicate") {
@@ -1029,7 +882,7 @@ const addClientDoc = (client_id) => {
   };
   const updateClient = (values) => {
     let cust_up = up_params.customer;
-    
+
     // Object Similar To JSON Object get from backend To Compare New and Old Data
     let fields_names = Object.entries({
       name: toTitleCase(values.customer_name).toUpperCase(),
@@ -1040,7 +893,7 @@ const addClientDoc = (client_id) => {
       bill_to: client_id,
       current_billing_mode_local: local_cal.cal_type,
       current_billing_mode_air: air_cal.cal_type,
-      current_billing_mode_surface : surface_cal.cal_type,
+      current_billing_mode_surface: surface_cal.cal_type,
     });
     // To Check Any Changes Happen or Not
     let change_fields = {};
@@ -1054,11 +907,17 @@ const addClientDoc = (client_id) => {
     }
 
     let commidity_lst_tmp = up_params.customer.commodities
-    let commidity_lst = commodities_list2.map(v => v[0])
 
-    let com_change = commidity_lst.every((v,idx) => commidity_lst_tmp.includes(v))
+    let commidity_id_list = commodities_list2.map((v) => v[0]).filter((v) => v !== null);
+    console.log("commidity_id_list========", commidity_id_list)
+    let commidity_lst = [...new Set(commidity_id_list.map((v) => `${v}`))].map((v) =>
+      parseInt(v.split(","))
+    );
+  console.log("commidity_lst=========", commidity_lst)
 
-    if((commidity_lst_tmp.length !== commidity_lst.length) || com_change == false){
+    let com_change = commidity_lst.every((v, idx) => commidity_lst_tmp.includes(v))
+
+    if ((commidity_lst_tmp.length !== commidity_lst.length) || com_change == false) {
       change_fields['commodities'] = commidity_lst
     }
 
@@ -1072,7 +931,7 @@ const addClientDoc = (client_id) => {
           address_line: toTitleCase(values.address_line_1).toUpperCase(),
           location: locality_id,
           bill_to: client_id,
-          commodities : commidity_lst,
+          commodities: commidity_lst,
           current_billing_mode_local: local_cal.cal_type,
           current_billing_mode_air: air_cal.cal_type,
           current_billing_mode_surface: surface_cal.cal_type,
@@ -1094,7 +953,7 @@ const addClientDoc = (client_id) => {
               addCalculation(customer.id, values.customer_name);
             }
           } else {
-            
+
 
             setAllUpdate()
           }
@@ -1147,11 +1006,11 @@ const addClientDoc = (client_id) => {
           }
           else if (is_per_charge) {
             addPerCharges(cust_id, name)
-             }
-             else{
+          }
+          else {
             setAllAdd()
-             }
-          
+          }
+
 
           if (air_cal.cal_type !== "DONT") {
             if (dom_rate_category == "City to City") {
@@ -1785,7 +1644,7 @@ const addClientDoc = (client_id) => {
           if (resp.status == 200) {
             if (dom_rate_category == "City to City") {
               updateOthChargesSurface(name, domrts_ids, resp.data.perchrg_ids_surface);
-            
+
             } else if (dom_rate_category == "Zone to Zone") {
               updateOthChargesSurfaceZone(
                 name,
@@ -1957,11 +1816,11 @@ const addClientDoc = (client_id) => {
         .then(function (resp) {
           console.log("add oth resp", resp);
           if (air_cal.cal_type == "DONT") {
-            
+
             setAllAdd()
           }
           if (surface_cal.cal_type == "DONT") {
-            
+
             setAllAdd()
           }
         })
@@ -2272,11 +2131,11 @@ const addClientDoc = (client_id) => {
         )
         .then(function (resp) {
           if (!is_air) {
-            
+
             setAllUpdate()
           }
           if (!is_surface) {
-            
+
             setAllUpdate()
           }
         })
@@ -2285,11 +2144,11 @@ const addClientDoc = (client_id) => {
         });
     } else {
       if (!is_air) {
-        
+
         setAllUpdate()
       }
       if (!is_surface) {
-        
+
         setAllUpdate()
       }
     }
@@ -2691,7 +2550,7 @@ const addClientDoc = (client_id) => {
           client: cust_id,
           domestic_rates_list: temp_as_list,
           air_cal_type: air_cal.cal_type,
-          surface_cal_type : surface_cal.cal_type,
+          surface_cal_type: surface_cal.cal_type,
           rate_category: dom_rate_type,
         },
         {
@@ -2800,12 +2659,12 @@ const addClientDoc = (client_id) => {
         add_datalist.push(itm);
       }
     }
-    
+
 
     if (
       f_datalist.length > 0 ||
       add_datalist.length > 0 ||
-      dom_rt_del_ids_air.length > 0 || dom_rt_del_ids_surface.length>0
+      dom_rt_del_ids_air.length > 0 || dom_rt_del_ids_surface.length > 0
     ) {
       axios
         .put(
@@ -2943,7 +2802,7 @@ const addClientDoc = (client_id) => {
     } else {
       if (dom_rate_category != "Both") {
         updatePerChargesAir(name, []);
-        updatePerChargesSurface(name,[]);
+        updatePerChargesSurface(name, []);
       } else {
         updateOthChargesAirZone(name, [], []);
         updateOthChargesSurfaceZone(name, [])
@@ -2953,31 +2812,93 @@ const addClientDoc = (client_id) => {
 
   // Location Functions Call
   useEffect(() => {
-    if (state_id !== 0 && by_pincode === false) {
-      // setcity_page(1);
-      getCities(state_id, "state");
-      setpincode_list_s([]);
-      setlocality_list_s([]);
+    if (state_id !== 0) {
+      setcity_page(1);
+      setcity_count(1);
+      setcity_bottom(103)
+      setcity_loaded(true);
+
     }
+  }, [state_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (state_id !== 0 && by_pincode === false) {
+      timeoutId = setTimeout(() => {
+        getCities(state_id, "state");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [state_id, city_page, city_search_item]);
 
   useEffect(() => {
     if (pincode_id !== 0) {
       setlocality_page(1);
-      getLocality(pincode_id, "pincode");
+      setlocality_count(1);
+      setlocality_bottom(103)
+      setlocality_loaded(true);
     }
+  }, [pincode_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (pincode_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getLocality(pincode_id, "pincode");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [pincode_id, locality_page, locality_search_item]);
 
   useEffect(() => {
-    if (city_id !== 0 && by_pincode === false) {
+    if (city_id !== 0) {
       setpincode_page(1);
-      getPincode(city_id, "city");
+      setpincode_count(1);
+      setpincode_bottom(103)
+      setload_pincode(true)
     }
+  }, [city_id])
+  console.log("up_params=====", up_params)
+
+  useEffect(() => {
+    if (!isupdating && state && !by_pincode) {
+      setcity("");
+      setcity_list_s([]);
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [state]);
+
+  useEffect(() => {
+    if (!isupdating && city && !by_pincode) {
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [city]);
+
+  useEffect(() => {
+    if (!isupdating && pincode && !by_pincode) {
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [pincode]);
+
+  useEffect(() => {
+    let timeoutId;
+    if (city_id !== 0 && by_pincode === false) {
+      timeoutId = setTimeout(() => {
+        getPincode(city_id, "city");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [city_id, pincode_page, pincode_search_item]);
 
   useLayoutEffect(() => {
     getStates();
-    setcity_list_s([]);
   }, [state_page, state_search_item, refresh]);
 
   useLayoutEffect(() => {
@@ -3001,7 +2922,7 @@ const addClientDoc = (client_id) => {
       setbill_to_nm(bill_to_name);
 
       getLocality(bill_to_locality_name.toUpperCase(), "locality");
-    } catch (error) {}
+    } catch (error) { }
 
     try {
       let cl_id = up_params.bill_to_id
@@ -3016,8 +2937,8 @@ const addClientDoc = (client_id) => {
 
       if (!up_params.bill_to_id) {
         let cust_up = up_params.customer;
-        
-       
+
+
         // Setting Normal Client Details
         setcustomer(cust_up);
         setisupdating(true);
@@ -3055,7 +2976,7 @@ const addClientDoc = (client_id) => {
         //  Domestic City Air Datalist  started for update
         let dom_chrg = cust_up.client_dom_city;
         let tmplist_air = [];
-        let tmplist_surface =[];
+        let tmplist_surface = [];
         if (dom_chrg.length > 0) {
           setdom_rate_type(toTitleCase(dom_chrg[0].rate_type));
 
@@ -3083,7 +3004,7 @@ const addClientDoc = (client_id) => {
         //  Domestic Zone Air Datalist  started for update
         let dom_chrg_zone = cust_up.client_dom_zone;
         let tmplist_air_zone = [];
-        let tmplist_surface_zone =[];
+        let tmplist_surface_zone = [];
         if (dom_chrg_zone.length > 0) {
           setdom_rate_category("Zone to Zone");
           setdom_rate_type(toTitleCase(dom_chrg_zone[0].rate_type));
@@ -3121,7 +3042,7 @@ const addClientDoc = (client_id) => {
             tmplist_surface_zone.push(tmpl1);
           }
         }
-     
+
         // Percentage Charge Setting Local
         let ptmp_lst = [];
         let ptmp_lst_air = [];
@@ -3136,7 +3057,7 @@ const addClientDoc = (client_id) => {
           (v) => v.transportation_mode == "LOCAL"
         );
         let air_per = cl_per_chrg.filter((v) => v.transportation_mode == "AIR");
-        let surface_per= cl_per_chrg.filter((v) => v.transportation_mode == "SURFACE")
+        let surface_per = cl_per_chrg.filter((v) => v.transportation_mode == "SURFACE")
 
         if (local_per.length > 0) {
           setis_per_charge(true);
@@ -3168,7 +3089,7 @@ const addClientDoc = (client_id) => {
           }
         }
         // // Setting Domestic Percebtage Charge
-        if (air_per.length > 0 || surface_per.length >0) {
+        if (air_per.length > 0 || surface_per.length > 0) {
           setis_per_charge_air(true);
           setis_per_charge_surfc(true);
           for (let v = 0; v < air_per.length; v++) {
@@ -3267,20 +3188,20 @@ const addClientDoc = (client_id) => {
           setdatalist1(tmplist_surface_zone);
         }
 
-       
+
         // Calculation Data Setting
         if (cust_up.cal_infos_cust.length > 0) {
           setupdate_cal(true);
           let local_cals = cust_up.cal_infos_cust.filter(
             (v) => v.transportation_mode == "LOCAL"
-            );
-            let air_cals = cust_up.cal_infos_cust.filter(
-              (v) => v.transportation_mode == "AIR"
-              );
-              let surface_cals = cust_up.cal_infos_cust.filter(
-                (v) => v.transportation_mode == "SURFACE"
-                );
-              
+          );
+          let air_cals = cust_up.cal_infos_cust.filter(
+            (v) => v.transportation_mode == "AIR"
+          );
+          let surface_cals = cust_up.cal_infos_cust.filter(
+            (v) => v.transportation_mode == "SURFACE"
+          );
+
           if (local_cals[0].calculation_type != "DONT") {
             setis_local(true);
             let cal = local_cals[local_cals.length - 1];
@@ -3416,7 +3337,7 @@ const addClientDoc = (client_id) => {
 
 
   useLayoutEffect(() => {
-    if(commodities_list2.length != 0) {
+    if (commodities_list2.length != 0) {
       setcommodities_error(false);
     }
   }, [commodities_list2])
@@ -3424,24 +3345,24 @@ const addClientDoc = (client_id) => {
     <Form
       onSubmit={(e) => {
         e.preventDefault();
-        if(state === ""){
+        if (state === "") {
           setstate_error(true);
-        } 
-        if(city === ""){
+        }
+        if (city === "") {
           setcity_error(true);
         }
-        if(pincode === "") {
+        if (pincode === "") {
           setpincode_error(true);
-        } if(pincode_loaded === false && pincode ==="") {
+        } if (pincode_loaded === false && pincode === "") {
           setpin_code_error(true);
         }
-        if(pincode_loaded === false && locality === ""){
+        if (pincode_loaded === false && locality === "") {
           setlocality_error(true);
         }
-        if(locality === ""){
+        if (locality === "") {
           setlocality_error2(true);
         }
-        if(commodities_list2.length ==0) {
+        if (commodities_list2.length == 0) {
           setcommodities_error(true);
         }
         validation.handleSubmit(e.values);
@@ -3500,7 +3421,7 @@ const addClientDoc = (client_id) => {
                         value={validation.values.customer_name || ""}
                         invalid={
                           validation.touched.customer_name &&
-                          validation.errors.customer_name
+                            validation.errors.customer_name
                             ? true
                             : false
                         }
@@ -3555,7 +3476,7 @@ const addClientDoc = (client_id) => {
                         value={validation.values.phone_number || ""}
                         invalid={
                           validation.touched.phone_number &&
-                          validation.errors.phone_number
+                            validation.errors.phone_number
                             ? true
                             : false
                         }
@@ -3566,7 +3487,7 @@ const addClientDoc = (client_id) => {
                         placeholder="Enter phone number"
                       />
                       {validation.touched.phone_number &&
-                      validation.errors.phone_number ? (
+                        validation.errors.phone_number ? (
                         <FormFeedback type="invalid">
                           {validation.errors.phone_number}
                         </FormFeedback>
@@ -3614,7 +3535,7 @@ const addClientDoc = (client_id) => {
                         value={validation.values.address_line_1 || ""}
                         invalid={
                           validation.touched.address_line_1 &&
-                          validation.errors.address_line_1
+                            validation.errors.address_line_1
                             ? true
                             : false
                         }
@@ -3625,7 +3546,7 @@ const addClientDoc = (client_id) => {
                         placeholder="Enter Address Line 1"
                       />
                       {validation.touched.address_line_1 &&
-                      validation.errors.address_line_1 ? (
+                        validation.errors.address_line_1 ? (
                         <FormFeedback type="invalid">
                           {validation.errors.address_line_1}
                         </FormFeedback>
@@ -3652,6 +3573,8 @@ const addClientDoc = (client_id) => {
                           setsearch_item={setstate_search_item}
                           loaded={state_loaded}
                           count={state_count}
+                          bottom={state_bottom}
+                          setbottom={setstate_bottom}
                         />
                       </span>
                       {/* <div className="mt-1 error-text" color="danger">
@@ -3678,6 +3601,8 @@ const addClientDoc = (client_id) => {
                         setsearch_item={setcity_search_item}
                         loaded={city_loaded}
                         count={city_count}
+                        bottom={city_bottom}
+                        setbottom={setcity_bottom}
                       />
                       {/* <div className="mt-1 error-text" color="danger">
                         {city_error ? "Please Select Any City" : null}
@@ -3702,6 +3627,10 @@ const addClientDoc = (client_id) => {
                           error_s={pin_code_error}
                           search_item={pincode_search_item}
                           setsearch_item={setpincode_search_item}
+                          loaded={load_pincode}
+                          count={pincode_count}
+                          bottom={pincode_bottom}
+                          setbottom={setpincode_bottom}
                         />
                       </div>
                     ) : (
@@ -3738,7 +3667,7 @@ const addClientDoc = (client_id) => {
                           value={pincode}
                           invalid={
                             validation.touched.pincode &&
-                            validation.errors.pincode
+                              validation.errors.pincode
                               ? true
                               : false
                           }
@@ -3754,8 +3683,8 @@ const addClientDoc = (client_id) => {
                         ) : null}
 
                         {pincode_loaded === false &&
-                        pincode_error === false &&
-                        pincode_error2 === true ? (
+                          pincode_error === false &&
+                          pincode_error2 === true ? (
                           <div
                             style={{
                               color: "#F46E6E",
@@ -3787,6 +3716,10 @@ const addClientDoc = (client_id) => {
                           error_s={locality_error}
                           search_item={locality_search_item}
                           setsearch_item={setlocality_search_item}
+                          loaded={locality_loaded}
+                          count={locality_count}
+                          bottom={locality_bottom}
+                          setbottom={setlocality_bottom}
                         />
                       </div>
                     ) : (
@@ -3811,7 +3744,7 @@ const addClientDoc = (client_id) => {
                           value={locality}
                           invalid={
                             validation.touched.locality &&
-                            validation.errors.locality
+                              validation.errors.locality
                               ? true
                               : false
                           }
@@ -3823,16 +3756,16 @@ const addClientDoc = (client_id) => {
                         />
 
                         {pincode_loaded === false &&
-                              locality_error2 === true ? (
-                              <div
-                                style={{
-                                  fontSize: "10.5px",
-                                  color: " #f46a6a",
-                                }}
-                              >
-                                Please add Locality
-                              </div>
-                            ) : null}
+                          locality_error2 === true ? (
+                          <div
+                            style={{
+                              fontSize: "10.5px",
+                              color: " #f46a6a",
+                            }}
+                          >
+                            Please add Locality
+                          </div>
+                        ) : null}
 
                         {/* {pincode_loaded === false &&
                               pincode_error === false &&
@@ -3898,11 +3831,11 @@ const addClientDoc = (client_id) => {
                       count={commodities_count}
 
                     />
-                    <div  style={{
-                              color: "#F46E6E",
-                              fontSize: "10.4px",
-                            }}>
-                      {commodities_error &&  "Please Select Any Commodities"}
+                    <div style={{
+                      color: "#F46E6E",
+                      fontSize: "10.4px",
+                    }}>
+                      {commodities_error && "Please Select Any Commodities"}
                     </div>
 
                   </Col>
@@ -4072,262 +4005,262 @@ const addClientDoc = (client_id) => {
         is_courier ||
         is_train ||
         is_surface) && (
-        <>
-          {/* Calculation Info */}
-          <div className="m-4">
-            <Col lg={12}>
-              <Card className="shadow bg-white rounded">
-                <CardTitle className="mb-1 header">
-                  <div className="header-text-icon header-text">
-                    Calculation Info
-                    <IconContext.Provider
-                      value={{
-                        className: "header-add-icon",
-                      }}
-                    >
-                      <div onClick={toggle_circle_cal}>
-                        {circle_btn_cal ? (
-                          <MdRemoveCircleOutline />
-                        ) : (
-                          <MdAddCircleOutline />
-                        )}
-                      </div>
-                    </IconContext.Provider>
-                  </div>
-                </CardTitle>
+          <>
+            {/* Calculation Info */}
+            <div className="m-4">
+              <Col lg={12}>
+                <Card className="shadow bg-white rounded">
+                  <CardTitle className="mb-1 header">
+                    <div className="header-text-icon header-text">
+                      Calculation Info
+                      <IconContext.Provider
+                        value={{
+                          className: "header-add-icon",
+                        }}
+                      >
+                        <div onClick={toggle_circle_cal}>
+                          {circle_btn_cal ? (
+                            <MdRemoveCircleOutline />
+                          ) : (
+                            <MdAddCircleOutline />
+                          )}
+                        </div>
+                      </IconContext.Provider>
+                    </div>
+                  </CardTitle>
 
-                {circle_btn_cal ? (
-                  <CardBody>
-                    <Row>
-                      <Col lg={12}>
-                        {/* Component For Calculation Tab */}
-                        <Tab
-                          activeTab={activeTab}
-                          setactiveTab={setactiveTab}
-                          // active tabs
-                          active_tabs={active_tabs}
-                          setactive_tabs={setactive_tabs}
-                          // Checkis
-                          is_local={is_local}
-                          is_air={is_air}
-                          is_surface={is_surface}
-                          is_cargo={is_cargo}
-                          is_train={is_train}
-                          is_courier={is_courier}
-                          is_warehouse={is_warehouse}
-                        />
-                      </Col>
-                    </Row>
-                  </CardBody>
-                ) : null}
-              </Card>
-            </Col>
-          </div>
+                  {circle_btn_cal ? (
+                    <CardBody>
+                      <Row>
+                        <Col lg={12}>
+                          {/* Component For Calculation Tab */}
+                          <Tab
+                            activeTab={activeTab}
+                            setactiveTab={setactiveTab}
+                            // active tabs
+                            active_tabs={active_tabs}
+                            setactive_tabs={setactive_tabs}
+                            // Checkis
+                            is_local={is_local}
+                            is_air={is_air}
+                            is_surface={is_surface}
+                            is_cargo={is_cargo}
+                            is_train={is_train}
+                            is_courier={is_courier}
+                            is_warehouse={is_warehouse}
+                          />
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  ) : null}
+                </Card>
+              </Col>
+            </div>
 
-          {/* Billing Info */}
-          <div className="m-4">
-            <Col lg={12}>
-              <Card className="shadow bg-white rounded">
-                <CardTitle className="mb-1 header">
-                  <div className="header-text-icon header-text">
-                    Billing Info
-                    <IconContext.Provider
-                      value={{
-                        className: "header-add-icon",
-                      }}
-                    >
-                      <div onClick={toggle_circle_cal}>
-                        {circle_btn_cal ? (
-                          <MdRemoveCircleOutline />
-                        ) : (
-                          <MdAddCircleOutline />
-                        )}
-                      </div>
-                    </IconContext.Provider>
-                  </div>
-                </CardTitle>
+            {/* Billing Info */}
+            <div className="m-4">
+              <Col lg={12}>
+                <Card className="shadow bg-white rounded">
+                  <CardTitle className="mb-1 header">
+                    <div className="header-text-icon header-text">
+                      Billing Info
+                      <IconContext.Provider
+                        value={{
+                          className: "header-add-icon",
+                        }}
+                      >
+                        <div onClick={toggle_circle_cal}>
+                          {circle_btn_cal ? (
+                            <MdRemoveCircleOutline />
+                          ) : (
+                            <MdAddCircleOutline />
+                          )}
+                        </div>
+                      </IconContext.Provider>
+                    </div>
+                  </CardTitle>
 
-                {circle_btn_cal ? (
-                  <CardBody>
-                    {bill_row.map((itm, indx) => {
-                      return (
-                        <>
-                          <Row className="mb-3 mt-3">
-                            <Col lg={4} md="6" sm="6">
-                              <div className="mb-2">
-                                <Label className="header-child">
-                                  Bill Generation Time Frame
-                                </Label>
+                  {circle_btn_cal ? (
+                    <CardBody>
+                      {bill_row.map((itm, indx) => {
+                        return (
+                          <>
+                            <Row className="mb-3 mt-3">
+                              <Col lg={4} md="6" sm="6">
+                                <div className="mb-2">
+                                  <Label className="header-child">
+                                    Bill Generation Time Frame
+                                  </Label>
 
-                                <NSearchInput
-                                  data_list={bill_generation_list}
-                                  data_item_s={bill_generation}
-                                  set_data_item_s={setbill_generation}
-                                  show_search={false}
-                                  error_message={"Please Select An Option"}
-                                />
-                              </div>
-                            </Col>
-                          </Row>
-
-                          <Row>
-                            <Col lg={3} md={6} sm={6}>
-                              <div className="mb-3">
-                                <Label className="header-child">
-                                  Agreement Document
-                                </Label>
-
-                                <Input
-                                  className="form-control-md"
-                                  id="input"
-                                  type="file"
-                                  // id="file"
-                                  multiple
-                                  onChange={(e) => {
-                                    const chosenFiles =
-                                      Array.prototype.slice.call(
-                                        e.target.files
-                                      );
-
-                                    setdocumentFiles(chosenFiles);
-                                  }}
-                                />
-                              </div>
-                            </Col>
-                            <Col lg={3} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Label className="header-child">
-                                  Agreement start Date
-                                </Label>
-                                <Input
-                                  type="date"
-                                  className="form-control-md"
-                                  id="input"
-                                  value={agreement_date}
-                                  onChange={(val) => {
-                                    setagreement_date(val.target.value);
-                                  }}
-                                />
-                              </div>
-                            </Col>
-
-                            <Col lg={3} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Label className="header-child">
-                                  Agreement End Date
-                                </Label>
-                                <Input
-                                  type="date"
-                                  className="form-control-md"
-                                  id="input"
-                                  value={agreement_end_date}
-                                  onChange={(val) => {
-                                    setagreement_end_date(val.target.value);
-                                  }}
-                                />
-                              </div>
-                            </Col>
-
-                            <Col lg={3} md={6} sm={6}>
-                              <div className="mb-2 mt-3">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    itm[1] = !itm[1];
-                                    setrefresh(!refresh);
-                                  }}
-                                  // className= {itm[1] ? "btn-danger btn  m-1" : "btn-success btn  m-1"}
-                                  className="btn btn-success  m-1"
-                                >
-                                  {itm[1] ? "Hide" : "Show"} Billing
-                                </button>
-                              </div>
-                            </Col>
-                          </Row>
-
-                          {itm[1] && (
-                            <Row>
-                              <Col lg={12}>
-                                {/* Component For Billing Info */}
-                                <BillingTab
-                                  activeTab={activeTab}
-                                  setactiveTab={setactiveTab}
-                                  activeAirTab={activeAirTab}
-                                  setactiveAirTab={setactiveAirTab}
-                                  activeSurfaceTab ={activeSurfaceTab}
-                                  setactiveSurfaceTab={setactiveSurfaceTab}
-                                  // Percentage Charges
-                                  is_per_charge={is_per_charge}
-                                  setis_per_charge={setis_per_charge}
-                                  per_charge_list={per_charge_list}
-                                  setper_charge_list={setper_charge_list}
-                                  per_charge_list_air={per_charge_list_air}
-                                  setper_charge_list_air={
-                                    setper_charge_list_air
-                                  }
-                                  per_charge_list_surface={per_charge_list_surface}
-                                  setper_charge_list_surface={setper_charge_list_surface}
-                                  // Charge Type Air
-                                  is_per_charge_air={is_per_charge_air}
-                                  setis_per_charge_air={setis_per_charge_air}
-                                  is_per_charge_surfc={is_per_charge_surfc}
-                                  setis_per_charge_surfc={setis_per_charge_surfc}
-                                  // Checkis
-                                  is_local={is_local}
-                                  is_air={is_air}
-                                  is_surface={is_surface}
-                                  is_cargo={is_cargo}
-                                  is_train={is_train}
-                                  is_courier={is_courier}
-                                  is_warehouse={is_warehouse}
-                                  // Table Data Domestic
-                                  datalist={datalist}
-                                  setdatalist={setdatalist}
-                                  datalist1={datalist1}
-                                  setdatalist1={setdatalist1}
-                                  dom_rate_type={dom_rate_type}
-                                  setdom_rate_type={setdom_rate_type}
-                                  dom_type={domestic_rate_type}
-                                  setdom_type={setdomestic_rate_type}
-                                  // Table Zone Data
-                                  dom_rate_category={dom_rate_category}
-                                  setdom_rate_category={setdom_rate_category}
-                                  // Local TAble
-                                  local_datalist={local_datalist}
-                                  setlocal_datalist={setlocal_datalist}
-                                  dom_rate_type_local={dom_rate_type_local}
-                                  setdom_rate_type_local={
-                                    setdom_rate_type_local
-                                  }
-                                  // DELete ids
-                                  asso_del_ids={asso_del_ids}
-                                  setasso_del_ids={setasso_del_ids}
-                                  per_del_ids={per_del_ids}
-                                  setper_del_ids={setper_del_ids}
-                                  dom_rt_del_ids_air={dom_rt_del_ids_air}
-                                  setdom_rt_del_ids_air={setdom_rt_del_ids_air}
-                                  dom_rt_del_ids_zone_air={
-                                    dom_rt_del_ids_zone_air
-                                  }
-                                  setdom_rt_del_ids_zone_air={
-                                    setdom_rt_del_ids_zone_air
-                                  }
-                                  per_del_ids_air={per_del_ids_air}
-                                  setper_del_ids_air={setper_del_ids_air}
-                                  per_del_ids_surfc={per_del_ids_surfc}
-                                  setper_del_ids_surfc={setper_del_ids_surfc}
-                                  isupdating={isupdating}
-                                  is_oda_air={is_oda_air}
-                                  setis_oda_air={setis_oda_air}
-                                  is_oda_surface={is_oda_surface}
-                                  setis_oda_surface={setis_oda_surface}
-                                />
+                                  <NSearchInput
+                                    data_list={bill_generation_list}
+                                    data_item_s={bill_generation}
+                                    set_data_item_s={setbill_generation}
+                                    show_search={false}
+                                    error_message={"Please Select An Option"}
+                                  />
+                                </div>
                               </Col>
                             </Row>
-                          )}
 
-                          {/* Button To show Historical Data */}
-                          {/* <Row>
+                            <Row>
+                              <Col lg={3} md={6} sm={6}>
+                                <div className="mb-3">
+                                  <Label className="header-child">
+                                    Agreement Document
+                                  </Label>
+
+                                  <Input
+                                    className="form-control-md"
+                                    id="input"
+                                    type="file"
+                                    // id="file"
+                                    multiple
+                                    onChange={(e) => {
+                                      const chosenFiles =
+                                        Array.prototype.slice.call(
+                                          e.target.files
+                                        );
+
+                                      setdocumentFiles(chosenFiles);
+                                    }}
+                                  />
+                                </div>
+                              </Col>
+                              <Col lg={3} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Label className="header-child">
+                                    Agreement start Date
+                                  </Label>
+                                  <Input
+                                    type="date"
+                                    className="form-control-md"
+                                    id="input"
+                                    value={agreement_date}
+                                    onChange={(val) => {
+                                      setagreement_date(val.target.value);
+                                    }}
+                                  />
+                                </div>
+                              </Col>
+
+                              <Col lg={3} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Label className="header-child">
+                                    Agreement End Date
+                                  </Label>
+                                  <Input
+                                    type="date"
+                                    className="form-control-md"
+                                    id="input"
+                                    value={agreement_end_date}
+                                    onChange={(val) => {
+                                      setagreement_end_date(val.target.value);
+                                    }}
+                                  />
+                                </div>
+                              </Col>
+
+                              <Col lg={3} md={6} sm={6}>
+                                <div className="mb-2 mt-3">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      itm[1] = !itm[1];
+                                      setrefresh(!refresh);
+                                    }}
+                                    // className= {itm[1] ? "btn-danger btn  m-1" : "btn-success btn  m-1"}
+                                    className="btn btn-success  m-1"
+                                  >
+                                    {itm[1] ? "Hide" : "Show"} Billing
+                                  </button>
+                                </div>
+                              </Col>
+                            </Row>
+
+                            {itm[1] && (
+                              <Row>
+                                <Col lg={12}>
+                                  {/* Component For Billing Info */}
+                                  <BillingTab
+                                    activeTab={activeTab}
+                                    setactiveTab={setactiveTab}
+                                    activeAirTab={activeAirTab}
+                                    setactiveAirTab={setactiveAirTab}
+                                    activeSurfaceTab={activeSurfaceTab}
+                                    setactiveSurfaceTab={setactiveSurfaceTab}
+                                    // Percentage Charges
+                                    is_per_charge={is_per_charge}
+                                    setis_per_charge={setis_per_charge}
+                                    per_charge_list={per_charge_list}
+                                    setper_charge_list={setper_charge_list}
+                                    per_charge_list_air={per_charge_list_air}
+                                    setper_charge_list_air={
+                                      setper_charge_list_air
+                                    }
+                                    per_charge_list_surface={per_charge_list_surface}
+                                    setper_charge_list_surface={setper_charge_list_surface}
+                                    // Charge Type Air
+                                    is_per_charge_air={is_per_charge_air}
+                                    setis_per_charge_air={setis_per_charge_air}
+                                    is_per_charge_surfc={is_per_charge_surfc}
+                                    setis_per_charge_surfc={setis_per_charge_surfc}
+                                    // Checkis
+                                    is_local={is_local}
+                                    is_air={is_air}
+                                    is_surface={is_surface}
+                                    is_cargo={is_cargo}
+                                    is_train={is_train}
+                                    is_courier={is_courier}
+                                    is_warehouse={is_warehouse}
+                                    // Table Data Domestic
+                                    datalist={datalist}
+                                    setdatalist={setdatalist}
+                                    datalist1={datalist1}
+                                    setdatalist1={setdatalist1}
+                                    dom_rate_type={dom_rate_type}
+                                    setdom_rate_type={setdom_rate_type}
+                                    dom_type={domestic_rate_type}
+                                    setdom_type={setdomestic_rate_type}
+                                    // Table Zone Data
+                                    dom_rate_category={dom_rate_category}
+                                    setdom_rate_category={setdom_rate_category}
+                                    // Local TAble
+                                    local_datalist={local_datalist}
+                                    setlocal_datalist={setlocal_datalist}
+                                    dom_rate_type_local={dom_rate_type_local}
+                                    setdom_rate_type_local={
+                                      setdom_rate_type_local
+                                    }
+                                    // DELete ids
+                                    asso_del_ids={asso_del_ids}
+                                    setasso_del_ids={setasso_del_ids}
+                                    per_del_ids={per_del_ids}
+                                    setper_del_ids={setper_del_ids}
+                                    dom_rt_del_ids_air={dom_rt_del_ids_air}
+                                    setdom_rt_del_ids_air={setdom_rt_del_ids_air}
+                                    dom_rt_del_ids_zone_air={
+                                      dom_rt_del_ids_zone_air
+                                    }
+                                    setdom_rt_del_ids_zone_air={
+                                      setdom_rt_del_ids_zone_air
+                                    }
+                                    per_del_ids_air={per_del_ids_air}
+                                    setper_del_ids_air={setper_del_ids_air}
+                                    per_del_ids_surfc={per_del_ids_surfc}
+                                    setper_del_ids_surfc={setper_del_ids_surfc}
+                                    isupdating={isupdating}
+                                    is_oda_air={is_oda_air}
+                                    setis_oda_air={setis_oda_air}
+                                    is_oda_surface={is_oda_surface}
+                                    setis_oda_surface={setis_oda_surface}
+                                  />
+                                </Col>
+                              </Row>
+                            )}
+
+                            {/* Button To show Historical Data */}
+                            {/* <Row>
                         <Col lg={3} md={6} sm={6}>
                           <div>
                             <button
@@ -4342,10 +4275,10 @@ const addClientDoc = (client_id) => {
                           </div>
                         </Col>
                       </Row> */}
-                        </>
-                      );
-                    })}
-                    {/* 
+                          </>
+                        );
+                      })}
+                      {/* 
                 <div>
                   <span
                     className="link-text"
@@ -4366,13 +4299,13 @@ const addClientDoc = (client_id) => {
                     Add Another Billing
                   </span>
                 </div> */}
-                  </CardBody>
-                ) : null}
-              </Card>
-            </Col>
-          </div>
-        </>
-      )}
+                    </CardBody>
+                  ) : null}
+                </Card>
+              </Col>
+            </div>
+          </>
+        )}
 
       {/* Submission Button */}
       {/*Button */}

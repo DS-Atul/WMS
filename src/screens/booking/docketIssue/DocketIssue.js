@@ -10,9 +10,9 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
-import Navigate from "../../manifest/navigateTab/Navigate";
 import DocketIssueDataTitle from "../../../data/booking/docketIssue/DocketIssueDataTitle";
 import DocketIssueDataFormate from "../../../data/booking/docketIssue/DocketIssueDataFormate";
+import Navigate from "../navigateTab/Navigate";
 
 const DocketIssue = () => {
   const dispatch = useDispatch();
@@ -91,11 +91,13 @@ const DocketIssue = () => {
                 {/* <Filter type={"commodity"} /> */}
               </div>
             </div>
-            {(user.user_department_name === "ADMIN" || user.user_department_name === "ACCOUNTANT" ||  user.user_department_name+" "+ user.designation_name === "ACCOUNT MANAGER") &&
-            (
-            <Navigate />
-            )
-                }
+            {(user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE" || 
+            user.user_department_name + " " + user.designation_name === "OPERATION MANAGER" || user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER"
+            ) &&
+              (
+                <Navigate />
+              )
+            }
           </div>
 
           {/* DataTable */}
@@ -104,7 +106,7 @@ const DocketIssue = () => {
             Data_Title={DocketIssueDataTitle}
             Data_Format={DocketIssueDataFormate}
             // path={`booking/get_order_issue/?search=${search}&p=${page_num}&records=${data_len}`}
-            path={`booking/get_all_issue/?search=${search}&p=${page_num}&records=${data_len}`}
+            path={`booking/get_all_issue/?search=${search}&p=${page_num}&records=${data_len}&barcode_type=${''}&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>

@@ -1,13 +1,14 @@
 const RunsheetDataTitle = [
   "Runsheet No. ",
   "Total Orders",
+  "Status",
   "Date & Time",
   // "Updated Date",
   "Route",
   "Route	Vehicle No.",
   "Driver",
   "Print",
-  "Status",
+  "Delivery Status",
   "Action",
 ];
 

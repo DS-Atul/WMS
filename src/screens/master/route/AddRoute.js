@@ -50,6 +50,8 @@ function AddRoute() {
   const [location_id, setlocation_id] = useState([]);
   const [location_page, setlocation_page] = useState(1);
   const [location_search, setlocation_search] = useState("");
+  const [location_loaded, setlocation_loaded] = useState(false)
+  const [location_count, setlocation_count] = useState(1)
 
   //state used for get data for update
   const [isupdating, setisupdating] = useState(false);
@@ -75,7 +77,7 @@ function AddRoute() {
   });
 
   // Get Route City
-  const get_route_cities = (route_id, cities_list) => {
+  const get_route_cities = (route_id) => {
     axios
       .get(ServerAddress + "master/get_routecities/?route_id=" + route_id, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -87,29 +89,14 @@ function AddRoute() {
           const loc = response.data.cities[index];
           temp.push([
             loc.pincode,
+            loc.pincode__pincode + "-" +
             toTitleCase(loc.pincode__city__city) +
-              "-" +
-              toTitleCase(loc.pincode__city__state__state) +
-              "-" +
-              loc.pincode__pincode,
+            "-" +
+            toTitleCase(loc.pincode__city__state__state),
           ]);
         }
         setlocation(temp);
-        let temp3 = [];
-        let other_cities = [];
 
-        for (let index = 0; index < temp.length; index++) {
-          const element2 = temp[index][1];
-          temp3.push(element2);
-        }
-
-        for (let index = 0; index < cities_list.length; index++) {
-          const element = cities_list[index][1];
-          if (temp3.includes(element) === false) {
-            other_cities.push(cities_list[index]);
-          }
-        }
-        setlocation_list(other_cities);
       })
       .catch((err) => {
         alert(`Error Occur in Get , ${err}`);
@@ -117,124 +104,72 @@ function AddRoute() {
   };
 
   // Get Operating City
-  // const get_locations = () => {
-  //   let temp = [...location_list];
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //         `master/all_pincode/?search=${""}&p=${page_num}&records=${data_len}&pincode_search=${[
-  //           location_search,
-  //         ]}&place_id=all&filter_by=all`,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((response) => {
-  //       for (let index = 0; index < response.data.results.length; index++) {
-  //         const loc = response.data.results[index];
-  //         temp.push([
-  //           loc.id,
-  //           toTitleCase(loc.city_name) +
-  //             "-" +
-  //             toTitleCase(loc.state_name) +
-  //             "-" +
-  //             loc.pincode,
-  //         ]);
-  //       }
-  //       temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
-  //       setlocation_list(temp);
-  //       try {
-  //         get_route_cities(location_data.state.route.id, temp);
-  //       } catch (error) {}
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get , ${err}`);
-  //     });
-  // };
-  const get_locations = async () => {
+  const get_locations = () => {
+    let temp_2 = [];
     let temp = [...location_list];
-    try {
-      const response = await axios.get(
+    axios
+      .get(
         ServerAddress +
-          `master/all_pincode/?search=${""}&p=${page_num}&records=${data_len}&pincode_search=${[
-            location_search,
-          ]}&place_id=all&filter_by=all`,
+        `master/all_pincode/?search=${""}&p=${location_page}&records=${20}&pincode_search=${[
+          location_search,
+        ]}&place_id=all&filter_by=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
-      );
-      for (let index = 0; index < response.data.results.length; index++) {
-        const loc = response.data.results[index];
-        temp.push([
-          loc.id,
-          toTitleCase(loc.city_name) +
-            "-" +
-            toTitleCase(loc.state_name) +
-            "-" +
-            loc.pincode,
-        ]);
-      }
-      temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
-      setlocation_list(temp);
-      try {
-        get_route_cities(location_data.state.route.id, temp);
-      } catch (error) {}
-    } catch (err) {
-      alert(`Error Occur in Get , ${err}`);
-    }
+      )
+      .then((response) => {
+
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (response.data.next === null) {
+            setlocation_loaded(false);
+          } else {
+            setlocation_loaded(true);
+          }
+          if (location_page === 1) {
+            temp_2 = response.data.results.map((v) => [
+              v.id,
+              v.pincode + "-" +
+              toTitleCase(v.city_name) +
+              "-" +
+              toTitleCase(v.state_name),
+
+
+            ]);
+          } else {
+            temp_2 = [
+              ...location_list,
+              ...response.data.results.map((v) => [
+                v.id,
+                v.pincode + "-" +
+                toTitleCase(v.city_name) +
+                "-" +
+                toTitleCase(v.state_name),
+
+              ]),
+            ];
+          }
+
+          setlocation_count(location_count + 2);
+          setlocation_list(temp_2);
+
+        }
+        else {
+          setlocation_list([])
+        }
+        try {
+          get_route_cities(location_data.state.route.id, temp_2);
+        } catch (error) { }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get , ${err}`);
+      });
   };
-  
 
   // Post Route Data
-  // const add_route = (values) => {
-  //   axios
-  //     .post(
-  //       ServerAddress + "master/add_route/",
-  //       {
-  //         name: String(values.name).toUpperCase(),
-  //         pincode: location_id,
-  //         created_by: user.id,
-  //         //For C&M
-  //         cm_current_department: user.user_department,
-  //         cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
-  //         cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
-  //       },
-
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       }
-  //     )
-  //     .then(function (response) {
-  //       if (response.data.status === "success") {
-  //         dispatch(setToggle(true));
-  //         dispatch(setShowAlert(true));
-  //         dispatch(
-  //           setDataExist(
-  //             `Route  "${toTitleCase(values.name)}" Added sucessfully`
-  //           )
-  //         );
-  //         dispatch(setAlertType("success"));
-  //         navigate("/master/routes");
-  //       } else if (response.data === "duplicate") {
-  //         dispatch(setShowAlert(true));
-  //         dispatch(
-  //           setDataExist(
-  //             `Route Name "${toTitleCase(values.name)}" already exists`
-  //           )
-  //         );
-  //         dispatch(setAlertType("warning"));
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       alert(`Error Happen while posting Commodity  Data ${error}`);
-  //     });
-  // };
-
-  const add_route = async (values) => {
-    try {
-      const response = await axios.post(
+  const add_route = (values) => {
+    axios
+      .post(
         ServerAddress + "master/add_route/",
         {
           name: String(values.name).toUpperCase(),
@@ -242,138 +177,60 @@ function AddRoute() {
           created_by: user.id,
           //For C&M
           cm_current_department: user.user_department,
-          cm_current_status:
-            user.user_department_name === "ADMIN"
-              ? "NOT APPROVED"
-              : current_status.toUpperCase(),
-          cm_transit_status:
-            user.user_department_name === "ADMIN"
-              ? "NOT APPROVED"
-              : current_status.toUpperCase(),
+          cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+          cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
         },
+
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      );
-  
-      if (response.data.status === "success") {
-        dispatch(setToggle(true));
-        dispatch(setShowAlert(true));
-        dispatch(
-          setDataExist(`Route  "${toTitleCase(values.name)}" Added sucessfully`)
-        );
-        dispatch(setAlertType("success"));
-        navigate("/master/routes");
-      } else if (response.data === "duplicate") {
-        dispatch(setShowAlert(true));
-        dispatch(
-          setDataExist(
-            `Route Name "${toTitleCase(values.name)}" already exists`
-          )
-        );
-        dispatch(setAlertType("warning"));
-      }
-    } catch (error) {
-      alert(`Error Happen while posting Commodity  Data ${error}`);
-    }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(setToggle(true));
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(
+              `Route  "${toTitleCase(values.name)}" Added sucessfully`
+            )
+          );
+          dispatch(setAlertType("success"));
+          navigate("/master/routes");
+        } else if (response.data === "duplicate") {
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(
+              `Route Name "${toTitleCase(values.name)}" already exists`
+            )
+          );
+          dispatch(setAlertType("warning"));
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while posting Commodity  Data ${error}`);
+      });
   };
-  
 
   // Update Branch
-  // const update_route = (values) => {
-  //   let id = routedata.id;
-  //   let op_city_id_list2 = [];
-  //   let temp_lis2 = [];
-  //   console.log("location-111--", location);
-  //   for (let index = 0; index < location.length; index++) {
-  //     const op_city_id = location[index];
-  //     op_city_id_list2.push(op_city_id[0]);
-  //   }
-  //   temp_lis2 = [...new Set(location.map((v) => `${v}`))].map((v) =>
-  //     parseInt(v.split(","))
-  //   );
-
-  //   let city_id_list = temp_lis2.flat();
-  //   let fields_names = Object.entries({
-  //     name: values.name,
-  //     pincode: city_id_list,
-  //   });
-
-  //   let change_fields = {};
-
-  //   for (let j = 0; j < fields_names.length; j++) {
-  //     const ele = fields_names[j];
-  //     let prev = location_data.state.route[`${ele[0]}`];
-  //     let new_v = ele[1];
-  //     if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
-  //       change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
-  //     }
-  //   }
-
-  //   axios
-  //     .put(
-  //       ServerAddress + "master/update_route/" + id,
-  //       {
-  //         name: String(values.name).toUpperCase(),
-  //         pincode: city_id_list,
-  //         modified_by: user.id,
-  //         change_fields: change_fields,
-  //         //For C&M
-  //         cm_transit_status: status_toggle === true ? current_status : "",
-  //         cm_current_status: (current_status).toUpperCase(),
-  //         cm_remarks: ""
-  //       },
-
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       }
-  //     )
-  //     .then(function (response) {
-  //       if (response.data.status === "success") {
-  //         dispatch(setDataExist(`Branch "${values.name}" Updated Sucessfully`));
-  //         dispatch(setAlertType("info"));
-  //         dispatch(setShowAlert(true));
-  //         navigate("/master/routes");
-  //       } else if (response.data === "duplicate") {
-  //         dispatch(setShowAlert(true));
-  //         dispatch(
-  //           setDataExist(
-  //             `Route name "${toTitleCase(values.name)}" already exists`
-  //           )
-  //         );
-  //         dispatch(setAlertType("warning"));
-  //       }
-  //     })
-  //     .catch(function () {
-  //       alert("Error Error While Updateing branches");
-  //     });
-  // };
-
-  const update_route = async (values) => {
+  const update_route = (values) => {
     let id = routedata.id;
-    let op_city_id_list2 = [];
-    let temp_lis2 = [];
-    console.log("location-111--", location);
-    for (let index = 0; index < location.length; index++) {
-      const op_city_id = location[index];
-      op_city_id_list2.push(op_city_id[0]);
-    }
-    temp_lis2 = [...new Set(location.map((v) => `${v}`))].map((v) =>
+
+    let id_list = location.map((v) => v[0]).filter((v) => v !== null);
+
+    let city_id_list = [...new Set(id_list.map((v) => `${v}`))].map((v) =>
       parseInt(v.split(","))
     );
-  
-    let city_id_list = temp_lis2.flat();
+
+
     let fields_names = Object.entries({
       name: values.name,
       pincode: city_id_list,
     });
-  
+
     let change_fields = {};
-  
+
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.route[`${ele[0]}`];
@@ -382,9 +239,9 @@ function AddRoute() {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
-  
-    try {
-      const response = await axios.put(
+
+    axios
+      .put(
         ServerAddress + "master/update_route/" + id,
         {
           name: String(values.name).toUpperCase(),
@@ -394,35 +251,35 @@ function AddRoute() {
           //For C&M
           cm_transit_status: status_toggle === true ? current_status : "",
           cm_current_status: (current_status).toUpperCase(),
-          cm_remarks: "",
+          cm_remarks: ""
         },
+
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      );
-      if (response.data.status === "success") {
-        dispatch(
-          setDataExist(`Branch "${values.name}" Updated Sucessfully`)
-        );
-        dispatch(setAlertType("info"));
-        dispatch(setShowAlert(true));
-        navigate("/master/routes");
-      } else if (response.data === "duplicate") {
-        dispatch(setShowAlert(true));
-        dispatch(
-          setDataExist(
-            `Route name "${toTitleCase(values.name)}" already exists`
-          )
-        );
-        dispatch(setAlertType("warning"));
-      }
-    } catch (error) {
-      alert("Error Error While Updateing branches");
-    }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(setDataExist(`Branch "${values.name}" Updated Sucessfully`));
+          dispatch(setAlertType("info"));
+          dispatch(setShowAlert(true));
+          navigate("/master/routes");
+        } else if (response.data === "duplicate") {
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(
+              `Route name "${toTitleCase(values.name)}" already exists`
+            )
+          );
+          dispatch(setAlertType("warning"));
+        }
+      })
+      .catch(function () {
+        alert("Error Error While Updateing branches");
+      });
   };
-  
 
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
@@ -442,10 +299,14 @@ function AddRoute() {
   //   } catch (error) {}
   //
   // }, []);
-  console.log("location-----", location);
+
   useEffect(() => {
     let id = location.map((data) => data[0]);
-    setlocation_id(id);
+    let id_list = [...new Set(id.map((v) => `${v}`))].map((v) =>
+      parseInt(v.split(","))
+    );
+    setlocation_id(id_list);
+
   }, [location]);
 
   useEffect(() => {
@@ -459,7 +320,7 @@ function AddRoute() {
     try {
       setroutedata(location_data.state.route);
       setisupdating(true);
-    } catch (error) {}
+    } catch (error) { }
   }, []);
 
   useEffect(() => {
@@ -498,62 +359,36 @@ function AddRoute() {
 
   }, [user, isupdating])
 
+  const update_routestatus = (id) => {
 
-  // This funcation is for update the status
-  // const update_routestatus = (id) => {
+    axios
+      .put(
+        ServerAddress + "master/update_route/" + id,
+        {
 
-  //   axios
-  //     .put(
-  //       ServerAddress + "master/update_route/" + id,
-  //       {
-
-  //         cm_current_status: "REJECTED",
-  //         cm_remarks: toTitleCase(message).toUpperCase(),
-  //         change_fields: {},
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       }
-  //     )
-  //     .then(function (response) {
-  //       if (response.data.status === "success") {
-  //         // dispatch(Toggle(true))
-  //         dispatch(setShowAlert(true));
-  //         dispatch(setDataExist(`Status Updated sucessfully`));
-  //         dispatch(setAlertType("info"));
-  //         navigate("/master/routes");
-  //       }
-  //     })
-  //     .catch(function (err) {
-  //       alert(`rror While  Updateing Coloader ${err}`);
-  //     });
-  // };
-
-  const update_routestatus = async (id) => {
-    try {
-      const response = await axios.put(ServerAddress + "master/update_route/" + id, {
-        cm_current_status: "REJECTED",
-        cm_remarks: toTitleCase(message).toUpperCase(),
-        change_fields: {},
-      }, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+          cm_current_status: "REJECTED",
+          cm_remarks: toTitleCase(message).toUpperCase(),
+          change_fields: {},
         },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          // dispatch(Toggle(true))
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Status Updated sucessfully`));
+          dispatch(setAlertType("info"));
+          navigate("/master/routes");
+        }
+      })
+      .catch(function (err) {
+        alert(`rror While  Updateing Coloader ${err}`);
       });
-  
-      if (response.data.status === "success") {
-        dispatch(setShowAlert(true));
-        dispatch(setDataExist(`Status Updated successfully`));
-        dispatch(setAlertType("info"));
-        navigate("/master/routes");
-      }
-    } catch (err) {
-      alert(`Error while updating Coloader ${err}`);
-    }
   };
-  
 
   const handleSubmit = () => {
     if (message == "") {
@@ -564,8 +399,8 @@ function AddRoute() {
       setShow(false)
     }
   }
-   //used for history
-   const handlClk = () => {
+  //used for history
+  const handlClk = () => {
     navigate("/route/routeHistory/RouteHistoryPage", {
       state: { routes: routes },
     });
@@ -573,7 +408,7 @@ function AddRoute() {
 
   return (
     <div>
-            <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
         </Modal.Header>
@@ -622,19 +457,19 @@ function AddRoute() {
             parent_title="Masters"
           />
         </div>
-         {/* Add For History Button  */}
-         {isupdating && 
-            <div style={{ justifyContent: "right", display: "flex" }}>
-              <Button
-                type="button"
-                onClick={() => {
-                  handlClk();
-                }}
-              >
-                History
-              </Button>
-            </div>
-          }
+        {/* Add For History Button  */}
+        {isupdating &&
+          <div style={{ justifyContent: "right", display: "flex" }}>
+            <Button
+              type="button"
+              onClick={() => {
+                handlClk();
+              }}
+            >
+              History
+            </Button>
+          </div>
+        }
 
         {/* Routes Info */}
         <div className="m-3">
@@ -697,6 +532,8 @@ function AddRoute() {
                         setpage={setlocation_page}
                         error_message={"Please Select Any Option"}
                         setsearch_item={setlocation_search}
+                        loaded={location_loaded}
+                        count={location_count}
                       />
                       {location_error ? (
                         <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
@@ -715,7 +552,7 @@ function AddRoute() {
         <div className="m-3">
           <Col lg={12}>
             <div className="mb-1 footer_btn">
-            <button
+              <button
                 type="submit"
                 className={isupdating && (user.user_department_name === "ADMIN") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
               >

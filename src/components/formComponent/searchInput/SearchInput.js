@@ -28,8 +28,11 @@ const SearchInput = ({
   with_add = 0,
   add_nav = "",
   loaded=false,
-  count=1
+  bottom=103,
+  setbottom,
+  count=1,
 }) => {
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -41,7 +44,7 @@ const SearchInput = ({
 
   // Pagination
   const ref = useRef();
-  const [bottom, setbottom] = useState(103 + with_add);
+  // const [bottom, setbottom] = useState(bottom1 + with_add);
   const [search, setsearch] = useState("");
   const [error, seterror] = useState(false);
   const [searching, setsearching] = useState(false);
@@ -132,6 +135,8 @@ const SearchInput = ({
           >
             {data_item_s}
           </div>
+
+          
           <div style={{ display: "flex" }}>
             <div style={{ borderLeft: "1px solid #d3d3d3" }}>
               {error ? (
@@ -153,6 +158,7 @@ const SearchInput = ({
               )}
             </div>
           </div>
+
         </button>
 
         {add_nav != "" && (
@@ -183,42 +189,10 @@ const SearchInput = ({
           ref={ref}
           className="dataResult custom-select"
           id="chk"
-          // onScroll={() => {
-
-          //   console.log("page", page)
-
-          //   let tmp_bottom = 0;
-          //   if (page < 3) {
-          //     tmp_bottom = bottom - page
-          //   }
-          //   else if (page < 5) {
-          //     tmp_bottom = bottom - page + 40
-          //   }
-          //   else if (page < 7) {
-          //     tmp_bottom = bottom - page + 99
-          //   }
-
-
-          //   console.log("ref.current.scrollTop", ref.current.scrollTop)
-          //   console.log("tmp_bottom", tmp_bottom)
-          //   // console.log(ref.current.scrollTop > tmp_bottom)
-          //   // if (ref.current.scrollTop > bottom - page + 2) {
-          //   if (page < 7) {
-          //     if (ref.current.scrollTop > tmp_bottom) {
-          //       // if (page == 1) {
-          //       setpage(page + 1);
-          //       // }
-          //       setbottom(bottom + 263 - with_add);
-          //     }
-          //   }
-
-
-          // }}
           onScroll={() => {
             for (let i = 1; i <= count; i += 3) {
-              
+              // setpage(page + 1);
               if (ref.current.scrollTop > bottom - i && loaded) {
-             
                 setpage(page + 1);
                 setbottom(bottom + 262 - with_add);
              

@@ -20,8 +20,10 @@ import {
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
+import { HiQuestionMarkCircle } from "react-icons/hi";
+import Modal from 'react-bootstrap/Modal';
 
-const RunsheetDataFormat = ({can_delete, data, data1 }) => {
+const RunsheetDataFormat = ({ can_delete, data, data1 }) => {
   console.log("data---Runsheet------", data)
   const dispatch = useDispatch();
   const total_data = useSelector((state) => state.pagination.total_data);
@@ -125,8 +127,8 @@ const RunsheetDataFormat = ({can_delete, data, data1 }) => {
     }
   }, [delete_id]);
 
-   //Permission
-   const userpermission = useSelector(
+  //Permission
+  const userpermission = useSelector(
     (state) => state.authentication.userpermission
   );
   const [can_update, setcan_update] = useState(false);
@@ -140,9 +142,30 @@ const RunsheetDataFormat = ({can_delete, data, data1 }) => {
       setcan_update(false);
     }
   }, [userpermission]);
+  //For C&M
+  const [showM, setShowM] = useState(false);
 
+  const handleCloseM = () => setShowM(false);
+  const handleShowM = () => setShowM(true);
+  const [reject_resion, setreject_resion] = useState("")
+
+  const handleModal = (commodity) => {
+    console.log("NOT APPROVED-----", commodity)
+    handleShowM()
+    setreject_resion(commodity)
+    console.log("reject_resion----", reject_resion)
+  }
   return (
     <>
+      <Modal show={showM} onHide={handleCloseM}>
+        <Modal.Header closeButton>
+          <Modal.Title>Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ fontSize: "15px" }}>Status : {toTitleCase(reject_resion.cm_current_status)}</div>
+          {reject_resion.cm_current_status === "REJECTED" && <div style={{ fontSize: "15px" }}>Resion: {toTitleCase(reject_resion.cm_remarks)}</div>}
+        </Modal.Body>
+      </Modal>
       {(list_toggle === true ? data1 : data) === 0 ? (
         <tr>
           <td>No Data Found</td>
@@ -181,30 +204,43 @@ const RunsheetDataFormat = ({can_delete, data, data1 }) => {
                 }}
               >
                 {(can_delete || user.is_superuser) && (
-                <td
-                  className="selection-cell"
-                  onClick={() => {
-                    handlefunn(runsheet.id);
-                    dispatch(setSelect(true));
-                  }}
-                >
-                  {selected.includes(runsheet.id) ? (
-                    <FiCheckSquare size={14} />
-                  ) : (
-                    <FiSquare size={14} />
-                  )}
-                </td>
-                  )}
+                  <td
+                    className="selection-cell"
+                    onClick={() => {
+                      handlefunn(runsheet.id);
+                      dispatch(setSelect(true));
+                    }}
+                  >
+                    {selected.includes(runsheet.id) ? (
+                      <FiCheckSquare size={14} />
+                    ) : (
+                      <FiSquare size={14} />
+                    )}
+                  </td>
+                )}
                 <td>
                   <span>{runsheet.runsheet_no}</span>
                 </td>
 
                 <td>{runsheet.orders.length}</td>
+                <td>
+                  {
+                    runsheet.cm_current_status === "APPROVED" ?
+                      <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-success btn-rounded"} onClick={() => { handleModal(), setreject_resion(runsheet) }}>Approved</button>
+                      :
+                      runsheet.cm_current_status === "REJECTED" && runsheet.cm_transit_status === "NOT APPROVED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-danger btn-rounded"} onClick={() => { handleModal(), setreject_resion(runsheet) }}>Reject <HiQuestionMarkCircle size={15} /></button>
+                        : runsheet.cm_current_status === "REJECTED" && (runsheet.cm_transit_status == "VERIFIED OPERATION MANAGER" || runsheet.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER") && (user.user_department_name + " " + user.designation_name === "OPERATION MANAGER" || user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER")
+                          ? <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-danger btn-rounded"} onClick={() => { handleModal(), setreject_resion(runsheet) }}>Reject <HiQuestionMarkCircle size={15} /> </button>
+                          : runsheet.cm_current_status === "REJECTED" && (runsheet.cm_transit_status === "VERIFIED ACCOUNTANT" || runsheet.cm_transit_status == "VERIFIED ACCOUNT MANAGER") && (user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER") ?
+                            <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-danger btn-rounded"} onClick={() => { handleModal(), setreject_resion(runsheet) }}>Reject <HiQuestionMarkCircle size={15} /> </button>
+                            : <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-warning btn-rounded"} onClick={() => { handleModal(), setreject_resion(runsheet) }}>Status <HiQuestionMarkCircle size={15} /></button>
+                  }
+                </td>
                 <td>{rn_date}</td>
                 {/* <td>{runsheet.modified_at}</td> */}
                 <td>{runsheet.is_defined_route ? toTitleCase(runsheet.defined_route_name) : toTitleCase(runsheet.route_name)}</td>
                 <td>
-                  { runsheet.vehicle_number}
+                  {runsheet.vehicle_number}
                 </td>
                 <td>{toTitleCase(runsheet.driver_name)}</td>
                 <td>
@@ -221,27 +257,67 @@ const RunsheetDataFormat = ({can_delete, data, data1 }) => {
                   {" "}
                   {runsheet.is_delivered ? "Delivered" : "Not Delivered"}{" "}
                 </td>
-                {(can_update || user.is_superuser) && (
-
+                {(can_update || user.is_superuser) && (               
                 <td>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    {runsheet.is_delivered ? (
-                      <Button size="sm" color="success" type="button">
-                        Closed
-                      </Button>
-                    ) : (
-                      <Link
-                        to="/runsheet/changedrunsheet"
-                        state={{ runsheet: runsheet }}
+                  {
+                    (selected.includes(runsheet.id) || runsheet.cm_transit_status == "APPROVED") && !user.is_superuser ? (
+                      <Button size="sm" outline color="warning" type="button"
+                        disabled
                       >
-                        <Button size="sm" outline color="warning" type="button">
+                        Edit
+                      </Button>
+                    )
+                      : (runsheet.cm_current_status !== "NOT APPROVED" && runsheet.cm_current_status !== "REJECTED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
+                        ?
+                        <Button size="sm" outline color="warning" type="button"
+                          disabled
+                        >
                           Edit
                         </Button>
-                      </Link>
-                    )}
-                  </div>
+                        : (runsheet.cm_current_status == "REJECTED" && (runsheet.cm_transit_status == "VERIFIED OPERATION MANAGER" || runsheet.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER") && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
+                          ?
+                          <Button size="sm" outline color="warning" type="button"
+                            disabled
+                          >
+                            Edit
+                          </Button>
+                          : (runsheet.cm_current_status !== "NOT APPROVED" && runsheet.cm_current_status !== "REJECTED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
+                            ?
+                            <Button size="sm" outline color="warning" type="button"
+                              disabled
+                            >
+                              Edit
+                            </Button>
+                            : (runsheet.cm_current_status !== "REJECTED" && (runsheet.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER" || runsheet.cm_transit_status == "VERIFIED OPERATION MANAGER" || runsheet.cm_transit_status == "VERIFIED ACCOUNTANT" || runsheet.cm_transit_status == "VERIFIED ACCOUNT MANAGER" || runsheet.cm_transit_status == "VERIFIED ACCOUNT MANAGER")
+                              && (user.user_department_name + " " + user.designation_name === "OPERATION MANAGER" || user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER"))
+                              ?
+                              <Button size="sm" outline color="warning" type="button"
+                                disabled
+                              >
+                                Edit
+                              </Button>
+                              : (runsheet.cm_current_status !== "REJECTED" && (runsheet.cm_transit_status == "VERIFIED ACCOUNTANT" || runsheet.cm_transit_status == "VERIFIED ACCOUNT MANAGER") && (user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER"))
+                                ?
+                                <Button size="sm" outline color="warning" type="button"
+                                  disabled
+                                >
+                                  Edit
+                                </Button>
+                                :
+                                (
+                                  <Link
+                                  to="/runsheet/changedrunsheet"
+                                  state={{ runsheet: runsheet }}
+                                >
+                                  <Button size="sm" outline color="warning" type="button"
+                                  >
+                                    Edit
+                                  </Button>
+                                </Link>
+                                  )
+                  }
                 </td>
-                )}
+                 )} 
               </tr>
             </>
           );

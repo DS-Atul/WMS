@@ -909,14 +909,24 @@ const AddOrganization = () => {
   const [gstpincode_list, setgstpincode_list] = useState([]);
   const [gst_pincode_page, setgst_pincode_page] = useState(1);
   const [gst_pincode_search_item, setgst_pincode_search_item] = useState("");
+  const [gstpincode_loaded, setgstpincode_loaded] = useState(false);
+  const [gstpincode_count, setgstpincode_count] = useState(1);
+  const [gstpincode_bottom, setgstpincode_bottom] = useState(103)
 
   const [gst_locality_list, setgst_locality_list] = useState([]);
   const [gst_locality, setgst_locality] = useState(["", ""]);
   const [gst_locality_page, setgst_locality_page] = useState(1);
   const [gst_locality_search_item, setgst_locality_search_item] = useState("");
+  const [gstlocality_loaded, setgstlocality_loaded] = useState(false);
+  const [gstlocality_count, setgstlocality_count] = useState(1);
+  const [gstlocality_bottom, setgstlocality_bottom] = useState(103)
 
   const [gst_city_page, setgst_city_page] = useState(1);
   const [gst_city_search_item, setgst_city_search_item] = useState("");
+  const [gstcity_loaded, setgstcity_loaded] = useState(false);
+  const [gstcity_count, setgstcity_count] = useState(1);
+  const [gstcity_bottom, setgstcity_bottom] = useState(103)
+
   const [selected, setselected] = useState([]);
   const [active, setactive] = useState(false);
 
@@ -1017,6 +1027,11 @@ const AddOrganization = () => {
       );
 
       if (resp.data.results.length > 0) {
+        if (resp.data.next === null) {
+          setgstcity_loaded(false);
+        } else {
+          setgstcity_loaded(true);
+        }
         if (gst_city_page === 1) {
           cities_list = resp.data.results.map((v) => [
             v.id,
@@ -1033,12 +1048,13 @@ const AddOrganization = () => {
             ]),
           ];
         }
+        setgstcity_count(gstcity_count + 2);
         setgst_city_list(cities_list);
       } else {
         setgst_city_list([]);
       }
     } catch (err) {
-      alert(`Error Occur in Get City, ${err}`);
+      console.warn(`Error Occur in Get City, ${err}`);
     }
   };
 
@@ -1059,6 +1075,11 @@ const AddOrganization = () => {
       );
 
       if (resp.data.results.length > 0) {
+        if (resp.data.next === null) {
+          setgstpincode_loaded(false);
+        } else {
+          setgstpincode_loaded(true);
+        }
         if (gst_pincode_page === 1) {
           pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
         } else {
@@ -1067,12 +1088,13 @@ const AddOrganization = () => {
             ...resp.data.results.map((v) => [v.id, v.pincode]),
           ];
         }
+        setgstpincode_count(gstpincode_count + 2);
         setgstpincode_list(pincode_list);
       } else {
         setgstpincode_list([]);
       }
     } catch (err) {
-      alert(`Error Occur in Get Pincode, ${err}`);
+      console.warn(`Error Occur in Get Pincode, ${err}`);
     }
   };
 
@@ -1092,6 +1114,11 @@ const AddOrganization = () => {
         }
       );
       if (resp.data.results.length > 0) {
+        if (resp.data.next === null) {
+          setgstlocality_loaded(false);
+        } else {
+          setgstlocality_loaded(true);
+        }
         if (gst_pincode_page === 1) {
           loc_list = resp.data.results.map((v) => [v.id, toTitleCase(v.name)]);
         } else {
@@ -1100,12 +1127,13 @@ const AddOrganization = () => {
             ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
           ];
         }
+        setgstlocality_count(gstlocality_count + 2);
         setgst_locality_list(loc_list);
       } else {
         setgst_locality_list([]);
       }
     } catch (err) {
-      alert(`Error Occur in Get City, ${err}`);
+      console.warn(`Error Occur in Get City, ${err}`);
     }
   };
 
@@ -1126,15 +1154,42 @@ const AddOrganization = () => {
   }, [dimension_list]);
 
   useLayoutEffect(() => {
-    if (gst_city_id != "") {
-      getGstPincode(gst_city_id, "city");
+    if (gst_city_id !== 0) {
+      setgst_pincode_page(1);
+      setgstpincode_count(1);
+      setgstpincode_bottom(103)
+      setgstpincode_loaded(true)
     }
+  }, [gst_city_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (gst_city_id != "") {
+      timeoutId = setTimeout(() => {
+        getGstPincode(gst_city_id, "city");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [gst_city_id, gst_pincode_page, gst_pincode_search_item]);
 
-  useLayoutEffect(() => {
-    if (gst_pincode_id !== "") {
-      getGstLocality(gst_pincode_id, "pincode");
+  useEffect(() => {
+    if (gst_pincode_id !== 0) {
+      setgst_locality_page(1);
+      setgstlocality_count(1);
+      setgstlocality_bottom(103)
+      setgstlocality_loaded(true)
     }
+  }, [gst_pincode_id])
+
+  useLayoutEffect(() => {
+    let timeoutId;
+    if (gst_pincode_id != "") {
+      timeoutId = setTimeout(() => {
+        getGstLocality(gst_pincode_id, "pincode");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+
   }, [gst_pincode_id, gst_locality_page, gst_locality_search_item]);
 
   useEffect(() => {
@@ -1797,6 +1852,10 @@ setbill_color(false);
                                     refresh={refresh}
                                     setrefresh={setrefresh}
                                     idx={index}
+                                    loaded={gstcity_loaded}
+                                      count={gstcity_count}
+                                      bottom={gstcity_bottom}
+                                      setbottom={setgstcity_bottom}
                                   />
                                 </div>
                               ))}
@@ -1818,6 +1877,9 @@ setbill_color(false);
                                     refresh={refresh}
                                     setrefresh={setrefresh}
                                     idx={index}
+                                    count={gstpincode_count}
+                                      bottom={gstpincode_bottom}
+                                      setbottom={setgstpincode_bottom}
                                   />
                                 </div>
                               ))}
@@ -1838,6 +1900,10 @@ setbill_color(false);
                                     refresh={refresh}
                                     setrefresh={setrefresh}
                                     idx={index}
+                                    loaded={gstlocality_loaded}
+                                    count={gstlocality_count}
+                                    bottom={gstlocality_bottom}
+                                    setbottom={setgstlocality_bottom}
                                   />
                                 </div>
                               ))}

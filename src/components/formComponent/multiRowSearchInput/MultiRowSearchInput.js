@@ -20,7 +20,12 @@ const MultiRowSearchInput = ({
   setsearch_txt,
   refresh = false,
   setrefresh,
+  with_add = 0,
   idx = 0,
+  loaded=false,
+  bottom=103,
+  setbottom,
+  count=1,
 }) => {
   const dispatch = useDispatch();
   // const is_search = useSelector((state) => state.searchbar.is_search);
@@ -31,7 +36,7 @@ const MultiRowSearchInput = ({
 
   // Pagination
   const ref = useRef();
-  const [bottom, setbottom] = useState(103);
+  // const [bottom, setbottom] = useState(103);
   const [search, setsearch] = useState("");
   const [error, seterror] = useState(false);
   const [searching, setsearching] = useState(false);
@@ -141,11 +146,23 @@ const MultiRowSearchInput = ({
           className="dataResult custom-select"
           id="chk"
           onScroll={() => {
-            if (ref.current.scrollTop > bottom - 1) {
-              setpage(page + 1);
-              setbottom(bottom + 260);
+            for (let i = 1; i <= count; i += 3) {
+              // setpage(page + 1);
+              if (ref.current.scrollTop > bottom - i && loaded) {
+                setpage(page + 1);
+                setbottom(bottom + 262 - with_add);
+             
+                break;   
+                           
+              }
             }
-          }}
+          }} 
+          // onScroll={() => {
+          //   if (ref.current.scrollTop > bottom - 1) {
+          //     setpage(page + 1);
+          //     setbottom(bottom + 260);
+          //   }
+          // }}
           style={{
             width: current_width,
             // width:"95%",

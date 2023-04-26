@@ -122,6 +122,10 @@ const AddOrder = () => {
   const [state_id_f_c, setstate_id_f_c] = useState(0);
   const [state_error_c, setstate_error_c] = useState(false);
   const [state_page_c, setstate_page_c] = useState(1);
+  const [statec_count, setstatec_count] = useState(1)
+  const [statec_loaded, setstatec_loaded] = useState(false)
+  const [statec_bottom, setstatec_bottom] = useState(103)
+
   const [state_search_item_c, setstate_search_item_c] = useState("");
   const [city_list__c, setcity_list__c] = useState([]);
   const [city_c, setcity_c] = useState("");
@@ -129,6 +133,10 @@ const AddOrder = () => {
   const [city_error_c, setcity_error_c] = useState(false);
   const [city_page_c, setcity_page_c] = useState(1);
   const [city_search_item_c, setcity_search_item_c] = useState("");
+  const [cityc_loaded, setcityc_loaded] = useState(false)
+  const [cityc_count, setcityc_count] = useState(1)
+  const [cityc_bottom, setcityc_bottom] = useState(103)
+
   const [by_pincode_f_c, setby_pincode_f_c] = useState(false);
   const [pincode_list_f_c, setpincode_list_f_c] = useState([]);
   const [pincode_f_c, setpincode_f_c] = useState("");
@@ -143,6 +151,10 @@ const AddOrder = () => {
   const [locality_c, setlocality_c] = useState("");
   const [locality_list_s_c, setlocality_list_s_c] = useState([]);
   const [locality_page_c, setlocality_page_c] = useState(1);
+  const [localityc_loaded, setlocalityc_loaded] = useState(false)
+  const [localityc_count, setlocalityc_count] = useState(1)
+  const [localityc_bottom, setlocalityc_bottom] = useState(103)
+
   const [locality_search_item_c, setlocality_search_item_c] = useState("");
   const [locality_id_f_c, setlocality_id_f_c] = useState(0);
   const [locality_error_c, setlocality_error_c] = useState(false);
@@ -229,6 +241,10 @@ const AddOrder = () => {
   const [consignee_state, setconsignee_state] = useState("");
   const [consignee_city, setconsignee_city] = useState("");
   const [consignee_pincode, setconsignee_pincode] = useState("");
+  const [pincodec_count, setpincodec_count] = useState(1)
+  const [pincodec_bottom, setpincodec_bottom] = useState(103)
+  const [loadc_pincode, setloadc_pincode] = useState(false)
+
   const [consignee_locality, setconsignee_locality] = useState("");
   const [consignee_add_1, setconsignee_add_1] = useState("");
   const [consignee_add_2, setconsignee_add_2] = useState("");
@@ -289,6 +305,10 @@ const AddOrder = () => {
   const [commodity_data_list, setcommodity_data_list] = useState([]);
   const [commodity, setcommodity] = useState("");
   const [commodity_id, setcommodity_id] = useState(0);
+  const [commodity_loaded, setcommodity_loaded] = useState(false)
+  const [commodity_count, setcommodity_count] = useState(1)
+  const [commodity_bottom, setcommodity_bottom] = useState(103)
+
   const [search_commodity, setsearch_commodity] = useState("");
   const e_acess_token = useSelector((state) => state.eway_bill.e_access_token);
   const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
@@ -373,7 +393,7 @@ const AddOrder = () => {
   //State
   const [state_list_s, setstate_list_s] = useState([]);
   const [state, setstate] = useState("");
-  const [state_id, setstate_id] = useState("");
+  const [state_id, setstate_id] = useState(0);
 
   //Pincode
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -864,62 +884,6 @@ const AddOrder = () => {
   //   }
   // };
 
-  //Get Origin  City
-  const getCities = (place_id, filter_by) => {
-    let cities_list = [...origincity_list];
-    // let dcities_list = [...destinationcity_list];
-    axios
-      .get(
-        ServerAddress +
-          `master/all_cities/?search=${""}&p=${origincity_page}&records=${10}&city_search=${origincity_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((resp) => {
-        if (resp.data.results.length > 0) {
-          if (origincity_page == 1) {
-            cities_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.city),
-            ]);
-          } else {
-            cities_list = [
-              ...origincity_list,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-            ];
-          }
-
-          // if (destinationcity_page == 1) {
-          //   dcities_list = resp.data.results.map((v) => [
-          //     v.id,
-          //     toTitleCase(v.city),
-          //   ]);
-          // } else {
-          //   dcities_list = [
-          //     ...destinationcity_list,
-          //     ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-          //   ];
-          // }
-          cities_list = [...new Set(cities_list.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
-          // dcities_list = [...new Set(dcities_list.map((v) => `${v}`))].map(
-          //   (v) => v.split(",")
-          // );
-          setorigincity_list(cities_list);
-          // setdestinationcity_list(dcities_list);
-        }
-      })
-      .catch((err) => {
-        // alert(`Error Occur in Get City, ${err}`);
-      });
-  };
-
   // Get destination city
   const getDes_Cities = (place_id, filter_by) => {
     // let cities_list = [...origincity_list];
@@ -927,11 +891,11 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${destinationcity_page}&records=${10}&city_search=${destinationcity_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_cities/?search=${""}&p=${destinationcity_page}&records=${10}&city_search=${destinationcity_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1009,7 +973,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/get_client_shipperconsignee/?client_id=${client_id}&city_id=${origin_id}&p=${shipper_page}&records=${10}&name_search=${shipper_search_item}`,
+        `master/get_client_shipperconsignee/?client_id=${client_id}&city_id=${origin_id}&p=${shipper_page}&records=${10}&name_search=${shipper_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1032,7 +996,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/get_client_shipperconsignee/?client_id=${client_id}&city_id=${destination_id}&p=${consignee_page}&records=${10}&name_search=${consignee_search_item}`,
+        `master/get_client_shipperconsignee/?client_id=${client_id}&city_id=${destination_id}&p=${consignee_page}&records=${10}&name_search=${consignee_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1135,7 +1099,7 @@ const AddOrder = () => {
             // console.log("Ankkiii");
           }
         })
-        .catch((err) => {});
+        .catch((err) => { });
     }
   };
 
@@ -1179,18 +1143,18 @@ const AddOrder = () => {
             : "NONE",
           asset:
             asset_info_selected === "With Box" &&
-            asset_info_selected !== "None" &&
-            cold_chain
+              asset_info_selected !== "None" &&
+              cold_chain
               ? box
               : asset_info_selected === "With Logger" &&
                 asset_info_selected !== "None" &&
                 cold_chain
-              ? logger
-              : asset_info_selected === "With Box + With Logger" &&
-                asset_info_selected !== "None" &&
-                cold_chain
-              ? both
-              : [],
+                ? logger
+                : asset_info_selected === "With Box + With Logger" &&
+                  asset_info_selected !== "None" &&
+                  cold_chain
+                  ? both
+                  : [],
           current_branch: home_branch_id,
           client_name: client.toUpperCase(),
           branch_name: user.branch_nm ? user.branch_nm : "BRANCH NOT SET",
@@ -1204,8 +1168,8 @@ const AddOrder = () => {
           eway_bill_no: ewaybill_no,
           consignee_address1: eway_confirm
             ? eway_list.toAddr1.toUpperCase() +
-              "," +
-              eway_list.toAddr2.toUpperCase()
+            "," +
+            eway_list.toAddr2.toUpperCase()
             : consignee_address.toUpperCase(),
           shipper_address1: eway_confirm
             ? eway_list.fromAddr1.toUpperCase() + "," + eway_list.fromAddr2
@@ -1237,14 +1201,14 @@ const AddOrder = () => {
           cm_current_status:
             user.user_department_name + " " + user.designation_name ===
               "DATA ENTRY OPERATOR" ||
-            user.user_department_name + " " + user.designation_name ===
+              user.user_department_name + " " + user.designation_name ===
               "CUSTOMER SERVICE EXECUTIVE"
               ? "NOT APPROVED"
               : cm_current_status.toUpperCase(),
           cm_transit_status:
             user.user_department_name + " " + user.designation_name ===
               "DATA ENTRY OPERATOR" ||
-            user.user_department_name + " " + user.designation_name ===
+              user.user_department_name + " " + user.designation_name ===
               "CUSTOMER SERVICE EXECUTIVE"
               ? "NOT APPROVED"
               : cm_current_status.toUpperCase(),
@@ -1258,7 +1222,7 @@ const AddOrder = () => {
       .then(function (response) {
         if (response.data.status === "success") {
           // console.log("///////Harshiiiiiiiiittttttttt",response.data)
-          eway_confirm && update_ewayBill(response.data.docket_no,response.data.eway_bill_no)
+          eway_confirm && update_ewayBill(response.data.docket_no, response.data.eway_bill_no)
           if (row3[0][0] !== "" || row4[0][0] !== "") {
             send_order_image(response.data.data.docket_no);
           }
@@ -1366,18 +1330,18 @@ const AddOrder = () => {
               : "NONE",
           asset:
             asset_info_selected === "With Box" &&
-            asset_info_selected !== "None" &&
-            cold_chain
+              asset_info_selected !== "None" &&
+              cold_chain
               ? box
               : asset_info_selected === "With Logger" &&
                 asset_info_selected !== "None" &&
                 cold_chain
-              ? logger
-              : asset_info_selected === "With Box + With Logger" &&
-                asset_info_selected !== "None" &&
-                cold_chain
-              ? both
-              : [],
+                ? logger
+                : asset_info_selected === "With Box + With Logger" &&
+                  asset_info_selected !== "None" &&
+                  cold_chain
+                  ? both
+                  : [],
 
           client_name: client.toUpperCase(),
           branch_name: user.branch_nm ? user.branch_nm : "BRANCH NOT SET",
@@ -1447,7 +1411,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${search_billto}&data=all`,
+        `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${search_billto}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1473,7 +1437,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_clients/?bill_to=${billto_id}&search=${""}&p=${client_page}&records=${10}&name_search=${search_client}`,
+        `master/all_clients/?bill_to=${billto_id}&search=${""}&p=${client_page}&records=${10}&name_search=${search_client}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1504,17 +1468,22 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_commodities/?search=${""}&p=${page}&records=${10}&commodity_type=${[
-            "",
-          ]}&commodity_name=${[
-            "",
-          ]}&commodity_name_search=${search_commodity}&data=all`,
+        `master/all_commodities/?search=${""}&p=${page}&records=${10}&commodity_type=${[
+          "",
+        ]}&commodity_name=${[
+          "",
+        ]}&commodity_name_search=${search_commodity}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
         if (response.data.results.length > 0) {
+          if (response.data.next === null) {
+            setcommodity_loaded(false);
+          } else {
+            setcommodity_loaded(true);
+          }
           data = response.data.results;
           console.log("data-------", data);
           for (let index = 0; index < data.length; index++) {
@@ -1526,6 +1495,7 @@ const AddOrder = () => {
           temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
             v.split(",")
           );
+          setcommodity_count(commodity_count + 2);
           setcommodity_data_list(temp3);
         }
       })
@@ -1539,7 +1509,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/get_orderasset/?order_id=${order_id}&p=1&records=10`,
+        `master/get_orderasset/?order_id=${order_id}&p=1&records=10`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1554,20 +1524,20 @@ const AddOrder = () => {
             temp.push([
               order_asset.asset,
               order_asset.asset_id +
-                "-" +
-                order_asset.box_type +
-                "-" +
-                order_asset.product_id,
+              "-" +
+              order_asset.box_type +
+              "-" +
+              order_asset.product_id,
             ]);
             deleted_id.push(order_asset.asset);
           } else {
             temp2.push([
               order_asset.asset,
               order_asset.asset_id +
-                "-" +
-                order_asset.box_type +
-                "-" +
-                order_asset.manufacturer_name,
+              "-" +
+              order_asset.box_type +
+              "-" +
+              order_asset.manufacturer_name,
             ]);
             deleted_id.push(order_asset.asset);
           }
@@ -1622,11 +1592,10 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/get_asset_details/?p=${
-            asset_info_selected === "With Logger" ? Logger_page : box_list_page
-          }&records=${10}&asset_type=${String(
-            asset_info_selected
-          ).toUpperCase()}&product_id_search=${search_logger}`,
+        `master/get_asset_details/?p=${asset_info_selected === "With Logger" ? Logger_page : box_list_page
+        }&records=${10}&asset_type=${String(
+          asset_info_selected
+        ).toUpperCase()}&product_id_search=${search_logger}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1639,19 +1608,19 @@ const AddOrder = () => {
             box.push([
               element.id,
               element.asset_id +
-                "-" +
-                element.box_type +
-                "-" +
-                element.product_id,
+              "-" +
+              element.box_type +
+              "-" +
+              element.product_id,
             ]);
           } else {
             logger.push([
               element.id,
               element.asset_id +
-                "-" +
-                element.box_type +
-                "-" +
-                element.manufacturer_name,
+              "-" +
+              element.box_type +
+              "-" +
+              element.manufacturer_name,
             ]);
           }
         }
@@ -1863,7 +1832,6 @@ const AddOrder = () => {
   useLayoutEffect(() => {
     try {
       let order_data = location.state.order;
-      console.log("Haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", order_data);
       setshipper_n(order_data.shipper);
       setorder_type(toTitleCase(order_data.order_type));
       setlinked_order(
@@ -1960,7 +1928,7 @@ const AddOrder = () => {
       setshipper_add_1(toTitleCase(order_data.shipper_address_line));
       setdestinationcity(toTitleCase(order_data.consignee_city));
       setdestinationcity_id(toTitleCase(order_data.consignee_city_id));
-    } catch (error) {}
+    } catch (error) { }
   }, []);
 
   useEffect(() => {
@@ -2077,9 +2045,9 @@ const AddOrder = () => {
 
   const [ewaybill, setewaybill] = useState(false);
 
-  useLayoutEffect(() => {
-    getCities("all", "all");
-  }, [origincity_page, origincity_search_item]);
+  // useLayoutEffect(() => {
+  //   getCities("all", "all");
+  // }, [origincity_page, origincity_search_item]);
 
   useLayoutEffect(() => {
     getDes_Cities("all", "all");
@@ -2279,9 +2247,9 @@ const AddOrder = () => {
   useEffect(() => {
     if (
       user.user_department_name + " " + user.designation_name ===
-        "CUSTOMER SERVICE EXECUTIVE" ||
+      "CUSTOMER SERVICE EXECUTIVE" ||
       user.user_department_name + " " + user.designation_name ===
-        "DATA ENTRY OPERATOR"
+      "DATA ENTRY OPERATOR"
     ) {
       setcm_current_status("NOT APPROVED");
       setstatus_toggle(true);
@@ -2433,23 +2401,23 @@ const AddOrder = () => {
       )
       .then(function (response) {
         console.log("response=======eway bill detail", response.data.response);
-        if(response.data.response !== null){
-          
-        seteway_detail_l(response.data.response);
-        seteway_confirm(true);
-        dispatch(setShowAlert(true));
-        dispatch(setDataExist(`Eway Bill nO Details Matched`));
-        dispatch(setAlertType("success"));
-        seteway_list(response.data.response);
-        gefilterlocalityfrom(response.data.response.fromPincode);
-        gefilterlocalityto(response.data.response.toPincode);
+        if (response.data.response !== null) {
+
+          seteway_detail_l(response.data.response);
+          seteway_confirm(true);
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Eway Bill nO Details Matched`));
+          dispatch(setAlertType("success"));
+          seteway_list(response.data.response);
+          gefilterlocalityfrom(response.data.response.fromPincode);
+          gefilterlocalityto(response.data.response.toPincode);
         }
-        else{
+        else {
           seteway_confirm(false);
           seteway_detail_l([])
           seteway_list([])
-        } 
-        
+        }
+
       })
       .catch((error) => {
         seteway_confirm(false);
@@ -2524,19 +2492,35 @@ const AddOrder = () => {
   const [state_error, setstate_error] = useState(false);
   const [state_page, setstate_page] = useState(1);
   const [state_search_item, setstate_search_item] = useState("");
+  const [state_loaded, setstate_loaded] = useState(false)
+  const [state_count, setstate_count] = useState(1)
+  const [state_bottom, setstate_bottom] = useState(103)
+
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
   const [city_id, setcity_id] = useState(0);
   const [city_error, setcity_error] = useState(false);
   const [city_page, setcity_page] = useState(1);
   const [city_search_item, setcity_search_item] = useState("");
+  const [city_loaded, setcity_loaded] = useState(false)
+  const [city_count, setcity_count] = useState(1)
+  const [city_bottom, setcity_bottom] = useState(103)
+
   const [pincode_page, setpincode_page] = useState(1);
   const [pincode_search_item, setpincode_search_item] = useState("");
   const [pincode_id, setpincode_id] = useState(0);
+  const [load_pincode, setload_pincode] = useState(false)
+  const [pincode_count, setpincode_count] = useState(1)
+  const [pincode_bottom, setpincode_bottom] = useState(103)
+
   const [pincode_list_error, setpincode_list_error] = useState(false);
   const [locality, setlocality] = useState("");
   const [locality_list_s, setlocality_list_s] = useState([]);
   const [locality_page, setlocality_page] = useState(1);
+  const [locality_loaded, setlocality_loaded] = useState(false)
+  const [locality_bottom, setlocality_bottom] = useState(103)
+  const [locality_count, setlocality_count] = useState(1)
+
   const [locality_search_item, setlocality_search_item] = useState("");
   const [locality_id_f, setlocality_id_f] = useState(0);
   const [locality_error, setlocality_error] = useState(false);
@@ -2551,13 +2535,18 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
+        `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
+          if (resp.data.next === null) {
+            setstate_loaded(false);
+          } else {
+            setstate_loaded(true);
+          }
           if (state_page == 1) {
             state_list = resp.data.results.map((v) => [
               v.id,
@@ -2570,6 +2559,7 @@ const AddOrder = () => {
             ];
           }
         }
+        setstate_count(state_count + 2);
         setstate_list_s(state_list);
       })
       .catch((err) => {
@@ -2577,17 +2567,19 @@ const AddOrder = () => {
       });
   };
 
-  const getCities_r = (place_id, filter_by, val) => {
+  const getCities = (place_id, filter_by, val) => {
+
     setby_pincode(false);
+    setby_pincode_f_c(false);
     let cities_list = [];
     axios
       .get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_cities/?search=${""}&p=${val === "Shipper" ? city_page : city_page_c}&records=${10}&city_search=${val === "Shipper" ? city_search_item : city_search_item_c}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -2595,29 +2587,54 @@ const AddOrder = () => {
       .then((resp) => {
         if (resp.data.results.length > 0) {
           if (val === "Shipper") {
+            if (resp.data.next === null) {
+              setcity_loaded(false);
+            } else {
+              setcity_loaded(true);
+            }
             if (city_page == 1) {
               cities_list = resp.data.results.map((v) => [
                 v.id,
                 toTitleCase(v.city),
               ]);
+            } else {
+              cities_list = [
+                ...city_list_s,
+                ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+              ];
             }
+            setcity_count(city_count + 2);
             setcity_list_s(cities_list);
-          } else {
+          }
+          else {
+            if (resp.data.next === null) {
+              setcityc_loaded(false);
+            } else {
+              setcityc_loaded(true);
+            }
             if (city_page_c == 1) {
               cities_list = resp.data.results.map((v) => [
                 v.id,
                 toTitleCase(v.city),
               ]);
+            } else {
+              cities_list = [
+                ...city_list__c,
+                ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+              ];
             }
+            setcityc_count(cityc_count + 2);
             setcity_list__c(cities_list);
           }
-        } else {
+        }
+
+        else {
           setcity_list_s([]);
           setcity_list__c([]);
         }
       })
       .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
+        console.warn(`Error Occur in Get City, ${err}`);
       });
   };
 
@@ -2626,17 +2643,22 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_pincode/?search=${""}&p=${val === "Shipper" ? pincode_page : pincode_page_c}&records=${10}&pincode_search=${val === "Shipper" ? pincode_search_item : pincode_search_item_c}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((resp) => {
         if (filter_by !== "pincode") {
+          if (resp.data.next === null) {
+            setload_pincode(false);
+          } else {
+            setload_pincode(true);
+          }
           if (val === "Shipper") {
             if (pincode_page == 1) {
               pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
@@ -2646,8 +2668,15 @@ const AddOrder = () => {
                 ...resp.data.results.map((v) => [v.id, v.pincode]),
               ];
             }
+            setpincode_count(pincode_count + 2);
             setpincode_list_s(pincode_list);
-          } else {
+          }
+          else {
+            if (resp.data.next === null) {
+              setloadc_pincode(false);
+            } else {
+              setloadc_pincode(true);
+            }
             if (pincode_page_c == 1) {
               pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
             } else {
@@ -2656,16 +2685,28 @@ const AddOrder = () => {
                 ...resp.data.results.map((v) => [v.id, v.pincode]),
               ];
             }
+            setpincodec_count(pincodec_count + 2);
             setpincode_list_f_c(pincode_list);
           }
-        } else if (resp.data.results.length > 0) {
+        }
+        else if (resp.data.results.length > 0 && val === "Shipper") {
+
           setcity(toTitleCase(resp.data.results[0].city_name));
           setcity_id(resp.data.results[0].city);
           setstate(toTitleCase(resp.data.results[0].state_name));
           setstate_id(resp.data.results[0].state);
           setpincode(resp.data.results[0].pincode);
           setpincode_id(resp.data.results[0].id);
-        } else {
+        }
+        else if (resp.data.results.length > 0 && val === "Consignee") {
+          setconsginee_c(toTitleCase(resp.data.results[0].city_name));
+          setcity_id_c(resp.data.results[0].city);
+          setconsginee_st(toTitleCase(resp.data.results[0].state_name));
+          setstate_id_f_c(resp.data.results[0].state);
+          setconsignee_pincode(resp.data.results[0].pincode);
+          setconsignee_p_id(resp.data.results[0].id);
+        }
+        else {
           dispatch(
             setDataExist(
               "You entered invalid pincode or pincode not available in database"
@@ -2680,7 +2721,7 @@ const AddOrder = () => {
         }
       })
       .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
+        console.warn(`Error Occur in Get City, ${err}`);
       });
   };
 
@@ -2689,50 +2730,70 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
-          `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
+        `master/all_locality/?search=${""}&p=${val === "Shipper" ? locality_page : locality_page_c}&records=${10}` +
+        `&place_id=${place_id}&filter_by=${filter_by}&name_search=${val === "Shipper" ? locality_search_item : locality_search_item_c}&state=&city=&name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((resp) => {
         if (filter_by !== "locality") {
-          if (val === "Shipper") {
-            if (pincode_page == 1) {
-              locality_list = resp.data.results.map((v) => [
-                v.id,
-                toTitleCase(v.name),
-              ]);
-            } else {
-              locality_list = [
-                ...locality_list_s,
-                ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-              ];
-            }
+          if (resp.data.results.length > 0) {
+            if (val === "Shipper") {
+              if (resp.data.next === null) {
+                setlocality_loaded(false);
+              } else {
+                setlocality_loaded(true);
+              }
 
-            locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
-              (v) => v.split(",")
-            );
-            setlocality_list_s(locality_list);
-          } else {
-            if (pincode_page_c == 1) {
-              locality_list = resp.data.results.map((v) => [
-                v.id,
-                toTitleCase(v.name),
-              ]);
-            } else {
-              locality_list = [
-                ...locality_list_s_c,
-                ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-              ];
-            }
+              if (locality_page == 1) {
+                locality_list = resp.data.results.map((v) => [
+                  v.id,
+                  toTitleCase(v.name),
+                ]);
+              } else {
+                locality_list = [
+                  ...locality_list_s,
+                  ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+                ];
+              }
 
-            locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
-              (v) => v.split(",")
-            );
-            setlocality_list_s_c(locality_list);
-            console.log("locality_list=c========", locality_list);
+              locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+                (v) => v.split(",")
+              );
+              setlocality_count(locality_count + 2);
+              setlocality_list_s(locality_list);
+            }
+            else {
+              if (resp.data.next === null) {
+                setlocalityc_loaded(false);
+              } else {
+                setlocalityc_loaded(true);
+              }
+              if (locality_page_c == 1) {
+                locality_list = resp.data.results.map((v) => [
+                  v.id,
+                  toTitleCase(v.name),
+                ]);
+              } else {
+                locality_list = [
+                  ...locality_list_s_c,
+                  ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+                ];
+              }
+
+              locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
+                (v) => v.split(",")
+              );
+              setlocalityc_count(localityc_count + 2);
+              setlocality_list_s_c(locality_list);
+              console.log("locality_list=c========", locality_list)
+            }
           }
+          else {
+            setlocality_list_s([]);
+          }
+
         } else if (resp.data.results.length > 0) {
           setlocality(toTitleCase(resp.data.results[0].name));
           setlocality_id(resp.data.results[0].id);
@@ -2751,26 +2812,43 @@ const AddOrder = () => {
       });
   };
 
-  useEffect(() => {
-    if (state_id !== "" && by_pincode === false) {
+  useLayoutEffect(() => {
+    if (state_id !== 0) {
       setcity_page(1);
-      getCities_r(state_id, "state", "Shipper");
-      // setpincode("");
-      setpincode_list_s([]);
-      // setlocality("")
-      setlocality_list_s([]);
+      setcity_count(1);
+      setcity_bottom(103)
+      setcity_loaded(true);
     }
-  }, [state_id, city_page, city_search_item]);
+  }, [state_id])
 
   useEffect(() => {
-    if (state_id_f_c !== "" && by_pincode_f_c === false) {
-      setcity_page_c(1);
-      getCities_r(state_id_f_c, "state", "Consignee");
-      // setpincode("");
-      setpincode_list_f_c([]);
-      // setlocality("")
-      setlocality_list_s_c([]);
+    let timeoutId;
+    if (state_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getCities(state_id, "state", "Shipper");
+      }, 1);
     }
+    return () => clearTimeout(timeoutId);
+  }, [state_id, city_page, city_search_item]);
+
+  useLayoutEffect(() => {
+    if (state_id_f_c !== 0) {
+      setcity_page_c(1);
+      setcityc_count(1);
+      setcityc_bottom(103)
+      setcityc_loaded(true);
+
+    }
+  }, [state_id_f_c])
+
+  useEffect(() => {
+    let timeoutId;
+    if (state_id_f_c !== 0) {
+      timeoutId = setTimeout(() => {
+        getCities(state_id_f_c, "state", "Consignee");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [state_id_f_c, city_page_c, state_search_item_c]);
 
   useLayoutEffect(() => {
@@ -2784,24 +2862,47 @@ const AddOrder = () => {
     }
   }, [consginee_st]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (pincode_id !== 0) {
       setlocality_page(1);
-      getLocality(pincode_id, "pincode", "Shipper");
+      setlocality_count(1);
+      setlocality_bottom(103)
+      setlocality_loaded(true);
     }
+  }, [pincode_id])
+
+  useEffect(() => {
+
+    let timeoutId;
+    if (pincode_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getLocality(pincode_id, "pincode", 'Shipper');
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [pincode_id, locality_page, locality_search_item]);
 
-  console.log("consignee_p_id-------", consignee_p_id);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (consignee_p_id !== 0) {
       setlocality_page_c(1);
-      getLocality(consignee_p_id, "pincode", "Consignee");
+      setlocalityc_count(1);
+      setlocalityc_bottom(103)
+      setlocalityc_loaded(true);
     }
+  }, [consignee_p_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (consignee_p_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getLocality(consignee_p_id, "pincode", 'Consignee');
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [consignee_p_id, locality_page_c, locality_search_item_c]);
 
   useLayoutEffect(() => {
     getStates();
-    setcity_list_s([]);
   }, [state_page, state_search_item, refresh]);
 
   const getStates_c = () => {
@@ -2810,13 +2911,18 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page_c}&records=${10}&state_search=${state_search_item_c}`,
+        `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page_c}&records=${10}&state_search=${state_search_item_c}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
+          if (resp.data.next === null) {
+            setstatec_loaded(false);
+          } else {
+            setstatec_loaded(true);
+          }
           if (state_page_c == 1) {
             state_list = resp.data.results.map((v) => [
               v.id,
@@ -2829,6 +2935,7 @@ const AddOrder = () => {
             ];
           }
         }
+        setstatec_count(statec_count + 2);
         setstate_list_c(state_list);
       })
       .catch((err) => {
@@ -2836,176 +2943,52 @@ const AddOrder = () => {
       });
   };
 
-  const getCities__c = (place_id, filter_by) => {
-    setby_pincode(false);
-    let cities_list = [];
-    axios
-      .get(
-        ServerAddress +
-          `master/all_cities/?search=${""}&p=${city_page_c}&records=${10}&city_search=${city_search_item_c}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((resp) => {
-        if (resp.data.results.length > 0) {
-          if (city_page_c == 1) {
-            cities_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.city),
-            ]);
-          }
-          setlocality_list_s_c(cities_list);
-        } else {
-          setlocality_list_s_c([]);
-        }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
-  };
-
-  const getPincode_c = (place_id, filter_by, val) => {
-    let pincode_list = [];
-    axios
-      .get(
-        ServerAddress +
-          `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((resp) => {
-        if (filter_by !== "pincode") {
-          if (pincode_page == 1) {
-            pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-          } else {
-            pincode_list = [
-              ...pincode_list_s,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
-          }
-          setpincode_list_s(pincode_list);
-        } else if (resp.data.results.length > 0) {
-          setcity(toTitleCase(resp.data.results[0].city_name));
-          setcity_id(resp.data.results[0].city);
-          setstate(toTitleCase(resp.data.results[0].state_name));
-          setstate_id(resp.data.results[0].state);
-          setpincode(resp.data.results[0].pincode);
-          setpincode_id(resp.data.results[0].id);
-        } else {
-          dispatch(
-            setDataExist(
-              "You entered invalid pincode or pincode not available in database"
-            )
-          );
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-          setcity("");
-          setcity_id("");
-          // setstate("");
-          setstate_id("");
-        }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get City, ${err}`);
-      });
-  };
-
-  const getLocality_co = (place_id, filter_by) => {
-    let locality_list = [];
-    axios
-      .get(
-        ServerAddress +
-          `master/all_locality/?search=${""}&p=${locality_page_c}&records=${10}` +
-          `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item_c}&state=&city=&name=&data=all`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((resp) => {
-        if (filter_by !== "locality") {
-          if (pincode_page_c == 1) {
-            locality_list = resp.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            locality_list = [
-              ...locality_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-
-          locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
-            (v) => v.split(",")
-          );
-          setlocality_list_s_c(locality_list);
-        } else if (resp.data.results.length > 0) {
-          setlocality_c(toTitleCase(resp.data.results[0].name));
-          setlocality_id_f_c(resp.data.results[0].id);
-          setcity_c(toTitleCase(resp.data.results[0].city_name));
-          setstate_s_c(toTitleCase(resp.data.results[0].state_name));
-          setpincode_f_c(resp.data.results[0].pincode_name);
-          setpincode_id_c(resp.data.results[0].pincode);
-        } else {
-          dispatch(setDataExist("You entered invalid Locality"));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-        }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Pincode , ${err}`);
-      });
-  };
-  useEffect(() => {
-    if (state_id_f_c !== "" && by_pincode === false) {
-      setcity_page(1);
-      getCities__c(state_id_f_c, "state");
-      // setpincode("");
-      setpincode_list_s([]);
-      // setlocality("")
-      setlocality_list_s([]);
-    }
-  }, [state_id_f_c, city_page_c, city_search_item_c]);
-  useLayoutEffect(() => {
-    if (state != "") {
-      setpincode_loaded(true);
-    }
-  }, [state_s_c]);
-  useEffect(() => {
-    if (pincode_id_c !== 0) {
-      setlocality_page_c(1);
-      getLocality_co(pincode_id_c, "pincode");
-    }
-  }, [pincode_id_c, locality_page_c, locality_search_item_c]);
+  // useLayoutEffect(() => {
+  //   if (state != "") {
+  //     setpincode_loaded(true);
+  //   }
+  // }, [state_s_c]);
 
   useLayoutEffect(() => {
     getStates_c();
-    setcity_list_s([]);
   }, [state_page_c, state_search_item_c, refresh_c]);
   ////////
-  useEffect(() => {
-    if (city_id !== 0 && by_pincode === false) {
+  useLayoutEffect(() => {
+    if (city_id !== 0) {
       setpincode_page(1);
-      getPincode(city_id, "city", "Shipper");
-      // setpincode("")
+      setpincode_count(1);
+      setpincode_bottom(103)
+      setload_pincode(true)
     }
-  }, [city_id, pincode_page, pincode_search_item]);
+  }, [city_id])
+
   useEffect(() => {
-    if (city_id_c !== 0 && by_pincode_f_c === false) {
-      setpincode_page_c(1);
-      getPincode(city_id_c, "city", "Consignee");
-      // setpincode("")
+    let timeoutId;
+    if (city_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getPincode(city_id, "city", "Shipper");
+      }, 1);
     }
+    return () => clearTimeout(timeoutId);
+  }, [city_id, pincode_page, pincode_search_item]);
+
+  useLayoutEffect(() => {
+    if (city_id_c !== 0) {
+      setpincode_page_c(1);
+      setpincodec_count(1);
+      setpincodec_bottom(103)
+      setloadc_pincode(true)
+    }
+  }, [city_id_c])
+
+  useEffect(() => {
+    let timeoutId;
+    if (city_id_c !== 0) {
+      timeoutId = setTimeout(() => {
+        getPincode(city_id_c, "city", "Consignee");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [city_id_c, pincode_page_c, pincode_search_item_c]);
 
   // Get Return Order
@@ -3062,7 +3045,7 @@ const AddOrder = () => {
       }
       settotal_delivered_pcs(
         parseInt(returned_data[0].total_quantity) -
-          returned_data[0].issue_notreceived.length
+        returned_data[0].issue_notreceived.length
       );
       setcold_chain(returned_data[0].cold_chain);
       setdelivery_type(returned_data[0].delivery_type);
@@ -3195,9 +3178,9 @@ const AddOrder = () => {
     });
   };
   useEffect(() => {
-    console.log("ewayyy 222222222222222",eway_detail_l)
-    if (eway_detail_l.length !=0) {
-      console.log("ewayyy invoice work done",eway_detail_l)
+    console.log("ewayyy 222222222222222", eway_detail_l)
+    if (eway_detail_l.length != 0) {
+      console.log("ewayyy invoice work done", eway_detail_l)
       let temp_list = [];
       temp_list.push([eway_detail_l.ewbNo, eway_detail_l.docDate, eway_detail_l.docNo, eway_detail_l.totInvValue, ""]);
       setrow2(temp_list);
@@ -3205,26 +3188,26 @@ const AddOrder = () => {
       setinvoice_value(eway_detail_l.docNo);
     }
   }, [eway_detail_l]);
- 
 
-  const update_ewayBill = (dkt_no,eway_no) => {
+
+  const update_ewayBill = (dkt_no, eway_no) => {
     let inv_list = [];
     axios
       .put(
         `https://dev.api.easywaybill.in/ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
         {
-  
+
           "transMode": "1",
           "fromPlace": user_l_state,
           "fromState": user_l_statecode,
           "transDocNo": dkt_no,
           "transDocDate": null,
-          "vehicleNo" : "MH03YX1234",
+          "vehicleNo": "MH03YX1234",
           "reasonCode": "1",
           "reasonRem": "test",
           "userGstin": "05AAAAT2562R1Z3",
           "ewbNo": eway_no
-         },
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -3240,12 +3223,69 @@ const AddOrder = () => {
           setDataExist(`${eway_no} Sucessfully Attached To Docket No =>${dkt_no}`)
         )
         dispatch(setAlertType("success"));
-        
+
       })
       .catch((error) => {
-       
+
       });
   };
+
+  useEffect(() => {
+    console.log("by_pincode========", by_pincode)
+    if (!location.state && state && !by_pincode) {
+      setcity("");
+      setcity_list_s([]);
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [state]);
+
+  useEffect(() => {
+    if (!location.state && city && !by_pincode) {
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [city]);
+
+  useEffect(() => {
+    if (!location.state && pincode && !by_pincode) {
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [pincode]);
+
+
+  useEffect(() => {
+    console.log("by_pincode_f_c========", by_pincode_f_c)
+    if (!location.state && consginee_st && !by_pincode_f_c) {
+      setconsginee_c("");
+      setcity_list__c([]);
+      setconsignee_pincode("");
+      setpincode_list_f_c([]);
+      setlocality_c("");
+      setlocality_list_s_c([]);
+    }
+  }, [consginee_st]);
+
+  useEffect(() => {
+    if (!location.state && consginee_c && !by_pincode_f_c) {
+      setconsignee_pincode("");
+      setpincode_list_f_c([]);
+      setlocality_c("");
+      setlocality_list_s_c([]);
+    }
+  }, [consginee_c]);
+
+  useEffect(() => {
+    if (!location.state && consignee_pincode && !by_pincode_f_c) {
+      setlocality_c("");
+      setlocality_list_s_c([]);
+    }
+  }, [consignee_pincode]);
 
   return (
     <div>
@@ -3381,13 +3421,8 @@ const AddOrder = () => {
                   {/* Booking Info */}
 
                   <Row>
-                    <Col
-                      lg={
-                        order_type == "Return" || order_type == "Issue" ? 2 : 4
-                      }
-                      md={6}
-                      sm={6}
-                    >
+
+                    <Col lg={(order_type == "Return" || order_type == "Issue") ? 2 : 4} md={6} sm={6}>
                       <Label className="header-child">Booking For</Label>
                       <div className="">
                         <NSearchInput
@@ -3500,15 +3535,14 @@ const AddOrder = () => {
                                     console.log("maxlength", e.target.value);
                                     if (e.target.value.length === 12) {
                                       setewaybill_no(e.target.value);
-                                      check_ewb_attached(e.target.value);
-                                      // get_eway_detail(e.target.value);
+                                      get_eway_detail(e.target.value);
                                     } else if (e.target.value.length < 12) {
                                       setewaybill_no(e.target.value);
                                     }
                                   }}
                                   placeholder="Enter Eway Bill Number"
-                                  // onMouseLeave={()=>{
-                                  // }}
+                                // onMouseLeave={()=>{
+                                // }}
                                 />
                               </div>
                             </Col>
@@ -3910,7 +3944,7 @@ const AddOrder = () => {
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
-                              <Label className="header-child">State</Label>
+                              <Label className="header-child">State*</Label>
                               <SearchInput
                                 data_list={state_list_s}
                                 setdata_list={setstate_list_s}
@@ -3923,6 +3957,10 @@ const AddOrder = () => {
                                 error_s={state_error}
                                 search_item={state_search_item}
                                 setsearch_item={setstate_search_item}
+                                loaded={state_loaded}
+                                count={state_count}
+                                bottom={state_bottom}
+                                setbottom={setstate_bottom}
                               />
                             </div>
                           </Col>
@@ -3943,6 +3981,10 @@ const AddOrder = () => {
                                 error_s={city_error}
                                 search_item={city_search_item}
                                 setsearch_item={setcity_search_item}
+                                loaded={city_loaded}
+                                count={city_count}
+                                bottom={city_bottom}
+                                setbottom={setcity_bottom}
                               />
                             </div>
                           </Col>
@@ -3965,6 +4007,10 @@ const AddOrder = () => {
                                   setsearch_item={setpincode_search_item}
                                   error_message={"Please Select Any Pincode"}
                                   error_s={pincode_list_error}
+                                  loaded={load_pincode}
+                                  count={pincode_count}
+                                  bottom={pincode_bottom}
+                                  setbottom={setpincode_bottom}
                                 />
                               </div>
                             ) : (
@@ -4007,7 +4053,7 @@ const AddOrder = () => {
                                   value={pincode}
                                   invalid={
                                     validation.touched.pincode &&
-                                    validation.errors.pincode
+                                      validation.errors.pincode
                                       ? true
                                       : false
                                   }
@@ -4019,7 +4065,7 @@ const AddOrder = () => {
                                 />
 
                                 {pincode_loaded === false &&
-                                pincode_error === true ? (
+                                  pincode_error === true ? (
                                   <div
                                     style={{
                                       color: "#F46E6E",
@@ -4031,8 +4077,8 @@ const AddOrder = () => {
                                 ) : null}
 
                                 {pincode_loaded === false &&
-                                pincode_error === false &&
-                                pincode_error2 === true ? (
+                                  pincode_error === false &&
+                                  pincode_error2 === true ? (
                                   <div
                                     style={{
                                       color: "#F46E6E",
@@ -4061,6 +4107,10 @@ const AddOrder = () => {
                                 setsearch_item={setlocality_search_item}
                                 error_message={"Please Select Any Locality"}
                                 error_s={locality_error}
+                                loaded={locality_loaded}
+                                count={locality_count}
+                                bottom={locality_bottom}
+                                setbottom={setlocality_bottom}
                               />
                             </div>
                           </Col>
@@ -4134,7 +4184,7 @@ const AddOrder = () => {
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
-                              <Label className="header-child">State</Label>
+                              <Label className="header-child">State*</Label>
                               <SearchInput
                                 data_list={state_list_c}
                                 setdata_list={setstate_list_c}
@@ -4147,6 +4197,10 @@ const AddOrder = () => {
                                 error_s={state_error}
                                 search_item={state_search_item_c}
                                 setsearch_item={setstate_search_item_c}
+                                loaded={statec_loaded}
+                                count={statec_count}
+                                bottom={statec_bottom}
+                                setbottom={setstatec_bottom}
                               />
                             </div>
                           </Col>
@@ -4167,6 +4221,10 @@ const AddOrder = () => {
                                 error_s={city_error_c}
                                 search_item={city_search_item_c}
                                 setsearch_item={setcity_search_item_c}
+                                loaded={cityc_loaded}
+                                count={cityc_count}
+                                bottom={cityc_bottom}
+                                setbottom={setcityc_bottom}
                               />
                             </div>
                           </Col>
@@ -4188,6 +4246,10 @@ const AddOrder = () => {
                                   setsearch_item={setpincode_search_item_c}
                                   error_message={"Please Select Any Pincode"}
                                   error_s={pincode_list_error_c}
+                                  loaded={loadc_pincode}
+                                  count={pincodec_count}
+                                  bottom={pincodec_bottom}
+                                  setbottom={setpincodec_bottom}
                                 />
                               </div>
                             ) : (
@@ -4199,7 +4261,7 @@ const AddOrder = () => {
                                   onChange={(val) => {
                                     setconsignee_pincode(val.target.value);
                                     if (val.target.value.length !== 0) {
-                                      setpincode_error(false);
+                                      setpincode_error_f_c(false);
                                       if (val.target.value.length === 6) {
                                         setpincode_error2_f_c(false);
                                       } else {
@@ -4230,7 +4292,7 @@ const AddOrder = () => {
                                   value={consignee_pincode}
                                   invalid={
                                     validation.touched.consignee_pincode &&
-                                    validation.errors.consignee_pincode
+                                      validation.errors.consignee_pincode
                                       ? true
                                       : false
                                   }
@@ -4241,8 +4303,8 @@ const AddOrder = () => {
                                   placeholder="Enter Pin code"
                                 />
 
-                                {pincode_loaded === false &&
-                                pincode_error === true ? (
+                                {pincode_loaded_f_c === false &&
+                                  pincode_error_f_c === true ? (
                                   <div
                                     style={{
                                       color: "#F46E6E",
@@ -4253,9 +4315,9 @@ const AddOrder = () => {
                                   </div>
                                 ) : null}
 
-                                {pincode_loaded === false &&
-                                pincode_error === false &&
-                                pincode_error2 === true ? (
+                                {pincode_loaded_f_c === false &&
+                                  pincode_error_f_c === false &&
+                                  pincode_error2_f_c === true ? (
                                   <div
                                     style={{
                                       color: "#F46E6E",
@@ -4282,8 +4344,13 @@ const AddOrder = () => {
                                 page={locality_page_c}
                                 setpage={setlocality_page_c}
                                 setsearch_item={setlocality_search_item_c}
+                                search_item={locality_search_item_c}
                                 error_message={"Please Select Any Locality"}
                                 error_s={locality_error}
+                                loaded={localityc_loaded}
+                                count={localityc_count}
+                                bottom={localityc_bottom}
+                                setbottom={setlocalityc_bottom}
                               />
                             </div>
                           </Col>
@@ -4408,7 +4475,7 @@ const AddOrder = () => {
                                 set_id={setlocality_id}
                                 show_search={false}
                                 error_message={"Please Select Locality Type"}
-                                // error_s={branch_type_error}
+                              // error_s={branch_type_error}
                               />
                             </div>
                           </Col>
@@ -4551,7 +4618,7 @@ const AddOrder = () => {
                                   set_id={setlocality_id_to}
                                   show_search={false}
                                   error_message={"Please Select Locality Type"}
-                                  // error_s={branch_type_error}
+                                // error_s={branch_type_error}
                                 />
                               </div>
                             </Col>
@@ -4666,7 +4733,7 @@ const AddOrder = () => {
                               page={box_list_page}
                               setpage={setbox_list_page}
                               setsearch_item={setsearch_logger}
-                              // setlist_id={}
+                            // setlist_id={}
                             />
                           </Col>
                         </>
@@ -4684,7 +4751,7 @@ const AddOrder = () => {
                               page={Logger_page}
                               setpage={setLogger_page}
                               setsearch_item={setsearch_logger}
-                              // setlist_id={}
+                            // setlist_id={}
                             />
                           </Col>
                         </>
@@ -4707,7 +4774,7 @@ const AddOrder = () => {
                                 setpage={setLogger_page}
                                 setsearch_item={setsearch_logger}
                                 width={"width"}
-                                // setlist_id={}
+                              // setlist_id={}
                               />
                             </div>
                           </Col>
@@ -4724,7 +4791,7 @@ const AddOrder = () => {
                                 page={box_list_page}
                                 setpage={setbox_list_page}
                                 setsearch_item={setsearch_logger}
-                                // setlist_id={}
+                              // setlist_id={}
                               />
                             </div>
                           </Col>
@@ -4826,6 +4893,10 @@ const AddOrder = () => {
                         setsearch_item={setsearch_commodity}
                         error_message={"Please Select Any Commodity"}
                         error_s={commodity_error}
+                        loaded={commodity_loaded}
+                        count={commodity_count}
+                        bottom={commodity_bottom}
+                        setbottom={setcommodity_bottom}
                       />
                       {/* {commodity_error ? (
                         <div className="mt-1 error-text" color="danger">
@@ -4918,7 +4989,7 @@ const AddOrder = () => {
                           value={validation.values.total_quantity || ""}
                           invalid={
                             validation.touched.total_quantity &&
-                            validation.errors.total_quantity
+                              validation.errors.total_quantity
                               ? true
                               : false
                           }
@@ -4929,7 +5000,7 @@ const AddOrder = () => {
                           placeholder="Enter Total Quantity"
                         />
                         {validation.touched.total_quantity &&
-                        validation.errors.total_quantity ? (
+                          validation.errors.total_quantity ? (
                           <FormFeedback type="invalid">
                             {validation.errors.total_quantity}
                           </FormFeedback>
@@ -5425,30 +5496,30 @@ const AddOrder = () => {
                           ))} */}
                           {row1[row1.length - 1][0] !== ""
                             ? row1
-                                .filter((e) => e[0] !== "")
-                                .map((item1, index1) => {
-                                  // console.log("item!1111111111111111111111111111111111",item1)
-                                  return (
-                                    <div style={{ width: "100%" }} key={index1}>
-                                      <img
-                                        src={item1[0]}
-                                        style={{
-                                          height: "110px",
-                                          width: "110px",
-                                          borderRadius: "10px",
-                                          padding: 20,
-                                        }}
-                                        onClick={() => {
-                                          // setshowModalOrder({
-                                          //   ...showModalOrder,
-                                          //   value: true,
-                                          //   ind: index1,
-                                          // });
-                                        }}
-                                      />
-                                    </div>
-                                  );
-                                })
+                              .filter((e) => e[0] !== "")
+                              .map((item1, index1) => {
+                                // console.log("item!1111111111111111111111111111111111",item1)
+                                return (
+                                  <div style={{ width: "100%" }} key={index1}>
+                                    <img
+                                      src={item1[0]}
+                                      style={{
+                                        height: "110px",
+                                        width: "110px",
+                                        borderRadius: "10px",
+                                        padding: 20,
+                                      }}
+                                      onClick={() => {
+                                        // setshowModalOrder({
+                                        //   ...showModalOrder,
+                                        //   value: true,
+                                        //   ind: index1,
+                                        // });
+                                      }}
+                                    />
+                                  </div>
+                                );
+                              })
                             : null}
 
                           {row1[row1.length - 1][0] === "" ? (
@@ -5713,7 +5784,7 @@ const AddOrder = () => {
                                     row4[index2][0] = val.target.value;
                                   }
                                 }}
-                                disabled={eway_confirm && index2==0}
+                                disabled={eway_confirm && index2 == 0}
                               />
                             </div>
                           ))}
@@ -5738,7 +5809,7 @@ const AddOrder = () => {
                                   item2[1] = event.target.value;
                                   row4[index2][1] = event.target.value;
                                 }}
-                                disabled={eway_confirm && index2==0}
+                                disabled={eway_confirm && index2 == 0}
                               />
                             </div>
                           ))}
@@ -5786,7 +5857,7 @@ const AddOrder = () => {
                                       item2[2] = val.target.value;
                                       row4[index2][2] = val.target.value;
                                     }}
-                                    disabled={eway_confirm && index2==0}
+                                    disabled={eway_confirm && index2 == 0}
                                   />
                                 )}
                               </div>
@@ -5819,7 +5890,7 @@ const AddOrder = () => {
                                   item2[3] = val.target.value;
                                   row4[index2][3] = val.target.value;
                                 }}
-                                disabled={eway_confirm && index2==0}
+                                disabled={eway_confirm && index2 == 0}
                               />
                             </div>
                           ))}
@@ -5828,7 +5899,7 @@ const AddOrder = () => {
                       <Col md={2} sm={2}>
                         <div className="mb-3">
                           <Label className="header-child">Invoice Images</Label>
-                
+
                           {/* {row2[row2.length - 1][0] !== ""
                             ? row2
                                 .filter((e) => e[0] !== "")
@@ -6166,37 +6237,37 @@ const AddOrder = () => {
                   type="submit"
                   className={
                     isupdating &&
-                    (user.user_department_name + " " + user.designation_name ===
-                      "DATA ENTRY OPERATOR" ||
-                      user.user_department_name +
+                      (user.user_department_name + " " + user.designation_name ===
+                        "DATA ENTRY OPERATOR" ||
+                        user.user_department_name +
                         " " +
                         user.designation_name ===
                         "CUSTOMER SERVICE EXECUTIVE")
                       ? "btn btn-info m-1"
                       : !isupdating
-                      ? "btn btn-info m-1"
-                      : "btn btn-success m-1"
+                        ? "btn btn-info m-1"
+                        : "btn btn-success m-1"
                   }
                   onClick={() => setsame_as(false)}
                 >
                   {isupdating &&
-                  (user.user_department_name + " " + user.designation_name ===
-                    "DATA ENTRY OPERATOR" ||
-                    user.user_department_name + " " + user.designation_name ===
+                    (user.user_department_name + " " + user.designation_name ===
+                      "DATA ENTRY OPERATOR" ||
+                      user.user_department_name + " " + user.designation_name ===
                       "CUSTOMER SERVICE EXECUTIVE" ||
-                    user.is_superuser)
+                      user.is_superuser)
                     ? "Update"
                     : !isupdating
-                    ? "Save"
-                    : "Approved"}
+                      ? "Save"
+                      : "Approved"}
                 </Button>
               )}
 
               {isupdating &&
                 user.user_department_name + " " + user.designation_name !==
-                  "DATA ENTRY OPERATOR" &&
+                "DATA ENTRY OPERATOR" &&
                 user.user_department_name + " " + user.designation_name !==
-                  "CUSTOMER SERVICE EXECUTIVE" &&
+                "CUSTOMER SERVICE EXECUTIVE" &&
                 !user.is_superuser &&
                 currentStep === labelArray.length && (
                   <button

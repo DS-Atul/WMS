@@ -124,6 +124,7 @@ const AddAsset = () => {
   const [search_branch, setsearch_branch] = useState("");
   const [branch_loaded, setbranch_loaded] = useState(false);
   const [branch_count, setbranch_count] = useState(1);
+  const [branch_bottom, setbranch_bottom] = useState(103)
 
   const [useproduct_id, setuseproduct_id] = useState("");
 
@@ -201,6 +202,10 @@ const AddAsset = () => {
   const [box_capacity_error, setbox_capacity_error] = useState(false);
   const [logger_box_type_error, setlogger_box_type_error] = useState(false);
   const [manufacture_type_error, setmanufacture_type_error] = useState(false);
+  const [manufacture_type_loaded, setmanufacture_type_loaded] = useState(false)
+  const [manufacture_type_count, setmanufacture_type_count] = useState(1)
+  const [manufacture_type_bottom, setmanufacture_type_bottom] = useState(103)
+
   const [temperature_log_type_error, settemperature_log_type_error] =
     useState(false);
   const [logger_number_error, setlogger_number_error] = useState(false);
@@ -234,6 +239,11 @@ const AddAsset = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (resp.data.results.length > 0) {
+        if (resp.data.next === null) {
+          setmanufacture_type_loaded(false);
+        } else {
+          setmanufacture_type_loaded(true);
+        }
         if (manufacture_type_page == 1) {
           manufacture_list = resp.data.results.map((v) => [v.id, toTitleCase(v.name)]);
         } else {
@@ -249,6 +259,7 @@ const AddAsset = () => {
       }
       manufacture_list = [...new Set(manufacture_list.map((v) => `${v}`))].map((v) => v.split(","));
       manufacture_list.push("Add New");
+      setmanufacture_type_count(manufacture_type_count + 2)
       setmanufacture_name_list(manufacture_list);
     } catch (err) {
       alert(`Error Occur in Get Commodity Type, ${err}`);
@@ -704,12 +715,13 @@ useEffect(() => {
 
   }, [user, isupdating])
 
+  const update_assetstatus = (id) => {
 
-  const update_assetstatus = async (id) => {
-    try {
-      const response = await axios.put(
+    axios
+      .put(
         ServerAddress + "master/update_asset/" + id,
         {
+
           cm_current_status: "REJECTED",
           cm_remarks: toTitleCase(message).toUpperCase(),
           change_fields: {},
@@ -719,18 +731,21 @@ useEffect(() => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      );
-      if (response.data.status === "success") {
-        dispatch(setShowAlert(true));
-        dispatch(setDataExist(`Status Updated successfully`));
-        dispatch(setAlertType("info"));
-        navigate("/master/commodities");
-      }
-    } catch (err) {
-      alert(`Error while updating Coloader ${err}`);
-    }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          // dispatch(Toggle(true))
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Status Updated sucessfully`));
+          dispatch(setAlertType("info"));
+          navigate("/master/commodities");
+        }
+      })
+      .catch(function (err) {
+        alert(`rror While  Updateing Coloader ${err}`);
+      });
   };
-  
+
   const handleSubmit = () => {
     if (message == "") {
       setmessage_error(true);
@@ -881,6 +896,10 @@ useEffect(() => {
                                 "Please select Manufacture Name type"
                               }
                               error_s={manufacture_type_error}
+                              loaded={manufacture_type_loaded}
+                              count={manufacture_type_count}
+                              bottom={manufacture_type_bottom}
+                              setbottom={setmanufacture_type_bottom}
                             />
                           </div>
                         </Col>
@@ -1101,6 +1120,8 @@ useEffect(() => {
                           error_s={branch_error}
                           loaded={branch_loaded}
                           count={branch_count}
+                          bottom={branch_bottom}
+                          setbottom={setbranch_bottom}
                         />
                         {/* <div className="mt-1 error-text" color="danger">
                           {branch_error ? "Please Select Any Branch" : null}
@@ -1481,6 +1502,8 @@ useEffect(() => {
                     }
                   }
 
+            
+           
                   if (branch_selected === "") {
                     setbranch_error(true);
                     document.getElementById("asset_details").scrollIntoView();

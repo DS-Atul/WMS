@@ -5,6 +5,8 @@ const OrderDeliveryDataTitle = [
     "Delivered Date & Time",
     "POD",
     "Signature",
+    "Status",
 ]
+
 
 export default OrderDeliveryDataTitle

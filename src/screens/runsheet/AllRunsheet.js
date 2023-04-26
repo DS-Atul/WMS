@@ -10,12 +10,16 @@ import Filter from "../../components/listDisplay/filter/Filter";
 import NumPagination from "../../components/listDisplay/numPagination/NumPagination";
 import { useDispatch, useSelector } from "react-redux";
 import Navigate from "./runsheetTab/Navigate";
+import OperationNavigate from "../booking/navigateTab/OperationNavigate";
 
 const AllRunsheet = () => {
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
   const route = useSelector((state) => state.filtervalue.data_a);
+  const user = useSelector((state) => state.authentication.userdetails);
+  const cm_value = useSelector((state) => state.datalist.cm_filter);
+
   //Permission
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
@@ -51,6 +55,11 @@ const AllRunsheet = () => {
                 <Filter type={"runsheet"} />
               </div>
             </div>
+            {(!user.is_superuser) &&
+            (
+            <OperationNavigate />
+            )
+                }
           </div>
 
           {/* DataTable */}
@@ -59,7 +68,7 @@ const AllRunsheet = () => {
             Data_Title={RunsheetDataTitle}
             Data_Format={RunsheetDataFormat}
             // path={toggle == false ? `manifestation/api/all-runsheets/?&search=${search}&p=${page_num}&records=${data_len}` : `manifestation/api/get_runsheetfilter_data/?route=${route}&vehicle_no=${vehicle_no}&p=${page_num}&records=${data_len}`}
-            path={`runsheet/get_runsheet/?&search=${search}&p=${page_num}&records=${data_len}&route=${route}`}
+            path={`runsheet/get_runsheet/?&search=${search}&p=${page_num}&records=${data_len}&route=${route}&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>

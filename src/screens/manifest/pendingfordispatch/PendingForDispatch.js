@@ -108,6 +108,12 @@ const PendingForDispatch = () => {
   const [manifest_type, setmanifest_type] = useState("Create_Manifest");
   const [branch_dest, setbranch_dest] = useState("");
   const [branch_dest_id, setbranch_dest_id] = useState("");
+  const [branch_search, setbranch_search] = useState("");
+  const [branch_page, setbranch_page] = useState(1);
+  const [branch_loaded, setbranch_loaded] = useState(false)
+  const [branch_count, setbranch_count] = useState(1)
+  const [branch_bottom, setbranch_bottom] = useState(103)
+
   const [page, setpage] = useState(1);
   console.log("branch_selected----", branch_selected)
   console.log("branch_type_short-----", branch_type_short)
@@ -124,6 +130,11 @@ const PendingForDispatch = () => {
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setbranch_loaded(false);
+        } else {
+          setbranch_loaded(true);
+        }
         let temp = [];
         let temp2 = [...branch_list];
         temp = response.data.results;
@@ -138,6 +149,7 @@ const PendingForDispatch = () => {
           ]);
         }
         temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+        setbranch_count(branch_count + 2);
         setbranch_list(temp2);
       })
       .catch((err) => {
@@ -147,7 +159,7 @@ const PendingForDispatch = () => {
 
   useLayoutEffect(() => {
     get_branch();
-  }, [search, page]);
+  }, [branch_search, branch_page]);
 
   // useLayoutEffect(() => {
   //   if (branch_type_short) {
@@ -165,8 +177,7 @@ const PendingForDispatch = () => {
     console.log("branch_dest,branch_dest", branch_dest);
   }, [branch_dest]);
 
-  const [branch_search, setbranch_search] = useState("");
-  const [branch_page, setbranch_page] = useState(1);
+
   //  FOr fetching Branch Data Ended
   useLayoutEffect(() => {
     setunmanifest_list(domestic_order);
@@ -436,6 +447,10 @@ const PendingForDispatch = () => {
                       error_message={"Please select Branch To Forward"}
                       page={branch_page}
                       setpage={setbranch_page}
+                      loaded={branch_loaded}
+                      count={branch_count}
+                      bottom={branch_bottom}
+                      setbottom={setbranch_bottom}
                     />
                   </Col>
                   <Col lg={3} md={5} sm={5}>

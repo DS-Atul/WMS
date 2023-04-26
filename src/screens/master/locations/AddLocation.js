@@ -103,16 +103,20 @@ const AddLocation = () => {
   const [pincode_page, setpincode_page] = useState(1);
   const [pincode_search_item, setpincode_search_item] = useState("");
   const [pincode_error, setpincode_error] = useState(false);
+  const [pincode_bottom, setpincode_bottom] = useState(103)
 
   // For Loading Data
   const [city_loaded, setcity_loaded] = useState(false);
   const [city_count, setcity_count] = useState(1);
+  const [city_bottom, setcity_bottom] = useState(103)
 
   const [country_loaded, setcountry_loaded] = useState(false);
   const [country_count, setcountry_count] = useState(1);
+  const [country_bottom, setcountry_bottom] = useState(103)
 
   const [state_loaded, setstate_loaded] = useState(false);
   const [state_count, setstate_count] = useState(1);
+  const [state_bottom, setstate_bottom] = useState(103)
 
   const [pincode_loaded, setpincode_loaded] = useState(false);
   const [pincode_count, setpincode_count] = useState(1);
@@ -287,7 +291,7 @@ const AddLocation = () => {
       setstate_count(state_count + 2);
       setstate_list_s(state_list);
     } catch (error) {
-      alert(`Error Occur in Get States, ${error}`);
+      console.warn(`Error Occur in Get State, ${error}`);
     }
   };
   
@@ -678,14 +682,26 @@ const AddLocation = () => {
 
   useLayoutEffect(() => {
     getCountry();
-    // setstate_list_s([])
   }, [country_page, country_search_item, other_country]);
 
-  useLayoutEffect(() => {
-    if (country !== "") {
-      getStates(country_id, "counter");
+  useEffect(() => {
+    if (country_id !== 0) {
+      setstate_page(1);
+      setstate_count(1);
+      setstate_bottom(103)
+      setstate_loaded(true);
     }
-  }, [country, state_page, state_search_item]);
+  }, [country_id])
+
+  useLayoutEffect(() => {
+    let timeoutId;
+    if (country_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getStates(country_id, "counter");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [country_id, state_page, state_search_item]);
 
   useEffect(() => {
     if (country !== "" && !isupdating) {
@@ -693,11 +709,24 @@ const AddLocation = () => {
     }
   }, [country]);
 
-  useLayoutEffect(() => {
-    if (state !== "") {
-      getCities(state_id, "state");
+  useEffect(() => {
+    if (state_id !== 0) {
+      setcity_page(1);
+      setcity_count(1);
+      setcity_bottom(103)
+      setcity_loaded(true);
     }
-  }, [state, city_page, city_search_item]);
+  }, [state_id])
+
+  useLayoutEffect(() => {
+    let timeoutId;
+    if (state_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getCities(state_id, "state");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [state_id, city_page, city_search_item]);
 
   useEffect(() => {
     if (state !== "" && !isupdating) {
@@ -725,11 +754,24 @@ const AddLocation = () => {
     }
   }, []);
 
-  useLayoutEffect(() => {
-    if (city !== "") {
-      getPincode(city_id, "city");
+  useEffect(() => {
+    if (city_id !== 0) {
+      setpincode_page(1);
+      setpincode_count(1);
+      setpincode_bottom(103);
+      setpincode_loaded(true);
     }
-  }, [city, pincode_page, pincode_search_item]);
+  }, [city_id])
+
+  useLayoutEffect(() => {
+    let timeoutId;
+    if (city_id !== 0 ) {
+      timeoutId = setTimeout(() => {
+        getPincode(city_id, "city");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [city_id, pincode_page, pincode_search_item]);
 
   useEffect(() => {
     if (city !== "" && !isupdating) {
@@ -970,6 +1012,8 @@ const AddLocation = () => {
                           error_s={country_error}
                           loaded={country_loaded}
                           count={country_count}
+                          bottom={country_bottom}
+                          setbottom={setcountry_bottom}
                           // add_nav={'/master/locations/addlocation'}
                         />
                       </div>
@@ -1029,6 +1073,8 @@ const AddLocation = () => {
                             error_s={empty_state}
                             loaded={state_loaded}
                             count={state_count}
+                            bottom={state_bottom}
+                            setbottom={setstate_bottom}
                           />
                           {/* <div className="mt-1 error-text" color="danger">
                           {empty_state ? "Please Select Any State" : null}
@@ -1116,6 +1162,8 @@ const AddLocation = () => {
                             error_s={empty_city}
                             loaded={city_loaded}
                             count={city_count}
+                            bottom={city_bottom}
+                            setbottom={setcity_bottom}
                           />
                         </div>
                         {/* <div className="mt-1 error-text" color="danger"> */}
@@ -1183,6 +1231,8 @@ const AddLocation = () => {
                             error_s={pincode_error}
                             loaded={pincode_loaded}
                             count={pincode_count}
+                            bottom={pincode_bottom}
+                            setbottom={setpincode_bottom}
                           />
                         </div>
                         <div className="mt-1 error-text" color="danger">

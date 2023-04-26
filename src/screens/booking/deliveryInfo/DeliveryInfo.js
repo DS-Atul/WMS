@@ -10,11 +10,12 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
-import Navigate from "../../manifest/navigateTab/Navigate";
+
 import OrderDeliveryDataTitle from "../../../data/booking/alldeliveryInfo/OrderDeliveryDataTitle";
 import OrderDeliveryDataFormate from "../../../data/booking/alldeliveryInfo/OrderDeliveryDataFormate";
 import { saveAs } from 'file-saver'
 import axios from "axios";
+import Navigate from "../navigateTab/Navigate";
 const DeliveryInfo = () => {
   const dispatch = useDispatch();
   const commodity_type = useSelector((state) => state.filtervalue.data_a);
@@ -130,7 +131,7 @@ const DeliveryInfo = () => {
   return (
     <>
       <PageTitle page="Delivery Info" />
-      <button onClick={handleClick}>Download Image</button>
+      {/* <button onClick={handleClick}>Download Image</button> */}
       <Title title="Delivery Info" parent_title="Booking" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
@@ -154,7 +155,9 @@ const DeliveryInfo = () => {
                 {/* <Filter type={"commodity"} /> */}
               </div>
             </div>
-            {(user.user_department_name === "ADMIN" || user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER") &&
+            {(user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE" || 
+            user.user_department_name + " " + user.designation_name === "OPERATION MANAGER" || user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER"
+            ) &&
               (
                 <Navigate />
               )
@@ -166,7 +169,7 @@ const DeliveryInfo = () => {
             can_delete={can_delete}
             Data_Title={OrderDeliveryDataTitle}
             Data_Format={OrderDeliveryDataFormate}
-            path={`booking/get_delivery_info/?search=${search}&p=${page_num}&records=${data_len}`}
+            path={`booking/get_delivery_info/?search=${search}&p=${page_num}&records=${data_len}&signature_person_name=${''}&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>

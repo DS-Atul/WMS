@@ -919,14 +919,24 @@ const AddVendor = () => {
   const [gst_pincode, setgst_pincode] = useState(["", ""]);
   const [gstpincode_list, setgstpincode_list] = useState([]);
   const [gst_pincodepage, setgst_pincodepage] = useState(1);
+  const [gstpincode_loaded, setgstpincode_loaded] = useState(false);
+  const [gstpincode_count, setgstpincode_count] = useState(1);
+  const [gstpincode_bottom, setgstpincode_bottom] = useState(103)
   const [gst_pincode_search, setgst_pincode_search] = useState("");
+
   const [gst_locality_list, setgst_locality_list] = useState([]);
   const [gst_locality, setgst_locality] = useState(["", ""]);
   const [gst_localitypage, setgst_localitypage] = useState(1);
   const [gst_locality_search, setgst_locality_search] = useState("");
+  const [gstlocality_loaded, setgstlocality_loaded] = useState(false);
+  const [gstlocality_count, setgstlocality_count] = useState(1);
+  const [gstlocality_bottom, setgstlocality_bottom] = useState(103)
 
   const [gst_city_page, setgst_city_page] = useState(1);
   const [gst_city_search_item, setgst_city_search_item] = useState("");
+  const [gstcity_loaded, setgstcity_loaded] = useState(false);
+  const [gstcity_count, setgstcity_count] = useState(1);
+  const [gstcity_bottom, setgstcity_bottom] = useState(103)
   const [selected, setselected] = useState([]);
   const [active, setactive] = useState(false);
 
@@ -1059,16 +1069,23 @@ const AddVendor = () => {
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${gst_city_page}&records=${10}&city_search=${gst_city_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_cities/?search=${""}&p=${gst_city_page}&records=${10}&city_search=${gst_city_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
       if (resp.data.results.length > 0) {
+
+        if (resp.data.next === null) {
+          setgstcity_loaded(false);
+        } else {
+          setgstcity_loaded(true);
+        }
+
         let cities_list = [];
         if (gst_city_page === 1) {
           cities_list = resp.data.results.map((v) => [
@@ -1086,12 +1103,13 @@ const AddVendor = () => {
             ]),
           ];
         }
+        setgstcity_count(gstcity_count + 2);
         setgst_city_list(cities_list);
       } else {
         setgst_city_list([]);
       }
     } catch (err) {
-      alert(`Error Occur in Get City11111111, ${err}`);
+      console.warn(`Error Occur in Get City, ${err}`);
     }
   };
   
@@ -1150,8 +1168,13 @@ const AddVendor = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-  
-      if (filter_by !== "pincode") {
+
+      if (response.data.results.length > 0) {
+        if (response.data.next === null) {
+          setgstpincode_loaded(false);
+        } else {
+          setgstpincode_loaded(true);
+        }
         if (gst_pincodepage == 1) {
           pincode_list = response.data.results.map((v) => [v.id, v.pincode]);
         } else {
@@ -1160,18 +1183,13 @@ const AddVendor = () => {
             ...response.data.results.map((v) => [v.id, v.pincode]),
           ];
         }
+        setgstpincode_count(gstpincode_count + 2);
         setgstpincode_list(pincode_list);
       } else {
-        dispatch(
-          setDataExist(
-            "You entered invalid pincode or pincode not available in database"
-          )
-        );
-        dispatch(setAlertType("warning"));
-        dispatch(setShowAlert(true));
+        setgstpincode_list([])
       }
     } catch (error) {
-      alert(`Error Occur in Get City, ${error}`);
+      console.warn(`Error Occur in Get Pincode, ${err}`);
     }
   };
   
@@ -1210,6 +1228,7 @@ const AddVendor = () => {
   //       alert(`Error Occur in Get Pincode , ${err}`);
   //     });
   // };
+
   const getLocality = async (place_id, filter_by) => {
     let locality_list = [];
     try {
@@ -1221,8 +1240,13 @@ const AddVendor = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-  
-      if (filter_by !== "locality") {
+
+      if (response.data.results.length > 0) {
+        if (response.data.next === null) {
+          setgstlocality_loaded(false);
+        } else {
+          setgstlocality_loaded(true);
+        }
         if (gst_localitypage == 1) {
           locality_list = response.data.results.map((v) => [
             v.id,
@@ -1234,17 +1258,15 @@ const AddVendor = () => {
             ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
           ];
         }
+        setgstlocality_count(gstlocality_count + 2);
         setgst_locality_list(locality_list);
       } else {
-        dispatch(setDataExist("You entered invalid Locality"));
-        dispatch(setAlertType("warning"));
-        dispatch(setShowAlert(true));
+        setgst_locality_list([])
       }
     } catch (error) {
       alert(`Error Occur in Get Pincode , ${error}`);
     }
-  };
-  
+  }; 
 
   useEffect(() => {
     if (gst_state_id !== "") {
@@ -1263,15 +1285,42 @@ const AddVendor = () => {
   }, [dimension_list]);
 
   useLayoutEffect(() => {
-    if (gst_city_id != "") {
-      getPincode(gst_city_id, "city");
+    if (gst_city_id !== 0) {
+      setgst_pincodepage(1);
+      setgstpincode_count(1);
+      setgstpincode_bottom(103)
+      setgstpincode_loaded(true)
     }
+  }, [gst_city_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (gst_city_id != "") {
+      timeoutId = setTimeout(() => {
+        getPincode(gst_city_id, "city");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [gst_city_id, gst_pincodepage, gst_pincode_search]);
 
-  useLayoutEffect(() => {
-    if (gst_pincode_id !== "") {
-      getLocality(gst_pincode_id, "pincode");
+  useEffect(() => {
+    if (gst_pincode_id !== 0) {
+      setgst_localitypage(1);
+      setgstlocality_count(1);
+      setgstlocality_bottom(103)
+      setgstlocality_loaded(true)
     }
+  }, [gst_pincode_id])
+
+  useLayoutEffect(() => {
+    let timeoutId;
+    if (gst_pincode_id != "") {
+      timeoutId = setTimeout(() => {
+        getLocality(gst_pincode_id, "pincode");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+
   }, [gst_pincode_id, gst_localitypage, gst_locality_search]);
 
   useEffect(() => {
@@ -2078,6 +2127,10 @@ const AddVendor = () => {
                                       refresh={refresh}
                                       setrefresh={setrefresh}
                                       idx={index}
+                                      loaded={gstcity_loaded}
+                                      count={gstcity_count}
+                                      bottom={gstcity_bottom}
+                                      setbottom={setgstcity_bottom}
                                     />
                                   </div>
                                 ))}
@@ -2099,6 +2152,10 @@ const AddVendor = () => {
                                       refresh={refresh}
                                       setrefresh={setrefresh}
                                       idx={index}
+                                      loaded={gstpincode_loaded}
+                                      count={gstpincode_count}
+                                      bottom={gstpincode_bottom}
+                                      setbottom={setgstpincode_bottom}
                                     />
                                   </div>
                                 ))}
@@ -2121,6 +2178,10 @@ const AddVendor = () => {
                                       refresh={refresh}
                                       setrefresh={setrefresh}
                                       idx={index}
+                                      loaded={gstlocality_loaded}
+                                      count={gstlocality_count}
+                                      bottom={gstlocality_bottom}
+                                      setbottom={setgstlocality_bottom}
                                     />
                                   </div>
                                 ))}

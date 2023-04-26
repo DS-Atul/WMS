@@ -5,6 +5,8 @@ import { FiSquare, FiCheckSquare } from "react-icons/fi";
 // import { setMain_checkbox } from "../../../store/Components/ListDisplay/Main_Checkbox/action";
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
+import { HiQuestionMarkCircle } from "react-icons/hi";
+
 import {
   setIsDeleted,
   setPageNumber,
@@ -158,16 +160,31 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
     }
   }, [index]);
 
-  const handleModal = (a, b, c) => {
-    setasset_barcode(a, b);
-    setasset_id(c);
-    if (asset_barcode) {
-      setopenModal(true);
-    }
-  };
+  //For C&M
+  const [showM, setShowM] = useState(false);
+
+  const handleCloseM = () => setShowM(false);
+  const handleShowM = () => setShowM(true);
+  const [reject_resion, setreject_resion] = useState("")
+
+  const handleModal = (commodity) => {
+    console.log("NOT APPROVED-----", commodity)
+    handleShowM()
+    setreject_resion(commodity)
+    console.log("reject_resion----", reject_resion)
+  }
 
   return (
     <>
+          <Modal show={showM} onHide={handleCloseM}>
+        <Modal.Header closeButton>
+          <Modal.Title>Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ fontSize: "15px" }}>Status : {toTitleCase(reject_resion.cm_current_status)}</div>
+          {reject_resion.cm_current_status === "REJECTED" && <div style={{ fontSize: "15px" }}>Resion: {toTitleCase(reject_resion.cm_remarks)}</div>}
+        </Modal.Body>
+      </Modal>
       {(list_toggle === true ? data1 : data).length === 0 ? (
         <tr>
           <td>No Data Found</td>
@@ -183,7 +200,7 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
             <tr
               key={index}
               style={{
-                borderWidth: 1,
+                bmanifestWidth: 1,
               }}
             >
               {/* {(can_delete || user.is_superuser) && (
@@ -203,7 +220,7 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
                 )}
               </td>
                )} */}
-              <td>
+              {/* <td>
                 <Link
                   to={{
                     pathname: `/manifest/updatemanifest`,
@@ -212,8 +229,49 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
                 >
                   {manifest.manifest_no}
                 </Link>
+              </td> */}
+              <td>
+                {/* VERIFIED CUSTOMER SUPPORT MANAGER */}
+                {/* || manifest.transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER") && !user.is_superuser && user.user_department_name !== "ACCOUNTANT"  */}
+                {
+                  (selected.includes(manifest.id) || manifest.cm_transit_status == "APPROVED") && !user.is_superuser ? (
+                    manifest.manifest_no
+                  )
+                    : (manifest.cm_current_status !== "NOT APPROVED" && manifest.cm_current_status !== "REJECTED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
+                      ? manifest.manifest_no
+                      : (manifest.cm_current_status == "REJECTED" && (manifest.cm_transit_status == "VERIFIED OPERATION MANAGER" || manifest.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER") && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
+                        ? manifest.manifest_no
+                        : (manifest.cm_current_status !== "NOT APPROVED" && manifest.cm_current_status !== "REJECTED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
+                          ? manifest.manifest_no
+                          : (manifest.cm_current_status !== "REJECTED" && (manifest.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER" || manifest.cm_transit_status == "VERIFIED OPERATION MANAGER" || manifest.cm_transit_status == "VERIFIED ACCOUNTANT" || manifest.cm_transit_status == "VERIFIED ACCOUNT MANAGER" || manifest.cm_transit_status == "VERIFIED ACCOUNT MANAGER")
+                            && (user.user_department_name + " " + user.designation_name === "OPERATION MANAGER" || user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER"))
+                            ? manifest.manifest_no
+                            : (manifest.cm_current_status !== "REJECTED" && (manifest.cm_transit_status == "VERIFIED ACCOUNTANT" || manifest.cm_transit_status == "VERIFIED ACCOUNT MANAGER") && (user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER"))
+                              ? manifest.manifest_no
+                              :
+                              (
+                                <Link
+                                  to="/manifest/updatemanifest"
+                                  state={{ manifest: manifest }}
+                                >
+                                  {manifest.manifest_no}
+                                </Link>)
+                }
               </td>
               <td>{l_fdate}</td>
+              <td>
+                {
+                  manifest.cm_current_status === "APPROVED" ?
+                    <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-success btn-rounded"} onClick={() => { handleModal(); setreject_resion(manifest) }}>Approved</button>
+                    :
+                    manifest.cm_current_status === "REJECTED" && manifest.cm_transit_status === "NOT APPROVED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE") ? <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-danger btn-rounded"} onClick={() => { handleModal(); setreject_resion(manifest) }}>Reject <HiQuestionMarkCircle size={15} /></button>
+                      : manifest.cm_current_status === "REJECTED" && (manifest.cm_transit_status == "VERIFIED OPERATION MANAGER" || manifest.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER") && (user.user_department_name + " " + user.designation_name === "OPERATION MANAGER" || user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER")
+                        ? <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-danger btn-rounded"} onClick={() => { handleModal(); setreject_resion(manifest) }}>Reject <HiQuestionMarkCircle size={15} /> </button>
+                        : manifest.cm_current_status === "REJECTED" && (manifest.cm_transit_status === "VERIFIED ACCOUNTANT" || manifest.cm_transit_status == "VERIFIED ACCOUNT MANAGER") && (user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER") ?
+                          <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-danger btn-rounded"} onClick={() => { handleModal(); setreject_resion(manifest) }}>Reject <HiQuestionMarkCircle size={15} /> </button>
+                          : <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-warning btn-rounded"} onClick={() => { handleModal(); setreject_resion(manifest) }}>Status <HiQuestionMarkCircle size={15} /></button>
+                }
+              </td>
               <td>{toTitleCase(manifest.orgin_branch_n)}</td>
               <td>{toTitleCase(manifest.destination_branch_n)}</td>
               <td>{toTitleCase(manifest.coloader_name)}</td>

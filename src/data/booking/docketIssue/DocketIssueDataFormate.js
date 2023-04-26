@@ -17,6 +17,7 @@ import {
   setIndexValue,
   setSelect,
 } from "../../../store/dataList/DataList";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   setAlertType,
   setDataExist,
@@ -26,6 +27,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import {
   Label,
   Input,
+  FormGroup
 } from "reactstrap";
 const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
   console.log("Issue data", data)
@@ -35,7 +37,9 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
   const ids = useSelector((state) => state.datalist.ids);
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
   const user = useSelector((state) => state.authentication.userdetails);
+  const success = useSelector((state) => state.alert.show_alert);
 
+  const navigate = useNavigate();
   // For Delete Commodity
   const delete_issue = (id) => {
     axios
@@ -113,7 +117,7 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
 
   useEffect(() => {
     dispatch(setToggle(false));
-  }, []);
+  }, [success]);
 
   useEffect(() => {
     dispatch(setIsDeleted("No"));
@@ -127,17 +131,17 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
       dispatch(setIndexValue("universal_no"));
     } else if (index === 1) {
       dispatch(setIndexValue("universal_type"));
-    }else if (index === 2) {
+    } else if (index === 2) {
       dispatch(setIndexValue("issue_location"));
-    }else if (index === 3) {
+    } else if (index === 3) {
       dispatch(setIndexValue("issue"));
-    }else if (index === 4) {
+    } else if (index === 4) {
       dispatch(setIndexValue("created_at"));
-    }else if (index === 5) {
+    } else if (index === 5) {
       dispatch(setIndexValue("barcode"));
-    }else if (index === 6) {
+    } else if (index === 6) {
       dispatch(setIndexValue("barcode_type"));
-    }else if (index === 7) {
+    } else if (index === 7) {
       dispatch(setIndexValue("is_solved"));
     }
   }, [index]);
@@ -161,15 +165,19 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
 
   const [show, setShow] = useState(false);
 
-  const handleClose = () => 
-  {
+  const handleClose = () => {
+    setclk_reject(false)
     settoggle(false);
     setShow(false);
   }
   const handleShow = () => setShow(true);
   const [remarks, setremarks] = useState("")
+  console.log("setremarks========", remarks)
   const [is_resolved, setis_resolved] = useState(false)
+  const [barcode_type, setbarcode_type] = useState("")
+  const [barcode, setbarcode] = useState("")
   const [toggle, settoggle] = useState(false)
+  const [clk_reject, setclk_reject] = useState(false)
 
   const update_issue = (id) => {
 
@@ -178,8 +186,15 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
         ServerAddress + "booking/update_issue/" + id,
         {
           is_solved: is_resolved,
-          remarks: toTitleCase(remarks).toUpperCase(),
-          change_fields: { 'is_solved': is_resolved, 'remarks':remarks, 'solved_by': user.username }
+          remarks: remarks!== null ? toTitleCase(remarks).toUpperCase() : "",
+          change_fields: { 'is_solved': is_resolved, 'remarks': remarks, 'solved_by': user.username },
+          barcode: barcode,
+          barcode_type: barcode_type,
+          //For C&M
+          cm_transit_status: status_toggle === true ? current_status : "",
+          cm_current_status: (current_status).toUpperCase(),
+          cm_remarks: ""
+
         },
         {
           headers: {
@@ -203,22 +218,109 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
       });
   };
   const [issue_id, setissue_id] = useState()
-  console.log("issue_id=========", issue_id)
-  const handleSubmit = (id, issue, remarks) =>{
-    setissue_id(id)
-    setis_resolved(issue)
+
+  const handleSubmit = (order, remarks) => {
+    console.log("issue_id=========", order)
+    setissue_id(order.id)
+    setis_resolved(order.is_solved)
+    setbarcode_type(order.barcode_type)
+    setbarcode(order.barcode)
     setremarks(remarks)
     handleShow()
   }
 
   useEffect(() => {
-    if(toggle && issue_id !==""){
+    if (toggle && issue_id !== "") {
       update_issue(issue_id)
     }
 
-  }, [toggle,issue_id])
-  
+  }, [toggle, issue_id])
 
+  //For C&M
+  const [current_status, setcurrent_status] = useState("");
+  const [status_toggle, setstatus_toggle] = useState(false)
+  const [message, setmessage] = useState("")
+  const [message_error, setmessage_error] = useState(false);
+
+  const [showM, setShowM] = useState(false);
+
+  const handleCloseM = () => setShowM(false);
+  const handleShowM = () => setShowM(true);
+  const [reject_resion, setreject_resion] = useState("")
+
+  const handleModal = (order) => {
+    console.log("NOT APPROVED-----", order)
+    handleShowM()
+    setreject_resion(order)
+    console.log("reject_resion----", reject_resion)
+  }
+  useEffect(() => {
+    if (user.user_department_name + " " + user.designation_name ===
+      "DATA ENTRY OPERATOR" ||
+      user.user_department_name +
+      " " +
+      user.designation_name ===
+      "CUSTOMER SERVICE EXECUTIVE") {
+      setcurrent_status("NOT APPROVED")
+      setstatus_toggle(true)
+    }
+
+    else if (user.user_department_name + " " + user.designation_name ===
+      "OPERATION MANAGER" ||
+      user.user_department_name +
+      " " +
+      user.designation_name ===
+      "CUSTOMER SUPPORT MANAGER" || user.is_superuser) {
+      setcurrent_status("APPROVED")
+      setstatus_toggle(true)
+    }
+    else {
+      setcurrent_status("NOT APPROVED")
+      // setstatus_toggle(false)
+    }
+
+  }, [user])
+
+  const update_issuestatus = (id) => {
+
+    axios
+      .put(
+        ServerAddress + "booking/update_issue/" + id,
+        {
+
+          cm_current_status: "REJECTED",
+          cm_remarks: toTitleCase(message).toUpperCase(),
+          change_fields: {'cm_current_status': 'REJECTED'},
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(setToggle(true));
+          setShow(false)
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Status Updated sucessfully`));
+          dispatch(setAlertType("info"));
+
+        }
+      })
+      .catch(function (err) {
+        alert(`rror While  Updateing Coloader ${err}`);
+      });
+  };
+  const handleSubmit2 = () => {
+    if (message == "") {
+      setmessage_error(true);
+    }
+    else {
+      update_issuestatus(issue_id)
+      setShow(false)
+    }
+  }
   return (
     <>
 
@@ -232,42 +334,143 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
           <Modal.Title>Issue</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="mb-3">
-            <Label className="header-child">Is Resolved</Label>
-            <br />
-            <Input
-              className="form-check-input-sm"
-              type="checkbox"
-              // value="false"
-              id="defaultCheck1"
-              onClick={() => {
-                setis_resolved(!is_resolved);
-              }}
-              readOnly={true}
-              checked={is_resolved}
-            />
-          </div>
-          <div className="mb-2">
-            <Label className="header-child">
-              Remarks
-            </Label>
-            <Input
-              value={remarks}
-              onChange={(e)=>setremarks(e.target.value)
-              }
-              type="text"
-              className="form-control-md"
-              id="input"
-              placeholder="Enter Remarks"
-            />
-          </div>
+          {!clk_reject ?
+            <>
+              <div className="mb-3">
+                <Label className="header-child">Is Resolved</Label>
+                <br />
+                <Input
+                  className="form-check-input-sm"
+                  type="checkbox"
+                  value={is_resolved}
+                  id="defaultCheck1"
+                  onClick={() => {
+                    setis_resolved(!is_resolved);
+                  }}
+                  readOnly={true}
+                  checked={is_resolved}
+                />
+              </div>
+              <div className="mb-2">
+                <Label className="header-child">
+                  Barcode Number
+                </Label>
+                <Input
+                  value={barcode}
+                  onChange={(e) => setbarcode(e.target.value)
+                  }
+                  type="text"
+                  className="form-control-md"
+                  id="input"
+                  placeholder="Enter Remarks"
+                />
+              </div>
+              <div className="mb-2">
+                <Label className="header-child">
+                  Barcode Type
+                </Label>
+                <Input
+                  value={barcode_type}
+                  onChange={(e) => setbarcode_type(e.target.value)
+                  }
+                  type="text"
+                  className="form-control-md"
+                  id="input"
+                  placeholder="Enter Remarks"
+                />
+              </div>
+              <div className="mb-2">
+                <Label className="header-child">
+                  Remarks
+                </Label>
+                <Input
+                  value={remarks}
+                  onChange={(e) => setremarks(e.target.value)
+                  }
+                  type="text"
+                  className="form-control-md"
+                  id="input"
+                  placeholder="Enter Remarks"
+                />
+              </div>
+            </>
+            :
+            <>
+              <FormGroup>
+                <Label for="exampleText">
+                  Text Area
+                </Label>
+                <Input
+                  id="exampleText"
+                  name="text"
+                  type="textarea"
+                  style={{ height: "90px" }}
+                  onChange={(e) => {
+                    setmessage(e.target.value)
+                  }}
+                />
+                <div className="mt-1 error-text" color="danger">
+                  {message_error ? "Please Enter Reject Resion" : null}
+                </div>
+              </FormGroup>
+            </>
+
+          }
         </Modal.Body>
         <Modal.Footer>
+
+          {/* <Button variant="primary" onClick={() => settoggle(true)}>Save</Button> */}
+          {!clk_reject ?
+            <Button
+              onClick={() => settoggle(true)}
+              type="submit"
+              className={(user.user_department_name + " " + user.designation_name ===
+                "DATA ENTRY OPERATOR" ||
+                user.user_department_name +
+                " " +
+                user.designation_name ===
+                "CUSTOMER SERVICE EXECUTIVE") ? "btn btn-primary m-1" : "btn btn-success m-1"}
+            >
+              {(user.user_department_name + " " + user.designation_name ===
+                "DATA ENTRY OPERATOR" ||
+                user.user_department_name +
+                " " +
+                user.designation_name ===
+                "CUSTOMER SERVICE EXECUTIVE" || user.is_superuser) ? "Update" : "Approved"}
+            </Button>
+            :
+            <Button variant="primary" onClick={() => handleSubmit2()}>Save</Button>
+          }
+          {
+            ((user.user_department_name + " " + user.designation_name) !== "DATA ENTRY OPERATOR" &&
+              (user.user_department_name + " " + user.designation_name) !== "CUSTOMER SERVICE EXECUTIVE") &&
+            !user.is_superuser &&
+            !clk_reject && (
+              <Button
+                type="button"
+                variant="danger"
+                // className="btn btn-danger m-1"
+                onClick={() => setclk_reject(true)}
+              >
+                Rejected
+              </Button>
+            )
+          }
+
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={()=>settoggle(true)}>Save</Button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal show={showM} onHide={handleCloseM}>
+        <Modal.Header closeButton>
+          <Modal.Title>Status</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ fontSize: "15px" }}>Status : {toTitleCase(reject_resion.cm_current_status)}</div>
+          {reject_resion.cm_current_status === "REJECTED" && <div style={{ fontSize: "15px" }}>Resion: {toTitleCase(reject_resion.cm_remarks)}</div>}
+        </Modal.Body>
       </Modal>
 
       {(list_toggle === true ? data1 : data).length === 0 ? (
@@ -310,7 +513,7 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
                 {(can_update && order.cm_current_status !== "APPROVED") || user.is_superuser ? (
 
                   <a style={{ color: "blue" }}
-                    onClick={() => handleSubmit(order.id, order.is_solved, order.remarks)}
+                    onClick={() => handleSubmit(order, order.remarks)}
                   >
                     {/* {toTitleCase(order.docket_no)} */}
                     {order.universal_no}
@@ -326,6 +529,15 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
               <td>{toTitleCase(order.universal_type)}</td>
               <td>{toTitleCase(order.issue_location)}</td>
               <td>{toTitleCase(order.issue)}</td>
+              <td>
+                {
+                  order.cm_current_status === "APPROVED" ?
+                    <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-success btn-rounded"} onClick={() => { handleModal(order) }}>Approved</button>
+                    :
+                    order.cm_current_status === "REJECTED" && order.cm_transit_status === "NOT APPROVED" ? <button style={{ padding: "4px", fontSize: "12px" }} class={"btn btn-danger btn-rounded"} onClick={() => { handleModal(order) }}>Reject <HiQuestionMarkCircle size={15} /></button>
+                      : <button style={{ padding: "4px", fontSize: "12px" }} className={"btn btn-warning btn-rounded"} onClick={() => { handleModal(order) }}>Status <HiQuestionMarkCircle size={15} /></button>
+                }
+              </td>
               <td>{l_fdate}</td>
               {/* <td>{order.issue_type}</td> */}
               <td>{order.barcode}</td>

@@ -43,7 +43,6 @@ const AddBranch = () => {
 
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("location_data-----", location_data);
   const navigate = useNavigate();
 
   //Circle Toogle Btn
@@ -89,6 +88,12 @@ const AddBranch = () => {
   const [selectgst_id, setselectgst_id] = useState(0);
 
   // Location Info
+
+  const [city_bottom, setcity_bottom] = useState(103)
+  const [state_bottom, setstate_bottom] = useState(103)
+  const [pincode_bottom, setpincode_bottom] = useState(103)
+  const [locality_bottom, setlocality_bottom] = useState(103)
+
   const [state_list_s, setstate_list_s] = useState([]);
   const [state, setstate] = useState("");
   const [state_id, setstate_id] = useState(0);
@@ -128,7 +133,8 @@ const AddBranch = () => {
   const [locality_search_item, setlocality_search_item] = useState("");
   const [locality_id, setlocality_id] = useState(0);
   const [locality_error, setlocality_error] = useState(false);
-  const [locality_error2, setlocality_error2] = useState(false);
+  const [locality_loaded, setlocality_loaded] = useState(false)
+  const [locality_count, setlocality_count] = useState(1)
   //If address is same as gst
   const [same_as_gst, setsame_as_gst] = useState(false);
 
@@ -154,7 +160,6 @@ const AddBranch = () => {
   const [own_pan_number, setown_pan_number] = useState("");
 
   const [address_line, setaddress_line] = useState("");
-  console.log("address is ",address_line);
   const [address_line_err, setaddress_line_err] = useState(false);
   const [isupdating, setisupdating] = useState(false);
   // Save an add button
@@ -171,7 +176,7 @@ const AddBranch = () => {
       branch_name: toTitleCase(branch.name) || "",
       branch_email: branch.email || "",
       branch_phone_number: branch.contact_number || "",
-      // address_line_1: toTitleCase(branch.address_line_1) || "",
+      address_line_1: toTitleCase(branch.address_line_1) || "",
       branch_head: toTitleCase(branch.head) || "",
       branch_head_email: branch.head_email || "",
       branch_head_phone_number: branch.head_phone_number || "",
@@ -206,41 +211,6 @@ const AddBranch = () => {
   const [vendor_data, setvendor_data] = useState([]);
   const [vendor_pan_no, setvendor_pan_no] = useState("");
 
-  // Get Vendor
-  // const get_vendor = () => {
-  //   let vendor_temp = [];
-  //   let data = [];
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //         `master/all_vendor/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((response) => {
-  //       data = response.data.results;
-  //       setvendor_data(data);
-  //       if (response.data.results.length > 0) {
-  //         if (vendor_n_page == 1) {
-  //           vendor_temp = response.data.results.map((v) => [
-  //             v.id,
-  //             toTitleCase(v.name),
-  //           ]);
-  //         } else {
-  //           vendor_temp = [
-  //             ...vendor_list,
-  //             ...response.data.results.map((v) => [v.id, v.name]),
-  //           ];
-  //         }
-  //       }
-  //       setvendor_list(vendor_temp);
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get , ${err}`);
-  //     });
-  // };
-
   // Get vendor
   const get_vendor = async () => {
     let vendor_temp = [];
@@ -248,7 +218,7 @@ const AddBranch = () => {
     try {
       const response = await axios.get(
         ServerAddress +
-          `master/all_vendor/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
+        `master/all_vendor/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -273,93 +243,6 @@ const AddBranch = () => {
       alert(`Error Occur in Get , ${error}`);
     }
   };
-
-  // Post Branch
-  // const send_branch_data = (values) => {
-  //   const buttonType = window.event.submitter.name;
-  //   let op_city_id = operating_city_list2.map((v) => v[0]);
-
-  //   let op_city_id_list = [...new Set(op_city_id.map((v) => `${v}`))].map((v) =>
-  //     parseInt(v.split(","))
-  //   );
-
-  //   axios
-  //     .post(
-  //       ServerAddress + "master/add_branch/",
-  //       {
-  //         name: toTitleCase(values.branch_name).toUpperCase(),
-  //         type: branch_type_short,
-  //         vendor: branch_type === "Own Branch" ? "" : vendor_id,
-  //         email: values.branch_email,
-  //         contact_number: values.branch_phone_number,
-  //         head: toTitleCase(values.branch_head).toUpperCase(),
-  //         head_email: values.branch_head_email,
-  //         head_phone_number: values.branch_head_phone_number,
-  //         pan_no:
-  //           branch_type === "Own Branch"
-  //             ? toTitleCase(own_pan_number).toUpperCase()
-  //             : toTitleCase(vendor_pan_no).toUpperCase(),
-  //         gst_no:
-  //           branch_type === "Own Branch"
-  //             ? toTitleCase(gst_number).toUpperCase()
-  //             : toTitleCase(select_gst).toUpperCase(),
-  //         created_by: user.id,
-  //         address_line_1: toTitleCase(values.address_line_1).toUpperCase(),
-  //         pincode: pincode_id,
-  //         location: locality_id,
-  //         operating_city: op_city_id_list,
-  //         //For C&M
-  //         cm_current_department: user.user_department,
-  //         cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
-  //         cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       }
-  //     )
-  //     .then(function (response) {
-  //       if (response.statusText === "Created") {
-  //         dispatch(setToggle(true));
-  //         dispatch(
-  //           setDataExist(`New Branch "${values.branch_name}" Added Sucessfully`)
-  //         );
-  //         dispatch(setAlertType("success"));
-  //         dispatch(setShowAlert(true));
-  //         if (buttonType === "save_add") {
-  //           setrefresh(!refresh);
-  //           setpincode_loaded(false);
-  //           setbranch_type("");
-  //           // setoperating_city_list2([]);
-  //           setstate("");
-  //           // setcity("");
-  //           setpincode("");
-  //           validation.values.branch_name = "";
-  //           validation.values.branch_email = "";
-  //           validation.values.branch_phone_number = "";
-  //           validation.values.address_line_1 = "";
-  //           validation.values.gst_number = "";
-  //           validation.values.branch_head = "";
-  //           validation.values.branch_head_email = "";
-  //           validation.values.branch_head_phone_number = "";
-  //         } else {
-  //           navigate("/master/branches");
-  //         }
-  //       } else if (response.data === "duplicate") {
-  //         dispatch(setShowAlert(true));
-  //         dispatch(
-  //           setDataExist(
-  //             `Branch Name "${toTitleCase(values.branch_name)}" already exists`
-  //           )
-  //         );
-  //         dispatch(setAlertType("warning"));
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       alert(`Error Happen while posting Braches Data ${error}`);
-  //     });
-  // };
 
   //post Branch using async and await
   const send_branch_data = async (values) => {
@@ -412,7 +295,6 @@ const AddBranch = () => {
           },
         }
       );
-      console.log("Response data", response.data);
       if (response.statusText === "Created") {
         dispatch(setToggle(true));
         dispatch(
@@ -437,7 +319,7 @@ const AddBranch = () => {
           validation.values.branch_head_email = "";
           validation.values.branch_head_phone_number = "";
         } else {
-          navigate("/master/branches");
+          // navigate("/master/branches");
         }
       } else if (response.data === "duplicate") {
         dispatch(setShowAlert(true));
@@ -453,121 +335,17 @@ const AddBranch = () => {
     }
   };
 
-  // Update Branch
-  // const update_branch = (values) => {
-  //   let id = branch.id;
-  //   let op_city_id_list = operating_city_list2.map((v) => v[0]);
-
-  //   let opcity_ids = [...new Set(op_city_id_list.map((v) => `${v}`))].map((v) =>
-  //     parseInt(v.split(","))
-  //   );
-
-  //   let fields_names = Object.entries({
-  //     address_line_1: values.address_line_1,
-  //     city_name: city,
-  //     contact_number: values.branch_phone_number,
-  //     email: values.branch_email,
-  //     gst_no:
-  //       branch_type === "Own Branch" ? gst_number.toUpperCase() : select_gst,
-  //     head: values.branch_head,
-  //     head_email: values.branch_head_email,
-  //     head_phone_number: values.branch_head_phone_number,
-  //     locality_name: locality,
-  //     name: values.branch_name,
-  //     operating_city: opcity_ids,
-  //     pan_no:
-  //       branch_type === "Own Branch"
-  //         ? own_pan_number.toUpperCase()
-  //         : vendor_pan_no,
-  //     pincode_name: pincode,
-  //     state_name: state,
-  //     type: branch_type_short,
-  //     vendor_name: vendor_name,
-  //   });
-
-  //   let change_fields = {};
-
-  //   for (let j = 0; j < fields_names.length; j++) {
-  //     const ele = fields_names[j];
-  //     let prev = location_data.state.branch[`${ele[0]}`];
-  //     let new_v = ele[1];
-  //     if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
-  //       change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
-  //     }
-  //   }
-
-  //   axios
-  //     .put(
-  //       ServerAddress + "master/update_branch/" + id,
-  //       {
-  //         name: toTitleCase(values.branch_name).toUpperCase(),
-  //         type: branch_type_short,
-  //         vendor: branch_type === "Own Branch" ? "" : vendor_id,
-  //         email: values.branch_email,
-  //         contact_number: values.branch_phone_number,
-  //         head: toTitleCase(values.branch_head).toUpperCase(),
-  //         head_email: values.branch_head_email,
-  //         head_phone_number: values.branch_head_phone_number,
-  //         pan_no:
-  //           branch_type === "Own Branch"
-  //             ? toTitleCase(own_pan_number).toUpperCase()
-  //             : toTitleCase(vendor_pan_no).toUpperCase(),
-  //         gst_no:
-  //           branch_type === "Own Branch"
-  //             ? toTitleCase(gst_number).toUpperCase()
-  //             : toTitleCase(select_gst).toUpperCase(),
-  //         address_line_1: toTitleCase(values.address_line_1).toUpperCase(),
-  //         pincode: pincode_id,
-  //         location: locality_id,
-  //         operating_city: opcity_ids,
-  //         modified_by: user.id,
-  //         change_fields: change_fields,
-  //         //For C&M
-  //         cm_transit_status: status_toggle === true ? current_status : "",
-  //         cm_current_status: (current_status).toUpperCase(),
-  //         cm_remarks: ""
-  //       },
-
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       }
-  //     )
-  //     .then(function (response) {
-  //       if (response.data.status === "success") {
-  //         dispatch(
-  //           setDataExist(`Branch "${values.branch_name}" Updated Sucessfully`)
-  //         );
-  //         dispatch(setAlertType("info"));
-  //         dispatch(setShowAlert(true));
-  //         navigate("/master/branches");
-  //       } else if (response.data === "duplicate") {
-  //         dispatch(setShowAlert(true));
-  //         dispatch(
-  //           setDataExist(
-  //             `Branch Name "${toTitleCase(values.branch_name)}" already exists`
-  //           )
-  //         );
-  //         dispatch(setAlertType("warning"));
-  //       }
-  //     })
-  //     .catch(function () {
-  //       alert("Error Error While Updateing branches");
-  //     });
-  // };
-
   //update branch with async and await
   const update_branch = async (values) => {
     let id = branch.id;
-    let op_city_id_list = operating_city_list2.map((v) => v[0]);
+    let op_city_id_list = operating_city_list2.map((v) => v[0]).filter((v) => v !== null);
 
     let opcity_ids = [...new Set(op_city_id_list.map((v) => `${v}`))].map((v) =>
       parseInt(v.split(","))
     );
 
     let fields_names = Object.entries({
-      address_line_1: address_line,
+      address_line_1: values.address_line_1,
       city_name: city,
       contact_number: values.branch_phone_number,
       email: values.branch_email,
@@ -590,16 +368,13 @@ const AddBranch = () => {
     });
 
     let change_fields = {};
-console.log("FIelds name", fields_names)
+
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.branch[`${ele[0]}`];
-
       let new_v = ele[1];
       if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
-        // change_fields[`${ele[0]}`] = new_v;
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
-
       }
     }
 
@@ -661,52 +436,12 @@ console.log("FIelds name", fields_names)
     }
   };
 
-  // Locations Function
-  //   const getStates = () => {
-  //     // let state_list = [...state_list_s];
-  //     let state_list = [];
-  //     axios
-  //       .get(
-  //         ServerAddress +
-  //           `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
-  //         {
-  //           headers: { Authorization: `Bearer ${accessToken}` },
-  //         }
-  //       )
-  //       .then((resp) => {
-
-  //         if(resp.data.next === null) {
-  //           setstate_loaded(false);
-  //         } else {
-  // setstate_loaded(true);
-  //         }
-
-  //         if (resp.data.results.length > 0) {
-  //           if (state_page == 1) {
-  //             state_list = resp.data.results.map((v) => [
-  //               v.id,
-  //               toTitleCase(v.state),
-  //             ]);
-  //           } else {
-  //             state_list = [
-  //               ...state_list_s,
-  //               ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
-  //             ];
-  //           }
-  //         }
-  //         setstate_count(state_count+2);
-  //         setstate_list_s(state_list);
-  //       })
-  //       .catch((err) => {
-  //         alert(`Error Occur in Get States, ${err}`);
-  //       });
-  //   };
   const getStates = async () => {
     let state_list = [];
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
+        `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -719,7 +454,7 @@ console.log("FIelds name", fields_names)
       }
 
       if (resp.data.results.length > 0) {
-        if (state_page == 1) {
+        if (state_page === 1) {
           state_list = resp.data.results.map((v) => [
             v.id,
             toTitleCase(v.state),
@@ -734,59 +469,9 @@ console.log("FIelds name", fields_names)
       setstate_count(state_count + 2);
       setstate_list_s(state_list);
     } catch (err) {
-      alert(`Error Occur in Get States, ${err}`);
+      console.warn(`Error Occur in Get States, ${err}`);
     }
   };
-
-  // const getCities = (place_id, filter_by) => {
-  //   setby_pincode(false);
-  //   let cities_list = [];
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //         `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
-  //         "&place_id=" +
-  //         place_id +
-  //         "&filter_by=" +
-  //         filter_by,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((resp) => {
-
-  //       if(resp.data.next === null) {
-  //         setcity_loaded(false);
-  //       } else {
-  //         setcity_loaded(true);
-  //       }
-
-  //       if (resp.data.results.length > 0) {
-  //         if (city_page == 1) {
-  //           cities_list = resp.data.results.map((v) => [
-  //             v.id,
-  //             toTitleCase(v.city),
-  //           ]);
-  //           if (get_state_wise_op) {
-  //             setoperating_city_list(cities_list);
-  //           }
-  //         } else {
-  //           cities_list = [
-  //             ...city_list_s,
-  //             ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-  //           ];
-  //         }
-  //         setcity_count(city_count +2);
-  //         setcity_list_s(cities_list);
-  //       }
-  //       else {
-  //         setcity_list_s([]);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get City, ${err}`);
-  //     });
-  // };
 
   const getCities = async (place_id, filter_by) => {
     setby_pincode(false);
@@ -794,11 +479,11 @@ console.log("FIelds name", fields_names)
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -816,9 +501,9 @@ console.log("FIelds name", fields_names)
             v.id,
             toTitleCase(v.city),
           ]);
-          if (get_state_wise_op) {
-            setoperating_city_list(cities_list);
-          }
+          // if (get_state_wise_op) {
+          //   setoperating_city_list(cities_list);
+          // }
         } else {
           cities_list = [
             ...city_list_s,
@@ -827,25 +512,24 @@ console.log("FIelds name", fields_names)
         }
         setcity_count(city_count + 2);
         setcity_list_s(cities_list);
+
       } else {
         setcity_list_s([]);
       }
     } catch (err) {
-      alert(`Error Occur in Get City, ${err}`);
+      console.warn(`Error Occur in Get City, ${err}`);
     }
   };
 
   // to get operating citys
-  const getop_cities = () => {
+  console.log("operating_city_list2========", operating_city_list2)
+  const getop_cities = (place_id, filter_by) => {
     let temp_2 = [];
-    let cities_list = [];
     let temp = [...operating_city_list];
     axios
       .get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${op_city_page}&records=${10}&city_search=${search_op_city}` +
-          "&place_id=all" +
-          "&filter_by=all",
+        `master/all_cities/?search=${""}&p=${op_city_page}&records=${20}&city_search=${search_op_city}&place_id=${place_id}&filter_by=${filter_by}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -853,40 +537,57 @@ console.log("FIelds name", fields_names)
       .then((response) => {
         temp = response.data.results;
         if (temp.length > 0) {
-          console.log("resp of op city", response.data.results);
           if (response.data.next === null) {
             setoperating_city_loaded(false);
           } else {
             setoperating_city_loaded(true);
           }
-
-          temp_2 = temp.map((v) => [v.id, toTitleCase(v.city)]);
-          try {
-            let client_up = location_data.state.branch;
-            let cl_brncs = [];
-            let f_brnch = [];
-            if (client_up.operating_city.length > 0 && !isupdating) {
-              cl_brncs = temp_2.filter((v) =>
-                client_up.operating_city.map((b) => b).includes(v[0])
-              );
-              f_brnch = temp_2.filter(
-                (v) => !client_up.operating_city.map((b) => b).includes(v[0])
-              );
-              f_brnch = [...new Set(f_brnch.map((v) => `${v}`))].map((v) =>
-                v.split(",")
-              );
-              setoperating_city_list2(cl_brncs);
-              setoperating_city_list(f_brnch);
-              setoperating_city_count(operating_city_count + 2);
-            } else {
-              setoperating_city_list(temp_2);
-              setoperating_city_count(operating_city_count + 2);
-            }
-          } catch (err) {
-            setoperating_city_list(temp_2);
-            setoperating_city_count(operating_city_count + 2);
+          if (op_city_page === 1) {
+            temp_2 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.city),
+            ]);
+          } else {
+            temp_2 = [
+              ...operating_city_list,
+              ...response.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.city),
+              ]),
+            ];
           }
+    
+          setoperating_city_count(operating_city_count + 2);
+          setoperating_city_list(temp_2);
         }
+        else{
+          setoperating_city_list([])
+        }
+      });
+  };
+
+  const get_OpCitiesDetails = (id) => {
+
+    let opcity_temp = [];
+    let data = [];
+    axios
+      .get(
+        ServerAddress +
+        `master/get_branch_operating_cities/?branch_id=${id}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        data = response.data.oper_cities;
+
+        if (data.length > 0) {
+          opcity_temp = data.map((v) => [v.operating_city, toTitleCase(v.operating_city__city)]);
+          setoperating_city_list2(opcity_temp)
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get OpCity, ${err}`);
       });
   };
 
@@ -948,18 +649,24 @@ console.log("FIelds name", fields_names)
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
 
+      if (resp.data.next === null) {
+        setload_pincode(false);
+      } else {
+        setload_pincode(true);
+      }
+
       if (filter_by !== "pincode") {
-        if (pincode_page == 1) {
+        if (pincode_page === 1) {
           pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
         } else {
           pincode_list = [
@@ -967,6 +674,7 @@ console.log("FIelds name", fields_names)
             ...resp.data.results.map((v) => [v.id, v.pincode]),
           ];
         }
+        setpincode_count(pincode_count + 2);
         setpincode_list_s(pincode_list);
       } else if (resp.data.results.length > 0) {
         setcity(toTitleCase(resp.data.results[0].city_name));
@@ -989,56 +697,9 @@ console.log("FIelds name", fields_names)
         setstate_id(resp.data.results[0].state);
       }
     } catch (err) {
-      alert(`Error Occur in Get City, ${err}`);
+      console.warn(`Error Occur in Get Pincode, ${err}`);
     }
   };
-
-  // const getLocality = (place_id, filter_by) => {
-  //   let locality_list = [];
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //         `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
-  //         `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((resp) => {
-  //       if (filter_by !== "locality") {
-  //         if (pincode_page == 1) {
-  //           locality_list = resp.data.results.map((v) => [
-  //             v.id,
-  //             toTitleCase(v.name),
-  //           ]);
-  //         } else {
-  //           locality_list = [
-  //             ...locality_list_s,
-  //             ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-  //           ];
-  //         }
-
-  //         locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
-  //           (v) => v.split(",")
-  //         );
-  //         setlocality_list_s(locality_list);
-  //       } else if (resp.data.results.length > 0) {
-  //         setlocality(toTitleCase(resp.data.results[0].name));
-  //         setlocality_id(resp.data.results[0].id);
-  //         setcity(toTitleCase(resp.data.results[0].city_name));
-  //         setstate(toTitleCase(resp.data.results[0].state_name));
-  //         setpincode(resp.data.results[0].pincode_name);
-  //         setpincode_id(resp.data.results[0].pincode);
-  //       } else {
-  //         dispatch(setDataExist("You entered invalid Locality"));
-  //         dispatch(setAlertType("warning"));
-  //         dispatch(setShowAlert(true));
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get Pincode , ${err}`);
-  //     });
-  // };
 
   // get locality
   const getLocality = async (place_id, filter_by) => {
@@ -1046,43 +707,38 @@ console.log("FIelds name", fields_names)
       let locality_list = [];
       const resp = await axios.get(
         ServerAddress +
-          `master/all_locality/?search=${""}&p=${locality_page}&records=${10}` +
-          `&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
+        `master/all_locality/?search=${""}&p=${locality_page}&records=${10}&place_id=${place_id}&filter_by=${filter_by}&name_search=${locality_search_item}&state=&city=&name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-
-      if (filter_by !== "locality") {
-        if (pincode_page == 1) {
+      if (resp.data.next === null) {
+        setlocality_loaded(false);
+      } else {
+        setlocality_loaded(true);
+      }
+      if (resp.data.results.length > 0) {
+        if (locality_page === 1) {
           locality_list = resp.data.results.map((v) => [
             v.id,
             toTitleCase(v.name),
           ]);
-        } else {
+        }
+        else {
           locality_list = [
             ...locality_list_s,
             ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
           ];
         }
-        locality_list = [...new Set(locality_list.map((v) => `${v}`))].map(
-          (v) => v.split(",")
-        );
+
+        setlocality_count(locality_count + 2);
         setlocality_list_s(locality_list);
-      } else if (resp.data.results.length > 0) {
-        setlocality(toTitleCase(resp.data.results[0].name));
-        setlocality_id(resp.data.results[0].id);
-        setcity(toTitleCase(resp.data.results[0].city_name));
-        setstate(toTitleCase(resp.data.results[0].state_name));
-        setpincode(resp.data.results[0].pincode_name);
-        setpincode_id(resp.data.results[0].pincode);
-      } else {
-        dispatch(setDataExist("You entered invalid Locality"));
-        dispatch(setAlertType("warning"));
-        dispatch(setShowAlert(true));
+      }
+      else {
+        setlocality_list_s([]);
       }
     } catch (err) {
-      alert(`Error Occur in Get Pincode, ${err}`);
+      console.warn(`Error Occur in Get Locality, ${err}`);
     }
   };
 
@@ -1098,42 +754,86 @@ console.log("FIelds name", fields_names)
   //this is used to get all operating city
 
   // Location Functions Call
-  useEffect(() => {
-    if (state_id !== 0 && by_pincode === false) {
+  useLayoutEffect(() => {
+    if (state_id !== 0) {
       setcity_page(1);
-      getCities(state_id, "state");
-      // setpincode("");
-      setpincode_list_s([]);
-      // setlocality("")
-      setlocality_list_s([]);
+      setcity_count(1);
+      setcity_bottom(103)
+      setcity_loaded(true);
     }
+  }, [state_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (state_id !== 0 && by_pincode === false) {
+      timeoutId = setTimeout(() => {
+        getCities(state_id, "state");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [state_id, city_page, city_search_item, get_state_wise_op]);
 
-  useEffect(() => {
-    if (!get_state_wise_op) {
-      getop_cities();
-    }
-  }, [get_state_wise_op, op_city_page, search_op_city]);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (pincode_id !== 0) {
       setlocality_page(1);
-      getLocality(pincode_id, "pincode");
+      setlocality_count(1);
+      setlocality_bottom(103)
+      setlocality_loaded(true);
     }
-  }, [pincode_id, locality_page, locality_search_item]);
+  }, [pincode_id])
 
   useEffect(() => {
-    if (city_id !== 0 && by_pincode === false) {
-      setpincode_page(1);
-      getPincode(city_id, "city");
-      // setpincode("")
+    let timeoutId;
+    if (pincode_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getLocality(pincode_id, "pincode");
+      }, 1);
     }
+    return () => clearTimeout(timeoutId);
+  }, [pincode_id, locality_page, locality_search_item]);
+
+  useLayoutEffect(() => {
+    if (city_id !== 0) {
+      setpincode_page(1);
+      setpincode_count(1);
+      setpincode_bottom(103)
+      setload_pincode(true)
+    }
+  }, [city_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (city_id !== 0 && by_pincode === false) {
+      timeoutId = setTimeout(() => {
+        getPincode(city_id, "city");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [city_id, pincode_page, pincode_search_item]);
 
   useLayoutEffect(() => {
     getStates();
-    // setcity_list_s([]);
   }, [state_page, state_search_item, refresh]);
+
+  useEffect(() => {
+    if (!get_state_wise_op) {
+      getop_cities('all', 'all');
+    }
+  }, [get_state_wise_op, op_city_page, search_op_city]);
+
+  useEffect(() => {
+    if (get_state_wise_op) {
+      getop_cities(state_id, "state");
+    }
+  }, [state_id, get_state_wise_op, op_city_page, search_op_city]);
+
+
+  useEffect(() => {
+    if (location_data.state !== null && branch.length !== 0) {
+      get_OpCitiesDetails(branch.id)
+    }
+  }, [branch])
+
 
   useEffect(() => {
     if (operating_city_list2.length !== 0) {
@@ -1163,16 +863,6 @@ console.log("FIelds name", fields_names)
     if (same_as_gst) {
       setaddress_line(gstaddress);
     }
-    if(!same_as_gst) {
-      setaddress_line(address_line);
-
-    }
-    // if (state != "") {
-    //   setstate_error(false);
-    // }
-    // if (city != "") {
-    //   setcity_error(false);
-    // }
     if (state !== "") {
       setpincode_loaded(true);
     }
@@ -1185,7 +875,6 @@ console.log("FIelds name", fields_names)
     //  gst_number,
     own_pan_number,
   ]);
-
   useLayoutEffect(() => {
     try {
       setbranch(location_data.state.branch);
@@ -1213,14 +902,35 @@ console.log("FIelds name", fields_names)
 
       setvendor_name(toTitleCase(location_data.state.branch.vendor_name));
       setvendor_id(location_data.state.branch.vendor);
-    } catch (error) {}
+    } catch (error) { }
   }, []);
 
   useEffect(() => {
     if (!location_data.state && state && !by_pincode && !same_as_gst) {
       setcity("");
+      setcity_list_s([]);
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
     }
   }, [state]);
+
+  useEffect(() => {
+    if (!location_data.state && city && !by_pincode && !same_as_gst) {
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [city]);
+
+  useEffect(() => {
+    if (!location_data.state && pincode && !by_pincode && !same_as_gst) {
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [pincode]);
 
   const [gst_alldetails, setgst_alldetails] = useState([]);
   const [vendoegst_alldetails, setvendoegst_alldetails] = useState([]);
@@ -1230,9 +940,9 @@ console.log("FIelds name", fields_names)
     axios
       .get(
         ServerAddress +
-          `organization/get_gstaddress/?type=${`ORGANIZATION`}&vendor_id=&search=${""}&p=${1}&records=${30}&gst_no_search=${[
-            gst_search,
-          ]}`,
+        `organization/get_gstaddress/?type=${`ORGANIZATION`}&vendor_id=&search=${""}&p=${1}&records=${30}&gst_no_search=${[
+          gst_search,
+        ]}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1254,37 +964,6 @@ console.log("FIelds name", fields_names)
       });
   };
 
-  //get vendor
-  // const get_vendorgstDetails = (id) => {
-  //   let vgst_temp = [];
-  //   let data = [];
-
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //         `organization/get_gstaddress/?type=${`VENDOR`}&vendor_id=${id}&search=${""}&p=${1}&records=${30}&gst_no_search=${[
-  //           selectgst_search,
-  //         ]}`,
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((response) => {
-  //       data = response.data.results;
-  //       if (response.data.results.length > 0) {
-  //         setvendoegst_alldetails(data);
-  //         let pan_no = response.data.results[0].vandor_pan_no;
-  //         setvendor_pan_no(pan_no);
-
-  //         vgst_temp = response.data.results.map((v) => [v.id, v.gst_no]);
-  //       }
-  //       setgst_list(vgst_temp);
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get , ${err}`);
-  //     });
-  // };
-
   const get_vendorgstDetails = async (id) => {
     try {
       let vgst_temp = [];
@@ -1292,9 +971,9 @@ console.log("FIelds name", fields_names)
 
       const response = await axios.get(
         ServerAddress +
-          `organization/get_gstaddress/?type=${`VENDOR`}&vendor_id=${id}&search=${""}&p=${1}&records=${30}&gst_no_search=${[
-            selectgst_search,
-          ]}`,
+        `organization/get_gstaddress/?type=${`VENDOR`}&vendor_id=${id}&search=${""}&p=${1}&records=${30}&gst_no_search=${[
+          selectgst_search,
+        ]}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1380,7 +1059,7 @@ console.log("FIelds name", fields_names)
       user.user_department_name === "ACCOUNTANT" ||
       user.user_department_name === "ACCOUNTANT" ||
       user.user_department_name + " " + user.designation_name ===
-        "ACCOUNT MANAGER" ||
+      "ACCOUNT MANAGER" ||
       user.is_superuser
     ) {
       setcurrent_status("APPROVED");
@@ -1470,7 +1149,6 @@ console.log("FIelds name", fields_names)
 
         <Form
           onSubmit={(e) => {
-            console.log("Second submit Run");
             e.preventDefault();
             let shaw = Object.entries(validation.values);
             let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
@@ -1620,7 +1298,7 @@ console.log("FIelds name", fields_names)
                             value={validation.values.branch_name || ""}
                             invalid={
                               validation.touched.branch_name &&
-                              validation.errors.branch_name
+                                validation.errors.branch_name
                                 ? true
                                 : false
                             }
@@ -1631,7 +1309,7 @@ console.log("FIelds name", fields_names)
                             placeholder="Enter Branch Name"
                           />
                           {validation.touched.branch_name &&
-                          validation.errors.branch_name ? (
+                            validation.errors.branch_name ? (
                             <FormFeedback type="invalid">
                               {validation.errors.branch_name}
                             </FormFeedback>
@@ -1648,7 +1326,7 @@ console.log("FIelds name", fields_names)
                             value={validation.values.branch_email || ""}
                             invalid={
                               validation.touched.branch_email &&
-                              validation.errors.branch_email
+                                validation.errors.branch_email
                                 ? true
                                 : false
                             }
@@ -1659,7 +1337,7 @@ console.log("FIelds name", fields_names)
                             placeholder="Enter Branch Email"
                           />
                           {validation.touched.branch_email &&
-                          validation.errors.branch_email ? (
+                            validation.errors.branch_email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.branch_email}
                             </FormFeedback>
@@ -1678,7 +1356,7 @@ console.log("FIelds name", fields_names)
                             value={validation.values.branch_phone_number || ""}
                             invalid={
                               validation.touched.branch_phone_number &&
-                              validation.errors.branch_phone_number
+                                validation.errors.branch_phone_number
                                 ? true
                                 : false
                             }
@@ -1690,7 +1368,7 @@ console.log("FIelds name", fields_names)
                             placeholder="Enter Branch Phone"
                           />
                           {validation.touched.branch_phone_number &&
-                          validation.errors.branch_phone_number ? (
+                            validation.errors.branch_phone_number ? (
                             <FormFeedback type="invalid">
                               {validation.errors.branch_phone_number}
                             </FormFeedback>
@@ -1825,7 +1503,6 @@ console.log("FIelds name", fields_names)
                     </Col>
 
                     <Row>
-
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">Address Line *</Label>
@@ -1834,12 +1511,11 @@ console.log("FIelds name", fields_names)
                             invalid={address_line_err}
                             onChange={(val) => {
                               setaddress_line(val.target.value);
-                              console.log("Address is", address_line);
                             }}
                             type="text"
                             className="form-control-md"
                             id="input"
-                            name="address_line"
+                            name="address_line_1"
                             placeholder="Enter Address Line 1"
                           />
 
@@ -1871,6 +1547,8 @@ console.log("FIelds name", fields_names)
                               setsearch_item={setstate_search_item}
                               loaded={state_loaded}
                               count={state_count}
+                              bottom={state_bottom}
+                              setbottom={setstate_bottom}
                             />
                           </span>
                           {/* <div className="mt-1 error-text" color="danger">
@@ -1897,6 +1575,8 @@ console.log("FIelds name", fields_names)
                             setsearch_item={setcity_search_item}
                             loaded={city_loaded}
                             count={city_count}
+                            bottom={city_bottom}
+                            setbottom={setcity_bottom}
                           />
                           {/* <div className="mt-1 error-text" color="danger">
                             {city_error ? "Please Select Any City" : null}
@@ -1920,6 +1600,10 @@ console.log("FIelds name", fields_names)
                               setsearch_item={setpincode_search_item}
                               error_message={"Please Select Any Pincode"}
                               error_s={pincode_list_error}
+                              loaded={load_pincode}
+                              count={pincode_count}
+                              bottom={pincode_bottom}
+                              setbottom={setpincode_bottom}
                             />
                           </div>
                         ) : (
@@ -1962,7 +1646,7 @@ console.log("FIelds name", fields_names)
                             />
 
                             {pincode_loaded === false &&
-                            pincode_error === true ? (
+                              pincode_error === true ? (
                               <div
                                 style={{
                                   color: "#F46E6E",
@@ -1974,8 +1658,8 @@ console.log("FIelds name", fields_names)
                             ) : null}
 
                             {pincode_loaded === false &&
-                            pincode_error === false &&
-                            pincode_error2 === true ? (
+                              pincode_error === false &&
+                              pincode_error2 === true ? (
                               <div
                                 style={{
                                   color: "#F46E6E",
@@ -2003,8 +1687,13 @@ console.log("FIelds name", fields_names)
                               page={locality_page}
                               setpage={setlocality_page}
                               setsearch_item={setlocality_search_item}
+                              search_item={locality_search_item}
                               error_message={"Please Select Any Locality"}
                               error_s={locality_error}
+                              loaded={locality_loaded}
+                              count={locality_count}
+                              bottom={locality_bottom}
+                              setbottom={setlocality_bottom}
                             />
                           </div>
                         )}
@@ -2086,7 +1775,7 @@ console.log("FIelds name", fields_names)
                             value={validation.values.branch_head || ""}
                             invalid={
                               validation.touched.branch_head &&
-                              validation.errors.branch_head
+                                validation.errors.branch_head
                                 ? true
                                 : false
                             }
@@ -2097,7 +1786,7 @@ console.log("FIelds name", fields_names)
                             placeholder="Enter Branch Head"
                           />
                           {validation.touched.branch_head &&
-                          validation.errors.branch_head ? (
+                            validation.errors.branch_head ? (
                             <FormFeedback type="invalid">
                               {validation.errors.branch_head}
                             </FormFeedback>
@@ -2116,7 +1805,7 @@ console.log("FIelds name", fields_names)
                             value={validation.values.branch_head_email || ""}
                             invalid={
                               validation.touched.branch_head_email &&
-                              validation.errors.branch_head_email
+                                validation.errors.branch_head_email
                                 ? true
                                 : false
                             }
@@ -2127,7 +1816,7 @@ console.log("FIelds name", fields_names)
                             placeholder="Enter Email"
                           />
                           {validation.touched.branch_head_email &&
-                          validation.errors.branch_head_email ? (
+                            validation.errors.branch_head_email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.branch_head_email}
                             </FormFeedback>
@@ -2148,7 +1837,7 @@ console.log("FIelds name", fields_names)
                             }
                             invalid={
                               validation.touched.branch_head_phone_number &&
-                              validation.errors.branch_head_phone_number
+                                validation.errors.branch_head_phone_number
                                 ? true
                                 : false
                             }
@@ -2160,7 +1849,7 @@ console.log("FIelds name", fields_names)
                             placeholder="Enter Phone Number"
                           />
                           {validation.touched.branch_head_phone_number &&
-                          validation.errors.branch_head_phone_number ? (
+                            validation.errors.branch_head_phone_number ? (
                             <FormFeedback type="invalid">
                               {validation.errors.branch_head_phone_number}
                             </FormFeedback>
@@ -2184,16 +1873,16 @@ console.log("FIelds name", fields_names)
                     isupdating && user.user_department_name === "ADMIN"
                       ? "btn btn-info m-1"
                       : !isupdating
-                      ? "btn btn-info m-1"
-                      : "btn btn-success m-1"
+                        ? "btn btn-info m-1"
+                        : "btn btn-success m-1"
                   }
                 >
                   {isupdating &&
-                  (user.user_department_name === "ADMIN" || user.is_superuser)
+                    (user.user_department_name === "ADMIN" || user.is_superuser)
                     ? "Update"
                     : !isupdating
-                    ? "Save"
-                    : "Approved"}
+                      ? "Save"
+                      : "Approved"}
                 </button>
 
                 {isupdating &&

@@ -19,6 +19,7 @@ import RoughDataFormat from "../../../data/manifests/roughManifest/RoughManifest
 import Navigate from "../navigateTab/Navigate";
 import AllManifestTitle from "../../../data/manifests/allManifest/AllManifestTitle";
 import AllManifestDataFormat from "../../../data/manifests/allManifest/AllManifestDataFormat";
+import OperationNavigate from "../../booking/navigateTab/OperationNavigate";
 
 const AllManifest = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,10 @@ const AllManifest = () => {
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
+  const user = useSelector((state) => state.authentication.userdetails);
+  const cm_value = useSelector((state) => state.datalist.cm_filter);
+
+  const origin = useSelector((state) => state.filtervalue.data_a);
 
   // // Permissions
   const user_permissions = useSelector(
@@ -81,6 +86,11 @@ const AllManifest = () => {
                 <Filter type={"client"} />
               </div>
             </div>
+            {(!user.is_superuser) &&
+            (
+            <OperationNavigate />
+            )
+                }
           </div>
 
           {/* DataTable */}
@@ -88,7 +98,7 @@ const AllManifest = () => {
             can_delete={can_delete}
             Data_Title={AllManifestTitle}
             Data_Format={AllManifestDataFormat}
-            path={`manifest/all_manifest/?search=${search}&p=${page_num}&records=${data_len}`}
+            path={`manifest/all_manifest/?search=${search}&p=${page_num}&records=${data_len}&origin=${origin}&value=${cm_value}`}
             checkbox={"NO"}
           />
           <NumPagination path={"path"} />

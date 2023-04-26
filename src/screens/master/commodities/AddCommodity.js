@@ -56,6 +56,9 @@ const Add_Commodity = () => {
   const [commodity_type_search_item, setcommodity_type_search_item] =
     useState("");
   const [other_commodity_type, setother_commodity_type] = useState("");
+  const [commodity_type_loaded, setcommodity_type_loaded] = useState(false)
+  const [commodity_type_count, setcommodity_type_count] = useState(1)
+
   const [showModal, setShowModal] = useState(false);
   const [jsonData, setJsonData] = useState([]);
   const [add_como_err, setadd_como_err] = useState(false);
@@ -74,7 +77,7 @@ const Add_Commodity = () => {
     },
   });
   console.log("location--commodity------", commodity.length)
-  console.log("location--commodity------", typeof(commodity))
+  console.log("location--commodity------", typeof (commodity))
   const [circle_btn, setcircle_btn] = useState(true);
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
@@ -93,7 +96,7 @@ const Add_Commodity = () => {
 
   //Get Commodity Type
   const getCommodityType = () => {
-    let commodity_list = [...commodity_type_list];
+    let commodity_list = [];
     let data = [];
     axios
       .get(
@@ -105,6 +108,12 @@ const Add_Commodity = () => {
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
+          if (resp.data.next === null) {
+            setcommodity_type_loaded(false);
+          } else {
+            setcommodity_type_loaded(true);
+          }
+    
           if (commodity_type_page == 1) {
             commodity_list = resp.data.results.map((v) => [
               v.id,
@@ -125,7 +134,7 @@ const Add_Commodity = () => {
           (v) => v.split(",")
         );
         commodity_list.push("Add New");
-
+        setcommodity_type_count(commodity_type_count + 2);
         setcommodity_type_list(commodity_list);
 
       })
@@ -576,7 +585,7 @@ const Add_Commodity = () => {
           className="custom-scrollbars__content"
         >
           <div style={{ background: "#f4bc61", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center", cursor: "pointer" }} onClick={() => {
-            if (typeof(commodity) === "object") {
+            if (typeof (commodity) === "object") {
               handlClk();
             }
           }}>History</div>
@@ -715,6 +724,8 @@ const Add_Commodity = () => {
                             setsearch_item={setcommodity_type_search_item}
                             error_message={"Please Select Commidity Type"}
                             error_s={commodity_type_error}
+                            loaded={commodity_type_loaded}
+                            count={commodity_type_count}
                           />
                         </div>
                       </Col>
