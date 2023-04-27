@@ -367,7 +367,8 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                 <td>
                   <div>
                     <Link
-                      to="/booking/orders/OrderInvoicePdf"
+                      // to="/booking/orders/OrderInvoicePdf"
+                      to="/booking/orders/OrderPdf"
                       state={{ order: order }}
                     >
                       <img src={pdf} width="18" height="18" />

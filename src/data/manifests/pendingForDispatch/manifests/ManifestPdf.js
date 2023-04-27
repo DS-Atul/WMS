@@ -7,6 +7,7 @@ import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { ServerAddress } from "../../../../constants/ServerAddress";
 import qil_logo from "../../../../assets/images/qil_logo.png";
+import Logo003 from "../../../../assets/images/Logo003.jpg"
 
 export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -122,7 +123,8 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                 md="8"
               >
                 <span style={{ display: "flex", alignItems: "center" }}>
-                  <img src={qil_logo} width="200vw" height="60vh" />
+                  <img src={Logo003} width="200vw" height="60vh" />
+                  {/* <img src={qil_logo} width="200vw" height="60vh" /> */}
                 </span>
                 <span>
                   <b>

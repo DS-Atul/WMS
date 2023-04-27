@@ -385,7 +385,7 @@ const Add_Vehcile = () => {
                   <Col lg={3} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">Vehicle Image*</Label>
-                      <Input type="file" name="file" id="exampleFile" />
+                      <Input type="file" name="file" id="input" />
                     </div>
                   </Col>
 

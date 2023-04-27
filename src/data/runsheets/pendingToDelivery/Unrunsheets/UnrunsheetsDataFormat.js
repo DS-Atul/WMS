@@ -70,7 +70,7 @@ const UnrunsheetsDataFormat = ({ Manifest_list, remove_list }) => {
                     </td> */}
                     <td>
                       <Link
-                        to="/booking/orders/OrderInvoicePdf"
+                        to="/booking/orders/OrderPdf"
                         state={{ order: Manifest }}
                       >
                         <img src={pdf} width="20" height="20" />
