@@ -714,7 +714,7 @@ const AddOrder = () => {
     "Issue",
   ]);
   const [order_type, setorder_type] = useState(order_type_list[0]);
-
+console.log("booking_through=====", booking_through)
   // validation
   const validation = useFormik({
     enableReinitialize: true,
@@ -752,57 +752,86 @@ const AddOrder = () => {
       });
       // TO Scroll the page
       let doc_no_scroll = window.document.getElementById("doc_no");
-      // let shipper = window.document.getElementById("shipper");
+      let shipper = window.document.getElementById("shipper");
 
-      // if (
-      //   entry_type_btn === "MANUALLY" &&
-      //   docket_no_value.length < 6
-      //   // || (entry_type_btn === "MANUALLY" && docket_no_value.length < 6)
-      // ) {
-      //   setdocket_error(true);
-      //   doc_no_scroll.scrollIntoView();
-      // } else if (transport_mode === "") {
-      //   settransport_mode_error(true);
-      //   doc_no_scroll.scrollIntoView();
-      // } else if (billto === "") {
-      //   setbillto_error(true);
-      // } else if (client === "") {
-      //   setclient_error(true);
-      //   doc_no_scroll.scrollIntoView();
-      // }
-
-      //  else if (commodity === "") {
-      //   setcommodity_error(true);
-      // } else if (delivery_type === "LOCAL" && local_delivery_type === "") {
-      //   setlocal_delivery_type_error(true);
-      // } else if (d_cod === "") {
-      //   setd_cod_error(true);
-      // } else if (
-      //   cal_type === "DIMENSION" &&
-      //   (length === "" || breadth === "" || height === "" || pieces === "")
-      // ) {
-      //   alert("Please Add Pakage Details");
-      // } else if (
-      //   (length !== "" || breadth !== "" || height !== "" || pieces !== "") &&
-      //   (length === "" || breadth === "" || height === "" || pieces === "")
-      // ) {
-      //   alert(
-      //     "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
-      //   );
-      // } else if (total_no_of_pieces !== parseInt(values.total_quantity)) {
-      //   alert(
-      //     "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
-      //   );
-      // } else if (d_cod === "Yes" && transportation_cost === "") {
-      //   settransportation_cost_err(true);
-      // } else if (booking_date === "") {
-      //   alert("Please Add Booking Date");
-      // } else {
-      //   // setShowOrder(!isupdating && true);
-      //   // aa(values)
+      if (
+        entry_type_btn === "MANUALLY" &&
+        docket_no_value.length < 6
+        // || (entry_type_btn === "MANUALLY" && docket_no_value.length < 6)
+      ) {
+        setdocket_error(true);
+        doc_no_scroll.scrollIntoView();
+      } else if (transport_mode === "" && delivery_type !== "LOCAL") {
+        settransport_mode_error(true);
+        doc_no_scroll.scrollIntoView();
+      } else if (billto === "") {
+        setbillto_error(true);
+        doc_no_scroll.scrollIntoView();
+      } else if (client === "") {
+        setclient_error(true);
+        doc_no_scroll.scrollIntoView();
+      }else if (state === "" && !booking_through) {
+        setstate_error(true);
+        doc_no_scroll.scrollIntoView();
+      } else if (city === "" && !booking_through) {
+        setcity_error(true);
+        doc_no_scroll.scrollIntoView();
+      } else if (pincode === "" && !booking_through) {
+        setpincode_list_error(true);
+        doc_no_scroll.scrollIntoView();
+      }else if (locality === "" && !booking_through) {
+        setlocality_error(true);
+        doc_no_scroll.scrollIntoView();
+      }
+      else if (consginee_st === "" && !booking_through) {
+        setstate_error_c(true);
+        doc_no_scroll.scrollIntoView();
+      }
+      else if (consginee_c === "" && !booking_through) {
+        setcity_error_c(true);
+        doc_no_scroll.scrollIntoView();
+      }
+      else if (consignee_pincode === "" && !booking_through) {
+        setpincode_list_error_c(true);
+        doc_no_scroll.scrollIntoView();
+      }
+      else if (locality_c === "" && !booking_through) {
+        setlocality_error_c(true);
+        doc_no_scroll.scrollIntoView();
+      }
+      
+       else if (commodity === "") {
+        setcommodity_error(true);
+      } else if (delivery_type === "LOCAL" && local_delivery_type === "") {
+        setlocal_delivery_type_error(true);
+      } else if (d_cod === "") {
+        setd_cod_error(true);
+      } else if (
+        cal_type === "DIMENSION" &&
+        (length === "" || breadth === "" || height === "" || pieces === "")
+      ) {
+        alert("Please Add Pakage Details");
+      } else if (
+        (length !== "" || breadth !== "" || height !== "" || pieces !== "") &&
+        (length === "" || breadth === "" || height === "" || pieces === "")
+      ) {
+        alert(
+          "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
+        );
+      } else if (total_no_of_pieces !== parseInt(values.total_quantity)) {
+        alert(
+          "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
+        );
+      } else if (d_cod === "Yes" && transportation_cost === "") {
+        settransportation_cost_err(true);
+      } else if (booking_date === "") {
+        alert("Please Add Booking Date");
+      } else {
+        // setShowOrder(!isupdating && true);
+        // aa(values)
       isupdating ? update_order(values) : send_order_data(values);
       console.log("hello ji");
-      // }
+      }
     },
   });
 
@@ -1930,46 +1959,6 @@ const AddOrder = () => {
       setdestinationcity_id(toTitleCase(order_data.consignee_city_id));
     } catch (error) { }
   }, []);
-
-  useEffect(() => {
-    // if (delivery_mode !== "") {
-    //   setdelivery_mode_error(false);
-    // }
-    if (client !== "") {
-      setclient_error(false);
-    }
-    if (billto !== "") {
-      setbillto_error(false);
-    }
-    if (transport_mode !== "") {
-      settransport_mode_error(false);
-    }
-    if (shipper !== "") {
-      setshipper_error(false);
-    }
-    if (consignee !== "") {
-      setconsignee_error(false);
-    }
-    if (commodity !== "") {
-      setcommodity_error(false);
-    }
-    if (local_delivery_type !== "") {
-      setlocal_delivery_type_error(false);
-    }
-    if (d_cod !== "") {
-      setd_cod_error(false);
-    }
-  }, [
-    temp_selected,
-    // delivery_mode,
-    client,
-    transport_mode,
-    shipper,
-    consignee,
-    commodity,
-    local_delivery_type,
-    d_cod,
-  ]);
 
   useEffect(() => {
     if (asset_info_selected === "With Box") {
@@ -3245,6 +3234,75 @@ const AddOrder = () => {
   };
 
   useEffect(() => {
+    if (client !== "") {
+      setclient_error(false);
+    }
+    if (billto !== "") {
+      setbillto_error(false);
+    }
+    if (state !== "") {
+      setstate_error(false);
+    }
+    if (city !== "") {
+      setcity_error(false);
+    }  
+    if (pincode !== "") {
+      setpincode_list_error(false);
+    }  
+    if (locality !== "") {
+      setlocality_error(false);
+    } 
+    if (consginee_st !== "") {
+      setstate_error_c(false);
+    }
+    if (consginee_c !== "") {
+      setcity_error_c(false);
+    }
+    if (consignee_pincode !== "") {
+      setpincode_list_error_c(false);
+    }
+    if (locality_c !== "") {
+      setlocality_error_c(false);
+    }
+    if (transport_mode !== "") {
+      settransport_mode_error(false);
+    }
+    if (shipper !== "") {
+      setshipper_error(false);
+    }
+    if (consignee !== "") {
+      setconsignee_error(false);
+    }
+    if (commodity !== "") {
+      setcommodity_error(false);
+    }
+    if (local_delivery_type !== "") {
+      setlocal_delivery_type_error(false);
+    }
+    if (d_cod !== "") {
+      setd_cod_error(false);
+    }
+  }, [
+    temp_selected,
+    client,
+    transport_mode,
+    shipper,
+    consignee,
+    commodity,
+    local_delivery_type,
+    d_cod,
+    billto, 
+    state,
+    city,
+    pincode,
+    locality,
+    consginee_st,
+    consginee_c,
+    consignee_pincode,
+    locality_c,
+  ]);
+
+  useEffect(() => {
     console.log("by_pincode========", by_pincode)
     if (!location.state && state && !by_pincode) {
       setcity("");
@@ -4012,7 +4070,7 @@ const AddOrder = () => {
                       <>
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-3">
-                            <Label className="header-child">Shipper *</Label>
+                            <Label className="header-child">Shipper*</Label>
                             <Input
                               placeholder="Enter shipper name"
                               id="input"
@@ -4260,6 +4318,7 @@ const AddOrder = () => {
                               onChange={(e) => {
                                 setconsignee_n(e.target.value);
                               }}
+                              placeholder="Enter Consignee Name"
                             />
                           </div>
                         </Col>
@@ -4277,7 +4336,7 @@ const AddOrder = () => {
                                 page={state_page_c}
                                 setpage={setstate_page_c}
                                 error_message={"Please Select Any State"}
-                                error_s={state_error}
+                                error_s={state_error_c}
                                 search_item={state_search_item_c}
                                 setsearch_item={setstate_search_item_c}
                                 loaded={statec_loaded}
@@ -4429,7 +4488,7 @@ const AddOrder = () => {
                                 setsearch_item={setlocality_search_item_c}
                                 search_item={locality_search_item_c}
                                 error_message={"Please Select Any Locality"}
-                                error_s={locality_error}
+                                error_s={locality_error_c}
                                 loaded={localityc_loaded}
                                 count={localityc_count}
                                 bottom={localityc_bottom}
