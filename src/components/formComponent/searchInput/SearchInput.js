@@ -32,7 +32,7 @@ const SearchInput = ({
   setbottom,
   count=1,
 }) => {
-
+console.log("data_list=============", data_list)
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -258,6 +258,10 @@ const SearchInput = ({
             <>
               {filterList.length > 0 ? (
                 filterList.map((value, key) => {
+                  console.log("value====", value)
+                  console.log("value[0]======", value[0])
+                  console.log("value[1]======", value[1])
+                  console.log("value[2]========", value[2])
                   return (
                     <div key={key} className="data_item">
                       <span

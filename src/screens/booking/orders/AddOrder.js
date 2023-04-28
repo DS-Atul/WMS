@@ -118,6 +118,7 @@ const AddOrder = () => {
   const [d_cod, setd_cod] = useState("No");
 
   const [state_list_c, setstate_list_c] = useState([]);
+  console.log("state_list_c=========", state_list_c)
   const [state_s_c, setstate_s_c] = useState("");
   const [state_id_f_c, setstate_id_f_c] = useState(0);
   const [state_error_c, setstate_error_c] = useState(false);

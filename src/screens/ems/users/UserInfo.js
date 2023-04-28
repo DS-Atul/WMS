@@ -218,9 +218,6 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
         }
 
       })
-      // .then((resp) => {
-      //   sethome_branch_list(resp.data);
-      // })
       .catch((err) => {
         alert(`Error Occur in Get`, err);
       });
@@ -274,9 +271,6 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           get_assupbranch(up_params.user.id, temp_2);
         } catch (error) { }
       })
-      // .then((resp) => {
-      //   sethome_branch_list(resp.data);
-      // })
       .catch((err) => {
         alert(`Error Occur in Get`, err);
       });
@@ -354,9 +348,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           setass_department_list(temp3);
         }
       })
-      // .then((resp) => {
-      //   sethome_branch_list(resp.data);
-      // })
+
       .catch((err) => {
         alert(`Error Occur in Get`, err);
       });
@@ -877,17 +869,17 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
     getAssDepartments();
   }, [ass_department_page, search_ass_department]);
 
-  useLayoutEffect(() => {
-    if (home_branch !== "") {
-      console.log("ass_branch_list---", ass_branch_list)
-      console.log("home_branch---", home_branch)
-      let newData = home_branch_list.filter((e) =>
-        e[1] !== home_branch
-      )
-      console.log("newData---", newData)
-      setass_branch_list(newData);
-    }
-  }, [home_branch]);
+  // useLayoutEffect(() => {
+  //   if (home_branch !== "") {
+  //     console.log("ass_branch_list---", ass_branch_list)
+  //     console.log("home_branch---", home_branch)
+  //     let newData = home_branch_list.filter((e) =>
+  //       e[1] !== home_branch
+  //     )
+  //     console.log("newData---", newData)
+  //     // setass_branch_list(newData);
+  //   }
+  // }, [home_branch]);
 
   //Permission
   const getUserPermission = () => {
