@@ -22,8 +22,8 @@ const DashboardChartSection = () => {
   const { height, width } = useWindowDimensions();
 
   // FOr Donut Chart
- 
- const colors= ['#609966', '#1F8A70', '#AACB73', '#4E6C50', '#81CACF'];
+
+  const colors = ["#609966", "#1F8A70", "#AACB73", "#4E6C50", "#81CACF"];
 
   const color = " rgb(136 , 132,216)";
 
@@ -36,10 +36,8 @@ const DashboardChartSection = () => {
   const optionsData = {
     stroke: { curve: "smooth", width: 3 },
     colors: ["#4E6C50", "#1F8A70"],
-   
   };
 
-  
   //-------------------state for Donut Chart and Order card-----------------//
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [local_order_data, setlocal_order_data] = useState("");
@@ -71,35 +69,56 @@ const DashboardChartSection = () => {
   console.log("billto dat", billto_name_arr);
 
   const getData1 = async () => {
+    //-- Defines a function called getData1 that uses the async/await syntax to make an asynchronous HTTP GET request to a server's API endpoint.--////
     try {
+      //--Defines a try block that will contain the code that attempts to make the HTTP GET request to the server.
+
       const resp = await axios.get(
+        //--Uses the axios library to make an HTTP GET request to a server's API endpoint, passing the endpoint as the first parameter and an object that specifies an Authorization header containing an access token as the second parameter. The await keyword is used to wait for the response from the server to be received and stored in the resp variable.
         ServerAddress + "analytic/get_masterdashboardview/",
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      console.log("data-----", resp.data);
+
+      console.log("data-----", resp.data); //--Logs the data returned from the server to the console.
       const {
+        //------ Destructures the resp.data object to extract specific data fields that are used to set the local state variables later in the code.
         delivery_type,
         billto,
         client_wise_distribution,
         shipper_wise_disribution,
         consignee_wise_disribution,
       } = resp.data;
+      //---Sets the values of three local state variables called local_order_data, domestic_order_data, and international_order_data to the total count of delivery types returned from the server, or zero if the delivery type data is not available.
       setlocal_order_data(delivery_type[0] ? delivery_type[0].total_count : 0);
-      setdomestic_order_data(delivery_type[1] ? delivery_type[1].total_count : 0);
-      setinternational_order_data(delivery_type[2] ? delivery_type[2].total_count : 0);
-
+      setdomestic_order_data(
+        delivery_type[1] ? delivery_type[1].total_count : 0
+      );
+      setinternational_order_data(
+        delivery_type[2] ? delivery_type[2].total_count : 0
+      );
+      //------Sets the values of two local state variables called billto_arr and billto_name_arr to arrays that contain the total count and name of the top five bill-to customers returned from the server, respectively.
       console.log("billto", billto);
       setbillto_arr(billto.map(({ total_count }) => total_count).slice(0, 5));
-      setbillto_name_arr(billto.map(({ billto_name }) => billto_name).slice(0, 5));
-      setclient_arr(client_wise_distribution.map(({ client }) => client).slice(0, 5));
-      setclient_name_arr(
-        client_wise_distribution.map(({ total_count }) => total_count).slice(0, 5)
+      setbillto_name_arr(
+        billto.map(({ billto_name }) => billto_name).slice(0, 5)
       );
-      setshipper_arr(shipper_wise_disribution.map(({ shiper }) => shiper).slice(0, 5));
+      setclient_arr(
+        client_wise_distribution.map(({ client }) => client).slice(0, 5)
+      );
+      setclient_name_arr(
+        client_wise_distribution
+          .map(({ total_count }) => total_count)
+          .slice(0, 5)
+      );
+      setshipper_arr(
+        shipper_wise_disribution.map(({ shiper }) => shiper).slice(0, 5)
+      );
       setshipper_name_arr(
-        shipper_wise_disribution.map(({ total_count }) => total_count).slice(0, 5)
+        shipper_wise_disribution
+          .map(({ total_count }) => total_count)
+          .slice(0, 5)
       );
       setconsignee_arr(
         consignee_wise_disribution.map(({ consignee }) => consignee).slice(0, 8)
@@ -113,7 +132,7 @@ const DashboardChartSection = () => {
       // alert(`Error Occur in , ${err}`);
     }
   };
-
+  //----Finally, the code defines an effect hook that runs getData1() once when the component is mounted, passing an empty array as the second argument to ensure that the effect only runs once.
   useEffect(() => {
     getData1();
   }, []);
@@ -122,68 +141,70 @@ const DashboardChartSection = () => {
     <>
       {/* For HeaderCard */}
       <Col lg={12} md={4} sm={4}>
-      <div className="header_card_container">
-        <HeaderCard
-          Headlogo={<FaTruck />}
-          headColor={"#6D9886"}
-          title={"Local"}
-          description={local_order_data}
-          naviLink={"/booking/orders"}
-          filter_by_value={"Local"}
-        />
-        <HeaderCard
-          Headlogo={<IoMdTrain />}
-          headColor={"#6D9886"}
-          title={"Domestic"}
-          description={domestic_order_data}
-          naviLink={"/booking/orders"}
-        />
-        <HeaderCard
-          Headlogo={<GiCommercialAirplane />}
-          headColor={"#6D9886"}
-          title={"Air"}
-          description={international_order_data}
-          naviLink={"/booking/orders"}
-        />
-      </div>
-        
-  <style jsx>{`
-    .header_card_container {
-      display: flex;
-      // flex-wrap: wrap;
-      justify-content: space-between;
-      margin-top:10px;
-      // text-align: center;
-    }
-    
-    @media only screen and (max-width: 767px) {
-      .header_card_container {
-        flex-direction: column;
-        align-items: center;
-      }
-    }
-  `}</style>
-      </Col>
+        <div className="header_card_container">
+          <HeaderCard
+            Headlogo={<FaTruck />}
+            headColor={"#6D9886"}
+            title={"Local"}
+            description={local_order_data}
+            naviLink={"/booking/orders"}
+            filter_by_value={"Local"}
+          />
+          <HeaderCard
+            Headlogo={<IoMdTrain />}
+            headColor={"#6D9886"}
+            title={"Domestic"}
+            description={domestic_order_data}
+            naviLink={"/booking/orders"}
+          />
+          <HeaderCard
+            Headlogo={<GiCommercialAirplane />}
+            headColor={"#6D9886"}
+            title={"Air"}
+            description={international_order_data}
+            naviLink={"/booking/orders"}
+          />
+        </div>
 
+        <style jsx>{`
+          .header_card_container {
+            display: flex;
+            // flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 10px;
+            // text-align: center;
+          }
+
+          @media only screen and (max-width: 767px) {
+            .header_card_container {
+              flex-direction: column;
+              align-items: center;
+            }
+          }
+        `}</style>
+      </Col>
       <Col lg={12} md={6} sm={6}>
         <div
           style={{
             display: "flex",
             margin: "2px",
             flexDirection: width > 800 ? "row" : "column",
+            boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px"
           }}
         >
-          <Col lg={6} md={12} sm={12}>
-            <Card className="shadow bg-white rounded" style={{ margin: "5px" }}>
+          <Col lg={6} md={6} sm={12}>
+            <Card
+              className="shadow bg-white rounded"
+              style={{ margin: "-1px", height: "100%", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px", width:"100%",marginRight:"2px"}}
+            >
               <CardTitle
                 style={{
                   display: "flex",
                   justifyContent: "center",
-                  
+
                   textAlign: "center",
-                  fontWeight: '500',
-                  fontFamily: 'Poppins, sansSerif'
-                 
+                  fontWeight: "500",
+                  fontFamily: "Poppins, sansSerif",
                 }}
               >
                 Top 5 Bill To
@@ -200,15 +221,23 @@ const DashboardChartSection = () => {
             </Card>
           </Col>
 
-          <Col lg={6} md={12} sm={12}>
-            <Card className="shadow bg-white rounded" style={{ margin: "5px" }}>
+          <Col lg={6} md={6} sm={12}>
+            <Card
+              className="shadow bg-white rounded"
+              style={{
+                margin: "0px",
+                height: "100%",
+                boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
+                width:"100%",marginLeft:'3px'
+              }}
+            >
               <CardTitle
                 style={{
                   display: "flex",
                   justifyContent: "center",
                   textAlign: "center",
-                  fontWeight: '500',
-                  fontFamily: 'Poppins, sansSerif'
+                  fontWeight: "500",
+                  fontFamily: "Poppins, sansSerif",
                 }}
               >
                 Top 5 Shipper
@@ -226,15 +255,15 @@ const DashboardChartSection = () => {
       </Col>
 
       {/* Pie Chart */}
-      <Card className="shadow bg-white rounded">
+      <Card className="shadow bg-white rounded" style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px"}}>
         <CardTitle
           style={{
             display: "flex",
-                  justifyContent: "center",
-                  
-                  textAlign: "center",
-                  fontWeight: '500',
-                  fontFamily: 'Poppins, sansSerif'
+            justifyContent: "center",
+
+            textAlign: "center",
+            fontWeight: "500",
+            fontFamily: "Poppins, sansSerif",
           }}
         >
           Top 5 Client
@@ -249,15 +278,15 @@ const DashboardChartSection = () => {
       </Card>
 
       {/* Horizontal Chart */}
-      <div style={{ background: "white", margin: "2px" }}>
+      <div style={{ background: "white", margin: "2px",  boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
         <CardTitle
           style={{
             display: "flex",
-                  justifyContent: "center",
-                  
-                  textAlign: "center",
-                  fontWeight: '500',
-                  fontFamily: 'Poppins, sansSerif'
+            justifyContent: "center",
+
+            textAlign: "center",
+            fontWeight: "500",
+            fontFamily: "Poppins, sansSerif",
           }}
         >
           Top 10 Consignee
@@ -271,7 +300,19 @@ const DashboardChartSection = () => {
       </div>
 
       {/* Vertical Chart */}
-      <div style={{ background: "white", margin: "2px" }}>
+      <div style={{ background: "white", margin: "2px", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
+      <CardTitle
+          style={{
+            display: "flex",
+            justifyContent: "center",
+
+            textAlign: "center",
+            fontWeight: "500",
+            fontFamily: "Poppins, sansSerif",
+          }}
+        >
+          Top 10 branch 
+        </CardTitle>
         <BarChart
           seriesData={consignee_name_arr}
           categories={consignee_arr}
@@ -281,7 +322,7 @@ const DashboardChartSection = () => {
       </div>
 
       {/* Spine Area Chart */}
-      <div style={{ background: "white", margin: "2px" }}>
+      <div style={{ background: "white", margin: "2px",boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
         <SpineAreaChart
           seriesData={seriesData1}
           optionsData={optionsData}

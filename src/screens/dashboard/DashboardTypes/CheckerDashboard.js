@@ -19,12 +19,10 @@ const CheckerDashboard = () => {
   const navigate = useNavigate();
   // To get Screen Size
   const { height, width } = useWindowDimensions();
-
   // FOr Donut Chart
   const series = [20, 30, 30, 10, 10];
   const labels = ["Series 1", "Series 2", "Series 3", "Series 4", "Series 5"];
-  const colors = ["#34c38f", "#556ee6", "#f46a6a", "#50a5f1", "#f1b44c"];
-
+  const colors = ["#34C38F", "#556EE6", "#F46A6A", "#50A5F1", "#F1B44C"];
   // used for bar chart
   const seriesData = [380, 430, 450, 475, 550, 584, 780, 1100, 1220, 1365, 100];
   const categories = [
@@ -41,25 +39,20 @@ const CheckerDashboard = () => {
     "USA",
   ];
   const color = " rgb(136 , 132,216)";
-
   //  Spine Area Chart
   const seriesData1 = [
     { data: [30, 40, 35, 50, 49, 60, 70] },
     { data: [20, 35, 40, 60, 58, 70, 80] },
   ];
-
   const optionsData = {
     stroke: { curve: "smooth", width: 3 },
-    colors: ["#556ee6", "#34c38f"],
+    colors: ["#556EE6", "#34C38F"],
     tooltip: { x: { format: "dd/MM/yy HH:mm" } },
   };
-
   let list1 = ["1", "2", "3", "4", "5", "6"];
-
   return (
     <>
       {/* For HeaderCard */}
-
       <Row style={{ display: "flex" }}>
         <Col>
           <Card
@@ -90,7 +83,6 @@ const CheckerDashboard = () => {
                       Generated
                     </h5>
                   </div>
-
                   <div className="avatar-sm ms-auto"></div>
                 </div>
               </Link>
@@ -119,7 +111,6 @@ const CheckerDashboard = () => {
                     Not Paid
                   </h5>
                 </div>
-
                 <div className="avatar-sm ms-auto"></div>
               </div>
             </CardBody>
@@ -147,7 +138,6 @@ const CheckerDashboard = () => {
                     In review
                   </h5>
                 </div>
-
                 <div className="avatar-sm ms-auto"></div>
               </div>
             </CardBody>
@@ -175,14 +165,12 @@ const CheckerDashboard = () => {
                     Disputed
                   </h5>
                 </div>
-
                 <div className="avatar-sm ms-auto"></div>
               </div>
             </CardBody>
           </Card>
         </Col>{" "}
       </Row>
-
       <div className="wrapper">
         <div className="table1">
           <div class="row1 header green">
@@ -191,7 +179,6 @@ const CheckerDashboard = () => {
             <div class="cell">Added Name</div>
             <div class="cell">Status</div>
           </div>
-
           <div class="row1">
             <div class="cell" data-title="Product">
               1
@@ -206,7 +193,6 @@ const CheckerDashboard = () => {
               Pending
             </div>
           </div>
-
           <div class="row1">
             <div class="cell" data-title="Product">
               2
@@ -221,7 +207,6 @@ const CheckerDashboard = () => {
               Fullfilled
             </div>
           </div>
-
           <div class="row1">
             <div class="cell" data-title="Product">
               1
@@ -236,7 +221,6 @@ const CheckerDashboard = () => {
               Active
             </div>
           </div>
-
           <div class="row1">
             <div class="cell" data-title="Product">
               4
@@ -253,22 +237,17 @@ const CheckerDashboard = () => {
           </div>
         </div>
       </div>
-
       {/* For table */}
       {/* <div>
         <DashboardTable title={DashboardDataTitle} data={list1} />
       </div> */}
-
       {/* for Charts */}
-
       {/*Line ColumnArea Chart */}
-
       <Row>
         <Col lg={12}>
           <Card>
             <CardBody>
               <CardTitle className="mb-4">
-
               </CardTitle>
               <Row className="justify-content-center">
                 <Col sm={4}>
@@ -294,20 +273,12 @@ const CheckerDashboard = () => {
             </CardBody>
           </Card>
         </Col>
-
       </Row>
-
       {/* Pie Chart */}
-
       {/* Horizontal Chart */}
-
       {/* Vertical Chart */}
-
-
-
       {/* Spine Area Chart */}
     </>
   );
 };
-
 export default CheckerDashboard;

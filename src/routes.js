@@ -55,15 +55,10 @@ const Department = React.lazy(() =>
 const Designation = React.lazy(() =>
   import("./screens/ems/designation/Designation.js")
 );
-const AddECreditanls = React.lazy(() =>
-  import("./screens/ems/ewaybillcreditanls/AddEwayCreditanls.js")
-);
-const ECreditanls = React.lazy(() =>
-  import("./screens/ems/ewaybillcreditanls/Creditanls.js")
-);
 const AddDesignation = React.lazy(() =>
   import("./screens/ems/designation/AddDesignation.js")
 );
+
 //Profile
 
 const Profile = React.lazy(() => import("./screens/authentication/userProfile/Profile.js"));
@@ -227,8 +222,6 @@ const AddOrganization = React.lazy(() =>
 // Booking
 const Orders = React.lazy(() => import("./screens/booking/orders/Orders.js"));
 
-// const BookingHistoryPage = React.lazy(() => import("./screens/booking/OpBookingHistory/BookingHistoryPage.js"));
-
 const AddOrder = React.lazy(() =>
   import("./screens/booking/orders/AddOrder.js")
 );
@@ -238,10 +231,6 @@ const AddDocketStatus = React.lazy(() =>
 
 const OrderInvoicePdf = React.lazy(() =>
   import("./screens/booking/orders/OrderInvoicePdf.js")
-);
-
-const OrderPdf = React.lazy(() =>
-  import("./screens/booking/orders/OrderPdf.js")
 );
 
 const OrderHistoryPage = React.lazy(() => import("./screens/booking/orders/orderHistory/OrderHistoryPage.js"));
@@ -326,11 +315,10 @@ const AddHubVehicle = React.lazy(() =>
 const HubVehicleForwarding = React.lazy(() =>
   import("./screens/manifest/hubVehicleForward/HubVehicleForwarding.js")
 );
+
+
 const BreakManifest = React.lazy(() =>
   import("./screens/manifest/recieveManifest/BreakManifest.js")
-);
-const UpdateManifest = React.lazy(() =>
-  import("./screens/manifest/updateManifest/UpdateManifest.js")
 );
 const BreakHubManifest = React.lazy(() =>
   import("./screens/manifest/recieveHubManifest/BreakHubManifest.js")
@@ -409,9 +397,11 @@ const Sample = React.lazy(() => import("./screens/dashboard/Sample.js"));
 
 // Calender
 const Calender = React.lazy(() => import("./screens/dashboard/Calendar/Calendar.js"));
-
 //Notification
 const Notification = React.lazy(() => import("./screens/dashboard/Notification/Notification.js"));
+
+//Timeline
+const Notifications = React.lazy(() => import("./screens/dashboard/Timeline/Timelinenotification.js"));
 
 
 const Pickedup = React.lazy(() =>
@@ -421,15 +411,16 @@ const BoxDetail =React.lazy(()=>import("./screens/manifest/incomingVehcile/BoxDe
 // Routes
 
 // eway bill
-const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"));
-const EDashboard =React.lazy(()=>import("./screens/ewayBill/dashboard/Dashboard.js"));
-const DocEwayBill =React.lazy(()=>import("./screens/ewayBill/docketEwaybill/DocketEway.js"))
+const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"))
 const Vehcile=React.lazy(()=>import("./screens/master/vehcile/vehcile.js"))
 const AddVehcile=React.lazy(()=>import("./screens/master/vehcile/add_Vehcile.js"))
-const Extent_eway=React.lazy(()=>import("./screens/ewayBill/ewayTable/EwbExpiredYesterday.js"))
-const Assign_eway=React.lazy(()=>import("./screens/ewayBill/ewayTable/AssignedEwayBill.js"))
-
 // const CheckerMaster= React.lazy(()=>import ("./screen"))
+
+// Miscellaneous
+const Miscellaneous = React.lazy(()=>import("./screens/miscellaneous/Miscellaneous.js"));
+
+
+
 const auth_routes = [
   { path: "/signin", element: <SignIn /> },
   { path: "/", exact: true, element: <Navigate to="/signin" /> },
@@ -492,16 +483,6 @@ const routes = [
     element: <AddDepertment />,
   },
   {
-    path: "/ems/ewaybill/addcredit",
-    name: "AddECreditanls",
-    element: <AddECreditanls />,
-  },
-  {
-    path: "/ems/department/adddepartment",
-    name: "ECreditanls",
-    element: <ECreditanls />,
-  },
-  {
     path: "/ems/department",
     name: "Department",
     element: <Department />,
@@ -515,24 +496,6 @@ const routes = [
     path: "/ems/designation/adddesignation",
     name: "Adddesignation",
     element: <AddDesignation />,
-  },
-
-  // Eway Bill Path Defined
-  {
-    path: "/ewaybill/docketEwayBill",
-    element: <DocEwayBill />,
-  },
-  {
-    path: "/ewaybill/extendEway",
-    element: <Extent_eway/>,
-  },
-  {
-    path: "/ewaybill/dashboard",
-    element: <EDashboard />,
-  },
-  {
-    path: "/ewaybill/assignedEwaybill",
-    element: <Assign_eway />,
   },
   //veicle model
   {
@@ -804,19 +767,10 @@ const routes = [
     path: "/booking/orders/addorder",
     element: <AddOrder />,
   },
-  // {
-  //   path: "/booking/OpBookingHistory/BookingHistoryPage",
-  //   element: <BookingHistoryPage/>,
-  // },
   {
     path: "/booking/orders/OrderInvoicePdf",
     element: <OrderInvoicePdf />,
   },
-  {
-    path: "/booking/orders/OrderPdf",
-    element: <OrderPdf />,
-  },
-  
   {
     path : "/booking/orders/orderHistory/OrderHistoryPage",
     element : <OrderHistoryPage/>,
@@ -864,10 +818,6 @@ const routes = [
   {
     path: "/manifest/breakmanifest",
     element: <BreakManifest />,
-  },
-  {
-    path: "/manifest/updatemanifest",
-    element: <UpdateManifest />,
   },
   {
     path: "/manifest/breakhubmanifest",
@@ -1069,7 +1019,14 @@ const routes = [
     element: <Notification/>,
    },
    
-  
+  {
+    path:"/miscellaneous/Miscellaneous",
+    element: <Miscellaneous/>
+  },
+  {
+    path:"/dashboard/Timeline/Timelinenotification",
+    element: <Notifications/>
+  },
   
 ];
 

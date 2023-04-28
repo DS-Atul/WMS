@@ -1,9 +1,14 @@
 import React from "react";
 import useWindowDimensions from "./ScreenSize";
+import { AiOutlineEllipsis } from "react-icons/ai";
+import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 const Notification = ({ avatarBg, avatarSrc, title, text, author, date }) => {
   // To get Screen Size
+  console.log("name66-----", text);
   const { height, width } = useWindowDimensions();
+  const navigate = useNavigate();
   return (
     <li className="list-group-item border-0" style={{ marginBottom: "5px" }}>
       <div className="d-flex">
@@ -26,7 +31,21 @@ const Notification = ({ avatarBg, avatarSrc, title, text, author, date }) => {
               <i className="mdi mdi-account me-1" /> {author}
             </p>
           </div>
-          <p className="text-muted mb-0">{date}</p>
+          <p className="text-muted mb-0">
+            {date}
+            <span>
+              {/* onClick={() => {
+                  navigate("/dashboard/Timeline/Timelinenotification");
+                }} style={{ fontSize: "24px", width: "24px",cursor:'pointer'}}> */}
+
+              <Link
+                to="/dashboard/Timeline/Timelinenotification"
+                state={{ text: text, title, date }}
+              >
+                <AiOutlineEllipsis />
+              </Link>
+            </span>
+          </p>
         </div>
       </div>
     </li>
