@@ -26,7 +26,19 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                 className="table-grid">
                 <tbody>
                     <tr>
-                        <td colSpan={2}><h3>AIRWAYBILL NUMBER</h3><br></br><h2><b> {order.docket_no}</b></h2></td>
+                        <td colSpan={2}>
+                            <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                                <div style={{marginTop:"20px"}}> <h3>AIRWAYBILL NUMBER</h3><br></br><h2><b> {order.docket_no}</b></h2></div>
+                                <div>
+                                    <img src={order.qrcode}
+                                        height="150"
+                                        width="150"
+
+                                    />
+                                </div>
+                            </div>
+
+                        </td>
                         <td colSpan={4}>
                             <div style={{ display: "flex", alignItems: "center", marginLeft: 20, marginTop: 20 }}>
                                 <img src={Logo003} width="250vw" height="60vh" />
@@ -35,7 +47,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                             <div style={{ float: "right", marginRight: 20 }}><b>Web:</b> www.ssciogistics.in<br></br><b>E-Mail: </b>info@ssciogistics.in</div></td>
 
                     </tr>
-                    
+
                     <tr>
                         <td colSpan={2}><b>DATE<br></br>{booking_date}</b></td>
                         <th colSpan={4}>&nbsp;<b>ISO 9001 2015 CERTIFIED COMPANY</b></th>
@@ -104,7 +116,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                     </tr>
 
                     <tr>
-                        <td rowSpan={3} colSpan={2}>Sensitive Supply Chain Logistics LTD liability is limited. By tendering the <br></br>shipment to Sensitive  
+                        <td rowSpan={3} colSpan={2}>Sensitive Supply Chain Logistics LTD liability is limited. By tendering the <br></br>shipment to Sensitive
                             Supply Chain Logistics LTD shipper agrees to the terms and conditions.Sensitive Supply <br></br>
                             Chain Logistics LTD liability for any loss or damage of the shipment will not exceed more<br></br> than $50 or declared value for insurance where shown . This is the non negotiable airway bill. </td>
                     </tr>
@@ -112,7 +124,11 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                         <td><input type="checkbox"></input><br></br>Ambient</td><td><input type="checkbox"></input><br></br>Frozen</td><td><input type="checkbox"></input><br></br>Refrigerated</td><td><input type="checkbox"></input><br></br>Other&emsp;</td>
                     </tr>
                     <tr>
-                        <td colSpan={4}>Does this shipment contains dangerous goods &emsp;<input type="checkbox"></input>&emsp; By <br></br>Air   &emsp;&emsp;  UN Number <br></br>Expected </td>
+                        <td colSpan={4} style={{ textAlign: "left", paddingLeft: "4px" }}>
+                            <div>Does this shipment contains dangerous goods &emsp;<input type="checkbox"></input>&emsp; <b>By Air</b>  &emsp;&emsp; </div>
+                            <div> UN Number </div>
+                            <div><b> Expected  &emsp;&emsp; Packing Group</b> </div>
+                        </td>
                     </tr>
 
                     <tr>

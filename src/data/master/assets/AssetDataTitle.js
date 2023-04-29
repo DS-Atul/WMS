@@ -1,6 +1,7 @@
 const AssetDataTitle = [
   "Asset ID",
   "Bar Code",
+  "Asset Type",
   "Uses Type",
   "Product ID",
   "Current Branch",

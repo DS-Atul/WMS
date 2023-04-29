@@ -32,7 +32,6 @@ const SearchInput = ({
   setbottom,
   count=1,
 }) => {
-console.log("data_list=============", data_list)
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -189,9 +188,22 @@ console.log("data_list=============", data_list)
           ref={ref}
           className="dataResult custom-select"
           id="chk"
+          // onScroll={() => {
+          //   const scrollTop = ref.current.scrollTop;
+          //   const scrollHeight = ref.current.scrollHeight;
+          //   const clientHeight = ref.current.clientHeight;
+            
+          //   if (scrollTop + clientHeight >= scrollHeight - 50) {
+          //     setpage(page => page + 1);
+          //   }
+          // }}
           onScroll={() => {
             for (let i = 1; i <= count; i += 3) {
               // setpage(page + 1);
+              console.log("i==============",i)
+              console.log("page===========", page)
+              console.log("bottom==========", bottom)
+              console.log("ref.current.scrollTop ============", ref.current.scrollTop )
               if (ref.current.scrollTop > bottom - i && loaded) {
                 setpage(page + 1);
                 setbottom(bottom + 262 - with_add);
@@ -258,10 +270,6 @@ console.log("data_list=============", data_list)
             <>
               {filterList.length > 0 ? (
                 filterList.map((value, key) => {
-                  console.log("value====", value)
-                  console.log("value[0]======", value[0])
-                  console.log("value[1]======", value[1])
-                  console.log("value[2]========", value[2])
                   return (
                     <div key={key} className="data_item">
                       <span

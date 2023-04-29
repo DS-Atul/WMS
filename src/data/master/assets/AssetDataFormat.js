@@ -313,6 +313,7 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
                   />
                 </div>
               </td>
+              <td>{toTitleCase(asset.asset_type)}</td>
               <td>{toTitleCase(asset.box_type)}</td>
               <td>
                 {asset.product_id != "" ? (

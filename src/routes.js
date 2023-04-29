@@ -232,6 +232,9 @@ const AddDocketStatus = React.lazy(() =>
 const OrderInvoicePdf = React.lazy(() =>
   import("./screens/booking/orders/OrderInvoicePdf.js")
 );
+const OrderPdf = React.lazy(() =>
+  import("./screens/booking/orders/OrderPdf.js")
+);
 
 const OrderHistoryPage = React.lazy(() => import("./screens/booking/orders/orderHistory/OrderHistoryPage.js"));
 
@@ -770,6 +773,10 @@ const routes = [
   {
     path: "/booking/orders/OrderInvoicePdf",
     element: <OrderInvoicePdf />,
+  },
+  {
+    path: "/booking/orders/OrderPdf",
+    element: <OrderPdf />,
   },
   {
     path : "/booking/orders/orderHistory/OrderHistoryPage",
