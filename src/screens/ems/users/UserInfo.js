@@ -498,7 +498,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           dispatch(setAlertType("success"));
           navigate("/ems/users");
         }
-        else if (resp.data.error === "UNIQUE constraint failed: ems_customuser.mobilenumber") {
+        else if (resp.data.error === "duplicate key value violates unique constraint \"ems_customuser_mobilenumber_key\"\nDETAIL:  Key (mobilenumber)=(9876543210) already exists.\n") {
           dispatch(
             setDataExist(
               `Mobile Number ${values.phone_number} already exists`

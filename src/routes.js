@@ -417,6 +417,10 @@ const BoxDetail =React.lazy(()=>import("./screens/manifest/incomingVehcile/BoxDe
 const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"))
 const Vehcile=React.lazy(()=>import("./screens/master/vehcile/vehcile.js"))
 const AddVehcile=React.lazy(()=>import("./screens/master/vehcile/add_Vehcile.js"))
+const Extent_eway=React.lazy(()=>import("./screens/ewayBill/ewayTable/EwbExpiredYesterday.js"))
+const Assign_eway=React.lazy(()=>import("./screens/ewayBill/ewayTable/AssignedEwayBill.js"))
+const Part_b=React.lazy(()=>import("./screens/ewayBill/ewayTable/PendingPartB.js"))
+
 // const CheckerMaster= React.lazy(()=>import ("./screen"))
 
 // Miscellaneous
@@ -499,6 +503,28 @@ const routes = [
     path: "/ems/designation/adddesignation",
     name: "Adddesignation",
     element: <AddDesignation />,
+  },
+
+  // Eway Bill Path Defined
+  {
+    path: "/ewaybill/docketEwayBill",
+    element: <DocEwayBill />,
+  },
+  {
+    path: "/ewaybill/pendingPartB",
+    element: <Part_b/>,
+  },
+  {
+    path: "/ewaybill/extendEway",
+    element: <Extent_eway/>,
+  },
+  {
+    path: "/ewaybill/dashboard",
+    element: <EDashboard />,
+  },
+  {
+    path: "/ewaybill/assignedEwaybill",
+    element: <Assign_eway />,
   },
   //veicle model
   {

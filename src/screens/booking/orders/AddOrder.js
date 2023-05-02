@@ -3676,15 +3676,14 @@ console.log("booking_through=====", booking_through)
                                   onChange={(e) => {
                                     console.log("maxlength", e.target.value);
                                     if (e.target.value.length === 12) {
-                                      setewaybill_no(e.target.value);
-                                      get_eway_detail(e.target.value);
+                                       setewaybill_no(e.target.value);
+                                      check_ewb_attached(e.target.value);
                                     } else if (e.target.value.length < 12) {
-                                      setewaybill_no(e.target.value);
+                                       setewaybill_no(e.target.value);
                                     }
                                   }}
                                   placeholder="Enter Eway Bill Number"
-                                // onMouseLeave={()=>{
-                                // }}
+                               
                                 />
                               </div>
                             </Col>

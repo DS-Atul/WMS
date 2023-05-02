@@ -231,13 +231,9 @@ const update_eway_b = (values) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${b_acess_token}`,
         },
-  
-
         }
-      
     )
     .then(function (response) {
-
       console.log("response=======eway bill detail", response);
       if (response.data.status === 1) {
         dispatch(setToggle(true));

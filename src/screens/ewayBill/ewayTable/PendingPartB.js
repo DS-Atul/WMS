@@ -59,7 +59,7 @@ const get_partb_12= () => {
   useEffect(() => {
         if (prev_date && today_date) {
             
-            get_assign_eway();
+            // get_assign_eway();
         }
       }, [prev_date && today_date])
       

@@ -20,6 +20,8 @@ const EwayDashboard = () => {
 const [expire_ewb_yesterday, setexpire_ewb_yesterday] = useState("");
 const [expiring_today, setexpiring_today] = useState("");
 const [part_b_12, setpart_b_12] = useState("");
+
+
 //  Get Expired Eway Bill 
   const get_expired_eway = () => {
     axios
@@ -329,6 +331,7 @@ useEffect(() => {
               boxShadow: "0 0 10px rgba(0,0,0,0.3)",
               borderRadius: "10px",
             }}
+           
           >
             <span
               style={{
@@ -388,6 +391,7 @@ useEffect(() => {
           width: "100%",
           justifyContent: "space-evenly",
         }}
+      
       >
         {/* ! st Part */}
 

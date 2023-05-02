@@ -24,7 +24,7 @@
     "file-saver": "^2.0.5",
     "formik": "^2.2.9",
     "material-table": "^2.0.3",
-    "node-sass": "^7.0.1",
+    "node-sass": "^8.0.0",
     "path-browserify": "^1.0.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
