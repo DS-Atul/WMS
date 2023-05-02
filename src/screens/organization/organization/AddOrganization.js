@@ -3,6 +3,7 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -34,6 +35,7 @@ import SearchInput from "../../../components/formComponent/searchInput/SearchInp
 import { MdAdd, MdDeleteForever } from "react-icons/md";
 import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
+import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 
 function handleLogoUpload(event) {
   const file = event.target.files[0];
@@ -933,7 +935,42 @@ const AddOrganization = () => {
   const [gst_id_list, setgst_id_list] = useState([]);
   const [gst_ids, setgst_ids] = useState([]);
   const [deleted_gst_id, setdeleted_gst_id] = useState([]);
+//  Organisation Configration
 
+const [config_type, setconfig_type] = useState([
+  ("AADHAR"),
+  ("EWAY BILL"),
+  ("PANCARD"),
+  ("GPS")
+])
+const [config_type_sel, setconfig_type_sel] = useState("");
+const [username, setusername] = useState("");
+const [password, setpassword] = useState("");
+const [url, seturl] = useState("");
+let dimension_list1=[
+  config_type_sel,
+  username,
+  password,
+  url
+]
+const [row1, setrow1] = useState([dimension_list1]);
+const addConfig = () => {
+  dimension_list1 = ["","","",""];
+  setrow1([...row1, dimension_list1]);
+};
+const deleteConfig = (item) => {
+  setconfig_type_sel("");
+  setusername("");
+  setpassword("");
+  let temp = [...row1];
+  const index = temp.indexOf(item);
+  if (index > -1) {
+    temp.splice(index, 1);
+   
+  }
+  setrow1(temp);
+};
+console.log("rowwwwwwwwwwwwwwwww1",row1)
   let dimension_list = [
     gst_no,
     gst_city,
@@ -2039,6 +2076,215 @@ setbill_color(false);
               </Card>
             </Col>
           </div>
+
+    {/*  Organisaziation Configration */}
+    <div className="m-3">
+            <Col lg={12}>
+              <Card className="shadow bg-white rounded">
+                <CardTitle className="mb-1 header">
+                  <div className="header-text-icon header-text">
+                    Organization Configuration
+                    <IconContext.Provider
+                      value={{
+                        className: "header-add-icon",
+                      }}
+                    >
+                      <div onClick={toggle_circle3}>
+                        {circle_btn3 ? (
+                          <MdRemoveCircleOutline />
+                        ) : (
+                          <MdAddCircleOutline />
+                        )}
+                      </div>
+                    </IconContext.Provider>
+                  </div>
+                </CardTitle>
+                {circle_btn3 ? (
+                  <CardBody>
+                    <Row>
+                      <>
+                        <Row className="hide">
+                          <Col lg={3} md={4} sm={4}>
+                            <div className="mb-3">
+                              <Label className="header-child">Config Type:</Label>
+                              {row1.map((item1, index1) => {
+                                return (
+
+<div
+                              key={index1}
+                            >
+                           
+                              <select
+                              
+                                style={{
+                                  marginBottom: "15px",
+                                  boxShadow: "none",
+                                }}
+                                className="form-select"
+                                placeholder="Select status"
+                                id="input"
+                                value={item1[0]}
+                                onChange={(val) => {
+                                  setconfig_type_sel(val.target.value);
+                                  item1[0] = val.target.value;
+                                  // row3[index1][1] = val.target.value;
+                                }}
+                                defaultValue="Select status"
+                              >
+                                
+                                <option>-----</option>
+                                <option>PANCARD</option>
+                                <option>EWAYBILL</option>
+                                <option>AADHAR</option>
+                                <option>GPS</option>
+                              </select>
+                            </div>
+                                );
+                              })}
+                            </div>
+                          </Col>
+
+                          <Col lg={3} md={4} sm={4}>
+                            <div className="mb-3">
+                              <Label className="header-child"> Username</Label>
+                              {row1.map((item1, index1) => (
+                                <div className="mb-3">
+                                   <Input
+                                    min={0}
+                                    key={index1}
+                                    value={item1[1]}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    style={{ marginBottom: "15px" }}
+                                    placeholder="Enter Username "
+                                    onChange={(val) => {
+                                      setusername(val.target.value);
+                                      item1[1] = val.target.value;
+                                      // setrefresh(!refresh);
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </Col>
+
+                          <Col lg={3} md={4} sm={4}>
+                            <div className="mb-3">
+                              <Label className="header-child">Password </Label>
+                              {row1.map((item1, index1) => (
+                                <div className="mb-3">
+                                  <Input
+                                    min={0}
+                                    key={index1}
+                                    value={item1[2]}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    style={{ marginBottom: "15px" }}
+                                    placeholder="Enter Password "
+                                    onChange={(val) => {
+                                      setpassword(val.target.value);
+                                      item1[2] = val.target.value;
+                                      // setrefresh(!refresh);
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </Col>
+                          <Col lg={2} md={4} sm={4}>
+                            <div className="mb-3">
+                              <Label className="header-child"> Url </Label>
+                              {row1.map((item1, index1) => (
+                                <div className="mb-3">
+                                   <Input
+                                    min={0}
+                                    key={index1}
+                                    value={item1[3]}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    style={{ marginBottom: "15px" }}
+                                    placeholder="Enter Url "
+                                    onChange={(val) => {
+                                      seturl(val.target.value);
+                                      item1[3] = val.target.value;
+                                      // setrefresh(!refresh);
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </Col>
+
+                         
+                          <Col lg={1}>
+                            <div
+                              className="mb-3"
+                              style={{ textAlign: "center" }}
+                            >
+                              {row1.length > 1 ? (
+                                <Label className="header-child">Delete</Label>
+                              ) : null}
+                              {row1.map((item, index) => (
+                                <IconContext.Provider
+                                  key={index}
+                                  value={{
+                                    className: "icon multi-input",
+                                  }}
+                                >
+                                  {row1.length > 1 ? (
+                                    <>
+                                      <div style={{ height: "14.5px" }}></div>
+                                      <div
+                                        onClick={() => {
+                                          deleteConfig(item)
+                                        }}
+                                      >
+                                        <MdDeleteForever
+                                          style={{
+                                            justifyContent: "center",
+                                            cursor: "pointer",
+                                          }}
+                                        />
+                                      </div>
+                                    </>
+                                  ) : null}
+                                </IconContext.Provider>
+                              ))}
+                            </div>
+                          </Col>
+                        </Row>
+                        <>
+                          {row1.length < 20 && (
+                            <div >
+                              <span
+                                className="link-text"
+                                onClick={() => {
+                                  addConfig();
+                                }}
+                              >
+                                <IconContext.Provider
+                                  value={{
+                                    className: "link-text",
+                                  }}
+                                >
+                                  <MdAdd />
+                                </IconContext.Provider>
+                                ADD ANOTHER CONFIG
+                              </span>
+                            </div>
+                          )}
+                        </>
+                      </>
+                    </Row>
+                  </CardBody>
+                ) : null}
+              </Card>
+            </Col>
+          </div>
+
 
           {/* Address info */}
           <div className="m-3" id="add">

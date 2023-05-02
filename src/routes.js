@@ -420,7 +420,8 @@ const AddVehcile=React.lazy(()=>import("./screens/master/vehcile/add_Vehcile.js"
 const Extent_eway=React.lazy(()=>import("./screens/ewayBill/ewayTable/EwbExpiredYesterday.js"))
 const Assign_eway=React.lazy(()=>import("./screens/ewayBill/ewayTable/AssignedEwayBill.js"))
 const Part_b=React.lazy(()=>import("./screens/ewayBill/ewayTable/PendingPartB.js"))
-
+const EDashboard=React.lazy(()=>import("./screens/ewayBill/dashboard/Dashboard.js"));
+const DocEwayBill=React.lazy(()=>import("./screens/ewayBill/docketEwaybill/DocketEway.js")); 
 // const CheckerMaster= React.lazy(()=>import ("./screen"))
 
 // Miscellaneous
