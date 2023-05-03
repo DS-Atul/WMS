@@ -20,6 +20,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { ServerAddress } from "../../../constants/ServerAddress";
 
 const OrganizationDataFormat = ({ data, data1 }) => {
+  console.log("data=====", data)
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user = useSelector((state) => state.authentication.userdetails);
@@ -164,7 +165,17 @@ const OrganizationDataFormat = ({ data, data1 }) => {
                 )}
               </td>
               <td>{organization.pan_no}</td>
-
+              <td>
+              
+                {organization.organization_gst.length !== 0 &&
+                 organization.organization_gst.map((organization, index) => {
+                   return (
+                  <span>{organization.gst_no +",  "}</span>
+                   )
+                }
+                
+                )}
+              </td>
               <td>{organization.regd_no}</td>
               <td>{organization.website}</td>
               <td>{organization.email}</td>

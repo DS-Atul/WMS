@@ -25,6 +25,7 @@ import {
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 const VendorDataFormat = ({ data, data1, can_delete }) => {
+  console.log("data========", data)
   const dispatch = useDispatch();
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -220,6 +221,18 @@ const VendorDataFormat = ({ data, data1, can_delete }) => {
                   toTitleCase(vendor.name)
                 )}
               </td>
+              <td>{vendor.pan_no}</td>
+              <td>
+              
+              {vendor.vendor_gst.length !== 0 &&
+               vendor.vendor_gst.map((vendor, index) => {
+                 return (
+                <span>{vendor.gst_no +",  "}</span>
+                 )
+              }
+              
+              )}
+            </td>
               <td>{toTitleCase(vendor.emailp)}</td>
               <td>{vendor.mobile_numberp}</td>
               <td>{toTitleCase(vendor.company_type)}</td>

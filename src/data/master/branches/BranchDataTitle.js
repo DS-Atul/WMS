@@ -1,6 +1,7 @@
 const BranchesDataTitle = [
   "Branch Id",
   "Branch Name",
+  "Organization Name",
   "Branch Type",
   "Vendor Name",
   "Location",

@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { useLocation, useNavigate } from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
 import {
   Card,
   Col,
@@ -54,9 +55,18 @@ const AddOrganization = () => {
 
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("Organisation data 000",location_data);
+  console.log("location_data======", location_data)
   const navigate = useNavigate();
-
+  // Used for Company Type list
+  const [company_type, setcompany_type] = useState("");
+  const [company_type_list, setcompany_type_list] = useState([
+    "Individual",
+    "Pvt Ltd / Ltd",
+    "Partnership",
+    "LLP",
+    "Others",
+  ]);
+  const [company_type_error, setcompany_type_error] = useState(false);
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
   const toggle_circle = () => {
@@ -102,8 +112,8 @@ const AddOrganization = () => {
   const [pincode_error2, setpincode_error2] = useState(false);
   const [sec_mobile2, setsec_mobile2] = useState("");
   const [mobile_error, setmobile_error] = useState(false);
-  const [moblie_len_error, setmoblie_len_error] = useState(false);
 
+  const [pan_no, setpan_no] = useState("")
   const [isupdating, setisupdating] = useState(false);
   //Get Updated Location Data
   const [organization, setOrganization] = useState([]);
@@ -145,6 +155,7 @@ const AddOrganization = () => {
 
   const [state_loded, setstate_loded] = useState(false);
   const [state_count, setstate_count] = useState(1);
+  const [billing_state_bottom, setbilling_state_bottom] = useState(103)
 
   const [city_loaded, setcity_loaded] = useState(false);
   const [city_count, setcity_count] = useState(1);
@@ -153,6 +164,9 @@ const AddOrganization = () => {
   const [office_pincode_count, setoffice_pincode_count] = useState(1);
 
   // Billing Address
+  const [togstate, settogstate] = useState(false)
+  const [togcity, settogcity] = useState(false)
+  const [togpincode, settogpincode] = useState(false)
   const [bill_color, setbill_color] = useState(false);
   const [billing_add_line1, setbilling_add_line1] = useState("");
   const [billing_add_line2, setbilling_add_line2] = useState("");
@@ -173,6 +187,7 @@ const AddOrganization = () => {
   const [billing_pincode_search_item, setbilling_pincode_search_item] =
     useState("");
   const [billing_id, setbilling_id] = useState(0);
+  const [billing_pincode_bottom, setbilling_pincode_bottom] = useState(103)
 
   const [billing_locality, setbilling_locality] = useState("");
   const [billing_locality_list, setbilling_locality_list] = useState([]);
@@ -180,9 +195,13 @@ const AddOrganization = () => {
   const [billing_locality_page, setbilling_locality_page] = useState(1);
   const [billing_locality_search_item, setbilling_locality_search_item] =
     useState("");
+  const [loaded_billing_locality, setloaded_billing_locality] = useState(false)
+  const [billing_locality_count, setbilling_locality_count] = useState(1)
+  const [billing_locality_bottom, setbilling_locality_bottom] = useState(103)
 
   const [billing_city_loaded, setbilling_city_loaded] = useState(false);
   const [billing_city_count, setbilling_city_count] = useState(1);
+  const [billing_city_bottom, setbilling_city_bottom] = useState(103)
 
   const [loaded_billing_pincode, setloaded_billing_pincode] = useState(false);
   const [billing_pincode_count, setbilling_pincode_count] = useState(1);
@@ -192,7 +211,7 @@ const AddOrganization = () => {
   const [office_pincode_loaded, setoffice_pincode_loaded] = useState(false);
 
   const [updated_gstaddress, setupdated_gstaddress] = useState([]);
-  console.log("updated_gstaddress----", updated_gstaddress);
+  // console.log("updated_gstaddress----", updated_gstaddress);
 
   // Validation
   const validation = useFormik({
@@ -201,8 +220,9 @@ const AddOrganization = () => {
       organisation_name: toTitleCase(organization.name) || "",
       toll_free_number: organization.tollfree_no || "",
       registeration_number: organization.regd_no || "",
-      pan_no: organization.pan_no || "",
+      // pan_no: organization.pan_no || "",
       phone_numberp: organization.mobile_nop || "",
+      tan_no: organization.tan_no || "",
       // phone_numbers: organization.mobile_nos || "",
       email: organization.email || "",
       web_url: organization.website || "",
@@ -222,13 +242,17 @@ const AddOrganization = () => {
         .min(11, "Number must be 11 digit")
         .max(11, "Number must be 11 digit")
         .required("Toll Free Number is required"),
-      pan_no: Yup.string().min(10).max(10).required("PAN Number is required"),
+      // pan_no: Yup.string().min(10).max(10).required("PAN Number is required"),
       email: Yup.string().email().required("Email is required"),
       web_url: Yup.string().required("Website URL is required"),
       phone_numberp: Yup.string()
         .min(10, "Invalid number")
         .max(10, "invalid number")
         .required("Phone Number is required"),
+      tan_no: Yup.string()
+        .min(10, "Invalid number")
+        .max(10, "invalid number")
+        .required("Tan Number is required"),
       contact_person_name: Yup.string().required("Name is required"),
       contact_person_email: Yup.string()
         .email("Please Enter a Valid email")
@@ -240,44 +264,50 @@ const AddOrganization = () => {
       // phone_numbers: Yup.string().min(10,"invalid").max(10,"invalid").required("Number is required"),
     }),
     onSubmit: (values) => {
-         if (
-              office_add_line1 !== "" &&
-              office_state !== "" &&
-              office_city !== "" &&
-              office_pincode !== "" &&
-              office_locality !== ""
-            
-              &&
-                billing_add_line1 === "" ||
-                billing_state === "" ||
-                billing_city === "" ||
-                billing_pincode === "" ||
-                billing_locality === ""
-              )
-               {
-                setbill_color(true);
-                document.getElementById("add").scrollIntoView();
-              } 
-             
-            else if (billing_add_line1 === "") {
-              setbill_add1_err(true);
-              document.getElementById("add").scrollIntoView();
-            } else if (billing_state === "") {
-              setstate_error1(true);
-              document.getElementById("add").scrollIntoView();
-            } else if (billing_city === "") {
-              setcity_error1(true);
-              document.getElementById("add").scrollIntoView();
-            } else if (billing_pincode === "") {
-              setpincode_error2(true);
-              document.getElementById("add").scrollIntoView();
-            } else if (billing_locality === "") {
-              setlocal_err2(true);
-              document.getElementById("add").scrollIntoView();
-            } else {
-      isupdating ? update_organisation(values) : send_organisation_data(values);
+      if (
+        office_add_line1 !== "" &&
+        office_state !== "" &&
+        office_city !== "" &&
+        office_pincode !== "" &&
+        office_locality !== ""
 
-            }
+        &&
+        billing_add_line1 === "" ||
+        billing_state === "" ||
+        billing_city === "" ||
+        billing_pincode === "" ||
+        billing_locality === ""
+      ) {
+        setbill_color(true);
+        document.getElementById("add").scrollIntoView();
+      }
+
+      else if (billing_add_line1 === "") {
+        setbill_add1_err(true);
+        document.getElementById("add").scrollIntoView();
+      } else if (billing_state === "") {
+        setstate_error1(true);
+        document.getElementById("add").scrollIntoView();
+      } else if (billing_city === "") {
+        setcity_error1(true);
+        document.getElementById("add").scrollIntoView();
+      } else if (billing_pincode === "") {
+        setpincode_error2(true);
+        document.getElementById("add").scrollIntoView();
+      } else if (billing_locality === "") {
+        setlocal_err2(true);
+        document.getElementById("add").scrollIntoView();
+      }
+      else if (pan_no.length !== 10) {
+        alert("Pan Number Must be 10 Degit")
+      }
+      else if(!active){
+        alert("Please Select Head Office")
+      }
+      else {
+        isupdating ? update_organisation(values) : send_organisation_data(values);
+
+      }
     },
   });
 
@@ -289,12 +319,14 @@ const AddOrganization = () => {
         {
           name: toTitleCase(values.organisation_name).toUpperCase(),
           regd_no: values.registeration_number,
+          type: (company_type).toUpperCase(),
           tollfree_no: values.toll_free_number,
           mobile_nop: values.phone_numberp,
           mobile_nos: sec_mobile2 !== "" ? sec_mobile2 : null,
           email: values.email,
+          tan_no: toTitleCase(values.tan_no).toUpperCase(),
           description: toTitleCase(descripation).toUpperCase(),
-          pan_no: toTitleCase(values.pan_no).toUpperCase(),
+          pan_no: toTitleCase(pan_no).toUpperCase(),
           website: values.web_url,
           contact_person: toTitleCase(values.contact_person_name).toUpperCase(),
           contact_person_email: values.contact_person_email,
@@ -326,12 +358,12 @@ const AddOrganization = () => {
           },
         }
       );
-      console.log("Organization ==>>", response.data);
+      console.log("response.data.===============", response.data)
       if (response.data.status === "success") {
         dispatch(setToggle(true));
         dispatch(
           setDataExist(
-            `Organization "${values.organisation_name}" Created Sucessfully`
+            `"${values.organisation_name}" Created Sucessfully`
           )
         );
         dispatch(setAlertType("success"));
@@ -340,7 +372,7 @@ const AddOrganization = () => {
       } else if (
         response.data.data.pan_no &&
         response.data.data.pan_no[0] ===
-          "organization with this PAN Number * already exists."
+        "organization with this PAN Number * already exists."
       ) {
         dispatch(setDataExist(`"${values.pan_no}" already exists`));
         dispatch(setAlertType("warning"));
@@ -348,7 +380,7 @@ const AddOrganization = () => {
       } else if (
         response.data.data.website &&
         response.data.data.website[0] ===
-          "organization with this Website Address already exists."
+        "organization with this Website Address already exists."
       ) {
         dispatch(setDataExist(`"${values.web_url}" already exists`));
         dispatch(setAlertType("warning"));
@@ -365,11 +397,11 @@ const AddOrganization = () => {
       } else if (
         response.data.data.name &&
         response.data.data.name[0] ===
-          "organization with this Organization Name * already exists."
+        "organization with this Organization Name * already exists."
       ) {
         dispatch(
           setDataExist(
-            `Organisation   "${values.organisation_name}" already exists`
+            `Organisation Name "${values.organisation_name}" already exists`
           )
         );
         dispatch(setAlertType("warning"));
@@ -377,7 +409,7 @@ const AddOrganization = () => {
       } else if (
         response.data.data.regd_no &&
         response.data.data.regd_no[0] ===
-          "organization with this Registeration Number already exists."
+        "organization with this Registeration Number already exists."
       ) {
         dispatch(
           setDataExist(
@@ -408,12 +440,15 @@ const AddOrganization = () => {
       mobile_nos: sec_mobile2,
       name: values.organisation_name,
 
-      pan_no: values.pan_no,
+      pan_no: pan_no,
       regd_no: values.registeration_number,
       tollfree_no: values.toll_free_number,
 
       website: values.web_url,
+      tan_no: values.tan_no,
+      type: company_type,
     });
+    console.log("fields_names======", fields_names)
 
     let change_fields = {};
 
@@ -434,11 +469,13 @@ const AddOrganization = () => {
           regd_no: values.registeration_number,
           tollfree_no: values.toll_free_number,
           mobile_nop: values.phone_numberp,
+          type: (company_type).toUpperCase(),
+          tan_no: toTitleCase(values.tan_no).toUpperCase(),
           // mobile_nos: values.phone_numbers ? values.phone_numbers : null,
           mobile_nos: sec_mobile2,
           email: values.email,
           description: toTitleCase(descripation).toUpperCase(),
-          pan_no: toTitleCase(values.pan_no).toUpperCase(),
+          pan_no: toTitleCase(pan_no).toUpperCase(),
           website: values.web_url,
           contact_person: toTitleCase(values.contact_person_name).toUpperCase(),
           contact_person_email: values.contact_person_email,
@@ -476,6 +513,7 @@ const AddOrganization = () => {
         }
       )
       .then(function (response) {
+        console.log("response======", response)
         if (response.data.status === "success") {
           dispatch(
             setDataExist(`"${values.organisation_name}" Updated Sucessfully`)
@@ -487,7 +525,7 @@ const AddOrganization = () => {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
-              `Name "${toTitleCase(values.organisation_name)}" already exists`
+              `Organization already exists`
             )
           );
           dispatch(setAlertType("warning"));
@@ -498,16 +536,17 @@ const AddOrganization = () => {
       });
   };
   // Locations Function
-  const getStates = async (place_id, filter_by) => {
+  const getStates = async () => {
     let state_list = [];
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${billing_state_page}&records=${10}&state_search=${billing_state_search_item}`,
+        `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${billing_state_page}&records=${10}&state_search=${billing_state_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
+      settogstate(true);
       if (resp.data.next === null) {
         setstate_loded(false);
       } else {
@@ -539,19 +578,18 @@ const AddOrganization = () => {
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${
-            active_tab == "first" ? city_page : billing_city_page
-          }&records=${10}&city_search=${
-            active_tab == "first" ? city_search_item : billing_city_search_item
-          }` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_cities/?search=${""}&p=${active_tab == "first" ? city_page : billing_city_page
+        }&records=${10}&city_search=${active_tab == "first" ? city_search_item : billing_city_search_item
+        }` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
+      settogcity(true);
       if (resp.data.next === null) {
         setcity_loaded(false);
         setbilling_city_loaded(false);
@@ -561,38 +599,44 @@ const AddOrganization = () => {
       }
 
       if (resp.data.results.length > 0) {
-        if (city_page == 1) {
-          cities_list = resp.data.results.map((v) => [
-            v.id,
-            toTitleCase(v.city),
-          ]);
-        } else {
-          if (state_type === "billing_state_id") {
+        if (state_type === "billing_state_id") {
+          if (billing_city_page == 1) {
+            cities_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.city),
+            ]);
+          } else {
             cities_list = [
               ...billing_city_list,
               ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
             ];
+          }
+          setbilling_city_count(billing_city_count + 2);
+          setbilling_city_list(cities_list);
+        }
+        else {
+          if (city_page == 1) {
+            cities_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.city),
+            ]);
           } else {
             cities_list = [
               ...office_city_list,
               ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
             ];
           }
-        }
-        if (state_type === "billing_state_id") {
-          setbilling_city_count(billing_city_count + 2);
-          setbilling_city_list(cities_list);
-        } else {
           setcity_count(city_count + 2);
           setoffice_city_list(cities_list);
         }
-      } else {
-        // setcity("");
+      }
+      else {
         setbilling_city_list([]);
         setoffice_city_list([]);
       }
+
     } catch (err) {
-      alert(`Error Occur in Get City, ${err}`);
+      console.warn(`Error Occur in Get City, ${err}`);
     }
   };
 
@@ -602,52 +646,39 @@ const AddOrganization = () => {
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_pincode/?search=${""}&p=${
-            active_tab == "first" ? pincode_page : billing_pincode_page
-          }&records=${10}&pincode_search=${
-            active_tab == "first"
-              ? pincode_search_item
-              : billing_pincode_search_item
-          }` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_pincode/?search=${""}&p=${active_tab == "first" ? pincode_page : billing_pincode_page
+        }&records=${10}&pincode_search=${active_tab == "first"
+          ? pincode_search_item
+          : billing_pincode_search_item
+        }` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-
+      settogpincode(true)
       if (resp.data.next === null) {
-        setload_office_pincode(false);
+        setloaded_billing_pincode(false);
       } else {
-        setload_office_pincode(true);
+        setloaded_billing_pincode(true);
       }
 
       if (filter_by !== "pincode") {
-        if (pincode_page == 1) {
+        if (billing_pincode == 1) {
           pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
-        } else {
-          if (city_type == "billin_city") {
-            pincode_list = [
-              ...billing_pincode_list,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
-          } else {
-            pincode_list = [
-              ...office_pincode_list,
-              ...resp.data.results.map((v) => [v.id, v.pincode]),
-            ];
-          }
         }
+        else {
+          pincode_list = [
+            ...billing_pincode_list,
+            ...resp.data.results.map((v) => [v.id, v.pincode]),
+          ];
+        }
+        setbilling_pincode_count(billing_pincode_count + 2);
+        setbilling_pincode_list(pincode_list);
 
-        if (city_type == "billin_city") {
-          setbilling_pincode_count(billing_pincode_count + 2);
-          setbilling_pincode_list(pincode_list);
-        } else {
-          setoffice_pincode_count(office_pincode_count + 2);
-          setoffice_pincode_list(pincode_list);
-        }
       } else if (city_type == "billin_city") {
         setbilling_state(toTitleCase(resp.data.results[0].state_name));
         setbilling_state_id(resp.data.results[0].state);
@@ -674,7 +705,7 @@ const AddOrganization = () => {
         dispatch(setShowAlert(true));
       }
     } catch (err) {
-      alert(`Error Occur in Get Pin Code, ${err}`);
+      console.warn(`Error Occur in Get Pin Code, ${err}`);
     }
   };
 
@@ -683,20 +714,24 @@ const AddOrganization = () => {
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_locality/?search=${""}&p=${
-            active_tab == "first" ? locality_page : billing_locality_page
-          }&records=${10}` +
-          `&place_id=${place_id}&filter_by=${filter_by}&name_search=${
-            active_tab == "first"
-              ? locality_search_item
-              : billing_locality_search_item
-          }&state=&city=&name=&data=all`,
+        `master/all_locality/?search=${""}&p=${active_tab == "first" ? locality_page : billing_locality_page
+        }&records=${10}` +
+        `&place_id=${place_id}&filter_by=${filter_by}&name_search=${active_tab == "first"
+          ? locality_search_item
+          : billing_locality_search_item
+        }&state=&city=&name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
+
+      if (resp.data.next === null) {
+        setloaded_billing_locality(false);
+      } else {
+        setloaded_billing_locality(true);
+      }
       if (filter_by !== "locality") {
-        if (pincode_page == 1) {
+        if (billing_locality_page == 1) {
           locality_list = resp.data.results.map((v) => [
             v.id,
             toTitleCase(v.name),
@@ -716,6 +751,7 @@ const AddOrganization = () => {
         }
         if (pincode_type == "billing_pincode") {
           setbilling_locality_list(locality_list);
+          setbilling_locality_count(billing_locality_count + 2);
         } else {
           setoffice_locality_list(locality_list);
         }
@@ -731,8 +767,11 @@ const AddOrganization = () => {
 
   useLayoutEffect(() => {
     try {
+      // console.log("location_data.state.organization=====", location_data.state.organization.org_detail)
       setOrganization(location_data.state.organization);
       setisupdating(true);
+      setcompany_type(toTitleCase(location_data.state.organization.type));
+      setpan_no(location_data.state.organization.pan_no);
       setsame_as_billing_add(location_data.state.organization.is_same);
       setOrganizationname(toTitleCase(location_data.state.organization.name));
       setdescripation(
@@ -789,26 +828,17 @@ const AddOrganization = () => {
           location_data.state.organization.organization_address[1].address_line1
         )
       );
-      console.log("location address==>",           location_data.state.organization.organization_address[1].address_line1
-      )
+
       // console.log("location_data.state.organization.organization_gst55555----", location_data.state.organization.organization_address[0])
       setbilling_add_line2(
         toTitleCase(
           location_data.state.organization.organization_address[1].address_line2
         )
       );
-      console.log(
-        "location_data.state.organization.organization_gst44444----",
-        location_data.state.organization
-      );
       setbilling_state(
         toTitleCase(
           location_data.state.organization.organization_address[1].state_name
         )
-      );
-      console.log(
-        "location_data.state.organization.organization_gst333333----",
-        location_data.state.organization
       );
       setbilling_pincode_id(
         location_data.state.organization.organization_address[1].pincode_id
@@ -818,10 +848,6 @@ const AddOrganization = () => {
       );
       setbilling_state_id(
         location_data.state.organization.organization_address[1].state_id
-      );
-      console.log(
-        "location_data.state.organization.organization_gst2222222----",
-        location_data.state.organization
       );
       setbilling_city_id(
         location_data.state.organization.organization_address[1].city_id
@@ -840,40 +866,139 @@ const AddOrganization = () => {
         )
       );
       setupdated_gstaddress(location_data.state.organization.organization_gst);
-      console.log(
-        "location_data.state.organization.organization_gst----",
-        location_data.state.organization
-      );
       setbilling_id(
         location_data.state.organization.organization_address[1].id
       );
-    } catch (error) {}
+    } catch (error) { }
   }, []);
 
   useLayoutEffect(() => {
-    getStates("all", "all");
+    getStates();
   }, [billing_state_page, billing_state_search_item]);
 
   useLayoutEffect(() => {
-    if (billing_state_id != "" && by_pincode === false) {
-      getCities(billing_state_id, "state", "billing_state_id");
+    if (billing_state_id !== 0) {
+      setbilling_city_page(1);
+      setbilling_city_count(1);
+      setbilling_city_bottom(103)
+      setbilling_city_loaded(true);
     }
+  }, [billing_state_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (billing_state_id !== "" && billing_state_id !== null && by_pincode === false) {
+      timeoutId = setTimeout(() => {
+        getCities(billing_state_id, "state", "billing_state_id");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [billing_state_id, billing_city_page, billing_city_search_item]);
 
   useLayoutEffect(() => {
-    if (billing_city_id != "" && by_pincode === false) {
-      getPincode(billing_city_id, "city", "billin_city");
+    if (billing_city_id !== 0) {
+      setbilling_pincode_page(1);
+      setbilling_pincode_count(1);
+      setbilling_pincode_bottom(103)
+      setloaded_billing_pincode(true)
     }
+  }, [billing_city_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (billing_city_id !== "" && by_pincode === false) {
+      timeoutId = setTimeout(() => {
+        getPincode(billing_city_id, "city", "billin_city");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [billing_city_id, billing_pincode_page, billing_pincode_search_item]);
 
   useLayoutEffect(() => {
-    if (billing_pincode_id != "") {
-      getLocality(billing_pincode_id, "pincode", "billing_pincode");
+    if (billing_pincode_id !== 0) {
+      setbilling_locality_page(1);
+      setbilling_locality_count(1);
+      setbilling_locality_bottom(103)
+      setloaded_billing_locality(true);
     }
+  }, [billing_pincode_id])
+
+
+  useEffect(() => {
+    if (!location_data.state && billing_state && !by_pincode && !same_as_billing_add) {
+      setbilling_city("");
+      setbilling_city_list([]);
+      setbilling_pincode("");
+      setbilling_pincode_list([]);
+      setbilling_locality("");
+      setbilling_locality_list([]);
+    }
+  }, [billing_state]);
+
+  useEffect(() => {
+    if (billing_state !== "" && togstate && !same_as_billing_add) {
+      setbilling_city("");
+      setbilling_city_list([]);
+      setbilling_pincode("");
+      setbilling_pincode_list([]);
+      setbilling_locality("");
+      setbilling_locality_list([]);
+    }
+  }, [billing_state]);
+
+  useEffect(() => {
+    if (!location_data.state && billing_city && !by_pincode && !same_as_billing_add) {
+      setbilling_pincode("");
+      setbilling_pincode_list([]);
+      setbilling_locality("");
+      setbilling_locality_list([]);
+    }
+  }, [billing_city]);
+
+  useEffect(() => {
+    if (billing_city !== "" && togcity && !same_as_billing_add) {
+      setbilling_pincode("");
+      setbilling_pincode_list([]);
+      setbilling_locality("");
+      setbilling_locality_list([]);
+    }
+  }, [billing_city]);
+
+
+  useEffect(() => {
+    if (billing_pincode !== "" && togpincode && !same_as_billing_add) {
+      setbilling_locality("");
+      setbilling_locality_list([]);
+    }
+  }, [billing_pincode]);
+
+  useEffect(() => {
+    if (!location_data.state && billing_pincode && !by_pincode && !same_as_billing_add) {
+      setbilling_locality("");
+      setbilling_locality_list([]);
+    }
+  }, [billing_pincode]);
+
+  useEffect(() => {
+    if (isupdating) {
+      settogstate(false);
+      settogcity(false);
+      settogpincode(false)
+    }
+  }, []);
+
+  useEffect(() => {
+    let timeoutId;
+    if (billing_pincode_id != "") {
+      timeoutId = setTimeout(() => {
+        getLocality(billing_pincode_id, "pincode", "billing_pincode");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [billing_pincode_id, billing_locality_page, billing_locality_search_item]);
 
   useLayoutEffect(() => {
-    if (office_state_id != "" && !by_pincode) {
+    if (office_state_id !== "" && office_state_id !== null && !by_pincode) {
       getCities(office_state_id, "state", "office_state_id");
     }
   }, [office_state_id, city_page, city_search_item]);
@@ -930,6 +1055,7 @@ const AddOrganization = () => {
   const [gstcity_bottom, setgstcity_bottom] = useState(103)
 
   const [selected, setselected] = useState([]);
+  console.log("selected=======", selected)
   const [active, setactive] = useState(false);
 
   const [gst_id_list, setgst_id_list] = useState([]);
@@ -980,6 +1106,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     active,
   ];
   const [row, setrow] = useState([dimension_list]);
+  console.log("row=========", row)
   const addGST = () => {
     dimension_list = ["", ["", "", ""], ["", ""], ["", ""], "", false];
     setrow([...row, dimension_list]);
@@ -1002,9 +1129,18 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     setrow(temp);
     setgst_id_list(temp_2);
   };
-
-  useEffect(() => {
-    if (same_as_billing_add) {
+  console.log("office_add_line1====", office_add_line1)
+  console.log("billing_add_line1=======", billing_add_line1)
+  console.log("office_state====", office_state)
+  console.log("billing_state=======", billing_state)
+  console.log("office_city=======", office_city)
+  console.log("billing_city=======", billing_city)
+  console.log("office_pincode=======", office_pincode)
+  console.log("billing_pincode=======", billing_pincode)
+  console.log("office_locality=======", office_locality)
+  console.log("billing_locality=======", billing_locality)
+  useLayoutEffect(() => {
+    if (same_as_billing_add && location_data.state === null) {
       setbilling_add_line1(office_add_line1);
       setbilling_add_line2(office_add_line2);
       setbilling_state(office_state);
@@ -1013,7 +1149,8 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
       setbilling_locality(office_locality);
       setbilling_pincode_id(office_pincode_id);
       setbilling_locality_id(office_locality_id);
-    } else {
+    }
+    else if (!same_as_billing_add && location_data.state === null) {
       setbilling_add_line1("");
       setbilling_add_line2("");
       setbilling_state("");
@@ -1021,7 +1158,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
       setbilling_pincode("");
       setbilling_locality("");
       setbilling_pincode_id("");
-      setbilling_locality_id(""); 
+      setbilling_locality_id("");
     }
   }, [same_as_billing_add]);
 
@@ -1031,7 +1168,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${1}&records=${10}&state_search=${""}`,
+        `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${1}&records=${10}&state_search=${""}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1053,11 +1190,11 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${gst_city_page}&records=${10}&city_search=${gst_city_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_cities/?search=${""}&p=${gst_city_page}&records=${10}&city_search=${gst_city_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1101,11 +1238,11 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_pincode/?search=${""}&p=${gst_pincode_page}&records=${10}&pincode_search=${gst_pincode_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_pincode/?search=${""}&p=${gst_pincode_page}&records=${10}&pincode_search=${gst_pincode_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1140,12 +1277,12 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_locality/?search=${""}&p=${gst_locality_page}&records=${10}&name_search=${gst_locality_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by +
-          "&state=&city=&name=&data=all",
+        `master/all_locality/?search=${""}&p=${gst_locality_page}&records=${10}&name_search=${gst_locality_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by +
+        "&state=&city=&name=&data=all",
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1232,6 +1369,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
   useEffect(() => {
     if (isupdating) {
       if (updated_gstaddress.length !== 0) {
+        console.log("updated_gstaddress========", updated_gstaddress)
         let temp = [];
         let temp_list = [];
         let temp_list2 = [];
@@ -1242,7 +1380,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
             temp[index].gst_no,
             [
               temp[index].city_id,
-              toTitleCase(temp[index].city_name),
+              toTitleCase(temp[index].state_name + "-" + temp[index].city_name),
               temp[index].state,
             ],
             [temp[index].pincode, temp[index].pincode_name],
@@ -1253,7 +1391,6 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
           ]);
           temp_list2.push(temp[index].id);
         }
-        console.log("temp_list------", temp_list);
         setrow(temp_list);
         setgst_ids(temp_list2);
         setgst_id_list(temp_list2);
@@ -1268,7 +1405,6 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     }
   }, [gst_id_list, gst_ids]);
 
-  console.log("location_data----", location_data.state);
   useEffect(() => {
     let temp = [];
     for (let index = 0; index < row.length; index++) {
@@ -1277,9 +1413,9 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
         temp.push(element);
       }
     }
-    console.log("temp.length ======", temp.length);
-    if (temp.length !== 0 && !location_data.state) {
+    if (temp.length !== 0) {
       let b = temp[0][1][1].split("-");
+      console.log("temptemptemptemp======", temp)
       setoffice_add_line1(toTitleCase(temp[0][4]));
       setoffice_state(b[0]);
       setoffice_state_id(temp[0][1][2]);
@@ -1289,7 +1425,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
       setoffice_pincode_id(temp[0][2][0]);
       setoffice_locality(temp[0][3][1]);
       setoffice_locality_id(temp[0][3][0]);
-    } else if (temp.length !== 0 && location_data.state === null) {
+    } else if (temp.length === 0) {
       setoffice_add_line1("");
       setoffice_state("");
       setoffice_state_id(0);
@@ -1344,23 +1480,23 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
       setlocal_err2(false);
     }
 
-  if  (
+    if (
       office_add_line1 !== "" &&
       office_state !== "" &&
       office_city !== "" &&
       office_pincode !== "" &&
       office_locality !== ""
-   
-      &&
-        billing_add_line1 !== "" &&
-        billing_state !== "" &&
-        billing_city !== "" &&
-        billing_pincode !== "" &&
-        billing_locality !== ""
-      ) {
-setbill_color(false);
 
-      }
+      &&
+      billing_add_line1 !== "" &&
+      billing_state !== "" &&
+      billing_city !== "" &&
+      billing_pincode !== "" &&
+      billing_locality !== ""
+    ) {
+      setbill_color(false);
+
+    }
   }, [
     dimension_list,
     office_add_line1,
@@ -1375,49 +1511,62 @@ setbill_color(false);
     billing_locality,
   ]);
 
-  // added to secondary mobile no
-  useLayoutEffect(() => {
-    // if(sec_mobile2 !== "") {
-    //   setmobile_error(false);
-    // }
-    if (sec_mobile2 === "") {
-      setmoblie_len_error(false);
+  //  For Check Pan Validation
+  const send_org_pan = async () => {
+    try {
+      const response = await axios.post(
+        ServerAddress + "organization/check_org_pan/",
+        {
+          pan_no: pan_no,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log("Organization ==>>", response);
+      if (response.data === "duplicate") {
+        dispatch(setDataExist(`"${pan_no}" Already Exists`));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+        setpan_no("")
+      }
+      setloaded_pan(false)
+    } catch (error) {
+      alert(`Error Happen while posting Organisation Data ${error}`);
     }
-    if (
-      sec_mobile2 !== "" &&
-      sec_mobile2 !== null &&
-      sec_mobile2.length === 10
-    ) {
-      setmoblie_len_error(false);
+  };
+  const [loaded_pan, setloaded_pan] = useState(false)
+
+  useEffect(() => {
+    if (loaded_pan && !isupdating) {
+      send_org_pan()
     }
-  }, [sec_mobile2]);
+  }, [loaded_pan])
 
-
-  console.log("Address =>",billing_add_line1 ,billing_state,billing_city,billing_pincode,billing_locality )
   return (
     <>
       <div>
         <Form
           onSubmit={(e) => {
-            console.log("Submit Run");
             e.preventDefault();
 
             let shaw = Object.entries(validation.values);
             let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
             let map_value = filter_value.map((m) => m[0]);
-            console.log("nooo", map_value);
             let all_value = map_value[0];
-            console.log("ttt", all_value);
+            console.log("all_value-=====", all_value)
 
             let fields1 = [
               "organisation_name",
               "email",
-              "toll_free_number",
+              "tollfree_no",
               "registeration_number",
               "pan_no",
               "phone_numberp",
 
-              "web_url",
+              // "web_url",
             ];
             let fields2 = [
               "contact_person_name",
@@ -1427,17 +1576,12 @@ setbill_color(false);
 
             if (fields1.includes(all_value)) {
               document.getElementById("section1").scrollIntoView();
-            } else if (
-              sec_mobile2 !== null &&
-              sec_mobile2 !== "" &&
-              sec_mobile2.length !== 10
-            ) {
-              document.getElementById("section1").scrollIntoView();
-              setmoblie_len_error(true);
-            } else if (office_add_line1 === "") {
+            }
+            else if (office_add_line1 === "") {
               setoffice_add1_err(true);
               document.getElementById("add").scrollIntoView();
-            } else if (office_state === "") {
+            }
+            else if (office_state === "") {
               setstate_error(true);
               document.getElementById("add").scrollIntoView();
             } else if (office_city === "") {
@@ -1451,7 +1595,7 @@ setbill_color(false);
               document.getElementById("add").scrollIntoView();
             } else if (fields2.includes(all_value)) {
               document.getElementById("section2").scrollIntoView();
-            } 
+            }
 
 
             // else if (
@@ -1545,6 +1689,33 @@ setbill_color(false);
                 {circle_btn ? (
                   <CardBody>
                     <Row>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">PAN Number:</Label>
+                          <Input
+                            onBlur={() => {
+                              if (pan_no.length === 10) {
+                                setloaded_pan(true)
+                                // alert("True")
+                              }
+                              else {
+                                setloaded_pan(false)
+                                // alert("False")
+                              }
+                            }
+                            }
+                            value={pan_no}
+                            onChange={(e) =>
+                              setpan_no(e.target.value)
+                            }
+                            id="input"
+                            type="text"
+                            placeholder="Please Enter PAN Number"
+                          />
+                        </div>
+                      </Col>
+
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2" id="section1">
                           <Label className="header-child">Name*</Label>
@@ -1554,7 +1725,7 @@ setbill_color(false);
                             value={validation.values.organisation_name || ""}
                             invalid={
                               validation.touched.organisation_name &&
-                              validation.errors.organisation_name
+                                validation.errors.organisation_name
                                 ? true
                                 : false
                             }
@@ -1565,11 +1736,25 @@ setbill_color(false);
                             placeholder="Enter Organisation Name"
                           />
                           {validation.touched.organisation_name &&
-                          validation.errors.organisation_name ? (
+                            validation.errors.organisation_name ? (
                             <FormFeedback type="invalid">
                               {validation.errors.organisation_name}
                             </FormFeedback>
                           ) : null}
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Company Type *</Label>
+                          <NSearchInput
+                            data_list={company_type_list}
+                            data_item_s={company_type}
+                            set_data_item_s={setcompany_type}
+                            show_search={false}
+                            error_message={"Please Select Company Type"}
+                            error_s={company_type_error}
+                          />
                         </div>
                       </Col>
 
@@ -1582,7 +1767,7 @@ setbill_color(false);
                             value={validation.values.email || ""}
                             invalid={
                               validation.touched.email &&
-                              validation.errors.email
+                                validation.errors.email
                                 ? true
                                 : false
                             }
@@ -1593,7 +1778,7 @@ setbill_color(false);
                             placeholder="Enter Email"
                           />
                           {validation.touched.email &&
-                          validation.errors.email ? (
+                            validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -1612,7 +1797,7 @@ setbill_color(false);
                             value={validation.values.toll_free_number || ""}
                             invalid={
                               validation.touched.toll_free_number &&
-                              validation.errors.toll_free_number
+                                validation.errors.toll_free_number
                                 ? true
                                 : false
                             }
@@ -1624,7 +1809,7 @@ setbill_color(false);
                             placeholder="Enter Toll Free Number"
                           />
                           {validation.touched.toll_free_number &&
-                          validation.errors.toll_free_number ? (
+                            validation.errors.toll_free_number ? (
                             <FormFeedback type="invalid">
                               {validation.errors.toll_free_number}
                             </FormFeedback>
@@ -1643,7 +1828,7 @@ setbill_color(false);
                             value={validation.values.registeration_number || ""}
                             invalid={
                               validation.touched.registeration_number &&
-                              validation.errors.registeration_number
+                                validation.errors.registeration_number
                                 ? true
                                 : false
                             }
@@ -1654,38 +1839,38 @@ setbill_color(false);
                             placeholder="Enter Registration Number"
                           />
                           {validation.touched.registeration_number &&
-                          validation.errors.registeration_number ? (
+                            validation.errors.registeration_number ? (
                             <FormFeedback type="invalid">
                               {validation.errors.registeration_number}
                             </FormFeedback>
                           ) : null}
                         </div>
                       </Col>
-
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
-                          <Label className="header-child">PAN Number:</Label>
+                          <Label className="header-child">
+                            Tan Number*:
+                          </Label>
                           <Input
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
-                            value={validation.values.pan_no || ""}
+                            value={validation.values.tan_no || ""}
                             invalid={
-                              validation.touched.pan_no &&
-                              validation.errors.pan_no
+                              validation.touched.tan_no &&
+                                validation.errors.tan_no
                                 ? true
                                 : false
                             }
-                            type="text"
-                            min={0}
                             className="form-control-md"
                             id="input"
-                            name="pan_no"
-                            placeholder="Enter Pan Number"
+                            name="tan_no"
+                            type="text"
+                            placeholder="Enter Tan Number"
                           />
-                          {validation.touched.pan_no &&
-                          validation.errors.pan_no ? (
+                          {validation.touched.tan_no &&
+                            validation.errors.tan_no ? (
                             <FormFeedback type="invalid">
-                              {validation.errors.pan_no}
+                              {validation.errors.tan_no}
                             </FormFeedback>
                           ) : null}
                         </div>
@@ -1702,7 +1887,7 @@ setbill_color(false);
                             value={validation.values.phone_numberp || ""}
                             invalid={
                               validation.touched.phone_numberp &&
-                              validation.errors.phone_numberp
+                                validation.errors.phone_numberp
                                 ? true
                                 : false
                             }
@@ -1713,7 +1898,7 @@ setbill_color(false);
                             placeholder="Enter Phone Number"
                           />
                           {validation.touched.phone_numberp &&
-                          validation.errors.phone_numberp ? (
+                            validation.errors.phone_numberp ? (
                             <FormFeedback type="invalid">
                               {validation.errors.phone_numberp}
                             </FormFeedback>
@@ -1738,12 +1923,6 @@ setbill_color(false);
                             type="number"
                             placeholder="Enter Phone Number"
                           />
-                          <div className="mt-1 error-text" color="danger">
-                            {/* {mobile_error ? " Phone number is required" : null} */}
-                            {moblie_len_error
-                              ? "Phone Number must be 10 digit long"
-                              : null}
-                          </div>
                         </div>
                       </Col>
 
@@ -1770,7 +1949,7 @@ setbill_color(false);
                             value={validation.values.web_url || ""}
                             invalid={
                               validation.touched.web_url &&
-                              validation.errors.web_url
+                                validation.errors.web_url
                                 ? true
                                 : false
                             }
@@ -1781,13 +1960,14 @@ setbill_color(false);
                             placeholder="Enter Website URL"
                           />
                           {validation.touched.web_url &&
-                          validation.errors.web_url ? (
+                            validation.errors.web_url ? (
                             <FormFeedback type="invalid">
                               {validation.errors.web_url}
                             </FormFeedback>
                           ) : null}
                         </div>
                       </Col>
+
                     </Row>
                   </CardBody>
                 ) : null}
@@ -1831,6 +2011,7 @@ setbill_color(false);
                                     min={0}
                                     key={index}
                                     value={item[0]}
+                                    disabled={row.length - 1 !== index}
                                     type="text"
                                     className="form-control-md"
                                     id="input"
@@ -1841,7 +2022,7 @@ setbill_color(false);
                                       item[0] = val.target.value;
                                       setrefresh(!refresh);
                                     }}
-                                    onMouseLeave={() => {
+                                    onBlur={() => {
                                       // setclicked(true);
                                       // alert("----")
                                       let itm = item[0];
@@ -1849,9 +2030,9 @@ setbill_color(false);
                                       if (
                                         item[0].length == 15 &&
                                         gst_val ==
-                                          itm[0] +
-                                            itm[1] +
-                                            validation.values.pan_no
+                                        itm[0] +
+                                        itm[1] +
+                                        pan_no
                                       ) {
                                         getGstStates(
                                           itm[0] + itm[1],
@@ -1890,9 +2071,10 @@ setbill_color(false);
                                     setrefresh={setrefresh}
                                     idx={index}
                                     loaded={gstcity_loaded}
-                                      count={gstcity_count}
-                                      bottom={gstcity_bottom}
-                                      setbottom={setgstcity_bottom}
+                                    count={gstcity_count}
+                                    bottom={gstcity_bottom}
+                                    setbottom={setgstcity_bottom}
+                                    disable_me={row.length - 1 !== index}
                                   />
                                 </div>
                               ))}
@@ -1915,8 +2097,9 @@ setbill_color(false);
                                     setrefresh={setrefresh}
                                     idx={index}
                                     count={gstpincode_count}
-                                      bottom={gstpincode_bottom}
-                                      setbottom={setgstpincode_bottom}
+                                    bottom={gstpincode_bottom}
+                                    setbottom={setgstpincode_bottom}
+                                    disable_me={row.length - 1 !== index}
                                   />
                                 </div>
                               ))}
@@ -1941,6 +2124,7 @@ setbill_color(false);
                                     count={gstlocality_count}
                                     bottom={gstlocality_bottom}
                                     setbottom={setgstlocality_bottom}
+                                    disable_me={row.length - 1 !== index}
                                   />
                                 </div>
                               ))}
@@ -1977,32 +2161,51 @@ setbill_color(false);
                             >
                               <Label className="header-child">H.O</Label>
                               {row.map((item, index) => {
+                                console.log("item=======", row.length)
+                                console.log("index======", index)
                                 return (
                                   <div
-                                    onClick={() => {
-                                      if (selected.includes(index)) {
-                                        let lis = [...selected];
-                                        setselected(
-                                          lis.filter((e) => e !== index)
-                                        );
-                                        setactive(false);
-                                        item[5] = false;
-                                      } else {
-                                        setselected([...selected, index]);
-                                        setactive(true);
-                                        item[5] = true;
-                                      }
-                                    }}
                                   >
-                                    {item[5] ? (
-                                      <FiCheckSquare
-                                        style={{ marginBottom: "40px" }}
-                                      />
-                                    ) : (
-                                      <FiSquare
-                                        style={{ marginBottom: "40px" }}
-                                      />
-                                    )}
+                                    {row.some((a) => a[5] == true && a[5] === row[index][5]) &&
+                                      (
+                                        <FiCheckSquare
+                                          onClick={() => {
+                                            if (selected.includes(index)) {
+                                              let lis = [...selected];
+                                              setselected(
+                                                lis.filter((e) => e !== index)
+                                              );
+                                              setactive(false);
+                                              item[5] = false;
+                                            } else {
+                                              setselected([...selected, index]);
+                                              setactive(true);
+                                              item[5] = true;
+                                            }
+                                          }}
+                                          style={{ marginBottom: "40px" }}
+                                        />
+                                      )
+                                    }
+
+                                    {row.every((a) => a[5] == false) ?
+                                      <FiSquare onClick={() => {
+                                        if (selected.includes(index)) {
+                                          let lis = [...selected];
+                                          setselected(
+                                            lis.filter((e) => e !== index)
+                                          );
+                                          setactive(false);
+                                          item[5] = false;
+                                        } else {
+                                          setselected([...selected, index]);
+                                          setactive(true);
+                                          item[5] = true;
+                                        }
+                                      }} style={{ marginBottom: "40px" }} />
+                                      : row.some((a) => a[5] !== true && a[5] === row[index][5]) ? <FiSquare style={{ marginBottom: "40px" }} /> : null
+                                    }
+
                                   </div>
                                 );
                               })}
@@ -2051,7 +2254,11 @@ setbill_color(false);
                               <span
                                 className="link-text"
                                 onClick={() => {
+                                  setgst_city_list([])
+                                  setgst_city_page(1)
+                                  setgstcity_bottom(103)
                                   if (row[row.length - 1][0].length != 15) {
+                                    alert("GST No must be 15 digit");
                                   } else {
                                     addGST();
                                   }
@@ -2362,7 +2569,7 @@ setbill_color(false);
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
                               <Label className="header-child">
-                                Address Line 1:*
+                                Address Line :*
                               </Label>
                               <Input
                                 value={office_add_line1}
@@ -2380,6 +2587,7 @@ setbill_color(false);
                                 id="input"
                                 name="office_add_line1"
                                 placeholder="Enter Address Line1"
+                                disabled
                               />
                               <div className="mt-1 error-text" color="danger">
                                 {office_add1_err
@@ -2425,6 +2633,9 @@ setbill_color(false);
                                   error_s={state_error}
                                   loaded={state_loded}
                                   count={state_count}
+                                  bottom={billing_state_bottom}
+                                  setbottom={setbilling_state_bottom}
+                                  disable_me={true}
                                 />
                               </span>
                               {/* <div className="mt-1 error-text" color="danger">
@@ -2435,7 +2646,7 @@ setbill_color(false);
 
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
-                              <Label className="header-child">City*</Label>
+                              <Label className="header-child">City111*</Label>
                               <SearchInput
                                 data_list={office_city_list}
                                 setdata_list={setoffice_city_list}
@@ -2450,6 +2661,7 @@ setbill_color(false);
                                 error_s={city_error}
                                 loaded={city_loaded}
                                 count={city_count}
+                                disable_me={true}
                               />
                               {/* <div className="mt-1 error-text" color="danger">
                                 {city_error ? "Please Select Any City" : null}
@@ -2478,6 +2690,7 @@ setbill_color(false);
                                   error_s={pincode_error}
                                   loaded={load_office_pincode}
                                   count={office_pincode_count}
+                                  disable_me={true}
                                 />
                               </div>
                             ) : (
@@ -2518,6 +2731,7 @@ setbill_color(false);
                                     }
                                   }}
                                   value={office_pincode}
+                                  disabled
                                   invalid={pincode_error}
                                   type="number"
                                   className="form-control-md"
@@ -2527,7 +2741,7 @@ setbill_color(false);
                                 />
 
                                 {pincode_loaded === false &&
-                                pincode_error === true ? (
+                                  pincode_error === true ? (
                                   <div
                                     className="mt-1 error-text"
                                     color="danger"
@@ -2539,8 +2753,8 @@ setbill_color(false);
                                 ) : null}
 
                                 {pincode_loaded === false &&
-                                pincode_error === false &&
-                                pincode_error2 === true ? (
+                                  pincode_error === false &&
+                                  pincode_error2 === true ? (
                                   <div
                                     style={{
                                       color: "#F46E6E",
@@ -2573,6 +2787,7 @@ setbill_color(false);
                                   setsearch_item={setlocality_search_item}
                                   error_message={"Please Select Locality"}
                                   error_s={local_err}
+                                  disable_me={true}
                                 />
                               </div>
                             )}
@@ -2590,7 +2805,7 @@ setbill_color(false);
                                   Address Line 1:*
                                 </Label>
                                 <Input
-                                  value={office_add_line1}
+                                  value={billing_add_line1}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -2639,7 +2854,7 @@ setbill_color(false);
                                   Address Line 2
                                 </Label>
                                 <Input
-                                  value={office_add_line2}
+                                  value={billing_add_line2}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -2676,7 +2891,7 @@ setbill_color(false);
                               <div className="mb-2">
                                 <Label className="header-child">State*</Label>
                                 <Input
-                                  value={office_state}
+                                  value={billing_state}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -2704,6 +2919,8 @@ setbill_color(false);
                                     error_s={state_error1}
                                     loaded={state_loded}
                                     count={state_count}
+                                    bottom={billing_state_bottom}
+                                    setbottom={setbilling_state_bottom}
                                   />
                                 </span>
                                 {/* <div className="mt-1 error-text" color="danger">
@@ -2717,7 +2934,7 @@ setbill_color(false);
                               <div className="mb-2">
                                 <Label className="header-child">City*</Label>
                                 <Input
-                                  value={office_city}
+                                  value={billing_city}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -2743,6 +2960,8 @@ setbill_color(false);
                                   error_s={city_error1}
                                   loaded={billing_city_loaded}
                                   count={billing_city_count}
+                                  bottom={billing_city_bottom}
+                                  setbottom={setbilling_city_bottom}
                                 />
                                 {/* <div className="mt-1 error-text" color="danger">
                                   {city_error ? "Please Select Any City" : null}
@@ -2755,7 +2974,7 @@ setbill_color(false);
                               <div className="mb-2">
                                 <Label className="header-child">Pincode*</Label>
                                 <Input
-                                  value={office_pincode}
+                                  value={billing_pincode}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -2786,6 +3005,8 @@ setbill_color(false);
                                     error_s={pincode_error2}
                                     loaded={loaded_billing_pincode}
                                     count={billing_pincode_count}
+                                    bottom={billing_pincode_bottom}
+                                    setbottom={setbilling_pincode_bottom}
                                   />
                                 </div>
                               ) : (
@@ -2835,7 +3056,7 @@ setbill_color(false);
                                   />
 
                                   {pincode_loaded === false &&
-                                  pincode_error === true ? (
+                                    pincode_error === true ? (
                                     <div
                                       className="mt-1 error-text"
                                       color="danger"
@@ -2847,8 +3068,8 @@ setbill_color(false);
                                   ) : null}
 
                                   {pincode_loaded === false &&
-                                  pincode_error === false &&
-                                  pincode_error2 === true ? (
+                                    pincode_error === false &&
+                                    pincode_error2 === true ? (
                                     <div
                                       style={{
                                         color: "#F46E6E",
@@ -2866,9 +3087,9 @@ setbill_color(false);
                           {same_as_billing_add ? (
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
-                                <Label className="header-child">Pincode*</Label>
+                                <Label className="header-child">Locality*</Label>
                                 <Input
-                                  value={office_locality}
+                                  value={billing_locality}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -2896,6 +3117,10 @@ setbill_color(false);
                                     }
                                     error_message={"Select locality"}
                                     error_s={local_err2}
+                                    loaded={loaded_billing_locality}
+                                    count={billing_locality_count}
+                                    bottom={billing_locality_bottom}
+                                    setbottom={setbilling_locality_bottom}
                                   />
                                 </div>
                               )}
@@ -2946,7 +3171,7 @@ setbill_color(false);
                             value={validation.values.contact_person_name || ""}
                             invalid={
                               validation.touched.contact_person_name &&
-                              validation.errors.contact_person_name
+                                validation.errors.contact_person_name
                                 ? true
                                 : false
                             }
@@ -2957,7 +3182,7 @@ setbill_color(false);
                             placeholder="Enter Name"
                           />
                           {validation.touched.contact_person_name &&
-                          validation.errors.contact_person_name ? (
+                            validation.errors.contact_person_name ? (
                             <FormFeedback type="invalid">
                               {validation.errors.contact_person_name}
                             </FormFeedback>
@@ -2976,7 +3201,7 @@ setbill_color(false);
                             value={validation.values.contact_person_email || ""}
                             invalid={
                               validation.touched.contact_person_email &&
-                              validation.errors.contact_person_email
+                                validation.errors.contact_person_email
                                 ? true
                                 : false
                             }
@@ -2987,7 +3212,7 @@ setbill_color(false);
                             placeholder="Enter Email"
                           />
                           {validation.touched.contact_person_email &&
-                          validation.errors.contact_person_email ? (
+                            validation.errors.contact_person_email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.contact_person_email}
                             </FormFeedback>
@@ -3006,7 +3231,7 @@ setbill_color(false);
                             value={validation.values.contact_person_ph_no || ""}
                             invalid={
                               validation.touched.contact_person_ph_no &&
-                              validation.errors.contact_person_ph_no
+                                validation.errors.contact_person_ph_no
                                 ? true
                                 : false
                             }
@@ -3018,7 +3243,7 @@ setbill_color(false);
                             placeholder="Enter Phone Number"
                           />
                           {validation.touched.contact_person_ph_no &&
-                          validation.errors.contact_person_ph_no ? (
+                            validation.errors.contact_person_ph_no ? (
                             <FormFeedback type="invalid">
                               {validation.errors.contact_person_ph_no}
                             </FormFeedback>

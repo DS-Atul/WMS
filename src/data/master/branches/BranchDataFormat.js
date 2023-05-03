@@ -22,6 +22,7 @@ import { HiQuestionMarkCircle } from "react-icons/hi";
 import Modal from 'react-bootstrap/Modal';
 
 const BranchDataFormat = ({ data, data1, can_delete }) => {
+  console.log("data=====", data)
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user = useSelector((state) => state.authentication.userdetails);
@@ -218,6 +219,7 @@ const BranchDataFormat = ({ data, data1, can_delete }) => {
                 )}
               </td>
 
+              <td>{branch.organization_name ? toTitleCase(branch.organization_name) : "-"}</td>
               <td>{branch_type_n}</td>
               <td>
                 {branch.vendor_name ? toTitleCase(branch.vendor_name) : "-"}

@@ -31,8 +31,8 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                                 <div style={{marginTop:"20px"}}> <h3>AIRWAYBILL NUMBER</h3><br></br><h2><b> {order.docket_no}</b></h2></div>
                                 <div>
                                     <img src={order.qrcode}
-                                        height="150"
-                                        width="150"
+                                        height="135"
+                                        width="135"
 
                                     />
                                 </div>

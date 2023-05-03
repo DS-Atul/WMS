@@ -87,6 +87,16 @@ const AddBranch = () => {
   const [selectgst_search, setselectgst_search] = useState("");
   const [selectgst_id, setselectgst_id] = useState(0);
 
+  const [org_list_s, setorg_list_s] = useState([])
+  const [org, setorg] = useState("")
+  const [org_id, setorg_id] = useState(0)
+  const [org_page, setorg_page] = useState(1)
+  const [org_error, setorg_error] = useState(false)
+  const [org_search_item, setorg_search_item] = useState("")
+  const [org_loaded, setorg_loaded] = useState(false)
+  const [org_count, setorg_count] = useState(1)
+  const [org_bottom, setorg_bottom] = useState(103)
+  
   // Location Info
 
   const [city_bottom, setcity_bottom] = useState(103)
@@ -262,6 +272,7 @@ const AddBranch = () => {
         {
           name: toTitleCase(values.branch_name).toUpperCase(),
           type: branch_type_short,
+          organizaton: org_id,
           vendor: branch_type === "Own Branch" ? "" : vendor_id,
           email: values.branch_email,
           contact_number: values.branch_phone_number,
@@ -360,6 +371,7 @@ const AddBranch = () => {
       locality_name: locality,
       name: values.branch_name,
       operating_city: opcity_ids,
+      organization_name: org,
       pan_no:
         branch_type === "Own Branch"
           ? own_pan_number.toUpperCase()
@@ -387,6 +399,7 @@ const AddBranch = () => {
         {
           name: toTitleCase(values.branch_name).toUpperCase(),
           type: branch_type_short,
+          organizaton: org_id,
           vendor: branch_type === "Own Branch" ? "" : vendor_id,
           email: values.branch_email,
           contact_number: values.branch_phone_number,
@@ -696,6 +709,42 @@ const AddBranch = () => {
     }
   };
 
+  const getOrganization = async () => {
+    let orgs_list = [];
+    try {
+      const resp = await axios.get(
+        ServerAddress +
+        `organization/get_organization/?search=${""}&p=${org_page}&records=${10}&name=${[]}&organization_search=${org_search_item}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      if (resp.data.next === null) {
+        setorg_loaded(false);
+      } else {
+        setorg_loaded(true);
+      }
+
+      if (resp.data.results.length > 0) {
+        if (org_page === 1) {
+          orgs_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+          ]);
+        } else {
+          orgs_list = [
+            ...state_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
+        }
+      }
+      setorg_count(org_count + 2);
+      setorg_list_s(orgs_list);
+    } catch (err) {
+      console.warn(`Error Occur in Get States, ${err}`);
+    }
+  };
+
   // Navigation At the time of Cancel
   const handleAction = () => {
     dispatch(setToggle(true));
@@ -745,6 +794,11 @@ const AddBranch = () => {
     }
     return () => clearTimeout(timeoutId);
   }, [pincode_id, locality_page, locality_search_item]);
+
+  useEffect(() => {
+    getOrganization()
+  }, [org_page, org_search_item])
+  
 
   useLayoutEffect(() => {
     if (city_id !== 0) {
@@ -844,6 +898,8 @@ const AddBranch = () => {
         setvendor_pan_no(location_data.state.branch.pan_no);
         setselect_gst(location_data.state.branch.gst_no);
       }
+      setorg(toTitleCase(location_data.state.branch.organization_name))
+      setorg_id(location_data.state.branch.organizaton)
       setaddress_line(location_data.state.branch.address_line_1);
       setstate(toTitleCase(location_data.state.branch.state_name));
       setstate_id(location_data.state.branch.state_id);
@@ -1251,6 +1307,34 @@ const AddBranch = () => {
                             error_message={"Please Select Branch Type"}
                             error_s={branch_type_error}
                           />
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Organization*</Label>
+                          <span onClick={() => setby_pincode(false)}>
+                            <SearchInput
+                              data_list={org_list_s}
+                              setdata_list={setorg_list_s}
+                              data_item_s={org}
+                              set_data_item_s={setorg}
+                              set_id={setorg_id}
+                              page={org_page}
+                              setpage={setorg_page}
+                              error_message={"Please Select Any Organization"}
+                              error_s={org_error}
+                              search_item={org_search_item}
+                              setsearch_item={setorg_search_item}
+                              loaded={org_loaded}
+                              count={org_count}
+                              bottom={org_bottom}
+                              setbottom={setorg_bottom}
+                            />
+                          </span>
+                          {/* <div className="mt-1 error-text" color="danger">
+                            {state_error ? "Please Select Any State" : null}
+                          </div> */}
                         </div>
                       </Col>
 

@@ -44,6 +44,8 @@ import {
   setManifestTab,
   setRunsheetTab,
 } from "../../../store/parentFilter/ParentFilter";
+import { setEAccessToken,setBAccessToken,setOrgs } from "../../../store/ewayBill/EwayBill";
+import { setShowAlert,setDataExist,setAlertType } from "../../../store/alert/Alert";
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -59,6 +61,8 @@ const SignIn = () => {
   );
 
   const userData = useSelector((state) => state.authentication.userdetails);
+  const e_acess_token = useSelector((state) => state.eway_bill.e_access_token);
+  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
 
   const [showPass, setshowPass] = useState(false);
   const [error, seterror] = useState(false);
@@ -125,6 +129,74 @@ const SignIn = () => {
     setis_mobile(mobile);
     setos(platform);
   };
+
+  const step_1 = () => {
+    axios
+      .post(
+        "https://dev.api.easywaybill.in/ezewb/v1/auth/initlogin",
+
+        {
+          userid: "test.easywaybill@gmail.com",
+          password: "Abcd@12345",
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("response-------eway bill step 1", response.data.response);
+        console.log("token", response.data);
+        dispatch(setEAccessToken(response.data.response.token));
+        dispatch(setOrgs(response.data.response.orgs));
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+
+  const business_token = () => {
+    axios
+      .post(
+        "https://dev.api.easywaybill.in/ezewb/v1/auth/completelogin",
+        {
+          token: `${e_acess_token}`,
+          orgid: "4",
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("responseblogin", response.data);
+        console.log("token", response.data.response.token);
+        dispatch(setBAccessToken(response.data.response.token));
+      })
+      .catch((error) => {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Eway Bill Server Is Currently Down`));
+        dispatch(setAlertType("danger"));
+      });
+  };
+
+
+useEffect(() => {
+ step_1();
+}, [])
+
+
+  useEffect(() => {
+    if (!e_acess_token) {
+      business_token();
+    }
+  }, [e_acess_token])
+
+
 
   const getUserDetails = (usern, passw, accessToken) => {
     axios
@@ -432,15 +504,15 @@ const SignIn = () => {
         //   ],
         //   trigger: false,
         // },
-        // {
-        //   id: 3,
-        //   dropdown: "Trip",
-        //   dropdownMenu: [
-        //     ["Transporter", "/transporter/Transporter"],
-        //     ["Hired", "/hiredDetails/HiredDetails"],
-        //   ],
-        //   trigger: false,
-        // },
+        {
+          id: 3,
+          dropdown: "EwayBill",
+          dropdownMenu: [
+            ["DocketWithEwayBill", "/ewaybill/docketEwayBill"],
+            ["Eway Dashboard", "/ewaybill/dashboard"],
+          ],
+          trigger: false,
+        },
         {
           id: 4,
           dropdown: "Master",
@@ -454,7 +526,7 @@ const SignIn = () => {
             ["Assets", "/master/assets"],
             ["Routes", "/master/routes"],
             ["Vendors", "/master/vendor/Vendor"],
-            ["Vehcile", "/master/Vehcile"],
+            ["Vehicle", "/master/Vehcile"],
           ],
           trigger: false,
         },
@@ -503,8 +575,8 @@ const SignIn = () => {
         },
         {
           id: 9,
-          dropdown: "Organisation",
-          dropdownMenu: [["Organiation", "/organization/organization"]],
+          dropdown: "Organization",
+          dropdownMenu: [["Organization", "/organization/organization"]],
           trigger: false,
         },
         {

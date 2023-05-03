@@ -1,5 +1,7 @@
 const VendorDataTitle = [
   "Vendor Name",
+  "PAN Number",
+  "GST Number",
   "Vendor Email",
   "Vendor Phone",
   "Company Type",

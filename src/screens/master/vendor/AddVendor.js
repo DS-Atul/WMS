@@ -81,7 +81,7 @@ const AddVendor = () => {
     "LLP",
     "Others",
   ]);
-
+  const [pan_no, setpan_no] = useState("")
   const [business_selected, setbusiness_selected] = useState("");
   const [business_list, setbusiness_list] = useState([
     "Manufacturing",
@@ -103,6 +103,8 @@ const AddVendor = () => {
     useState(false);
   const [msme_No_length, setmsme_No_length] = useState(false);
   const [msme_certificate, setmsme_certificate] = useState("");
+
+  const [registration_date, setregistration_date] = useState("")
   //Service Offered
   const [by_air, setby_air] = useState([]);
   const [by_air2, setby_air2] = useState([]);
@@ -219,7 +221,7 @@ const AddVendor = () => {
       vendor_ph_no: vendor_data.mobile_numberp || "",
       vendor_email1: vendor_data.emails || "",
       vendor_ph_no1: vendor_data.mobile_numbers || "",
-      pan_number: vendor_data.pan_no || "",
+      // pan_number: vendor_data.pan_no || "",
     },
 
     validationSchema: Yup.object({
@@ -233,26 +235,26 @@ const AddVendor = () => {
       //   .min(10, "Phone number must 10 digit long")
       //   .max(10, "Phone number must 10 digit long")
       //   .required("Vendor Phone No is require"),
-      pan_number: Yup.string()
-        .min(10, "Pan number must be 10 characters")
-        .max(10, "Pan number must be 10 characters")
-        .required("Pan No Is Required"),
+      // pan_number: Yup.string()
+      //   .min(10, "Pan number must be 10 characters")
+      //   .max(10, "Pan number must be 10 characters")
+      //   .required("Pan No Is Required"),
     }),
 
     onSubmit: (values) => {
 
-         if (msme_registerd === true && msme_registerd_number === "") {
-              setmsme_registerd_number_error(true);
-              document.getElementById("vendor_info").scrollIntoView();
-            }
-       else if (
-              msme_registerd_number !== "" &&
-              msme_registerd_number.length !== 12
-            ) {
-              document.getElementById("vendor_info").scrollIntoView();
-              setmsme_No_length(true);
-            }
-    else  if (company_type === "") {
+      if (msme_registerd === true && msme_registerd_number === "") {
+        setmsme_registerd_number_error(true);
+        document.getElementById("vendor_info").scrollIntoView();
+      }
+      else if (
+        msme_registerd_number !== "" &&
+        msme_registerd_number.length !== 12
+      ) {
+        document.getElementById("vendor_info").scrollIntoView();
+        setmsme_No_length(true);
+      }
+      else if (company_type === "") {
         document.getElementById("vendor_servies").scrollIntoView();
         setcompany_type_error(true);
       } else if (business_selected === "") {
@@ -267,10 +269,16 @@ const AddVendor = () => {
         forward_by_train === false &&
         channel_partner === false &&
         delivery_partner === false &&
-        Select_other_service_offerd === false
+        Select_other_service_offerd === false && (business_selected === "Transportation" || business_selected === "Coloader")
       ) {
         alert("Please Select Any Service Offered");
-      } else {
+      } else if(pan_no.length !== 10){
+        alert("Pan Number Must be 10 Degit")
+      }
+      else if(!active){
+        alert("Please Select Head Office")
+      }
+       else {
         isupdating ? update_vendor(values) : add_vendor(values);
       }
     },
@@ -388,20 +396,20 @@ const AddVendor = () => {
       const response = await axios.post(ServerAddress + "master/add_vendor/", {
         name: toTitleCase(values.vendor_name).toUpperCase(),
         is_msme_regitered: msme_registerd,
-  
+        registration_date: msme_registerd ? registration_date : null,
         emailp: values.vendor_email,
         mobile_numberp: values.vendor_ph_no,
-  
+
         emails: values.vendor_email1,
         mobile_numbers:
           values.vendor_ph_no1 !== "" ? values.vendor_ph_no1 : null,
-  
+
         company_type: company_type.toUpperCase(),
         lob: business_selected.toUpperCase(),
         service_region: service_region_selected.toUpperCase(),
-        pan_no: toTitleCase(values.pan_number).toUpperCase(),
+        pan_no: toTitleCase(pan_no).toUpperCase(),
         created_by: user_id,
-        msme_registration_no: msme_registerd_number,
+        msme_registration_no: msme_registerd ? msme_registerd_number : "",
         service_offered: [
           by_air.length !== 0 && by_air,
           by_air2.length !== 0 && by_air2,
@@ -450,7 +458,7 @@ const AddVendor = () => {
       alert(`Error Happen while posting Braches Data ${error}`);
     }
   };
-  
+
   //update Vendor
   // const update_vendor = (values) => {
   //   let vendor_other_data = [];
@@ -558,7 +566,7 @@ const AddVendor = () => {
     for (let i = 0; i < row1.length; i++) {
       vendor_other_data.push([String(row1[i][0]).toUpperCase(), row1[i][1]]);
     }
-  
+
     let fields_names = Object.entries({
       company_type: company_type,
       emailp: values.vendor_email,
@@ -568,40 +576,42 @@ const AddVendor = () => {
       mobile_numberp: values.vendor_ph_no,
       mobile_numbers: values.vendor_ph_no1,
       name: values.vendor_name,
-      pan_no: values.pan_number,
+      pan_no: pan_no,
+      registration_date: registration_date,
       service_region: service_region_selected,
     });
-  console.log("CHnage field ", fields_names );
+    console.log("CHnage field ", fields_names);
     let change_fields = {};
-  
+
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.vendor[`${ele[0]}`];
-      console.log("Previous data is",  prev);
+      console.log("Previous data is", prev);
       let new_v = ele[1];
       console.log("new data", new_v);
       if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
-        console.log("hnage field ===>>", typeof change_fields )
+        console.log("hnage field ===>>", typeof change_fields)
       }
     }
-  
+
     try {
       const response = await axios.put(
         ServerAddress + "master/update_vendor/" + vendor_data.id,
         {
           name: toTitleCase(values.vendor_name).toUpperCase(),
           is_msme_regitered: msme_registerd,
+          registration_date: msme_registerd ? registration_date : null,
           emailp: values.vendor_email,
           mobile_numberp: values.vendor_ph_no,
           emails: values.vendor_email1,
           mobile_numbers:
             values.vendor_ph_no1 !== "" ? values.vendor_ph_no1 : null,
-          msme_registration_no: msme_registerd_number,
+          msme_registration_no: msme_registerd ? msme_registerd_number : "",
           company_type: company_type.toUpperCase(),
           lob: business_selected.toUpperCase(),
           service_region: service_region_selected.toUpperCase(),
-          pan_no: toTitleCase(values.pan_number).toUpperCase(),
+          pan_no: toTitleCase(pan_no).toUpperCase(),
           modified_by: user_id,
           service_offered: [
             by_air.length !== 0 && by_air,
@@ -648,11 +658,11 @@ const AddVendor = () => {
         dispatch(setAlertType("warning"));
       }
     } catch (error) {
-              alert(`Error Happen while posting Braches Data ${error}`);
+      alert(`Error Happen while posting Braches Data ${error}`);
 
     }
   };
-  
+
   // Navigation At the time of Cancel
   const handleAction = () => {
     dispatch(setToggle(true));
@@ -669,9 +679,11 @@ const AddVendor = () => {
       setservice_region_selected(
         toTitleCase(location_data.state.vendor.service_region)
       );
+      setregistration_date(location_data.state.vendor.registration_date)
+      setpan_no(location_data.state.vendor.pan_no)
       setmsme_registerd(location_data.state.vendor.is_msme_regitered);
       setcompany_type(toTitleCase(location_data.state.vendor.company_type));
-    } catch (error) {}
+    } catch (error) { }
   }, []);
 
   useLayoutEffect(() => {
@@ -939,6 +951,7 @@ const AddVendor = () => {
   const [gstcity_bottom, setgstcity_bottom] = useState(103)
   const [selected, setselected] = useState([]);
   const [active, setactive] = useState(false);
+  console.log("selected=====",active)
 
   const [gst_id_list, setgst_id_list] = useState([]);
   const [gst_ids, setgst_ids] = useState([]);
@@ -1007,7 +1020,7 @@ const AddVendor = () => {
     try {
       const resp = await axios.get(
         ServerAddress +
-          `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${1}&records=${10}&state_search=${""}`,
+        `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${1}&records=${10}&state_search=${""}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1021,7 +1034,7 @@ const AddVendor = () => {
       alert(`Error Occur in Get States, ${err}`);
     }
   };
-  
+
 
   // const getGstCities = (place_id, filter_by) => {
   //   let cities_list = [...gst_city_list];
@@ -1112,7 +1125,7 @@ const AddVendor = () => {
       console.warn(`Error Occur in Get City, ${err}`);
     }
   };
-  
+
 
   // const getPincode = (place_id, filter_by) => {
   //   let pincode_list = [];
@@ -1192,7 +1205,7 @@ const AddVendor = () => {
       console.warn(`Error Occur in Get Pincode, ${err}`);
     }
   };
-  
+
   // const getLocality = (place_id, filter_by) => {
   //   let locality_list = [];
   //   axios
@@ -1266,7 +1279,7 @@ const AddVendor = () => {
     } catch (error) {
       alert(`Error Occur in Get Pincode , ${error}`);
     }
-  }; 
+  };
 
   useEffect(() => {
     if (gst_state_id !== "") {
@@ -1336,7 +1349,7 @@ const AddVendor = () => {
             temp[index].gst_no,
             [
               temp[index].city_id,
-              toTitleCase(temp[index].city_name),
+              toTitleCase(temp[index].state_name + "-" + temp[index].city_name),
               temp[index].state,
             ],
             [temp[index].pincode, temp[index].pincode_name],
@@ -1421,7 +1434,7 @@ const AddVendor = () => {
       setSelect_forward_by_road(false);
     }
 
-    if (others_services_offerd === true && row1[0].length ===0) {
+    if (others_services_offerd === true && row1[0].length === 0) {
       setSelect_other_service_offerd(true);
     } else {
       setSelect_other_service_offerd(false);
@@ -1470,7 +1483,7 @@ const AddVendor = () => {
       user.user_department_name === "ACCOUNTANT" ||
       user.user_department_name === "ACCOUNTANT" ||
       user.user_department_name + " " + user.designation_name ===
-        "ACCOUNT MANAGER" ||
+      "ACCOUNT MANAGER" ||
       user.is_superuser
     ) {
       setcurrent_status("APPROVED");
@@ -1525,7 +1538,7 @@ const AddVendor = () => {
           },
         }
       );
-  
+
       if (response.data.status === "success") {
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Status Updated sucessfully`));
@@ -1536,7 +1549,7 @@ const AddVendor = () => {
       alert(`rror While  Updateing Coloader ${error}`);
     }
   };
-  
+
   const handleSubmit = () => {
     if (message == "") {
       setmessage_error(true);
@@ -1551,9 +1564,44 @@ const AddVendor = () => {
     });
   };
 
+  //  For Check Pan Validation
+  const send_org_pan = async () => {
+    try {
+      const response = await axios.post(
+        ServerAddress + "master/check_vendor_pan/",
+        {
+          pan_no: pan_no,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log("Organization ==>>", response);
+      if (response.data === "duplicate") {
+        dispatch(setDataExist(`"${pan_no}" Already Exists`));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+        setpan_no("")
+      }
+      setloaded_pan(false)
+    } catch (error) {
+      alert(`Error Happen while posting Organisation Data ${error}`);
+    }
+  };
+  const [loaded_pan, setloaded_pan] = useState(false)
+
+  useEffect(() => {
+    if (loaded_pan && !isupdating) {
+      send_org_pan()
+    }
+  }, [loaded_pan])
+
   return (
     <>
       <div>
+
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Reject Resion</Modal.Title>
@@ -1584,6 +1632,7 @@ const AddVendor = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+
         <Form
           onSubmit={(e) => {
             e.preventDefault();
@@ -1610,13 +1659,13 @@ const AddVendor = () => {
             if (field3.includes(all_value)) {
               document.getElementById("vendor_servies").scrollIntoView();
             }
-           if(others_services_offerd === true && row1[0] == ""){
-            setother_err(true);
-           }
+            if (others_services_offerd === true && row1[0] == "") {
+              setother_err(true);
+            }
             validation.handleSubmit(e.values);
             return false;
           }}
-        >s
+        >
           <div className="mt-3">
             <PageTitle page={"Add Vendor"} />
             <Title
@@ -1663,6 +1712,33 @@ const AddVendor = () => {
                 {circle_btn ? (
                   <CardBody>
                     <Row>
+
+                    <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">PAN Number:</Label>
+                          <Input
+                            onBlur={() => {
+                              if (pan_no.length === 10) {
+                                setloaded_pan(true)
+                                // alert("True")
+                              }
+                              else {
+                                setloaded_pan(false)
+                                // alert("False")
+                              }
+                            }
+                            }
+                            value={pan_no}
+                            onChange={(e) =>
+                              setpan_no(e.target.value)
+                            }
+                            id="input"
+                            type="text"
+                            placeholder="Please Enter PAN Number"
+                          />
+                        </div>
+                      </Col>
+
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">Vendor Name * </Label>
@@ -1672,7 +1748,7 @@ const AddVendor = () => {
                             value={validation.values.vendor_name || ""}
                             invalid={
                               validation.touched.vendor_name &&
-                              validation.errors.vendor_name
+                                validation.errors.vendor_name
                                 ? true
                                 : false
                             }
@@ -1683,11 +1759,25 @@ const AddVendor = () => {
                             placeholder="Enter Vendor Name"
                           />
                           {validation.touched.vendor_name &&
-                          validation.errors.vendor_name ? (
+                            validation.errors.vendor_name ? (
                             <FormFeedback type="invalid">
                               {validation.errors.vendor_name}
                             </FormFeedback>
                           ) : null}
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Company Type *</Label>
+                          <NSearchInput
+                            data_list={company_type_list}
+                            data_item_s={company_type}
+                            set_data_item_s={setcompany_type}
+                            show_search={false}
+                            error_message={"Please Select Company Type"}
+                            error_s={company_type_error}
+                          />
                         </div>
                       </Col>
 
@@ -1774,7 +1864,7 @@ const AddVendor = () => {
                                 onChange={(val) => {
                                   setmsme_registerd_number(val.target.value);
                                 }}
-                                // invalid={msme_registerd_number_error || msme_No_length}
+                              // invalid={msme_registerd_number_error || msme_No_length}
                               />
                               <div className="mt-1 error-text" color="danger">
                                 {msme_registerd_number_error
@@ -1814,8 +1904,29 @@ const AddVendor = () => {
                               />
                             </div>
                           </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-3">
+                              <Label className="header-child">
+                                {/* Callibration */}
+                                Registration Date
+                              </Label>
+                              <Input
+                                style={{ marginBottom: "10px" }}
+                                value={registration_date}
+                                className="form-control-md"
+                                id="input"
+                                name="logo"
+                                type="date"
+                                onChange={(val) => {
+                                  setregistration_date(val.target.value);
+                                }}
+                              />
+                            </div>
+                          </Col>
                         </>
                       )}
+
                     </Row>
                   </CardBody>
                 ) : null}
@@ -1857,7 +1968,7 @@ const AddVendor = () => {
                             value={validation.values.vendor_email || ""}
                             invalid={
                               validation.touched.vendor_email &&
-                              validation.errors.vendor_email
+                                validation.errors.vendor_email
                                 ? true
                                 : false
                             }
@@ -1868,7 +1979,7 @@ const AddVendor = () => {
                             placeholder="Enter Vendor Email"
                           />
                           {validation.touched.vendor_email &&
-                          validation.errors.vendor_email ? (
+                            validation.errors.vendor_email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.vendor_email}
                             </FormFeedback>
@@ -1885,7 +1996,7 @@ const AddVendor = () => {
                             value={validation.values.vendor_ph_no || ""}
                             invalid={
                               validation.touched.vendor_ph_no &&
-                              validation.errors.vendor_ph_no
+                                validation.errors.vendor_ph_no
                                 ? true
                                 : false
                             }
@@ -1897,7 +2008,7 @@ const AddVendor = () => {
                             placeholder="Enter Phone Number"
                           />
                           {validation.touched.vendor_ph_no &&
-                          validation.errors.vendor_ph_no ? (
+                            validation.errors.vendor_ph_no ? (
                             <FormFeedback type="invalid">
                               {validation.errors.vendor_ph_no}
                             </FormFeedback>
@@ -1926,7 +2037,7 @@ const AddVendor = () => {
                         <div className="mb-2">
                           <Label className="header-child">Vendor Ph.No 2</Label>
                           <Input
-                            // onChange={validation.handleChange}
+                            onChange={validation.handleChange}
                             // onBlur={validation.handleBlur}
                             value={validation.values.vendor_ph_no1 || ""}
                             // invalid={
@@ -1982,19 +2093,7 @@ const AddVendor = () => {
                 {circle_btn2 ? (
                   <CardBody>
                     <Row>
-                      <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">Company Type *</Label>
-                          <NSearchInput
-                            data_list={company_type_list}
-                            data_item_s={company_type}
-                            set_data_item_s={setcompany_type}
-                            show_search={false}
-                            error_message={"Please Select Company Type"}
-                            error_s={company_type_error}
-                          />
-                        </div>
-                      </Col>
+
 
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
@@ -2028,34 +2127,6 @@ const AddVendor = () => {
                         </div>
                       </Col>
 
-                      <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">Pan Number *</Label>
-                          <Input
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.pan_number || ""}
-                            invalid={
-                              validation.touched.pan_number &&
-                              validation.errors.pan_number
-                                ? true
-                                : false
-                            }
-                            type="text"
-                            className="form-control-md"
-                            id="input"
-                            name="pan_number"
-                            placeholder="Enter Pan Number"
-                          />
-                          {validation.touched.pan_number &&
-                          validation.errors.pan_number ? (
-                            <FormFeedback type="invalid">
-                              {validation.errors.pan_number}
-                            </FormFeedback>
-                          ) : null}
-                        </div>
-                      </Col>
-
                       <Row>
                         <>
                           <Row className="hide">
@@ -2068,6 +2139,7 @@ const AddVendor = () => {
                                       min={0}
                                       key={index}
                                       value={item[0]}
+                                      disabled={row.length - 1 !== index}
                                       type="text"
                                       className="form-control-md"
                                       id="input"
@@ -2078,7 +2150,7 @@ const AddVendor = () => {
                                         item[0] = val.target.value;
                                         setrefresh(!refresh);
                                       }}
-                                      onMouseLeave={() => {
+                                      onBlur={() => {
                                         // setclicked(true);
                                         // alert("----")
                                         let itm = item[0];
@@ -2086,9 +2158,9 @@ const AddVendor = () => {
                                         if (
                                           item[0].length == 15 &&
                                           gst_val ==
-                                            itm[0] +
-                                              itm[1] +
-                                              validation.values.pan_number
+                                          itm[0] +
+                                          itm[1] +
+                                          pan_no
                                         ) {
                                           getGstStates(
                                             itm[0] + itm[1],
@@ -2131,6 +2203,7 @@ const AddVendor = () => {
                                       count={gstcity_count}
                                       bottom={gstcity_bottom}
                                       setbottom={setgstcity_bottom}
+                                      disable_me={row.length - 1 !== index}
                                     />
                                   </div>
                                 ))}
@@ -2156,6 +2229,7 @@ const AddVendor = () => {
                                       count={gstpincode_count}
                                       bottom={gstpincode_bottom}
                                       setbottom={setgstpincode_bottom}
+                                      disable_me={row.length - 1 !== index}
                                     />
                                   </div>
                                 ))}
@@ -2182,6 +2256,7 @@ const AddVendor = () => {
                                       count={gstlocality_count}
                                       bottom={gstlocality_bottom}
                                       setbottom={setgstlocality_bottom}
+                                      disable_me={row.length - 1 !== index}
                                     />
                                   </div>
                                 ))}
@@ -2221,30 +2296,47 @@ const AddVendor = () => {
                                 {row.map((item, index) => {
                                   return (
                                     <div
-                                      onClick={() => {
-                                        if (selected.includes(index)) {
-                                          let lis = [...selected];
-                                          setselected(
-                                            lis.filter((e) => e !== index)
-                                          );
-                                          setactive(false);
-                                          item[5] = false;
-                                        } else {
-                                          setselected([...selected, index]);
-                                          setactive(true);
-                                          item[5] = true;
-                                        }
-                                      }}
                                     >
-                                      {item[5] ? (
-                                        <FiCheckSquare
-                                          style={{ marginBottom: "40px" }}
-                                        />
-                                      ) : (
-                                        <FiSquare
-                                          style={{ marginBottom: "40px" }}
-                                        />
-                                      )}
+                                      {row.some((a) => a[5] == true && a[5] === row[index][5]) &&
+                                        (
+                                          <FiCheckSquare
+                                            onClick={() => {
+                                              if (selected.includes(index)) {
+                                                let lis = [...selected];
+                                                setselected(
+                                                  lis.filter((e) => e !== index)
+                                                );
+                                                setactive(false);
+                                                item[5] = false;
+                                              } else {
+                                                setselected([...selected, index]);
+                                                setactive(true);
+                                                item[5] = true;
+                                              }
+                                            }}
+                                            style={{ marginBottom: "40px" }}
+                                          />
+                                        )
+                                      }
+  
+                                      {row.every((a) => a[5] == false) ?
+                                        <FiSquare onClick={() => {
+                                          if (selected.includes(index)) {
+                                            let lis = [...selected];
+                                            setselected(
+                                              lis.filter((e) => e !== index)
+                                            );
+                                            setactive(false);
+                                            item[5] = false;
+                                          } else {
+                                            setselected([...selected, index]);
+                                            setactive(true);
+                                            item[5] = true;
+                                          }
+                                        }} style={{ marginBottom: "40px" }} />
+                                        : row.some((a) => a[5] !== true && a[5] === row[index][5]) ? <FiSquare style={{ marginBottom: "40px" }} /> : null
+                                      }
+  
                                     </div>
                                   );
                                 })}
@@ -2297,6 +2389,9 @@ const AddVendor = () => {
                                   <span
                                     className="link-text"
                                     onClick={() => {
+                                      setgst_city_list([])
+                                      setgst_city_page(1)
+                                      setgstcity_bottom(103)
                                       if (row[row.length - 1][0].length != 15) {
                                         alert("GST No must be 15 digit");
                                       } else {
@@ -2311,7 +2406,7 @@ const AddVendor = () => {
                                     >
                                       <MdAdd />
                                     </IconContext.Provider>
-                                    Add Another GST
+                                      Add Another GST 
                                   </span>
                                 </div>
                               )}
@@ -2321,391 +2416,393 @@ const AddVendor = () => {
                       </Row>
 
                       {/*Service Offerd  */}
-                      <Row>
-                        <Label className="header-child mb-3">
-                          Service Offered *
-                        </Label>
+                      {(business_selected === "Transportation" || business_selected === "Coloader") &&
+                        <Row>
+                          <Label className="header-child mb-3">
+                            Service Offered *
+                          </Label>
 
-                        <Col lg={7} md={6} sm={6}>
-                          <div
-                            style={{
-                              background: "transparent",
-                              padding: "30px",
-                              border: "2px solid gray",
-                              borderRadius: "5px",
-                            }}
-                          >
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Input
-                                  style={{ margin: "0 6.5px 0 6.5px" }}
-                                  className="form-control-md"
-                                  id="input"
-                                  type="checkbox"
-                                  onClick={() => {
-                                    setforward_by_air(!forward_by_air);
-                                  }}
-                                  checked={forward_by_air}
-                                />
-                                <Label className="header-child">
-                                  Forwarding By Air
-                                </Label>
-                              </div>
-                            </Col>
-                            {forward_by_air && (
-                              <>
-                                <Col>
-                                  <Col lg={5} md={6} sm={6}>
-                                    <div
-                                      className="mb-1"
-                                      style={{ marginLeft: "30.5px" }}
-                                    >
-                                      <Input
-                                        style={{ marginRight: "6.5px" }}
-                                        className="form-control-md"
-                                        id="input"
-                                        type="checkbox"
-                                        onClick={() => {
-                                          setairway_bill(!airway_bill);
-                                        }}
-                                        checked={airway_bill}
-                                      />
-                                      <Label className="header-child">
-                                        AirWay Bill
-                                      </Label>
-                                    </div>
-                                  </Col>
-
-                                  <Col lg={5} md={6} sm={6}>
-                                    <div
-                                      className="mb-1"
-                                      style={{ marginLeft: "30.5px" }}
-                                    >
-                                      <Input
-                                        style={{ marginRight: "6.5px" }}
-                                        className="form-control-md"
-                                        id="input"
-                                        type="checkbox"
-                                        onClick={() => {
-                                          setconsole_connect(!console_connect);
-                                        }}
-                                        checked={console_connect}
-                                      />
-                                      <Label className="header-child">
-                                        Console Connect
-                                      </Label>
-                                    </div>
-                                  </Col>
-                                </Col>
-                              </>
-                            )}
-
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Input
-                                  style={{ margin: "0 6.5px 0 6.5px" }}
-                                  className="form-control-md"
-                                  id="input"
-                                  type="checkbox"
-                                  onClick={() => {
-                                    setforward_by_road(!forward_by_road);
-                                  }}
-                                  checked={forward_by_road}
-                                />
-                                <Label className="header-child">
-                                  Forwarding By Road
-                                </Label>
-                              </div>
-                            </Col>
-                            {forward_by_road && (
-                              <>
-                                <Col lg={5} md={6} sm={6}>
-                                  <div
-                                    className="mb-2"
-                                    style={{ marginLeft: "30.5px" }}
-                                  >
-                                    <Input
-                                      style={{ margin: "0 6.5px 0 6.5px" }}
-                                      className="form-control-md"
-                                      id="input"
-                                      type="checkbox"
-                                      onClick={() => {
-                                        setdirect_vehicle(!direct_vehicle);
-                                      }}
-                                      checked={direct_vehicle}
-                                    />
-                                    <Label className="header-child">
-                                      Direct vehicle
-                                    </Label>
-                                  </div>
-                                </Col>
-
-                                {direct_vehicle && (
-                                  <>
-                                    <Col lg={6} md={6} sm={6}>
+                          <Col lg={7} md={6} sm={6}>
+                            <div
+                              style={{
+                                background: "transparent",
+                                padding: "30px",
+                                border: "2px solid gray",
+                                borderRadius: "5px",
+                              }}
+                            >
+                              <Col lg={4} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Input
+                                    style={{ margin: "0 6.5px 0 6.5px" }}
+                                    className="form-control-md"
+                                    id="input"
+                                    type="checkbox"
+                                    onClick={() => {
+                                      setforward_by_air(!forward_by_air);
+                                    }}
+                                    checked={forward_by_air}
+                                  />
+                                  <Label className="header-child">
+                                    Forwarding By Air
+                                  </Label>
+                                </div>
+                              </Col>
+                              {forward_by_air && (
+                                <>
+                                  <Col>
+                                    <Col lg={5} md={6} sm={6}>
                                       <div
-                                        className="mb-2"
-                                        style={{ marginLeft: "55.5px" }}
+                                        className="mb-1"
+                                        style={{ marginLeft: "30.5px" }}
                                       >
                                         <Input
-                                          style={{
-                                            margin: "0 6.5px 0 6.5px",
-                                          }}
+                                          style={{ marginRight: "6.5px" }}
                                           className="form-control-md"
                                           id="input"
                                           type="checkbox"
                                           onClick={() => {
-                                            settemp_control_vehicle(
-                                              !temp_control_vehicle
-                                            );
+                                            setairway_bill(!airway_bill);
                                           }}
-                                          checked={temp_control_vehicle}
+                                          checked={airway_bill}
                                         />
                                         <Label className="header-child">
-                                          Temperature Control Vehicle
+                                          AirWay Bill
                                         </Label>
                                       </div>
                                     </Col>
 
                                     <Col lg={5} md={6} sm={6}>
                                       <div
-                                        className="mb-2"
-                                        style={{ marginLeft: "55.5px" }}
+                                        className="mb-1"
+                                        style={{ marginLeft: "30.5px" }}
                                       >
                                         <Input
-                                          style={{
-                                            margin: "0 6.5px 0 6.5px",
-                                          }}
+                                          style={{ marginRight: "6.5px" }}
                                           className="form-control-md"
                                           id="input"
                                           type="checkbox"
                                           onClick={() => {
-                                            setnormal_vehicle(!normal_vehicle);
+                                            setconsole_connect(!console_connect);
                                           }}
-                                          checked={normal_vehicle}
+                                          checked={console_connect}
                                         />
                                         <Label className="header-child">
-                                          Normal Vehicle
+                                          Console Connect
                                         </Label>
                                       </div>
                                     </Col>
-                                  </>
-                                )}
-
-                                <Col lg={5} md={6} sm={6}>
-                                  <div
-                                    className="mb-2"
-                                    style={{ marginLeft: "30.5px" }}
-                                  >
-                                    <Input
-                                      style={{ margin: "0 6.5px 0 6.5px" }}
-                                      className="form-control-md"
-                                      id="input"
-                                      type="checkbox"
-                                      onClick={() => {
-                                        setpart_load_vehicle(
-                                          !part_load_vehicle
-                                        );
-                                      }}
-                                      checked={part_load_vehicle}
-                                    />
-                                    <Label className="header-child">
-                                      Part Load Vehicle
-                                    </Label>
-                                  </div>
-                                </Col>
-
-                                <Col lg={5} md={6} sm={6}>
-                                  <div
-                                    className="mb-2"
-                                    style={{ marginLeft: "30.5px" }}
-                                  >
-                                    <Input
-                                      style={{ margin: "0 6.5px 0 6.5px" }}
-                                      className="form-control-md"
-                                      id="input"
-                                      type="checkbox"
-                                      onClick={() => {
-                                        setkg_wise(!kg_wise);
-                                      }}
-                                      checked={kg_wise}
-                                    />
-                                    <Label className="header-child">
-                                      KG Wise
-                                    </Label>
-                                  </div>
-                                </Col>
-                              </>
-                            )}
-
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Input
-                                  style={{ margin: "0 6.5px 0 6.5px" }}
-                                  className="form-control-md"
-                                  id="input"
-                                  type="checkbox"
-                                  onClick={() => {
-                                    setforward_by_train(!forward_by_train);
-                                  }}
-                                  checked={forward_by_train}
-                                />
-                                <Label className="header-child">
-                                  Forwarding By Train
-                                </Label>
-                              </div>
-                            </Col>
-
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Input
-                                  style={{ margin: "0 6.5px 0 6.5px" }}
-                                  className="form-control-md"
-                                  id="input"
-                                  type="checkbox"
-                                  onClick={() => {
-                                    setchannel_partner(!channel_partner);
-                                  }}
-                                  checked={channel_partner}
-                                />
-                                <Label className="header-child">
-                                  Channel Partner
-                                </Label>
-                              </div>
-                            </Col>
-
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Input
-                                  style={{ margin: "0 6.5px 0 6.5px" }}
-                                  className="form-control-md"
-                                  id="input"
-                                  type="checkbox"
-                                  onClick={() => {
-                                    setdelivery_partner(!delivery_partner);
-                                  }}
-                                  checked={delivery_partner}
-                                />
-                                <Label className="header-child">
-                                  Delivery Partner
-                                </Label>
-                              </div>
-                            </Col>
-
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Input
-                                  style={{ margin: "0 6.5px 0 6.5px" }}
-                                  className="form-control-md"
-                                  id="input"
-                                  type="checkbox"
-                                  onClick={() => {
-                                    setothers_services_offerd(
-                                      !others_services_offerd
-                                    );
-                                  }}
-                                  checked={others_services_offerd}
-                                />
-                                <Label className="header-child">Others</Label>
-                              </div>
-                            </Col>
-
-                            {others_services_offerd && (
-                              <>
-                                <Row>
-                                  <Col lg={4} md={6} sm={6}>
-                                    <div className="mb-2">
-                                      <Label className="header-child">
-                                        Others Services
-                                      </Label>
-
-                                      {row1.map((item, index) => {
-                                        return (
-                                          <Input
-                                            // min={0}
-                                            key={index}
-                                            value={item[0]}
-                                            invalid={other_err}
-                                            className="form-control-md d"
-                                            id="input"
-                                            style={{ marginBottom: "15px" }}
-                                            type="text"
-                                            // value={other_service}
-                                            onChange={(val) => {
-                                              item[0] = val.target.value;
-                                              // setother_service(val.target.value);
-                                              setrefresh(!refresh);
-                                            }}
-                                          />
-                                        );
-                                      })}
-                                    </div>
-                                    <div className="mt-1 error-text" color="danger">
-                                  {other_err ? "Services is required" : null}
-                                </div>
                                   </Col>
+                                </>
+                              )}
 
-                                  <Col lg={1}>
+                              <Col lg={4} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Input
+                                    style={{ margin: "0 6.5px 0 6.5px" }}
+                                    className="form-control-md"
+                                    id="input"
+                                    type="checkbox"
+                                    onClick={() => {
+                                      setforward_by_road(!forward_by_road);
+                                    }}
+                                    checked={forward_by_road}
+                                  />
+                                  <Label className="header-child">
+                                    Forwarding By Road
+                                  </Label>
+                                </div>
+                              </Col>
+                              {forward_by_road && (
+                                <>
+                                  <Col lg={5} md={6} sm={6}>
                                     <div
-                                      className="mb-3"
-                                      style={{ textAlign: "center" }}
+                                      className="mb-2"
+                                      style={{ marginLeft: "30.5px" }}
                                     >
-                                      {row1.length > 1 ? (
-                                        <Label className="header-child">
-                                          Delete
-                                        </Label>
-                                      ) : null}
-                                      {row1.map((item1, index) => (
-                                        <IconContext.Provider
-                                          key={index}
-                                          value={{
-                                            className: "icon multi-input",
-                                          }}
-                                        >
-                                          {row1.length > 1 ? (
-                                            <>
-                                              <div
-                                                style={{ height: "12.5px" }}
-                                              ></div>
-                                              <div
-                                                onClick={() => {
-                                                  // isupdating
-                                                  // && item[4] && delete_package(item[4])
-                                                  // deletePackage(item);
-                                                  delete_other_services(item1);
-                                                }}
-                                              >
-                                                <MdDeleteForever
-                                                  style={{
-                                                    justifyContent: "center",
-                                                    cursor: "pointer",
-                                                  }}
-                                                />
-                                              </div>
-                                            </>
-                                          ) : null}
-                                        </IconContext.Provider>
-                                      ))}
+                                      <Input
+                                        style={{ margin: "0 6.5px 0 6.5px" }}
+                                        className="form-control-md"
+                                        id="input"
+                                        type="checkbox"
+                                        onClick={() => {
+                                          setdirect_vehicle(!direct_vehicle);
+                                        }}
+                                        checked={direct_vehicle}
+                                      />
+                                      <Label className="header-child">
+                                        Direct vehicle
+                                      </Label>
                                     </div>
                                   </Col>
-                                </Row>
 
-                                <div
-                                  style={{
-                                    color: "purple",
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() => {
-                                    add_other_service();
-                                  }}
-                                >
-                                  + Add Another
+                                  {direct_vehicle && (
+                                    <>
+                                      <Col lg={6} md={6} sm={6}>
+                                        <div
+                                          className="mb-2"
+                                          style={{ marginLeft: "55.5px" }}
+                                        >
+                                          <Input
+                                            style={{
+                                              margin: "0 6.5px 0 6.5px",
+                                            }}
+                                            className="form-control-md"
+                                            id="input"
+                                            type="checkbox"
+                                            onClick={() => {
+                                              settemp_control_vehicle(
+                                                !temp_control_vehicle
+                                              );
+                                            }}
+                                            checked={temp_control_vehicle}
+                                          />
+                                          <Label className="header-child">
+                                            Temperature Control Vehicle
+                                          </Label>
+                                        </div>
+                                      </Col>
+
+                                      <Col lg={5} md={6} sm={6}>
+                                        <div
+                                          className="mb-2"
+                                          style={{ marginLeft: "55.5px" }}
+                                        >
+                                          <Input
+                                            style={{
+                                              margin: "0 6.5px 0 6.5px",
+                                            }}
+                                            className="form-control-md"
+                                            id="input"
+                                            type="checkbox"
+                                            onClick={() => {
+                                              setnormal_vehicle(!normal_vehicle);
+                                            }}
+                                            checked={normal_vehicle}
+                                          />
+                                          <Label className="header-child">
+                                            Normal Vehicle
+                                          </Label>
+                                        </div>
+                                      </Col>
+                                    </>
+                                  )}
+
+                                  <Col lg={5} md={6} sm={6}>
+                                    <div
+                                      className="mb-2"
+                                      style={{ marginLeft: "30.5px" }}
+                                    >
+                                      <Input
+                                        style={{ margin: "0 6.5px 0 6.5px" }}
+                                        className="form-control-md"
+                                        id="input"
+                                        type="checkbox"
+                                        onClick={() => {
+                                          setpart_load_vehicle(
+                                            !part_load_vehicle
+                                          );
+                                        }}
+                                        checked={part_load_vehicle}
+                                      />
+                                      <Label className="header-child">
+                                        Part Load Vehicle
+                                      </Label>
+                                    </div>
+                                  </Col>
+
+                                  <Col lg={5} md={6} sm={6}>
+                                    <div
+                                      className="mb-2"
+                                      style={{ marginLeft: "30.5px" }}
+                                    >
+                                      <Input
+                                        style={{ margin: "0 6.5px 0 6.5px" }}
+                                        className="form-control-md"
+                                        id="input"
+                                        type="checkbox"
+                                        onClick={() => {
+                                          setkg_wise(!kg_wise);
+                                        }}
+                                        checked={kg_wise}
+                                      />
+                                      <Label className="header-child">
+                                        KG Wise
+                                      </Label>
+                                    </div>
+                                  </Col>
+                                </>
+                              )}
+
+                              <Col lg={4} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Input
+                                    style={{ margin: "0 6.5px 0 6.5px" }}
+                                    className="form-control-md"
+                                    id="input"
+                                    type="checkbox"
+                                    onClick={() => {
+                                      setforward_by_train(!forward_by_train);
+                                    }}
+                                    checked={forward_by_train}
+                                  />
+                                  <Label className="header-child">
+                                    Forwarding By Train
+                                  </Label>
                                 </div>
-                              </>
-                            )}
-                          </div>
-                        </Col>
-                      </Row>
+                              </Col>
+
+                              <Col lg={4} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Input
+                                    style={{ margin: "0 6.5px 0 6.5px" }}
+                                    className="form-control-md"
+                                    id="input"
+                                    type="checkbox"
+                                    onClick={() => {
+                                      setchannel_partner(!channel_partner);
+                                    }}
+                                    checked={channel_partner}
+                                  />
+                                  <Label className="header-child">
+                                    Channel Partner
+                                  </Label>
+                                </div>
+                              </Col>
+
+                              <Col lg={4} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Input
+                                    style={{ margin: "0 6.5px 0 6.5px" }}
+                                    className="form-control-md"
+                                    id="input"
+                                    type="checkbox"
+                                    onClick={() => {
+                                      setdelivery_partner(!delivery_partner);
+                                    }}
+                                    checked={delivery_partner}
+                                  />
+                                  <Label className="header-child">
+                                    Delivery Partner
+                                  </Label>
+                                </div>
+                              </Col>
+
+                              <Col lg={4} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Input
+                                    style={{ margin: "0 6.5px 0 6.5px" }}
+                                    className="form-control-md"
+                                    id="input"
+                                    type="checkbox"
+                                    onClick={() => {
+                                      setothers_services_offerd(
+                                        !others_services_offerd
+                                      );
+                                    }}
+                                    checked={others_services_offerd}
+                                  />
+                                  <Label className="header-child">Others</Label>
+                                </div>
+                              </Col>
+
+                              {others_services_offerd && (
+                                <>
+                                  <Row>
+                                    <Col lg={4} md={6} sm={6}>
+                                      <div className="mb-2">
+                                        <Label className="header-child">
+                                          Others Services
+                                        </Label>
+
+                                        {row1.map((item, index) => {
+                                          return (
+                                            <Input
+                                              // min={0}
+                                              key={index}
+                                              value={item[0]}
+                                              invalid={other_err}
+                                              className="form-control-md d"
+                                              id="input"
+                                              style={{ marginBottom: "15px" }}
+                                              type="text"
+                                              // value={other_service}
+                                              onChange={(val) => {
+                                                item[0] = val.target.value;
+                                                // setother_service(val.target.value);
+                                                setrefresh(!refresh);
+                                              }}
+                                            />
+                                          );
+                                        })}
+                                      </div>
+                                      <div className="mt-1 error-text" color="danger">
+                                        {other_err ? "Services is required" : null}
+                                      </div>
+                                    </Col>
+
+                                    <Col lg={1}>
+                                      <div
+                                        className="mb-3"
+                                        style={{ textAlign: "center" }}
+                                      >
+                                        {row1.length > 1 ? (
+                                          <Label className="header-child">
+                                            Delete
+                                          </Label>
+                                        ) : null}
+                                        {row1.map((item1, index) => (
+                                          <IconContext.Provider
+                                            key={index}
+                                            value={{
+                                              className: "icon multi-input",
+                                            }}
+                                          >
+                                            {row1.length > 1 ? (
+                                              <>
+                                                <div
+                                                  style={{ height: "12.5px" }}
+                                                ></div>
+                                                <div
+                                                  onClick={() => {
+                                                    // isupdating
+                                                    // && item[4] && delete_package(item[4])
+                                                    // deletePackage(item);
+                                                    delete_other_services(item1);
+                                                  }}
+                                                >
+                                                  <MdDeleteForever
+                                                    style={{
+                                                      justifyContent: "center",
+                                                      cursor: "pointer",
+                                                    }}
+                                                  />
+                                                </div>
+                                              </>
+                                            ) : null}
+                                          </IconContext.Provider>
+                                        ))}
+                                      </div>
+                                    </Col>
+                                  </Row>
+
+                                  <div
+                                    style={{
+                                      color: "purple",
+                                      cursor: "pointer",
+                                    }}
+                                    onClick={() => {
+                                      add_other_service();
+                                    }}
+                                  >
+                                    + Add Another
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </Col>
+                        </Row>
+                      }
                     </Row>
                   </CardBody>
                 ) : null}
@@ -2801,16 +2898,16 @@ const AddVendor = () => {
                     isupdating && user.user_department_name === "ADMIN"
                       ? "btn btn-info m-1"
                       : !isupdating
-                      ? "btn btn-info m-1"
-                      : "btn btn-success m-1"
+                        ? "btn btn-info m-1"
+                        : "btn btn-success m-1"
                   }
                 >
                   {isupdating &&
-                  (user.user_department_name === "ADMIN" || user.is_superuser)
+                    (user.user_department_name === "ADMIN" || user.is_superuser)
                     ? "Update"
                     : !isupdating
-                    ? "Save"
-                    : "Approved"}
+                      ? "Save"
+                      : "Approved"}
                 </button>
 
                 {isupdating &&
