@@ -439,8 +439,8 @@ const AddAsset = () => {
           current_branch: user.home_branch, // It will updated according to the Branch
           is_checked: isChecked,
           created_by: user_id,
-          purchase_date: asset_type === "Logger" ? purchase_date : null,
-          expiry_date: asset_type === "Logger" ? expiry_date : null,
+          callibration_from: asset_type === "Logger" ? purchase_date : null,
+          callibration_to: asset_type === "Logger" ? expiry_date : null,
           asset_callibration: asset_type === "Logger" ? row : [],
           //For C&M
           cm_current_department: user.user_department,
@@ -535,8 +535,8 @@ const AddAsset = () => {
           current_branch: user.home_branch, // It will updated accordind to the Branch
           is_checked: isChecked,
           modified_by: user_id,
-          purchase_date: asset_type === "Logger" ? purchase_date : null,
-          expiry_date: asset_type === "Logger" ? expiry_date : null,
+          callibration_from: asset_type === "Logger" ? purchase_date : null,
+          callibration_to: asset_type === "Logger" ? expiry_date : null,
           asset_callibration: asset_type === "Logger" ? row : [],
           change_fields: change_fields,
           is_damaged: is_defective,
@@ -622,8 +622,8 @@ const AddAsset = () => {
 
         for (let index = 0; index < temp.length; index++) {
           temp_list.push([
-            temp[index].effective_from,
-            temp[index].effective_to,
+            temp[index].callibration_from,
+            temp[index].callibration_to,
             toTitleCase(temp[index].issued_by),
             temp[index].issued_date,
             temp[index].certificate,
