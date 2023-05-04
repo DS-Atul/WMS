@@ -881,7 +881,7 @@ console.log("associate_branch_list_1", associate_branch_list_1)
   }, [state]);
 
   useEffect(() => {
-    if (state !== "" && togstate) {
+    if (state !== "" && togstate && !by_pincode) {
       setcity("");
       setcity_list_s([]);
       setpincode("");
@@ -901,7 +901,7 @@ console.log("associate_branch_list_1", associate_branch_list_1)
   }, [city]);
 
   useEffect(() => {
-    if (city !== "" && togcity) {
+    if (city !== "" && togcity && !by_pincode) {
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
@@ -917,7 +917,7 @@ console.log("associate_branch_list_1", associate_branch_list_1)
   }, [pincode]);
 
   useEffect(() => {
-    if (pincode !== "" && togpincode) {
+    if (pincode !== "" && togpincode && !by_pincode) {
       setlocality("");
       setlocality_list_s([]);
     }

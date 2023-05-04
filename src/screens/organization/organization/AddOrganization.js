@@ -55,7 +55,6 @@ const AddOrganization = () => {
 
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("location_data======", location_data)
   const navigate = useNavigate();
   // Used for Company Type list
   const [company_type, setcompany_type] = useState("");
@@ -264,6 +263,7 @@ const AddOrganization = () => {
       // phone_numbers: Yup.string().min(10,"invalid").max(10,"invalid").required("Number is required"),
     }),
     onSubmit: (values) => {
+      let data= row.some((a) => a[5] == true)
       if (
         office_add_line1 !== "" &&
         office_state !== "" &&
@@ -301,7 +301,8 @@ const AddOrganization = () => {
       else if (pan_no.length !== 10) {
         alert("Pan Number Must be 10 Degit")
       }
-      else if(!active){
+     
+      else if(data===false){
         alert("Please Select Head Office")
       }
       else {
@@ -351,6 +352,7 @@ const AddOrganization = () => {
             ],
           ],
           gst_address: row,
+          org_config: row1,
         },
         {
           headers: {
@@ -358,7 +360,6 @@ const AddOrganization = () => {
           },
         }
       );
-      console.log("response.data.===============", response.data)
       if (response.data.status === "success") {
         dispatch(setToggle(true));
         dispatch(
@@ -448,7 +449,6 @@ const AddOrganization = () => {
       tan_no: values.tan_no,
       type: company_type,
     });
-    console.log("fields_names======", fields_names)
 
     let change_fields = {};
 
@@ -513,7 +513,6 @@ const AddOrganization = () => {
         }
       )
       .then(function (response) {
-        console.log("response======", response)
         if (response.data.status === "success") {
           dispatch(
             setDataExist(`"${values.organisation_name}" Updated Sucessfully`)
@@ -1055,7 +1054,7 @@ const AddOrganization = () => {
   const [gstcity_bottom, setgstcity_bottom] = useState(103)
 
   const [selected, setselected] = useState([]);
-  console.log("selected=======", selected)
+
   const [active, setactive] = useState(false);
 
   const [gst_id_list, setgst_id_list] = useState([]);
@@ -1096,7 +1095,7 @@ const deleteConfig = (item) => {
   }
   setrow1(temp);
 };
-console.log("rowwwwwwwwwwwwwwwww1",row1)
+
   let dimension_list = [
     gst_no,
     gst_city,
@@ -1106,7 +1105,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     active,
   ];
   const [row, setrow] = useState([dimension_list]);
-  console.log("row=========", row)
+
   const addGST = () => {
     dimension_list = ["", ["", "", ""], ["", ""], ["", ""], "", false];
     setrow([...row, dimension_list]);
@@ -1129,16 +1128,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     setrow(temp);
     setgst_id_list(temp_2);
   };
-  console.log("office_add_line1====", office_add_line1)
-  console.log("billing_add_line1=======", billing_add_line1)
-  console.log("office_state====", office_state)
-  console.log("billing_state=======", billing_state)
-  console.log("office_city=======", office_city)
-  console.log("billing_city=======", billing_city)
-  console.log("office_pincode=======", office_pincode)
-  console.log("billing_pincode=======", billing_pincode)
-  console.log("office_locality=======", office_locality)
-  console.log("billing_locality=======", billing_locality)
+
   useLayoutEffect(() => {
     if (same_as_billing_add && location_data.state === null) {
       setbilling_add_line1(office_add_line1);
@@ -1369,7 +1359,6 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
   useEffect(() => {
     if (isupdating) {
       if (updated_gstaddress.length !== 0) {
-        console.log("updated_gstaddress========", updated_gstaddress)
         let temp = [];
         let temp_list = [];
         let temp_list2 = [];
@@ -1415,7 +1404,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
     }
     if (temp.length !== 0) {
       let b = temp[0][1][1].split("-");
-      console.log("temptemptemptemp======", temp)
+
       setoffice_add_line1(toTitleCase(temp[0][4]));
       setoffice_state(b[0]);
       setoffice_state_id(temp[0][1][2]);
@@ -1525,7 +1514,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
           },
         }
       );
-      console.log("Organization ==>>", response);
+
       if (response.data === "duplicate") {
         dispatch(setDataExist(`"${pan_no}" Already Exists`));
         dispatch(setAlertType("warning"));
@@ -1544,6 +1533,7 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
       send_org_pan()
     }
   }, [loaded_pan])
+ 
 
   return (
     <>
@@ -1556,7 +1546,6 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
             let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
             let map_value = filter_value.map((m) => m[0]);
             let all_value = map_value[0];
-            console.log("all_value-=====", all_value)
 
             let fields1 = [
               "organisation_name",
@@ -2161,8 +2150,6 @@ console.log("rowwwwwwwwwwwwwwwww1",row1)
                             >
                               <Label className="header-child">H.O</Label>
                               {row.map((item, index) => {
-                                console.log("item=======", row.length)
-                                console.log("index======", index)
                                 return (
                                   <div
                                   >

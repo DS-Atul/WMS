@@ -75,6 +75,7 @@ const AddBranch = () => {
   const [vendor_n_page, setvendor_n_page] = useState(1);
   const [search_vendor_name, setsearch_vendor_name] = useState("");
 
+
   //GST LIST
   //When brach is own
   const [gst_number, setgst_number] = useState("");
@@ -86,6 +87,15 @@ const AddBranch = () => {
   const [gst_list, setgst_list] = useState([]);
   const [selectgst_search, setselectgst_search] = useState("");
   const [selectgst_id, setselectgst_id] = useState(0);
+  const [gst_loaded, setgst_loaded] = useState(false)
+  const [gst_count, setgst_count] = useState(1)
+  const [gst_bottom, setgst_bottom] = useState(103)
+  const [gst_page, setgst_page] = useState(1)
+
+  const [vendor_gst_page, setvendor_gst_page] = useState(1)
+  const [vendor_gst_loaded, setvendor_gst_loaded] = useState(false)
+  const [vendor_gst_count, setvendor_gst_count] = useState(1)
+  const [vendor_gst_bottom, setvendor_gst_bottom] = useState(103)
 
   const [org_list_s, setorg_list_s] = useState([])
   const [org, setorg] = useState("")
@@ -96,7 +106,7 @@ const AddBranch = () => {
   const [org_loaded, setorg_loaded] = useState(false)
   const [org_count, setorg_count] = useState(1)
   const [org_bottom, setorg_bottom] = useState(103)
-  
+
   // Location Info
 
   const [city_bottom, setcity_bottom] = useState(103)
@@ -333,7 +343,7 @@ const AddBranch = () => {
           validation.values.branch_head_email = "";
           validation.values.branch_head_phone_number = "";
         } else {
-          // navigate("/master/branches");
+          navigate("/master/branches");
         }
       } else if (response.data === "duplicate") {
         dispatch(setShowAlert(true));
@@ -572,11 +582,11 @@ const AddBranch = () => {
               ]),
             ];
           }
-    
+
           setoperating_city_count(operating_city_count + 2);
           setoperating_city_list(temp_2);
         }
-        else{
+        else {
           setoperating_city_list([])
         }
       });
@@ -798,7 +808,7 @@ const AddBranch = () => {
   useEffect(() => {
     getOrganization()
   }, [org_page, org_search_item])
-  
+
 
   useLayoutEffect(() => {
     if (city_id !== 0) {
@@ -927,7 +937,7 @@ const AddBranch = () => {
   }, [state]);
 
   useEffect(() => {
-    if (state !== "" && togstate) {
+    if (state !== "" && togstate && !same_as_gst && !by_pincode) {
       setcity("");
       setcity_list_s([]);
       setpincode("");
@@ -947,7 +957,7 @@ const AddBranch = () => {
   }, [city]);
 
   useEffect(() => {
-    if (city !== "" && togcity) {
+    if (city !== "" && togcity && !same_as_gst) {
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
@@ -955,9 +965,9 @@ const AddBranch = () => {
     }
   }, [city]);
 
-  
+
   useEffect(() => {
-    if (pincode !== "" && togpincode) {
+    if (pincode !== "" && togpincode && !same_as_gst) {
       setlocality("");
       setlocality_list_s([]);
     }
@@ -987,7 +997,7 @@ const AddBranch = () => {
     axios
       .get(
         ServerAddress +
-        `organization/get_gstaddress/?type=${`ORGANIZATION`}&vendor_id=&search=${""}&p=${1}&records=${30}&gst_no_search=${[
+        `organization/get_gstaddress/?type=${`ORGANIZATION`}&vendor_id=&organization_id=${org_id}&search=${""}&p=${gst_page}&records=${10}&gst_no_search=${[
           gst_search,
         ]}`,
         {
@@ -996,14 +1006,31 @@ const AddBranch = () => {
       )
       .then((response) => {
         data = response.data.results;
+        console.log("daata org========", data)
 
         if (response.data.results.length > 0) {
+          if (response.data.next === null) {
+            setgst_loaded(false);
+          } else {
+            setgst_loaded(true);
+          }
+          if (gst_page === 1) {
+            gst_temp = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.gst_no),
+            ]);
+          } else {
+            gst_temp = [
+              ...gst_data_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.gst_no)]),
+            ];
+          }
+    
           setgst_alldetails(data);
           let pan_no = response.data.results[0].organization_pan_no;
           setown_pan_number(pan_no);
-
-          gst_temp = response.data.results.map((v) => [v.id, v.gst_no]);
         }
+        setgst_count(gst_count + 2);
         setgst_data_list(gst_temp);
       })
       .catch((err) => {
@@ -1018,7 +1045,7 @@ const AddBranch = () => {
 
       const response = await axios.get(
         ServerAddress +
-        `organization/get_gstaddress/?type=${`VENDOR`}&vendor_id=${id}&search=${""}&p=${1}&records=${30}&gst_no_search=${[
+        `organization/get_gstaddress/?type=${`VENDOR`}&vendor_id=${id}&organization_id=&search=${""}&p=${vendor_gst_page}&records=${10}&gst_no_search=${[
           selectgst_search,
         ]}`,
         {
@@ -1028,12 +1055,30 @@ const AddBranch = () => {
 
       data = response.data.results;
       if (response.data.results.length > 0) {
+
+        if (response.data.next === null) {
+          setvendor_gst_loaded(false);
+        } else {
+          setvendor_gst_loaded(true);
+        }
+
         setvendoegst_alldetails(data);
         let pan_no = response.data.results[0].vandor_pan_no;
         setvendor_pan_no(pan_no);
 
-        vgst_temp = response.data.results.map((v) => [v.id, v.gst_no]);
+        if (vendor_gst_page === 1) {
+          vgst_temp = response.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.gst_no),
+          ]);
+        } else {
+          vgst_temp = [
+            ...gst_list,
+            ...response.data.results.map((v) => [v.id, toTitleCase(v.gst_no)]),
+          ];
+        }
       }
+      setvendor_gst_count(vendor_gst_count + 2);
       setgst_list(vgst_temp);
     } catch (err) {
       alert(`Error Occur in Get, ${err}`);
@@ -1041,10 +1086,10 @@ const AddBranch = () => {
   };
 
   useEffect(() => {
-    if (branch_type === "Own Branch") {
+    if (org_id !== 0) {
       get_gstDetails();
     }
-  }, [gst_search, branch_type, isupdating]);
+  }, [org_id, gst_page, gst_search]);
 
   useEffect(() => {
     if (vendor_id !== null && vendor_id !== "") {
@@ -1053,7 +1098,7 @@ const AddBranch = () => {
     if (vendor_id !== null && !location_data.state) {
       setselect_gst("");
     }
-  }, [selectgst_search, vendor_id, isupdating]);
+  }, [selectgst_search, vendor_id, isupdating, vendor_gst_page]);
 
   useEffect(() => {
     let selected_gst = [];
@@ -1451,7 +1496,7 @@ const AddBranch = () => {
                         </div>
                       </Col>
 
-                      {branch_type === "Vendor" ? (
+                      {branch_type === "Vendor" && vendor_name !== "" ? (
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2" id="branch_info">
@@ -1481,13 +1526,19 @@ const AddBranch = () => {
                                 setsearch_item={setselectgst_search}
                                 error_message={"Please Select Vendor GST No"}
                                 error_s={select_gst_error}
+                                page={vendor_gst_page}
+                                setpage={setvendor_gst_page}
+                                loaded={vendor_gst_loaded}
+                                count={vendor_gst_count}
+                                bottom={vendor_gst_bottom}
+                                setbottom={setvendor_gst_bottom}
                               />
                             </div>
                           </Col>
                         </>
                       ) : null}
 
-                      {branch_type === "Own Branch" ? (
+                      {branch_type === "Own Branch" && org !== "" ? (
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2" id="branch_info">
@@ -1523,7 +1574,13 @@ const AddBranch = () => {
                                 set_id={setgst_id}
                                 setsearch_item={setgst_search}
                                 error_message={"Please Select GST"}
+                                page={gst_page}
+                                setpage={setgst_page}
                                 error_s={own_gst_error}
+                                loaded={gst_loaded}
+                                count={gst_count}
+                                bottom={gst_bottom}
+                                setbottom={setgst_bottom}
                               />
                             </div>
                           </Col>
@@ -1592,6 +1649,7 @@ const AddBranch = () => {
                             id="input"
                             name="address_line_1"
                             placeholder="Enter Address Line 1"
+                            disabled={same_as_gst}
                           />
 
                           <div className="mt-1 error-text" color="danger">
@@ -1624,6 +1682,7 @@ const AddBranch = () => {
                               count={state_count}
                               bottom={state_bottom}
                               setbottom={setstate_bottom}
+                              disable_me={same_as_gst}
                             />
                           </span>
                           {/* <div className="mt-1 error-text" color="danger">
@@ -1652,6 +1711,7 @@ const AddBranch = () => {
                             count={city_count}
                             bottom={city_bottom}
                             setbottom={setcity_bottom}
+                            disable_me={same_as_gst}
                           />
                           {/* <div className="mt-1 error-text" color="danger">
                             {city_error ? "Please Select Any City" : null}
@@ -1679,6 +1739,7 @@ const AddBranch = () => {
                               count={pincode_count}
                               bottom={pincode_bottom}
                               setbottom={setpincode_bottom}
+                              disable_me={same_as_gst}
                             />
                           </div>
                         ) : (
@@ -1769,6 +1830,7 @@ const AddBranch = () => {
                               count={locality_count}
                               bottom={locality_bottom}
                               setbottom={setlocality_bottom}
+                              disable_me={same_as_gst}
                             />
                           </div>
                         )}

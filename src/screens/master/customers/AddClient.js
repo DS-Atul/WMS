@@ -2876,7 +2876,7 @@ const AddClient = (props) => {
 
   
   useEffect(() => {
-    if (state !== "" && togstate) {
+    if (state !== "" && togstate  && !by_pincode) {
       setcity("");
       setcity_list_s([]);
       setpincode("");
@@ -2896,7 +2896,7 @@ const AddClient = (props) => {
   }, [city]);
 
   useEffect(() => {
-    if (city !== "" && togcity) {
+    if (city !== "" && togcity  && !by_pincode) {
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
@@ -2905,7 +2905,7 @@ const AddClient = (props) => {
   }, [city]);
 
   useEffect(() => {
-    if (pincode !== "" && togpincode) {
+    if (pincode !== "" && togpincode  && !by_pincode) {
       setlocality("");
       setlocality_list_s([]);
     }

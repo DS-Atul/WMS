@@ -1,3 +1,4 @@
+
 /* eslint-disable */
 import React, { useState, useLayoutEffect, useEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
@@ -242,7 +243,7 @@ const AddVendor = () => {
     }),
 
     onSubmit: (values) => {
-
+      let data= row.some((a) => a[5] == true)
       if (msme_registerd === true && msme_registerd_number === "") {
         setmsme_registerd_number_error(true);
         document.getElementById("vendor_info").scrollIntoView();
@@ -275,7 +276,7 @@ const AddVendor = () => {
       } else if(pan_no.length !== 10){
         alert("Pan Number Must be 10 Degit")
       }
-      else if(!active){
+      else if(data===false){
         alert("Please Select Head Office")
       }
        else {

@@ -3316,7 +3316,7 @@ console.log("booking_through=====", booking_through)
   }, [state]);
 
   useEffect(() => {
-    if (state !== "" && togstate) {
+    if (state !== "" && togstate && !by_pincode) {
       setcity("");
       setcity_list_s([]);
       setpincode("");
@@ -3336,7 +3336,7 @@ console.log("booking_through=====", booking_through)
   }, [city]);
 
   useEffect(() => {
-    if (city !== "" && togcity) {
+    if (city !== "" && togcity && !by_pincode) {
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
@@ -3352,7 +3352,7 @@ console.log("booking_through=====", booking_through)
   }, [pincode]);
 
   useEffect(() => {
-    if (pincode !== "" && togpincode) {
+    if (pincode !== "" && togpincode && !by_pincode) {
       setlocality("");
       setlocality_list_s([]);
     }
@@ -3379,7 +3379,7 @@ console.log("booking_through=====", booking_through)
   }, [consginee_st]);
 
   useEffect(() => {
-    if (consginee_st !== "" && togstate_c) {
+    if (consginee_st !== "" && togstate_c && !by_pincode_f_c) {
       setconsginee_c("");
       setcity_list__c([]);
       setconsignee_pincode("");
@@ -3399,7 +3399,7 @@ console.log("booking_through=====", booking_through)
   }, [consginee_c]);
 
   useEffect(() => {
-    if (consginee_c !== "" && togcity_c) {
+    if (consginee_c !== "" && togcity_c && !by_pincode_f_c) {
       setconsignee_pincode("");
       setpincode_list_f_c([]);
       setlocality_c("");
@@ -3415,7 +3415,7 @@ console.log("booking_through=====", booking_through)
   }, [consignee_pincode]);
  
   useEffect(() => {
-    if (consignee_pincode !== "" && togpincode_c) {
+    if (consignee_pincode !== "" && togpincode_c && !by_pincode_f_c) {
       setlocality_c("");
       setlocality_list_s_c([]);
     }

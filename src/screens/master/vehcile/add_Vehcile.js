@@ -34,7 +34,7 @@ const Add_Vehcile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("location_data =====================",location_data)
+  console.log("location_data =====================", location_data)
   // vendor State
   const [vendor_list, setvendor_list] = useState([]);
   const [vendor_name, setvendor_name] = useState("");
@@ -67,7 +67,7 @@ const Add_Vehcile = () => {
     try {
       console.log("hello jiii", location_data.state.vehcile);
       if (location_data.state.vehcile) {
-       
+
         setis_updating(true);
         let vehicle_data = location_data.state.vehcile;
         setvehicle(vehicle_data)
@@ -76,16 +76,16 @@ const Add_Vehcile = () => {
         setvehcile_model(toTitleCase(vehicle_data.vehcile_model));
         setactive_selected(vehicle_data.active_selected);
         setvendor_name(toTitleCase(vehicle_data.transporter));
-        if(vehicle_data.vehcile_status === true){
+        if (vehicle_data.vehcile_status === true) {
           setactive_selected("Active")
         }
-        else{
+        else {
           setactive_selected("Unactive")
 
         }
       }
 
-    } catch (error) {}
+    } catch (error) { }
   }, []);
 
   //   Api For Posting Data
@@ -135,7 +135,7 @@ const Add_Vehcile = () => {
   const upadte_vehcile = (values) => {
     let id = vehcile.id;
     let fields_names = Object.entries({
-      transporter:vendor_name ? vendor_name : "",
+      transporter: vendor_name ? vendor_name : "",
       vehcile_model: vehcile_model,
       vehcile_no: vehcile_no,
       vehcile_type: vehcile_type_s,
@@ -191,7 +191,7 @@ const Add_Vehcile = () => {
             dispatch(
               setDataExist(
                 `"${toTitleCase(
-                 vehcile_no
+                  vehcile_no
                 )}" already exists`
               )
             );
@@ -209,7 +209,7 @@ const Add_Vehcile = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_vendor/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
+        `master/all_vendor/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -344,16 +344,13 @@ const Add_Vehcile = () => {
                         name="VEHCILE_NUMBER"
                         type="text"
                         id="input"
-                        maxLength={40}
+                        maxLength={10}
                         value={vehcile_no}
                         onChange={(e) => {
                           setvehcile_no(e.target.value);
                         }}
                         invalid={vehicle_number_error}
                       />
-                      <FormFeedback type="invalid">
-                        Please Enter Vehicle No.
-                      </FormFeedback>
                       {vehicle_len_error && (
                         <div style={{ fontSize: "10.5px", color: "#f46a6a" }}>
                           Please Enter a valid Vehicle No.
@@ -369,16 +366,17 @@ const Add_Vehcile = () => {
                         name="VEHCILE_MODEL"
                         type="text"
                         id="input"
-                        maxLength={40}
                         value={vehcile_model}
                         onChange={(e) => {
                           setvehcile_model(e.target.value);
                         }}
                         invalid={vehicle_model_error}
                       />
-                      <FormFeedback type="invalid">
-                        Please Enter Vehicle Model
-                      </FormFeedback>
+                      {vehicle_model_error && (
+                        <div style={{ fontSize: "10.5px", color: "#f46a6a" }}>
+                          Please Enter a valid Vehicle No.
+                        </div>
+                      )}
                     </div>
                   </Col>
 
@@ -421,26 +419,26 @@ const Add_Vehcile = () => {
                     vendor_name === ""
                   ) {
                     setvendor_error(true);
-                  } else if (vehcile_no === "") {
+                  } else if (vehcile_no === "" || vehcile_no.length !== 10) {
                     setvehicle_number_error(true);
                   } else if (vehcile_model === "") {
                     setvehicle_model_error(true);
                   } else {
-                    is_updating ? upadte_vehcile() : 
-                    add_vehcile();
+                    is_updating ? upadte_vehcile() :
+                      add_vehcile();
                   }
                 }}
               >
                 {is_updating ? "Update" : "Save"
 
                 }
-                
+
               </Button>
 
               <Button
                 className="btn btn-info m-1 cu_btn"
                 type="button"
-                onClick={()=>navigate(-1)}
+                onClick={() => navigate(-1)}
               >
                 Cancel
               </Button>
