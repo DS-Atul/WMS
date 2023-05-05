@@ -164,22 +164,12 @@ const AddForward = (manifest) => {
 
   const [ewb_no, setewb_no] = useState([])
 useEffect(() => {
-  let eway_bill_no=manifest.manifest.orders
-  let ewb =[]
-  console.log("eway_bill_no////////",eway_bill_no)
-  for (let index = 0; index < eway_bill_no.length; index++) {
-    const element = eway_bill_no[index].eway_bill_no;
-    console.log("elementttttttttttttttttttt?????????",element)
-    ewb.push(element)
-  }
-  let filtered= ewb.filter(function(el){
-    return el != ""
-  })
-  console.log("ewbbbb nolllllllll",filtered)
-  setewb_no(filtered)
+  let m = data?.map(item=>item.eway_bill_no).filter(Boolean);
+  console.log("mmmmmmmmmmmmmmmmmmmm",m)
+  setewb_no(m)
 
  
-}, [])
+}, [data])
 
   const deletePackage = (item) => {
     setlength("length");

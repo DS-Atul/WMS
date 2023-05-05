@@ -26,7 +26,7 @@ import NSearchInput from "../../../components/formComponent/nsearchInput/NSearch
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 
 import TransferList from "../../../components/formComponent/transferList/TransferList";
-import { ServerAddress } from "../../../constants/ServerAddress";
+import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
 import {
   setAlertType,
   setDataExist,
@@ -191,19 +191,11 @@ const EditRoughDocket = () => {
 
 const [ewb_no_l, setewb_no_l] = useState([]);
 useLayoutEffect(() => {
-  let ord_ewb=[]
-  console.log("data",data)
+  let m = data?.map(item=>item.eway_bill_no).filter(Boolean);
+  console.log("mmmmmmmmmmmmmmmmmmmm",m)
   
-  for (let index = 0; index < data.length; index++) {
-    const element = data[index].eway_bill_no;
-    ord_ewb.push(element);
-    console.log("ord_ewb{{{{}}}}}}}}}}",ord_ewb)
- }
- let filtered= ord_ewb.filter(function(el){
-  return el != ""
-})
-console.log("ewbbbb nolllllllll",filtered)
-setewb_no_l(filtered);
+ 
+setewb_no_l(m);
 
 }, [data])
 
@@ -212,7 +204,7 @@ const update_eway_b = (values) => {
  
   axios
     .post(
-      `https://dev.api.easywaybill.in/ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
+      EServerAddress +`ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
  
       {
           
@@ -234,7 +226,6 @@ const update_eway_b = (values) => {
         }
     )
     .then(function (response) {
-      console.log("response=======eway bill detail", response);
       if (response.data.status === 1) {
         dispatch(setToggle(true));
         dispatch(setShowAlert(true));
@@ -358,7 +349,6 @@ const update_eway_b = (values) => {
       )
       .then((response) => {
         data = response.data.results;
-        console.log("data printing", data);
         setvendor_data(data);
         if (response.data.results.length > 0) {
           if (vendor_n_page == 1) {

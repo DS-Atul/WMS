@@ -312,6 +312,9 @@ const AddOrganization = () => {
     },
   });
 
+  console.log("location______data",location_data.state)
+  
+
   // Post Branch
   const send_organisation_data = async (values) => {
     try {
@@ -334,6 +337,8 @@ const AddOrganization = () => {
           contact_person_mobile: values.contact_person_ph_no,
           logo_uploaded_by: user.id,
           created_by: user.id,
+          org_config:row1,
+          organization_name:[],
           is_same: same_as_billing_add,
           address: [
             [
@@ -503,6 +508,8 @@ const AddOrganization = () => {
           gst_address: row,
           modified_by: user.id,
           deleted_gst: deleted_gst_id,
+          org_config:row1,
+          deleted_config:deleted_config_id,
           change_fields: change_fields,
         },
 
@@ -1062,6 +1069,11 @@ const AddOrganization = () => {
   const [deleted_gst_id, setdeleted_gst_id] = useState([]);
 //  Organisation Configration
 
+
+const [config_id_list, setconfig_id_list] = useState([]);
+const [config_ids, setconfig_ids] = useState([]);
+const [deleted_config_id, setdeleted_config_id] = useState([]);
+
 const [config_type, setconfig_type] = useState([
   ("AADHAR"),
   ("EWAY BILL"),
@@ -1088,14 +1100,16 @@ const deleteConfig = (item) => {
   setusername("");
   setpassword("");
   let temp = [...row1];
+  let temp2=[...config_id_list]
   const index = temp.indexOf(item);
   if (index > -1) {
     temp.splice(index, 1);
+    temp2.splice(index,1)
    
   }
   setrow1(temp);
+  setconfig_id_list(temp2);
 };
-
   let dimension_list = [
     gst_no,
     gst_city,
@@ -1173,7 +1187,7 @@ const deleteConfig = (item) => {
       alert(`Error Occur in Get States, ${err}`);
     }
   };
-
+  console.log("row1111111",row1)
   const getGstCities = async (place_id, filter_by) => {
     let cities_list = [];
 
@@ -1387,12 +1401,41 @@ const deleteConfig = (item) => {
     }
   }, [isupdating]);
 
+
+
   useEffect(() => {
     if (gst_id_list !== "") {
       let id_list = gst_ids.filter((p) => gst_id_list.indexOf(p) === -1);
       setdeleted_gst_id(id_list);
     }
   }, [gst_id_list, gst_ids]);
+
+
+
+  useEffect(() => {
+    if (isupdating) {
+      if (location_data.state.organization.organization_config.length !== 0) {
+        let temp = [];
+        let temp_list = [];
+        let temp_list2 = [];
+        temp = location_data.state.organization.organization_config;
+
+        for (let index = 0; index < location_data.state.organization.organization_config.length; index++) {
+          temp_list.push([
+            temp[index].config_type,
+            temp[index].username,
+            temp[index].password,
+            temp[index].url,
+            temp[index].id,
+          ]);
+          temp_list2.push(temp[index].id);
+        }
+        setrow1(temp_list);
+        setconfig_ids(temp_list2);
+        setconfig_id_list(temp_list2);
+      }
+    }
+  }, [isupdating]);
 
   useEffect(() => {
     let temp = [];
@@ -3250,7 +3293,7 @@ const deleteConfig = (item) => {
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
                   <div className="header-text-icon header-text">
-                    Discription
+                  Description
                     <IconContext.Provider
                       value={{
                         className: "header-add-icon",

@@ -37,6 +37,7 @@ import SearchInput from "../../../components/formComponent/searchInput/SearchInp
 import {
   bucket_address,
   ServerAddress,
+  EServerAddress
 } from "../../../constants/ServerAddress";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
 import DataList from "../../../components/listDisplay/dataList/DataList";
@@ -59,6 +60,7 @@ import {
   setOrgs,
 } from "../../../store/ewayBill/EwayBill";
 import { gstin_no } from "../../../constants/CompanyDetails";
+import OrderImgDataFormat from "../../../data/images/orderImage/OrderDataFormat";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -344,6 +346,7 @@ const AddOrder = () => {
 
   let dimension_list1 = [selectedFile, caption1];
   const [row1, setrow1] = useState([dimension_list1]);
+  const [ord_image, setord_image] = useState([])
 
   const [documentOrder, setdocumentOrder] = useState("");
   let dimension_list3 = [documentOrder, caption1];
@@ -523,33 +526,7 @@ const AddOrder = () => {
 
   // Order Images
 
-  const getOrderImages = () => {
-    axios
-      .get(
-        ServerAddress + `booking/get-order-images/${location.state.order.id}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((res) => {
-        let data = res.data.Data;
-        if (data) {
-          let aa = [];
-          let aaa = [];
 
-          data?.map((e) => {
-            let addImg = [bucket_address + e.image, e.caption, e.id];
-            aa.unshift(addImg);
-            aaa.unshift(["", "", e.id]);
-          });
-          setrow1(aa);
-          setrow3(aaa);
-        }
-      })
-      .catch((err) => {
-        // console.log("errrrrrrrrrrrrrankit----", err)
-      });
-  };
 
   const deleteOrderImg = (item1) => {
     axios
@@ -610,7 +587,7 @@ const AddOrder = () => {
 
   useLayoutEffect(() => {
     if (isupdating && order_active_btn === "second") {
-      getOrderImages();
+      // getOrderImages();
     } else if (isupdating && order_active_btn === "third") {
       getInvoiceImages();
     }
@@ -1066,6 +1043,7 @@ console.log("booking_through=====", booking_through)
 
   //Post Order Image
   const send_order_image = (awb) => {
+    alert("It runned")
     let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "");
     const docket_imageform = new FormData();
     if (newrow3.length !== 0) {
@@ -1119,15 +1097,15 @@ console.log("booking_through=====", booking_through)
           },
         })
         .then((res) => {
-          // console.log("Order Image Response1111", res.data);
           if (res.data.Data === "Done") {
-            // successMSg();
-            alert(`Your Docket Image Saved Successfully`);
-            // wipe_data();
-            // setvisible(false);
-          } else {
-            // console.log("Ankkiii");
-          }
+            dispatch(setShowAlert(true));
+            dispatch(
+              setDataExist(`Image Has Been Saved Successfully !`)
+            );
+            dispatch(setAlertType("success"));
+            // alert(`Your Docket Image Saved Successfully`);
+          
+          } 
         })
         .catch((err) => { });
     }
@@ -1251,7 +1229,7 @@ console.log("booking_through=====", booking_through)
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          // console.log("///////Harshiiiiiiiiittttttttt",response.data)
+          console.log("///////Harshiiiiiiiiittttttttt",response.data)
           eway_confirm && update_ewayBill(response.data.docket_no, response.data.eway_bill_no)
           if (row3[0][0] !== "" || row4[0][0] !== "") {
             send_order_image(response.data.data.docket_no);
@@ -1388,7 +1366,7 @@ console.log("booking_through=====", booking_through)
           origin_locality: shipper_locality.toUpperCase(),
           destination_city: destinationcity.toUpperCase(),
           destination_state: consignee_state.toUpperCase(),
-          destination_pincode: consignee_pincode.toUpperCase(),
+          destination_pincode: consignee_pincode,
           destination_locality: consignee_locality.toUpperCase(),
           billto_name: billto.toUpperCase(),
           shipper_location: shipper_locality_id,
@@ -1397,7 +1375,7 @@ console.log("booking_through=====", booking_through)
           assetold_ids: assetold_ids,
           assetnew_ids: assetnew_ids,
           linked_order: order_type === "Normal" ? null : linked_order,
-          order_type: order_type === "Normal" ? null : order_type.toUpperCase(),
+          order_type: order_type === "Normal" ? null : order_type?.toUpperCase(),
 
           cm_transit_status: status_toggle === true ? cm_current_status : "",
           cm_current_status: cm_current_status.toUpperCase(),
@@ -1419,6 +1397,8 @@ console.log("booking_through=====", booking_through)
       )
       .then(function (response) {
         if (response.data.status === "success") {
+          console.log("harshittttttttttttttttttttttttt",response.data.data)
+          eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no)
           send_order_image(order.docket_no);
           dispatch(setToggle(true));
           dispatch(setDataExist(`Order Updated Sucessfully`));
@@ -2324,7 +2304,7 @@ console.log("booking_through=====", booking_through)
   const step_1 = () => {
     axios
       .post(
-        "https://dev.api.easywaybill.in/ezewb/v1/auth/initlogin",
+       EServerAddress + "ezewb/v1/auth/initlogin",
 
         {
           userid: "test.easywaybill@gmail.com",
@@ -2339,7 +2319,7 @@ console.log("booking_through=====", booking_through)
       )
       .then(function (response) {
         console.log("response-------eway bill step 1", response.data.response);
-        console.log("token", response.data);
+        console.log("tokenhhhhhhhhhhhh", response.data);
         dispatch(setEAccessToken(response.data.response.token));
         dispatch(setOrgs(response.data.response.orgs));
       })
@@ -2351,7 +2331,7 @@ console.log("booking_through=====", booking_through)
   const business_token = () => {
     axios
       .post(
-        "https://dev.api.easywaybill.in/ezewb/v1/auth/completelogin",
+      EServerAddress +  "ezewb/v1/auth/completelogin",
         {
           token: `${e_acess_token}`,
           orgid: "4",
@@ -2381,7 +2361,7 @@ console.log("booking_through=====", booking_through)
     let inv_list = [];
     axios
       .get(
-        `https://dev.api.easywaybill.in/ezewb/v1/ewb/data?ewbNo=${eway}&gstin=${gstin_no}`,
+        EServerAddress +`ezewb/v1/ewb/data?ewbNo=${eway}&gstin=${gstin_no}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -3196,6 +3176,8 @@ console.log("booking_through=====", booking_through)
 
   const update_ewayBill = (dkt_no, eway_no) => {
     let inv_list = [];
+    console.log("dkt_nooooooooooooooo",dkt_no);
+    console.log("eway_nooooooooooo",eway_no)
     axios
       .put(
         `https://dev.api.easywaybill.in/ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
@@ -3206,9 +3188,9 @@ console.log("booking_through=====", booking_through)
           "fromState": user_l_statecode,
           "transDocNo": dkt_no,
           "transDocDate": null,
-          "vehicleNo": "MH03YX1234",
+          "vehicleNo": null,
           "reasonCode": "1",
-          "reasonRem": "test",
+          "reasonRem": "Assigning  Trans Doc no",
           "userGstin": "05AAAAT2562R1Z3",
           "ewbNo": eway_no
         },
@@ -5618,29 +5600,25 @@ console.log("booking_through=====", booking_through)
                     ""
                   )}
                   {order_active_btn === "second" ? (
+<>
+
+{
+isupdating &&
+
+<OrderImgDataFormat 
+id={location.state.order.id}
+/> 
+}
+          
                     <Row className="hide">
                       <Col md={5} sm={5}>
                         <div className="mb-3">
                           <Label className="header-child">Image</Label>
-                          {/* {row1.map((item1, index1) => (
-                            <Input
-                              style={{ marginBottom: "15px" }}
-                              key={index1}
-                              className="form-control-md"
-                              type="file"
-                              id="input"
-                              onClick={(event) => {
-                                // setshowModalOrder(true)
-                                setSelectedFile(event.target.files[0]);
-                                item1[0] = event.target.files;
-                              }}
-                            />
-                          ))} */}
+             
                           {row1[row1.length - 1][0] !== ""
                             ? row1
                               .filter((e) => e[0] !== "")
                               .map((item1, index1) => {
-                                // console.log("item!1111111111111111111111111111111111",item1)
                                 return (
                                   <div style={{ width: "100%" }} key={index1}>
                                     <img
@@ -5862,6 +5840,7 @@ console.log("booking_through=====", booking_through)
                         </span>
                       </div>
                     </Row>
+                    </>
                   ) : (
                     ""
                   )}
