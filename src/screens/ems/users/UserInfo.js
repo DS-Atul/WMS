@@ -1443,6 +1443,29 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
                         </div>
                       </Col>
                     }
+                    <Col lg={6} md={6} sm={6}>
+                                <div className="mb-3">
+                                  <Label className="header-child">
+                                   User Profile Pic:
+                                  </Label>
+
+                                  <Input
+                                    className="form-control-md"
+                                    id="input"
+                                    type="file"
+                                    // id="file"
+                                    multiple
+                                    onChange={(e) => {
+                                      const chosenFiles =
+                                        Array.prototype.slice.call(
+                                          e.target.files
+                                        );
+
+                                      // setdocumentFiles(chosenFiles);
+                                    }}
+                                  />
+                                </div>
+                              </Col>
                     <Col lg={12} md={6} sm={12}>
                       <div style={{ width: "" }}>
                         <Label className="header-child">
@@ -1462,6 +1485,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
                         />
                       </div>
                     </Col>
+                    
 
                     {/* <Col lg={6} md={6} sm={12}>
                       <div style={{ width: "", marginLeft: "" }}>

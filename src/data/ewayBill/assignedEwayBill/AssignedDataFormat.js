@@ -79,10 +79,10 @@ console.log("current date", currentDate);
             <td>{ewb.fromTrdName}</td>
             <td>{ewb.toTrdName}</td>
             <td>{expired ? 
-            <img src={cross} height="20px" width="20px" />
-            : 
-            
             <img src={correct} height="20px" width="20px" />
+            : 
+            <img src={cross} height="20px" width="20px" />
+            
             
             }</td>
             <td> {ewb.fromPlace + "," + ewb.fromPincode}</td>

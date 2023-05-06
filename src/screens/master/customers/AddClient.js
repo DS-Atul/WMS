@@ -795,6 +795,7 @@ const AddClient = (props) => {
 
   // Client Document Api Function
   const addClientDoc = (client_id) => {
+    alert("started")
     const docket_imageform = new FormData();
     docket_imageform.append(`client_id`, client_id);
     let ind = 0;
@@ -815,7 +816,10 @@ const AddClient = (props) => {
           "content-type": "multipart/form-data",
         },
       })
-      .then(function (resp) { })
+      .then(function (resp) { 
+
+        console.log("resp",resp)
+      })
       .catch((err) => alert(`Error occur while add client doc , ${err}`));
   };
 
@@ -949,6 +953,10 @@ const AddClient = (props) => {
       )
       .then(function (resp) {
         if (resp.data.status === "success") {
+
+          if (documentFiles.length > 0) {
+            addClientDoc(resp.data.data.id);
+          }
           if (local_cal.cal_type != "DONT" || air_cal.cal_type != "DONT" || surface_cal.cal_type !== "DONT") {
             if (update_cal) {
               updateCalculation(values.customer_name);

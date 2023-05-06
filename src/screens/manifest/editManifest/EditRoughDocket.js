@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MdDeleteForever, MdAdd } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import {
   Card,
   Col,
@@ -26,7 +27,10 @@ import NSearchInput from "../../../components/formComponent/nsearchInput/NSearch
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 
 import TransferList from "../../../components/formComponent/transferList/TransferList";
-import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
+import {
+  EServerAddress,
+  ServerAddress,
+} from "../../../constants/ServerAddress";
 import {
   setAlertType,
   setDataExist,
@@ -44,8 +48,12 @@ import { gstin_no } from "../../../constants/CompanyDetails";
 const EditRoughDocket = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const user_id = useSelector((state) => state.authentication.userdetails.id);
-  const user_l_state = useSelector((state) => state.authentication.userdetails.branch_location_state);
-  const user_l_statecode = useSelector((state) => state.authentication.userdetails.branch_location_state_code);
+  const user_l_state = useSelector(
+    (state) => state.authentication.userdetails.branch_location_state
+  );
+  const user_l_statecode = useSelector(
+    (state) => state.authentication.userdetails.branch_location_state_code
+  );
   const accessToken = useSelector((state) => state.authentication.access_token);
   const success = useSelector((state) => state.alert.show_alert);
 
@@ -121,7 +129,7 @@ const EditRoughDocket = () => {
   const [coloader_list, setcoloader_list] = useState([]);
   const [coloader_selected, setcoloader_selected] = useState("");
   const [coloader_id, setcoloader_id] = useState("");
-  
+
   const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
   const [from_branch, setfrom_branch] = useState("");
   const [to_branch, setto_branch] = useState("");
@@ -135,7 +143,7 @@ const EditRoughDocket = () => {
   const [company_slected_list, setcompany_slected_list] = useState("");
   const [flight_name, setflight_name] = useState("");
   const [data, setdata] = useState([]);
-  const [data2, setdata2] = useState([])
+  const [data2, setdata2] = useState([]);
 
   const [coloader_mode_list, setcoloader_mode_list] = useState([
     // "Direct Awb",
@@ -169,16 +177,15 @@ const EditRoughDocket = () => {
     axios
       .get(
         ServerAddress +
-        // `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
-        `manifest/get_all_manifest_order/?manifest_no=${manifest_no}`,
+          // `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
+          `manifest/get_all_manifest_order/?manifest_no=${manifest_no}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
-          setdata(response.data[0].orders); 
-          setdata2(response.data[0].orders); 
-
+        setdata(response.data[0].orders);
+        setdata2(response.data[0].orders);
       })
       .catch((err) => {
         alert(`Error While Loading Client , ${err}`);
@@ -189,79 +196,120 @@ const EditRoughDocket = () => {
     manifest_no && get_orderof_manifest();
   }, [manifest_no, success, refresh]);
 
-const [ewb_no_l, setewb_no_l] = useState([]);
-useLayoutEffect(() => {
-  let m = data?.map(item=>item.eway_bill_no).filter(Boolean);
-  console.log("mmmmmmmmmmmmmmmmmmmm",m)
-  
- 
-setewb_no_l(m);
+  const [ewb_no_l, setewb_no_l] = useState([]);
+  const [is_checked, setis_checked] = useState(false);
 
-}, [data])
-
-
-const update_eway_b = (values) => {
- 
-  axios
-    .post(
-      EServerAddress +`ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
- 
-      {
-          
-        "fromPlace": user_l_state,
-        "fromState": user_l_statecode,
-        "vehicleNo": rental ? vehicle_no :vendor_name,
-        "transMode": "1",
-        "transDocNo": null,
-        "transDocDate": null, 
-        "ewbNos": ewb_no_l,
-        "userGstin": gstin_no,
-       },
-
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${b_acess_token}`,
-        },
-        }
-    )
-    .then(function (response) {
-      if (response.data.status === 1) {
-        dispatch(setToggle(true));
-        dispatch(setShowAlert(true));
-        dispatch(
-          setDataExist(`Updated  ${ewb_no_l}sucessfully`)
-        )
-        dispatch(setAlertType("success"));
-         
-          updateManifest(values)
-      }else{
-        dispatch(setToggle(true));
-        dispatch(setShowAlert(true));
-        dispatch(
-          setDataExist(`Updated  ${ewb_no_l} Failed `)
-        )
-        dispatch(setAlertType("danger"));
-         
-          updateManifest()
-      }
-     
-    })
-    .catch((error) => {
-      dispatch(setToggle(true));
-      dispatch(setShowAlert(true));
-      dispatch(
-        setDataExist(`Updated  ${ewb_no_l} Failed `)
-      )
-      dispatch(setAlertType("danger"));
-        setShow(false)
-        updateManifest()
+  // const today_r = new Date();
+  // const  date = today_r.toLocaleDateString('en-GB'); // 'en-GB' specifies the format as day-month-year
+  // console.log("dateeeeeeeeeeeee",date);
+  useLayoutEffect(() => {
    
-    })
-};
+    let m = data?.map((item) => [item.eway_bill_no, item.docket_no]);
+    let filteredArr = m?.filter((subArr) => subArr[0].length !== 0);
+    setewb_no_l(filteredArr);
+  }, [data]);
 
+  useEffect(() => {
+    if (is_checked) {
+     
+      ewb_no_l.forEach((item,index) => {
+ 
+        axios 
+          .put(
+            EServerAddress + `ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
+            {
+              transMode: "1",
+              fromPlace: user_l_state,
+              fromState: user_l_statecode,
+              transDocNo: item[1],
+              transDocDate: date,
+              vehicleNo: rental ? vehicle_no : vendor_name,
+              reasonCode: "1",
+              reasonRem: "Assigning  Trans Doc no",
+              userGstin: "05AAAAT2562R1Z3",
+              ewbNo: item[0],
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${b_acess_token}`,
+              },
+            }
+          )
+          .then(function (response) {
+            console.log("response(((((9999999999", response);
+            // alert(item[1]);
+            dispatch(setToggle(true));
+            dispatch(setShowAlert(true));
+            dispatch(
+              setDataExist(
+                `${item[0]} Sucessfully Attached To Docket No =>${item[1]}`
+              )
+            );
+            dispatch(setAlertType("success"));
+            if (index === (ewb_no_l.length)-1) {
+             updateManifest()
+              setis_checked(false)
+            }
+          })
+          .catch((error) => {});
+
+      });
+    }
+  }, [is_checked]);
+
+  const update_eway_b = (values) => {
+    axios
+      .post(
+        EServerAddress + `ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
+
+        {
+          fromPlace: user_l_state,
+          fromState: user_l_statecode,
+          vehicleNo: rental ? vehicle_no : vendor_name,
+          transMode: "1",
+          transDocNo: null,
+          transDocDate: null,
+          ewbNos: ewb_no_l,
+          userGstin: gstin_no,
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${b_acess_token}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === 1) {
+          dispatch(setToggle(true));
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Updated  ${ewb_no_l}sucessfully`));
+          dispatch(setAlertType("success"));
+
+          updateManifest(values);
+        } else {
+          dispatch(setToggle(true));
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Updated  ${ewb_no_l} Failed `));
+          dispatch(setAlertType("danger"));
+
+          updateManifest();
+        }
+      })
+      .catch((error) => {
+        dispatch(setToggle(true));
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Updated  ${ewb_no_l} Failed `));
+        dispatch(setAlertType("danger"));
+        setShow(false);
+        updateManifest();
+      });
+  };
 
   const updateManifest = () => {
+    
     axios
       .put(
         ServerAddress + "manifest/update_manifest/" + manifest_id,
@@ -285,9 +333,9 @@ const update_eway_b = (values) => {
           manifest_packages: row,
           manifest_no: manifest_no,
           deleted_packages: deleted_packages_id,
-          vehicle_no:vehicle_no,
-          vehcile_no_f:vendor_id,
-          is_rented_vehcile:rental ? "True" :"False",
+          vehicle_no: vehicle_no,
+          vehcile_no_f: vendor_id,
+          is_rented_vehcile: rental ? "True" : "False",
         },
         {
           headers: {
@@ -320,10 +368,7 @@ const update_eway_b = (values) => {
     } else {
       setsame_box(false);
     }
-    
-
-  }, [total_bags, total_box, manifest_data])
- 
+  }, [total_bags, total_box, manifest_data]);
 
   const [vendor_list, setvendor_list] = useState([]);
   const [vendor_name, setvendor_name] = useState("");
@@ -513,12 +558,16 @@ const update_eway_b = (values) => {
                       </Col>
                       <Col lg={4} md={8} sm={8}>
                         <div className="mb-2">
-                          {
-                            rental ? 
-                            <Label className="header-child"> Market Vehcile No* :</Label>
-                            :
-                            <Label className="header-child">Vehcile No* :</Label>
-                          }
+                          {rental ? (
+                            <Label className="header-child">
+                              {" "}
+                              Market Vehcile No* :
+                            </Label>
+                          ) : (
+                            <Label className="header-child">
+                              Vehcile No* :
+                            </Label>
+                          )}
                           {rental ? null : (
                             <SearchInput
                               data_list={vendor_list}
@@ -549,7 +598,6 @@ const update_eway_b = (values) => {
                           )}
                         </div>
                       </Col>
-                     
                     </Row>
                   </CardBody>
                 ) : null}
@@ -611,7 +659,8 @@ const update_eway_b = (values) => {
                   className="btn btn-info m-1 cu_btn"
                   onClick={() => {
                     // updateManifest();
-                    update_eway_b()
+                    // update_eway_b()
+                    setis_checked(true);
                   }}
                 >
                   Save

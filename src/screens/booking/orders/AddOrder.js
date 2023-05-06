@@ -1230,7 +1230,7 @@ console.log("booking_through=====", booking_through)
       .then(function (response) {
         if (response.data.status === "success") {
           console.log("///////Harshiiiiiiiiittttttttt",response.data)
-          eway_confirm && update_ewayBill(response.data.docket_no, response.data.eway_bill_no)
+          // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no,response.data.data.booking_at)
           if (row3[0][0] !== "" || row4[0][0] !== "") {
             send_order_image(response.data.data.docket_no);
           }
@@ -1398,7 +1398,7 @@ console.log("booking_through=====", booking_through)
       .then(function (response) {
         if (response.data.status === "success") {
           console.log("harshittttttttttttttttttttttttt",response.data.data)
-          eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no)
+          // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no)
           send_order_image(order.docket_no);
           dispatch(setToggle(true));
           dispatch(setDataExist(`Order Updated Sucessfully`));
@@ -3174,47 +3174,48 @@ console.log("booking_through=====", booking_through)
   }, [eway_detail_l]);
 
 
-  const update_ewayBill = (dkt_no, eway_no) => {
-    let inv_list = [];
-    console.log("dkt_nooooooooooooooo",dkt_no);
-    console.log("eway_nooooooooooo",eway_no)
-    axios
-      .put(
-        `https://dev.api.easywaybill.in/ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
-        {
+  // const update_ewayBill = (dkt_no, eway_no,date) => {
 
-          "transMode": "1",
-          "fromPlace": user_l_state,
-          "fromState": user_l_statecode,
-          "transDocNo": dkt_no,
-          "transDocDate": null,
-          "vehicleNo": null,
-          "reasonCode": "1",
-          "reasonRem": "Assigning  Trans Doc no",
-          "userGstin": "05AAAAT2562R1Z3",
-          "ewbNo": eway_no
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${b_acess_token}`,
-          },
-        }
-      )
-      .then(function (response) {
-        console.log("response(((((9999999999", response);
-        dispatch(setToggle(true));
-        dispatch(setShowAlert(true));
-        dispatch(
-          setDataExist(`${eway_no} Sucessfully Attached To Docket No =>${dkt_no}`)
-        )
-        dispatch(setAlertType("success"));
+  //   let inv_list = [];
+  //   console.log("dkt_nooooooooooooooo",dkt_no);
+  //   console.log("eway_nooooooooooo",eway_no)
+  //   axios
+  //     .put(
+  //       EServerAddress +`ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
+  //       {
 
-      })
-      .catch((error) => {
+  //         "transMode": "3",
+  //         "fromPlace": user_l_state,
+  //         "fromState": user_l_statecode,
+  //         "transDocNo": dkt_no,
+  //         "transDocDate": null,
+  //         "vehicleNo": null,
+  //         "reasonCode": "1",
+  //         "reasonRem": "Assigning  Trans Doc no",
+  //         "userGstin": "05AAAAT2562R1Z3",
+  //         "ewbNo": eway_no
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${b_acess_token}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       console.log("response(((((9999999999", response);
+  //       dispatch(setToggle(true));
+  //       dispatch(setShowAlert(true));
+  //       dispatch(
+  //         setDataExist(`${eway_no} Sucessfully Attached To Docket No =>${dkt_no}`)
+  //       )
+  //       dispatch(setAlertType("success"));
 
-      });
-  };
+  //     })
+  //     .catch((error) => {
+
+  //     });
+  // };
 
   useEffect(() => {
     if (client !== "") {
