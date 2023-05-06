@@ -63,7 +63,17 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
         }
       })
       .catch((err) => {
-        alert(`Error While delete branch ${err}`);
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Order Already Exists Some Where`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setDeleteId(false));
+        dispatch(setIds([]));
+        dispatch(setSelect(false));
+        setselected([]);
       });
   };
 

@@ -71,7 +71,17 @@ const VendorDataFormat = ({ data, data1, can_delete }) => {
         }
       })
       .catch((err) => {
-        alert(`Error While delete Asset ${err}`);
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Vendor Already Exists Some Where`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setDeleteId(false));
+        dispatch(setIds([]));
+        dispatch(setSelect(false));
+        setselected([]);
       });
   };
 

@@ -1,9 +1,9 @@
 
 // const ServerAddress = "http://erp.etechcube.com/";
 // const ServerAddress = "http://trackingerp.ssclogistics.in/";
-const ServerAddress = "http://192.168.29.99:8000/";
 const EServerAddress = "http://dev.api.easywaybill.in/";
 
+const ServerAddress = "http://192.168.29.50:8000/";
 
 // const ServerAddress = "http://192.168.0.91:8000/";
 

@@ -55,7 +55,17 @@ const BranchDataFormat = ({ data, data1, can_delete }) => {
         }
       })
       .catch((err) => {
-        alert(`Error While delete branch ${err}`);
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Branch Already Exists Some Where`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setDeleteId(false));
+        dispatch(setIds([]));
+        dispatch(setSelect(false));
+        setselected([]);
       });
   };
 

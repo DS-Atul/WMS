@@ -79,7 +79,17 @@ const OrderOriginsDataFormat = ({ data, data1, can_delete }) => {
         }
       })
       .catch((err) => {
-        alert(`Error While delete Shipper & Consignee ${err}`);
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Shipper / Consignee Already Exists Some Where`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setDeleteId(false));
+        dispatch(setIds([]));
+        dispatch(setSelect(false));
+        setselected([]);
       });
   };
 

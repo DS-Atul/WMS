@@ -190,6 +190,10 @@ const AddOrder = () => {
   const [selectClient, setselectClient] = useState([]);
   const [search_client, setsearch_client] = useState("");
   const [client_page, setclient_page] = useState(1);
+  const [client_bottom, setclient_bottom] = useState(103)
+  const [client_loaded, setclient_loaded] = useState(false)
+  const [client_count, setclient_count] = useState(1)
+
 
   // Clients Commidities Lists
   const [clients_commidities_lists, setclients_commidities_lists] = useState(
@@ -285,11 +289,15 @@ const AddOrder = () => {
   const [box_no_selected, setbox_no_selected] = useState("");
   const [box_selected_id, setbox_selected_id] = useState("");
   const [box_list_page, setbox_list_page] = useState(1);
-  const [search_box_list, setsearch_box_list] = useState("");
+  const [search_box, setsearch_box] = useState("");
+  const [box_loaded, setbox_loaded] = useState(false)
+  const [box_count, setbox_count] = useState(1)
 
   //Logger Number
   const [Logger_list, setLogger_list] = useState([]);
   const [Logger_Selected, setLogger_Selected] = useState([]);
+  const [logger_loaded, setlogger_loaded] = useState(false)
+  const [logger_count, setlogger_count] = useState(1)
   const [Logger_selected_id, setLogger_selected_id] = useState("");
   const [Logger_page, setLogger_page] = useState(1);
   const [search_logger, setsearch_logger] = useState("");
@@ -465,6 +473,9 @@ const AddOrder = () => {
   // const [delivery_mode_error, setdelivery_mode_error] = useState(false);
   const [client_error, setclient_error] = useState(false);
   const [billto_error, setbillto_error] = useState(false);
+  const [billto_bottom, setbillto_bottom] = useState(103)
+  const [billto_count, setbillto_count] = useState(1)
+  const [billto_loaded, setbillto_loaded] = useState(false)
   const [transport_mode_error, settransport_mode_error] = useState(false);
   const [order_hist, setorder_hist] = useState();
   const [origin_city_error, setorigin_city_error] = useState(false);
@@ -692,7 +703,7 @@ const AddOrder = () => {
     "Issue",
   ]);
   const [order_type, setorder_type] = useState(order_type_list[0]);
-console.log("booking_through=====", booking_through)
+  console.log("booking_through=====", booking_through)
   // validation
   const validation = useFormik({
     enableReinitialize: true,
@@ -748,7 +759,7 @@ console.log("booking_through=====", booking_through)
       } else if (client === "") {
         setclient_error(true);
         doc_no_scroll.scrollIntoView();
-      }else if (state === "" && !booking_through) {
+      } else if (state === "" && !booking_through) {
         setstate_error(true);
         doc_no_scroll.scrollIntoView();
       } else if (city === "" && !booking_through) {
@@ -757,7 +768,7 @@ console.log("booking_through=====", booking_through)
       } else if (pincode === "" && !booking_through) {
         setpincode_list_error(true);
         doc_no_scroll.scrollIntoView();
-      }else if (locality === "" && !booking_through) {
+      } else if (locality === "" && !booking_through) {
         setlocality_error(true);
         doc_no_scroll.scrollIntoView();
       }
@@ -777,8 +788,8 @@ console.log("booking_through=====", booking_through)
         setlocality_error_c(true);
         doc_no_scroll.scrollIntoView();
       }
-      
-       else if (commodity === "") {
+
+      else if (commodity === "") {
         setcommodity_error(true);
       } else if (delivery_type === "LOCAL" && local_delivery_type === "") {
         setlocal_delivery_type_error(true);
@@ -807,8 +818,8 @@ console.log("booking_through=====", booking_through)
       } else {
         // setShowOrder(!isupdating && true);
         // aa(values)
-      isupdating ? update_order(values) : send_order_data(values);
-      console.log("hello ji");
+        isupdating ? update_order(values) : send_order_data(values);
+        console.log("hello ji");
       }
     },
   });
@@ -1203,7 +1214,7 @@ console.log("booking_through=====", booking_through)
             : "",
           barcode_no: row6,
           linked_order: order_type === "Normal" ? null : linked_order,
-          order_type: order_type === "Normal" ? null : order_type.toUpperCase(),
+          order_type: order_type.toUpperCase(),
 
           cm_current_department: user.user_department,
           cm_current_status:
@@ -1375,7 +1386,7 @@ console.log("booking_through=====", booking_through)
           assetold_ids: assetold_ids,
           assetnew_ids: assetnew_ids,
           linked_order: order_type === "Normal" ? null : linked_order,
-          order_type: order_type === "Normal" ? null : order_type?.toUpperCase(),
+          order_type: order_type.toUpperCase(),
 
           cm_transit_status: status_toggle === true ? cm_current_status : "",
           cm_current_status: cm_current_status.toUpperCase(),
@@ -1416,7 +1427,7 @@ console.log("booking_through=====", booking_through)
   const [data, setdata] = useState(false);
 
   const getBillto = () => {
-    let b_temp2 = [...billto_list];
+    let b_temp2 = [];
     let b_data = [];
     axios
       .get(
@@ -1428,12 +1439,25 @@ console.log("booking_through=====", booking_through)
       )
       .then((response) => {
         b_data = response.data.results;
-        for (let index = 0; index < b_data.length; index++) {
-          b_temp2.push([b_data[index].id, toTitleCase(b_data[index].name)]);
+        if (response.data.results.length > 0) {
+          if (response.data.next === null) {
+            setbillto_loaded(false);
+          } else {
+            setbillto_loaded(true);
+          }
+          if (billto_page == 1) {
+            b_temp2 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            b_temp2 = [
+              ...billto_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
         }
-        b_temp2 = [...new Set(b_temp2.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
+        setbillto_count(billto_count + 2);
         setbillto_list(b_temp2);
       })
       .catch((err) => {
@@ -1454,17 +1478,28 @@ console.log("booking_through=====", booking_through)
       )
       .then((response) => {
         data = response.data.results;
-
-        console.log("clients data", data);
-
-        let com_list_cl = data.map((v) => [v.id, v.commodities]);
-        console.log("com_list_cl", com_list_cl);
-        setclients_commidities_lists(com_list_cl);
-        for (let index = 0; index < data.length; index++) {
-          temp2.push([data[index].id, toTitleCase(data[index].name)]);
+        if (response.data.results.length > 0) {
+          if (response.data.next === null) {
+            setclient_loaded(false);
+          } else {
+            setclient_loaded(true);
+          }
+          if (client_page == 1) {
+            temp2 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp2 = [
+              ...client_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
         }
-        temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+        setclient_count(client_count + 2);
         setclient_list(temp2);
+        // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
@@ -1594,7 +1629,7 @@ console.log("booking_through=====", booking_through)
   };
 
   //  Get Asset Details
-  const getassetData = () => {
+  const getassetData = (type) => {
     let data = [];
     let box = [...box_list_1];
     let logger = [...Logger_list];
@@ -1602,44 +1637,117 @@ console.log("booking_through=====", booking_through)
     axios
       .get(
         ServerAddress +
-        `master/get_asset_details/?p=${asset_info_selected === "With Logger" ? Logger_page : box_list_page
+        `master/get_asset_details/?p=${type === "logger" ? Logger_page : box_list_page
         }&records=${10}&asset_type=${String(
           asset_info_selected
-        ).toUpperCase()}&product_id_search=${search_logger}`,
+        ).toUpperCase()}&product_id_search=${type === "logger" ? search_logger : search_box}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
         data = response.data.results;
-        for (let index = 0; index < data.length; index++) {
-          const element = data[index];
-          if (element.asset_type === "TEMPERATURE CONTROL BOX") {
-            box.push([
-              element.id,
-              element.asset_id +
-              "-" +
-              element.box_type +
-              "-" +
-              element.product_id,
-            ]);
-          } else {
-            logger.push([
-              element.id,
-              element.asset_id +
-              "-" +
-              element.box_type +
-              "-" +
-              element.manufacturer_name,
-            ]);
+        if (data.length > 0) {
+
+          if (type === "logger") {
+            if (response.data.next === null) {
+              setlogger_loaded(false);
+            } else {
+              setlogger_loaded(true);
+            }
+            if (Logger_page === 1) {
+              logger = response.data.results.map((v) => v.asset_type === "LOGGER" && [
+                v.id,
+                v.asset_id +
+                "-" +
+                v.box_type +
+                "-" +
+                v.manufacturer_name,
+              ]);
+            } else {
+              logger = [
+                ...Logger_list,
+                ...response.data.results.map((v) => v.asset_type === "LOGGER" && [
+                  v.id,
+                  v.asset_id +
+                  "-" +
+                  v.box_type +
+                  "-" +
+                  v.manufacturer_name,
+                ]),
+              ];
+            }
+            setlogger_count(logger_count + 2);
+            setLogger_list(logger);
           }
+          else {
+            if (response.data.next === null) {
+              setbox_loaded(false);
+            } else {
+              setbox_loaded(true);
+            }
+
+            if (box_list_page === 1) {
+              box = response.data.results.map((v) => v.asset_type === "TEMPERATURE CONTROL BOX" && [
+                v.id,
+                v.asset_id +
+                "-" +
+                v.box_type +
+                "-" +
+                v.product_id, v.id,
+                v.asset_id +
+                "-" +
+                v.box_type +
+                "-" +
+                v.manufacturer_name,
+              ]);
+            } else {
+              box = [
+                ...box_list_1,
+                ...response.data.results.map((v) => v.asset_type === "TEMPERATURE CONTROL BOX" && [
+                  v.id,
+                  v.asset_id +
+                  "-" +
+                  v.box_type +
+                  "-" +
+                  v.product_id,
+                ]),
+              ];
+            }
+            setbox_count(box_count + 2);
+            setbox_list_1(box);
+          }
+
         }
-        logger = [...new Set(logger.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        box = [...new Set(box.map((v) => `${v}`))].map((v) => v.split(","));
-        setbox_list_1(box);
-        setLogger_list(logger);
+
+        // for (let index = 0; index < data.length; index++) {
+        //   const element = data[index];
+        //   if (element.asset_type === "TEMPERATURE CONTROL BOX") {
+        //     box.push([
+        //       element.id,
+        //       element.asset_id +
+        //       "-" +
+        //       element.box_type +
+        //       "-" +
+        //       element.product_id,
+        //     ]);
+        //   } else {
+        //     logger.push([
+        //       element.id,
+        //       element.asset_id +
+        //       "-" +
+        //       element.box_type +
+        //       "-" +
+        //       element.manufacturer_name,
+        //     ]);
+        //   }
+        // }
+        // logger = [...new Set(logger.map((v) => `${v}`))].map((v) =>
+        //   v.split(",")
+        // );
+        // box = [...new Set(box.map((v) => `${v}`))].map((v) => v.split(","));
+        // setbox_list_1(box);
+        // setLogger_list(logger);
         if (isupdating && order_id !== "") {
           get_orderasset(order_id, box, logger);
         }
@@ -1693,19 +1801,37 @@ console.log("booking_through=====", booking_through)
 
   useLayoutEffect(() => {
     if (asset_info_selected !== "None" && asset_info_selected) {
-      getassetData();
+      getassetData("logger");
     }
-  }, [asset_info_selected, search_logger, search_box_list, box_list_page]);
+  }, [asset_info_selected, search_logger, Logger_page]);
+
+  useLayoutEffect(() => {
+    if (asset_info_selected !== "None" && asset_info_selected) {
+      getassetData("box");
+    }
+  }, [asset_info_selected, search_box, box_list_page]);
 
   useEffect(() => {
     getBillto();
   }, [billto_page, search_billto]);
 
-  useEffect(() => {
-    // setdata(false);
+  useLayoutEffect(() => {
     if (billto_id !== 0) {
-      getClient();
+      setclient_page(1);
+      setclient_count(1);
+      setclient_bottom(103)
+      setclient_loaded(true);
     }
+  }, [billto_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (billto_id !== 0) {
+      timeoutId = setTimeout(() => {
+      getClient();
+    }, 1);
+  }
+  return () => clearTimeout(timeoutId);
   }, [billto_id, search_client, client_page]);
 
   useEffect(() => {
@@ -2501,7 +2627,7 @@ console.log("booking_through=====", booking_through)
   const [consginee_st, setconsginee_st] = useState("");
   const [consginee_c, setconsginee_c] = useState("");
   const [consignee_p_id, setconsignee_p_id] = useState(0);
-  
+
   const [togstate_c, settogstate_c] = useState(false)
   const [togcity_c, settogcity_c] = useState(false)
   const [togpincode_c, settogpincode_c] = useState(false)
@@ -2634,7 +2760,7 @@ console.log("booking_through=====", booking_through)
       )
       .then((resp) => {
         if (filter_by !== "pincode") {
-  
+
           if (val === "Shipper") {
             settogpincode(true)
             if (resp.data.next === null) {
@@ -3229,13 +3355,13 @@ console.log("booking_through=====", booking_through)
     }
     if (city !== "") {
       setcity_error(false);
-    }  
+    }
     if (pincode !== "") {
       setpincode_list_error(false);
-    }  
+    }
     if (locality !== "") {
       setlocality_error(false);
-    } 
+    }
     if (consginee_st !== "") {
       setstate_error_c(false);
     }
@@ -3275,7 +3401,7 @@ console.log("booking_through=====", booking_through)
     commodity,
     local_delivery_type,
     d_cod,
-    billto, 
+    billto,
     state,
     city,
     pincode,
@@ -3396,7 +3522,7 @@ console.log("booking_through=====", booking_through)
       setlocality_list_s_c([]);
     }
   }, [consignee_pincode]);
- 
+
   useEffect(() => {
     if (consignee_pincode !== "" && togpincode_c && !by_pincode_f_c) {
       setlocality_c("");
@@ -3592,10 +3718,14 @@ console.log("booking_through=====", booking_through)
                         setsearch_item={setsearch_billto}
                         error_message={"Plesae Select Any Bill To"}
                         error_s={billto_error}
+                        loaded={billto_loaded}
+                        count={billto_count}
+                        bottom={billto_bottom}
+                        setbottom={setbillto_bottom}
                       />
-                      {/* <div className="mt-1 error-text" color="danger">
+                      <div className="mt-1 error-text" color="danger">
                         {billto_error ? "Please Select Client " : null}
-                      </div> */}
+                      </div>
                     </Col>
 
                     {billto && (
@@ -3614,10 +3744,14 @@ console.log("booking_through=====", booking_through)
                           setsearch_item={setsearch_client}
                           error_message={"Plesae Select Any Client"}
                           error_s={client_error}
+                          loaded={client_loaded}
+                          count={client_count}
+                          bottom={client_bottom}
+                          setbottom={setclient_bottom}
                         />
-                        {/* <div className="mt-1 error-text" color="danger">
+                        <div className="mt-1 error-text" color="danger">
                           {client_error ? "Please Select Client " : null}
-                        </div> */}
+                        </div>
                       </Col>
                     )}
 
@@ -3659,14 +3793,14 @@ console.log("booking_through=====", booking_through)
                                   onChange={(e) => {
                                     console.log("maxlength", e.target.value);
                                     if (e.target.value.length === 12) {
-                                       setewaybill_no(e.target.value);
+                                      setewaybill_no(e.target.value);
                                       check_ewb_attached(e.target.value);
                                     } else if (e.target.value.length < 12) {
-                                       setewaybill_no(e.target.value);
+                                      setewaybill_no(e.target.value);
                                     }
                                   }}
                                   placeholder="Enter Eway Bill Number"
-                               
+
                                 />
                               </div>
                             </Col>
@@ -4857,7 +4991,9 @@ console.log("booking_through=====", booking_through)
                               setlist_b={setbox_list_2}
                               page={box_list_page}
                               setpage={setbox_list_page}
-                              setsearch_item={setsearch_logger}
+                              setsearch_item={setsearch_box}
+                              loaded={box_loaded}
+                              count={box_count}
                             // setlist_id={}
                             />
                           </Col>
@@ -4876,6 +5012,8 @@ console.log("booking_through=====", booking_through)
                               page={Logger_page}
                               setpage={setLogger_page}
                               setsearch_item={setsearch_logger}
+                              loaded={logger_loaded}
+                              count={logger_count}
                             // setlist_id={}
                             />
                           </Col>
@@ -4898,7 +5036,8 @@ console.log("booking_through=====", booking_through)
                                 page={Logger_page}
                                 setpage={setLogger_page}
                                 setsearch_item={setsearch_logger}
-                                width={"width"}
+                                loaded={logger_loaded}
+                                count={logger_count}
                               // setlist_id={}
                               />
                             </div>
@@ -4912,10 +5051,11 @@ console.log("booking_through=====", booking_through)
                                 setlist_a={setbox_list_1}
                                 list_b={box_list_2}
                                 setlist_b={setbox_list_2}
-                                width={"width"}
                                 page={box_list_page}
                                 setpage={setbox_list_page}
-                                setsearch_item={setsearch_logger}
+                                setsearch_item={setsearch_box}
+                                loaded={box_loaded}
+                                count={box_count}
                               // setlist_id={}
                               />
                             </div>

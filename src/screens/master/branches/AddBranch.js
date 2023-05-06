@@ -1025,7 +1025,7 @@ const AddBranch = () => {
               ...response.data.results.map((v) => [v.id, toTitleCase(v.gst_no)]),
             ];
           }
-    
+
           setgst_alldetails(data);
           let pan_no = response.data.results[0].organization_pan_no;
           setown_pan_number(pan_no);
@@ -1205,6 +1205,7 @@ const AddBranch = () => {
       state: { Branch: branch },
     });
   };
+
   return (
     <>
       <div>

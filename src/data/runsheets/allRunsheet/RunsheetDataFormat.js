@@ -58,7 +58,17 @@ const RunsheetDataFormat = ({ can_delete, data, data1 }) => {
         }
       })
       .catch((error) => {
-        alert(`Error Happen while posting Commodity  Data ${error}`);
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Runsheet Already Exists Some Where`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setDeleteId(false));
+        dispatch(setIds([]));
+        dispatch(setSelect(false));
+        setselected([]);
       });
   };
 

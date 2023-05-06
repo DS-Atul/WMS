@@ -57,7 +57,17 @@ const LocationDataFormat = ({ data, data1, can_delete }) => {
         }
       })
       .catch((err) => {
-        alert(`Error While delete Location ${err}`);
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Location Already Exists Some Where`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setDeleteId(false));
+        dispatch(setIds([]));
+        dispatch(setSelect(false));
+        setselected([]);
       });
   };
   useEffect(() => {

@@ -53,7 +53,17 @@ const OrganizationDataFormat = ({ data, data1 }) => {
         }
       })
       .catch((err) => {
-        alert(`Error While delete branch ${err}`);
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Organization Already Exists Some Where`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setDeleteId(false));
+        dispatch(setIds([]));
+        dispatch(setSelect(false));
+        setselected([]);
       });
   };
 
