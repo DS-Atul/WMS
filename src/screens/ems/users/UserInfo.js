@@ -33,11 +33,12 @@ import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { useLayoutEffect } from "react";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
-
+import Main_c from "../../../components/crop/main";
 const UserInfo = () => {
   const locations = useLocation();
 
   const { state: up_params } = useLocation();
+  const [profile_pic, setprofile_pic] = useState("")
   const [is_update, setis_update] = useState(false);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [is_active, setis_active] = useState(true);
@@ -135,6 +136,11 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   //     a commonly used password. *Your password can’t be entirely numeric.
   //   </Tooltip>
   // );
+
+  // Images state
+  const [modal, setmodal] = useState(false);
+  const [document, setdocument] = useState("");
+  const [doc_result_image, setdoc_result_image] = useState("");
 
   const getBranches = () => {
     let temp3 = [];
@@ -492,6 +498,11 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
       .then(function (resp) {
         console.log("uresp-----------", resp)
         if (resp.status === 201) {
+          if (document) {
+            send_user_pic(resp.data.user_id);
+          }
+          add_user_permission(resp.data);
+          
           add_user_permission(resp.data.user_id);
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`${values.username} Added sucessfully`));
@@ -609,6 +620,10 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
         if (resp.status == 202 && user.is_superuser === false) {
           // setlodated(true)
           update_user_permission();
+          if (document) {
+            send_user_pic(up_params.user.id);
+          }
+
           // navigate("/ems/users");
         }
         else if (resp.status == 202 && user.is_superuser === true) {
@@ -821,6 +836,34 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
     password,
     confirm_password,
   ]);
+
+
+  const send_user_pic = (u_id) =>{
+    const docket_imageform = new FormData();
+    docket_imageform.append(`user_image`,document,document?.name)   
+    docket_imageform.append(`user_id`,u_id)
+
+    axios
+    .post(ServerAddress + "ems/add_profilepic/", docket_imageform, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "content-type": "multipart/form-data",
+      },
+    })
+    .then((res) => {
+      if (res.data.Data === "Done") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Image Has Been Saved Successfully !`)
+        );
+        dispatch(setAlertType("success"));
+        // alert(`Your Docket Image Saved Successfully`);
+      
+      } 
+    })
+    .catch((err) => { });
+
+  }
   useLayoutEffect(() => {
     try {
       let user_u = up_params.user;
@@ -1443,29 +1486,41 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
                         </div>
                       </Col>
                     }
-                    <Col lg={6} md={6} sm={6}>
-                                <div className="mb-3">
-                                  <Label className="header-child">
-                                   User Profile Pic:
-                                  </Label>
+                    {modal ? <Main_c modal={modal}
+                            modal_set={setmodal}
+                            upload_image={setdocument}
+                            result_image={setdoc_result_image}
 
-                                  <Input
-                                    className="form-control-md"
-                                    id="input"
-                                    type="file"
-                                    // id="file"
-                                    multiple
-                                    onChange={(e) => {
-                                      const chosenFiles =
-                                        Array.prototype.slice.call(
-                                          e.target.files
-                                        );
-
-                                      // setdocumentFiles(chosenFiles);
-                                    }}
-                                  />
-                                </div>
-                              </Col>
+                            /> : null}
+                     <Col lg={6} md={6} sm={6}>
+                            <div className="mb-3">
+                              <Label className="header-child">
+                                Profile Pic
+                              </Label>
+                              <div
+                             className="mb-3"
+                             onClick={() => {
+                               setmodal(true);
+                             }}
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                height: "38px",
+                                border: "1px solid #dad7d7",
+                                alignItems:"center"
+                              }}
+                            >
+                              <div style={{marginLeft:"3px"}} >Choose File:</div>
+                              <div style={{fontSize:"25px",color:"#dad7d7",marginLeft:"5px"}}>|</div>
+                             {document ? (
+                              <div style={{fontWeight:"bold",color:"blue"}}>Image Uploaded</div>
+                             ):(
+                              <div> No File Chosen</div>
+                             )
+                            }
+                            </div>
+                            </div>
+                          </Col>
                     <Col lg={12} md={6} sm={12}>
                       <div style={{ width: "" }}>
                         <Label className="header-child">

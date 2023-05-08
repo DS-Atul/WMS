@@ -17,6 +17,7 @@ import {
   Input,
   FormFeedback,
   Form,
+  Button,
 } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
@@ -105,6 +106,7 @@ const AddClient = (props) => {
   const local_cal = useSelector((state) => state.client.local_cal);
   const air_cal = useSelector((state) => state.client.air_cal);
   const surface_cal = useSelector((state) => state.client.surface_cal)
+  console.log("up_parmsss{{{{{{{{{}}}}}}}}}",up_params)
   // active Tabs
   let temp_active_tabs = [
     local_cal.cal_type,
@@ -143,7 +145,7 @@ const AddClient = (props) => {
 
   // Business Info
   const [agreement, setagreement] = useState(false);
-  const [documentFiles, setdocumentFiles] = useState([]);
+  const [documentFiles, setdocumentFiles] = useState("");
   const [agreement_date, setagreement_date] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -794,22 +796,15 @@ const AddClient = (props) => {
       });
   };
 
+  
+  
   // Client Document Api Function
   const addClientDoc = (client_id) => {
     alert("started")
     const docket_imageform = new FormData();
     docket_imageform.append(`client_id`, client_id);
-    let ind = 0;
-    for (const documentFile of documentFiles) {
-      docket_imageform.append(
-        `clientdocument_${ind}`,
-        documentFile,
-        documentFile.name
-      );
-      ind += 1;
-    }
-    docket_imageform.append(`count`, ind);
-
+  docket_imageform.append(`clientdocument`, documentFiles, documentFiles.name);
+  console.log("clientdocumentclientdocumentclientdocument",documentFiles.name)
     axios
       .post(ServerAddress + "master/add_client_doc/", docket_imageform, {
         headers: {
@@ -859,7 +854,7 @@ const AddClient = (props) => {
       .then(function (resp) {
         // console.log("add client resp", resp);
         if (resp.status === 201) {
-          if (documentFiles.length > 0) {
+          if (documentFiles != "") {
             addClientDoc(resp.data.data.id);
           }
 
@@ -955,7 +950,7 @@ const AddClient = (props) => {
       .then(function (resp) {
         if (resp.data.status === "success") {
 
-          if (documentFiles.length > 0) {
+          if (documentFiles !="") {
             addClientDoc(resp.data.data.id);
           }
           if (local_cal.cal_type != "DONT" || air_cal.cal_type != "DONT" || surface_cal.cal_type !== "DONT") {
@@ -2988,6 +2983,7 @@ const AddClient = (props) => {
 
 
         // Setting Normal Client Details
+        setdocumentFiles(cust_up.agreement_documents)
         setcustomer(cust_up);
         setisupdating(true);
         setstate(toTitleCase(cust_up.state_name));
@@ -3866,6 +3862,7 @@ const AddClient = (props) => {
                 <Row>
                   <Label className="header-child">Clients Commodities</Label>
                   <Col lg={12} md={12} sm={12}>
+                    
                     <TransferList
                       list_a={commodities_list}
                       setlist_a={setcommodities_list}
@@ -4179,13 +4176,8 @@ const AddClient = (props) => {
                                     type="file"
                                     // id="file"
                                     multiple
-                                    onChange={(e) => {
-                                      const chosenFiles =
-                                        Array.prototype.slice.call(
-                                          e.target.files
-                                        );
-
-                                      setdocumentFiles(chosenFiles);
+                                    onChange={e => {
+                                     setdocumentFiles(e.target.files[0]);
                                     }}
                                   />
                                 </div>

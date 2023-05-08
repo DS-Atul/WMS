@@ -133,6 +133,7 @@ const deleteOrderImg = (id) => {
                             handle_img(bucket_address + ewb.image);
                             setopenModal(true)
                         }}>
+                          {console.log("bucket_address + ewb.image",bucket_address + ewb.image)}
                         <img src={bucket_address + ewb.image} height="70px" width="70px"
                        
                         />

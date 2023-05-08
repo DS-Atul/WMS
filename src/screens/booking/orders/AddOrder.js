@@ -328,7 +328,6 @@ const AddOrder = () => {
 
   // Status Info
   const [current_status, setcurrent_status] = useState("");
-
   //Multi Field List(Packages----)
   const [order_active_btn, setorder_active_btn] = useState("first");
 
@@ -350,6 +349,7 @@ const AddOrder = () => {
 
   let dimension_list1 = [selectedFile, caption1];
   const [row1, setrow1] = useState([dimension_list1]);
+  console.log("row1======", row1)
   const [ord_image, setord_image] = useState([])
 
   const [documentOrder, setdocumentOrder] = useState("");
@@ -375,7 +375,6 @@ const AddOrder = () => {
   ];
   const [row2, setrow2] = useState([dimension_list2]);
   const [row4, setrow4] = useState([["", "", "", ""]]);
-
   //For Calculation Info
   const [cal_type, setcal_type] = useState("");
 
@@ -813,7 +812,6 @@ const AddOrder = () => {
         // setShowOrder(!isupdating && true);
         // aa(values)
         isupdating ? update_order(values) : send_order_data(values);
-
       }
     },
   });
@@ -1035,6 +1033,8 @@ const AddOrder = () => {
   //       alert(`Error Occur while Order Delivery Info, ${err}`);
   //     });
   // };
+//  Post Invoice Image data 
+
 
   //Post Order Image
   const send_order_image = (awb) => {
@@ -1049,9 +1049,6 @@ const AddOrder = () => {
       );
       if (newrow3.length !== 0 && newrow3[0][0] !== "") {
         for (let index = 0; index < newrow3.length; index++) {
-          // docket_imageform.append("docketcount", row3[0][0] !== "" ? row3.length : 0);
-          // if (row3.length !== 0 && row3[0][0] !== "") {
-          //   for (let index = 0; index < row3.length; index++) {
 
           docket_imageform.append(
             `DocketImage${index}`,
@@ -1459,8 +1456,6 @@ const AddOrder = () => {
       .then((response) => {
         data = response.data.results;
         let com_list_cl = data.map((v) => [v.id, v.commodities]);
-        console.log("billto_id=====", billto_id)
-        console.log("com_list_cl=====", com_list_cl)
         setclients_commidities_lists(com_list_cl);
         if (response.data.results.length > 0) {
           if (response.data.next === null) {
@@ -1852,13 +1847,9 @@ const AddOrder = () => {
     // Setting Client Commidities After Selecting Client
     if (client_id != 0 && clients_commidities_lists.length !== 0) {
       let sel_com = clients_commidities_lists.find((v) => v[0] == client_id)[1];
-      console.log("commodity_data_list", commodity_data_list);
-      console.log("sel_com", sel_com);
       let tmp_com_data_list = commodity_data_list.filter((v) =>
         sel_com.includes(parseInt(v[0]))
       );
-
-      console.log("tmp_com_data_list", tmp_com_data_list);
       setclient_commidities_list(tmp_com_data_list);
     }
   }, [client_id, data, clients_commidities_lists]);
@@ -2391,9 +2382,6 @@ const AddOrder = () => {
   //   alert("111111")
   // }
   //   }, [toggle_order])
-  console.log("showOrder-----", showOrder);
-  console.log("same_as------", same_as);
-
   useEffect(() => {
     if (same_as && showOrder) {
       navigate("/booking/orders");
@@ -5705,56 +5693,66 @@ const AddOrder = () => {
                   ) : (
                     ""
                   )}
-                  {order_active_btn === "second" ? (
-<>
-
-{
-isupdating &&
-
-<OrderImgDataFormat 
-id={location.state.order.id}
-/> 
-}
-          
+               {order_active_btn === "second" ? (
+                <>                {
+                  isupdating &&
+                  
+                  <OrderImgDataFormat 
+                  id={location.state.order.id}
+                  /> 
+                  }
                     <Row className="hide">
                       <Col md={5} sm={5}>
                         <div className="mb-3">
                           <Label className="header-child">Image</Label>
-             
-                          {row1[row1.length - 1][0] !== ""
+                          {/* {row1.map((item1, index1) => (
+                            <Input
+                              style={{ marginBottom: "15px" }}
+                              key={index1}
+                              className="form-control-md"
+                              type="file"
+                              id="input"
+                              onClick={(event) => {
+                                // setshowModalOrder(true)
+                                setSelectedFile(event.target.files[0]);
+                                item1[0] = event.target.files;
+                              }}
+                            />
+                          ))} */}
+                          {row1[row.length - 1][0] !== ""
                             ? row1
-                              .filter((e) => e[0] !== "")
-                              .map((item1, index1) => {
-                                return (
-                                  <div style={{ width: "100%" }} key={index1}>
-                                    <img
-                                      src={item1[0]}
-                                      style={{
-                                        height: "110px",
-                                        width: "110px",
-                                        borderRadius: "10px",
-                                        padding: 20,
-                                      }}
-                                      onClick={() => {
-                                        // setshowModalOrder({
-                                        //   ...showModalOrder,
-                                        //   value: true,
-                                        //   ind: index1,
-                                        // });
-                                      }}
-                                    />
-                                  </div>
-                                );
-                              })
+                                .filter((e) => e[0] !== "")
+                                .map((item1, index1) => {
+                                  // console.log("item!1111111111111111111111111111111111",item1)
+                                  return (
+                                    <div style={{ width: "100%" }} key={index1}>
+                                      <img
+                                        src={item1[0]}
+                                        style={{
+                                          height: "110px",
+                                          width: "110px",
+                                          borderRadius: "10px",
+                                          padding: 20,
+                                        }}
+                                        onClick={() => {
+                                          // setshowModalOrder({
+                                          //   ...showModalOrder,
+                                          //   value: true,
+                                          //   ind: index1,
+                                          // });
+                                        }}
+                                      />
+                                    </div>
+                                  );
+                                })
                             : null}
-
                           {row1[row1.length - 1][0] === "" ? (
                             <div style={{ height: "110px", paddingTop: 35 }}>
                               <div
                                 style={{
                                   display: "flex",
                                   flexDirection: "row",
-                                  border: "0.5px solid #dad7d7",
+                                  border: "0.5px solid #DAD7D7",
                                   alignItems: "center",
                                   height: "38px",
                                   borderRadius: 5,
@@ -5773,7 +5771,7 @@ id={location.state.order.id}
                                 <div
                                   style={{
                                     fontSize: "25px",
-                                    color: "#dad7d7",
+                                    color: "#DAD7D7",
                                     marginLeft: "5px",
                                   }}
                                 >
@@ -5910,7 +5908,6 @@ id={location.state.order.id}
                           ))}
                         </div>
                       </Col>
-
                       <div>
                         <span
                           className="link-text"
@@ -5942,6 +5939,7 @@ id={location.state.order.id}
                       </div>
                     </Row>
                     </>
+
                   ) : (
                     ""
                   )}
@@ -6046,7 +6044,6 @@ id={location.state.order.id}
                                 style={{ height: "110px", paddingTop: 35 }}
                                 key={index2}
                               >
-
                                 {eway_confirm ? (
                                   <Input
                                     min={0}
