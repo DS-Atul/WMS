@@ -26,9 +26,6 @@ const TransferList = ({
   const [bottom, setbottom] = useState(56);
   const [search, setsearch] = useState("");
   const [searching, setsearching] = useState(false);
-  const [focused, setfocused] = useState(false);
-  const [is_search, setis_search] = useState(false);
-  const [showfilter, setshowfilter] = useState(false);
   const [data_list_s, setdata_list_s] = useState(list_a);
   const [filterList, setfilterList] = useState(list_a);
 
@@ -83,15 +80,7 @@ const TransferList = ({
   const [search_b, setsearch_b] = useState("");
 
   useEffect(() => {
-    setis_search(false);
-    setsearch_item("");
-  }, []);
-
-  useEffect(() => {
-    if (search == "") {
-      setis_search(true);
-      setsearch_item("");
-    }
+    setsearch_item(toTitleCase(search).toUpperCase());
   }, [search]);
 
   useLayoutEffect(() => {
@@ -99,16 +88,6 @@ const TransferList = ({
     setfilterList(list_a);
   }, [list_a]);
 
-  // useEffect(() => {
-  //   if (!showfilter) {
-  //     setsearch("");
-  //     if (!data_item_s && error_message && focused) {
-  //       seterror(true);
-  //     } else {
-  //       seterror(false);
-  //     }
-  //   }
-  // }, [showfilter]);
 
   return (
     <div className="d-flex flex-wrap">
@@ -131,55 +110,12 @@ const TransferList = ({
             value={search}
             onMouseDown={() => setsearching(true)}
             onChange={(val) => {
+              setpage(1);
+              setbottom(56);
               setsearch(val.target.value);
-              setis_search(false);
             }}
             placeholder="Search....."
           />
-          {/* <Input
-            className="input"
-            type="search"
-            placeholder="Search........"
-            style={{
-              width: "100%",
-              height: "100%",
-              border: "1px solid #D3D3D3",
-            }}
-            value={search_a}
-            onChange={(event) => {
-              let val = event.target.value;
-              setsearch_a(val);
-              setfilter_a(
-                list_a.filter((item) => {
-                  let name = item[1];
-                  name = name.toLowerCase();
-                  val = val.toLowerCase();
-                  if (String(name).includes(String(val))) {
-                    return name;
-                  }
-                })
-              );
-            }}
-          /> */}
-
-          <i
-            onMouseDown={() => {
-              if (search != "") {
-                setsearching(true);
-              }
-            }}
-            onClick={() => {
-              if (!is_search) {
-                setlist_a([]);
-              }
-              setis_search(true);
-              setsearch_item(toTitleCase(search).toUpperCase());
-
-              setpage(1);
-              setbottom(56);
-            }}
-            className="bx bx-search-alt search-icon"
-          ></i>
         </div>
 
         <div
@@ -187,17 +123,6 @@ const TransferList = ({
           style={{ overflow: "auto", height: "200px" }}
           ref={ref}
           onScroll={() => {
-            // for (let i = 1; i <= 111; i += 3) {
-              
-            //   if (ref.current.scrollTop > bottom - 1) {
-             
-            //     setpage(page + 1);
-            //     setbottom(bottom + 236);
-             
-            //     break;   
-                           
-            //   }
-            // }
             for (let i = 1; i <= count; i += 3) {
               
               if (ref.current.scrollTop > bottom - i && loaded) {
@@ -209,66 +134,6 @@ const TransferList = ({
                            
               }
             }
-        
-            // console.log("ref.current.scrollTop----", ref.current.scrollTop)
-            // console.log("bottom---",bottom)
-    
-            // if (ref.current.scrollTop > bottom - 1) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 3) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }           
-            //  else if (ref.current.scrollTop > bottom - 9) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 12) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 15) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 18) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 21) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 24) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 27) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 30) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 33) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 36) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 39) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
-            // else if (ref.current.scrollTop > bottom - 42) {
-            //   setpage(page + 1);
-            //   setbottom(bottom + 236);
-            // }
           }}
         >
           <div

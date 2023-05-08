@@ -33,6 +33,7 @@ import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
+import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 
 function AddRoute() {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -45,6 +46,10 @@ function AddRoute() {
   const [routes, setroutes] = useState([]);
 
   // Liocation
+
+  const [city_bottom, setcity_bottom] = useState(103)
+  const [state_bottom, setstate_bottom] = useState(103)
+
   const [location_list, setlocation_list] = useState([]);
   const [location, setlocation] = useState([]);
   const [location_id, setlocation_id] = useState([]);
@@ -52,6 +57,27 @@ function AddRoute() {
   const [location_search, setlocation_search] = useState("");
   const [location_loaded, setlocation_loaded] = useState(false)
   const [location_count, setlocation_count] = useState(1)
+
+  const [state_list_s, setstate_list_s] = useState([]);
+  const [state, setstate] = useState("");
+  const [state_id, setstate_id] = useState(0);
+  const [state_error, setstate_error] = useState(false);
+  const [state_page, setstate_page] = useState(1);
+  const [state_search_item, setstate_search_item] = useState("");
+  const [state_loaded, setstate_loaded] = useState(false);
+  const [state_count, setstate_count] = useState(1);
+  const [togstate, settogstate] = useState(false)
+
+  const [city_list_s, setcity_list_s] = useState([]);
+  const [city, setcity] = useState("");
+  const [city_id, setcity_id] = useState(0);
+  const [city_error, setcity_error] = useState(false);
+  const [city_page, setcity_page] = useState(1);
+  const [city_search_item, setcity_search_item] = useState("");
+  const [city_loaded, setcity_loaded] = useState(false);
+  const [city_count, setcity_count] = useState(1);
+  const [togcity, settogcity] = useState(false)
+
 
   //state used for get data for update
   const [isupdating, setisupdating] = useState(false);
@@ -104,7 +130,7 @@ function AddRoute() {
   };
 
   // Get Operating City
-  const get_locations = () => {
+  const get_locations = (place_id, filter_by) => {
     let temp_2 = [];
     let temp = [...location_list];
     axios
@@ -112,7 +138,7 @@ function AddRoute() {
         ServerAddress +
         `master/all_pincode/?search=${""}&p=${location_page}&records=${20}&pincode_search=${[
           location_search,
-        ]}&place_id=all&filter_by=all`,
+        ]}&place_id=${place_id}&filter_by=${filter_by}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -165,6 +191,88 @@ function AddRoute() {
         alert(`Error Occur in Get , ${err}`);
       });
   };
+
+  const getStates = async () => {
+    let state_list = [];
+    try {
+      const resp = await axios.get(
+        ServerAddress +
+        `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      settogstate(true);
+      if (resp.data.next === null) {
+        setstate_loaded(false);
+      } else {
+        setstate_loaded(true);
+      }
+
+      if (resp.data.results.length > 0) {
+        if (state_page === 1) {
+          state_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.state),
+          ]);
+        } else {
+          state_list = [
+            ...state_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
+          ];
+        }
+      }
+      setstate_count(state_count + 2);
+      setstate_list_s(state_list);
+    } catch (err) {
+      console.warn(`Error Occur in Get States, ${err}`);
+    }
+  };
+
+  const getCities = async (place_id, filter_by) => {
+    let cities_list = [];
+    try {
+      const resp = await axios.get(
+        ServerAddress +
+        `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (resp.data.next === null) {
+        setcity_loaded(false);
+      } else {
+        setcity_loaded(true);
+      }
+
+      if (resp.data.results.length > 0) {
+        if (city_page == 1) {
+          cities_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.city),
+          ]);
+        } else {
+          cities_list = [
+            ...city_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
+          ];
+        }
+        setcity_count(city_count + 2);
+        setcity_list_s(cities_list);
+
+      } else {
+        setcity_list_s([]);
+      }
+    } catch (err) {
+      console.warn(`Error Occur in Get City, ${err}`);
+    }
+  };
+
 
   // Post Route Data
   const add_route = (values) => {
@@ -324,8 +432,21 @@ function AddRoute() {
   }, []);
 
   useEffect(() => {
-    get_locations();
-  }, [location_page, location_search]);
+    if (city_id === 0) {
+      get_locations("all", "all");
+    }
+  }, [location_page, location_search, city_id]);
+
+  useEffect(() => {
+    if (city_id !== 0) {
+      get_locations(city_id, "city");
+    }
+  }, [location_page, location_search, city_id]);
+
+  useEffect(() => {
+    setlocation_page(1)
+  }, [city])
+
 
   //For Checker Maker
   const [current_status, setcurrent_status] = useState("");
@@ -405,6 +526,30 @@ function AddRoute() {
       state: { routes: routes },
     });
   };
+
+  useLayoutEffect(() => {
+    getStates();
+  }, [state_page, state_search_item]);
+
+  useLayoutEffect(() => {
+    if (state_id !== 0) {
+      setcity_page(1);
+      setcity_count(1);
+      setcity_bottom(103)
+      setcity_loaded(true);
+    }
+  }, [state_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (state_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getCities(state_id, "state");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [state_id, city_page, city_search_item]);
+
 
   return (
     <div>
@@ -521,6 +666,53 @@ function AddRoute() {
                         ) : null}
                       </div>
                     </Col>
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header-child">State*</Label>
+                        <SearchInput
+                          data_list={state_list_s}
+                          setdata_list={setstate_list_s}
+                          data_item_s={state}
+                          set_data_item_s={setstate}
+                          set_id={setstate_id}
+                          page={state_page}
+                          setpage={setstate_page}
+                          error_message={"Please Select Any State"}
+                          error_s={state_error}
+                          search_item={state_search_item}
+                          setsearch_item={setstate_search_item}
+                          loaded={state_loaded}
+                          count={state_count}
+                          bottom={state_bottom}
+                          setbottom={setstate_bottom}
+                        />
+                      </div>
+                    </Col>
+
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header-child">City*</Label>
+
+                        <SearchInput
+                          data_list={city_list_s}
+                          setdata_list={setcity_list_s}
+                          data_item_s={city}
+                          set_data_item_s={setcity}
+                          set_id={setcity_id}
+                          page={city_page}
+                          setpage={setcity_page}
+                          error_message={"Please Select Any City"}
+                          error_s={city_error}
+                          search_item={city_search_item}
+                          setsearch_item={setcity_search_item}
+                          loaded={city_loaded}
+                          count={city_count}
+                          bottom={city_bottom}
+                          setbottom={setcity_bottom}
+                        />
+                      </div>
+                    </Col>
+
                     <Label className="header-child">Pincode* </Label>
                     <Col lg={12} md={12} sm={12}>
                       <TransferList

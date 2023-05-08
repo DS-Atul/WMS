@@ -82,7 +82,6 @@ const AddOrder = () => {
 
   //Get Updated Location Data
   const [order, setorder] = useState([]);
-  console.log("orderorderorderorder", order);
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
@@ -116,11 +115,9 @@ const AddOrder = () => {
   const [nonecold_chain, setnonecold_chain] = useState(false);
   const [cod_list, setcod_list] = useState(["Yes", "No"]);
   const [asset_prov, setasset_prov] = useState(false);
-  console.log("----------asset_prov", asset_prov);
   const [d_cod, setd_cod] = useState("No");
 
   const [state_list_c, setstate_list_c] = useState([]);
-  console.log("state_list_c=========", state_list_c)
   const [state_s_c, setstate_s_c] = useState("");
   const [state_id_f_c, setstate_id_f_c] = useState(0);
   const [state_error_c, setstate_error_c] = useState(false);
@@ -331,7 +328,6 @@ const AddOrder = () => {
 
   // Status Info
   const [current_status, setcurrent_status] = useState("");
-  console.log("current_status------oo----", current_status);
 
   //Multi Field List(Packages----)
   const [order_active_btn, setorder_active_btn] = useState("first");
@@ -380,7 +376,6 @@ const AddOrder = () => {
   const [row2, setrow2] = useState([dimension_list2]);
   const [row4, setrow4] = useState([["", "", "", ""]]);
 
-  console.log("dimensionnnnnnnnnnnnnnn listttt", row2);
   //For Calculation Info
   const [cal_type, setcal_type] = useState("");
 
@@ -552,7 +547,7 @@ const AddOrder = () => {
         }
       })
       .catch((err) => {
-        // console.log(console.log("err----delete---Order--", err))
+        console.warn(console.log("err while delete Order image", err))
       });
   };
   const deleteInvoiceImg = (item2) => {
@@ -698,12 +693,11 @@ const AddOrder = () => {
 
   const [linked_order, setlinked_order] = useState("");
   const [order_type_list, setorder_type_list] = useState([
-    "Normal",
+    "New",
     "Return",
     "Issue",
   ]);
   const [order_type, setorder_type] = useState(order_type_list[0]);
-  console.log("booking_through=====", booking_through)
   // validation
   const validation = useFormik({
     enableReinitialize: true,
@@ -819,7 +813,7 @@ const AddOrder = () => {
         // setShowOrder(!isupdating && true);
         // aa(values)
         isupdating ? update_order(values) : send_order_data(values);
-        console.log("hello ji");
+
       }
     },
   });
@@ -828,20 +822,11 @@ const AddOrder = () => {
   const [box_bq, setbox_bq] = useState("");
   let dimension_list8 = [box_bq];
   const [row6, setrow6] = useState([dimension_list8]);
-  console.log("row6--------------------------", row6);
-  console.log(
-    "validation.values.total_quantity",
-    validation.values.total_quantity
-  );
   useEffect(() => {
     if (validation.values.total_quantity !== 0) {
       let val = validation.values.total_quantity;
-      console.log("val----", val);
       let val_box = [];
       for (let index = 0; index < val; index++) {
-        console.log("val--------", index);
-        // const element = val[index];
-        // console.log("element----", element)
         val_box.push([""]);
       }
       setrow6(val_box);
@@ -966,7 +951,6 @@ const AddOrder = () => {
         },
       })
       .then(function (response) {
-        console.log("exitssssss or notttttt", response.data.result);
         if (response.data.result === true) {
           dispatch(setShowAlert(true));
           dispatch(
@@ -1054,7 +1038,7 @@ const AddOrder = () => {
 
   //Post Order Image
   const send_order_image = (awb) => {
-    alert("It runned")
+    // alert("It runned")
     let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "");
     const docket_imageform = new FormData();
     if (newrow3.length !== 0) {
@@ -1099,7 +1083,6 @@ const AddOrder = () => {
         }
       }
 
-      console.log("docket_imageform----------", row4.length);
       axios
         .post(ServerAddress + "booking/add-order-images/", docket_imageform, {
           headers: {
@@ -1141,8 +1124,8 @@ const AddOrder = () => {
           order_channel: "WEB APP",
           billto: billto_id,
           client: client_id,
-          shipper: eway_confirm ? eway_list.fromTrdName : shipper_n,
-          consignee: eway_confirm ? eway_list.toTrdName : consignee_n,
+          shipper: eway_confirm ? eway_list.fromTrdName : (shipper_n).toUpperCase(),
+          consignee: eway_confirm ? eway_list.toTrdName : (consignee_n).toUpperCase(),
           booking_at: booking_date,
           local_delivery_type: String(local_delivery_type).toUpperCase(),
           cold_chain: cold_chain ? true : false,
@@ -1213,7 +1196,7 @@ const AddOrder = () => {
             ? user.starting_docket_no
             : "",
           barcode_no: row6,
-          linked_order: order_type === "Normal" ? null : linked_order,
+          linked_order: order_type === "New" ? null : linked_order,
           order_type: order_type.toUpperCase(),
 
           cm_current_department: user.user_department,
@@ -1240,7 +1223,6 @@ const AddOrder = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          console.log("///////Harshiiiiiiiiittttttttt",response.data)
           // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no,response.data.data.booking_at)
           if (row3[0][0] !== "" || row4[0][0] !== "") {
             send_order_image(response.data.data.docket_no);
@@ -1297,7 +1279,6 @@ const AddOrder = () => {
 
       // billto_name: billto,
     });
-    console.log("fields_names----============", fields_names);
     let change_fields = {};
 
     for (let j = 0; j < fields_names.length; j++) {
@@ -1385,14 +1366,14 @@ const AddOrder = () => {
           assetdeleted_ids: assetdeleted_ids,
           assetold_ids: assetold_ids,
           assetnew_ids: assetnew_ids,
-          linked_order: order_type === "Normal" ? null : linked_order,
-          order_type: order_type.toUpperCase(),
+          linked_order: order_type === "New" ? null : linked_order,
+          order_type: order_type?.toUpperCase(),
 
           cm_transit_status: status_toggle === true ? cm_current_status : "",
           cm_current_status: cm_current_status.toUpperCase(),
           cm_remarks: toTitleCase(message).toUpperCase(),
-          shipper: eway_confirm ? eway_list.fromTrdName : shipper_n,
-          consignee: eway_confirm ? eway_list.shipToTradeName : consignee_n,
+          shipper: eway_confirm ? eway_list.fromTrdName : (shipper_n).toUpperCase(),
+          consignee: eway_confirm ? eway_list.toTrdName : (consignee_n).toUpperCase(),
           shipper_location: eway_confirm ? locality_id : locality_id_f,
           consignee_location: eway_confirm ? locality_id_to : locality_id_f_c,
           with_ewayBill: eway_confirm ? "True" : "False",
@@ -1408,7 +1389,6 @@ const AddOrder = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          console.log("harshittttttttttttttttttttttttt",response.data.data)
           // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no)
           send_order_image(order.docket_no);
           dispatch(setToggle(true));
@@ -1478,6 +1458,10 @@ const AddOrder = () => {
       )
       .then((response) => {
         data = response.data.results;
+        let com_list_cl = data.map((v) => [v.id, v.commodities]);
+        console.log("billto_id=====", billto_id)
+        console.log("com_list_cl=====", com_list_cl)
+        setclients_commidities_lists(com_list_cl);
         if (response.data.results.length > 0) {
           if (response.data.next === null) {
             setclient_loaded(false);
@@ -1496,6 +1480,7 @@ const AddOrder = () => {
             ];
           }
         }
+        
         setclient_count(client_count + 2);
         setclient_list(temp2);
         // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
@@ -1530,7 +1515,6 @@ const AddOrder = () => {
             setcommodity_loaded(true);
           }
           data = response.data.results;
-          console.log("data-------", data);
           for (let index = 0; index < data.length; index++) {
             temp3.push([
               data[index].id,
@@ -1857,7 +1841,7 @@ const AddOrder = () => {
     if (data === true && isupdating === true && returned_data.length === 0) {
       setclient_id(order.client);
     }
-    if (location.state === null && order_type == "Normal") {
+    if (location.state === null && order_type == "New") {
       setorigincity("");
       setorigincity_id("");
       setshipper_id("");
@@ -1976,23 +1960,23 @@ const AddOrder = () => {
           : ""
       );
 
-      setstate(order_data.shipper_state);
+      setstate(toTitleCase(order_data.shipper_state));
       setlocality_id_f(order_data.shipper_location);
-      setcity(order_data.shipper_city);
+      setcity(toTitleCase(order_data.shipper_city));
       setconsignee_n(order_data.consignee);
       setpincode(order_data.shipper_pincode);
-      setconsginee_st(order_data.consignee_state);
+      setconsginee_st(toTitleCase(order_data.consignee_state));
       setlocality_sel_to(order_data.consignee_locality);
       setlocality_id_to(order_data.consignee_location);
       setlocality_sel(order_data.shipper_locality);
       setlocality_id(order_data.shipper_location);
-      setconsignee_address(order_data.consignee_address1);
-      setconsginee_c(order_data.consignee_city);
+      setconsignee_address(toTitleCase(order_data.consignee_address1));
+      setconsginee_c(toTitleCase(order_data.consignee_city));
       setconsignee_pincode(order_data.consignee_pincode);
-      setlocality_c(order_data.consignee_locality);
+      setlocality_c(toTitleCase(order_data.consignee_locality));
       setlocality_id_f_c(order_data.consignee_location);
-      setlocality(order_data.shipper_locality);
-      setshipper_address(order_data.shipper_address1);
+      setlocality(toTitleCase(order_data.shipper_locality));
+      setshipper_address(toTitleCase(order_data.shipper_address1));
       setewaybill_no(order_data.eway_bill_no);
       setbooking_through(order_data.with_ewayBill);
       seteway_confirm(order_data.with_ewayBill);
@@ -2383,9 +2367,6 @@ const AddOrder = () => {
   // const [same_as, setsame_as] = useState(false)
   // const [showOrder, setShowOrder] = useState(false);
   // const [toggle_order, settoggle_order] = useState(false)
-  console.log("showOrder-----", showOrder);
-  console.log("same_as----", same_as);
-  console.log("toggle_order----", toggle_order);
 
   const handleCloseOrder = () => setShowOrder(false);
 
@@ -2444,8 +2425,6 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("response-------eway bill step 1", response.data.response);
-        console.log("tokenhhhhhhhhhhhh", response.data);
         dispatch(setEAccessToken(response.data.response.token));
         dispatch(setOrgs(response.data.response.orgs));
       })
@@ -2470,8 +2449,6 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("responseblogin", response.data);
-        console.log("token", response.data.response.token);
         dispatch(setBAccessToken(response.data.response.token));
       })
       .catch((error) => {
@@ -2496,7 +2473,6 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("response=======eway bill detail", response.data.response);
         if (response.data.response !== null) {
 
           seteway_detail_l(response.data.response);
@@ -2517,7 +2493,6 @@ const AddOrder = () => {
       })
       .catch((error) => {
         seteway_confirm(false);
-        console.log("response=======eway bill detail", error);
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Entered EwayBill No Is Wrong`));
         dispatch(setAlertType("danger"));
@@ -2556,10 +2531,8 @@ const AddOrder = () => {
         setto_address(response.data[0]);
         for (let index = 0; index < response.data.length; index++) {
           const element = [response.data[index].id, response.data[index].name];
-          console.log("Element{{{{{}}}}}}", element);
           localityto.push(element);
         }
-        console.log("localityto+++++++++++", localityto);
         setlocslity_to_list(localityto);
       })
       .catch((err) => {
@@ -2896,7 +2869,6 @@ const AddOrder = () => {
               );
               setlocalityc_count(localityc_count + 2);
               setlocality_list_s_c(locality_list);
-              console.log("locality_list=c========", locality_list)
             }
           }
           else {
@@ -3288,13 +3260,10 @@ const AddOrder = () => {
     });
   };
   useEffect(() => {
-    console.log("ewayyy 222222222222222", eway_detail_l)
     if (eway_detail_l.length != 0) {
-      console.log("ewayyy invoice work done", eway_detail_l)
       let temp_list = [];
       temp_list.push([eway_detail_l.ewbNo, eway_detail_l.docDate, eway_detail_l.docNo, eway_detail_l.totInvValue, ""]);
       setrow2(temp_list);
-      console.log("temp_list=============", temp_list);
       setinvoice_value(eway_detail_l.docNo);
     }
   }, [eway_detail_l]);
@@ -3413,8 +3382,17 @@ const AddOrder = () => {
   ]);
 
   useEffect(() => {
-    console.log("by_pincode========", by_pincode)
-    if (!location.state && state && !by_pincode) {
+    if (!location.state && state && !by_pincode && order_type !== "Return" && order_type !== "Issue") {
+      setcity_list_s([]);
+      setpincode("");
+      setpincode_list_s([]);
+      setlocality("");
+      setlocality_list_s([]);
+    }
+  }, [state]);
+
+  useEffect(() => {
+    if (state !== "" && togstate && !by_pincode && order_type !== "Return" && order_type !== "Issue") {
       setcity("");
       setcity_list_s([]);
       setpincode("");
@@ -3425,18 +3403,7 @@ const AddOrder = () => {
   }, [state]);
 
   useEffect(() => {
-    if (state !== "" && togstate && !by_pincode) {
-      setcity("");
-      setcity_list_s([]);
-      setpincode("");
-      setpincode_list_s([]);
-      setlocality("");
-      setlocality_list_s([]);
-    }
-  }, [state]);
-
-  useEffect(() => {
-    if (!location.state && city && !by_pincode) {
+    if (!location.state && city && !by_pincode && order_type !== "Return" && order_type !== "Issue") {
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
@@ -3445,7 +3412,7 @@ const AddOrder = () => {
   }, [city]);
 
   useEffect(() => {
-    if (city !== "" && togcity && !by_pincode) {
+    if (city !== "" && togcity && !by_pincode && order_type !== "Return" && order_type !== "Issue") {
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
@@ -3454,14 +3421,14 @@ const AddOrder = () => {
   }, [city]);
 
   useEffect(() => {
-    if (!location.state && pincode && !by_pincode) {
+    if (!location.state && pincode && !by_pincode && order_type !== "Return" && order_type !== "Issue") {
       setlocality("");
       setlocality_list_s([]);
     }
   }, [pincode]);
 
   useEffect(() => {
-    if (pincode !== "" && togpincode && !by_pincode) {
+    if (pincode !== "" && togpincode && !by_pincode && order_type !== "Return" && order_type !== "Issue") {
       setlocality("");
       setlocality_list_s([]);
     }
@@ -3476,8 +3443,7 @@ const AddOrder = () => {
   }, []);
 
   useEffect(() => {
-    console.log("by_pincode_f_c========", by_pincode_f_c)
-    if (!location.state && consginee_st && !by_pincode_f_c) {
+    if (!location.state && consginee_st && !by_pincode_f_c && order_type !== "Return" && order_type !== "Issue") {
       setconsginee_c("");
       setcity_list__c([]);
       setconsignee_pincode("");
@@ -3488,7 +3454,7 @@ const AddOrder = () => {
   }, [consginee_st]);
 
   useEffect(() => {
-    if (consginee_st !== "" && togstate_c && !by_pincode_f_c) {
+    if (consginee_st !== "" && togstate_c && !by_pincode_f_c && order_type !== "Return" && order_type !== "Issue") {
       setconsginee_c("");
       setcity_list__c([]);
       setconsignee_pincode("");
@@ -3499,7 +3465,7 @@ const AddOrder = () => {
   }, [consginee_st]);
 
   useEffect(() => {
-    if (!location.state && consginee_c && !by_pincode_f_c) {
+    if (!location.state && consginee_c && !by_pincode_f_c && order_type !== "Return" && order_type !== "Issue") {
       setconsignee_pincode("");
       setpincode_list_f_c([]);
       setlocality_c("");
@@ -3508,7 +3474,7 @@ const AddOrder = () => {
   }, [consginee_c]);
 
   useEffect(() => {
-    if (consginee_c !== "" && togcity_c && !by_pincode_f_c) {
+    if (consginee_c !== "" && togcity_c && !by_pincode_f_c && order_type !== "Return" && order_type !== "Issue") {
       setconsignee_pincode("");
       setpincode_list_f_c([]);
       setlocality_c("");
@@ -3517,14 +3483,14 @@ const AddOrder = () => {
   }, [consginee_c]);
 
   useEffect(() => {
-    if (!location.state && consignee_pincode && !by_pincode_f_c) {
+    if (!location.state && consignee_pincode && !by_pincode_f_c && order_type !== "Return" && order_type !== "Issue") {
       setlocality_c("");
       setlocality_list_s_c([]);
     }
   }, [consignee_pincode]);
 
   useEffect(() => {
-    if (consignee_pincode !== "" && togpincode_c && !by_pincode_f_c) {
+    if (consignee_pincode !== "" && togpincode_c && !by_pincode_f_c && order_type !== "Return" && order_type !== "Issue") {
       setlocality_c("");
       setlocality_list_s_c([]);
     }
@@ -3791,7 +3757,6 @@ const AddOrder = () => {
                                   maxLength="12"
                                   value={ewaybill_no}
                                   onChange={(e) => {
-                                    console.log("maxlength", e.target.value);
                                     if (e.target.value.length === 12) {
                                       setewaybill_no(e.target.value);
                                       check_ewb_attached(e.target.value);
@@ -4202,7 +4167,7 @@ const AddOrder = () => {
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
-                              <Label className="header-child">State*</Label>
+                              <Label className="header-child">State22*</Label>
                               <SearchInput
                                 data_list={state_list_s}
                                 setdata_list={setstate_list_s}
@@ -4443,7 +4408,7 @@ const AddOrder = () => {
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
-                              <Label className="header-child">State*</Label>
+                              <Label className="header-child">State11*</Label>
                               <SearchInput
                                 data_list={state_list_c}
                                 setdata_list={setstate_list_c}
@@ -5834,7 +5799,6 @@ id={location.state.order.id}
                               style={{ height: "110px", paddingTop: 35 }}
                               key={index1}
                             >
-                              {console.log("222222222222222222222222", item1)}
                               <select
                                 disabled={item1[2] ? true : false}
                                 style={{
@@ -5921,10 +5885,6 @@ id={location.state.order.id}
                                       onClick={() => {
                                         if (item1[2]) {
                                           deleteOrderImg(item1);
-                                          console.log(
-                                            "11111111111111",
-                                            item1[2]
-                                          );
                                         } else {
                                           deleteimage(item1);
                                           setSelectedFile(
@@ -6086,7 +6046,6 @@ id={location.state.order.id}
                                 style={{ height: "110px", paddingTop: 35 }}
                                 key={index2}
                               >
-                                {console.log("item99999999=======", item2)}
 
                                 {eway_confirm ? (
                                   <Input
@@ -6252,10 +6211,6 @@ id={location.state.order.id}
                                     <div
                                       onClick={() => {
                                         if (item2[4]) {
-                                          console.log(
-                                            "item2aaaaaaaaaaaaa",
-                                            item2[4]
-                                          );
                                           deleteInvoiceImg(item2);
                                         } else {
                                           deleteinvoice(item2);
@@ -6332,7 +6287,6 @@ id={location.state.order.id}
                               Upload Report
                             </Label>
                             {row5.map((item, index) => {
-                              console.log("row5---log----", row5);
                               return (
                                 <Input
                                   min={0}
@@ -6440,7 +6394,6 @@ id={location.state.order.id}
                                 Enter Value*
                               </Label>
                               {row6.map((item, index) => {
-                                console.log("item-------", item);
                                 return (
                                   <Input
                                     min={0}

@@ -10,19 +10,19 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
-import BillTosDataFormat from "../../../data/master/clients/BillTosDataFormat";
-import ClientsDataTitle from "../../../data/master/clients/BillTosDataTitles";
 import AssetDataTitle from "../../../data/master/assets/AssetDataTitle";
 import AssetsDataFormat from "../../../data/master/assets/AssetDataFormat";
 import Navigate from "../navigateTab/Navigate";
+import { ServerAddress } from "../../../constants/ServerAddress";
+import axios from "axios";
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 const Assets = () => {
   const dispatch = useDispatch();
-  const toggle = useSelector((state) => state.parentfilter.toggle);
-  const commodity_type = useSelector((state) => state.filtervalue.data_a);
-  const commodity_name = useSelector((state) => state.filtervalue.data_b);
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
+  const accessToken = useSelector((state) => state.authentication.access_token);
 
   // // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
@@ -48,6 +48,31 @@ const Assets = () => {
   );
   const [can_add, setcan_add] = useState(false);
   const [can_delete, setcan_delete] = useState(false);
+  const [data, setdata] = useState([])
+
+  const get_asset = async () => {
+    try {
+      const response = await axios.get(
+        ServerAddress +
+        `master/get_latest_asset/`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      console.log("resp is====== ===>", response);
+      setdata(response.data.asset)
+
+    } catch (err) {
+      alert(`Error While Loading Client , ${err}`);
+    }
+  };
+
+
+  useEffect(() => {
+    get_asset();
+  }, []);
+
   useEffect(() => {
     if (
       userpermission.some((e) => e.sub_model === "Asset" && e.write === true)
@@ -68,8 +93,61 @@ const Assets = () => {
     }
   }, [userpermission]);
 
+  //For Modal
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  useEffect(() => {
+    if(data.length>0){
+      handleShow()
+    }
+  }, [data])
+
+
   return (
     <>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{fontSize:"14px", color:"red"}}>Please Update Calibration These Are Going To Be Expired ...</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+
+          <table
+            className="topheader table-light"
+            style={{ borderCollapse: "collapse", width: "100%", borderWidth: 1 }}
+          >
+            <tbody style={{ fontSize: "12px", textAlign: "left" }}>
+              {(
+                data.map((asset, index) => {
+                  return (
+                    <tr
+                      key={index}
+                      style={{
+                        borderWidth: 1,
+                      }}
+                    >
+                      <td>{asset.asset_id}</td>
+                      <td>{asset.product_id}</td>
+                      <td>{asset.callibration_from}</td>
+                      <td>{asset.callibration_to}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" size="sm" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <PageTitle page="Assets" />
       <Title title="Assets " parent_title="Masters" />
       <div className="mx-3">
@@ -101,11 +179,11 @@ const Assets = () => {
                 <Filter type={"client"} />
               </div>
             </div>
-            {(user.user_department_name === "ADMIN" || user.user_department_name === "ACCOUNTANT" ||  user.user_department_name+" "+ user.designation_name === "ACCOUNT MANAGER") &&
-            (
-            <Navigate />
-            )
-                }
+            {(user.user_department_name === "ADMIN" || user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER") &&
+              (
+                <Navigate />
+              )
+            }
           </div>
 
           {/* DataTable */}

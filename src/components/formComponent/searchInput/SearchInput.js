@@ -36,33 +36,19 @@ const SearchInput = ({
   const navigate = useNavigate();
 
   //  Dropdown Handle
-  const [is_search, setis_search] = useState(false);
   const [showfilter, setshowfilter] = useState(false);
   const [data_list_s, setdata_list_s] = useState(data_list);
   const [filterList, setfilterList] = useState(data_list);
 
   // Pagination
   const ref = useRef();
-  // const [bottom, setbottom] = useState(bottom1 + with_add);
   const [search, setsearch] = useState("");
   const [error, seterror] = useState(false);
   const [searching, setsearching] = useState(false);
   const [focused, setfocused] = useState(false);
 
   useEffect(() => {
-    // dispatch(setIsSearch(false));
-    setis_search(false);
-    // dispatch(setSearchItem(""));
-    setsearch_item("");
-  }, []);
-
-  useEffect(() => {
-    if (search == "") {
-      // dispatch(setIsSearch(true));
-      setis_search(true);
-      // dispatch(setSearchItem(""));
-      setsearch_item("");
-    }
+    setsearch_item(toTitleCase(search).toUpperCase());
   }, [search]);
 
   useLayoutEffect(() => {
@@ -171,7 +157,6 @@ const SearchInput = ({
             }}
             onClick={() => {
               window.open(add_nav, '_blank')
-              // navigate(add_nav);
             }}
           >
             <AiOutlinePlus />
@@ -188,22 +173,8 @@ const SearchInput = ({
           ref={ref}
           className="dataResult custom-select"
           id="chk"
-          // onScroll={() => {
-          //   const scrollTop = ref.current.scrollTop;
-          //   const scrollHeight = ref.current.scrollHeight;
-          //   const clientHeight = ref.current.clientHeight;
-            
-          //   if (scrollTop + clientHeight >= scrollHeight - 50) {
-          //     setpage(page => page + 1);
-          //   }
-          // }}
           onScroll={() => {
             for (let i = 1; i <= count; i += 3) {
-              // setpage(page + 1);
-              console.log("i==============",i)
-              console.log("page===========", page)
-              console.log("bottom==========", bottom)
-              console.log("ref.current.scrollTop ============", ref.current.scrollTop )
               if (ref.current.scrollTop > bottom - i && loaded) {
                 setpage(page + 1);
                 setbottom(bottom + 262 - with_add);
@@ -237,30 +208,12 @@ const SearchInput = ({
                 value={search}
                 onMouseDown={() => setsearching(true)}
                 onChange={(val) => {
+                  setpage(1);
+                  setbottom(103);
                   setsearch(val.target.value);
-                  setis_search(false);
                 }}
                 placeholder="Search....."
               />
-              <i
-                onMouseDown={() => {
-                  if (search != "") {
-                    setsearching(true);
-                  }
-                }}
-                onClick={() => {
-                  if (!is_search) {
-                    setdata_list([]);
-                  }
-                  setis_search(true);
-
-                  setsearch_item(toTitleCase(search).toUpperCase());
-
-                  setpage(1);
-                  setbottom(103);
-                }}
-                className="bx bx-search-alt search-icon"
-              ></i>
             </div>
           ) : (
             <div></div>

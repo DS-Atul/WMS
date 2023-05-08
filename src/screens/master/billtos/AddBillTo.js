@@ -1149,6 +1149,34 @@ console.log("associate_branch_list_1", associate_branch_list_1)
             {circle_btn && (
               <CardBody>
                 <Row>
+                <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header-child">PAN Number</Label>
+                        <Input
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.pan_no || ""}
+                          invalid={
+                            validation.touched.pan_no &&
+                              validation.errors.pan_no
+                              ? true
+                              : false
+                          }
+                          type="text"
+                          className="form-control-md"
+                          id="input"
+                          name="pan_no"
+                          placeholder="Enter PAN Number"
+                        />
+                        {validation.touched.pan_no &&
+                          validation.errors.pan_no ? (
+                          <FormFeedback type="invalid">
+                            {validation.errors.pan_no}
+                          </FormFeedback>
+                        ) : null}
+                      </div>
+                    </Col>
+                    
                   <Col lg={4} md={6} sm={6}>
                     <div className="mb-3">
                       <Label className="header-child">Name*</Label>
@@ -1342,36 +1370,6 @@ console.log("associate_branch_list_1", associate_branch_list_1)
               </CardTitle>
               {circle_btn6 ? (
                 <CardBody>
-                  <Row>
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">PAN Number</Label>
-                        <Input
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.pan_no || ""}
-                          invalid={
-                            validation.touched.pan_no &&
-                              validation.errors.pan_no
-                              ? true
-                              : false
-                          }
-                          type="text"
-                          className="form-control-md"
-                          id="input"
-                          name="pan_no"
-                          placeholder="Enter PAN Number"
-                        />
-                        {validation.touched.pan_no &&
-                          validation.errors.pan_no ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.pan_no}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
-                    </Col>
-                  </Row>
-
                   <>
                     <Row className="hide">
                       <Col md={3} sm={3}>

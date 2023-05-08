@@ -163,6 +163,7 @@ const AddClient = (props) => {
   const [is_cargo, setis_cargo] = useState(false);
   const [is_courier, setis_courier] = useState(false);
   const [is_warehouse, setis_warehouse] = useState(false);
+  const [is_other, setis_other] = useState(false)
 
   // Multi Billing
   const [bill_row, setbill_row] = useState([["1", true]]);
@@ -3965,7 +3966,7 @@ const AddClient = (props) => {
                     </div>
                   </Col>
 
-                  <Col lg={2}>
+                  <Col lg={1}>
                     <div
                       onClick={() => {
                         setis_surface(!is_surface);
@@ -3980,7 +3981,7 @@ const AddClient = (props) => {
                     </div>
                   </Col>
 
-                  <Col lg={2}>
+                  <Col lg={1}>
                     <div
                       onClick={() => {
                         setis_cargo(!is_cargo);
@@ -4037,6 +4038,21 @@ const AddClient = (props) => {
                         <FiSquare size={20} />
                       )}
                       <Label className="header-child">&nbsp; Warehouse</Label>
+                    </div>
+                  </Col>
+
+                  <Col lg={2}>
+                    <div
+                      onClick={() => {
+                        setis_other(!is_other);
+                      }}
+                    >
+                      {is_other ? (
+                        <FiCheckSquare size={20} />
+                      ) : (
+                        <FiSquare size={20} />
+                      )}
+                      <Label className="header-child">&nbsp; Other</Label>
                     </div>
                   </Col>
                 </Row>

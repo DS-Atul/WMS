@@ -83,6 +83,7 @@ const AddBranch = () => {
   const [gst_id, setgst_id] = useState("");
   const [gst_data_list, setgst_data_list] = useState([]);
   const [select_gst, setselect_gst] = useState("");
+  const [toggst, settoggst] = useState(false)
   const [select_gst_error, setselect_gst_error] = useState(false);
   const [gst_list, setgst_list] = useState([]);
   const [selectgst_search, setselectgst_search] = useState("");
@@ -282,7 +283,7 @@ const AddBranch = () => {
         {
           name: toTitleCase(values.branch_name).toUpperCase(),
           type: branch_type_short,
-          organizaton: org_id,
+          organizaton: branch_type === "Own Branch" ? org_id : null,
           vendor: branch_type === "Own Branch" ? "" : vendor_id,
           email: values.branch_email,
           contact_number: values.branch_phone_number,
@@ -409,7 +410,7 @@ const AddBranch = () => {
         {
           name: toTitleCase(values.branch_name).toUpperCase(),
           type: branch_type_short,
-          organizaton: org_id,
+          organizaton: branch_type === "Own Branch" ? org_id : null,
           vendor: branch_type === "Own Branch" ? "" : vendor_id,
           email: values.branch_email,
           contact_number: values.branch_phone_number,
@@ -548,7 +549,6 @@ const AddBranch = () => {
   };
 
   // to get operating citys
-  console.log("operating_city_list2========", operating_city_list2)
   const getop_cities = (place_id, filter_by) => {
     let temp_2 = [];
     let temp = [...operating_city_list];
@@ -677,7 +677,7 @@ const AddBranch = () => {
       console.warn(`Error Occur in Get Pincode, ${err}`);
     }
   };
-
+console.log("location_data=====", location_data)
   // get locality
   const getLocality = async (place_id, filter_by) => {
     try {
@@ -997,7 +997,7 @@ const AddBranch = () => {
     axios
       .get(
         ServerAddress +
-        `organization/get_gstaddress/?type=${`ORGANIZATION`}&vendor_id=&organization_id=${org_id}&search=${""}&p=${gst_page}&records=${10}&gst_no_search=${[
+        `organization/get_gstaddress/?type=${`ORGANIZATION`}&vendor_id=&organization_id=${branch_type === "Own Branch" ? org_id : ""}&search=${""}&p=${gst_page}&records=${10}&gst_no_search=${[
           gst_search,
         ]}`,
         {
@@ -1006,8 +1006,7 @@ const AddBranch = () => {
       )
       .then((response) => {
         data = response.data.results;
-        console.log("daata org========", data)
-
+        settoggst(true);
         if (response.data.results.length > 0) {
           if (response.data.next === null) {
             setgst_loaded(false);
@@ -1017,12 +1016,12 @@ const AddBranch = () => {
           if (gst_page === 1) {
             gst_temp = response.data.results.map((v) => [
               v.id,
-              toTitleCase(v.gst_no),
+              v.gst_no,
             ]);
           } else {
             gst_temp = [
               ...gst_data_list,
-              ...response.data.results.map((v) => [v.id, toTitleCase(v.gst_no)]),
+              ...response.data.results.map((v) => [v.id, v.gst_no]),
             ];
           }
 
@@ -1069,12 +1068,12 @@ const AddBranch = () => {
         if (vendor_gst_page === 1) {
           vgst_temp = response.data.results.map((v) => [
             v.id,
-            toTitleCase(v.gst_no),
+            v.gst_no,
           ]);
         } else {
           vgst_temp = [
             ...gst_list,
-            ...response.data.results.map((v) => [v.id, toTitleCase(v.gst_no)]),
+            ...response.data.results.map((v) => [v.id, v.gst_no]),
           ];
         }
       }
@@ -1206,9 +1205,33 @@ const AddBranch = () => {
     });
   };
 
+  useEffect(() => {
+    if (vendor_name !== "" && toggst){
+      setselect_gst("")
+    }
+  }, [vendor_name])
+
+  useEffect(() => {
+    if (!location_data.state && vendor_name){
+      setselect_gst("")
+    }
+  }, [vendor_name])
+
+  useEffect(() => {
+    if (org !== "" && toggst){
+      setgst_number("")
+    }
+  }, [org])
+
+  useEffect(() => {
+    if (!location_data.state && org){
+      setgst_number("")
+    }
+  }, [org])
+  
   return (
     <>
-      <div>
+      <div >
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Reject Resion</Modal.Title>
@@ -1356,33 +1379,35 @@ const AddBranch = () => {
                         </div>
                       </Col>
 
-                      <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">Organization*</Label>
-                          <span onClick={() => setby_pincode(false)}>
-                            <SearchInput
-                              data_list={org_list_s}
-                              setdata_list={setorg_list_s}
-                              data_item_s={org}
-                              set_data_item_s={setorg}
-                              set_id={setorg_id}
-                              page={org_page}
-                              setpage={setorg_page}
-                              error_message={"Please Select Any Organization"}
-                              error_s={org_error}
-                              search_item={org_search_item}
-                              setsearch_item={setorg_search_item}
-                              loaded={org_loaded}
-                              count={org_count}
-                              bottom={org_bottom}
-                              setbottom={setorg_bottom}
-                            />
-                          </span>
-                          {/* <div className="mt-1 error-text" color="danger">
+                      {branch_type === "Own Branch" &&
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">Organization*</Label>
+                            <span onClick={() => setby_pincode(false)}>
+                              <SearchInput
+                                data_list={org_list_s}
+                                setdata_list={setorg_list_s}
+                                data_item_s={org}
+                                set_data_item_s={setorg}
+                                set_id={setorg_id}
+                                page={org_page}
+                                setpage={setorg_page}
+                                error_message={"Please Select Any Organization"}
+                                error_s={org_error}
+                                search_item={org_search_item}
+                                setsearch_item={setorg_search_item}
+                                loaded={org_loaded}
+                                count={org_count}
+                                bottom={org_bottom}
+                                setbottom={setorg_bottom}
+                              />
+                            </span>
+                            {/* <div className="mt-1 error-text" color="danger">
                             {state_error ? "Please Select Any State" : null}
                           </div> */}
-                        </div>
-                      </Col>
+                          </div>
+                        </Col>
+                      }
 
                       {branch_type === "Vendor" && (
                         <Col lg={4} md={6} sm={6}>

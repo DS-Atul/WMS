@@ -207,13 +207,14 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
                     to="/master/Add_Vehcile"
                     state={{vehcile:vehcile  }}
                   >
-                    {((vehcile.vehcile_no).toUpperCase())}
+                    {vehcile.vehcile_no}
                   </Link>
                 
           
               </td>
-               <td>{vehcile.vehcile_type}</td>
-               <td>{vehcile.vehcile_model}</td>
+              <td>{toTitleCase(vehcile.branch_name)}</td>
+               <td>{toTitleCase(vehcile.vehcile_type)}</td>
+               <td>{toTitleCase(vehcile.vehcile_model)}</td>
                <td>{vehcile.vehcile_status  ?
             <div>
                 <img src={correct}  height="18px"  width="18px" /> 

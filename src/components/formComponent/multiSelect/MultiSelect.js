@@ -29,7 +29,6 @@ const MultiSelect = ({
   const [search_a, setsearch_a] = useState("");
 
   const [search, setsearch] = useState("");
-  const [is_search, setis_search] = useState(false);
   const ref = useRef();
   const [bottom, setbottom] = useState(101);
 
@@ -110,18 +109,9 @@ const MultiSelect = ({
     setmultidata(false);
   };
 
-  useEffect(() => {
-    // dispatch(setIsSearch(false));
-    setis_search(false);
-    setsearch_txt("");
-  }, []);
 
   useEffect(() => {
-    if (search == "") {
-      // dispatch(setIsSearch(true));
-      setis_search(true);
-      setsearch_txt("");
-    }
+    setsearch_txt(toTitleCase(search).toUpperCase());
   }, [search]);
 
   return (
@@ -261,40 +251,9 @@ const MultiSelect = ({
                     }}
                     value={search}
                     onChange={(val) => {
-                      // dispatch(setIsSearch(false));
-                      setis_search(false);
                       setsearch(val.target.value);
-                      // let val = event.target.value;
-                      // setsearch_a(val);
-                      // setfilter_a(
-                      //   list_a.filter(item => {
-                      //     let name = item[1];
-                      //     name = name.toLowerCase();
-                      //     val = val.toLowerCase();
-                      //     if (String(name).includes(String(val))) {
-                      //       return name;
-                      //     }
-                      //   })
-                      // );
                     }}
                   />
-
-                  <i
-                    onClick={() => {
-                      if (!is_search) {
-                        setlist_a([]);
-                      }
-                      // dispatch(setFilterToggle(true));
-                      // dispatch(setIsSearch(true));
-                      setis_search(true);
-                      // dispatch(setSearchItem(search));
-                      setsearch_txt(toTitleCase(search).toUpperCase());
-                      // dispatch(setPageNumber(1));
-                      setpage(1);
-                      setbottom(103);
-                    }}
-                    className="bx bx-search-alt search-icon"
-                  ></i>
                 </div>
               </div>
             )}

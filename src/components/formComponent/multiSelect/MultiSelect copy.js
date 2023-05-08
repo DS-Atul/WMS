@@ -1,22 +1,37 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { FiSquare, FiCheckSquare, FiX, FiTarget } from "react-icons/fi";
 import "../../../assets/scss/forms/form.scss";
 import { IconContext } from "react-icons";
+import { Input } from "reactstrap";
+// import { setIsSearch, setSearchItem } from "../../../store/searchBar/SearchBar";
+import { useDispatch } from "react-redux";
+import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 const MultiSelect = ({
   list_a,
+  setlist_a,
   setlist_b,
   show_search = true,
   setlist_id,
   get_id = true,
+  page,
+  setpage,
+  setsearch_txt,
+  type,
 }) => {
+  const dispatch = useDispatch();
   const [selected_a, setselected_a] = useState([]);
   const [data, setdata] = useState(false);
   const [multidata, setmultidata] = useState(false);
   const [showfilter, setshowfilter] = useState(false);
   const [filter_a, setfilter_a] = useState([]);
   const [search_a, setsearch_a] = useState("");
+
+  const [search, setsearch] = useState("");
+  const [is_search, setis_search] = useState(false);
+  const ref = useRef();
+  const [bottom, setbottom] = useState(101);
 
   const getselected = (selected, setselected, name, index) => {
     if (selected.includes(name)) {
@@ -57,12 +72,12 @@ const MultiSelect = ({
     }
   };
   useEffect(() => {
-    if (selected_a.length >= 4) {
+    if (selected_a.length >= 2) {
       setdata(true);
     } else {
       setdata(false);
     }
-  }, [selected_a.length >= 4]);
+  }, [selected_a.length >= 2]);
 
   useLayoutEffect(() => {
     if (multidata == true) {
@@ -70,7 +85,7 @@ const MultiSelect = ({
     } else {
       setselected_a(selected_a);
     }
-  }, [multidata == true]);
+  }, [multidata]);
 
   useEffect(() => {
     let temp = [];
@@ -95,10 +110,24 @@ const MultiSelect = ({
     setmultidata(false);
   };
 
+  useEffect(() => {
+    // dispatch(setIsSearch(false));
+    setis_search(false);
+    setsearch_txt("");
+  }, []);
+
+  useEffect(() => {
+    if (search == "") {
+      // dispatch(setIsSearch(true));
+      setis_search(true);
+      setsearch_txt("");
+    }
+  }, [search]);
+
   return (
     <>
       <div
-        className="d-flex flex-wrap"
+        // className="d-flex flex-wrap"
         style={{ height: showfilter == true ? "210px" : "" }}
       >
         <button
@@ -130,13 +159,13 @@ const MultiSelect = ({
                   }}
                 >
                   {data[1]}
-                  <FiTarget
+                  {/* <FiTarget
                     style={{
                       fontSize: "10px",
                       marginLeft: "5px",
                       color: "gray",
                     }}
-                  />
+                  /> */}
                 </div>
               ))
             ) : (
@@ -177,88 +206,125 @@ const MultiSelect = ({
             </div>
           </div>
         </button>
-        {showfilter == true ? (
-          <div
-            className="card"
-            style={{
-              overflow: "auto",
-              height: "180px",
-              width: "100%",
-              border: "1px solid #d3d3d3",
-              borderTop: "none",
-            }}
-          >
-            <div className="" style={{ height: "180px", width: "100%" }}>
-              {show_search === true ? (
+
+        {showfilter == true && (
+          <>
+            {show_search === true && (
+              <div
+                style={{
+                  height: "40px",
+                  backgroundColor: "#fff",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginRight: "5px",
+                  width: "100%",
+                  border: "1px solid #d3d3d3",
+                  borderBottom: null,
+                  borderTop: null,
+                }}
+              >
+                <div
+                  onClick={() => {
+                    setmultidata(!multidata);
+                    if (multidata) {
+                      setselected_a([]);
+                    }
+                  }}
+                  style={{ paddingTop: "5px", width: "8%" }}
+                >
+                  {multidata == true ? (
+                    <FiCheckSquare size={18} style={{ margin: "5px 5px" }} />
+                  ) : (
+                    <FiSquare size={18} style={{ margin: "5px 5px" }} />
+                  )}
+                  {/* <span style={{ fontSize: "13px" }}>Select All</span> */}
+                </div>
                 <div
                   style={{
-                    height: "30px",
-                    margin: "10px 10px 1px 10px",
-                    position: "sticky",
-                    top: "0px",
+                    display: "flex",
+                    flexDirection: "row",
+                    paddingLeft: 10,
+                    alignItems: "center",
+                    justifyContent: "space-around",
                   }}
                 >
-                  <input
+                  <Input
                     type="search"
                     placeholder="Search..."
+                    className="form-control-sm"
                     id="input"
                     style={{
                       width: "100%",
-                      height: "100%",
-                      border: "1px solid #D3D3D3",
-                      borderRadius: "5px",
+                      height: "30px",
                     }}
-                    value={search_a}
-                    onChange={(event) => {
-                      let val = event.target.value;
-                      setsearch_a(val);
-                      setfilter_a(
-                        list_a.filter((item) => {
-                          let name = item[1];
-                          name = name.toLowerCase();
-                          val = val.toLowerCase();
-                          if (String(name).includes(String(val))) {
-                            return name;
-                          }
-                        })
-                      );
+                    value={search}
+                    onChange={(val) => {
+                      // dispatch(setIsSearch(false));
+                      setis_search(false);
+                      setsearch(val.target.value);
+                      // let val = event.target.value;
+                      // setsearch_a(val);
+                      // setfilter_a(
+                      //   list_a.filter(item => {
+                      //     let name = item[1];
+                      //     name = name.toLowerCase();
+                      //     val = val.toLowerCase();
+                      //     if (String(name).includes(String(val))) {
+                      //       return name;
+                      //     }
+                      //   })
+                      // );
                     }}
                   />
-                </div>
-              ) : null}
-              <div style={{ width: "100%", height: "180px" }}>
-                {multidata == true ? (
-                  <div
-                    onClick={() => setmultidata(!multidata)}
-                    style={{ paddingTop: "5px" }}
-                  >
-                    {" "}
-                    <FiCheckSquare style={{ margin: "5px 5px" }} />
-                    <span style={{ fontSize: "13px" }}>Select All</span>
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => setmultidata(!multidata)}
-                    style={{ paddingTop: "5px" }}
-                  >
-                    {" "}
-                    <FiSquare style={{ margin: "5px 5px" }} />
-                    <span style={{ fontSize: "13px" }}>Select All</span>
-                  </div>
-                )}
 
-                {search_a != ""
-                  ? filter_a.map((item, index) =>
-                      getselected(selected_a, setselected_a, item, index)
-                    )
-                  : list_a.map((item, index) =>
-                      getselected(selected_a, setselected_a, item, index)
-                    )}
+                  <i
+                    onClick={() => {
+                      if (!is_search) {
+                        setlist_a([]);
+                      }
+                      // dispatch(setFilterToggle(true));
+                      // dispatch(setIsSearch(true));
+                      setis_search(true);
+                      // dispatch(setSearchItem(search));
+                      setsearch_txt(toTitleCase(search).toUpperCase());
+                      // dispatch(setPageNumber(1));
+                      setpage(1);
+                      setbottom(103);
+                    }}
+                    className="bx bx-search-alt search-icon"
+                  ></i>
+                </div>
               </div>
+            )}
+
+            <div
+              ref={ref}
+              style={{
+                width: "100%",
+                borderTop: "1px solid #d3d3d3",
+                overflow: "auto",
+                border: "1px solid #d3d3d3",
+                // maxHeight: "140px",
+                height: "140px",
+              }}
+              onScroll={() => {
+                if (ref.current.scrollTop > bottom - 1 && type == "backend") {
+                  setpage(page + 1);
+                  setbottom(bottom + 235);
+                }
+              }}
+            >
+              {search_a != ""
+                ? filter_a.map((item, index) =>
+                    getselected(selected_a, setselected_a, item, index)
+                  )
+                : list_a.map((item, index) =>
+                    getselected(selected_a, setselected_a, item, index)
+                  )}
             </div>
-          </div>
-        ) : (
-          ""
+          </>
         )}
       </div>
     </>

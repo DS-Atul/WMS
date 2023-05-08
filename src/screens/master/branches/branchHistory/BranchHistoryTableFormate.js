@@ -19,7 +19,7 @@ const BranchHistoryTableFormate = ({table_data}) => {
               <td>{(item.action_flag === 1 ? "Created" : "Updated")}</td>
               <td>{new_data.code ? new_data.code:"-"}</td>
             <td>{new_data.type ? new_data.type : "-" }</td>
-            <td>{new_data.vendor? new_data.vendor : "-"}</td>
+            <td>{new_data.vendor_name? new_data.vendor_name : "-"}</td>
             <td>{new_data.name ? new_data.name : "-"}</td>
             <td>{new_data.email ? new_data.email : "-"}</td>
             <td>{new_data.contact_number ? new_data.contact_number : "-"}</td>

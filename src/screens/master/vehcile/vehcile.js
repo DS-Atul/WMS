@@ -88,7 +88,7 @@ const Vehcile = () => {
                   />
             
 
-                <Filter type={"charges"} />
+                {/* <Filter type={"charges"} /> */}
               </div>
             </div>
             {(user.user_department_name === "ADMIN" || user.user_department_name === "ACCOUNTANT" ||  user.user_department_name+" "+ user.designation_name === "ACCOUNT MANAGER") &&

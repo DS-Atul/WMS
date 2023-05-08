@@ -82,7 +82,6 @@ const UserInfo = () => {
   const [password_err_1, setpassword_err_1] = useState(false);
   const [password_err_2, setpassword_err_2] = useState(false);
   const [password_err_3, setpassword_err_3] = useState(false);
-  const [home_branch_err, sethome_branch_err] = useState("");
   const [user_type_err, setuser_type_err] = useState(false);
   const [channel_access_err, setchannel_access_err] = useState(false);
 
@@ -96,7 +95,8 @@ const UserInfo = () => {
   const [branch_count, setbranch_count] = useState(1)
   const [branch_loaded, setbranch_loaded] = useState(false)
   const [branch_bottom, setbranch_bottom] = useState(103)
-
+  const [home_branch_err, sethome_branch_err] = useState("");
+  
   const [user_department_list, setuser_department_list] = useState([]);
   const [user_department, setuser_department] = useState("");
   const [user_department_page, setuser_department_page] = useState(1);

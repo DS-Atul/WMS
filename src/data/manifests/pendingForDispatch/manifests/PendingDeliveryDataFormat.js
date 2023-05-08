@@ -99,7 +99,8 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
                         <div>
                           {/* /manifests/manifest-pdf */}
                           <Link
-                            to="/manifest/manifestPdf"
+                            // to="/manifest/manifestPdf"
+                            to="../../../booking/orders/OrderPdf"
                             state={{ order: local }}
                           >
                             <img src={pdf} width="20" height="20" />

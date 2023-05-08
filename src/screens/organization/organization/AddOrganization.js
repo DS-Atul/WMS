@@ -263,7 +263,7 @@ const AddOrganization = () => {
       // phone_numbers: Yup.string().min(10,"invalid").max(10,"invalid").required("Number is required"),
     }),
     onSubmit: (values) => {
-      let data= row.some((a) => a[5] == true)
+      let data = row.some((a) => a[5] == true)
       if (
         office_add_line1 !== "" &&
         office_state !== "" &&
@@ -301,8 +301,8 @@ const AddOrganization = () => {
       else if (pan_no.length !== 10) {
         alert("Pan Number Must be 10 Degit")
       }
-     
-      else if(data===false){
+
+      else if (data === false) {
         alert("Please Select Head Office")
       }
       else {
@@ -312,8 +312,8 @@ const AddOrganization = () => {
     },
   });
 
-  console.log("location______data",location_data.state)
-  
+  console.log("location______data", location_data.state)
+
 
   // Post Branch
   const send_organisation_data = async (values) => {
@@ -337,8 +337,8 @@ const AddOrganization = () => {
           contact_person_mobile: values.contact_person_ph_no,
           logo_uploaded_by: user.id,
           created_by: user.id,
-          org_config:row1,
-          organization_name:[],
+          org_config: row1,
+          organization_name: [],
           is_same: same_as_billing_add,
           address: [
             [
@@ -508,8 +508,8 @@ const AddOrganization = () => {
           gst_address: row,
           modified_by: user.id,
           deleted_gst: deleted_gst_id,
-          org_config:row1,
-          deleted_config:deleted_config_id,
+          org_config: row1,
+          deleted_config: deleted_config_id,
           change_fields: change_fields,
         },
 
@@ -1067,49 +1067,49 @@ const AddOrganization = () => {
   const [gst_id_list, setgst_id_list] = useState([]);
   const [gst_ids, setgst_ids] = useState([]);
   const [deleted_gst_id, setdeleted_gst_id] = useState([]);
-//  Organisation Configration
+  //  Organisation Configration
 
 
-const [config_id_list, setconfig_id_list] = useState([]);
-const [config_ids, setconfig_ids] = useState([]);
-const [deleted_config_id, setdeleted_config_id] = useState([]);
+  const [config_id_list, setconfig_id_list] = useState([]);
+  const [config_ids, setconfig_ids] = useState([]);
+  const [deleted_config_id, setdeleted_config_id] = useState([]);
 
-const [config_type, setconfig_type] = useState([
-  ("AADHAR"),
-  ("EWAY BILL"),
-  ("PANCARD"),
-  ("GPS")
-])
-const [config_type_sel, setconfig_type_sel] = useState("");
-const [username, setusername] = useState("");
-const [password, setpassword] = useState("");
-const [url, seturl] = useState("");
-let dimension_list1=[
-  config_type_sel,
-  username,
-  password,
-  url
-]
-const [row1, setrow1] = useState([dimension_list1]);
-const addConfig = () => {
-  dimension_list1 = ["","","",""];
-  setrow1([...row1, dimension_list1]);
-};
-const deleteConfig = (item) => {
-  setconfig_type_sel("");
-  setusername("");
-  setpassword("");
-  let temp = [...row1];
-  let temp2=[...config_id_list]
-  const index = temp.indexOf(item);
-  if (index > -1) {
-    temp.splice(index, 1);
-    temp2.splice(index,1)
-   
-  }
-  setrow1(temp);
-  setconfig_id_list(temp2);
-};
+  const [config_type, setconfig_type] = useState([
+    ("AADHAR"),
+    ("EWAY BILL"),
+    ("PANCARD"),
+    ("GPS")
+  ])
+  const [config_type_sel, setconfig_type_sel] = useState("");
+  const [username, setusername] = useState("");
+  const [password, setpassword] = useState("");
+  const [url, seturl] = useState("");
+  let dimension_list1 = [
+    config_type_sel,
+    username,
+    password,
+    url
+  ]
+  const [row1, setrow1] = useState([dimension_list1]);
+  const addConfig = () => {
+    dimension_list1 = ["", "", "", ""];
+    setrow1([...row1, dimension_list1]);
+  };
+  const deleteConfig = (item) => {
+    setconfig_type_sel("");
+    setusername("");
+    setpassword("");
+    let temp = [...row1];
+    let temp2 = [...config_id_list]
+    const index = temp.indexOf(item);
+    if (index > -1) {
+      temp.splice(index, 1);
+      temp2.splice(index, 1)
+
+    }
+    setrow1(temp);
+    setconfig_id_list(temp2);
+  };
   let dimension_list = [
     gst_no,
     gst_city,
@@ -1187,7 +1187,7 @@ const deleteConfig = (item) => {
       alert(`Error Occur in Get States, ${err}`);
     }
   };
-  console.log("row1111111",row1)
+  console.log("row1111111", row1)
   const getGstCities = async (place_id, filter_by) => {
     let cities_list = [];
 
@@ -1576,7 +1576,7 @@ const deleteConfig = (item) => {
       send_org_pan()
     }
   }, [loaded_pan])
- 
+
 
   return (
     <>
@@ -2314,8 +2314,8 @@ const deleteConfig = (item) => {
             </Col>
           </div>
 
-    {/*  Organisaziation Configration */}
-    <div className="m-3">
+          {/*  Organisaziation Configration */}
+          <div className="m-3">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
@@ -2343,39 +2343,38 @@ const deleteConfig = (item) => {
                         <Row className="hide">
                           <Col lg={3} md={4} sm={4}>
                             <div className="mb-3">
-                              <Label className="header-child">Config Type:</Label>
+                              <Label className="header-child">System Type:</Label>
                               {row1.map((item1, index1) => {
                                 return (
 
-<div
-                              key={index1}
-                            >
-                           
-                              <select
-                              
-                                style={{
-                                  marginBottom: "15px",
-                                  boxShadow: "none",
-                                }}
-                                className="form-select"
-                                placeholder="Select status"
-                                id="input"
-                                value={item1[0]}
-                                onChange={(val) => {
-                                  setconfig_type_sel(val.target.value);
-                                  item1[0] = val.target.value;
-                                  // row3[index1][1] = val.target.value;
-                                }}
-                                defaultValue="Select status"
-                              >
-                                
-                                <option>-----</option>
-                                <option>PANCARD</option>
-                                <option>EWAYBILL</option>
-                                <option>AADHAR</option>
-                                <option>GPS</option>
-                              </select>
-                            </div>
+                                  <div
+                                    key={index1}
+                                  >
+
+                                    <select
+                                      style={{
+                                        marginBottom: "15px",
+                                        boxShadow: "none",
+                                      }}
+                                      className="form-select"
+                                      placeholder="Select status"
+                                      id="input"
+                                      value={item1[0]}
+                                      onChange={(val) => {
+                                        setconfig_type_sel(val.target.value);
+                                        item1[0] = val.target.value;
+                                        // row3[index1][1] = val.target.value;
+                                      }}
+                                      defaultValue="Select status"
+                                    >
+
+                                      <option>-----</option>
+                                      <option>PANCARD</option>
+                                      <option>EWAYBILL</option>
+                                      <option>AADHAR</option>
+                                      <option>GPS</option>
+                                    </select>
+                                  </div>
                                 );
                               })}
                             </div>
@@ -2386,7 +2385,7 @@ const deleteConfig = (item) => {
                               <Label className="header-child"> Username</Label>
                               {row1.map((item1, index1) => (
                                 <div className="mb-3">
-                                   <Input
+                                  <Input
                                     min={0}
                                     key={index1}
                                     value={item1[1]}
@@ -2432,10 +2431,10 @@ const deleteConfig = (item) => {
                           </Col>
                           <Col lg={2} md={4} sm={4}>
                             <div className="mb-3">
-                              <Label className="header-child"> Url </Label>
+                              <Label className="header-child"> URL </Label>
                               {row1.map((item1, index1) => (
                                 <div className="mb-3">
-                                   <Input
+                                  <Input
                                     min={0}
                                     key={index1}
                                     value={item1[3]}
@@ -2455,7 +2454,7 @@ const deleteConfig = (item) => {
                             </div>
                           </Col>
 
-                         
+
                           <Col lg={1}>
                             <div
                               className="mb-3"
@@ -3293,7 +3292,7 @@ const deleteConfig = (item) => {
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
                   <div className="header-text-icon header-text">
-                  Description
+                    Description
                     <IconContext.Provider
                       value={{
                         className: "header-add-icon",

@@ -63,14 +63,25 @@ const Add_Vehcile = () => {
   const [vendor_data, setvendor_data] = useState([]);
   const [vehcile, setvehicle] = useState([]);
 
+  const [branch_id, setbranch_id] = useState("");
+  const [branch_list, setbranch_list] = useState([]);
+  const [branch, setbranch] = useState("");
+  const [search_branch, setsearch_branch] = useState("");
+  const [branch_count, setbranch_count] = useState(1)
+  const [branch_loaded, setbranch_loaded] = useState(false)
+  const [branch_bottom, setbranch_bottom] = useState(103)
+  const [branch_err, setbranch_err] = useState("");
+  const [page, setpage] = useState(1);
+
   useEffect(() => {
     try {
-      console.log("hello jiii", location_data.state.vehcile);
       if (location_data.state.vehcile) {
 
         setis_updating(true);
         let vehicle_data = location_data.state.vehcile;
-        setvehicle(vehicle_data)
+        setvehicle(vehicle_data);
+        setbranch(toTitleCase(vehicle_data.branch_name));
+        setbranch_id(vehicle_data.branch);
         setvehcile_type_s(toTitleCase(vehicle_data.vehcile_type));
         setvehcile_no(vehicle_data.vehcile_no);
         setvehcile_model(toTitleCase(vehicle_data.vehcile_model));
@@ -94,11 +105,12 @@ const Add_Vehcile = () => {
       .post(
         ServerAddress + "master/add_vehcile/",
         {
-          vehcile_no: vehcile_no.toUpperCase(),
-          vehcile_model: vehcile_model,
+          vehcile_no: toTitleCase(vehcile_no).toUpperCase(),
+          vehcile_model: toTitleCase(vehcile_model).toUpperCase(),
           vehcile_status: active_selected === "Active" ? "True" : "False",
-          vehcile_type: vehcile_type_s,
+          vehcile_type: (vehcile_type_s).toUpperCase(),
           transporter_name: vendor_id,
+          branch: branch_id,
         },
         {
           headers: {
@@ -135,6 +147,7 @@ const Add_Vehcile = () => {
   const upadte_vehcile = (values) => {
     let id = vehcile.id;
     let fields_names = Object.entries({
+      branch_name: branch,
       transporter: vendor_name ? vendor_name : "",
       vehcile_model: vehcile_model,
       vehcile_no: vehcile_no,
@@ -158,13 +171,13 @@ const Add_Vehcile = () => {
         .put(
           ServerAddress + "master/update_vehicle/" + id,
           {
-            vehcile_no: vehcile_no.toUpperCase(),
-            vehcile_model: vehcile_model,
+            vehcile_no: toTitleCase(vehcile_no).toUpperCase(),
+            vehcile_model: toTitleCase(vehcile_model).toUpperCase(),
             vehcile_status: active_selected === "Active" ? "True" : "False",
-            vehcile_type: vehcile_type_s,
+            vehcile_type: (vehcile_type_s).toUpperCase(),
             transporter_name: vendor_id,
+            branch: branch_id,
             change_fields: change_fields,
-
           },
           {
             headers: {
@@ -238,6 +251,55 @@ const Add_Vehcile = () => {
       });
   };
 
+  const getBranches = () => {
+    let temp3 = [];
+
+    axios
+      .get(
+        ServerAddress +
+        `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
+          "",
+        ]}&branch_city=${[""]}&vendor=${[""]}&branch_search=${search_branch}&data=all`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        if (response.data.next === null) {
+          setbranch_loaded(false);
+        } else {
+          setbranch_loaded(true);
+        }
+
+        if (response.data.results.length > 0) {
+          if (page === 1) {
+            temp3 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp3 = [
+              ...branch_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setbranch_count(branch_count+2)
+          setbranch_list(temp3);
+        }
+        else{
+          setbranch_list([]);
+        }
+
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get`, err);
+      });
+  };
+
+  useLayoutEffect(() => {
+    getBranches();
+  }, [page, search_branch]);
+  
   useLayoutEffect(() => {
     get_vendor();
   }, [vendor_n_page, search_vendor_name, refresh]);
@@ -248,6 +310,9 @@ const Add_Vehcile = () => {
   const [vehicle_model_error, setvehicle_model_error] = useState(false);
   const [vehicle_len_error, setvehicle_len_error] = useState(false);
   useEffect(() => {
+    if (branch) {
+      setbranch_err(false);
+    }
     if (vehcile_type_s !== "") {
       setvehicle_type_error(false);
     }
@@ -301,7 +366,7 @@ const Add_Vehcile = () => {
             {circle_btn ? (
               <CardBody>
                 <Row>
-                  <Col lg={3} md={4} sm={4}>
+                  <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">Vehicle Type*</Label>
                       <NSearchInput
@@ -315,7 +380,7 @@ const Add_Vehcile = () => {
                     </div>
                   </Col>
                   {vehcile_type_s === "Partner Vehicle" && (
-                    <Col lg={3} md={4} sm={4}>
+                    <Col lg={4} md={4} sm={4}>
                       <div className="mb-3">
                         <Label className="header-child">
                           Transporter Name*
@@ -337,7 +402,7 @@ const Add_Vehcile = () => {
                     </Col>
                   )}
 
-                  <Col lg={3} md={4} sm={4}>
+                  <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">Vehicle Number*</Label>
                       <Input
@@ -359,7 +424,32 @@ const Add_Vehcile = () => {
                     </div>
                   </Col>
 
-                  <Col lg={3} md={4} sm={4}>
+                  <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header-child">Branch *:</Label>
+                        <SearchInput
+                          data_list={branch_list}
+                          setdata_list={setbranch_list}
+                          data_item_s={branch}
+                          set_data_item_s={setbranch}
+                          page={page}
+                          setpage={setpage}
+                          set_id={setbranch_id}
+                          setsearch_item={setsearch_branch}
+                          error_message={"Please Select Any Branch"}
+                          error_s={branch_err}
+                          loaded={branch_loaded}
+                          count={branch_count}
+                          bottom={branch_bottom}
+                          setbottom={setbranch_bottom}
+                        />
+                      </div>
+                      <div className="mt-1 error-text" color="danger">
+                        {branch_err ? "Please Select Any Branch" : null}
+                      </div>
+                    </Col>
+
+                  <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">Vehicle Model*</Label>
                       <Input
@@ -380,14 +470,14 @@ const Add_Vehcile = () => {
                     </div>
                   </Col>
 
-                  <Col lg={3} md={4} sm={4}>
+                  <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">Vehicle Image*</Label>
                       <Input type="file" name="file" id="input" />
                     </div>
                   </Col>
 
-                  <Col lg={3} md={4} sm={4}>
+                  <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">Active Status</Label>
                       <NSearchInput
@@ -423,7 +513,10 @@ const Add_Vehcile = () => {
                     setvehicle_number_error(true);
                   } else if (vehcile_model === "") {
                     setvehicle_model_error(true);
-                  } else {
+                  } else if (branch === "") {
+                    setbranch_err(true);
+                  } 
+                  else {
                     is_updating ? upadte_vehcile() :
                       add_vehcile();
                   }

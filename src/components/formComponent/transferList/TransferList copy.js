@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IconContext } from "react-icons";
 import {
   BiChevronsRight,
@@ -6,11 +6,31 @@ import {
   BiChevronsLeft,
   BiChevronLeft,
 } from "react-icons/bi";
-import { Col } from "reactstrap";
+import { Col, Input } from "reactstrap";
+import toTitleCase from "../../../lib/titleCase/TitleCase";
 
-const TransferList = ({ list_a, setlist_a, list_b, setlist_b, width }) => {
+const TransferList = ({
+  list_a,
+  setlist_a,
+  list_b,
+  setlist_b,
+  width,
+  page = 1,
+  setpage,
+  setsearch_item,
+  loaded=false,
+  count=1
+}) => {
   //for multi select Groups
-  console.log("list_a", list_a);
+  const ref = useRef();
+  const [bottom, setbottom] = useState(56);
+  const [search, setsearch] = useState("");
+  const [searching, setsearching] = useState(false);
+  const [focused, setfocused] = useState(false);
+  const [is_search, setis_search] = useState(false);
+  const [showfilter, setshowfilter] = useState(false);
+  const [data_list_s, setdata_list_s] = useState(list_a);
+  const [filterList, setfilterList] = useState(list_a);
 
   const getselected = (selected, setselected, name, index) => {
     if (selected.includes(name)) {
@@ -62,11 +82,61 @@ const TransferList = ({ list_a, setlist_a, list_b, setlist_b, width }) => {
   const [search_a, setsearch_a] = useState("");
   const [search_b, setsearch_b] = useState("");
 
+  useEffect(() => {
+    setis_search(false);
+    setsearch_item("");
+  }, []);
+
+  useEffect(() => {
+    if (search == "") {
+      setis_search(true);
+      setsearch_item("");
+    }
+  }, [search]);
+
+  useLayoutEffect(() => {
+    setdata_list_s(list_a);
+    setfilterList(list_a);
+  }, [list_a]);
+
+  // useEffect(() => {
+  //   if (!showfilter) {
+  //     setsearch("");
+  //     if (!data_item_s && error_message && focused) {
+  //       seterror(true);
+  //     } else {
+  //       seterror(false);
+  //     }
+  //   }
+  // }, [showfilter]);
+
   return (
     <div className="d-flex flex-wrap">
       <Col lg={width ? 6 : 4} md={11} sm={10} xs={10}>
-        <div style={{ height: "11.5%", marginBottom: "8px" }}>
-          <input
+        <div
+          // style={{ height: "11.5%", marginBottom: "8px" }}
+          style={{
+            height: "11.5%",
+            // marginTop: "5px",
+            marginBottom: "8px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <Input
+            autoComplete="off"
+            className="form-control-md"
+            id="input"
+            value={search}
+            onMouseDown={() => setsearching(true)}
+            onChange={(val) => {
+              setsearch(val.target.value);
+              setis_search(false);
+            }}
+            placeholder="Search....."
+          />
+          {/* <Input
             className="input"
             type="search"
             placeholder="Search........"
@@ -90,10 +160,117 @@ const TransferList = ({ list_a, setlist_a, list_b, setlist_b, width }) => {
                 })
               );
             }}
-          />
+          /> */}
+
+          <i
+            onMouseDown={() => {
+              if (search != "") {
+                setsearching(true);
+              }
+            }}
+            onClick={() => {
+              if (!is_search) {
+                setlist_a([]);
+              }
+              setis_search(true);
+              setsearch_item(toTitleCase(search).toUpperCase());
+
+              setpage(1);
+              setbottom(56);
+            }}
+            className="bx bx-search-alt search-icon"
+          ></i>
         </div>
 
-        <div className="card" style={{ overflow: "auto", height: "200px" }}>
+        <div
+          className="card"
+          style={{ overflow: "auto", height: "200px" }}
+          ref={ref}
+          onScroll={() => {
+            // for (let i = 1; i <= 111; i += 3) {
+              
+            //   if (ref.current.scrollTop > bottom - 1) {
+             
+            //     setpage(page + 1);
+            //     setbottom(bottom + 236);
+             
+            //     break;   
+                           
+            //   }
+            // }
+            for (let i = 1; i <= count; i += 3) {
+              
+              if (ref.current.scrollTop > bottom - i && loaded) {
+             
+                setpage(page + 1);
+                setbottom(bottom + 236);
+             
+                break;   
+                           
+              }
+            }
+        
+            // console.log("ref.current.scrollTop----", ref.current.scrollTop)
+            // console.log("bottom---",bottom)
+    
+            // if (ref.current.scrollTop > bottom - 1) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 3) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }           
+            //  else if (ref.current.scrollTop > bottom - 9) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 12) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 15) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 18) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 21) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 24) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 27) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 30) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 33) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 36) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 39) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+            // else if (ref.current.scrollTop > bottom - 42) {
+            //   setpage(page + 1);
+            //   setbottom(bottom + 236);
+            // }
+          }}
+        >
           <div
             className="card-body p-2"
             style={{ border: "1px solid #D3D3D3" }}

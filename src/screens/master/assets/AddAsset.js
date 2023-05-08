@@ -1263,6 +1263,7 @@ useEffect(() => {
                               <Input
                                 style={{ marginBottom: "10px" }}
                                 type="date"
+                                disabled={row.length - 1 !== index}
                                 key={index}
                                 value={item[0]}
                                 className="form-control-md"
@@ -1287,6 +1288,7 @@ useEffect(() => {
                               <Input
                                 style={{ marginBottom: "10px" }}
                                 key={index}
+                                disabled={row.length - 1 !== index}
                                 value={item[1]}
                                 type="date"
                                 className="form-control-md"
@@ -1313,7 +1315,7 @@ useEffect(() => {
                                 style={{ marginBottom: "10px" }}
                                 key={index}
                                 value={item[2]}
-                              
+                                disabled={row.length - 1 !== index}
                                 type="text"
                                 className="form-control-md"
                                 id="input"
@@ -1339,6 +1341,7 @@ useEffect(() => {
                               <Input
                                 style={{ marginBottom: "10px" }}
                                 key={index}
+                                disabled={row.length - 1 !== index}
                                 value={item[3]}
                                 type="date"
                                 className="form-control-md"
@@ -1363,6 +1366,7 @@ useEffect(() => {
                             return (
                               <Input
                                 key={index}
+                                disabled={row.length - 1 !== index}
                                 style={{ marginBottom: "10px" }}
                                 type="file"
                                 className="form-control-md"
