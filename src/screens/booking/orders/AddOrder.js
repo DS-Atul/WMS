@@ -531,8 +531,6 @@ const AddOrder = () => {
 
   // Order Images
 
-
-
   const deleteOrderImg = (item1) => {
     axios
       .delete(ServerAddress + `booking/delete-order-images/${item1[2]}`, {
@@ -5710,11 +5708,10 @@ console.log("row2row2row2",row2)
                   )}
                {order_active_btn === "second" ? (
                 <>                {
-                  isupdating &&
-                  
+                 (isupdating) && 
                   <OrderImgDataFormat 
                   id={location.state.order.id}
-                  /> 
+                  />                   
                   }
                     <Row className="hide">
                       <Col md={5} sm={5}>
@@ -6160,6 +6157,7 @@ console.log("row2row2row2",row2)
                                 })
                             : null} */}
                           {/* {row2[row2.length - 1][0] === "" ? ( */}
+                          {row2.map((item2, index2) => (
                             <div style={{ height: "110px", paddingTop: 35 }}>
                               <div
                                 style={{
@@ -6199,6 +6197,7 @@ console.log("row2row2row2",row2)
                                 )}
                               </div>
                             </div>
+                                 ))}
                           {/* ) : null} */}
                         </div>
                       </Col>
