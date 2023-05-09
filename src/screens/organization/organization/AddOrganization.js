@@ -2675,7 +2675,7 @@ const AddOrganization = () => {
 
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
-                              <Label className="header-child">City111*</Label>
+                              <Label className="header-child">City*</Label>
                               <SearchInput
                                 data_list={office_city_list}
                                 setdata_list={setoffice_city_list}

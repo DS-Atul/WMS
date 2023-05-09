@@ -7,6 +7,7 @@ import Logo003 from "../../../assets/images/Logo003.jpg";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
+    console.log("order======", order)
     //used for date and time
     const [booking_date, setbooking_date] = useState("");
     const [booking_date_time, setbooking_date_time] = useState("");
@@ -157,6 +158,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
 const OrderPdf = () => {
     const [order, setorder] = useState([]);
     const location = useLocation();
+    console.log("loc=======", location)
     const componentRef = useRef();
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,

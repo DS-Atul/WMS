@@ -194,7 +194,22 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
     setreject_resion(commodity)
     console.log("reject_resion----", reject_resion)
   }
-
+  const handleLinkClick = (e) => {
+    e.preventDefault();
+    const linkObject = {
+      pathname: '/booking/orders/OrderPdf',
+      state: { order: order, from: location.pathname }
+    };
+    const newWindow = window.open(
+      `${window.location.origin}${linkObject.pathname}`,
+      '_blank',
+      'noopener noreferrer'
+    );
+    if (newWindow) {
+      newWindow.opener = null;
+      newWindow.location.search = queryString.stringify(linkObject.state);
+    }
+  };
   return (
     <>
       <Modal show={showM} onHide={handleCloseM}>
@@ -378,8 +393,11 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                   <div>
                     <Link
                       // to="/booking/orders/OrderInvoicePdf"
+
                       to="/booking/orders/OrderPdf"
-                      state={{ order: order }}
+                      state={{ order: order }}                     
+                      // target='_top'                   
+                    
                     >
                       <img src={pdf} width="18" height="18" />
                     </Link>

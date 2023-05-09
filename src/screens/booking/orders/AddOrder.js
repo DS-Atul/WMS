@@ -1943,7 +1943,7 @@ const AddOrder = () => {
   useLayoutEffect(() => {
     try {
       let order_data = location.state.order;
-      setshipper_n(order_data.shipper);
+      setshipper_n(toTitleCase(order_data.shipper));
       setorder_type(toTitleCase(order_data.order_type));
       setlinked_order(
         order_data.order_type === "RETURN" || order_data.order_type === "ISSUE"
@@ -1954,7 +1954,7 @@ const AddOrder = () => {
       setstate(toTitleCase(order_data.shipper_state));
       setlocality_id_f(order_data.shipper_location);
       setcity(toTitleCase(order_data.shipper_city));
-      setconsignee_n(order_data.consignee);
+      setconsignee_n(toTitleCase(order_data.consignee));
       setpincode(order_data.shipper_pincode);
       setconsginee_st(toTitleCase(order_data.consignee_state));
       setlocality_sel_to(order_data.consignee_locality);
@@ -4155,7 +4155,7 @@ const AddOrder = () => {
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
-                              <Label className="header-child">State22*</Label>
+                              <Label className="header-child">State*</Label>
                               <SearchInput
                                 data_list={state_list_s}
                                 setdata_list={setstate_list_s}
@@ -4396,7 +4396,7 @@ const AddOrder = () => {
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
-                              <Label className="header-child">State11*</Label>
+                              <Label className="header-child">State*</Label>
                               <SearchInput
                                 data_list={state_list_c}
                                 setdata_list={setstate_list_c}
@@ -5452,8 +5452,8 @@ const AddOrder = () => {
                       }}
                       className="btn1 footer-text"
                       onClick={() => {
-                        setorder_active_btn("first");
-                        updateCurrentStep(1);
+                        // setorder_active_btn("first");
+                        // updateCurrentStep(1);
                       }}
                     >
                       Packages
@@ -5467,8 +5467,8 @@ const AddOrder = () => {
                       }}
                       className="btn2 footer-text"
                       onClick={() => {
-                        setorder_active_btn("second");
-                        updateCurrentStep(2);
+                        // setorder_active_btn("second");
+                        // updateCurrentStep(2);
                       }}
                     >
                       Order Images
@@ -5480,8 +5480,8 @@ const AddOrder = () => {
                       }}
                       className="btn3 footer-text"
                       onClick={() => {
-                        setorder_active_btn("third");
-                        updateCurrentStep(3);
+                        // setorder_active_btn("third");
+                        // updateCurrentStep(3);
                       }}
                     >
                       Invoices
@@ -5494,7 +5494,7 @@ const AddOrder = () => {
                         }}
                         className="btn3 footer-text"
                         onClick={() => {
-                          setorder_active_btn("forth");
+                          // setorder_active_btn("forth");
                           // updateCurrentStep(3);
                         }}
                       >
@@ -5509,7 +5509,7 @@ const AddOrder = () => {
                         }}
                         className="btn3 footer-text"
                         onClick={() => {
-                          setorder_active_btn("fifth");
+                          // setorder_active_btn("fifth");
                           // updateCurrentStep(3);
                         }}
                       >
@@ -6144,7 +6144,7 @@ const AddOrder = () => {
                                   );
                                 })
                             : null} */}
-                          {row2[row2.length - 1][0] === "" ? (
+                          {/* {row2[row2.length - 1][0] === "" ? ( */}
                             <div style={{ height: "110px", paddingTop: 35 }}>
                               <div
                                 style={{
@@ -6184,7 +6184,7 @@ const AddOrder = () => {
                                 )}
                               </div>
                             </div>
-                          ) : null}
+                          {/* ) : null} */}
                         </div>
                       </Col>
                       <Col md={1}>
