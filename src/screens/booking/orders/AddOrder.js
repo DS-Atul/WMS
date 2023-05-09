@@ -3249,16 +3249,26 @@ const AddOrder = () => {
     });
   };
   useEffect(() => {
-    if (eway_detail_l.length != 0) {
-      const dateStr = eway_detail_l.docDate ;
-const [day, month, year] = dateStr.split("-");
-const isoDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    if (eway_detail_l.length !== 0) {
+      const dateStr = eway_detail_l.docDate ?? "";
+      // const [day, month, year] = dateStr.split("-");
+      const [day, month, year] = dateStr?.split("-") ?? ["", "", ""];
+const isoDate = `${year}-${(month || "").padStart(2, "0")}-${(day || "").padStart(2, "0")}`;
+
+      // const isoDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
       let temp_list = [];
-      temp_list.push([eway_detail_l.ewbNo, isoDate, eway_detail_l.docNo, eway_detail_l.totInvValue, ""]);
-      console.log("temp_listtemp_list",temp_list)
+      temp_list.push([
+        eway_detail_l.ewbNo,
+        isoDate,
+        eway_detail_l.docNo,
+        eway_detail_l.totInvValue,
+        ""
+      ]);
+      console.log("temp_listtemp_list", temp_list);
       setrow2(temp_list);
       setinvoice_value(eway_detail_l.docNo);
     }
+    
   }, [eway_detail_l]);
 
 console.log("row2row2row2",row2)
