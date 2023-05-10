@@ -61,6 +61,7 @@ import {
 } from "../../../store/ewayBill/EwayBill";
 import { gstin_no } from "../../../constants/CompanyDetails";
 import OrderImgDataFormat from "../../../data/images/orderImage/OrderDataFormat";
+import InvoiceImgDataFormat from "../../../data/images/invoicesImage/InvoiceImageDataFormat";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -560,41 +561,9 @@ const AddOrder = () => {
       });
   };
 
-  const getInvoiceImages = () => {
-    axios
-      .get(
-        ServerAddress + `booking/get-invoice-images/${location.state.order.id}`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((res) => {
-        let data = res.data.Data;
-        let aa = [];
-        data.map((e) => {
-          let addImg = [
-            bucket_address + e.invoice_image,
-            e.invoice_at.split("T")[0],
-            e.invoice_no,
-            e.invoice_amount,
-            e.id,
-          ];
-          aa.unshift(addImg);
-        });
-        // setrow2(aa);
-      })
-      .catch((err) => {
-        // console.log("errrrrrrrrrrrrrankit----", err)
-      });
-  };
+ 
 
-  useLayoutEffect(() => {
-    if (isupdating && order_active_btn === "second") {
-      // getOrderImages();
-    } else if (isupdating && order_active_btn === "third") {
-      getInvoiceImages();
-    }
-  }, [order_active_btn]);
+ 
 
   const addorderimage = () => {
     setSelectedFile("");
@@ -1037,6 +1006,7 @@ const AddOrder = () => {
   //Post Order Image
   const send_order_image = (awb) => {
     // alert("It runned")
+    console.log("Ankitttttttttytttytytytytyty")
     let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "");
     const docket_imageform = new FormData();
     if (newrow3.length !== 0) {
@@ -1060,6 +1030,8 @@ const AddOrder = () => {
           docket_imageform.append(`id`, 0);
         }
       }
+
+      console.log("row444",row4)
 
       docket_imageform.append(
         "invoice_count",
@@ -1383,7 +1355,9 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
+        console.log("harshit tapa",response)
         if (response.data.status === "success") {
+          console.log("harshit tapa")
           // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no)
           send_order_image(order.docket_no);
           dispatch(setToggle(true));
@@ -5956,6 +5930,15 @@ console.log("row2row2row2",row2)
                     ""
                   )}
                   {order_active_btn === "third" ? (
+                    <>
+
+                    {
+                      isupdating &&
+
+                      <InvoiceImgDataFormat 
+                      id={location.state.order.id}
+                      />
+                    }
                     <Row>
                       {showModalInvoice.value ? (
                         <Main_c
@@ -5988,7 +5971,7 @@ console.log("row2row2row2",row2)
                           }}
                         />
                       ) : null}
-                      <Col md={row2.length > 1 ? 3 : 2} sm={2}>
+                      <Col md={row2.length > 1 } sm={2}>
                         <div className="mb-3">
                           <Label className="header-child">EwayBill No</Label>
                           {row2.map((item2, index2) => (
@@ -6126,7 +6109,7 @@ console.log("row2row2row2",row2)
                           ))}
                         </div>
                       </Col>
-                      <Col md={2} sm={2}>
+                      <Col md={3} sm={2}>
                         <div className="mb-3">
                           <Label className="header-child">Invoice Images</Label>
 
@@ -6286,6 +6269,7 @@ console.log("row2row2row2",row2)
                         </span>
                       </div>
                     </Row>
+                    </>
                   ) : (
                     ""
                   )}
