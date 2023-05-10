@@ -213,7 +213,7 @@ const UsersDataFormat = ({ data, data1, can_delete }) => {
                   </div>
                 )}
               </td>
-              <td>{toTitleCase(user.user_department_name)}</td>
+              <td>{user.user_department_name ? toTitleCase(user.user_department_name) : "Super User"}</td>
               <td>{toTitleCase(user.user_type)}</td>
             </tr>
           );

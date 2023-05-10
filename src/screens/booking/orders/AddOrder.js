@@ -350,7 +350,6 @@ const AddOrder = () => {
 
   let dimension_list1 = [selectedFile, caption1];
   const [row1, setrow1] = useState([dimension_list1]);
-  console.log("row1======", row1)
   const [ord_image, setord_image] = useState([])
 
   const [documentOrder, setdocumentOrder] = useState("");
@@ -375,7 +374,8 @@ const AddOrder = () => {
     invoice_img,
   ];
   const [row2, setrow2] = useState([dimension_list2]);
-  const [row4, setrow4] = useState([["", "", "", ""]]);
+  const [row4, setrow4] = useState([["", "", "", "", ""]]);
+  
   //For Calculation Info
   const [cal_type, setcal_type] = useState("");
 
@@ -595,7 +595,7 @@ const AddOrder = () => {
     setinvoice_value("");
     dimension_list2 = ["", "", "", ""];
     setrow2([...row2, dimension_list2]);
-    setrow4([...row4, ["", "", "", ""]]);
+    setrow4([...row4, ["", "", "", "", ""]]);
   };
   const deleteinvoice = (item2) => {
     let temp2 = [...row2];
@@ -1005,9 +1005,8 @@ const AddOrder = () => {
 
   //Post Order Image
   const send_order_image = (awb) => {
-    // alert("It runned")
-    console.log("Ankitttttttttytttytytytytyty")
     let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "");
+
     const docket_imageform = new FormData();
     if (newrow3.length !== 0) {
       docket_imageform.append(`awb_no`, awb);
@@ -1031,8 +1030,6 @@ const AddOrder = () => {
         }
       }
 
-      console.log("row444",row4)
-
       docket_imageform.append(
         "invoice_count",
         row4[0][0] !== "" ? row4.length : 0
@@ -1041,12 +1038,13 @@ const AddOrder = () => {
         for (let index = 0; index < row4.length; index++) {
           docket_imageform.append(
             `InvoiceImage${index}`,
-            row4[index][0],
-            row4[index][0]?.nane
+            row4[index][4],
+            row4[index][4]?.nane
           );
           docket_imageform.append(`invoice_date${index}`, row4[index][1]);
           docket_imageform.append(`invoice_no${index}`, row4[index][2]);
           docket_imageform.append(`invoice_amount${index}`, row4[index][3]);
+          docket_imageform.append(`ewayBill_no${index}`, row4[index][0]);
         }
       }
 
@@ -1148,21 +1146,22 @@ const AddOrder = () => {
           consignee_address: consignee_add_1.toUpperCase(),
           order_origin: all_shipper_details.toUpperCase(),
           order_destination: all_consignee_details.toUpperCase(),
-          origin_city: origincity.toUpperCase(),
-          origin_state: shipper_state.toUpperCase(),
-          origin_pincode: shipper_pincode,
-          origin_locality: shipper_locality,
-          destination_city: destinationcity,
-          destination_state: consignee_state.toUpperCase(),
+          origin_city: city.toUpperCase(),
+          origin_state: state.toUpperCase(),
+          origin_pincode: pincode,
+          origin_locality: locality.toUpperCase(),
+          destination_city: consginee_c.toUpperCase(),
+          destination_state: consginee_st.toUpperCase(),
           destination_pincode: consignee_pincode,
-          destination_locality: consignee_locality,
+          destination_locality: locality_c.toUpperCase(),
           billto_name: billto.toUpperCase(),
           eway_detail: eway_confirm ? eway_detail_l : null,
           is_docket_entry: user.is_docket_entry ? user.is_docket_entry : false,
           starting_docket_no: user.starting_docket_no
             ? user.starting_docket_no
             : "",
-          barcode_no: row6,
+          // barcode_no: row6,
+          barcode_no: [],
           linked_order: order_type === "New" ? null : linked_order,
           order_type: order_type.toUpperCase(),
 
@@ -1193,7 +1192,7 @@ const AddOrder = () => {
           // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no,response.data.data.booking_at)
           if (row3[0][0] !== "" || row4[0][0] !== "") {
             send_order_image(response.data.data.docket_no);
-          }
+          }        
           dispatch(setToggle(true));
           setsubmit_btn(true);
           setresponse_awb_no(response.data.awb_no);
@@ -1319,14 +1318,14 @@ const AddOrder = () => {
           consignee_address: consignee_address.toUpperCase(),
           order_origin: all_shipper_details.toUpperCase(),
           order_destination: all_consignee_details.toUpperCase(),
-          origin_city: origincity.toUpperCase(),
-          origin_state: shipper_state.toUpperCase(),
-          origin_pincode: shipper_pincode.toUpperCase(),
-          origin_locality: shipper_locality.toUpperCase(),
-          destination_city: destinationcity.toUpperCase(),
-          destination_state: consignee_state.toUpperCase(),
+          origin_city: city.toUpperCase(),
+          origin_state: state.toUpperCase(),
+          origin_pincode: pincode,
+          origin_locality: locality.toUpperCase(),
+          destination_city: consginee_c.toUpperCase(),
+          destination_state: consginee_st.toUpperCase(),
           destination_pincode: consignee_pincode,
-          destination_locality: consignee_locality.toUpperCase(),
+          destination_locality: locality_c.toUpperCase(),
           billto_name: billto.toUpperCase(),
           shipper_location: shipper_locality_id,
           consignee_location: consignee_locality_id,
@@ -1355,9 +1354,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("harshit tapa",response)
         if (response.data.status === "success") {
-          console.log("harshit tapa")
           // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no)
           send_order_image(order.docket_no);
           dispatch(setToggle(true));
@@ -1593,7 +1590,7 @@ const AddOrder = () => {
           asset_info_selected
         ).toUpperCase()}&product_id_search=${type === "logger" ? search_logger : search_box}`,
         {
-          headers: { Authorization: `Bearer ${accessToken}` },
+          headers: { Authorization: `Bearer ${accessToken}`},
         }
       )
       .then((response) => {
@@ -1669,6 +1666,10 @@ const AddOrder = () => {
             setbox_list_1(box);
           }
 
+        }
+        else{
+          setbox_list_1([]);
+          setLogger_list([]);
         }
 
         // for (let index = 0; index < data.length; index++) {
@@ -2041,18 +2042,6 @@ const AddOrder = () => {
   ]);
 
   useEffect(() => {
-    setall_shipper_details(
-      shipper_state + "," + shipper_city + "," + shipper_pincode
-    );
-  }, [shipper_state, shipper_city, shipper_pincode]);
-
-  useEffect(() => {
-    setall_consignee_details(
-      consignee_state + "," + consignee_city + "," + consignee_pincode
-    );
-  }, [consignee_state, consignee_city, consignee_pincode]);
-
-  useEffect(() => {
     if (box !== [] && asset_info_selected === "With Box") {
       let item = asset_idlist.filter((p) => box.indexOf(p) == -1);
       setassetdeleted_ids(item);
@@ -2409,7 +2398,6 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log(response.data.response.token)
         dispatch(setBAccessToken(response.data.response.token));
       })
       .catch((error) => {
@@ -2891,7 +2879,7 @@ const AddOrder = () => {
       }, 1);
     }
     return () => clearTimeout(timeoutId);
-  }, [state_id_f_c, city_page_c, state_search_item_c]);
+  }, [state_id_f_c, city_page_c, city_search_item_c]);
 
   useLayoutEffect(() => {
     if (state != "") {
@@ -3139,6 +3127,19 @@ const AddOrder = () => {
   }, [returned_data, order_type]);
 
   useEffect(() => {
+    setall_shipper_details(
+      state + "," + city + "," + pincode
+    );
+  }, [state, city, pincode]);
+
+  useEffect(() => {
+    setall_consignee_details(
+      consginee_st + "," + consginee_c + "," + consignee_pincode
+    );
+  }, [consginee_st, consginee_c, consignee_pincode]);
+
+
+  useEffect(() => {
     if (
       location.state === null &&
       order_type !== "Return" &&
@@ -3225,7 +3226,7 @@ const AddOrder = () => {
       const dateStr = eway_detail_l.docDate ?? "";
       // const [day, month, year] = dateStr.split("-");
       const [day, month, year] = dateStr?.split("-") ?? ["", "", ""];
-const isoDate = `${year}-${(month || "").padStart(2, "0")}-${(day || "").padStart(2, "0")}`;
+      const isoDate = `${year}-${(month || "").padStart(2, "0")}-${(day || "").padStart(2, "0")}`;
 
       // const isoDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
       let temp_list = [];
@@ -3236,14 +3237,12 @@ const isoDate = `${year}-${(month || "").padStart(2, "0")}-${(day || "").padStar
         eway_detail_l.totInvValue,
         ""
       ]);
-      console.log("temp_listtemp_list", temp_list);
       setrow2(temp_list);
       setinvoice_value(eway_detail_l.docNo);
     }
     
   }, [eway_detail_l]);
 
-console.log("row2row2row2",row2)
   // const update_ewayBill = (dkt_no, eway_no,date) => {
 
   //   let inv_list = [];
@@ -5705,7 +5704,7 @@ console.log("row2row2row2",row2)
                               }}
                             />
                           ))} */}
-                          {row1[row.length - 1][0] !== ""
+                          {row1[row1.length - 1][0] !== ""
                             ? row1
                                 .filter((e) => e[0] !== "")
                                 .map((item1, index1) => {
@@ -5951,21 +5950,21 @@ console.log("row2row2row2",row2)
                           }}
                           upload_image={(val) => {
                             if (showModalInvoice.ind !== "") {
-                              row4[showModalInvoice.ind][0] = val;
+                              row4[showModalInvoice.ind][4] = val;
                               setshowModalInvoice({
                                 ...showModalInvoice,
                                 value: false,
                                 ind: "",
                               });
                             } else {
-                              row4[row4.length - 1][0] = val;
+                              row4[row4.length - 1][4] = val;
                             }
                           }}
                           result_image={(val) => {
                             if (showModalInvoice.ind !== "") {
-                              row2[showModalInvoice.ind][0] = val;
+                              row2[showModalInvoice.ind][4] = val;
                             } else {
-                              row2[row2.length - 1][0] = val;
+                              row2[row2.length - 1][4] = val;
                               setinvoice_img(val);
                             }
                           }}

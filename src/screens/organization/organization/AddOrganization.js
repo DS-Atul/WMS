@@ -1119,6 +1119,7 @@ const AddOrganization = () => {
     active,
   ];
   const [row, setrow] = useState([dimension_list]);
+  console.log("row======", row)
 
   const addGST = () => {
     dimension_list = ["", ["", "", ""], ["", ""], ["", ""], "", false];
