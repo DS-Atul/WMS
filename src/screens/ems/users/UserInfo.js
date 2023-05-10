@@ -496,7 +496,6 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
         }
       )
       .then(function (resp) {
-        console.log("uresp-----------", resp)
         if (resp.status === 201) {
           if (document) {
             send_user_pic(resp.data.user_id);
@@ -509,7 +508,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           dispatch(setAlertType("success"));
           navigate("/ems/users");
         }
-        else if (resp.data.error === "duplicate key value violates unique constraint \"ems_customuser_mobilenumber_key\"\nDETAIL:  Key (mobilenumber)=(9876543210) already exists.\n") {
+        else if (resp.data === "duplicate mobilenumber") {
           dispatch(
             setDataExist(
               `Mobile Number ${values.phone_number} already exists`
@@ -518,7 +517,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           dispatch(setAlertType("warning"));
           dispatch(setShowAlert(true));
         }
-        else if (resp.data.error === "UNIQUE constraint failed: ems_customuser.username") {
+        else if (resp.data === "duplicate username") {
           dispatch(
             setDataExist(
               `User Name "${values.username}" already exists`
@@ -632,7 +631,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           dispatch(setShowAlert(true));
           navigate("/ems/users");
         }
-        else if (resp.data.error === "UNIQUE constraint failed: ems_customuser.mobilenumber") {
+        else if (resp.data === "duplicate mobilenumber") {
           dispatch(
             setDataExist(
               `Mobile Number ${values.phone_number} already exists`
@@ -641,7 +640,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           dispatch(setAlertType("warning"));
           dispatch(setShowAlert(true));
         }
-        else if (resp.data.error === "UNIQUE constraint failed: ems_customuser.username") {
+      else if (resp.data === "duplicate username") {
           dispatch(
             setDataExist(
               `User Name "${values.username}" already exists`
@@ -770,6 +769,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
 
     ["Billing", "Invoices", false, false, false, false, ""],
     ["Manifest", "Panding For Dispatch", false, false, false, false, ""],
+    ["Manifest", "Hub Dispatch", false, false, false, false, ""],
     ["Manifest", "Raugh Manifest", false, false, false, false, ""],
     ["Manifest", "Panding To Depart", false, false, false, false, ""],
     ["Manifest", "Incoming Manifest", false, false, false, false, ""],

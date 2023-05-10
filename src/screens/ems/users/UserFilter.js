@@ -28,7 +28,7 @@ const UserFilter = () => {
         ServerAddress +
           `master/all-branches/?search=${""}&p=${page_num}&records=${data_len}&branch_name=${[
             "",
-          ]}&branch_city=${[""]}&branch_search=${search_txt}&vendor=`,
+          ]}&branch_city=${[""]}&branch_search=${search_txt}&vendor=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -42,6 +42,7 @@ const UserFilter = () => {
         temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
           v.split(",")
         );
+        console.log("temp_list====", temp_list)
         setbranch_name_filter(temp_list);
       })
       .catch((err) => {
@@ -61,6 +62,7 @@ const UserFilter = () => {
     dispatch(setToggle(toggle));
   }, [toggle]);
   useEffect(() => {
+    console.log("branch_name_id====", branch_name_id)
     dispatch(setFilterA([branch_name_id]));
   }, [home_branch]);
 
@@ -84,7 +86,6 @@ const UserFilter = () => {
             setlist_b={sethome_branch}
             setlist_id={setbranch_name_id}
             show_search={true}
-            get_id={false}
             page={page}
             setpage={setpage}
             setsearch_txt={setsearch_txt}

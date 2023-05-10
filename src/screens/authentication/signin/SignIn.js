@@ -556,6 +556,7 @@ useEffect(() => {
           dropdown: "Manifest",
           dropdownMenu: [
             ["Pending For Dispatch", "/manifest/pendingfordispatch"],
+            ["Hub Dispatch", "/manifest/hubvehicleforward"],
             ["Raugh Manifest", "/manifest/roughmanifest"],
             ["Pending To Depart", "/manifest/pendingtodepart"],
             ["Incoming Manifest", "/manifest/incomingmanifest"],
