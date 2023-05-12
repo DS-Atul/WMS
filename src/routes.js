@@ -1,6 +1,5 @@
 import React, { lazy } from "react";
 import { Navigate } from "react-router-dom";
-
 // Authentication
 const SignIn = React.lazy(() =>
   import("./screens/authentication/signin/SignIn.js")
@@ -123,6 +122,11 @@ const AssetHistoryPage = React.lazy(() => import("./screens/master/assets/assetH
 const AssigneBranch = React.lazy(() =>
   import("./screens/master/assets/AssigneBranch.js")
 );
+
+const AssetsCallibration = React.lazy(() =>
+  import("./screens/master/assets/AssetsCallibration.js")
+);
+
 
 const AddAsset = React.lazy(() =>
   import("./screens/master/assets/AddAsset.js")
@@ -654,6 +658,10 @@ const routes = [
   {
     path: "/master/assets/assignbranch",
     element: <AssigneBranch />,
+  },
+  {
+    path: "/master/assets/assetscallibration",
+    element: <AssetsCallibration />,
   },
   {
     path: "/master/add-asset",

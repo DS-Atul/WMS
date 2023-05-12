@@ -42,7 +42,7 @@ function AddDepartment() {
   const [departments, setdepartments] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [showRow, setshowRow] = useState([]);
-  
+
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
   };
@@ -125,7 +125,7 @@ function AddDepartment() {
   };
 
   const add_user_permission = (dep_id) => {
-    const newarrdata = permission_title_list.filter((e)=>e[1]!=="All Section")
+    const newarrdata = permission_title_list.filter((e) => e[1] !== "All Section")
     axios
       .post(
         ServerAddress + "ems/add_group_permissions/",
@@ -190,7 +190,7 @@ function AddDepartment() {
       setdepartments(location.state.user);
       setisupdating(true);
       setis_checker_maker(location.state.user.is_checker_maker);
-    } catch (error) {}
+    } catch (error) { }
   }, []);
 
   // Permission
@@ -219,13 +219,13 @@ function AddDepartment() {
     //   (val) => val.toString() != permissions.toString()
     // );
     // setpermissions_list(filterlist);
-    if (idxx===2) {
+    if (idxx === 2) {
       permission_title_list[idx][idxx] = false;
       permission_title_list[idx][3] = false;
       permission_title_list[idx][4] = false;
       permission_title_list[idx][5] = false;
-      
-    }else {
+
+    } else {
       permission_title_list[idx][idxx] = false;
     }
     setpermis(true);
@@ -296,7 +296,7 @@ function AddDepartment() {
   }, [permission_title_list, updated_permission, refresh]);
 
   const update_user_permission = () => {
-    const newarrdata = permission_title_list.filter((e)=>e[1]!=="All Section")
+    const newarrdata = permission_title_list.filter((e) => e[1] !== "All Section")
     axios
       .post(
         ServerAddress + "ems/update_group_permissions/",
@@ -328,8 +328,8 @@ function AddDepartment() {
     axios
       .get(
         ServerAddress +
-          "ems/get_grouppermission/?department_id=" +
-          departments.id,
+        "ems/get_grouppermission/?department_id=" +
+        departments.id,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -349,12 +349,12 @@ function AddDepartment() {
         const element = updated_permission[index];
         temp_p.push(Object.values(element));
       }
-      temp_p.splice(0,0,["Ems App", "All Section", false, false, false, false, ""])
-      temp_p.splice(3,0,["Booking App", "All Section", false, false, false, false, ""])
-      temp_p.splice(14,0,["Master App", "All Section", false, false, false, false, ""])
-      temp_p.splice(28,0,["Billing App", "All Section", false, false, false, false, ""])
-      temp_p.splice(32,0,["Manifest App", "All Section", false, false, false, false, ""])
-      temp_p.splice(38,0,["Runsheet App", "All Section", false, false, false, false, ""])
+      temp_p.splice(0, 0, ["Ems App", "All Section", false, false, false, false, ""])
+      temp_p.splice(3, 0, ["Booking App", "All Section", false, false, false, false, ""])
+      temp_p.splice(14, 0, ["Master App", "All Section", false, false, false, false, ""])
+      temp_p.splice(28, 0, ["Billing App", "All Section", false, false, false, false, ""])
+      temp_p.splice(32, 0, ["Manifest App", "All Section", false, false, false, false, ""])
+      temp_p.splice(38, 0, ["Runsheet App", "All Section", false, false, false, false, ""])
       setpermission_title_list(temp_p);
     }
   }, [updated_permission, isupdating]);
@@ -372,135 +372,135 @@ function AddDepartment() {
   // }, [permission_title_list]);
 
   const TilteColor = (idx) => {
-    if (idx===0) {
+    if (idx === 0) {
       return "red"
-    }else if (idx===3) {
+    } else if (idx === 3) {
       return "red"
-    }else if (idx===14) {
+    } else if (idx === 14) {
       return "red"
-    }else if (idx===28) {
+    } else if (idx === 28) {
       return "red"
-    }else if (idx===32) {
+    } else if (idx === 32) {
       return "red"
-    }else if (idx===38) {
+    } else if (idx === 38) {
       return "red"
-    }else {
+    } else {
       return "#000"
     }
   }
 
-  const RotateDrop = (idx) =>{
-    if (idx===0&&showRow.includes(1)) {
+  const RotateDrop = (idx) => {
+    if (idx === 0 && showRow.includes(1)) {
       return true
-    }else if (idx===3&&showRow.includes(4)) {
+    } else if (idx === 3 && showRow.includes(4)) {
       return true
-    }else if (idx===14&&showRow.includes(15)) {
+    } else if (idx === 14 && showRow.includes(15)) {
       return true
-    }else if (idx===28&&showRow.includes(29)) {
+    } else if (idx === 28 && showRow.includes(29)) {
       return true
-    }else if (idx===32&&showRow.includes(33)) {
+    } else if (idx === 32 && showRow.includes(33)) {
       return true
-    }else if (idx===38&&showRow.includes(39)) {
+    } else if (idx === 38 && showRow.includes(39)) {
       return true
-    }else {
+    } else {
       return false
     }
   }
 
   const showData = (i) => {
-    if (i===0) {
+    if (i === 0) {
       if (showRow.includes(1)) {
         let ind = showRow.indexOf(1)
         let newData = [...showRow]
         newData.splice(ind, 2);
         setshowRow(newData)
-      }else {
-        setshowRow([...showRow,1,2])
+      } else {
+        setshowRow([...showRow, 1, 2])
       }
-    }else if (i===3) {
+    } else if (i === 3) {
       if (showRow.includes(4)) {
         let ind = showRow.indexOf(4)
         let newData = [...showRow]
         newData.splice(ind, 10);
         setshowRow(newData)
-      }else {
-        setshowRow([...showRow,4,5,6,7,8,9,10,11,12,13])
+      } else {
+        setshowRow([...showRow, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
       }
-    }else if (i===14) {
+    } else if (i === 14) {
       if (showRow.includes(15)) {
         let ind = showRow.indexOf(15)
         let newData = [...showRow]
         newData.splice(ind, 13);
         setshowRow(newData)
-      }else {
-        setshowRow([...showRow,15,16,17,18,19,20,21,22,23,24,25,26,27])
+      } else {
+        setshowRow([...showRow, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27])
       }
-    }else if (i===28) {
+    } else if (i === 28) {
       if (showRow.includes(29)) {
         let ind = showRow.indexOf(29)
         let newData = [...showRow]
         newData.splice(ind, 3);
         setshowRow(newData)
-      }else {
-        setshowRow([...showRow,29,30,31])
+      } else {
+        setshowRow([...showRow, 29, 30, 31])
       }
-    }else if (i===32) {
+    } else if (i === 32) {
       if (showRow.includes(33)) {
         let ind = showRow.indexOf(33)
         let newData = [...showRow]
         newData.splice(ind, 5);
         setshowRow(newData)
-      }else {
-        setshowRow([...showRow,33,34,35,36,37])
+      } else {
+        setshowRow([...showRow, 33, 34, 35, 36, 37])
       }
-    }else if (i===38) {
+    } else if (i === 38) {
       if (showRow.includes(39)) {
         let ind = showRow.indexOf(39)
         let newData = [...showRow]
         newData.splice(ind, 2);
         setshowRow(newData)
-      }else {
-        setshowRow([...showRow,39,40])
+      } else {
+        setshowRow([...showRow, 39, 40])
       }
     }
   }
 
   const allperm2 = (idx) => {
     let ttt = permission_title_list[idx][2]
-    if (idx===0) {
-      permission_title_list.map((e,i)=>{
-        if (i<3) {
-          e[2]=!ttt
+    if (idx === 0) {
+      permission_title_list.map((e, i) => {
+        if (i < 3) {
+          e[2] = !ttt
         }
       })
-    }else if (idx===3) {
-      permission_title_list.map((e,i)=>{
-        if (i>2&&i<14) {
-          e[2]=!ttt
+    } else if (idx === 3) {
+      permission_title_list.map((e, i) => {
+        if (i > 2 && i < 14) {
+          e[2] = !ttt
         }
       })
-    }else if (idx===14) {
-      permission_title_list.map((e,i)=>{
-        if (i>13&&i<28) {
-          e[2]=!ttt
+    } else if (idx === 14) {
+      permission_title_list.map((e, i) => {
+        if (i > 13 && i < 28) {
+          e[2] = !ttt
         }
       })
-    }else if (idx===28) {
-      permission_title_list.map((e,i)=>{
-        if (i>27&&i<32) {
-          e[2]=!ttt
+    } else if (idx === 28) {
+      permission_title_list.map((e, i) => {
+        if (i > 27 && i < 32) {
+          e[2] = !ttt
         }
       })
-    }else if (idx===32) {
-      permission_title_list.map((e,i)=>{
-        if (i>31&&i<38) {
-          e[2]=!ttt
+    } else if (idx === 32) {
+      permission_title_list.map((e, i) => {
+        if (i > 31 && i < 38) {
+          e[2] = !ttt
         }
       })
-    }else if (idx===38) {
-      permission_title_list.map((e,i)=>{
-        if (i>37&&i<41) {
-          e[2]=!ttt
+    } else if (idx === 38) {
+      permission_title_list.map((e, i) => {
+        if (i > 37 && i < 41) {
+          e[2] = !ttt
         }
       })
     }
@@ -509,40 +509,40 @@ function AddDepartment() {
   }
   const allperm3 = (idx) => {
     let ttt = permission_title_list[idx][3]
-    if (idx===0) {
-      permission_title_list.map((e,i)=>{
-        if (i<3) {
-          e[3]=!ttt
+    if (idx === 0) {
+      permission_title_list.map((e, i) => {
+        if (i < 3) {
+          e[3] = !ttt
         }
       })
-    }else if (idx===3) {
-      permission_title_list.map((e,i)=>{
-        if (i>2&&i<14) {
-          e[3]=!ttt
+    } else if (idx === 3) {
+      permission_title_list.map((e, i) => {
+        if (i > 2 && i < 14) {
+          e[3] = !ttt
         }
       })
-    }else if (idx===14) {
-      permission_title_list.map((e,i)=>{
-        if (i>13&&i<28) {
-          e[3]=!ttt
+    } else if (idx === 14) {
+      permission_title_list.map((e, i) => {
+        if (i > 13 && i < 28) {
+          e[3] = !ttt
         }
       })
-    }else if (idx===28) {
-      permission_title_list.map((e,i)=>{
-        if (i>27&&i<32) {
-          e[3]=!ttt
+    } else if (idx === 28) {
+      permission_title_list.map((e, i) => {
+        if (i > 27 && i < 32) {
+          e[3] = !ttt
         }
       })
-    }else if (idx===32) {
-      permission_title_list.map((e,i)=>{
-        if (i>31&&i<38) {
-          e[3]=!ttt
+    } else if (idx === 32) {
+      permission_title_list.map((e, i) => {
+        if (i > 31 && i < 38) {
+          e[3] = !ttt
         }
       })
-    }else if (idx===38) {
-      permission_title_list.map((e,i)=>{
-        if (i>37&&i<41) {
-          e[3]=!ttt
+    } else if (idx === 38) {
+      permission_title_list.map((e, i) => {
+        if (i > 37 && i < 41) {
+          e[3] = !ttt
         }
       })
     }
@@ -551,40 +551,40 @@ function AddDepartment() {
   }
   const allperm4 = (idx) => {
     let ttt = permission_title_list[idx][4]
-    if (idx===0) {
-      permission_title_list.map((e,i)=>{
-        if (i<3) {
-          e[4]=!ttt
+    if (idx === 0) {
+      permission_title_list.map((e, i) => {
+        if (i < 3) {
+          e[4] = !ttt
         }
       })
-    }else if (idx===3) {
-      permission_title_list.map((e,i)=>{
-        if (i>2&&i<14) {
-          e[4]=!ttt
+    } else if (idx === 3) {
+      permission_title_list.map((e, i) => {
+        if (i > 2 && i < 14) {
+          e[4] = !ttt
         }
       })
-    }else if (idx===14) {
-      permission_title_list.map((e,i)=>{
-        if (i>13&&i<28) {
-          e[4]=!ttt
+    } else if (idx === 14) {
+      permission_title_list.map((e, i) => {
+        if (i > 13 && i < 28) {
+          e[4] = !ttt
         }
       })
-    }else if (idx===28) {
-      permission_title_list.map((e,i)=>{
-        if (i>27&&i<32) {
-          e[4]=!ttt
+    } else if (idx === 28) {
+      permission_title_list.map((e, i) => {
+        if (i > 27 && i < 32) {
+          e[4] = !ttt
         }
       })
-    }else if (idx===32) {
-      permission_title_list.map((e,i)=>{
-        if (i>31&&i<38) {
-          e[4]=!ttt
+    } else if (idx === 32) {
+      permission_title_list.map((e, i) => {
+        if (i > 31 && i < 38) {
+          e[4] = !ttt
         }
       })
-    }else if (idx===38) {
-      permission_title_list.map((e,i)=>{
-        if (i>37&&i<41) {
-          e[4]=!ttt
+    } else if (idx === 38) {
+      permission_title_list.map((e, i) => {
+        if (i > 37 && i < 41) {
+          e[4] = !ttt
         }
       })
     }
@@ -593,40 +593,40 @@ function AddDepartment() {
   }
   const allperm5 = (idx) => {
     let ttt = permission_title_list[idx][5]
-    if (idx===0) {
-      permission_title_list.map((e,i)=>{
-        if (i<3) {
-          e[5]=!ttt
+    if (idx === 0) {
+      permission_title_list.map((e, i) => {
+        if (i < 3) {
+          e[5] = !ttt
         }
       })
-    }else if (idx===3) {
-      permission_title_list.map((e,i)=>{
-        if (i>2&&i<14) {
-          e[5]=!ttt
+    } else if (idx === 3) {
+      permission_title_list.map((e, i) => {
+        if (i > 2 && i < 14) {
+          e[5] = !ttt
         }
       })
-    }else if (idx===14) {
-      permission_title_list.map((e,i)=>{
-        if (i>13&&i<28) {
-          e[5]=!ttt
+    } else if (idx === 14) {
+      permission_title_list.map((e, i) => {
+        if (i > 13 && i < 28) {
+          e[5] = !ttt
         }
       })
-    }else if (idx===28) {
-      permission_title_list.map((e,i)=>{
-        if (i>27&&i<32) {
-          e[5]=!ttt
+    } else if (idx === 28) {
+      permission_title_list.map((e, i) => {
+        if (i > 27 && i < 32) {
+          e[5] = !ttt
         }
       })
-    }else if (idx===32) {
-      permission_title_list.map((e,i)=>{
-        if (i>31&&i<38) {
-          e[5]=!ttt
+    } else if (idx === 32) {
+      permission_title_list.map((e, i) => {
+        if (i > 31 && i < 38) {
+          e[5] = !ttt
         }
       })
-    }else if (idx===38) {
-      permission_title_list.map((e,i)=>{
-        if (i>37&&i<41) {
-          e[5]=!ttt
+    } else if (idx === 38) {
+      permission_title_list.map((e, i) => {
+        if (i > 37 && i < 41) {
+          e[5] = !ttt
         }
       })
     }
@@ -636,6 +636,7 @@ function AddDepartment() {
 
   return (
     <div>
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -646,7 +647,7 @@ function AddDepartment() {
         {/* Commodity */}
         <div className="mt-4">
           <PageTitle page="Add Department" />
-          <Title title={isupdating?"Update Department":"Add Department"} parent_title={isupdating?"Department":"Department"} />
+          <Title title={isupdating ? "Update Department" : "Add Department"} parent_title={isupdating ? "Department" : "Department"} />
         </div>
         <div className="m-4">
           <Col lg={12}>
@@ -682,7 +683,7 @@ function AddDepartment() {
                           value={validation.values.department}
                           invalid={
                             validation.touched.department &&
-                            validation.errors.department
+                              validation.errors.department
                               ? true
                               : false
                           }
@@ -693,7 +694,7 @@ function AddDepartment() {
                           placeholder="Enter Department"
                         />
                         {validation.touched.department &&
-                        validation.errors.department ? (
+                          validation.errors.department ? (
                           <FormFeedback type="invalid">
                             {validation.errors.department}
                           </FormFeedback>
@@ -774,8 +775,8 @@ function AddDepartment() {
               </CardTitle>
               {circle_btn2 ? (
                 <CardBody>
-                  <div 
-                  style={{ borderWidth: 1 }}
+                  <div
+                    style={{ borderWidth: 1 }}
                   >
                     <div
                       className="fixTableHead"
@@ -849,128 +850,128 @@ function AddDepartment() {
                             // console.log("ersssssssssssssssssssss",permission_title_list)
                             return (
                               <>
-                              {!showRow.includes(idx)?<tr
-                                key={idx}
-                                style={{
-                                  borderWidth: 1,
-                                  color:TilteColor(idx),
-                                  // fontWeight:"800"
-                                }}
-                              >
-                                <td style={{alignItems:"center"}}>
-                                {TilteColor(idx)=="red"?
-                                <RiArrowDropDownLine color="#000" size={30}
-                                onClick={()=>{
-                                  showData(idx)
-                                }}
-                                style={{transform: RotateDrop(idx)?'rotate(180deg)':''}}
-                                />
-                                :null}
-                                  {item[0]}  
-                                  {TilteColor(idx)=="red"?<Input
-                                    className="form-check-input-sm"
-                                    type="checkbox"
-                                    style={{margin:10,borderColor:"red"}}
-                                    onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        // alert(idx)
-                                        allperm2(idx)
-                                        allperm3(idx)
-                                        allperm4(idx)
-                                        allperm5(idx)
-                                      }
-                                    }}
-                                    checked={item[2]}
-                                    readOnly
-                                  />:null}
-                                  </td>
-                                <td>{item[1]}</td>
-                                <td>
-                                  <Input
-                                    className="form-check-input-sm"
-                                    type="checkbox"
-                                    onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        // alert(idx)
-                                        allperm2(idx)
-                                      }else {
-                                        if (!item[2]) {
-                                          setPermissions(2, idx);
-                                        } else {
-                                          removePermissions(2, idx);
+                                {!showRow.includes(idx) ? <tr
+                                  key={idx}
+                                  style={{
+                                    borderWidth: 1,
+                                    color: TilteColor(idx),
+                                    // fontWeight:"800"
+                                  }}
+                                >
+                                  <td style={{ alignItems: "center" }}>
+                                    {TilteColor(idx) == "red" ?
+                                      <RiArrowDropDownLine color="#000" size={30}
+                                        onClick={() => {
+                                          showData(idx)
+                                        }}
+                                        style={{ transform: RotateDrop(idx) ? 'rotate(180deg)' : '' }}
+                                      />
+                                      : null}
+                                    {item[0]}
+                                    {TilteColor(idx) == "red" ? <Input
+                                      className="form-check-input-sm"
+                                      type="checkbox"
+                                      style={{ margin: 10, borderColor: "red" }}
+                                      onClick={() => {
+                                        if (idx === 0 || idx === 3 || idx === 14 || idx === 28 || idx === 32 || idx === 38) {
+                                          // alert(idx)
+                                          allperm2(idx)
+                                          allperm3(idx)
+                                          allperm4(idx)
+                                          allperm5(idx)
                                         }
+                                      }}
+                                      checked={item[2]}
+                                      readOnly
+                                    /> : null}
+                                  </td>
+                                  <td>{item[1]}</td>
+                                  <td>
+                                    <Input
+                                      className="form-check-input-sm"
+                                      type="checkbox"
+                                      onClick={() => {
+                                        if (idx === 0 || idx === 3 || idx === 14 || idx === 28 || idx === 32 || idx === 38) {
+                                          // alert(idx)
+                                          allperm2(idx)
+                                        } else {
+                                          if (!item[2]) {
+                                            setPermissions(2, idx);
+                                          } else {
+                                            removePermissions(2, idx);
+                                          }
 
-                                      }
-                                    }}
-                                    checked={item[2]}
-                                    readOnly
-                                  />
-                                </td>
+                                        }
+                                      }}
+                                      checked={item[2]}
+                                      readOnly
+                                    />
+                                  </td>
 
-                                <td>
-                                  <Input
-                                    className="form-check-input-sm"
-                                    type="checkbox"
-                                    onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        allperm3(idx)
-                                      }else {
-                                      if (!item[3]) {
-                                        setPermissions(3, idx);
-                                        setPermissions(2, idx);
-                                      } else {
-                                        removePermissions(3, idx);
-                                      }
-                                    }
-                                    }}
-                                    checked={item[3]}
-                                    readOnly
-                                  />
-                                </td>
-                                <td>
-                                  <Input
-                                    className="form-check-input-sm"
-                                    type="checkbox"
-                                    onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        allperm4(idx)
-                                      }else {
-                                      if (!item[4]) {
-                                        setPermissions(4, idx);
-                                        setPermissions(3, idx);
-                                        setPermissions(2, idx);
-                                      } else {
-                                        removePermissions(4, idx);
-                                      }
-                                    }
-                                    }}
-                                    checked={item[4]}
-                                    readOnly
-                                  />
-                                </td>
-                                <td>
-                                  <Input
-                                    className="form-check-input-sm"
-                                    type="checkbox"
-                                    onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        allperm5(idx)
-                                      }else {
-                                      if (!item[5]) {
-                                        setPermissions(4, idx);
-                                        setPermissions(5, idx);
-                                        setPermissions(3, idx);
-                                        setPermissions(2, idx);
-                                      } else {
-                                        removePermissions(5, idx);
-                                      }
-                                    }
-                                    }}
-                                    checked={item[5]}
-                                    readOnly
-                                  />
-                                </td>
-                              </tr>:null}
+                                  <td>
+                                    <Input
+                                      className="form-check-input-sm"
+                                      type="checkbox"
+                                      onClick={() => {
+                                        if (idx === 0 || idx === 3 || idx === 14 || idx === 28 || idx === 32 || idx === 38) {
+                                          allperm3(idx)
+                                        } else {
+                                          if (!item[3]) {
+                                            setPermissions(3, idx);
+                                            setPermissions(2, idx);
+                                          } else {
+                                            removePermissions(3, idx);
+                                          }
+                                        }
+                                      }}
+                                      checked={item[3]}
+                                      readOnly
+                                    />
+                                  </td>
+                                  <td>
+                                    <Input
+                                      className="form-check-input-sm"
+                                      type="checkbox"
+                                      onClick={() => {
+                                        if (idx === 0 || idx === 3 || idx === 14 || idx === 28 || idx === 32 || idx === 38) {
+                                          allperm4(idx)
+                                        } else {
+                                          if (!item[4]) {
+                                            setPermissions(4, idx);
+                                            setPermissions(3, idx);
+                                            setPermissions(2, idx);
+                                          } else {
+                                            removePermissions(4, idx);
+                                          }
+                                        }
+                                      }}
+                                      checked={item[4]}
+                                      readOnly
+                                    />
+                                  </td>
+                                  <td>
+                                    <Input
+                                      className="form-check-input-sm"
+                                      type="checkbox"
+                                      onClick={() => {
+                                        if (idx === 0 || idx === 3 || idx === 14 || idx === 28 || idx === 32 || idx === 38) {
+                                          allperm5(idx)
+                                        } else {
+                                          if (!item[5]) {
+                                            setPermissions(4, idx);
+                                            setPermissions(5, idx);
+                                            setPermissions(3, idx);
+                                            setPermissions(2, idx);
+                                          } else {
+                                            removePermissions(5, idx);
+                                          }
+                                        }
+                                      }}
+                                      checked={item[5]}
+                                      readOnly
+                                    />
+                                  </td>
+                                </tr> : null}
                               </>
                             );
                           })}

@@ -41,6 +41,7 @@ import ShipperConsigneeFilter from "../../../screens/master/orderOrigins/OrderOr
 // import Trip_Filter from "../../pages/Transporter/Trip/Trip_Details/Trip_Filter";
 import VendorFilter from "../../../screens/master/vendor/VendorFilter";
 import RouteFilter from "../../../screens/master/route/RouteFilter";
+import AssetsFilter from "../../../screens/master/assets/AssetsFilter";
 
 const Filter = ({ type }) => {
   const dispatch = useDispatch();
@@ -146,7 +147,9 @@ const Filter = ({ type }) => {
           </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body style={{ paddingTop: "0px" }}>
-          {filter === "commodity" ? (
+          {filter === "assets" ? (
+            <AssetsFilter />
+          ) : filter === "commodity" ? (
             <CommoditiesFilter />
           ) : filter === "branches" ? (
             <BranchesFilter />
@@ -171,7 +174,6 @@ const Filter = ({ type }) => {
           ) : (
             ""
           )}
-
           <br />
         </Offcanvas.Body>
       </Offcanvas>

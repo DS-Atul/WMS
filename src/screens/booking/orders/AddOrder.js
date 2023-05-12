@@ -2431,7 +2431,7 @@ const AddOrder = () => {
           dispatch(setAlertType("success"));
           seteway_list(response.data.response);
           gefilterlocalityfrom(response.data.response.fromPincode);
-          gefilterlocalityto(response.data.response.toPincode);
+          gefilterlocalityto(response.data.response.toPincode); 
         }
         else {
           seteway_confirm(false);
@@ -2451,13 +2451,13 @@ const AddOrder = () => {
   const gefilterlocalityfrom = (pincode) => {
     let locality_from = [];
     axios
-      .get(ServerAddress + `master/filter_locality/?pincode=${pincode}`, {
+      .get(ServerAddress + `master/filter_locality/?pincode=${pincode}&p=${1}&records=${10}&locality_search=${""}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
-        setfrom_address(response.data[0]);
-        for (let index = 0; index < response.data.length; index++) {
-          const element = [response.data[index].id, response.data[index].name];
+        setfrom_address(response.data.results[0]);
+        for (let index = 0; index < response.data.results.length; index++) {
+          const element = [response.data.results[index].id, response.data.results[index].name];
           locality_from.push(element);
         }
         setlocality_list(locality_from);

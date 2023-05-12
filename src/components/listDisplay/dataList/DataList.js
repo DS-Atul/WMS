@@ -97,7 +97,7 @@ const DataList = ({
         setdata_ids(temp_data);
       })
       .catch((err) => {
-        alert(`Error Occur in Get Data ${err}`);
+        console.warn(`Error Occur in Get Data ${err}`);
       });
   };
   const getdatab = () => {
@@ -113,7 +113,7 @@ const DataList = ({
         dispatch(setDataLoaded(true));
       })
       .catch((err) => {
-        alert(`Error Occur in Get Data ${err}`);
+        console.warn(`Error Occur in Get Data ${err}`);
       });
   };
   useLayoutEffect(() => {

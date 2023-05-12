@@ -30,16 +30,16 @@ const NumPagination = ({ path, pathb }) => {
   const [first, setfirst] = useState(0);
   const [page_no, setpage_no] = useState(1);
   let total = total_data;
-
+console.log("next=========", next)
   const leftClick = () => {
-    if (prev !== "" && is_loaded === true) {
+    if (prev !== null && is_loaded === true) {
       setpage_no(page_no - 1);
       setfirst(first - data_length);
     }
   };
 
   const rightClick = () => {
-    if (next !== "" && is_loaded === true) {
+    if (next !== null && is_loaded === true) {
       setpage_no(page_no + 1);
       setfirst(first + data_length);
     }
@@ -114,13 +114,13 @@ const NumPagination = ({ path, pathb }) => {
 
   const clk_rightb = () => {
     dispatch(setToggleB(true));
-    dispatch(setDataLoadedB(false));
+    // dispatch(setDataLoadedB(false));
     rightClickb();
   };
 
   const clk_leftb = () => {
     dispatch(setToggleB(true));
-    dispatch(setDataLoadedB(false));
+    // dispatch(setDataLoadedB(false));
     leftClickb();
   };
 
@@ -191,6 +191,7 @@ const NumPagination = ({ path, pathb }) => {
                 <span
                   className="active_arrow"
                   onClick={() => {
+                    dispatch(setDataLoaded(false));
                     if (is_loaded) {
                       clk_left();
                     }
@@ -212,6 +213,7 @@ const NumPagination = ({ path, pathb }) => {
                 <span
                   className="active_arrow"
                   onClick={() => {
+                    dispatch(setDataLoaded(false));
                     if (is_loaded) {
                       clk_right();
                     }

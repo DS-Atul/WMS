@@ -674,7 +674,7 @@ const AddBranch = () => {
         setstate_id(resp.data.results[0].state);
       }
     } catch (err) {
-      console.warn(`Error Occur in Get Pincode, ${err}`);
+      alert(`Error Occur in Get Pincode, ${err}`);
     }
   };
 console.log("location_data=====", location_data)

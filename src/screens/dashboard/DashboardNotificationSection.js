@@ -13,18 +13,15 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { TiPlus } from "react-icons/ti";
 import { ServerAddress } from "../../constants/ServerAddress";
-
 const DashboardNotificationSection = ({ show, setShow, date}) => {
   const navigate = useNavigate();
   const [blogData, setBlogData] = useState([]);
- 
   const accessToken = useSelector((state) => state.authentication.access_token);
   // To get Screen Size
   const { height } = useWindowDimensions();
-
   const getdepartment = () => {
     axios
-      .get(ServerAddress + `notice_board/get-Category/?&p=${1}&records=${10}`, {
+      .get(ServerAddress + `notice_board/get-Notice/?&p=${1}&records=${10}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
@@ -47,7 +44,7 @@ const DashboardNotificationSection = ({ show, setShow, date}) => {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            background: "#f1eeee",
+            background: "#F1EEEE",
           }}
         >
           <div>
@@ -72,6 +69,7 @@ const DashboardNotificationSection = ({ show, setShow, date}) => {
           }}
         >
           {blogData.map((val, index) => {
+            console.log("raggg====", val)
             // <li key={a.id}>{a.text}</li>
           let f_date_f = val.created_at.split("T");
           let f_date = f_date_f[0];
@@ -80,15 +78,15 @@ const DashboardNotificationSection = ({ show, setShow, date}) => {
               avatarSrc={
                 "https://media.licdn.com/dms/image/C5103AQEVLuPfI_Rh3w/profile-displayphoto-shrink_200_200/0/1518872449311?e=1686182400&v=beta&t=KqqwW_dpTmgCsXS5MZCDFfABQTRR6g1YVyJUPx2RRa4"
               }
-              title={val.name}
+              title={val.title}
               text={val.description}
-              author={val.name}
+              author={val.title}
               date={f_date}
+              comment={val.comment}
             />
           )
             })}
         </div>
-
         <div className="notification_Card_container">
           <div className="notification_row">
             <span className="notity_card">
@@ -102,7 +100,6 @@ const DashboardNotificationSection = ({ show, setShow, date}) => {
                 width="100"
               />
             </span>
-
             <span className="notity_card">
               <img
                 onClick={() => {
@@ -113,7 +110,6 @@ const DashboardNotificationSection = ({ show, setShow, date}) => {
                 width="100"
               />
             </span>
-
             <span className="notity_card">
               <img src={Attendance} alt="Attendance" width="100" />
             </span>
@@ -124,13 +120,11 @@ const DashboardNotificationSection = ({ show, setShow, date}) => {
                 <img src={Gmail} alt="Gmail" width="100" />
               </a>
             </span>
-
             <span className="notity_card">
               <a href="https://web.whatsapp.com/">
                 <img src={Whatsapp} alt="Whatsapp" width="100" />
               </a>
             </span>
-
             <span className="notity_card">
               <img src={BookMarks} alt="BookMark" width="100" />
             </span>
@@ -140,5 +134,4 @@ const DashboardNotificationSection = ({ show, setShow, date}) => {
     </>
   );
 };
-
 export default DashboardNotificationSection;

@@ -4,9 +4,11 @@ import React, { useRef, useState, useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 export const ComponentToPrint = React.forwardRef((props, ref) => {
   const { runsheet, rn_orders_s } = props;
+  console.log("runsheet=====", runsheet)
 
   const [order_data, setorder_data] = useState("");
   const [booking_date, setbooking_date] = useState("");
@@ -66,11 +68,11 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
           marginBttom: "50px",
         }}
       >
-        <a>Route : {runsheet.route_name}</a>
+        <a>Route : {toTitleCase(runsheet.route_name)}</a>
         <br />
-        <a>Vehicle No : {runsheet.vehicle_name}</a>
+        <a>Vehicle No : {runsheet.vehicle_number}</a>
         <br />
-        <a>Driver Name : {runsheet.driver_name}</a>
+        <a>Driver Name : {toTitleCase(runsheet.driver_name)}</a>
         <br />
       </div>
 
@@ -89,7 +91,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
         <br />
         <a>Date : {booking_date}</a>
         <br />
-        <a>Market / Fixed Vehicle : {runsheet.vehicle_type} </a>
+        <a>Market / Fixed Vehicle : {toTitleCase(runsheet.vehicle_type)} </a>
         <br />
       </div>
       <br />
@@ -152,13 +154,13 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
                     <td>{key + 1}</td>
                     <td>{val.docket_no}</td>
                     <td> {val.eway_bill_no} </td>
-                    <td>{val.shipper_name}</td>
-                    <td>{val.consignee_name}</td>
+                    <td>{toTitleCase(val.shipper)}</td>
+                    <td>{toTitleCase(val.consignee)}</td>
                     <td>
-                      {val.shipper_postoffice}, {val.shipper_city}
+                      {toTitleCase(val.shipper_state)}, {toTitleCase(val.shipper_city)}
                     </td>
                     <td>
-                      {val.consignee_postoffice}, {val.consignee_city}
+                      {toTitleCase(val.consignee_state)}, {toTitleCase(val.consignee_city)}
                     </td>
                     <td>{val.total_quantity}</td>
                     <td>{val.actual_weight}</td>

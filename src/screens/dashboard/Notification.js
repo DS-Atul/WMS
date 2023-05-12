@@ -3,8 +3,7 @@ import useWindowDimensions from "./ScreenSize";
 import { AiOutlineEllipsis } from "react-icons/ai";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-
-const Notification = ({ avatarBg, avatarSrc, title, text, author, date }) => {
+const Notification = ({ avatarBg, avatarSrc, title, text, author, date, comment }) => {
   // To get Screen Size
   console.log("name66-----", text);
   const { height, width } = useWindowDimensions();
@@ -37,10 +36,9 @@ const Notification = ({ avatarBg, avatarSrc, title, text, author, date }) => {
               {/* onClick={() => {
                   navigate("/dashboard/Timeline/Timelinenotification");
                 }} style={{ fontSize: "24px", width: "24px",cursor:'pointer'}}> */}
-
               <Link
                 to="/dashboard/Timeline/Timelinenotification"
-                state={{ text: text, title, date }}
+                state={{ text: text, title, date,comment }}
               >
                 <AiOutlineEllipsis />
               </Link>

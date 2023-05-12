@@ -33,7 +33,7 @@ import { setToggle } from "../../../store/pagination/Pagination";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 
-function AssigneBranch() {
+function AssetsCallibration() {
   const user = useSelector((state) => state.authentication.userdetails);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const page_num = useSelector((state) => state.pagination.page_number);
@@ -43,6 +43,13 @@ function AssigneBranch() {
   const navigate = useNavigate();
   const [isupdating, setisupdating] = useState(false);
 
+  // Callibration
+  const [callibration_from_date, setcallibration_from_date] = useState("")
+  const [callibration_to_date, setcallibration_to_date] = useState("")
+  const [issued_by, setissued_by] = useState("")
+  const [issued_date, setissued_date] = useState("")
+  const [certificate, setcertificate] = useState("")
+
   // Asset
   const [asset_list_1, setasset_list_1] = useState([]);
   const [asset_list_2, setasset_list_2] = useState([]);
@@ -51,16 +58,6 @@ function AssigneBranch() {
   const [asset_loaded, setasset_loaded] = useState(false)
   const [asset_count, setasset_count] = useState(1)
 
-  //BranCh
-  const [branch_id, setbranch_id] = useState("");
-  const [branch_list, setbranch_list] = useState([]);
-  const [branch, setbranch] = useState("");
-  const [page, setpage] = useState(1);
-  const [search_branch, setsearch_branch] = useState("");
-  const [branch_err, setbranch_err] = useState("");
-  const [branch_loaded, setbranch_loaded] = useState(false)
-  const [branch_count, setbranch_count] = useState(1)
-  const [branch_bottom, setbranch_bottom] = useState(103)
 
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
@@ -74,7 +71,7 @@ function AssigneBranch() {
     navigate("/master/assets");
   };
 
-  const update_asset_branch = async () => {
+  const update_asset_callibration = async () => {
     let assetid_list = asset_list_2.map((v) => v[0]).filter((v) => v !== null);
 
     let asset_ids = [...new Set(assetid_list.map((v) => `${v}`))].map((v) =>
@@ -83,8 +80,12 @@ function AssigneBranch() {
     try {
       const response = await axios.post(ServerAddress + "master/update_asset_callibration/", {
         assets: asset_ids,
-        branch_id: branch_id,
-        is_callibration: false,
+        callibration_from: callibration_from_date,
+        callibration_to: callibration_to_date,
+        issued_by: issued_by,
+        issued_date: issued_date,
+        certificate: certificate,
+        is_callibration: true,
       }, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -105,61 +106,13 @@ function AssigneBranch() {
     }
   };
 
-  const getBranches = () => {
-    let temp3 = [];
-    let data = [];
-    axios
-      .get(
-        ServerAddress +
-          `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
-            "",
-          ]}&branch_city=${[""]}&vendor=${[""]}&branch_search=${search_branch}&data=all`,
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((response) => {
-        if (response.data.next === null) {
-          setbranch_loaded(false);
-        } else {
-          setbranch_loaded(true);
-        }
-
-        if (response.data.results.length > 0) {
-          data = response.data.results;
-          if (page === 1) {
-            temp3 = response.data.results.map((v) => [
-              v.id,
-              toTitleCase(v.name),
-            ]);
-          } else {
-            temp3 = [
-              ...branch_list,
-              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-            ];
-          }
-          setbranch_count(branch_count+2)
-          setbranch_list(temp3);
-        }
-        else{
-          setbranch_list([])
-        }
-      })
-      // .then((resp) => {
-      //   setbranch_list(resp.data);
-      // })
-      .catch((err) => {
-        alert(`Error Occur in Get`, err);
-      });
-  };
-
   const getAsset = () => {
     let temp3 = [];
     let data = [];
     axios
       .get(
         ServerAddress +
-          `master/get-asset-info/?search=${""}&p=${asset_page}&records=${20}&data=all&value=&asset_search=${asset_search}&branch_name=${""}`,
+          `master/get_asset_details/?search=${""}&p=${asset_page}&records=${20}&asset_type=LOGGER&product_id_search=${asset_search}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -181,7 +134,7 @@ function AssigneBranch() {
              "-" +
              v.box_type +
              "-" +
-             (v.manufacturer_name ? v.manufacturer_name : v.product_id)
+             v.manufacturer_name
             ]);
           } else {
             temp3 = [
@@ -190,7 +143,7 @@ function AssigneBranch() {
                 "-" +
                 v.box_type +
                 "-" +
-                (v.manufacturer_name ? v.manufacturer_name : v.product_id)]),
+                v.manufacturer_name]),
             ];
           }
           setasset_count(asset_count+2)
@@ -208,9 +161,6 @@ function AssigneBranch() {
       });
   };
 
-  useLayoutEffect(() => {
-    getBranches();
-  }, [page, search_branch]);
 
   useLayoutEffect(() => {
     getAsset();
@@ -221,15 +171,20 @@ function AssigneBranch() {
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          update_asset_branch()
+          // if (multiasset == "") {
+          //   setmultiasset_error(true);
+          // }
+          // else{
+            update_asset_callibration()
+          // }
         }}
       >
         <div className="mt-3">
           <PageTitle
-            page="Add Assign Branch"
+            page="Update Assets Callibaration"
           />
           <Title
-            title="Add Assign Branch"
+            title="Assets Callibaration"
             parent_title="Masters"
           />
         </div>
@@ -240,7 +195,7 @@ function AssigneBranch() {
             <Card className="shadow bg-white rounded">
               <CardTitle className="mb-1 header">
                 <div className="header-text-icon header-text">
-                Update Assign Branch
+                  Update Asset Callibaration
                   <IconContext.Provider
                     value={{
                       className: "header-add-icon",
@@ -259,28 +214,95 @@ function AssigneBranch() {
               {circle_btn ? (
                 <CardBody>
                   <Row>
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">Branch *</Label>
-                        <SearchInput
-                          data_list={branch_list}
-                          setdata_list={setbranch_list}
-                          data_item_s={branch}
-                          set_data_item_s={setbranch}
-                          page={page}
-                          setpage={setpage}
-                          set_id={setbranch_id}
-                          setsearch_item={setsearch_branch}
-                          loaded={branch_loaded}
-                          count={branch_count}
-                          bottom={branch_bottom}
-                          setbottom={setbranch_bottom}
-                        />
-                      </div>
-                      <div className="mt-1 error-text" color="danger">
-                        {branch_err ? "Please Select Any Branch" : null}
-                      </div>
-                    </Col>
+                  <Col lg={2} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">
+                            Callibration From *
+                          </Label>
+                              <Input
+                                type="date"
+                                value={callibration_from_date}
+                                className="form-control-md"
+                                id="input"
+                                onChange={(val) => {
+                                  setcallibration_from_date(val.target.value);
+                                }}
+                              />
+                        </div>
+                      </Col>
+
+                      <Col lg={2} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">
+                            Callibration To
+                          </Label>
+                              <Input
+                                value={callibration_to_date}
+                                type="date"
+                                className="form-control-md"
+                                id="input"
+                                onChange={(val) => {
+                                  setcallibration_to_date(val.target.value);                                  
+                                }}
+                              />
+                        </div>
+                      </Col>
+
+                      <Col lg={3} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">
+                            {/* Callibration */}
+                            Certificate Issued By *
+                          </Label>
+                              <Input
+                                value={issued_by}
+                                type="text"
+                                className="form-control-md"
+                                id="input"
+                                placeholder="Enter name"
+                                onChange={(val) => {
+                                  setissued_by(val.target.value);
+                                }}                              
+                              />
+                        </div>
+                      </Col>
+
+                      <Col lg={2} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">
+                            {/* Callibration Certificate*/} Issued Date *
+                          </Label>
+                              <Input
+                                value={issued_date}
+                                type="date"
+                                className="form-control-md"
+                                id="input"
+                                onChange={(val) => {
+                                  setissued_date(val.target.value);
+                                }}
+                              />
+                        </div>
+                      </Col>
+
+                      <Col lg={2} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">
+                            {/* Callibration */}
+                            Certificate 
+                          </Label>
+                              <Input
+                                type="file"
+                                className="form-control-md"
+                                id="input"
+                                // value={item[4]}
+                                onChange={(val) => {
+                                  setcertificate(val.target.files[0]);
+                                }}
+                              />
+                        </div>
+                      </Col>
+
+
                     <Label className="header-child">Asset *</Label>
                     <Col lg={12} md={12} sm={12}>
                       <TransferList
@@ -326,4 +348,4 @@ function AssigneBranch() {
   );
 }
 
-export default AssigneBranch;
+export default AssetsCallibration;

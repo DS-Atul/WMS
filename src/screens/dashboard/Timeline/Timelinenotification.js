@@ -25,7 +25,7 @@ function TimelineNotification() {
               />
             </div>
             <div className="text">
-              <h3 className="hero_t"> Social Culture Experience</h3>
+              <h3 className="hero_t">{location_data.state.comment}</h3>
               <div className="hero_t">
             <span className="date">{location_data.state.date}</span>
           </div>

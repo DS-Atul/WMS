@@ -332,6 +332,7 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
                   <div style={{ color: "red" }}>Product Id Not Added</div>
                 )}
               </td>
+              <td>{toTitleCase(asset.assigned_branch_n)}</td>
               <td>{toTitleCase(asset.current_branch_n)}</td>
               <td>{asset.created_by_n}</td>
               <td>
@@ -355,7 +356,7 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
                   <img src={cross} style={{ width: "22px", height: "22px" }} />
                 )}
               </td>
-              <td>{toTitleCase(asset.created_branch_n)}</td>
+              <td>{toTitleCase(asset.created_branch_n)}</td>            
               <td>
                 {
                   asset.cm_current_status === "APPROVED" ?

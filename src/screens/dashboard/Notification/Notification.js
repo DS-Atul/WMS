@@ -64,6 +64,7 @@ function Notification() {
   const [client, setclient] = useState({});
   const [timeline_btn, settimeline_btn] = useState("first");
   const [package_id_list, setpackage_id_list] = useState([]);
+  const [comment, setcomment] = useState("")
   let dimension_list = ["", "", "", ""];
   const [row, setrow] = useState([dimension_list]);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -111,11 +112,11 @@ function Notification() {
     validationSchema: Yup.object({
       Timeline: Yup.string().required("Title Is Required"),
       Status: Yup.string().required("Status is required"),
-      Description: Yup.string().required("Description is required").max(100),
     }),
     onSubmit: (values) => {
       console.log("values", values);
       send_timeline_data(values);
+     
     },
   });
 
@@ -155,14 +156,7 @@ function Notification() {
 
   useLayoutEffect(() => {
     get_timeline();
-  }, [refresh]);
-
-  // const [category_a, setcategory_a] = useState("");
-  // const [Timeline, setTimeline] = useState("");
-  // const [Description, setDescription] = useState("");
-  // // const [expiry_d, setexpiry_d] = useState("");
-  // const [Status, setStatus] = useState("");  
-  const [comment_f, setcomment_f] = useState("");
+  }, [refresh]); 
 
   const send_timeline_data = async (values) => {
     const buttonType = window.event.submitter.name;
@@ -176,7 +170,7 @@ function Notification() {
           description: values.Description,
           date_of_expiry: booking_date1,
           status: values.Status,
-          comment: comment_f,
+          comment: comment,
         },
         {
           headers: {
@@ -205,6 +199,7 @@ function Notification() {
     <React.Fragment>
       <Form
         onSubmit={(e) => {
+          alert("Timline Information")
           e.preventDefault();
           validation.handleSubmit(e.values);
           return false;
@@ -380,9 +375,9 @@ function Notification() {
                         <Label
                           htmlFor="projectdesc"
                           className="col-form-label col-lg-2"
-                          value={comment_f}
+                          value={comment}
                           onChange={(e) => {
-                            setcomment_f(e.target.value);
+                            setcomment(e.target.value);
                           }}
                         >
                           Comments

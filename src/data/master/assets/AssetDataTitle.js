@@ -4,6 +4,7 @@ const AssetDataTitle = [
   "Asset Type",
   "Uses Type",
   "Product ID",
+  "Assigned Branch",
   "Current Branch",
   "Created By",
   "In Use",

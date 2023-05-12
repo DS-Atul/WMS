@@ -312,8 +312,6 @@ const AddOrganization = () => {
     },
   });
 
-  console.log("location______data", location_data.state)
-
 
   // Post Branch
   const send_organisation_data = async (values) => {
@@ -1119,7 +1117,6 @@ const AddOrganization = () => {
     active,
   ];
   const [row, setrow] = useState([dimension_list]);
-  console.log("row======", row)
 
   const addGST = () => {
     dimension_list = ["", ["", "", ""], ["", ""], ["", ""], "", false];
@@ -1188,7 +1185,7 @@ const AddOrganization = () => {
       alert(`Error Occur in Get States, ${err}`);
     }
   };
-  console.log("row1111111", row1)
+
   const getGstCities = async (place_id, filter_by) => {
     let cities_list = [];
 

@@ -17,6 +17,7 @@ import {
   setFilterC,
   setFilterD,
 } from "../../store/filterValue/FilterValue";
+import { setHubTab, setIncomingTab, setManifestTab, setRoughTab, setRunsheetTab } from "../../store/parentFilter/ParentFilter";
 
 const SideBar = () => {
   const dispatch = useDispatch();
@@ -43,6 +44,36 @@ const SideBar = () => {
     dispatch(setFilterC([]));
     dispatch(setFilterD([]));
   };
+
+  const handleClick = (e) => {
+    if(e[0] ==="Pending For Dispatch"){
+      dispatch(setManifestTab(1));
+    }
+    else if(e[0] === "Hub Dispatch"){
+      dispatch(setManifestTab(2));
+      dispatch(setHubTab(1))
+    }
+    else if(e[0] === "Raugh Manifest"){
+      dispatch(setManifestTab(3));
+      dispatch(setRoughTab(1));
+    }
+    else if(e[0] === "Pending To Depart"){
+      dispatch(setManifestTab(4));
+    }
+    else if(e[0] === "Incoming Manifest"){
+      dispatch(setManifestTab(5));
+      dispatch(setIncomingTab(1));
+    }
+    else if(e[0] === "All Manifest"){
+      dispatch(setManifestTab(6));
+    }
+    else if(e[0] === "Pending Delivery"){
+      dispatch(setRunsheetTab(1));
+    }
+    else if(e[0] === "All Runsheet"){
+      dispatch(setRunsheetTab(2));
+    }
+  }
 
   return (
     <>
@@ -93,7 +124,7 @@ const SideBar = () => {
                         onClick={() => handlefun()}
                       >
                         {n.dropdownMenu.map((i) => (
-                          <Link to={i[1]} key={i[0]}>
+                          <Link to={i[1]} key={i[0]} onClick={() => handleClick(i)}>
                             {i[0]}
                           </Link>
                         ))}

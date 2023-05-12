@@ -23,7 +23,7 @@ const Assets = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
   const accessToken = useSelector((state) => state.authentication.access_token);
-
+  const branchname = useSelector((state) => state.filtervalue.data_a);
   // // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
@@ -163,11 +163,16 @@ const Assets = () => {
               >
                 {(can_add || user.is_superuser) && (
                   <>
-                    {/* <Nav_Btn
-                      btn_name="Assign Branch"
+                    <Nav_Btn
+                      btn_name="Update Assets Callibration"
+                      icon={<MdAdd size={15} />}
+                      form_path="/master/assets/assetscallibration"
+                    />
+                    <Nav_Btn
+                      btn_name="Update Assign Branch"
                       icon={<MdAdd size={15} />}
                       form_path="/master/assets/assignbranch"
-                    /> */}
+                    />
                     <Nav_Btn
                       btn_name="Add Asset"
                       icon={<MdAdd size={15} />}
@@ -176,7 +181,7 @@ const Assets = () => {
                   </>
                 )}
                 {/* Filter Tool */}
-                <Filter type={"client"} />
+                <Filter type={"assets"} />
               </div>
             </div>
             {(user.user_department_name === "ADMIN" || user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER") &&
@@ -191,7 +196,9 @@ const Assets = () => {
             can_delete={can_delete}
             Data_Title={AssetDataTitle}
             Data_Format={AssetsDataFormat}
-            path={`master/get-asset-info/?search=${search}&p=${page_num}&records=${data_len}&data=&value=${cm_value}`}
+            path={`master/get-asset-info/?search=${search}&p=${page_num}&records=${data_len}&branch_name=${[
+              branchname,
+            ]}&data=&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>

@@ -532,7 +532,7 @@ const AddAsset = () => {
           assigned_branch: branch_short_id,
           created_branch: user.home_branch, // It will not updated
           checked_by: isChecked ? user_id : null,
-          current_branch: user.home_branch, // It will updated accordind to the Branch
+          current_branch: branch_short_id, // It will updated accordind to the Branch
           is_checked: isChecked,
           modified_by: user_id,
           callibration_from: asset_type === "Logger" ? purchase_date : null,
@@ -890,7 +890,7 @@ useEffect(() => {
                               set_data_item_s={setmanufacture_type}
                               set_id={setmanufacture_type_id}
                               page={manufacture_type_page}
-                              setpage={manufacture_type_page}
+                              setpage={setmanufacture_type_page}
                               setsearch_item={setmanufacture_type_search}
                               error_message={
                                 "Please select Manufacture Name type"
