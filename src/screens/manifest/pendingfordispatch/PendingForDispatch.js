@@ -119,6 +119,8 @@ const PendingForDispatch = () => {
   console.log("branch_type_short-----", branch_type_short)
 
   const get_branch = () => {
+    let temp = [];
+    let temp2 = [];
     axios
       .get(
         ServerAddress +
@@ -135,22 +137,41 @@ const PendingForDispatch = () => {
         } else {
           setbranch_loaded(true);
         }
-        let temp = [];
-        let temp2 = [...branch_list];
+
+        if (response.data.results.length > 0) {
         temp = response.data.results;
-        console.log("response---temp-----", temp);
-        for (let index = 0; index < temp.length; index++) {
-          temp2.push([
-            temp[index].id,
-            temp[index].name,
-            temp[index].city_name,
-            temp[index].location,
-            // temp[index].locality_name
+        if (branch_page === 1) {
+          temp2 = response.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+            toTitleCase(v.city_name),
+            v.location,
           ]);
+        } else {
+          temp2 = [
+            ...branch_list,
+            ...response.data.results.map((v) => [v.id, toTitleCase(v.state), toTitleCase(v.city_name),
+              v.location,]),
+          ];
         }
-        temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+
+        // console.log("response---temp-----", temp);
+        // for (let index = 0; index < temp.length; index++) {
+        //   temp2.push([
+        //     temp[index].id,
+        //     temp[index].name,
+        //     temp[index].city_name,
+        //     temp[index].location,
+        //     // temp[index].locality_name
+        //   ]);
+        // }
+        // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
         setbranch_count(branch_count + 2);
         setbranch_list(temp2);
+      }
+      else{
+        setbranch_list([])
+      }
       })
       .catch((err) => {
         alert(`Error While Loading Branches , ${err}`);

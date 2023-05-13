@@ -392,9 +392,9 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
                 <td>{l_fdate}</td>
                 <td>{val.docket_number}</td>
                 <td>{val.consignee_city}</td>
-                <td>{val.shipper_name}</td>
+                <td>{val.shipper}</td>
                 <td>{val.shipper_city}</td>
-                <td>{val.consignee_name}</td>
+                <td>{val.consignee}</td>
                 <td>{""}</td>
                 <td>{val.pcs}</td>
                 <td>{val.weight}</td>

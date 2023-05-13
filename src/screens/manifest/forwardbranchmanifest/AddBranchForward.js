@@ -92,6 +92,7 @@ const AddBranchForward = (manifest) => {
   const [page, setpage] = useState(1);
   const [coloader_loaded, setcoloader_loaded] = useState(false)
   const [coloader_count, setcoloader_count] = useState(1)
+  const [coloader_bottom, setcoloader_bottom] = useState(103)
 
   const [manifest_no, setmanifest_no] = useState("");
   const [forward_branch, setforward_branch] = useState("");
@@ -625,6 +626,8 @@ const AddBranchForward = (manifest) => {
                               setsearch_item={setsearch}
                               loaded={coloader_loaded}
                               count={coloader_count}
+                              bottom={coloader_bottom}
+                              setbottom={setcoloader_bottom}
                             />
                           </div>
                         </Col>

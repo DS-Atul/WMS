@@ -492,9 +492,12 @@ const AddBranch = () => {
             ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
           ];
         }
-      }
       setstate_count(state_count + 2);
       setstate_list_s(state_list);
+      }
+      else{
+        setstate_list_s([])
+      }
     } catch (err) {
       console.warn(`Error Occur in Get States, ${err}`);
     }

@@ -106,6 +106,7 @@ const AddForward = (manifest) => {
   const [orgin, setorgin] = useState("");
   const [dest, setdest] = useState("");
   const [manifest_id, setmanifest_id] = useState();
+  const [coloader_bottom, setcoloader_bottom] = useState(103)
 
   const [orders, setorders] = useState([])
   const [docket_weight, setdocket_weight] = useState("")
@@ -165,10 +166,7 @@ const AddForward = (manifest) => {
   const [ewb_no, setewb_no] = useState([])
 useEffect(() => {
   let m = data?.map(item=>item.eway_bill_no).filter(Boolean);
-  console.log("mmmmmmmmmmmmmmmmmmmm",m)
   setewb_no(m)
-
- 
 }, [data])
 
   const deletePackage = (item) => {
@@ -711,6 +709,8 @@ const formattedDate = `${day}/${month}/${year}`;
                               setsearch_item={setsearch}
                               loaded={coloader_loaded}
                               count={coloader_count}
+                              bottom={coloader_bottom}
+                              setbottom={setcoloader_bottom}
                             />
                           </div>
                         </Col>

@@ -436,7 +436,7 @@ const AddForward = (data) => {
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
                   <div className="header-text-icon header-text">
-                    Manifest Info :
+                    Manifest Info222 :
                     <IconContext.Provider
                       value={{
                         className: "header-add-icon",
