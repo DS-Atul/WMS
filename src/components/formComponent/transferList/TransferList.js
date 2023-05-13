@@ -122,17 +122,24 @@ const TransferList = ({
           className="card"
           style={{ overflow: "auto", height: "200px" }}
           ref={ref}
-          onScroll={() => {
-            for (let i = 1; i <= count; i += 3) {
+          // onScroll={() => {
+          //   for (let i = 1; i <= count; i += 3) {
               
-              if (ref.current.scrollTop > bottom - i && loaded) {
+          //     if (ref.current.scrollTop > bottom - i && loaded) {
              
-                setpage(page + 1);
-                setbottom(bottom + 236);
+          //       setpage(page + 1);
+          //       setbottom(bottom + 236);
              
-                break;   
+          //       break;   
                            
-              }
+          //     }
+          //   }
+          // }}
+
+          onScroll={() => {
+            if (ref.current.scrollTop > bottom - count && loaded) {
+              setpage(page + 1);
+              setbottom(bottom + 236);
             }
           }}
         >

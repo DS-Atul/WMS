@@ -77,56 +77,58 @@ const DataList = ({
   const user = useSelector((state) => state.authentication.userdetails);
   const index_value = useSelector((state) => state.datalist.index_value);
 
-  const getdata = () => {
-    axios
-      .get(ServerAddress + path, {
+  const getdata = async () => {
+    try {
+      const response = await axios.get(ServerAddress + path, {
         headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => {
-        setdata(response.data.results);
-        dispatch(setTotalData(response.data.count));
-        dispatch(setDataLoaded(true));
-        dispatch(setPrev(response.data.previous));
-        dispatch(setNext(response.data.next));
-        let total_data = response.data.results;
-        let temp_data = [];
-        for (let index = 0; index < total_data.length; index++) {
-          const element = total_data[index];
-          temp_data.push(element.id);
-        }
-        setdata_ids(temp_data);
-      })
-      .catch((err) => {
-        console.warn(`Error Occur in Get Data ${err}`);
       });
+  
+      const { results, count, previous, next } = response.data;
+  
+      const tempDataIds = results.map((element) => element.id);
+  
+      setdata(results);
+      dispatch(setTotalData(count));
+      dispatch(setDataLoaded(true));
+      dispatch(setPrev(previous));
+      dispatch(setNext(next));
+      setdata_ids(tempDataIds);
+    } catch (err) {
+      console.warn(`Error Occurred in Get Data ${err}`);
+    }
   };
-  const getdatab = () => {
-    axios
-      .get(ServerAddress + pathb, {
+  
+  const getdatab = async () => {
+    try {
+      const response = await axios.get(ServerAddress + pathb, {
         headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => {
-        setdatab(response.data.results);
-        dispatch(setTotalDataB(response.data.count));
-        dispatch(setPrevB(response.data.previous));
-        dispatch(setNextB(response.data.next));
-        dispatch(setDataLoaded(true));
-      })
-      .catch((err) => {
-        console.warn(`Error Occur in Get Data ${err}`);
       });
+  
+      const { results, count, previous, next } = response.data;
+  
+      setdatab(results);
+      dispatch(setTotalDataB(count));
+      dispatch(setPrevB(previous));
+      dispatch(setNextB(next));
+      dispatch(setDataLoaded(true));
+    } catch (err) {
+      console.warn(`Error Occurred in Get Data ${err}`);
+    }
   };
+
   useLayoutEffect(() => {
     if (path) {
       getdata();
     }
-  }, [tog, page_num, toggle, is_search, is_deleted, prev, next, cm_value]);
+  }, [tog, page_num, toggle, is_search, is_deleted, cm_value]);
+  // }, [tog, page_num, toggle, is_search, is_deleted, prev, next, cm_value]);
 
   useLayoutEffect(() => {
     if (pathb) {
       getdatab();
     }
-  }, [togb, page_numb, toggle, is_search, is_deletedb, prevb, nextb]);
+  }, [togb, page_numb, toggle, is_search, is_deletedb]);
+  // }, [togb, page_numb, toggle, is_search, is_deletedb, prevb, nextb]);
 
   // ------------Shorting---------------
 

@@ -173,17 +173,23 @@ const SearchInput = ({
           ref={ref}
           className="dataResult custom-select"
           id="chk"
-          onScroll={() => {
-            for (let i = 1; i <= count; i += 3) {
-              if (ref.current.scrollTop > bottom - i && loaded) {
-                setpage(page + 1);
-                setbottom(bottom + 262 - with_add);
+          // onScroll={() => {
+          //   for (let i = 1; i <= count; i += 3) {
+          //     if (ref.current.scrollTop > bottom - i && loaded) {
+          //       setpage(page + 1);
+          //       setbottom(bottom + 262 - with_add);
              
-                break;   
+          //       break;   
                            
-              }
+          //     }
+          //   }
+          // }} 
+          onScroll={() => {
+            if (ref.current.scrollTop > bottom - count && loaded) {
+              setpage(page + 1);
+              setbottom(bottom + 262 - with_add);
             }
-          }} 
+          }}
           style={{
             width: "95%",
             // width: current_width,
