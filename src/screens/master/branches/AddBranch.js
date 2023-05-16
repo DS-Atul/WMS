@@ -100,7 +100,7 @@ const AddBranch = () => {
 
   const [org_list_s, setorg_list_s] = useState([])
   const [org, setorg] = useState("")
-  const [org_id, setorg_id] = useState(0)
+  const [org_id, setorg_id] = useState(null)
   const [org_page, setorg_page] = useState(1)
   const [org_error, setorg_error] = useState(false)
   const [org_search_item, setorg_search_item] = useState("")
@@ -1088,7 +1088,7 @@ console.log("location_data=====", location_data)
   };
 
   useEffect(() => {
-    if (org_id !== 0) {
+    if (org_id !== null ) {
       get_gstDetails();
     }
   }, [org_id, gst_page, gst_search]);
