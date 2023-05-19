@@ -20,48 +20,49 @@ const Manifest_pdf = () => {
     content: () => componentRef.current,
   });
 
-  const mn_orders = (manifest_no) => {
-    axios
-      .get(
-        ServerAddress +
-        `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
+  // const mn_orders = (manifest_no) => {
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //       `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
 
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((response) => {
-        if (response.data.length > 0) {
-          setmn_orders_s(response.data);
-        }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Manifest Order Data , ${err}`);
-      });
-  };
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       if (response.data.length > 0) {
+  //         setmn_orders_s(response.data);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get Manifest Order Data , ${err}`);
+  //     });
+  // };
 
-  const get_mn_details = (mn_no) => {
-    // get_manifest/
+  // const get_mn_details = (mn_no) => {
+  //   // get_manifest/
 
-    axios
-      .get(ServerAddress + "manifestation/api/get_manifest/?mn_no=" + mn_no, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => {
-        setmanifest(response.data);
-        mn_orders(response.data.manifest_no);
-        setloading_err(false);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Manifest Order Data , ${err}`);
-      });
-  };
+  //   axios
+  //     .get(ServerAddress + "manifestation/api/get_manifest/?mn_no=" + mn_no, {
+  //       headers: { Authorization: `Bearer ${accessToken}` },
+  //     })
+  //     .then((response) => {
+  //       setmanifest(response.data);
+  //       mn_orders(response.data.manifest_no);
+  //       setloading_err(false);
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get Manifest Order Data , ${err}`);
+  //     });
+  // };
 
   useLayoutEffect(() => {
     try {
       setmanifest(location.state.manifest);
       setloading_err(false);
-      mn_orders(location.state.manifest.manifest_no);
+      console.log("location======", location)
+      setmn_orders_s(location.state.manifest.orders);
       if (location.state.mn_coloader) {
         alert(location.state.mn_coloader);
       }
@@ -328,8 +329,8 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
           Co-loader Name : {manifest.coloader_name ? manifest.coloader_name : "-"}
         </a>{" "}
         <br />
-        <a>No of Bags : {manifest.bag_count ? manifest.bag_count : "-"}</a>{" , "}
-        <a>Box : {manifest.box_count ? manifest.box_count : "-"}</a>{" , "}
+        <a>No of Bags : {manifest.bag_count}</a>{" , "}
+        <a>Box : {manifest.box_count}</a>{" , "}
         <br />
         <br />
         <br />
@@ -390,15 +391,15 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
               >
                 <td>{key + 1}</td>
                 <td>{l_fdate}</td>
-                <td>{val.docket_number}</td>
-                <td>{val.consignee_city}</td>
-                <td>{val.shipper}</td>
-                <td>{val.shipper_city}</td>
-                <td>{val.consignee}</td>
-                <td>{""}</td>
-                <td>{val.pcs}</td>
-                <td>{val.weight}</td>
-                <td>{""}</td>
+                <td>{val.docket_no}</td>
+                <td>{toTitleCase(val.consignee_city)}</td>
+                <td>{toTitleCase(val.shipper)}</td>
+                <td>{toTitleCase(val.shipper_city)}</td>
+                <td>{toTitleCase(val.consignee)}</td>
+                <td>{val.eway_bill_no ? val.eway_bill_no : "-"}</td>
+                <td>{val.total_quantity}</td>
+                <td>{val.actual_weight}</td>
+                <td>{val.remarks ? val.remarks : "-"}</td>
               </tr>
             );
           })}

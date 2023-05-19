@@ -6,6 +6,7 @@ const PendingDepartTitle = [
   "Coloader",
   "Total Bags",
   "Total Box",
+  "Total Weight",
   "Total Quantity",
   "Action",
 ];

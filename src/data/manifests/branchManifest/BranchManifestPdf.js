@@ -20,51 +20,51 @@ const Manifest_pdf = () => {
     content: () => componentRef.current,
   });
 
-  const mn_orders = (manifest_no) => {
-    axios
-      .get(
-        ServerAddress +
-          `manifest/get_hub_orders/?hub_no=${manifest_no}`,
+  // const mn_orders = (manifest_no) => {
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `manifest/get_hub_orders/?hub_no=${manifest_no}`,
 
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((response) => {
-        console.log("mn_orders",response.data);
-        if (response.data.length > 0) {
-          setmn_orders_s(response.data);
-        }
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Manifest Order Data , ${err}`);
-      });
-  };
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       console.log("mn_orders",response.data);
+  //       if (response.data.length > 0) {
+  //         setmn_orders_s(response.data);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get Manifest Order Data , ${err}`);
+  //     });
+  // };
 
-  const get_mn_details = (mn_no) => {
-    // get_manifest/
+  // const get_mn_details = (mn_no) => {
+  //   // get_manifest/
 
-    axios
-      .get(ServerAddress + "manifestation/api/get_manifest/?mn_no=" + mn_no, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => {
-        console.log("helloo jiget_mn_details",response.data);
-        setmanifest(response.data);
-        mn_orders(response.data.manifest_no);
-        setloading_err(false);
-      })
-      .catch((err) => {
-        alert(`Error Occur in Get Manifest Order Data , ${err}`);
-      });
-  };
+  //   axios
+  //     .get(ServerAddress + "manifestation/api/get_manifest/?mn_no=" + mn_no, {
+  //       headers: { Authorization: `Bearer ${accessToken}` },
+  //     })
+  //     .then((response) => {
+  //       console.log("helloo jiget_mn_details",response.data);
+  //       setmanifest(response.data);
+  //       mn_orders(response.data.manifest_no);
+  //       setloading_err(false);
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get Manifest Order Data , ${err}`);
+  //     });
+  // };
 
   useLayoutEffect(() => {
     try {
       console.log("please check thiss=====>",location.state.manifest);
       setmanifest(location.state.manifest);
       setloading_err(false);
-      mn_orders(location.state.manifest.hub_transfer_no);
+      setmn_orders_s(location.state.manifest.orders);
       if (location.state.mn_coloader) {
         alert(location.state.mn_coloader);
       }
@@ -263,7 +263,7 @@ const Manifest_pdf = () => {
 
 export const ComponentToPrint = React.forwardRef((props, ref) => {
   const { manifest, mn_orders } = props;
-console.log("manifest---pdf----", manifest)
+console.log("mn_orders---pdf----", mn_orders)
   return (
     <div ref={ref}>
       {/* Manifest {value} */}
@@ -300,9 +300,9 @@ console.log("manifest---pdf----", manifest)
       >
         <a>Manifest Created Date : {(manifest.created_at).split("T")[0]} </a>
         <br />
-        <a>From: {manifest.from_branch_n} </a> <br />
+        <a>From: {toTitleCase(manifest.orgin_branch_name)} </a> <br />
         <a>Manifest No: {manifest.hub_transfer_no}</a> <br />
-        <a>Origin: {manifest.orgin_branch_name} </a> <br />
+        <a>Origin: {toTitleCase(manifest.orgin_s)} </a> <br />
         <a>Manifest Actual Weight:{manifest.total_weight}</a> <br />
         <a>Chargeable Weight : {manifest.chargeable_weight} </a> <br />
         {/* <a>Flight Name & No : {manifest.} </a> <br /> */}
@@ -328,14 +328,14 @@ console.log("manifest---pdf----", manifest)
             : "-"}
         </a>{" "}
         <br />
-        <a>To : {manifest.to_branch_n}</a> <br />
-        <a>Destination : {manifest.destination_branch_name}</a> <br />
+        <a>To : {toTitleCase(manifest.destination_branch_name)}</a> <br />
+        <a>Destination : {toTitleCase(manifest.destination_s)}</a> <br />
         <a>
-          Co-loader Name : {manifest.coloader_name ? manifest.coloader_name : "-"}
+          Co-loader Name : {manifest.coloader_name ? toTitleCase(manifest.coloader_name) : "-"}
         </a>{" "}
         <br />
-        <a>No of Bags : {manifest.bag_count ? manifest.bag_count : "-"}</a>{" , "}
-        <a>Box : {manifest.box_count ? manifest.box_count : "-"}</a>{" "}
+        <a>No of Bags : {manifest.bag_count}</a>{" , "}
+        <a>Box : {manifest.box_count}</a>{" "}
         <br />
         <br />
         <br />
@@ -397,14 +397,14 @@ console.log("manifest---pdf----", manifest)
                 <td>{key + 1}</td>
                 <td>{l_fdate}</td>
                 <td>{val.docket_no}</td>
-                <td>{val.consignee_city}</td>
-                <td>{val.shipper_name}</td>
-                <td>{val.shipper_city}</td>
-                <td>{val.consignee_name}</td>
-                <td>{""}</td>
-                <td>{val.pcs}</td>
-                <td>{val.weight}</td>
-                <td>{""}</td>
+                <td>{toTitleCase(val.consignee_city)}</td>
+                <td>{toTitleCase(val.shipper)}</td>
+                <td>{toTitleCase(val.shipper_city)}</td>
+                <td>{toTitleCase(val.consignee)}</td>
+                <td>{val.eway_bill_no ? val.eway_bill_no : "-"}</td>
+                <td>{val.total_quantity}</td>
+                <td>{val.actual_weight}</td>
+                <td>{val.remarks ? val.remarks : "-"}</td>
               </tr>
             );
           })}

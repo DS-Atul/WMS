@@ -775,7 +775,11 @@ const AddOrder = () => {
         settransportation_cost_err(true);
       } else if (booking_date === "") {
         alert("Please Add Booking Date");
-      } else {
+      } 
+      else if(order_type === "Issue" && returned_data[0].issue.length === 0 && returned_data[0].issue_notreceived.length === 0){
+        alert("This Docket Number Does Not Have Any Issue");
+      }
+      else{
         // setShowOrder(!isupdating && true);
         // aa(values)
         isupdating ? update_order(values) : send_order_data(values);
@@ -1140,7 +1144,7 @@ const AddOrder = () => {
             eway_list.toAddr2.toUpperCase()
             : consignee_address.toUpperCase(),
           shipper_address1: eway_confirm
-            ? eway_list.fromAddr1.toUpperCase() + "," + eway_list.fromAddr2
+            ? eway_list.fromAddr1.toUpperCase() + "," + eway_list.fromAddr2.toUpperCase()
             : shipper_address.toUpperCase(),
 
           billto_name: billto.toUpperCase(),
@@ -1201,6 +1205,11 @@ const AddOrder = () => {
         dispatch(setDataExist(`Order  ${docket_no_value} Added sucessfully`));
         dispatch(setAlertType("success"));
         setShowOrder(true);
+      }
+      else{
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Somthing Went Wrong`));
+        dispatch(setAlertType("warning"));
       }
       // })
     } catch (error) {
@@ -1340,8 +1349,10 @@ const AddOrder = () => {
             cm_transit_status: status_toggle === true ? cm_current_status : "",
             cm_current_status: cm_current_status.toUpperCase(),
             cm_remarks: toTitleCase(message).toUpperCase(),
-            shipper: eway_confirm ? eway_list.fromTrdName : (shipper_n).toUpperCase(),
-            consignee: eway_confirm ? eway_list.toTrdName : (consignee_n).toUpperCase(),
+            shipper: (shipper_n).toUpperCase(),
+            consignee: (consignee_n).toUpperCase(),
+            // shipper: eway_confirm ? eway_list.fromTrdName : (shipper_n).toUpperCase(),
+            // consignee: eway_confirm ? eway_list.toTrdName : (consignee_n).toUpperCase(),
             shipper_location: eway_confirm ? locality_id : locality_id_f,
             consignee_location: eway_confirm ? locality_id_to : locality_id_f_c,
             with_ewayBill: eway_confirm ? "True" : "False",
@@ -1363,6 +1374,11 @@ const AddOrder = () => {
         dispatch(setAlertType("info"));
         dispatch(setShowAlert(true));
         navigate("/booking/orders");
+      }
+      else{
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Somthing Went Wrong`));
+        dispatch(setAlertType("warning"));
       }
     }
     catch (error) {
@@ -1459,38 +1475,50 @@ const AddOrder = () => {
   // Get Commodity
   const getCommidityData = () => {
     let data = [];
-    let temp3 = [...commodity_data_list];
+    let temp3 = [];
     axios
       .get(
         ServerAddress +
-        `master/all_commodities/?search=${""}&p=${page}&records=${10}&commodity_type=${[
-          "",
-        ]}&commodity_name=${[
-          "",
-        ]}&commodity_name_search=${search_commodity}&data=all`,
+        // &commodity_name_search=${search_commodity}&data=all
+        `master/get_clientcommodity/?search=${search_commodity}&p=${page}&records=${10}&client=${client_id}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setcommodity_loaded(false);
+        } else {
+          setcommodity_loaded(true);
+        }
         if (response.data.results.length > 0) {
-          if (response.data.next === null) {
-            setcommodity_loaded(false);
-          } else {
-            setcommodity_loaded(true);
-          }
           data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([
-              data[index].id,
-              toTitleCase(data[index].commodity_name),
+          if (page == 1) {
+            temp3 = data.map((v) => [
+              v.id,
+              toTitleCase(v.commodity_name),
             ]);
+          } else {
+            temp3 = [
+              ...client_commidities_list,
+              ...data.map((v) => [v.id, toTitleCase(v.commodity_name)]),
+            ];
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
+          // for (let index = 0; index < data.length; index++) {
+          //   temp3.push([
+          //     data[index].id,
+          //     toTitleCase(data[index].commodity_name),
+          //   ]);
+          // }
+          // temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
+          //   v.split(",")
+          // );
           setcommodity_count(commodity_count + 2);
-          setcommodity_data_list(temp3);
+          // setcommodity_data_list(temp3);
+          setclient_commidities_list(temp3)
+        }
+        else{
+          setclient_commidities_list([])
         }
       })
       .catch((err) => {
@@ -1797,8 +1825,10 @@ const AddOrder = () => {
   }, [billto_id]);
 
   useEffect(() => {
-    getCommidityData();
-  }, [page, search_commodity]);
+    if (client_id !== 0 && client_id !== "") {
+      getCommidityData();
+    }
+  }, [page, search_commodity, client_id, search_commodity]);
 
   useEffect(() => {
     if (order_id !== "") {
@@ -1819,13 +1849,13 @@ const AddOrder = () => {
       setconsignee_id("");
     }
     // Setting Client Commidities After Selecting Client
-    if (client_id != 0 && clients_commidities_lists.length !== 0) {
-      let sel_com = clients_commidities_lists.find((v) => v[0] == client_id)[1];
-      let tmp_com_data_list = commodity_data_list.filter((v) =>
-        sel_com.includes(parseInt(v[0]))
-      );
-      setclient_commidities_list(tmp_com_data_list);
-    }
+    // if (client_id != 0 && clients_commidities_lists.length !== 0) {
+    //   let sel_com = clients_commidities_lists.find((v) => v[0] == client_id)[1];
+    //   let tmp_com_data_list = commodity_data_list.filter((v) =>
+    //     sel_com.includes(parseInt(v[0]))
+    //   );
+    //   setclient_commidities_list(tmp_com_data_list);
+    // }
   }, [client_id, data, clients_commidities_lists]);
 
   useEffect(() => {
@@ -1919,6 +1949,7 @@ const AddOrder = () => {
       let order_data = location.state.order;
       setshipper_n(toTitleCase(order_data.shipper));
       setorder_type(toTitleCase(order_data.order_type));
+
       setlinked_order(
         order_data.order_type === "RETURN" || order_data.order_type === "ISSUE"
           ? order_data.linked_order_value
@@ -2423,12 +2454,13 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
+        alert()
         if (response.data.response !== null) {
 
           seteway_detail_l(response.data.response);
           seteway_confirm(true);
           dispatch(setShowAlert(true));
-          dispatch(setDataExist(`Eway Bill nO Details Matched`));
+          dispatch(setDataExist(`Eway Bill no Details Matched`));
           dispatch(setAlertType("success"));
           seteway_list(response.data.response);
           gefilterlocalityfrom(response.data.response.fromPincode);
@@ -2450,6 +2482,7 @@ const AddOrder = () => {
   };
 
   const gefilterlocalityfrom = (pincode) => {
+    alert("===========")
     let locality_from = [];
     axios
       .get(ServerAddress + `master/filter_locality/?pincode=${pincode}&p=${1}&records=${10}&locality_search=${""}`, {
@@ -2568,12 +2601,12 @@ const AddOrder = () => {
       )
       .then((resp) => {
         settogstate(true);
+        if (resp.data.next === null) {
+          setstate_loaded(false);
+        } else {
+          setstate_loaded(true);
+        }
         if (resp.data.results.length > 0) {
-          if (resp.data.next === null) {
-            setstate_loaded(false);
-          } else {
-            setstate_loaded(true);
-          }
           if (state_page == 1) {
             state_list = resp.data.results.map((v) => [
               v.id,
@@ -2585,9 +2618,13 @@ const AddOrder = () => {
               ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
             ];
           }
+          setstate_count(state_count + 2);
+          setstate_list_s(state_list);
         }
-        setstate_count(state_count + 2);
-        setstate_list_s(state_list);
+        else{
+          setstate_list_s([])
+        }
+
       })
       .catch((err) => {
         alert(`Error Occur in Get States, ${err}`);
@@ -2856,7 +2893,7 @@ const AddOrder = () => {
     // let timeoutId;
     // if (state_id !== 0) {
     //   timeoutId = setTimeout(() => {
-        getCities(state_id, "state", "Shipper");
+    getCities(state_id, "state", "Shipper");
     //   }, 1);
     // }
     // return () => clearTimeout(timeoutId);
@@ -3034,8 +3071,14 @@ const AddOrder = () => {
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Docket Number Does not Exist`));
           dispatch(setAlertType("warning"));
-        } else {
+        }
+        else {
           setreturned_data(response.data.results);
+          if(order_type === "Issue" && response.data.results[0].issue.length === 0 && response.data.results[0].issue_notreceived.length === 0){
+            dispatch(setShowAlert(true));
+            dispatch(setDataExist(`This Docket Number Does Not Have Any Issue`));
+            dispatch(setAlertType("warning"));
+          }
         }
       })
       .catch((err) => {
@@ -3201,7 +3244,7 @@ const AddOrder = () => {
   }, [returned_data, order_type]);
 
   useEffect(() => {
-    if (
+    if(
       linked_order.length >= 6 &&
       (order_type === "Return" || order_type === "Issue") &&
       location.state === null

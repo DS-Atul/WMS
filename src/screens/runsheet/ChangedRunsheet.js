@@ -78,11 +78,20 @@ const ChangedRusheet = () => {
   const [driver_name, setdriver_name] = useState("");
   const [driver_id, setdriver_id] = useState(0);
   const [search_driver_name, setsearch_driver_name] = useState("");
+  const [driver_count, setdriver_count] = useState(1)
+  const [driver_page, setdriver_page] = useState(1)
+  const [driver_bottom, setdriver_bottom] = useState(103)
+  const [driver_loaded, setdriver_loaded] = useState(false)
+
   //Route
   const [route_list, setroute_list] = useState([]);
   const [defined_route_name, setdefined_route_name] = useState("")
   const [route_id, setroute_id] = useState("");
   const [search_route, setsearch_route] = useState("");
+  const [route_loaded, setroute_loaded] = useState(false)
+  const [route_count, setroute_count] = useState(1)
+  const [route_bottom, setroute_bottom] = useState(103)
+  const [route_page, setroute_page] = useState(1)
 
   const [route, setroute] = useState("");
   //Vehicle
@@ -102,40 +111,78 @@ const ChangedRusheet = () => {
 
   //Get Driver Name
   const getDrivers = () => {
+    let driver_lists = []
     axios
       .get(
         ServerAddress +
-        `ems/get_driver/?search=${""}&p=${page_num}&records=${data_len}`,
+        `ems/get_driver/?search=${search_driver_name}&p=${driver_page}&records=${10}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setdriver_loaded(false);
+        } else {
+          setdriver_loaded(true);
+        }
         if (response.data.results.length > 0) {
-          let driver_list = response.data.results.map((v) => [
-            v.id,
-            toTitleCase(v.username),
-          ]);
-          setdriver_list(driver_list);
+          if (driver_page == 1) {
+            driver_lists = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.username),
+            ]);
+          } else {
+            driver_lists = [
+              ...driver_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.username)]),
+            ];
+          }
+          setdriver_count(driver_count + 2);
+          setdriver_list(driver_lists);
+        }
+        else {
+          setdriver_list([])
         }
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
       });
   };
+
   const getRoutes = () => {
+    let route_lists = []
     axios
       .get(
         ServerAddress +
-        `master/get_routes/?search=${""}&p=${page_num}&records=${data_len}&name=&data=all`,
+        `master/get_routes/?search=${""}&p=${route_page}&records=${10}&name_search=${search_route}&name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setroute_loaded(false);
+        } else {
+          setroute_loaded(true);
+        }
         if (response.data.results.length > 0) {
-          let route_list = response.data.results.map((v) => [v.id, v.name]);
-          setroute_list(route_list);
+          if (route_page == 1) {
+            route_lists = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            route_lists = [
+              ...route_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setroute_count(route_count + 2);
+          setroute_list(route_lists);
+        }
+        else {
+          setroute_list([])
         }
       })
       .catch((err) => {
@@ -232,11 +279,18 @@ const ChangedRusheet = () => {
   const handleSubmit = () => {
     update_runsheet(runsheet.id);
   };
+
+  useEffect(() => {
+    getRoutes();
+  }, [search_route, route_page]);
+
   useEffect(() => {
     getVehicles();
-    getDrivers();
-    getRoutes();
   }, []);
+
+  useEffect(() => {
+    getDrivers();
+  }, [search_driver_name, driver_page]);
 
   useLayoutEffect(() => {
     try {
@@ -289,7 +343,7 @@ const ChangedRusheet = () => {
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Status Updated sucessfully`));
           dispatch(setAlertType("info"));
-            navigate(-1);
+          navigate(-1);
         }
       })
       .catch(function (err) {
@@ -297,76 +351,76 @@ const ChangedRusheet = () => {
       });
   };
 
-   //For Checker & Maker
-   const [toggle_rejected, settoggle_rejected] = useState(false);
-   const [message, setmessage] = useState("");
-   const [message_error, setmessage_error] = useState(false);
-   const [status_toggle, setstatus_toggle] = useState(false);
-   const [cm_current_status, setcm_current_status] = useState("");
- 
-   const [show, setShow] = useState(false);
- 
-   const handleClose = () => setShow(false);
-   const handleShow = () => {
-     setShow(true);
-     setmessage_error(false);
-   };
- 
-   useEffect(() => {
-     settoggle_rejected(false);
-   }, []);
- 
- 
-   const handleSubmit2 = () => {
-     if (message == "") {
-       setmessage_error(true);
-     } else {
+  //For Checker & Maker
+  const [toggle_rejected, settoggle_rejected] = useState(false);
+  const [message, setmessage] = useState("");
+  const [message_error, setmessage_error] = useState(false);
+  const [status_toggle, setstatus_toggle] = useState(false);
+  const [cm_current_status, setcm_current_status] = useState("");
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+    setmessage_error(false);
+  };
+
+  useEffect(() => {
+    settoggle_rejected(false);
+  }, []);
+
+
+  const handleSubmit2 = () => {
+    if (message == "") {
+      setmessage_error(true);
+    } else {
       update_runsheetstatus(runsheet.id);
-       setShow(false);
-     }
-   };
- 
-   useEffect(() => {
-     if (
-       user.user_department_name + " " + user.designation_name ===
-         "CUSTOMER SERVICE EXECUTIVE" ||
-       user.user_department_name + " " + user.designation_name ===
-         "DATA ENTRY OPERATOR"
-     ) {
-       setcm_current_status("NOT APPROVED");
-       setstatus_toggle(true);
-     } else if (
-       user.user_department_name + " " + user.designation_name === 
-       "OPERATION MANAGER"
-     ) {
-       setcm_current_status("VERIFIED OPERATION MANAGER");
-       setstatus_toggle(true);
-     } else if (
-       user.user_department_name + " " + user.designation_name ===
-       "CUSTOMER SUPPORT MANAGER"
-     ) {
-       setcm_current_status("VERIFIED CUSTOMER SUPPORT MANAGER");
-       setstatus_toggle(true);
-     } else if (user.user_department_name === "ACCOUNTANT") {
-       setcm_current_status("VERIFIED ACCOUNTANT");
-       setstatus_toggle(true);
-     } else if (
-       user.user_department_name + " " + user.designation_name ===
-       "ACCOUNT MANAGER"
-     ) {
-       setcm_current_status("VERIFIED ACCOUNT MANAGER");
-       setstatus_toggle(true);
-     } else if (user.user_department_name === "ADMIN" || user.is_superuser) {
-       setcm_current_status("APPROVED");
-       setstatus_toggle(true);
-     } else {
-       setcm_current_status("NOT APPROVED");
-       // setstatus_toggle(false)
-     }
-   }, [user, isupdating]);
+      setShow(false);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      user.user_department_name + " " + user.designation_name ===
+      "CUSTOMER SERVICE EXECUTIVE" ||
+      user.user_department_name + " " + user.designation_name ===
+      "DATA ENTRY OPERATOR"
+    ) {
+      setcm_current_status("NOT APPROVED");
+      setstatus_toggle(true);
+    } else if (
+      user.user_department_name + " " + user.designation_name ===
+      "OPERATION MANAGER"
+    ) {
+      setcm_current_status("VERIFIED OPERATION MANAGER");
+      setstatus_toggle(true);
+    } else if (
+      user.user_department_name + " " + user.designation_name ===
+      "CUSTOMER SUPPORT MANAGER"
+    ) {
+      setcm_current_status("VERIFIED CUSTOMER SUPPORT MANAGER");
+      setstatus_toggle(true);
+    } else if (user.user_department_name === "ACCOUNTANT") {
+      setcm_current_status("VERIFIED ACCOUNTANT");
+      setstatus_toggle(true);
+    } else if (
+      user.user_department_name + " " + user.designation_name ===
+      "ACCOUNT MANAGER"
+    ) {
+      setcm_current_status("VERIFIED ACCOUNT MANAGER");
+      setstatus_toggle(true);
+    } else if (user.user_department_name === "ADMIN" || user.is_superuser) {
+      setcm_current_status("APPROVED");
+      setstatus_toggle(true);
+    } else {
+      setcm_current_status("NOT APPROVED");
+      // setstatus_toggle(false)
+    }
+  }, [user, isupdating]);
   return (
     <div>
-         <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
         </Modal.Header>
@@ -431,145 +485,160 @@ const ChangedRusheet = () => {
               {circle_btn ? (
                 <CardBody>
                   {/* <Form> */}
-                    <Row>
+                  <Row>
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child"> Runsheet No.</Label>
+                        <Input
+                          value={runsheet_no}
+                          type="text"
+                          name="runsheet_no"
+                          className="form-control-md"
+                          id="input"
+                          placeholder="Runsheet No"
+                          disabled
+                        />
+                      </div>
+                    </Col>
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child"> Vehicle Type </Label>
+                        <SearchInput
+                          data_list={vehicle_type_list}
+                          data_item_s={vehicle_type}
+                          set_data_item_s={setvehicle_type}
+                          show_search={false}
+                          setsearch_item={setsearch_vehicle_type}
+                          disable_me={true}
+                        />
+                      </div>
+                    </Col>
+                    {runsheet.is_defined_route ?
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child"> Runsheet No.</Label>
+                        <div className="mb-2">
+                          <Label> Route *</Label>
+                          <SearchInput
+                            data_list={route_list}
+                            setdata_list={setroute_list}
+                            data_item_s={defined_route_name}
+                            set_data_item_s={setdefined_route_name}
+                            set_id={setroute_id}
+                            page={route_page}
+                            setpage={setroute_page}
+                            search_item={search_route}
+                            setsearch_item={setsearch_route}
+                            loaded={route_loaded}
+                            count={route_count}
+                            bottom={route_bottom}
+                            setbottom={setroute_bottom}
+                          />
+                        </div>
+                      </Col>
+                      :
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">
+                            Route
+                          </Label>
                           <Input
-                            value={runsheet_no}
+                            value={route}
+                            onChange={(event) => {
+                              setroute(
+                                event.target.value
+                              );
+                            }}
                             type="text"
-                            name="runsheet_no"
+                            name="route"
                             className="form-control-md"
                             id="input"
-                            placeholder="Runsheet No"
-                            disabled
+                            placeholder="Enter Vehicle Number"
                           />
                         </div>
                       </Col>
+                    }
+                    {!runsheet.is_contract_vehicle ? (
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">
+                            Vehicle Number
+                          </Label>
+                          <Input
+                            value={vehicle_no}
+                            onChange={(event) => {
+                              setvehicle_no(
+                                event.target.value
+                              );
+                            }}
+                            type="text"
+                            name="vehicle_no"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Vehicle Number"
+                          />
+                        </div>
+                      </Col>
+                    ) : (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-3">
-                          <Label className="header-child"> Vehicle Type </Label>
+                          <Label>Vehicle Number</Label>
                           <SearchInput
-                            data_list={vehicle_type_list}
-                            data_item_s={vehicle_type}
-                            set_data_item_s={setvehicle_type}
-                            show_search={false}
-                            setsearch_item={setsearch_vehicle_type}
-                            disable_me={true}
+                            data_list={setcontract_based_vehicle_list}
+                            data_item_s={contract_based_vehicle_no}
+                            set_data_item_s={setcontract_based_vehicle_no}
+                            set_id={setcontract_based_vehicle_id}
+                            setsearch_item={setsearch_setcontract_based_vehicle}
                           />
                         </div>
                       </Col>
-                      {runsheet.is_defined_route ?
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                            <Label> Route </Label>
-                            <SearchInput
-                              data_list={route_list}
-                              data_item_s={defined_route_name}
-                              set_data_item_s={setdefined_route_name}
-                              set_id={setroute_id}
-                              setsearch_item={setsearch_route}
-                            />
-                          </div>
-                        </Col>
-                        :
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">
-                              Route
-                            </Label>
-                            <Input
-                              value={route}
-                              onChange={(event) => {
-                                setroute(
-                                  event.target.value
-                                );
-                              }}
-                              type="text"
-                              name="route"
-                              className="form-control-md"
-                              id="input"
-                              placeholder="Enter Vehicle Number"
-                            />
-                          </div>
-                        </Col>
-                      }
-                      {!runsheet.is_contract_vehicle ? (
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">
-                              Vehicle Number
-                            </Label>
-                            <Input
-                              value={vehicle_no}
-                              onChange={(event) => {
-                                setvehicle_no(
-                                  event.target.value
-                                );
-                              }}
-                              type="text"
-                              name="vehicle_no"
-                              className="form-control-md"
-                              id="input"
-                              placeholder="Enter Vehicle Number"
-                            />
-                          </div>
-                        </Col>
-                      ) : (
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-3">
-                            <Label>Vehicle Number</Label>
-                            <SearchInput
-                              data_list={setcontract_based_vehicle_list}
-                              data_item_s={contract_based_vehicle_no}
-                              set_data_item_s={setcontract_based_vehicle_no}
-                              set_id={setcontract_based_vehicle_id}
-                              setsearch_item={setsearch_setcontract_based_vehicle}
-                            />
-                          </div>
-                        </Col>
-                      )}
+                    )}
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label> Driver *</Label>
+                        <SearchInput
+                          data_list={driver_list}
+                          setdata_list={setdriver_list}
+                          data_item_s={driver_name}
+                          set_data_item_s={setdriver_name}
+                          set_id={setdriver_id}
+                          setsearch_item={setsearch_driver_name}
+                          page={driver_page}
+                          setpage={setdriver_page}
+                          loaded={driver_loaded}
+                          count={driver_count}
+                          bottom={driver_bottom}
+                          setbottom={setdriver_bottom}
+                        />
+                      </div>
+                    </Col>
+                    {vehicle_type === "Truck" &&
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-3">
-                          <Label> Driver </Label>
-                          <SearchInput
-                            data_list={driver_list}
-                            data_item_s={driver_name}
-                            set_data_item_s={setdriver_name}
-                            set_id={setdriver_id}
-                            setsearch_item={setsearch_driver_name}
+                        <div className="mb-2">
+                          <Label className="header-child">
+                            Delivery Staff
+                          </Label>
+                          <Input
+                            value={delivery_staff}
+                            onChange={(event) => {
+                              setdelivery_staff(
+                                event.target.value
+                              );
+                            }}
+                            type="text"
+                            name="delivery_staff"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Staff Name"
                           />
                         </div>
                       </Col>
-                      {vehicle_type === "Truck" &&
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">
-                              Delivery Staff
-                            </Label>
-                            <Input
-                              value={delivery_staff}
-                              onChange={(event) => {
-                                setdelivery_staff(
-                                  event.target.value
-                                );
-                              }}
-                              type="text"
-                              name="delivery_staff"
-                              className="form-control-md"
-                              id="input"
-                              placeholder="Enter Staff Name"
-                            />
-                          </div>
-                        </Col>
-                      }
-                      <Col md={4} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child">Pod Image </Label>
-                          <Input id="input" type="file" />
-                        </div>
-                      </Col>
-                    </Row>
+                    }
+                    <Col md={4} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child">Pod Image </Label>
+                        <Input id="input" type="file" />
+                      </div>
+                    </Col>
+                  </Row>
                   {/* </Form> */}
                 </CardBody>
               ) : null}
@@ -621,34 +690,34 @@ const ChangedRusheet = () => {
         <div className="m-3">
           <Col lg={12}>
             <div className="mb-1 footer_btn">
-            <Button
-                  type="submit"
-                  className={
-                    isupdating &&
+              <Button
+                type="submit"
+                className={
+                  isupdating &&
                     (user.user_department_name + " " + user.designation_name ===
                       "DATA ENTRY OPERATOR" ||
                       user.user_department_name +
-                        " " +
-                        user.designation_name ===
-                        "CUSTOMER SERVICE EXECUTIVE")
-                      ? "btn btn-info m-1"
-                      : !isupdating
+                      " " +
+                      user.designation_name ===
+                      "CUSTOMER SERVICE EXECUTIVE")
+                    ? "btn btn-info m-1"
+                    : !isupdating
                       ? "btn btn-info m-1"
                       : "btn btn-success m-1"
-                  }
-                  onClick={() =>handleSubmit()}
-                >
-                  {isupdating &&
+                }
+                onClick={() => handleSubmit()}
+              >
+                {isupdating &&
                   (user.user_department_name + " " + user.designation_name ===
                     "DATA ENTRY OPERATOR" ||
                     user.user_department_name + " " + user.designation_name ===
-                      "CUSTOMER SERVICE EXECUTIVE" ||
+                    "CUSTOMER SERVICE EXECUTIVE" ||
                     user.is_superuser)
-                    ? "Update"
-                    : !isupdating
+                  ? "Update"
+                  : !isupdating
                     ? "Save"
                     : "Approved"}
-                </Button>
+              </Button>
 
               {/* <Button
                 type="button"
@@ -659,9 +728,9 @@ const ChangedRusheet = () => {
               </Button> */}
               {isupdating &&
                 user.user_department_name + " " + user.designation_name !==
-                  "DATA ENTRY OPERATOR" &&
+                "DATA ENTRY OPERATOR" &&
                 user.user_department_name + " " + user.designation_name !==
-                  "CUSTOMER SERVICE EXECUTIVE" &&
+                "CUSTOMER SERVICE EXECUTIVE" &&
                 !user.is_superuser && (
                   <button
                     type="button"

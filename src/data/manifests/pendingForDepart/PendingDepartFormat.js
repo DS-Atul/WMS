@@ -294,6 +294,7 @@ const PendingDepartDataFormat = ({ data, data1, can_delete }) => {
               <td>{depart.bag_count}</td>
               <td>{depart.box_count}</td>
               <td>{depart.total_weight}</td>
+              <td>{depart.orders[0].total_quantity}</td>
               {(can_update || user.is_superuser) && (
               <td>
                 {/* /manifest/editraughdocket */}

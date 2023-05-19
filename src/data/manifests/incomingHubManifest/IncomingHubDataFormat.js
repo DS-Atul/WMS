@@ -194,10 +194,13 @@ const IncomingHubDataFormat = ({ data, data1 }) => {
               </td> */}
 
               <td>{hub.hub_transfer_no}</td>
-              <td>{hub.orgin_s}</td>
-              <td>{hub.destination_s}</td>
+              <td>{toTitleCase(hub.orgin_s)}</td>
+              <td>{toTitleCase(hub.destination_s)}</td>
               <td>{hub.orders.length}</td>
-
+              <td>{toTitleCase(hub.coloader_name)}</td>
+              <td>{hub.bag_count}</td>
+              <td>{hub.box_count}</td>
+              <td>{hub.total_weight}</td>
               <td>
                 <div style={{ marginLeft: "20px" }}>
                   {hub.is_recieved ? (

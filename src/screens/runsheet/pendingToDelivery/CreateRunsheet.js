@@ -46,18 +46,26 @@ function CreateRunsheet({ awb_numbers, issuereceived_total, issuenon_received_to
   const [defined_route_name, setdefined_route_name] = useState("")
   const [route_id, setroute_id] = useState("");
   const [search_route, setsearch_route] = useState("");
+  const [route_loaded, setroute_loaded] = useState(false)
+  const [route_count, setroute_count] = useState(1)
+  const [route_bottom, setroute_bottom] = useState(103)
+  const [route_page, setroute_page] = useState(1)
 
   //Vehicle
   const [veh_list, setveh_list] = useState([]);
   const [vehicle_no, setvehicle_no] = useState("");
   const [vehicle_id, setvehicle_id] = useState(0);
   const [search_vehicle_no, setsearch_vehicle_no] = useState("");
-const [close, setclose] = useState(false)
+  const [close, setclose] = useState(false)
   //Driver
   const [driver_list, setdriver_list] = useState([]);
   const [driver_name, setdriver_name] = useState("");
   const [driver_id, setdriver_id] = useState(0);
   const [search_driver_name, setsearch_driver_name] = useState("");
+  const [driver_count, setdriver_count] = useState(1)
+  const [driver_page, setdriver_page] = useState(1)
+  const [driver_bottom, setdriver_bottom] = useState(103)
+  const [driver_loaded, setdriver_loaded] = useState(false)
 
   //Used for error
   const [route_error, setroute_error] = useState(false);
@@ -136,21 +144,38 @@ const [close, setclose] = useState(false)
   };
 
   const getRoutes = () => {
+    let route_lists = []
     axios
       .get(
         ServerAddress +
-        `master/get_routes/?search=${""}&p=${page_num}&records=${data_len}&name=&data=all`,
+        `master/get_routes/?search=${""}&p=${route_page}&records=${10}&name_search=${search_route}&name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setroute_loaded(false);
+        } else {
+          setroute_loaded(true);
+        }
         if (response.data.results.length > 0) {
-          let route_list = response.data.results.map((v) => [
-            v.id,
-            toTitleCase(v.name),
-          ]);
-          setroute_list(route_list);
+          if (route_page == 1) {
+            route_lists = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            route_lists = [
+              ...route_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setroute_count(route_count + 2);
+          setroute_list(route_lists);
+        }
+        else {
+          setroute_list([])
         }
       })
       .catch((err) => {
@@ -178,21 +203,38 @@ const [close, setclose] = useState(false)
   };
 
   const getDrivers = () => {
+    let driver_lists = []
     axios
       .get(
         ServerAddress +
-        `ems/get_driver/?search=${""}&p=${page_num}&records=${data_len}`,
+        `ems/get_driver/?search=${search_driver_name}&p=${driver_page}&records=${10}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setdriver_loaded(false);
+        } else {
+          setdriver_loaded(true);
+        }
         if (response.data.results.length > 0) {
-          let driver_list = response.data.results.map((v) => [
-            v.id,
-            toTitleCase(v.username),
-          ]);
-          setdriver_list(driver_list);
+          if (driver_page == 1) {
+            driver_lists = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.username),
+            ]);
+          } else {
+            driver_lists = [
+              ...driver_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.username)]),
+            ];
+          }
+          setdriver_count(driver_count + 2);
+          setdriver_list(driver_lists);
+        }
+        else {
+          setdriver_list([])
         }
       })
       .catch((err) => {
@@ -201,10 +243,18 @@ const [close, setclose] = useState(false)
   };
 
   useEffect(() => {
-    getVehicles();
-    getDrivers();
     getRoutes();
+  }, [search_route, route_page]);
+
+  useEffect(() => {
+    getVehicles();
   }, []);
+
+  useEffect(() => {
+    getDrivers();
+  }, [search_driver_name, driver_page]);
+
+
 
   useEffect(() => {
     if (route != "") {
@@ -329,10 +379,18 @@ const [close, setclose] = useState(false)
                   {defined_route ? (
                     <SearchInput
                       data_list={route_list}
+                      setdata_list={setroute_list}
                       data_item_s={defined_route_name}
                       set_data_item_s={setdefined_route_name}
                       set_id={setroute_id}
+                      page={route_page}
+                      setpage={setroute_page}
+                      search_item={search_route}
                       setsearch_item={setsearch_route}
+                      loaded={route_loaded}
+                      count={route_count}
+                      bottom={route_bottom}
+                      setbottom={setroute_bottom}
                     />
                   ) : (
                     <Input
@@ -408,13 +466,21 @@ const [close, setclose] = useState(false)
                 )}
 
                 <div style={{ marginTop: "10px" }}>
-                  <Label> Driver :</Label>
+                  <Label> Driver *:</Label>
                   <SearchInput
                     data_list={driver_list}
+                    setdata_list={setdriver_list}
                     data_item_s={driver_name}
                     set_data_item_s={setdriver_name}
                     set_id={setdriver_id}
+                    search_item={search_driver_name}
                     setsearch_item={setsearch_driver_name}
+                    page={driver_page}
+                    setpage={setdriver_page}
+                    loaded={driver_loaded}
+                    count={driver_count}
+                    bottom={driver_bottom}
+                    setbottom={setdriver_bottom}
                   />
                   {driver_name_error && (
                     <div className="mt-1 error-text" color="danger">
@@ -439,8 +505,8 @@ const [close, setclose] = useState(false)
                 }
               </>
               :
-               <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces is Damaged and "${issuenon_received_total}" is not Received So, Do you want to Create Runsheet ?`}</div>
-               }
+              <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces is Damaged and "${issuenon_received_total}" is not Received So, Do you want to Create Runsheet ?`}</div>
+            }
           </Modal.Body>
 
           <Modal.Footer>
@@ -449,12 +515,12 @@ const [close, setclose] = useState(false)
                 Save
               </Button>
               :
-              <Button type="button" onClick={()=>setclose(true)}>
+              <Button type="button" onClick={() => setclose(true)}>
                 Yes
               </Button>
             }
             <Button type="button" variant="secondary" onClick={handleClose}>
-            {(issuereceived_total === 0 && issuenon_received_total === 0) ? "Close" : "Cancel"}
+              {(issuereceived_total === 0 && issuenon_received_total === 0) ? "Close" : "Cancel"}
             </Button>
           </Modal.Footer>
         </form>

@@ -18,6 +18,7 @@ const DocketInfo = ({ runsheet_no }) => {
   const [data_title, setdata_title] = useState(DocketInfoDataTitle);
   const [runsheet_orders, setrunsheet_orders] = useState([]);
   const success = useSelector((state) => state.alert.show_alert);
+  console.log('runsheet_orders=======', runsheet_orders)
 
   const get_runsheetorder = (runsheet_no) => {
     axios
@@ -106,8 +107,8 @@ const DocketInfo = ({ runsheet_no }) => {
                     }}
                   >
                     <td>{rn_order.docket_no}</td>
-                    <td>{toTitleCase(rn_order.shipper_name)}</td>
-                    <td>{toTitleCase(rn_order.consignee_name)}</td>
+                    <td>{toTitleCase(rn_order.shipper)}</td>
+                    <td>{toTitleCase(rn_order.consignee)}</td>
                     <td>
                       {toTitleCase(rn_order.shipper_state) +
                         ", " +

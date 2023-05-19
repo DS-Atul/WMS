@@ -289,6 +289,9 @@ const AddForwarding = React.lazy(() =>
 const ManifestPdf = React.lazy(() =>
   import("./data/manifests/pendingForDispatch/manifests/ManifestPdf.js")
 );
+const UpdateManifest = React.lazy(() =>
+  import("./screens/manifest/updateManifest/UpdateManifest.js")
+);
 const PendingDepart = React.lazy(() =>
   import("./screens/manifest/pendingDepart/PendingDepart.js")
 );
@@ -860,6 +863,10 @@ const routes = [
   {
     path: "/manifest/breakmanifest",
     element: <BreakManifest />,
+  },
+  {
+    path: "/manifest/updatemanifest",
+    element: <UpdateManifest />,
   },
   {
     path: "/manifest/breakhubmanifest",

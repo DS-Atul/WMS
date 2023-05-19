@@ -202,8 +202,8 @@ const AddBranchForward = (manifest) => {
     validationSchema: Yup.object({
       coloader_no: Yup.string().required("Coloader No is required"),
       vehicle_no: Yup.string().required("Vehicle Number is required"),
-      no_of_bags: Yup.string().required("Bags is required"),
-      no_of_box: Yup.string().required("Box is required"),
+      // no_of_bags: Yup.string().required("Bags is required"),
+      // no_of_box: Yup.string().required("Box is required"),
       actual_weight: Yup.string().required("Manifest Weight is required"),
       driver_name: Yup.string().required("Driver Name is required"),
       supporting_staff: Yup.string().required("Spporting Staff Name is required"),
@@ -255,8 +255,8 @@ const AddBranchForward = (manifest) => {
           coloader: coloader_id,
           airwaybill_no: values.coloader_no,
           forwarded_at: today,
-          bag_count: values.no_of_bags,
-          box_count: values.no_of_box,
+          bag_count: values.no_of_bags ? values.no_of_bags : 0,
+          box_count: values.no_of_box ? values.no_of_box : 0,
           total_weight: values.actual_weight,
           chargeable_weight: values.chargeable_weight,
           coloader_name: coloader_selected.toUpperCase(),
@@ -844,12 +844,12 @@ const AddBranchForward = (manifest) => {
                               name="no_of_bags"
                               placeholder="Enter Total  Bags"
                             />
-                            {validation.touched.no_of_bags &&
+                            {/* {validation.touched.no_of_bags &&
                               validation.errors.no_of_bags ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.no_of_bags}
                               </FormFeedback>
-                            ) : null}
+                            ) : null} */}
                           </div>
                         </Col>
                         <Col lg={3} md={3} sm={6}>
@@ -872,12 +872,12 @@ const AddBranchForward = (manifest) => {
                               name="no_of_box"
                               placeholder="Enter Total Box"
                             />
-                            {validation.touched.no_of_box &&
+                            {/* {validation.touched.no_of_box &&
                               validation.errors.no_of_box ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.no_of_box}
                               </FormFeedback>
-                            ) : null}
+                            ) : null} */}
                           </div>
                         </Col>
                         <Col lg={3} md={3} sm={6}>

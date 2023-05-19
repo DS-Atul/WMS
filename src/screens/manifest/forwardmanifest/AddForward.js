@@ -202,8 +202,8 @@ useEffect(() => {
     validationSchema: Yup.object({
       coloader_no: Yup.string().required("Coloader No is required"),
       flight_no: Yup.string().required("Flight Name is required"),
-      no_of_bags: Yup.string().required("Bags is required"),
-      no_of_box: Yup.string().required("Box is required"),
+      // no_of_bags: Yup.string().required("Bags is required"),
+      // no_of_box: Yup.string().required("Box is required"),
       actual_weight: Yup.string().required("Enter Manifest Weight"),
       chargeable_weight: Yup.string().required("Enter Chargable Weight"),
       actual_weight: Yup.string().required("Enter Actual Weight"),
@@ -275,8 +275,8 @@ useEffect(() => {
           coloader: coloader_id,
           airwaybill_no: toTitleCase(values.coloader_no).toUpperCase(),
           forwarded_at: today,
-          bag_count: values.no_of_bags,
-          box_count: values.no_of_box,
+          bag_count: values.no_of_bags ? values.no_of_bags : 0,
+          box_count: values.no_of_box ? values.no_of_box : 0,
           total_weight: values.actual_weight,
           manifest_no: manifest_no,
           chargeable_weight: values.chargeable_weight,
@@ -871,12 +871,12 @@ const formattedDate = `${day}/${month}/${year}`;
                               name="no_of_bags"
                               placeholder="Enter Total  Bags"
                             />
-                            {validation.touched.no_of_bags &&
+                            {/* {validation.touched.no_of_bags &&
                               validation.errors.no_of_bags ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.no_of_bags}
                               </FormFeedback>
-                            ) : null}
+                            ) : null} */}
                           </div>
                         </Col>
                         <Col lg={3} md={3} sm={6}>
@@ -899,12 +899,12 @@ const formattedDate = `${day}/${month}/${year}`;
                               name="no_of_box"
                               placeholder="Enter Total Box"
                             />
-                            {validation.touched.no_of_box &&
+                            {/* {validation.touched.no_of_box &&
                               validation.errors.no_of_box ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.no_of_box}
                               </FormFeedback>
-                            ) : null}
+                            ) : null} */}
                           </div>
                         </Col>
                         <Col lg={3} md={3} sm={6}>

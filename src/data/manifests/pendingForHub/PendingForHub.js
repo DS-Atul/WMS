@@ -277,6 +277,11 @@ useEffect(() => {
               <td>{toTitleCase(hub.orgin_s)}</td>
               <td>{toTitleCase(hub.destination_s)}</td>
               <td>{hub.orders.length}</td>
+              <td>{toTitleCase(hub.coloader_name)}</td>
+              <td>{hub.bag_count}</td>
+              <td>{hub.box_count}</td>
+              <td>{hub.total_weight}</td>
+              <td>{hub.orders[0].total_quantity}</td>
               {(can_update || user.is_superuser) && (
               <td>
                 {/* <Link to="/manifest/edithub" state={{ hub: hub }}>
