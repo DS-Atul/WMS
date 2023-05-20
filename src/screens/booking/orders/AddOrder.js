@@ -2242,6 +2242,14 @@ const AddOrder = () => {
     ) {
       settransport_mode("");
     }
+    else if (
+      delivery_type === "INTERNATIONAL" &&
+      location.state === null &&
+      returned_data.length === 0 &&
+      returned_data.length === 0
+    ) {
+      settransport_mode("");
+    }
   }, [delivery_type]);
 
   useEffect(() => {
@@ -3054,6 +3062,17 @@ const AddOrder = () => {
     return () => clearTimeout(timeoutId);
   }, [city_id_c, pincode_page_c, pincode_search_item_c]);
 
+  useEffect(() => {
+    if(delivery_type === "INTERNATIONAL"){
+      settransport_mode_data_list(["Cargo","Courier"])
+    }
+    else{
+      settransport_mode_data_list(["Air","Surface","Train",])
+    }
+
+  }, [delivery_type])
+  
+
   // Get Return Order
 
   const getReturnOrder = () => {
@@ -3845,12 +3864,12 @@ const AddOrder = () => {
                                 type="radio"
                                 name="delivery_type"
                                 id="exampleRadios2"
-                                value="International"
+                                value="INTERNATIONAL"
                                 disabled={isupdating ? delivery_type : ""}
                                 onClick={() => {
-                                  setdelivery_type("International");
+                                  setdelivery_type("INTERNATIONAL");
                                 }}
-                                checked={delivery_type === "International"}
+                                checked={delivery_type === "INTERNATIONAL"}
                                 readOnly={true}
                               />
                               <Label

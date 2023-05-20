@@ -46,10 +46,10 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
 
   const [click, setclick] = useState(true);
 
-  const deleteCharge = (id) => {
+  const delete_vehicle = (id) => {
     axios
       .post(
-        ServerAddress + "master/delete_charge/",
+        ServerAddress + "master/delete_vehicle/",
         {
           data: id,
         },
@@ -129,7 +129,7 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
 
   useEffect(() => {
     if (delete_id == true) {
-      deleteCharge(ids);
+      delete_vehicle(ids);
     }
   }, [delete_id]);
 

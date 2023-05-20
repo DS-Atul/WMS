@@ -39,36 +39,46 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
   const success = useSelector((state) => state.alert.show_alert);
 
   // For Delete Commodity
-  // const delete_commidity_row = (id) => {
-  //   axios
-  //     .post(
-  //       ServerAddress + "master/delete_commodity/",
-  //       {
-  //         data: id,
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //       }
-  //     )
-  //     .then(function (response) {
-  //       if (response.statusText === "OK") {
-  //         dispatch(setDeleteId(false));
-  //         dispatch(setIds([]));
-  //         dispatch(setSelect(false));
-  //         setselected([]);
-  //         dispatch(setShowAlert(true));
-  //         dispatch(setDataExist(`Data Deleted Sucessfully`));
-  //         dispatch(setAlertType("danger"));
-  //         dispatch(setIsDeleted("Yes"));
-  //         dispatch(setToggle(true));
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error While delete Commidity ${err}`);
-  //     });
-  // };
+  const delete_delivery_info = (id) => {
+    axios
+      .post(
+        ServerAddress + "booking/delete_delivery_info/",
+        {
+          data: id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.statusText === "OK") {
+          dispatch(setDeleteId(false));
+          dispatch(setIds([]));
+          dispatch(setSelect(false));
+          setselected([]);
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Data Deleted Sucessfully`));
+          dispatch(setAlertType("danger"));
+          dispatch(setIsDeleted("Yes"));
+          dispatch(setToggle(true));
+        }
+      })
+      .catch((err) => {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Docket Already Exists Some Where`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setDeleteId(false));
+        dispatch(setIds([]));
+        dispatch(setSelect(false));
+        setselected([]);
+      });
+  };
 
   //Multi Delete
   const close = useSelector((state) => state.datalist.close);
@@ -112,6 +122,11 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
   //     delete_commidity_row(ids);
   //   }
   // }, [delete_id]);
+  useEffect(() => {
+    if (delete_id === true) {
+      delete_delivery_info(ids);
+    }
+  }, [delete_id]);
 
   useEffect(() => {
     dispatch(setToggle(false));

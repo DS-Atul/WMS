@@ -24,6 +24,7 @@ import { HiQuestionMarkCircle } from "react-icons/hi";
 import Modal from 'react-bootstrap/Modal';
 
 const BillTosDataFormat = ({ data, data1, can_delete }) => {
+  console.log("fffffff===", data)
   const dispatch = useDispatch();
   const cust_user_permissions = useSelector(
     (state) => state.permissions.cust_user_permissions
@@ -266,7 +267,7 @@ const BillTosDataFormat = ({ data, data1, can_delete }) => {
                   toTitleCase(client.name)
                 )}
               </td>
-              {/* <td>{client.number}</td> */}
+              <td>{client.pan_no}</td>
               <td>
                 <HashLink
                   to="/master/billtos/addbillto#customer"

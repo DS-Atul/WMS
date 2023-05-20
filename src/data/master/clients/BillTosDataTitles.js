@@ -1,3 +1,3 @@
-const BillTosDataTitles = ["Name", "Client", "Total Clients","Current Status"];
+const BillTosDataTitles = ["Name", "PAN Number", "Client", "Total Clients","Current Status"];
 
 export default BillTosDataTitles;

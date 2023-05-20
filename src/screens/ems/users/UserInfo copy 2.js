@@ -274,9 +274,8 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           setass_branch_list([])
         }
         try {
-          // get_assupbranch(up_params.user.id, temp_2);
-        } 
-        catch (error) { }
+          get_assupbranch(up_params.user.id, temp_2);
+        } catch (error) { }
       })
       .catch((err) => {
         alert(`Error Occur in Get`, err);
@@ -367,22 +366,40 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   const [new_branch_ids, setnew_branch_ids] = useState([])
   const [old_branch_ids, setold_branch_ids] = useState([])
 
-  const get_assupbranch = (user_id) => {
+  const get_assupbranch = (user_id, branch_list) => {
     let temp = [];
     let temp2 = [];
-    let data = [];
     axios
       .get(ServerAddress + "ems/get_associatedbranch/?user_id=" + user_id, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
-        data = response.data.associated_branch
-        if (data.length > 0) {
-          temp2 = data.map((v) => [v.branch, toTitleCase(v.branch__name)]);
-          temp = data.map((v) => v.branch);
-          setass_branch_list2(temp2)
-          setass_branch_ids(temp);
+        for (
+          let index = 0;
+          index < response.data.associated_branch.length;
+          index++
+        ) {
+          const op_city = response.data.associated_branch[index];
+          temp.push([op_city.id, toTitleCase(op_city.branch__name)]);
+          temp2.push(op_city.id);
         }
+        setass_branch_ids(temp2);
+        setass_branch_list2(temp);
+        let temp3 = [];
+        let other_branches = [];
+
+        for (let index = 0; index < temp.length; index++) {
+          const element2 = temp[index][1];
+          temp3.push(element2);
+        }
+
+        for (let index = 0; index < branch_list.length; index++) {
+          const element = branch_list[index][1];
+          if (temp3.includes(element) === false) {
+            other_branches.push(branch_list[index]);
+          }
+        }
+        setass_branch_list(other_branches);
       })
       .catch((err) => {
         alert(`Error Occur in Get , ${err}`);
@@ -428,11 +445,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   };
 
   const add_user = (values) => {
-    let branch_id = ass_branch_list2.map((v) => v[0]);
 
-    let branch_id_list = [...new Set(branch_id.map((v) => `${v}`))].map((v) =>
-      parseInt(v.split(","))
-    );
     axios
       .post(
         ServerAddress + "ems/add-user/",
@@ -455,7 +468,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           home_branch: home_branch_id,
           created_by: username,
           user_department: user_department_id,
-          associated_branch: branch_id_list,
+          associated_branch: ass_branch_list2,
           // associated_department: ass_department_list2,
           is_docket_entry: is_docket,
           starting_docket_no: docket_no === "" ? null : docket_no,
@@ -974,13 +987,6 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   }, [sortedArray, shouldSort]);
 
   useEffect(() => {
-    if (locations.state !== null && user.length !== 0) {
-    get_assupbranch(user.id);
-    }
-  }, [user])
-  
-
-  useEffect(() => {
     if (is_update === true && user.is_superuser === false) {
       getUserPermission();
     }
@@ -1337,18 +1343,12 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
 
   useEffect(() => {
     let item = ass_branch_list2.map((p) => p[0])
-    console.log("item-----", item)
-    console.log("ass_branch_ids-----", ass_branch_ids)
     let new_ids = item.filter((p) => !ass_branch_ids.includes(p))
-    new_ids = [...new Set(new_ids)];
-    console.log("new_ids-----", new_ids)
     setnew_branch_ids(new_ids)
     let deleted_ids = ass_branch_ids.filter((p) => item.indexOf(p) == -1);
     setdeleted_branchid(deleted_ids)
 
     let old_data = ass_branch_ids.filter(v => !deleted_ids.includes(v))
-    old_data = [...new Set(old_data)];
-    console.log("old_data----", old_data)
     setold_branch_ids(old_data)
 
   }, [ass_branch_ids, ass_branch_list2, ass_branch_list])

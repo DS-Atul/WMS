@@ -88,6 +88,7 @@ const HubManifestTab = () => {
             background: tab === 1 ? "#d6e8ff" : "#F8F8FB",
           }}
           onClick={() => {
+            dispatch(setManifestTab(2));
             dispatch(setHubTab(1));
             navigate("/manifest/hubairforward");
           }}

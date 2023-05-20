@@ -1575,6 +1575,14 @@ const AddOrganization = () => {
     }
   }, [loaded_pan])
 
+  useEffect(() => {
+      if (pan_no.length === 10) {
+        setloaded_pan(true)
+      }
+      else {
+        setloaded_pan(false)
+      }
+  }, [pan_no])
 
   return (
     <>
@@ -1722,19 +1730,19 @@ const AddOrganization = () => {
 
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
-                          <Label className="header-child">PAN Number:</Label>
+                          <Label className="header-child">PAN Number *:</Label>
                           <Input
-                            onBlur={() => {
-                              if (pan_no.length === 10) {
-                                setloaded_pan(true)
-                                // alert("True")
-                              }
-                              else {
-                                setloaded_pan(false)
-                                // alert("False")
-                              }
-                            }
-                            }
+                            // onBlur={() => {
+                            //   if (pan_no.length === 10) {
+                            //     setloaded_pan(true)
+                            //     // alert("True")
+                            //   }
+                            //   else {
+                            //     setloaded_pan(false)
+                            //     // alert("False")
+                            //   }
+                            // }
+                            // }
                             value={pan_no}
                             onChange={(e) =>
                               setpan_no(e.target.value)

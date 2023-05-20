@@ -341,7 +341,10 @@ function AddDepartment() {
         alert(`Error Occur While Getting User Details, ${err}`);
       });
   };
-
+  const [sortedArray, setSortedArray] = useState([]);
+  const [shouldSort, setShouldSort] = useState(true);
+  const [data, setdata] = useState([])
+  console.log("datassff====",updated_permission)
   useEffect(() => {
     if (isupdating === true) {
       let temp_p = [];
@@ -349,27 +352,61 @@ function AddDepartment() {
         const element = updated_permission[index];
         temp_p.push(Object.values(element));
       }
-      temp_p.splice(0, 0, ["Ems App", "All Section", false, false, false, false, ""])
-      temp_p.splice(3, 0, ["Booking App", "All Section", false, false, false, false, ""])
-      temp_p.splice(14, 0, ["Master App", "All Section", false, false, false, false, ""])
-      temp_p.splice(28, 0, ["Billing App", "All Section", false, false, false, false, ""])
-      temp_p.splice(32, 0, ["Manifest App", "All Section", false, false, false, false, ""])
-      temp_p.splice(38, 0, ["Runsheet App", "All Section", false, false, false, false, ""])
-      setpermission_title_list(temp_p);
+      setdata(temp_p);
     }
   }, [updated_permission, isupdating]);
+
+  useEffect(() => {
+    const order = ['Ems', 'Booking', 'Master', 'Billing', 'Manifest', 'Runsheet'];
+  
+    const sorted = [...data].sort((item1, item2) => {
+      const index1 = order.indexOf(item1[0]);
+      const index2 = order.indexOf(item2[0]);
+  
+      if (index1 !== index2) {
+        return index1 - index2;
+      }
+  
+      const compareSecond = item1[1].localeCompare(item2[1]);
+      if (compareSecond !== 0) {
+        return compareSecond;
+      }
+  
+      if (item1[6] === '') {
+        return 1;
+      } else if (item2[6] === '') {
+        return -1;
+      } else if (item1[6] < item2[6]) {
+        return -1;
+      } else if (item1[6] > item2[6]) {
+        return 1;
+      }
+  
+      return 0;
+    });
+  
+    setSortedArray(sorted);
+    setShouldSort(false); // Disable sorting until permission_title_list changes
+  }, [data]);
+  
+  useEffect(() => {
+    if (!shouldSort) {      
+      const updatedArray = [...sortedArray];
+      updatedArray.splice(0, 0, ["Ems App", "All Section", false, false, false, false, ""])
+      updatedArray.splice(3, 0, ["Booking App", "All Section", false, false, false, false, ""])
+      updatedArray.splice(14, 0, ["Master App", "All Section", false, false, false, false, ""])
+      updatedArray.splice(28, 0, ["Billing App", "All Section", false, false, false, false, ""])
+      updatedArray.splice(32, 0, ["Manifest App", "All Section", false, false, false, false, ""])
+      updatedArray.splice(38, 0, ["Runsheet App", "All Section", false, false, false, false, ""])
+      setpermission_title_list(updatedArray);
+    }
+  }, [sortedArray, shouldSort]);
 
   useEffect(() => {
     if (isupdating === true) {
       getUserPermission();
     }
   }, [isupdating]);
-
-  // useEffect(() => {
-  //   if (permission_title_list[0][2]) {
-  //     alert("its a correct ind")
-  //   }
-  // }, [permission_title_list]);
 
   const TilteColor = (idx) => {
     if (idx === 0) {

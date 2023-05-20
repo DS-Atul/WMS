@@ -33,12 +33,12 @@ import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { useLayoutEffect } from "react";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
-import { RiArrowDropDownLine } from "react-icons/ri";
-
+import Main_c from "../../../components/crop/main";
 const UserInfo = () => {
   const locations = useLocation();
 
   const { state: up_params } = useLocation();
+  const [profile_pic, setprofile_pic] = useState("")
   const [is_update, setis_update] = useState(false);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [is_active, setis_active] = useState(true);
@@ -52,7 +52,7 @@ const UserInfo = () => {
   const [date_joined, setdate_joined] = useState(new Date().toISOString().split("T")[0]);
   const [password, setpassword] = useState("");
   const [user, setuser] = useState("");
-  const [user_type, setuser_type] = useState([]);
+  const [user_type, setuser_type] = useState("");
   const [user_type_o, setuser_type_id] = useState([]);
   const [lodated, setlodated] = useState(false);
   const [user_role, setuser_role] = useState("");
@@ -64,6 +64,9 @@ const UserInfo = () => {
   const [designation_page, setdesignation_page] = useState(1)
   const [designation_id, setdesignation_id] = useState(0)
   const [designation_search, setdesignation_search] = useState("")
+  const [designation_loaded, setdesignation_loaded] = useState(false)
+  const [designation_count, setdesignation_count] = useState(1)
+  const [designation_bottom, setdesignation_bottom] = useState(103)
 
   const userid = useSelector((state) => state.authentication.userdetails);
   const username = useSelector(
@@ -80,7 +83,6 @@ const UserInfo = () => {
   const [password_err_1, setpassword_err_1] = useState(false);
   const [password_err_2, setpassword_err_2] = useState(false);
   const [password_err_3, setpassword_err_3] = useState(false);
-  const [home_branch_err, sethome_branch_err] = useState("");
   const [user_type_err, setuser_type_err] = useState(false);
   const [channel_access_err, setchannel_access_err] = useState(false);
 
@@ -91,78 +93,34 @@ const UserInfo = () => {
   const [home_branch_list, sethome_branch_list] = useState([]);
   const [home_branch, sethome_branch] = useState("");
   const [search_branch, setsearch_branch] = useState("");
-
+  const [branch_count, setbranch_count] = useState(1)
+  const [branch_loaded, setbranch_loaded] = useState(false)
+  const [branch_bottom, setbranch_bottom] = useState(103)
+  const [home_branch_err, sethome_branch_err] = useState("");
+  
   const [user_department_list, setuser_department_list] = useState([]);
   const [user_department, setuser_department] = useState("");
   const [user_department_page, setuser_department_page] = useState(1);
   const [user_department_id, setuser_department_id] = useState(null);
   const [search_user_department, setsearch_user_department] = useState("");
   const [user_department_err, setuser_department_err] = useState(false);
+  const [department_loaded, setdepartment_loaded] = useState(false)
+  const [department_count, setdepartment_count] = useState(1)
+  const [department_bottom, setdepartment_bottom] = useState(103)
 
   // Ass Branch
   const [ass_branch_list, setass_branch_list] = useState([]);
   const [ass_branch_list2, setass_branch_list2] = useState([]);
   const [ass_branch_page, setass_branch_page] = useState(1);
   const [search_ass_branch, setsearch_ass_branch] = useState("");
+  const [ass_branch_list_loaded, setass_branch_list_loaded] = useState(false)
+const [ass_branch_list_count, setass_branch_list_count] = useState(1)
 
   // Ass Branch
   const [ass_department_list, setass_department_list] = useState([]);
   const [ass_department_list2, setass_department_list2] = useState([]);
   const [ass_department_page, setass_department_page] = useState(1);
   const [search_ass_department, setsearch_ass_department] = useState("");
-
-  const [showRow, setshowRow] = useState([])
-  // const [check_validation, setcheck_validation] = useState("");
-  const [updated_permission, setupdated_permission] = useState([]);
-  const [refresh, setrefresh] = useState(false);
-
-  const [permission_title_list, setpermission_title_list] = useState([
-    ["Ems App", "All Section", false, false, false, false, ""],
-    ["Ems", "Login Details", false, false, false, false, ""],
-    ["Ems", "Users", false, false, false, false, ""],
-    ["Booking App", "All Section", false, false, false, false, ""],
-    ["Booking", "Order", false, false, false, false, ""],
-    ["Booking", "Airport Order", false, false, false, false, ""],
-    ["Booking", "eWaybill", false, false, false, false, ""],
-    ["Booking", "Cold Chain", false, false, false, false, ""],
-    ["Booking", "Packages", false, false, false, false, ""],
-    ["Booking", "Order Images", false, false, false, false],
-    ["Booking", "Invoices", false, false, false, false, ""],
-    ["Booking", "Order Status", false, false, false, false],
-    ["Booking", "Delivery Info", false, false, false, false, ""],
-    ["Booking", "Docket Issues", false, false, false, false, ""],
-    ["Master App", "All Section", false, false, false, false, ""],
-    ["Master", "Bill To", false, false, false, false, ""],
-
-    ["Master", "Client", false, false, false, false, ""],
-    ["Master", "Calculation Info", false, false, false, false, ""],
-    ["Master", "Billing Info", false, false, false, false, ""],
-
-    ["Master", "Commodity", false, false, false, false, ""],
-
-    ["Master", "Locations", false, false, false, false, ""],
-    ["Master", "Branch", false, false, false, false, ""],
-    ["Master", "Vendor", false, false, false, false, ""],
-    ["Master", "Charges", false, false, false, false, ""],
-    ["Master", "Asset", false, false, false, false, ""],
-    ["Master", "Routes", false, false, false, false, ""],
-    ["Master", "Shipper/Consignee", false, false, false, false, ""],
-    ["Master", "Domestic Rates", false, false, false, false, ""],
-    ["Billing App", "All Section", false, false, false, false, ""],
-    ["Billing", "Bill Closed", false, false, false, false, ""],
-    ["Billing", "Warai Charges", false, false, false, false, ""],
-
-    ["Billing", "Invoices", false, false, false, false, ""],
-    ["Manifest App", "All Section", false, false, false, false, ""],
-    ["Manifest", "Panding For Dispatch", false, false, false, false, ""],
-    ["Manifest", "Raugh Manifest", false, false, false, false, ""],
-    ["Manifest", "Panding To Depart", false, false, false, false, ""],
-    ["Manifest", "Incoming Manifest", false, false, false, false, ""],
-    ["Manifest", "All Manifest", false, false, false, false, ""],
-    ["Runsheet App", "All Section", false, false, false, false, ""],
-    ["Runsheet", "Pending Delivery", false, false, false, false, ""],
-    ["Runsheet", "All Runsheet", false, false, false, false, ""],
-  ]);
 
   const dispatch = useDispatch();
   const toggle_circle = () => {
@@ -173,15 +131,20 @@ const UserInfo = () => {
   };
   // const renderTooltip = (props) => (
   //   <Tooltip id="button-tooltip" {...props}>
-  //     *Your password can't be too similar to your other personal information.
-  //     *Your password must contain at least 8 characters. *Your password can't be
-  //     a commonly used password. *Your password can't be entirely numeric.
+  //     *Your password can’t be too similar to your other personal information.
+  //     *Your password must contain at least 8 characters. *Your password can’t be
+  //     a commonly used password. *Your password can’t be entirely numeric.
   //   </Tooltip>
   // );
 
+  // Images state
+  const [modal, setmodal] = useState(false);
+  const [document, setdocument] = useState("");
+  const [doc_result_image, setdoc_result_image] = useState("");
+
   const getBranches = () => {
     let temp3 = [];
-    let data = [];
+
     axios
       .get(
         ServerAddress +
@@ -193,20 +156,32 @@ const UserInfo = () => {
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setbranch_loaded(false);
+        } else {
+          setbranch_loaded(true);
+        }
+
         if (response.data.results.length > 0) {
-          data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([data[index].id, toTitleCase(data[index].name)]);
+          if (page === 1) {
+            temp3 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp3 = [
+              ...home_branch_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
+          setbranch_count(branch_count+2)
           sethome_branch_list(temp3);
         }
+        else{
+          sethome_branch_list([]);
+        }
+
       })
-      // .then((resp) => {
-      //   sethome_branch_list(resp.data);
-      // })
       .catch((err) => {
         alert(`Error Occur in Get`, err);
       });
@@ -214,7 +189,6 @@ const UserInfo = () => {
 
   const getDesignations = () => {
     let temp3 = [];
-    let data = [];
     axios
       .get(
         ServerAddress +
@@ -224,32 +198,44 @@ const UserInfo = () => {
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setdesignation_loaded(false);
+        } else {
+          setdesignation_loaded(true);
+        }
+
         if (response.data.results.length > 0) {
-          data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([data[index].id, toTitleCase(data[index].name)]);
+          if (designation_page === 1) {
+            temp3 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp3 = [
+              ...designation_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
+          setdesignation_count(designation_count+2)
           setdesignation_list(temp3);
         }
+        else{
+          setdesignation_list([]);
+        }
+
       })
-      // .then((resp) => {
-      //   sethome_branch_list(resp.data);
-      // })
       .catch((err) => {
         alert(`Error Occur in Get`, err);
       });
   };
 
   const getAssBranches = () => {
-    let temp3 = [];
-    let data = [];
+    let temp_2 = [];
+    let temp = [...ass_branch_list];
     axios
       .get(
         ServerAddress +
-        `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
+        `master/all-branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_name=${[
           "",
         ]}&branch_city=${[""]}&vendor=${[
           "",
@@ -259,26 +245,38 @@ const UserInfo = () => {
         }
       )
       .then((response) => {
-        console.log("respose value is", response);
-        if (response.data.results.length > 0) {
-          data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([data[index].id, toTitleCase(data[index].name)]);
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (response.data.next === null) {
+            setass_branch_list_loaded(false);
+          } else {
+            setass_branch_list_loaded(true);
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
-          setass_branch_list(temp3);
-          console.log("temp3 value is", temp3);
-          console.log("temp3 value is d", data);
+          if (ass_branch_page === 1) {
+            temp_2 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp_2 = [
+              ...ass_branch_list,
+              ...response.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.name),
+              ]),
+            ];
+          }
+    
+          setass_branch_list_count(ass_branch_list_count + 2);
+          setass_branch_list(temp_2);
+        }
+        else{
+          setass_branch_list([])
         }
         try {
-          get_assupbranch(up_params.user.id, temp3);
+          get_assupbranch(up_params.user.id, temp_2);
         } catch (error) { }
       })
-      // .then((resp) => {
-      //   sethome_branch_list(resp.data);
-      // })
       .catch((err) => {
         alert(`Error Occur in Get`, err);
       });
@@ -286,7 +284,6 @@ const UserInfo = () => {
 
   const getDepartments = () => {
     let temp3 = [];
-    let data = [];
     axios
       .get(
         ServerAddress +
@@ -298,16 +295,31 @@ const UserInfo = () => {
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setdepartment_loaded(false);
+        } else {
+          setdepartment_loaded(true);
+        }
+
         if (response.data.results.length > 0) {
-          data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([data[index].id, toTitleCase(data[index].name)]);
+          if (user_department_page === 1) {
+            temp3 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp3 = [
+              ...user_department_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
+          setdepartment_count(department_count+2)
           setuser_department_list(temp3);
         }
+        else{
+          setuser_department_list([]);
+        }
+
         try {
           get_assupdepartment(up_params.user.id, temp3);
         } catch (error) { }
@@ -342,9 +354,7 @@ const UserInfo = () => {
           setass_department_list(temp3);
         }
       })
-      // .then((resp) => {
-      //   sethome_branch_list(resp.data);
-      // })
+
       .catch((err) => {
         alert(`Error Occur in Get`, err);
       });
@@ -486,15 +496,18 @@ const UserInfo = () => {
         }
       )
       .then(function (resp) {
-        console.log("uresp-----------", resp)
         if (resp.status === 201) {
+          if (document) {
+            send_user_pic(resp.data.user_id);
+          }
+          add_user_permission(resp.data);          
           add_user_permission(resp.data.user_id);
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`${values.username} Added sucessfully`));
           dispatch(setAlertType("success"));
           navigate("/ems/users");
         }
-        else if (resp.data.error === "UNIQUE constraint failed: ems_customuser.mobilenumber") {
+        else if (resp.data === "duplicate mobilenumber") {
           dispatch(
             setDataExist(
               `Mobile Number ${values.phone_number} already exists`
@@ -503,7 +516,7 @@ const UserInfo = () => {
           dispatch(setAlertType("warning"));
           dispatch(setShowAlert(true));
         }
-        else if (resp.data.error === "UNIQUE constraint failed: ems_customuser.username") {
+        else if (resp.data === "duplicate username") {
           dispatch(
             setDataExist(
               `User Name "${values.username}" already exists`
@@ -537,13 +550,12 @@ const UserInfo = () => {
   };
 
   const update_user_permission = () => {
-    const newarrdata = permission_title_list.filter((e)=>e[1]!=="All Section")
     axios
       .post(
         ServerAddress + "ems/update_user_permissions/",
         {
           user: user.id,
-          permissions_list: newarrdata,
+          permissions_list: permission_title_list,
           modified_by: userid.id,
         },
         {
@@ -576,10 +588,10 @@ const UserInfo = () => {
           last_name: toTitleCase(values.last_name).toUpperCase(),
           mobilenumber: values.phone_number,
           date_joined: date_joined,
-          // user_type: user_type.toUpperCase(),
+          user_type: user_type.toUpperCase(),
           channel_access: channel_access.toUpperCase(),
           designation: designation_id,
-          user_role: user_role,
+          // user_role: user_role.toUpperCase(),
           is_staff: is_staff,
           is_active: is_active,
           is_coldchain: is_coldchain,
@@ -606,6 +618,10 @@ const UserInfo = () => {
         if (resp.status == 202 && user.is_superuser === false) {
           // setlodated(true)
           update_user_permission();
+          if (document) {
+            send_user_pic(up_params.user.id);
+          }
+
           // navigate("/ems/users");
         }
         else if (resp.status == 202 && user.is_superuser === true) {
@@ -614,7 +630,7 @@ const UserInfo = () => {
           dispatch(setShowAlert(true));
           navigate("/ems/users");
         }
-        else if (resp.data.error === "UNIQUE constraint failed: ems_customuser.mobilenumber") {
+        else if (resp.data === "duplicate mobilenumber") {
           dispatch(
             setDataExist(
               `Mobile Number ${values.phone_number} already exists`
@@ -623,7 +639,7 @@ const UserInfo = () => {
           dispatch(setAlertType("warning"));
           dispatch(setShowAlert(true));
         }
-        else if (resp.data.error === "UNIQUE constraint failed: ems_customuser.username") {
+      else if (resp.data === "duplicate username") {
           dispatch(
             setDataExist(
               `User Name "${values.username}" already exists`
@@ -639,14 +655,12 @@ const UserInfo = () => {
   };
 
   const add_user_permission = (user_id) => {
-    const newarrdata = permission_title_list.filter((e)=>e[1]!=="All Section")
-    console.log("send Data",newarrdata)
     axios
       .post(
         ServerAddress + "ems/add_user_permissions/",
         {
           user: user_id,
-          permissions_list: newarrdata,
+          permissions_list: permission_title_list,
           created_by: userid.id,
         },
         {
@@ -686,30 +700,10 @@ const UserInfo = () => {
     //   (val) => val.toString() != permissions.toString()
     // );
     // setpermissions_list(filterlist);
-    if (idxx===2) {
-      permission_title_list[idx][idxx] = false;
-      permission_title_list[idx][3] = false;
-      permission_title_list[idx][4] = false;
-      permission_title_list[idx][5] = false;
-      
-    }else {
-      permission_title_list[idx][idxx] = false;
-    }
+    permission_title_list[idx][idxx] = false;
     setrefresh(!refresh);
   };
   const navigate = useNavigate();
-
-  useLayoutEffect(() => {
-    // console.log("Lenght", permission_title_list.length);
-    let arr = permission_title_list.map((item, idx) => {
-      return item.slice(2, -1).some((v) => v == true);
-    });
-
-    let res = arr.some((v) => v == true);
-    // setcheck_validation(res);
-    // console.log("////////////", res);
-    // console.log("validation999",check_validation)
-  }, [permission_title_list, updated_permission, refresh]);
 
   const validation = useFormik({
     enableReinitialize: true,
@@ -724,26 +718,67 @@ const UserInfo = () => {
     },
 
     validationSchema: Yup.object({
-      // first_name: Yup.string().required("First name is required"),
-      // last_name: Yup.string().required("Last name is required"),
-      // username: Yup.string().required("user id is required"),
-      // email: Yup.string()
-      //   .email("invalid Email Formate")
-      //   .required("Email is required"),
-      // phone_number: Yup.string()
-      //   .min(10, "Invalid number")
-      //   .max(10, "invalid number")
-      //   .required("Phone number is required"),
+      first_name: Yup.string().required("First name is required"),
+      last_name: Yup.string().required("Last name is required"),
+      username: Yup.string().required("Username is required"),
+      email: Yup.string()
+        .email("Invalid Email Formate")
+        .required("Email is required"),
+      phone_number: Yup.string()
+        .min(10, "Invalid number")
+        .max(10, "invalid number")
+        .required("Phone number is required"),
     }),
 
     onSubmit: (values) => {
       is_update ? update_user(values) : add_user(values);
     },
   });
-  
-  
+  const [updated_permission, setupdated_permission] = useState([]);
+  const [permission_title_list, setpermission_title_list] = useState([
+    ["Ems", "Login Details", false, false, false, false, ""],
+    ["Ems", "Users", false, false, false, false, ""],
+    ["Booking", "Order", false, false, false, false, ""],
+    ["Booking", "Airport Order", false, false, false, false, ""],
+    ["Booking", "eWaybill", false, false, false, false, ""],
+    ["Booking", "Cold Chain", false, false, false, false, ""],
+    ["Booking", "Packages", false, false, false, false, ""],
+    ["Booking", "Order Images", false, false, false, false],
+    ["Booking", "Invoices", false, false, false, false, ""],
+    ["Booking", "Order Status", false, false, false, false],
+    ["Booking", "Delivery Info", false, false, false, false, ""],
+    ["Booking", "Docket Issues", false, false, false, false, ""],
+    ["Master", "Bill To", false, false, false, false, ""],
 
-  
+    ["Master", "Client", false, false, false, false, ""],
+    ["Master", "Calculation Info", false, false, false, false, ""],
+    ["Master", "Billing Info", false, false, false, false, ""],
+    ["Master", "Commodity", false, false, false, false, ""],
+
+    ["Master", "Locations", false, false, false, false, ""],
+    ["Master", "Branch", false, false, false, false, ""],
+    ["Master", "Vendor", false, false, false, false, ""],
+    ["Master", "Charges", false, false, false, false, ""],
+    ["Master", "Asset", false, false, false, false, ""],
+    ["Master", "Routes", false, false, false, false, ""],
+    ["Master", "Shipper/Consignee", false, false, false, false, ""],
+    ["Master", "Domestic Rates", false, false, false, false, ""],
+    ["Billing", "Bill Closed", false, false, false, false, ""],
+    ["Billing", "Warai Charges", false, false, false, false, ""],
+
+    ["Billing", "Invoices", false, false, false, false, ""],
+    ["Manifest", "Panding For Dispatch", false, false, false, false, ""],
+    ["Manifest", "Hub Dispatch", false, false, false, false, ""],
+    ["Manifest", "Raugh Manifest", false, false, false, false, ""],
+    ["Manifest", "Panding To Depart", false, false, false, false, ""],
+    ["Manifest", "Incoming Manifest", false, false, false, false, ""],
+    ["Manifest", "All Manifest", false, false, false, false, ""],
+    ["Runsheet", "Pending Delivery", false, false, false, false, ""],
+    ["Runsheet", "All Runsheet", false, false, false, false, ""],
+  ]);
+
+  const [refresh, setrefresh] = useState(false);
+  const [user_role_o, setuser_role_id] = useState("");
 
   const [user_type_list, setuser_type_list] = useState([
     ["EMPLOYEE", "Employee"],
@@ -791,6 +826,9 @@ const UserInfo = () => {
     if (password === confirm_password) {
       setpassword_err_3(false);
     }
+    if (user_department) {
+      setuser_department_err(false);
+    }
   }, [
     home_branch,
     user_type,
@@ -800,6 +838,34 @@ const UserInfo = () => {
     password,
     confirm_password,
   ]);
+
+
+  const send_user_pic = (u_id) =>{
+    const docket_imageform = new FormData();
+    docket_imageform.append(`user_image`,document,document?.name)   
+    docket_imageform.append(`user_id`,u_id)
+
+    axios
+    .post(ServerAddress + "ems/add_profilepic/", docket_imageform, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "content-type": "multipart/form-data",
+      },
+    })
+    .then((res) => {
+      if (res.data.Data === "Done") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(`Image Has Been Saved Successfully !`)
+        );
+        dispatch(setAlertType("success"));
+        // alert(`Your Docket Image Saved Successfully`);
+      
+      } 
+    })
+    .catch((err) => { });
+
+  }
   useLayoutEffect(() => {
     try {
       let user_u = up_params.user;
@@ -816,7 +882,7 @@ const UserInfo = () => {
       setchannel_access(toTitleCase(user_u.channel_access));
       setdesignation(toTitleCase(user_u.designation_name));
       setdesignation_id(user_u.designation)
-      setuser_role(toTitleCase(user_u.user_role));
+      // setuser_role(toTitleCase(user_u.user_role));
       setis_staff(user_u.is_staff);
       setis_active(user_u.is_active);
       setis_superuser(user_u.is_superuser);
@@ -848,17 +914,17 @@ const UserInfo = () => {
     getAssDepartments();
   }, [ass_department_page, search_ass_department]);
 
-  useLayoutEffect(() => {
-    if (home_branch !== "") {
-      console.log("ass_branch_list---", ass_branch_list)
-      console.log("home_branch---", home_branch)
-      let newData = home_branch_list.filter((e) =>
-        e[1] !== home_branch
-      )
-      console.log("newData---", newData)
-      setass_branch_list(newData);
-    }
-  }, [home_branch]);
+  // useLayoutEffect(() => {
+  //   if (home_branch !== "") {
+  //     console.log("ass_branch_list---", ass_branch_list)
+  //     console.log("home_branch---", home_branch)
+  //     let newData = home_branch_list.filter((e) =>
+  //       e[1] !== home_branch
+  //     )
+  //     console.log("newData---", newData)
+  //     // setass_branch_list(newData);
+  //   }
+  // }, [home_branch]);
 
   //Permission
   const getUserPermission = () => {
@@ -928,305 +994,43 @@ const UserInfo = () => {
     setold_branch_ids(old_data)
 
   }, [ass_branch_ids, ass_branch_list2, ass_branch_list])
-  
-  const TilteColor = (idx) => {
-    if (idx===0) {
-      return "red"
-    }else if (idx===3) {
-      return "red"
-    }else if (idx===14) {
-      return "red"
-    }else if (idx===28) {
-      return "red"
-    }else if (idx===32) {
-      return "red"
-    }else if (idx===38) {
-      return "red"
-    }else {
-      return "#000"
-    }
-  }
-
-  const RotateDrop = (idx) =>{
-    console.log("diididdididi",idx)
-    if (idx===0&&showRow.includes(1)) {
-      return true
-    }else if (idx===3&&showRow.includes(4)) {
-      return true
-    }else if (idx===14&&showRow.includes(15)) {
-      return true
-    }else if (idx===28&&showRow.includes(29)) {
-      return true
-    }else if (idx===32&&showRow.includes(33)) {
-      return true
-    }else if (idx===38&&showRow.includes(39)) {
-      return true
-    }else {
-      return false
-    }
-  }
-
-  const showData = (i) => {
-    if (i===0) {
-      if (showRow.includes(1)) {
-        let ind = showRow.indexOf(1)
-        let newData = [...showRow]
-        newData.splice(ind, 2);
-        setshowRow(newData)
-        console.log("Ankiyttttttttttyt",newData)
-      }else {
-        setshowRow([...showRow,1,2])
-      }
-    }else if (i===3) {
-      if (showRow.includes(4)) {
-        let ind = showRow.indexOf(4)
-        let newData = [...showRow]
-        newData.splice(ind, 10);
-        setshowRow(newData)
-        console.log("Ankiyttttttttttyt",newData)
-      }else {
-        setshowRow([...showRow,4,5,6,7,8,9,10,11,12,13])
-      }
-    }else if (i===14) {
-      if (showRow.includes(15)) {
-        let ind = showRow.indexOf(15)
-        let newData = [...showRow]
-        newData.splice(ind, 13);
-        setshowRow(newData)
-        console.log("Ankiyttttttttttyt",newData)
-      }else {
-        setshowRow([...showRow,15,16,17,18,19,20,21,22,23,24,25,26,27])
-      }
-    }else if (i===28) {
-      if (showRow.includes(29)) {
-        let ind = showRow.indexOf(29)
-        let newData = [...showRow]
-        newData.splice(ind, 3);
-        setshowRow(newData)
-        console.log("Ankiyttttttttttyt",newData)
-      }else {
-        setshowRow([...showRow,29,30,31])
-      }
-    }else if (i===32) {
-      if (showRow.includes(33)) {
-        let ind = showRow.indexOf(33)
-        let newData = [...showRow]
-        newData.splice(ind, 5);
-        setshowRow(newData)
-        console.log("Ankiyttttttttttyt",newData)
-      }else {
-        setshowRow([...showRow,33,34,35,36,37])
-      }
-    }else if (i===38) {
-      if (showRow.includes(39)) {
-        let ind = showRow.indexOf(39)
-        let newData = [...showRow]
-        newData.splice(ind, 2);
-        setshowRow(newData)
-        console.log("Ankiyttttttttttyt",newData)
-      }else {
-        setshowRow([...showRow,39,40])
-      }
-    }
-  }
-
-  const allperm2 = (idx) => {
-    let ttt = permission_title_list[idx][2]
-    if (idx===0) {
-      permission_title_list.map((e,i)=>{
-        if (i<3) {
-          e[2]=!ttt
-        }
-      })
-    }else if (idx===3) {
-      permission_title_list.map((e,i)=>{
-        if (i>2&&i<14) {
-          e[2]=!ttt
-        }
-      })
-    }else if (idx===14) {
-      permission_title_list.map((e,i)=>{
-        if (i>13&&i<28) {
-          e[2]=!ttt
-        }
-      })
-    }else if (idx===28) {
-      permission_title_list.map((e,i)=>{
-        if (i>27&&i<32) {
-          e[2]=!ttt
-        }
-      })
-    }else if (idx===32) {
-      permission_title_list.map((e,i)=>{
-        if (i>31&&i<38) {
-          e[2]=!ttt
-        }
-      })
-    }else if (idx===38) {
-      permission_title_list.map((e,i)=>{
-        if (i>37&&i<41) {
-          e[2]=!ttt
-        }
-      })
-    }
-    setrefresh(!refresh);
-  }
-  const allperm3 = (idx) => {
-    let ttt = permission_title_list[idx][3]
-    if (idx===0) {
-      permission_title_list.map((e,i)=>{
-        if (i<3) {
-          e[3]=!ttt
-        }
-      })
-    }else if (idx===3) {
-      permission_title_list.map((e,i)=>{
-        if (i>2&&i<14) {
-          e[3]=!ttt
-        }
-      })
-    }else if (idx===14) {
-      permission_title_list.map((e,i)=>{
-        if (i>13&&i<28) {
-          e[3]=!ttt
-        }
-      })
-    }else if (idx===28) {
-      permission_title_list.map((e,i)=>{
-        if (i>27&&i<32) {
-          e[3]=!ttt
-        }
-      })
-    }else if (idx===32) {
-      permission_title_list.map((e,i)=>{
-        if (i>31&&i<38) {
-          e[3]=!ttt
-        }
-      })
-    }else if (idx===38) {
-      permission_title_list.map((e,i)=>{
-        if (i>37&&i<41) {
-          e[3]=!ttt
-        }
-      })
-    }
-    setrefresh(!refresh);
-  }
-  const allperm4 = (idx) => {
-    let ttt = permission_title_list[idx][4]
-    if (idx===0) {
-      permission_title_list.map((e,i)=>{
-        if (i<3) {
-          e[4]=!ttt
-        }
-      })
-    }else if (idx===3) {
-      permission_title_list.map((e,i)=>{
-        if (i>2&&i<14) {
-          e[4]=!ttt
-        }
-      })
-    }else if (idx===14) {
-      permission_title_list.map((e,i)=>{
-        if (i>13&&i<28) {
-          e[4]=!ttt
-        }
-      })
-    }else if (idx===28) {
-      permission_title_list.map((e,i)=>{
-        if (i>27&&i<32) {
-          e[4]=!ttt
-        }
-      })
-    }else if (idx===32) {
-      permission_title_list.map((e,i)=>{
-        if (i>31&&i<38) {
-          e[4]=!ttt
-        }
-      })
-    }else if (idx===38) {
-      permission_title_list.map((e,i)=>{
-        if (i>37&&i<41) {
-          e[4]=!ttt
-        }
-      })
-    }
-    setrefresh(!refresh);
-  }
-  const allperm5 = (idx) => {
-    let ttt = permission_title_list[idx][5]
-    if (idx===0) {
-      permission_title_list.map((e,i)=>{
-        if (i<3) {
-          e[5]=!ttt
-        }
-      })
-    }else if (idx===3) {
-      permission_title_list.map((e,i)=>{
-        if (i>2&&i<14) {
-          e[5]=!ttt
-        }
-      })
-    }else if (idx===14) {
-      permission_title_list.map((e,i)=>{
-        if (i>13&&i<28) {
-          e[5]=!ttt
-        }
-      })
-    }else if (idx===28) {
-      permission_title_list.map((e,i)=>{
-        if (i>27&&i<32) {
-          e[5]=!ttt
-        }
-      })
-    }else if (idx===32) {
-      permission_title_list.map((e,i)=>{
-        if (i>31&&i<38) {
-          e[5]=!ttt
-        }
-      })
-    }else if (idx===38) {
-      permission_title_list.map((e,i)=>{
-        if (i>37&&i<41) {
-          e[5]=!ttt
-        }
-      })
-    }
-    setrefresh(!refresh);
-  }
-
-
+  console.log("user_type_err=======", user_type_err)
+  console.log("user_type========", user_type)
   return (
     <div>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          // if (!home_branch) {
-          //   sethome_branch_err(true);
-          // }
-          // if (!user_type) {
-          //   setuser_type_err(true);
-          // }
-          // if (!channel_access) {
-          //   setchannel_access_err(true);
-          // }
-          // if (!designation) {
-          //   setdesignation_err(true);
-          // }
-          // else if (!user_role) {
-          //   setuser_role_err(true);
-          // }
-          // else if (!is_update && !password) {
-          //   setpassword_err_1(true);
-          // }
-          // if (!is_update && password.length < 8) {
-          //   setpassword_err_2(true);
-          // }
-          // if (!is_update && password !== confirm_password) {
-          //   setpassword_err_3(true);
-          // }
-
-          validation.handleSubmit(e.values);
+          if (!home_branch) {
+            sethome_branch_err(true);
+          }
+          else if (!user_type) {
+            setuser_type_err(true);
+          }
+          else if (!channel_access) {
+            setchannel_access_err(true);
+          }
+          else if (!designation) {
+            setdesignation_err(true);
+          }
+          else if (!user_department && !is_superuser) {
+            setuser_department_err(true);
+          }
+          else if (!is_update && !password) {
+            setpassword_err_1(true);
+            alert("lllll")
+          }
+          else if (!is_update && password.length < 8) {
+            setpassword_err_2(true);
+            alert("lllll")
+          }
+          else if (!is_update && password !== confirm_password) {
+            setpassword_err_3(true);
+            alert("kkkkk")
+          }
+          else{
+            validation.handleSubmit(e.values);
+          }
 
           return false;
         }}
@@ -1407,7 +1211,7 @@ const UserInfo = () => {
                     )}
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-3">
-                        <Label className="header-child">phone number*</Label>
+                        <Label className="header-child">Phone number*</Label>
                         <Input
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
@@ -1471,6 +1275,10 @@ const UserInfo = () => {
                           setsearch_item={setsearch_branch}
                           error_message={"Please Select Any Branch"}
                           error_s={home_branch_err}
+                          loaded={branch_loaded}
+                          count={branch_count}
+                          bottom={branch_bottom}
+                          setbottom={setbranch_bottom}
                         />
                       </div>
                       {/* <div className="mt-1 error-text" color="danger">
@@ -1489,11 +1297,13 @@ const UserInfo = () => {
                           set_id={setuser_type_id}
                           show_search={false}
                           setsearch_item={setsearch_item}
+                          error_message={"Please Select Any Application Usage Type"}
+                          error_s={user_type_err}
                         />
                       </div>
-                      <div className="mt-1 error-text" color="danger">
+                      {/* <div className="mt-1 error-text" color="danger">
                         {user_type_err ? "Please Select Any User Type" : null}
-                      </div>
+                      </div> */}
                     </Col>
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
@@ -1529,6 +1339,10 @@ const UserInfo = () => {
                           setsearch_item={setdesignation_search}
                           error_message={"Please Select Any Designation"}
                           error_s={designation_err}
+                          loaded={designation_loaded}
+                          count={designation_count}
+                          bottom={designation_bottom}
+                          setbottom={setdesignation_bottom}
                         />
                       </div>
                       {/* <div className="mt-1 error-text" color="danger">
@@ -1565,16 +1379,22 @@ const UserInfo = () => {
                             data_item_s={user_department}
                             set_data_item_s={setuser_department}
                             page={user_department_page}
+                            error_message={"Please Select Any Department"}
+                            error_s={user_department_err}
                             setpage={setuser_department_page}
                             set_id={setuser_department_id}
                             setsearch_item={setsearch_user_department}
+                            loaded={department_loaded}
+                            count={department_count}
+                            bottom={department_bottom}
+                            setbottom={setdepartment_bottom}
                           />
                         </div>
-                        <div className="mt-1 error-text" color="danger">
+                        {/* <div className="mt-1 error-text" color="danger">
                           {user_department_err
                             ? "Please Select Any Designation"
                             : null}
-                        </div>
+                        </div> */}
                       </Col>
                     )}
                     <Col lg={4} md={6} sm={6}>
@@ -1673,6 +1493,41 @@ const UserInfo = () => {
                         </div>
                       </Col>
                     }
+                    {modal ? <Main_c modal={modal}
+                            modal_set={setmodal}
+                            upload_image={setdocument}
+                            result_image={setdoc_result_image}
+
+                            /> : null}
+                     <Col lg={6} md={6} sm={6}>
+                            <div className="mb-3">
+                              <Label className="header-child">
+                                Profile Pic
+                              </Label>
+                              <div
+                             className="mb-3"
+                             onClick={() => {
+                               setmodal(true);
+                             }}
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                height: "38px",
+                                border: "1px solid #dad7d7",
+                                alignItems:"center"
+                              }}
+                            >
+                              <div style={{marginLeft:"3px"}} >Choose File:</div>
+                              <div style={{fontSize:"25px",color:"#dad7d7",marginLeft:"5px"}}>|</div>
+                             {document ? (
+                              <div style={{fontWeight:"bold",color:"blue"}}>Image Uploaded</div>
+                             ):(
+                              <div> No File Chosen</div>
+                             )
+                            }
+                            </div>
+                            </div>
+                          </Col>
                     <Col lg={12} md={6} sm={12}>
                       <div style={{ width: "" }}>
                         <Label className="header-child">
@@ -1686,10 +1541,13 @@ const UserInfo = () => {
                           page={ass_branch_page}
                           setpage={setass_branch_page}
                           setsearch_item={setsearch_ass_branch}
+                          loaded={ass_branch_list_loaded}
+                          count={ass_branch_list_count}
                         // width={"width"}
                         />
                       </div>
                     </Col>
+                    
 
                     {/* <Col lg={6} md={6} sm={12}>
                       <div style={{ width: "", marginLeft: "" }}>
@@ -1714,8 +1572,6 @@ const UserInfo = () => {
             </Card>
           </Col>
         </div>
-
-        {/* Permission */}
         <div className="m-4">
           <div className=" mb-2 main-header"></div>
           <Col lg={12}>
@@ -1740,9 +1596,7 @@ const UserInfo = () => {
               </CardTitle>
               {circle_btn2 ? (
                 <CardBody>
-                  <div 
-                  style={{ borderWidth: 1 }}
-                  >
+                  <div style={{ borderWidth: 1 }}>
                     <div
                       className="fixTableHead"
                       style={{ overflowY: "auto", maxHeight: "500px" }}
@@ -1755,17 +1609,8 @@ const UserInfo = () => {
                           borderWidth: 1,
                         }}
                       >
-                        <thead >
-                          <tr style={{ lineHeight: 2, }}>
-                            <th
-                              style={{
-                                whiteSpace: "nowrap",
-                                textAlign: "center",
-                                padding: "0px 0px",
-                              }}
-                            >
-                              App
-                            </th>
+                        <thead>
+                          <tr style={{ lineHeight: 2, borderWidth: 1 }}>
                             <th
                               style={{
                                 whiteSpace: "nowrap",
@@ -1774,6 +1619,15 @@ const UserInfo = () => {
                               }}
                             >
                               Section
+                            </th>
+                            <th
+                              style={{
+                                whiteSpace: "nowrap",
+                                textAlign: "center",
+                                padding: "0px 0px",
+                              }}
+                            >
+                              Page
                             </th>
                             <th
                               style={{
@@ -1812,63 +1666,30 @@ const UserInfo = () => {
 
                         <tbody>
                           {permission_title_list.map((item, idx) => {
-                            console.log("ersssssssssssssssssssss",permission_title_list)
                             return (
-                              <>
-                              {!showRow.includes(idx)?<tr
+                              <tr
                                 key={idx}
                                 style={{
                                   borderWidth: 1,
-                                  color:TilteColor(idx),
-                                  // fontWeight:"800"
                                 }}
                               >
-                                <td style={{alignItems:"center"}}>
-                                {TilteColor(idx)=="red"?
-                                <RiArrowDropDownLine color="#000" size={30}
-                                onClick={()=>{
-                                  showData(idx)
-                                }}
-                                style={{transform: RotateDrop(idx)?'rotate(180deg)':''}}
-                                />
-                                :null}
-                                  {item[0]}  
-                                  {TilteColor(idx)=="red"?<Input
-                                    className="form-check-input-sm"
-                                    type="checkbox"
-                                    style={{margin:10,borderColor:"red"}}
-                                    onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        // alert(idx)
-                                        allperm2(idx)
-                                        allperm3(idx)
-                                        allperm4(idx)
-                                        allperm5(idx)
-                                      }
-                                    }}
-                                    checked={item[2]}
-                                    readOnly
-                                  />:null}
-                                  </td>
+                                <td>{item[0]}</td>
                                 <td>{item[1]}</td>
                                 <td>
                                   <Input
                                     className="form-check-input-sm"
                                     type="checkbox"
                                     onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        // alert(idx)
-                                        allperm2(idx)
-                                      }else {
-                                        if (!item[2]) {
-                                          setPermissions(2, idx);
-                                        } else {
-                                          removePermissions(2, idx);
-                                        }
-
+                                      // if (!item[3] && !item[4] && !item[5]) {
+                                      if (!item[2]) {
+                                        setPermissions(2, idx);
+                                      } else {
+                                        removePermissions(2, idx);
                                       }
+                                      // }
                                     }}
-                                    checked={item[2]}
+                                    checked={is_superuser ? true : item[2]}
+                                    disabled={is_superuser}
                                     readOnly
                                   />
                                 </td>
@@ -1878,18 +1699,15 @@ const UserInfo = () => {
                                     className="form-check-input-sm"
                                     type="checkbox"
                                     onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        allperm3(idx)
-                                      }else {
                                       if (!item[3]) {
                                         setPermissions(3, idx);
                                         setPermissions(2, idx);
                                       } else {
                                         removePermissions(3, idx);
                                       }
-                                    }
                                     }}
-                                    checked={item[3]}
+                                    checked={is_superuser ? true : item[3]}
+                                    disabled={is_superuser}
                                     readOnly
                                   />
                                 </td>
@@ -1898,9 +1716,6 @@ const UserInfo = () => {
                                     className="form-check-input-sm"
                                     type="checkbox"
                                     onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        allperm4(idx)
-                                      }else {
                                       if (!item[4]) {
                                         setPermissions(4, idx);
                                         setPermissions(3, idx);
@@ -1908,9 +1723,9 @@ const UserInfo = () => {
                                       } else {
                                         removePermissions(4, idx);
                                       }
-                                    }
                                     }}
-                                    checked={item[4]}
+                                    checked={is_superuser ? true : item[4]}
+                                    disabled={is_superuser}
                                     readOnly
                                   />
                                 </td>
@@ -1919,9 +1734,6 @@ const UserInfo = () => {
                                     className="form-check-input-sm"
                                     type="checkbox"
                                     onClick={() => {
-                                      if (idx===0||idx===3||idx===14||idx===28||idx===32||idx===38) {
-                                        allperm5(idx)
-                                      }else {
                                       if (!item[5]) {
                                         setPermissions(4, idx);
                                         setPermissions(5, idx);
@@ -1930,14 +1742,13 @@ const UserInfo = () => {
                                       } else {
                                         removePermissions(5, idx);
                                       }
-                                    }
                                     }}
-                                    checked={item[5]}
+                                    checked={is_superuser ? true : item[5]}
+                                    disabled={is_superuser}
                                     readOnly
                                   />
                                 </td>
-                              </tr>:null}
-                              </>
+                              </tr>
                             );
                           })}
                         </tbody>
@@ -1949,8 +1760,6 @@ const UserInfo = () => {
             </Card>
           </Col>
         </div>
-
-
         <div className=" m-4">
           <Col lg={12}>
             <div className="mb-1 footer_btn">

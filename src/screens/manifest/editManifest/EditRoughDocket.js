@@ -202,10 +202,10 @@ const EditRoughDocket = () => {
   // const today_r = new Date();
   // const  date = today_r.toLocaleDateString('en-GB'); // 'en-GB' specifies the format as day-month-year
   // console.log("dateeeeeeeeeeeee",date);
+
   useLayoutEffect(() => {
-   
-    let m = data?.map((item) => [item.eway_bill_no, item.docket_no]);
-    let filteredArr = m?.filter((subArr) => subArr[0].length !== 0);
+    let m = data?.map((item) => [item?.eway_bill_no, item?.docket_no]);
+    let filteredArr = m?.filter((subArr) => subArr[0]?.length !== 0);
     setewb_no_l(filteredArr);
   }, [data]);
 

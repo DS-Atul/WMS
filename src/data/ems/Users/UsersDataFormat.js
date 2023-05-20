@@ -66,7 +66,17 @@ const UsersDataFormat = ({ data, data1, can_delete }) => {
         }
       })
       .catch((err) => {
-        alert(`Error While delete User ${err}`);
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `User Already Exists Some Where`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        dispatch(setDeleteId(false));
+        dispatch(setIds([]));
+        dispatch(setSelect(false));
+        setselected([]);
       });
   };
   useEffect(() => {
