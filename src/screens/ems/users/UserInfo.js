@@ -246,6 +246,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
       )
       .then((response) => {
         temp = response.data.results;
+        console.log("data---------", temp)
         if (temp.length > 0) {
           if (response.data.next === null) {
             setass_branch_list_loaded(false);
@@ -365,11 +366,13 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   const [deleted_branchid, setdeleted_branchid] = useState([]);
   const [ass_branch_ids, setass_branch_ids] = useState([]);
   const [new_branch_ids, setnew_branch_ids] = useState([])
-  const [old_branch_ids, setold_branch_ids] = useState([])
+  // const [old_branch_ids, setold_branch_ids] = useState([])
 
+  const [new_datas, setnew_datas] = useState([])
   const get_assupbranch = (user_id) => {
     let temp = [];
     let temp2 = [];
+    let temp3 = [];
     let data = [];
     axios
       .get(ServerAddress + "ems/get_associatedbranch/?user_id=" + user_id, {
@@ -377,11 +380,14 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
       })
       .then((response) => {
         data = response.data.associated_branch
+        console.log("set data------", data)
         if (data.length > 0) {
           temp2 = data.map((v) => [v.branch, toTitleCase(v.branch__name)]);
           temp = data.map((v) => v.branch);
+          temp3 = data.map((v) => [v.id, toTitleCase(v.branch__name)]);
           setass_branch_list2(temp2)
           setass_branch_ids(temp);
+          setnew_datas(temp3)
         }
       })
       .catch((err) => {
@@ -573,7 +579,6 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           modified_by: username,
           user_department: user_department_id,
           // associated_branch: ass_branch_list2,
-          old_branch_ids: old_branch_ids,
           new_branch_ids: new_branch_ids,
           deleted_branchid: deleted_branchid,
           // associated_department: ass_department_list2,
@@ -961,7 +966,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   }, [data]);
   
   useEffect(() => {
-    if (!shouldSort && is_superuser === false) {      
+    if (!shouldSort && is_superuser === false && locations.state !== null) {      
       const updatedArray = [...sortedArray];
       updatedArray.splice(0, 0, ["Ems App", "All Section", false, false, false, false, ""])
       updatedArray.splice(3, 0, ["Booking App", "All Section", false, false, false, false, ""])
@@ -1337,19 +1342,34 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
 
   useEffect(() => {
     let item = ass_branch_list2.map((p) => p[0])
-    console.log("item-----", item)
-    console.log("ass_branch_ids-----", ass_branch_ids)
+
+    //For New
     let new_ids = item.filter((p) => !ass_branch_ids.includes(p))
     new_ids = [...new Set(new_ids)];
-    console.log("new_ids-----", new_ids)
+    // console.log("new_ids-----", new_ids)
     setnew_branch_ids(new_ids)
-    let deleted_ids = ass_branch_ids.filter((p) => item.indexOf(p) == -1);
+
+    //For Deleted
+    let prev = ass_branch_list2.map((p) => p[1])
+    let next = new_datas.map((p) => p[1])
+
+    let deleted_id = next.filter((p) => prev.indexOf(p) == -1);
+
+    let deleted_ids = new_datas
+      .filter(item => deleted_id.includes(item[1]))
+      .map(item => item[0]);
+
+    deleted_ids = [...new Set(deleted_ids)];
+
+    // let deleted_ids = ass_branch_ids.filter((p) => item.indexOf(p) == -1);
+    // console.log("deleted_ids----", deleted_ids)
     setdeleted_branchid(deleted_ids)
 
-    let old_data = ass_branch_ids.filter(v => !deleted_ids.includes(v))
-    old_data = [...new Set(old_data)];
-    console.log("old_data----", old_data)
-    setold_branch_ids(old_data)
+    //For Old
+    // let old_data = ass_branch_ids.filter(v => !deleted_ids.includes(v))
+    // old_data = [...new Set(old_data)];
+    // console.log("old_data----", old_data)
+    // setold_branch_ids(old_data)
 
   }, [ass_branch_ids, ass_branch_list2, ass_branch_list])
   return (

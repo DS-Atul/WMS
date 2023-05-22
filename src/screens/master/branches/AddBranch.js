@@ -1019,12 +1019,12 @@ console.log("location_data=====", location_data)
           if (gst_page === 1) {
             gst_temp = response.data.results.map((v) => [
               v.id,
-              v.gst_no,
+              v.gst_no +(v.is_active? "-"+ "H.O" : "") 
             ]);
           } else {
             gst_temp = [
               ...gst_data_list,
-              ...response.data.results.map((v) => [v.id, v.gst_no]),
+              ...response.data.results.map((v) => [v.id,  v.gst_no +(v.is_active? "-"+ "H.O" : "") ]),
             ];
           }
 
@@ -1056,6 +1056,7 @@ console.log("location_data=====", location_data)
       );
 
       data = response.data.results;
+      console.log("data----", data)
       if (response.data.results.length > 0) {
 
         if (response.data.next === null) {
@@ -1071,12 +1072,12 @@ console.log("location_data=====", location_data)
         if (vendor_gst_page === 1) {
           vgst_temp = response.data.results.map((v) => [
             v.id,
-            v.gst_no,
+            v.gst_no +(v.is_active? "-"+ "H.O" : "")        
           ]);
         } else {
           vgst_temp = [
             ...gst_list,
-            ...response.data.results.map((v) => [v.id, v.gst_no]),
+            ...response.data.results.map((v) => [v.id, v.gst_no +(v.is_active? "-"+ "H.O" : "")]),
           ];
         }
       }
@@ -1234,7 +1235,7 @@ console.log("location_data=====", location_data)
   
   return (
     <>
-      <div >
+      <div>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Reject Resion</Modal.Title>

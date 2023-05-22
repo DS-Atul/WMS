@@ -143,26 +143,26 @@ const AddLocation = () => {
     },
   });
 
-  
-  
+
+
   const getCountry = async () => {
     try {
       let country_list = [...country_list_s];
       const resp = await axios.get(
         ServerAddress +
-          `master/all_country/?search=${""}&p=${country_page}&records=${10}&name_search=${country_search_item}`,
+        `master/all_country/?search=${""}&p=${country_page}&records=${10}&name_search=${country_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
       console.log("Countary===>", resp.data);
-  
+
       if (resp.data.next === null) {
         setcountry_loaded(false);
       } else {
         setcountry_loaded(true);
       }
-  
+
       if (resp.data.results.length > 0) {
         // console.log("resp.data.results", resp.data);
         if (country_page === 1) {
@@ -174,22 +174,26 @@ const AddLocation = () => {
             ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
           ];
         }
+        let a_index = country_list.indexOf("Add New");
+        if (a_index !== -1) {
+          country_list.splice(a_index, 1);
+        }
+        country_list = [...new Set(country_list.map((v) => `${v}`))].map((v) =>
+          v.split(",")
+        );
+        country_list.push("Add New");
+        setcountry_count(country_count + 2);
+        setcountry_list_s(country_list);
+      }
+      else {
+        setcountry_list_s(['Add New'])
       }
       // state_list = resp.data.results.map(v => [v.id, toTitleCase(v.state)])\
-      let a_index = country_list.indexOf("Add New");
-      if (a_index !== -1) {
-        country_list.splice(a_index, 1);
-      }
-      country_list = [...new Set(country_list.map((v) => `${v}`))].map((v) =>
-        v.split(",")
-      );
-  
+
+
       // if(country_search_item !== "") {
       //   setcountry_list_s(country_list);
       // } else {
-      country_list.push("Add New");
-      setcountry_count(country_count + 2);
-      setcountry_list_s(country_list);
       // }
     } catch (err) {
       alert(`Error Occur in Get States, ${err}`);
@@ -210,7 +214,7 @@ const AddLocation = () => {
           },
         }
       );
-      
+
       if (response.data.status !== "duplicated") {
         if (response.statusText === "Created") {
           setcountry_id(response.data.country_id);
@@ -241,30 +245,30 @@ const AddLocation = () => {
       alert(`Error Happen while posting State  Data ${error}`);
     }
   };
-  
+
   const getStates = async (place_id, filter_by) => {
     try {
       let state_list = [...state_list_s];
       const resp = await axios.get(
         ServerAddress +
-          `master/all_states/?search=${""}&p=${state_page}&records=${10}&state_search=${state_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_states/?search=${""}&p=${state_page}&records=${10}&state_search=${state_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      
+
       settogstate(true);
-  
+
       if (resp.data.next === null) {
         setstate_loaded(false);
       } else {
         setstate_loaded(true);
       }
-  
+
       if (resp.data.results.length > 0) {
         if (state_page === 1) {
           state_list = resp.data.results.map((v) => [
@@ -277,24 +281,27 @@ const AddLocation = () => {
             ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
           ];
         }
+        let a_index = state_list.indexOf("Add New");
+        if (a_index !== -1) {
+          // setstate_list_s([])
+          state_list.splice(a_index, 1);
+        }
+        state_list = [...new Set(state_list.map((v) => `${v}`))].map((v) =>
+          v.split(",")
+        );
+        state_list.push("Add New");
+        setstate_count(state_count + 2);
+        setstate_list_s(state_list);
+      }
+      else {
+        setstate_list_s(["Add New"])
       }
       // state_list = resp.data.results.map(v => [v.id, toTitleCase(v.state)])\
-      let a_index = state_list.indexOf("Add New");
-      if (a_index !== -1) {
-        // setstate_list_s([])
-        state_list.splice(a_index, 1);
-      }
-      state_list = [...new Set(state_list.map((v) => `${v}`))].map((v) =>
-        v.split(",")
-      );
-      state_list.push("Add New");
-      setstate_count(state_count + 2);
-      setstate_list_s(state_list);
     } catch (error) {
       console.warn(`Error Occur in Get State, ${error}`);
     }
   };
-  
+
   const setState = async () => {
     try {
       const response = await axios.post(
@@ -311,7 +318,7 @@ const AddLocation = () => {
           },
         }
       );
-  
+
       if (response.data.status !== "duplicated") {
         if (response.statusText === "Created") {
           setstate_id(response.data.state_id);
@@ -342,31 +349,31 @@ const AddLocation = () => {
       alert(`Error Happen while posting State  Data ${error}`);
     }
   };
-  
+
   const getCities = async (place_id, filter_by) => {
     try {
       let cities_list = [...city_list_s];
       const resp = await axios.get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_cities/?search=${""}&p=${city_page}&records=${10}&city_search=${city_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-  
+
       settogcity(true);
       console.log("City ===>>", resp.data);
-  
+
       if (resp.data.next === null) {
         setcity_loaded(false);
       } else {
         setcity_loaded(true);
       }
-  
+
       if (resp.data.results.length > 0) {
         if (city_page === 1) {
           cities_list = resp.data.results.map((v) => [v.id, toTitleCase(v.city)]);
@@ -376,46 +383,49 @@ const AddLocation = () => {
             ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
           ];
         }
+        let a_index = cities_list.indexOf("Add New");
+        if (a_index !== -1) {
+          cities_list.splice(a_index, 1);
+        }
+
+        cities_list = [...new Set(cities_list.map((v) => `${v}`))].map((v) =>
+          v.split(",")
+        );
+        cities_list.push("Add New");
+
+        setcity_count(city_count + 2);
+        setcity_list_s(cities_list);
       }
-  
-      let a_index = cities_list.indexOf("Add New");
-      if (a_index !== -1) {
-        cities_list.splice(a_index, 1);
+      else {
+        setcity_list_s(["Add New"])
       }
-  
-      cities_list = [...new Set(cities_list.map((v) => `${v}`))].map((v) =>
-        v.split(",")
-      );
-      cities_list.push("Add New");
-  
-      setcity_count(city_count + 2);
-      setcity_list_s(cities_list);
+
     } catch (err) {
       alert(`Error Occur in Get City, ${err}`);
     }
   };
-  
+
   const getPincode = async (place_id, filter_by) => {
     try {
       let pincode_list = [...pincode_list_s];
       const response = await axios.get(
         ServerAddress +
-          `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_pincode/?search=${""}&p=${pincode_page}&records=${10}&pincode_search=${pincode_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-  
+
       if (response.data.next === null) {
         setpincode_loaded(false);
       } else {
         setpincode_loaded(true);
       }
-  
+
       if (response.data.results.length > 0) {
         if (pincode_page === 1) {
           pincode_list = response.data.results.map((v) => [v.id, v.pincode]);
@@ -426,22 +436,25 @@ const AddLocation = () => {
             // ...response.data.results.map((v) => [v.id, toTitleCase(v.pincode)]),
           ];
         }
+        let a_index = pincode_list.indexOf("Add New");
+        if (a_index !== -1) {
+          pincode_list.splice(a_index, 1);
+        }
+        pincode_list = [...new Set(pincode_list.map((v) => `${v}`))].map((v) =>
+          v.split(",")
+        );
+        pincode_list.push("Add New");
+        setpincode_count(pincode_count + 2);
+        setpincode_list_s(pincode_list);
       }
-      let a_index = pincode_list.indexOf("Add New");
-      if (a_index !== -1) {
-        pincode_list.splice(a_index, 1);
+      else {
+        setpincode_list_s(["Add New"])
       }
-      pincode_list = [...new Set(pincode_list.map((v) => `${v}`))].map((v) =>
-        v.split(",")
-      );
-      pincode_list.push("Add New");
-      setpincode_count(pincode_count + 2);
-      setpincode_list_s(pincode_list);
     } catch (err) {
       alert(`Error Occur in Get City, ${err}`);
     }
   };
-  
+
   const setCity = async () => {
     try {
       const response = await axios.post(ServerAddress + "master/add-city/", {
@@ -454,11 +467,11 @@ const AddLocation = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-  
+
       if (response.data.status !== "duplicated") {
         if (response.statusText === "Created") {
           setcity_id(response.data.city_id);
-  
+
           dispatch(
             setDataExist(
               `City ${toTitleCase(other_city)} in State ${toTitleCase(
@@ -466,7 +479,7 @@ const AddLocation = () => {
               )} Added Sucessfully`
             )
           );
-  
+
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
           setcity(toTitleCase(other_city));
@@ -481,7 +494,7 @@ const AddLocation = () => {
             )} Already Exist`
           )
         );
-  
+
         dispatch(setAlertType("warning"));
         // if (isupdating === false) {
         //   setcity("");
@@ -496,7 +509,7 @@ const AddLocation = () => {
       alert(`Error Happen while posting City Data ${error}`);
     }
   };
-  
+
   const setPicode = async () => {
     try {
       const response = await axios.post(
@@ -512,17 +525,17 @@ const AddLocation = () => {
           },
         }
       );
-  
+
       if (response.data.status !== "duplicated") {
         if (response.statusText === "Created") {
           setpincode_id(response.data.pincode_id);
-  
+
           dispatch(
             setDataExist(
               `Pincode ${toTitleCase(other_pincode)} Added Sucessfully`
             )
           );
-  
+
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
           setpincode(toTitleCase(other_pincode));
@@ -533,7 +546,7 @@ const AddLocation = () => {
         dispatch(
           setDataExist(`Pincode ${toTitleCase(other_pincode)}Already Exist`)
         );
-  
+
         dispatch(setAlertType("warning"));
         // if (isupdating === false) {
         //   setcity("");
@@ -548,7 +561,7 @@ const AddLocation = () => {
       alert(`Error Happen while posting City Data ${error}`);
     }
   };
-  
+
   const update_location = async (values) => {
     try {
       let id = location.id;
@@ -591,10 +604,9 @@ const AddLocation = () => {
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
-            `Location of ${location.pincode} updated sucessfully ${
-              location.pincode !== values.pincode
-                ? `by overriding pincode ${values.pincode}`
-                : ""
+            `Location of ${location.pincode} updated sucessfully ${location.pincode !== values.pincode
+              ? `by overriding pincode ${values.pincode}`
+              : ""
             }`
           )
         );
@@ -615,7 +627,7 @@ const AddLocation = () => {
       dispatch(setShowAlert(false));
     }
   };
-  
+
 
   const send_locality_data = async (values) => {
     try {
@@ -658,7 +670,7 @@ const AddLocation = () => {
       alert(`Error Happen while posting Location  Data ${error}`);
     }
   };
-  
+
 
   const handleAction = () => {
     dispatch(setToggle(true));
@@ -677,7 +689,7 @@ const AddLocation = () => {
       setcity_id(location_data.state.location.city_id);
       setpincode(toTitleCase(location_data.state.location.pincode_name));
       setpincode_id(location_data.state.location.pincode);
-    } catch (error) {}
+    } catch (error) { }
   }, []);
 
   useLayoutEffect(() => {
@@ -741,7 +753,7 @@ const AddLocation = () => {
       setpincode("");
     }
   }, [state]);
-  
+
   useEffect(() => {
     if (city !== "" && togcity) {
       setpincode("");
@@ -766,7 +778,7 @@ const AddLocation = () => {
 
   useLayoutEffect(() => {
     let timeoutId;
-    if (city_id !== 0 ) {
+    if (city_id !== 0) {
       timeoutId = setTimeout(() => {
         getPincode(city_id, "city");
       }, 1);
@@ -815,7 +827,7 @@ const AddLocation = () => {
       user.user_department_name === "ACCOUNTANT" ||
       user.user_department_name === "ACCOUNTANT" ||
       user.user_department_name + " " + user.designation_name ===
-        "ACCOUNT MANAGER" ||
+      "ACCOUNT MANAGER" ||
       user.is_superuser
     ) {
       setcurrent_status("APPROVED");
@@ -1015,7 +1027,7 @@ const AddLocation = () => {
                           count={country_count}
                           bottom={country_bottom}
                           setbottom={setcountry_bottom}
-                          // add_nav={'/master/locations/addlocation'}
+                        // add_nav={'/master/locations/addlocation'}
                         />
                       </div>
                       <div className="mt-1 error-text" color="danger">
@@ -1303,11 +1315,11 @@ const AddLocation = () => {
                     ) : null}
 
                     {city &&
-                    state &&
-                    pincode &&
-                    city !== "Add New" &&
-                    state !== "Add New" &&
-                    pincode !== "Add New" ? (
+                      state &&
+                      pincode &&
+                      city !== "Add New" &&
+                      state !== "Add New" &&
+                      pincode !== "Add New" ? (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">Locality*</Label>
@@ -1317,7 +1329,7 @@ const AddLocation = () => {
                             value={validation.values.locality || ""}
                             invalid={
                               validation.touched.locality &&
-                              validation.errors.locality
+                                validation.errors.locality
                                 ? true
                                 : false
                             }
@@ -1328,7 +1340,7 @@ const AddLocation = () => {
                             placeholder="Enter Locality"
                           />
                           {validation.touched.locality &&
-                          validation.errors.locality ? (
+                            validation.errors.locality ? (
                             <FormFeedback type="invalid">
                               {validation.errors.locality}
                             </FormFeedback>
@@ -1355,16 +1367,16 @@ const AddLocation = () => {
                   isupdating && user.user_department_name === "ADMIN"
                     ? "btn btn-info m-1"
                     : !isupdating
-                    ? "btn btn-info m-1"
-                    : "btn btn-success m-1"
+                      ? "btn btn-info m-1"
+                      : "btn btn-success m-1"
                 }
               >
                 {isupdating &&
-                (user.user_department_name === "ADMIN" || user.is_superuser)
+                  (user.user_department_name === "ADMIN" || user.is_superuser)
                   ? "Update"
                   : !isupdating
-                  ? "Save"
-                  : "Approved"}
+                    ? "Save"
+                    : "Approved"}
               </button>
 
               {isupdating &&

@@ -6,6 +6,7 @@ import { setIsSearch, setSearchItem } from "../../../store/searchBar/SearchBar";
 import { useDispatch, useSelector } from "react-redux";
 import { setFilterToggle } from "../../../store/filterValue/FilterValue";
 import { setPageNumber } from "../../../store/pagination/Pagination";
+import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 const MultiRowSearchInput = ({
   data_list,
@@ -52,13 +53,17 @@ const MultiRowSearchInput = ({
     setsearch_txt("");
   }, []);
 
+  // useEffect(() => {
+  //   if (search == "") {
+  //     setis_search(true);
+  //     // dispatch(setIsSearch(true));
+  //     // dispatch(setSearchItem(""));
+  //     setsearch_txt("");
+  //   }
+  // }, [search]);
+
   useEffect(() => {
-    if (search == "") {
-      setis_search(true);
-      // dispatch(setIsSearch(true));
-      // dispatch(setSearchItem(""));
-      setsearch_txt("");
-    }
+    setsearch_txt(toTitleCase(search).toUpperCase());
   }, [search]);
 
   useLayoutEffect(() => {
@@ -80,9 +85,9 @@ const MultiRowSearchInput = ({
   return (
     <div
       onFocus={() => setfocused(true)}
-      onMouseLeave={() => {
-        setshowfilter(false);
-      }}
+      // onBlur={() => {
+      //   setshowfilter(false);
+      // }}
       id={`tab${idx}`}
       onClick={() => {
         const el = document.getElementById(`tab${idx}`);
@@ -164,8 +169,8 @@ const MultiRowSearchInput = ({
           //   }
           // }}
           style={{
-            width: current_width,
-            // width:"95%",
+            // width: current_width,
+            width:"95%",
             zIndex: "10000000",
             border: showfilter ? "1px solid #d3d3d3" : null,
             position: "absolute",
@@ -189,13 +194,15 @@ const MultiRowSearchInput = ({
                 value={search}
                 onMouseDown={() => setsearching(true)}
                 onChange={(val) => {
+                  setpage(1);
+                  setbottom(103);
                   setsearch(val.target.value);
                   // dispatch(setIsSearch(false));
                   setis_search(false);
                 }}
                 placeholder="Search....."
               />
-              <i
+              {/* <i
                 onMouseDown={() => {
                   if (search != "") {
                     setsearching(true);
@@ -215,7 +222,7 @@ const MultiRowSearchInput = ({
                   setbottom(103);
                 }}
                 className="bx bx-search-alt search-icon"
-              ></i>
+              ></i> */}
             </div>
           ) : (
             <div></div>

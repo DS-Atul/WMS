@@ -1341,7 +1341,7 @@ const AddOrder = () => {
             shipper_location: shipper_locality_id,
             consignee_location: consignee_locality_id,
             assetdeleted_ids: assetdeleted_ids,
-            assetold_ids: assetold_ids,
+            // assetold_ids: assetold_ids,
             assetnew_ids: assetnew_ids,
             linked_order: order_type === "New" ? null : linked_order,
             order_type: order_type?.toUpperCase(),
@@ -1526,6 +1526,7 @@ const AddOrder = () => {
       });
   };
 
+  const [new_datas, setnew_datas] = useState([])
   // Get Order Assets
   const get_orderasset = (order_id, box, logger) => {
     axios
@@ -1539,6 +1540,7 @@ const AddOrder = () => {
       .then((response) => {
         let temp = [];
         let temp2 = [];
+        let temps = [];
         let deleted_id = [];
         for (let index = 0; index < response.data.results.length; index++) {
           const order_asset = response.data.results[index];
@@ -1549,9 +1551,15 @@ const AddOrder = () => {
               "-" +
               order_asset.box_type +
               "-" +
-              order_asset.product_id,
+              order_asset.product_id
             ]);
             deleted_id.push(order_asset.asset);
+            temps.push(order_asset.id,
+              order_asset.asset_id +
+              "-" +
+              order_asset.box_type +
+              "-" +
+              order_asset.product_id);
           } else {
             temp2.push([
               order_asset.asset,
@@ -1559,14 +1567,22 @@ const AddOrder = () => {
               "-" +
               order_asset.box_type +
               "-" +
-              order_asset.manufacturer_name,
+              order_asset.manufacturer_name
             ]);
             deleted_id.push(order_asset.asset);
+            temps.push(order_asset.id,
+              order_asset.asset_id +
+              "-" +
+              order_asset.box_type +
+              "-" +
+              order_asset.manufacturer_name);
           }
         }
         setasset_idlist(deleted_id);
         setbox_list_2(temp);
         setLogger_Selected(temp2);
+        setnew_datas(temps)
+        
         let temp3 = [];
         let other_boxes = [];
         let temp4 = [];
@@ -2050,9 +2066,11 @@ const AddOrder = () => {
   useEffect(() => {
     if (asset_info_selected === "With Box") {
       let box = box_list_2.map((data) => data[0]);
+      box = [...new Set(box)];
       setbox(box);
     } else if (asset_info_selected === "With Logger") {
       let logger = Logger_Selected.map((data) => data[0]);
+      logger = [...new Set(logger)];
       setlogger(logger);
     }
   }, [box_list_2, Logger_Selected, Logger_list, box_list_1]);
@@ -2077,22 +2095,22 @@ const AddOrder = () => {
     if (box !== [] && asset_info_selected === "With Box") {
       let item = asset_idlist.filter((p) => box.indexOf(p) == -1);
       setassetdeleted_ids(item);
-      let item2 = asset_idlist.filter((p) => box.indexOf(p) !== -1);
-      setassetold_ids(item2);
+      // let item2 = asset_idlist.filter((p) => box.indexOf(p) !== -1);
+      // setassetold_ids(item2);
       let item3 = box.filter((a) => asset_idlist.indexOf(a) == -1);
       setassetnew_ids(item3);
     } else if (logger !== [] && asset_info_selected === "With Logger") {
       let item = asset_idlist.filter((p) => logger.indexOf(p) == -1);
       setassetdeleted_ids(item);
-      let item2 = asset_idlist.filter((p) => logger.indexOf(p) !== -1);
-      setassetold_ids(item2);
+      // let item2 = asset_idlist.filter((p) => logger.indexOf(p) !== -1);
+      // setassetold_ids(item2);
       let item3 = logger.filter((a) => asset_idlist.indexOf(a) == -1);
       setassetnew_ids(item3);
     } else {
       let item = asset_idlist.filter((p) => both.indexOf(p) == -1);
       setassetdeleted_ids(item);
-      let item2 = asset_idlist.filter((p) => both.indexOf(p) !== -1);
-      setassetold_ids(item2);
+      // let item2 = asset_idlist.filter((p) => both.indexOf(p) !== -1);
+      // setassetold_ids(item2);
       let item3 = both.filter((a) => asset_idlist.indexOf(a) == -1);
       setassetnew_ids(item3);
     }

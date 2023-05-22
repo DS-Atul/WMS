@@ -390,7 +390,7 @@ function AddDepartment() {
   }, [data]);
   
   useEffect(() => {
-    if (!shouldSort) {      
+    if (!shouldSort && location.state !== null) {      
       const updatedArray = [...sortedArray];
       updatedArray.splice(0, 0, ["Ems App", "All Section", false, false, false, false, ""])
       updatedArray.splice(3, 0, ["Booking App", "All Section", false, false, false, false, ""])

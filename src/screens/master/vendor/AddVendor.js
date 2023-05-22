@@ -1920,7 +1920,7 @@ const AddVendor = () => {
                             <div className="mb-3">
                               <Label className="header-child">
                                 {/* Callibration */}
-                                Registration Date
+                                MSME Registration Date
                               </Label>
                               <Input
                                 style={{ marginBottom: "10px" }}
@@ -2370,7 +2370,7 @@ const AddVendor = () => {
                                   >
                                     {row.length > 1 ? (
                                       <>
-                                        <div style={{ height: "14.5px" }}></div>
+                                        {/* <div style={{ height: "14.5px" }}></div> */}
                                         <div
                                           onClick={() => {
                                             // isupdating
@@ -2382,6 +2382,7 @@ const AddVendor = () => {
                                             style={{
                                               justifyContent: "center",
                                               cursor: "pointer",
+                                              marginBottom: "37px",
                                             }}
                                           />
                                         </div>

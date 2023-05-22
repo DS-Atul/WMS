@@ -1142,7 +1142,7 @@ const AddOrganization = () => {
   };
 
   useLayoutEffect(() => {
-    if (same_as_billing_add && location_data.state === null) {
+    if (same_as_billing_add) {
       setbilling_add_line1(office_add_line1);
       setbilling_add_line2(office_add_line2);
       setbilling_state(office_state);
@@ -1162,7 +1162,7 @@ const AddOrganization = () => {
       setbilling_pincode_id("");
       setbilling_locality_id("");
     }
-  }, [same_as_billing_add]);
+  }, [same_as_billing_add, dimension_list]);
 
   // used to fetch data from gst number
   const getGstStates = async (place_id, filter_by) => {
@@ -2264,7 +2264,7 @@ const AddOrganization = () => {
                                 >
                                   {row.length > 1 ? (
                                     <>
-                                      <div style={{ height: "14.5px" }}></div>
+                                      {/* <div style={{ height: "14.5px" }}></div> */}
                                       <div
                                         onClick={() => {
                                           deleteGST(item);
@@ -2274,6 +2274,7 @@ const AddOrganization = () => {
                                           style={{
                                             justifyContent: "center",
                                             cursor: "pointer",
+                                            marginBottom: "37px",
                                           }}
                                         />
                                       </div>

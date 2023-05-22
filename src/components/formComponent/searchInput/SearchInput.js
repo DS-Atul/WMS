@@ -70,14 +70,14 @@ const SearchInput = ({
   //---error
   useEffect(() => {
     seterror(error_s);
-  }, [error_s]);
+  }, [error_s]);  
 
   return (
     <div
       onFocus={() => setfocused(true)}
-      onMouseLeave={() => {
-        setshowfilter(false);
-      }}
+      // onBlur={() => {
+      //   setshowfilter(false);
+      // }}
       onBlur={() => {
         if (!data_item_s) {
           seterror(true);
