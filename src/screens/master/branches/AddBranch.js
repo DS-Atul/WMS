@@ -552,13 +552,14 @@ const AddBranch = () => {
   };
 
   // to get operating citys
-  const getop_cities = (place_id, filter_by) => {
+
+  const getop_cities = (place_id, filter_by, val) => {
     let temp_2 = [];
     let temp = [...operating_city_list];
     axios
       .get(
         ServerAddress +
-        `master/all_cities/?search=${""}&p=${op_city_page}&records=${20}&city_search=${search_op_city}&place_id=${place_id}&filter_by=${filter_by}`,
+        `master/all_branches_opcity/?search=${""}&p=${op_city_page}&records=${20}&city_search=${search_op_city}&place_id=${place_id}&filter_by=${filter_by}&data=${val}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -594,6 +595,49 @@ const AddBranch = () => {
         }
       });
   };
+
+  // const getop_cities = (place_id, filter_by) => {
+  //   let temp_2 = [];
+  //   let temp = [...operating_city_list];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //       `master/all_cities/?search=${""}&p=${op_city_page}&records=${20}&city_search=${search_op_city}&place_id=${place_id}&filter_by=${filter_by}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       temp = response.data.results;
+  //       if (temp.length > 0) {
+  //         if (response.data.next === null) {
+  //           setoperating_city_loaded(false);
+  //         } else {
+  //           setoperating_city_loaded(true);
+  //         }
+  //         if (op_city_page === 1) {
+  //           temp_2 = response.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.city),
+  //           ]);
+  //         } else {
+  //           temp_2 = [
+  //             ...operating_city_list,
+  //             ...response.data.results.map((v) => [
+  //               v.id,
+  //               toTitleCase(v.city),
+  //             ]),
+  //           ];
+  //         }
+
+  //         setoperating_city_count(operating_city_count + 2);
+  //         setoperating_city_list(temp_2);
+  //       }
+  //       else {
+  //         setoperating_city_list([])
+  //       }
+  //     });
+  // };
 
   const get_OpCitiesDetails = (id) => {
 
@@ -837,14 +881,20 @@ console.log("location_data=====", location_data)
   }, [state_page, state_search_item, refresh]);
 
   useEffect(() => {
-    if (!get_state_wise_op) {
-      getop_cities('all', 'all');
+    if (!get_state_wise_op && location_data.state === null) {
+      getop_cities('all', 'all', 'all');
+    }
+    else if(!get_state_wise_op && location_data.state !== null) {
+      getop_cities('all', 'all', parseInt(location_data.state.branch.id));
     }
   }, [get_state_wise_op, op_city_page, search_op_city]);
 
   useEffect(() => {
-    if (get_state_wise_op) {
-      getop_cities(state_id, "state");
+    if (get_state_wise_op && location_data.state === null) {
+      getop_cities(state_id, "state", 'all');
+    }
+    else if(get_state_wise_op && location_data.state !== null) {
+      getop_cities(state_id, "state", parseInt(location_data.state.branch.id));
     }
   }, [state_id, get_state_wise_op, op_city_page, search_op_city]);
 

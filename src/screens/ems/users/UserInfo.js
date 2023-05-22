@@ -229,17 +229,13 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
       });
   };
 
-  const getAssBranches = () => {
+  const getAssBranches = (val) => {
     let temp_2 = [];
     let temp = [...ass_branch_list];
     axios
       .get(
         ServerAddress +
-        `master/all-branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_name=${[
-          "",
-        ]}&branch_city=${[""]}&vendor=${[
-          "",
-        ]}&branch_search=${search_ass_branch}&data=all`,
+        `master/all_user_ass_branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_search=${search_ass_branch}&data=${val}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -283,6 +279,61 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
         alert(`Error Occur in Get`, err);
       });
   };
+
+  // const getAssBranches = (val) => {
+  //   let temp_2 = [];
+  //   let temp = [...ass_branch_list];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //       `master/all-branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_name=${[
+  //         "",
+  //       ]}&branch_city=${[""]}&vendor=${[
+  //         "",
+  //       ]}&branch_search=${search_ass_branch}&data=${val}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       temp = response.data.results;
+  //       console.log("data---------", temp)
+  //       if (temp.length > 0) {
+  //         if (response.data.next === null) {
+  //           setass_branch_list_loaded(false);
+  //         } else {
+  //           setass_branch_list_loaded(true);
+  //         }
+  //         if (ass_branch_page === 1) {
+  //           temp_2 = response.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.name),
+  //           ]);
+  //         } else {
+  //           temp_2 = [
+  //             ...ass_branch_list,
+  //             ...response.data.results.map((v) => [
+  //               v.id,
+  //               toTitleCase(v.name),
+  //             ]),
+  //           ];
+  //         }
+    
+  //         setass_branch_list_count(ass_branch_list_count + 2);
+  //         setass_branch_list(temp_2);
+  //       }
+  //       else{
+  //         setass_branch_list([])
+  //       }
+  //       try {
+  //         // get_assupbranch(up_params.user.id, temp_2);
+  //       } 
+  //       catch (error) { }
+  //     })
+  //     .catch((err) => {
+  //       alert(`Error Occur in Get`, err);
+  //     });
+  // };
 
   const getDepartments = () => {
     let temp3 = [];
@@ -890,7 +941,12 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   }, [designation_page, designation_search])
 
   useLayoutEffect(() => {
-    getAssBranches();
+    if(locations.state === null){
+      getAssBranches("all");
+    }
+    else{
+      getAssBranches(parseInt(up_params.user.id));
+    }
   }, [ass_branch_page, search_ass_branch]);
 
   useLayoutEffect(() => {

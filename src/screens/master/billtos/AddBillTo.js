@@ -49,6 +49,8 @@ import Modal from 'react-bootstrap/Modal';
 
 const AddClient = () => {
   const { state: up_params } = useLocation();
+  console.log("up_params=======", up_params)
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user_id = useSelector((state) => state.authentication.userdetails.id);
@@ -453,16 +455,14 @@ const AddClient = () => {
         alert(`Error Occur in Get OpCity, ${err}`);
       });
   };
-
-  const getBranches = async () => {
+  
+  const getBranches = async (val) => {
     let temp_2 = [];
     let temp = [];
     try {
       const response = await axios.get(
         ServerAddress +
-        `master/all-branches/?search=${branch_search}&p=${page_num}&records=${data_len}&branch_name=${[
-          "",
-        ]}&branch_city=${[""]}&vendor=&data=all`,
+        `master/all_branches_billto/?search=${""}&p=${page_num}&records=${data_len}&branch_search=${branch_search}&data=${val}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -503,7 +503,57 @@ const AddClient = () => {
       console.log(`Error Occur in Get Branches, ${err}`);
     }
   };
-  console.log("associate_branch_list_1", associate_branch_list_1)
+
+  // const getBranches = async () => {
+  //   let temp_2 = [];
+  //   let temp = [];
+  //   try {
+  //     const response = await axios.get(
+  //       ServerAddress +
+  //       `master/all-branches/?search=${branch_search}&p=${page_num}&records=${data_len}&branch_name=${[
+  //         "",
+  //       ]}&branch_city=${[""]}&vendor=&data=all`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     );
+  //     temp = response.data.results;
+  //     console.log("resp", response.data)
+  //     if (temp.length > 0) {
+  //       if (response.data.next === null) {
+  //         setbranch_loaded(false);
+  //       } else {
+  //         setbranch_loaded(true);
+  //       }
+  //       if (branch_page === 1) {
+  //         temp_2 = response.data.results.map((v) => [
+  //           v.id,
+  //           toTitleCase(v.name),
+  //         ]);
+  //       } else {
+  //         temp_2 = [
+  //           ...associate_branch_list_1,
+  //           ...response.data.results.map((v) => [
+  //             v.id,
+  //             toTitleCase(v.name),
+  //           ]),
+  //         ];
+  //       }
+
+  //       setbranch_count(branch_count + 2);
+  //       setassociate_branch_list_1(temp_2);
+  //     }
+  //     else {
+  //       setassociate_branch_list_1([])
+  //     }
+  //     try {
+  //       get_BranchDetails(up_params.client.id);
+  //     } catch (error) { }
+  //   } catch (err) {
+  //     console.log(`Error Occur in Get Branches, ${err}`);
+  //   }
+  // };
+
 
   // Bill To API Functions
   const addBillTo = async (values) => {
@@ -846,7 +896,12 @@ const AddClient = () => {
   }, [state_page, state_search_item, refresh]);
 
   useLayoutEffect(() => {
-    getBranches();
+    if(up_params === null){
+      getBranches("all");
+    }
+    else{
+      getBranches(parseInt(up_params?.client?.id));
+    }
   }, [branch_page, branch_search]);
 
   useLayoutEffect(() => {
@@ -1857,7 +1912,7 @@ const AddClient = () => {
                     <Col lg={4} md="6" sm="6">
                       <div className="mb-3">
                         <Label className="header-child">
-                          Authorised Person Name
+                          Authorised Person Name *
                         </Label>
                         <Input
                           onChange={validation.handleChange}
@@ -1887,7 +1942,7 @@ const AddClient = () => {
                     <Col lg={4} md="6" sm="6">
                       <div className="mb-2">
                         <Label className="header-child">
-                          Authorised Person Email
+                          Authorised Person Email *
                         </Label>
                         <Input
                           onChange={validation.handleChange}
@@ -1917,7 +1972,7 @@ const AddClient = () => {
                     <Col lg={4} md="6" sm="6">
                       <div className="mb-2">
                         <Label className="header-child">
-                          Authorised Person Number
+                          Authorised Person Number *
                         </Label>
                         <Input
                           onChange={validation.handleChange}
@@ -1970,7 +2025,7 @@ const AddClient = () => {
                         onClick={() => {
                           navigate("/master/clients/addclient", {
                             state: {
-                              // billto : client,
+                              billto : client,
                               bill_to_name: validation.values.name,
                               bill_to_email: validation.values.email,
                               bill_to_phone_number:

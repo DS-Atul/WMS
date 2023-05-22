@@ -40,6 +40,7 @@ const AddClient = (props) => {
   const dispatch = useDispatch();
 
   const { state: up_params } = useLocation();
+  console.log("up_params-------", up_params)
   
 
   const user_id = useSelector((state) => state.authentication.userdetails.id);
@@ -537,12 +538,12 @@ const AddClient = (props) => {
 
 
   // Commodities API Function
-  const getCommodities = () => {
+  const getCommodities = (val) => {
     let com_list = [];
     axios
       .get(
         ServerAddress +
-        `master/all_commodities/?search=${commodities_search_txt}&p=${commodities_page}&records=${10}&commodity_type=${""}&commodity_name=${""}&data=all`,
+        `master/GetClientCommodity/?search=${commodities_search_txt}&p=${commodities_page}&records=${10}&data=${val}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -800,11 +801,10 @@ const AddClient = (props) => {
   
   // Client Document Api Function
   const addClientDoc = (client_id) => {
-    alert("started")
     const docket_imageform = new FormData();
     docket_imageform.append(`client_id`, client_id);
-  docket_imageform.append(`clientdocument`, documentFiles, documentFiles.name);
-  console.log("clientdocumentclientdocumentclientdocument",documentFiles.name)
+  docket_imageform.append(`clientdocument`, documentFiles, documentFiles?.name);
+  console.log("clientdocumentclientdocumentclientdocument",documentFiles?.name)
     axios
       .post(ServerAddress + "master/add_client_doc/", docket_imageform, {
         headers: {
@@ -951,7 +951,7 @@ const AddClient = (props) => {
         if (resp.data.status === "success") {
 
           if (documentFiles !="") {
-            addClientDoc(resp.data.data.id);
+            // addClientDoc(resp.data.data.id);
           }
           if (local_cal.cal_type != "DONT" || air_cal.cal_type != "DONT" || surface_cal.cal_type !== "DONT") {
             if (update_cal) {
@@ -2945,7 +2945,18 @@ const AddClient = (props) => {
   }, [state_page, state_search_item, refresh]);
 
   useLayoutEffect(() => {
-    getCommodities();
+    if(up_params === null){
+      getCommodities("all");
+    }
+    else{
+      if(up_params?.customer){
+        getCommodities(parseInt(up_params?.customer?.id));
+      }
+      else{
+        getCommodities("all");
+      }
+      
+    }
   }, [commodities_page, commodities_search_txt, refresh]);
 
   useLayoutEffect(() => {
@@ -2970,12 +2981,12 @@ const AddClient = (props) => {
     try {
       let cl_id = up_params.bill_to_id
         ? up_params.bill_to_id
-        : up_params.customer.bill_to;
+        : up_params.billto.id;
 
       if (up_params.bill_to_nm) {
         setbill_to_nm(up_params.bill_to_nm);
       }
-
+    console.log("cl_id-------", cl_id)
       setclient_id(cl_id);
 
       if (!up_params.bill_to_id) {
