@@ -154,7 +154,7 @@ const UsersDataFormat = ({ data, data1, can_delete }) => {
 
   useEffect(() => {
     if (
-      userpermission.some((e) => e.sub_model === "Branch" && e.update === true)
+      userpermission.some((e) => e.sub_model === "Users" && e.update === true)
     ) {
       setcan_update(true);
     } else {
@@ -201,11 +201,10 @@ const UsersDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {can_update || users.is_superuser ? (
                   <Link to="/ems/users/UserInfo" state={{ user: user }}>
-                    {toTitleCase(user.username)}
+                    {user.username}
                   </Link>
-                ) : (
-                  toTitleCase(user.username)
-                )}
+                ) : (user.username)
+                }
               </td>
               <td>{user.email}</td>
               <td>{toTitleCase(user.first_name)}</td>

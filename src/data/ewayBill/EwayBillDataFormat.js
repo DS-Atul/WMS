@@ -208,7 +208,7 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
                 borderWidth: 1,
               }}
             >
-       
+         {(can_delete || user.is_superuser) && (
                 <td
                   className="selection-cell"
                   onClick={() => {
@@ -224,7 +224,7 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
                     <FiSquare size={14} />
                   )}
                 </td>
-             
+         ) }
               <td>{toTitleCase(commodity.docket_no)}</td>
               <td>{toTitleCase(commodity.ewb_no)}</td>
               <td>{toTitleCase(commodity.ewb_id)}</td>

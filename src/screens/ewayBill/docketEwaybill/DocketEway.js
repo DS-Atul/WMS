@@ -45,22 +45,19 @@ const DocketEway = () => {
   useEffect(() => {
     if (
       userpermission.some(
-        (e) => e.sub_model === "Commodity" && e.write === true
+        (e) => e.sub_model === "eWaybill" && e.delete === true
       )
     ) {
-      setcan_add(true);
+      setcan_delete(true);
     } else {
-      setcan_add(false);
+      setcan_delete(false);
     }
   }, [userpermission]);
-
-
-
   
   return (
     <>
       <PageTitle page="Part A" />
-      <Title title=" Eway Bill Dockets `s" parent_title="Eway Bill" />
+      <Title title=" Eway Bill Dockets's" parent_title="Eway Bill" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
           <div className="mb-2 row">

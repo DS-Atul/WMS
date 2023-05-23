@@ -97,7 +97,7 @@ const UserInfo = () => {
   const [branch_loaded, setbranch_loaded] = useState(false)
   const [branch_bottom, setbranch_bottom] = useState(103)
   const [home_branch_err, sethome_branch_err] = useState("");
-  
+
   const [user_department_list, setuser_department_list] = useState([]);
   const [user_department, setuser_department] = useState("");
   const [user_department_page, setuser_department_page] = useState(1);
@@ -114,7 +114,7 @@ const UserInfo = () => {
   const [ass_branch_page, setass_branch_page] = useState(1);
   const [search_ass_branch, setsearch_ass_branch] = useState("");
   const [ass_branch_list_loaded, setass_branch_list_loaded] = useState(false)
-const [ass_branch_list_count, setass_branch_list_count] = useState(1)
+  const [ass_branch_list_count, setass_branch_list_count] = useState(1)
 
   // Ass Branch
   const [ass_department_list, setass_department_list] = useState([]);
@@ -174,10 +174,10 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
               ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
             ];
           }
-          setbranch_count(branch_count+2)
+          setbranch_count(branch_count + 2)
           sethome_branch_list(temp3);
         }
-        else{
+        else {
           sethome_branch_list([]);
         }
 
@@ -216,10 +216,10 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
               ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
             ];
           }
-          setdesignation_count(designation_count+2)
+          setdesignation_count(designation_count + 2)
           setdesignation_list(temp3);
         }
-        else{
+        else {
           setdesignation_list([]);
         }
 
@@ -242,7 +242,6 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
       )
       .then((response) => {
         temp = response.data.results;
-        console.log("data---------", temp)
         if (temp.length > 0) {
           if (response.data.next === null) {
             setass_branch_list_loaded(false);
@@ -263,16 +262,16 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
               ]),
             ];
           }
-    
+
           setass_branch_list_count(ass_branch_list_count + 2);
           setass_branch_list(temp_2);
         }
-        else{
+        else {
           setass_branch_list([])
         }
         try {
           // get_assupbranch(up_params.user.id, temp_2);
-        } 
+        }
         catch (error) { }
       })
       .catch((err) => {
@@ -318,7 +317,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   //             ]),
   //           ];
   //         }
-    
+
   //         setass_branch_list_count(ass_branch_list_count + 2);
   //         setass_branch_list(temp_2);
   //       }
@@ -366,10 +365,10 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
               ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
             ];
           }
-          setdepartment_count(department_count+2)
+          setdepartment_count(department_count + 2)
           setuser_department_list(temp3);
         }
-        else{
+        else {
           setuser_department_list([]);
         }
 
@@ -431,7 +430,6 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
       })
       .then((response) => {
         data = response.data.associated_branch
-        console.log("set data------", data)
         if (data.length > 0) {
           temp2 = data.map((v) => [v.branch, toTitleCase(v.branch__name)]);
           temp = data.map((v) => v.branch);
@@ -528,7 +526,6 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           if (document) {
             send_user_pic(resp.data.user_id);
           }
-          add_user_permission(resp.data);          
           add_user_permission(resp.data.user_id);
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`${values.username} Added sucessfully`));
@@ -643,7 +640,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
         }
       )
       .then(function (resp) {
-        if (resp.status == 202 && user.is_superuser === false) {
+        if (resp.status == 202 && is_superuser === false && permission_title_list[1][6] !== "") {
           // setlodated(true)
           update_user_permission();
           if (document) {
@@ -651,6 +648,9 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           }
 
           // navigate("/ems/users");
+        }
+        else if (resp.status == 202 && is_superuser === false && permission_title_list[1][6] === "") {
+          add_user_permission(up_params.user.id);
         }
         else if (resp.status == 202 && user.is_superuser === true) {
           dispatch(setDataExist(`"${values.username}" Updated Sucessfully`));
@@ -667,7 +667,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           dispatch(setAlertType("warning"));
           dispatch(setShowAlert(true));
         }
-      else if (resp.data === "duplicate username") {
+        else if (resp.data === "duplicate username") {
           dispatch(
             setDataExist(
               `User Name "${values.username}" already exists`
@@ -699,6 +699,12 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
         }
       )
       .then(function (resp) {
+        if (resp.data.status == "success" && is_superuser === false && permission_title_list[1][6] === ""){
+          dispatch(setDataExist(`Permission Updated Sucessfully`));
+          dispatch(setAlertType("info"));
+          dispatch(setShowAlert(true));
+          navigate("/ems/users");
+        }
         // navigate("/ems/users");
         // dispatch(setShowAlert(true));
         // dispatch(setDataExist(`${usernm} Permission Added sucessfully`));
@@ -741,11 +747,11 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
     },
   });
 
-    // Permission
-    const [permissions_list, setpermissions_list] = useState([]);
-    const [refresh, setrefresh] = useState(false);
-  
-    const [permis, setpermis] = useState(false);
+  // Permission
+  const [permissions_list, setpermissions_list] = useState([]);
+  const [refresh, setrefresh] = useState(false);
+
+  const [permis, setpermis] = useState(false);
   const setPermissions = (idxx, idx) => {
     let tmp = permissions_list;
     // if (permissions_list.length > 0) {
@@ -879,30 +885,30 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   ]);
 
 
-  const send_user_pic = (u_id) =>{
+  const send_user_pic = (u_id) => {
     const docket_imageform = new FormData();
-    docket_imageform.append(`user_image`,document,document?.name)   
-    docket_imageform.append(`user_id`,u_id)
+    docket_imageform.append(`user_image`, document, document?.name)
+    docket_imageform.append(`user_id`, u_id)
 
     axios
-    .post(ServerAddress + "ems/add_profilepic/", docket_imageform, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "content-type": "multipart/form-data",
-      },
-    })
-    .then((res) => {
-      if (res.data.Data === "Done") {
-        dispatch(setShowAlert(true));
-        dispatch(
-          setDataExist(`Image Has Been Saved Successfully !`)
-        );
-        dispatch(setAlertType("success"));
-        // alert(`Your Docket Image Saved Successfully`);
-      
-      } 
-    })
-    .catch((err) => { });
+      .post(ServerAddress + "ems/add_profilepic/", docket_imageform, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "content-type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        if (res.data.Data === "Done") {
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(`Image Has Been Saved Successfully !`)
+          );
+          dispatch(setAlertType("success"));
+          // alert(`Your Docket Image Saved Successfully`);
+
+        }
+      })
+      .catch((err) => { });
 
   }
   useLayoutEffect(() => {
@@ -941,10 +947,10 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   }, [designation_page, designation_search])
 
   useLayoutEffect(() => {
-    if(locations.state === null){
+    if (locations.state === null) {
       getAssBranches("all");
     }
-    else{
+    else {
       getAssBranches(parseInt(up_params.user.id));
     }
   }, [ass_branch_page, search_ass_branch]);
@@ -958,7 +964,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
   }, [ass_department_page, search_ass_department]);
 
   //Permission
-  const getUserPermission = () => { 
+  const getUserPermission = () => {
     axios
       .get(
         ServerAddress + "ems/get_userpermission/?username=" + user.username,
@@ -990,20 +996,20 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
 
   useEffect(() => {
     const order = ['Ems', 'Booking', 'Master', 'Billing', 'Manifest', 'Runsheet'];
-  
+
     const sorted = [...data].sort((item1, item2) => {
       const index1 = order.indexOf(item1[0]);
       const index2 = order.indexOf(item2[0]);
-  
+
       if (index1 !== index2) {
         return index1 - index2;
       }
-  
+
       const compareSecond = item1[1].localeCompare(item2[1]);
       if (compareSecond !== 0) {
         return compareSecond;
       }
-  
+
       if (item1[6] === '') {
         return 1;
       } else if (item2[6] === '') {
@@ -1013,16 +1019,16 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
       } else if (item1[6] > item2[6]) {
         return 1;
       }
-  
+
       return 0;
     });
-  
+
     setSortedArray(sorted);
     setShouldSort(false); // Disable sorting until permission_title_list changes
   }, [data]);
-  
+
   useEffect(() => {
-    if (!shouldSort && is_superuser === false && locations.state !== null) {      
+    if (!shouldSort && is_superuser === false && locations.state !== null) {
       const updatedArray = [...sortedArray];
       updatedArray.splice(0, 0, ["Ems App", "All Section", false, false, false, false, ""])
       updatedArray.splice(3, 0, ["Booking App", "All Section", false, false, false, false, ""])
@@ -1036,10 +1042,10 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
 
   useEffect(() => {
     if (locations.state !== null && user.length !== 0) {
-    get_assupbranch(user.id);
+      get_assupbranch(user.id);
     }
   }, [user])
-  
+
 
   useEffect(() => {
     if (is_update === true && user.is_superuser === false) {
@@ -1047,7 +1053,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
     }
   }, [is_update]);
 
-  
+
   const TilteColor = (idx) => {
     if (idx === 0) {
       return "red"
@@ -1340,20 +1346,20 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
 
   useEffect(() => {
     const order = ['Ems', 'Booking', 'Master', 'Billing', 'Manifest', 'Runsheet'];
-  
+
     const sorted = [...data2].sort((item1, item2) => {
       const index1 = order.indexOf(item1[0]);
       const index2 = order.indexOf(item2[0]);
-  
+
       if (index1 !== index2) {
         return index1 - index2;
       }
-  
+
       const compareSecond = item1[1].localeCompare(item2[1]);
       if (compareSecond !== 0) {
         return compareSecond;
       }
-  
+
       if (item1[6] === '') {
         return 1;
       } else if (item2[6] === '') {
@@ -1363,16 +1369,16 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
       } else if (item1[6] > item2[6]) {
         return 1;
       }
-  
+
       return 0;
     });
-  
+
     setSortedArray2(sorted);
     setShouldSort2(false); // Disable sorting until permission_title_list changes
   }, [data2]);
-  
+
   useEffect(() => {
-    if (!shouldSort2 && is_update === false && user_department_id !== null && is_superuser === false) {      
+    if (!shouldSort2 && is_update === false && user_department_id !== null && is_superuser === false) {
       const updatedArray = [...sortedArray2];
       updatedArray.splice(0, 0, ["Ems App", "All Section", false, false, false, false, ""])
       updatedArray.splice(3, 0, ["Booking App", "All Section", false, false, false, false, ""])
@@ -1457,7 +1463,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
           else if (!is_update && password !== confirm_password) {
             setpassword_err_3(true);
           }
-          else{
+          else {
             validation.handleSubmit(e.values);
           }
 
@@ -1563,7 +1569,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
                           className="form-control-md"
                           id="input"
                           placeholder="Enter user Id"
-                          // disabled={is_update}
+                        // disabled={is_update}
                         />
                         {validation.touched.username &&
                           validation.errors.username ? (
@@ -1923,40 +1929,40 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
                       </Col>
                     }
                     {modal ? <Main_c modal={modal}
-                            modal_set={setmodal}
-                            upload_image={setdocument}
-                            result_image={setdoc_result_image}
+                      modal_set={setmodal}
+                      upload_image={setdocument}
+                      result_image={setdoc_result_image}
 
-                            /> : null}
-                     <Col lg={6} md={6} sm={6}>
-                            <div className="mb-3">
-                              <Label className="header-child">
-                                Profile Pic
-                              </Label>
-                              <div
-                             className="mb-3"
-                             onClick={() => {
-                               setmodal(true);
-                             }}
-                              style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                height: "38px",
-                                border: "1px solid #dad7d7",
-                                alignItems:"center"
-                              }}
-                            >
-                              <div style={{marginLeft:"3px"}} >Choose File:</div>
-                              <div style={{fontSize:"25px",color:"#dad7d7",marginLeft:"5px"}}>|</div>
-                             {document ? (
-                              <div style={{fontWeight:"bold",color:"blue"}}>Image Uploaded</div>
-                             ):(
-                              <div> No File Chosen</div>
-                             )
-                            }
-                            </div>
-                            </div>
-                          </Col>
+                    /> : null}
+                    <Col lg={6} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child">
+                          Profile Pic
+                        </Label>
+                        <div
+                          className="mb-3"
+                          onClick={() => {
+                            setmodal(true);
+                          }}
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            height: "38px",
+                            border: "1px solid #dad7d7",
+                            alignItems: "center"
+                          }}
+                        >
+                          <div style={{ marginLeft: "3px" }} >Choose File:</div>
+                          <div style={{ fontSize: "25px", color: "#dad7d7", marginLeft: "5px" }}>|</div>
+                          {document ? (
+                            <div style={{ fontWeight: "bold", color: "blue" }}>Image Uploaded</div>
+                          ) : (
+                            <div> No File Chosen</div>
+                          )
+                          }
+                        </div>
+                      </div>
+                    </Col>
                     <Col lg={12} md={6} sm={12}>
                       <div style={{ width: "" }}>
                         <Label className="header-child">
@@ -1976,7 +1982,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
                         />
                       </div>
                     </Col>
-                    
+
 
                     {/* <Col lg={6} md={6} sm={12}>
                       <div style={{ width: "", marginLeft: "" }}>
@@ -2094,7 +2100,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
                         </thead>
 
                         <tbody>
-                        {permission_title_list.map((item, idx) => {
+                          {permission_title_list.map((item, idx) => {
                             return (
                               <>
                                 {!showRow.includes(idx) ? <tr

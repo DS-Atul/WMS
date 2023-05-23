@@ -44,8 +44,8 @@ import {
   setManifestTab,
   setRunsheetTab,
 } from "../../../store/parentFilter/ParentFilter";
-import { setEAccessToken,setBAccessToken,setOrgs } from "../../../store/ewayBill/EwayBill";
-import { setShowAlert,setDataExist,setAlertType } from "../../../store/alert/Alert";
+import { setEAccessToken, setBAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
+import { setShowAlert, setDataExist, setAlertType } from "../../../store/alert/Alert";
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -185,9 +185,9 @@ const SignIn = () => {
   };
 
 
-useEffect(() => {
- step_1();
-}, [])
+  useEffect(() => {
+    step_1();
+  }, [])
 
 
   useEffect(() => {
@@ -261,7 +261,7 @@ useEffect(() => {
           // setusername(username);
 
           send_login_details(username, response.data.access);
-          
+
           if (response.data.first_login === "True") {
             navigate("/resetpassword");
           } else {
@@ -282,20 +282,20 @@ useEffect(() => {
     dispatch(setManifestTab(1));
     dispatch(setRunsheetTab(1));
   }, []);
- 
+
 
   useLayoutEffect(() => {
     if (userpermission) {
       let navigation_list = [
-        {
-          id: 1,
-          dropdown: "EMS",
-          dropdownMenu: [
-            ["Login Details", "/ems/logindetails"],
-            ["Users", "/ems/users"],
-          ],
-          trigger: false,
-        },
+        // {
+        //   id: 1,
+        //   dropdown: "EMS",
+        //   dropdownMenu: [
+        //     ["Login Details", "/ems/logindetails"],
+        //     ["Users", "/ems/users"],
+        //   ],
+        //   trigger: false,
+        // },
       ];
 
       if (
@@ -303,18 +303,42 @@ useEffect(() => {
         userData &&
         userData.is_superuser === false
       ) {
-        // Order
-        let booking = [];
 
-        let a = userpermission.find(({ sub_model }) => sub_model === "Order");
-        if (a.sub_model === "Order" && a.read === true) {
-          booking.push(["Orders", "/booking/orders"]);
+        // Ems
+        let ems = [];
+
+        let ems_data = userpermission.find(({ sub_model }) => sub_model === "Login Details");
+        if (ems_data.sub_model === "Login Details" && ems_data.read === true) {
+          ems.push(["Login Details", "/ems/logindetails"]);
         }
-        if (booking.length > 0) {
+
+        let user = userpermission.find(({ sub_model }) => sub_model === "Users");
+        if (user.sub_model === "Users" && user.read === true) {
+          ems.push(["Users", "/ems/users"]);
+        }
+
+        if (ems.length > 0) {
           navigation_list.push({
-            id: 5,
-            dropdown: "Booking",
-            dropdownMenu: booking,
+            id: 7,
+            dropdown: "EMS",
+            dropdownMenu: ems,
+            trigger: false,
+          });
+        }
+
+        // eWay Bill
+        let eway = [];
+
+        let eway_bill = userpermission.find(({ sub_model }) => sub_model === "eWaybill");
+        if (eway_bill.sub_model === "eWaybill" && eway_bill.read === true) {
+          eway.push(["DocketWithEwayBill", "/ewaybill/docketEwayBill"]);
+          eway.push(["Eway Dashboard", "/ewaybill/dashboard"]);
+        }
+        if (eway.length > 0) {
+          navigation_list.push({
+            id: 8,
+            dropdown: "EwayBill",
+            dropdownMenu: eway,
             trigger: false,
           });
         }
@@ -373,7 +397,30 @@ useEffect(() => {
             trigger: false,
           });
         }
+        // Order
+        let booking = [];
 
+        let a = userpermission.find(({ sub_model }) => sub_model === "Order");
+        if (a.sub_model === "Order" && a.read === true) {
+          booking.push(["Orders", "/booking/orders"]);
+        }
+        let issue = userpermission.find(({ sub_model }) => sub_model === "Docket Issues");
+        if (issue.sub_model === "Docket Issues" && issue.read === true) {
+          booking.push(["Docket Issues", "/booking/docketIssue/DocketIssue"]);
+        }
+        let info = userpermission.find(({ sub_model }) => sub_model === "Delivery Info");
+        if (info.sub_model === "Delivery Info" && info.read === true) {
+          booking.push(["Delivery Info", "/booking/deliveryinfo"]);
+        }
+        if (booking.length > 0) {
+          navigation_list.push({
+            id: 5,
+            dropdown: "Booking",
+            dropdownMenu: booking,
+            trigger: false,
+          });
+        }
+        
         // Manifest
         let manifest = [];
         let mani = userpermission.find(
@@ -603,8 +650,8 @@ useEffect(() => {
       <Helmet>
         <title> SignIn | {company_details.WebApp_Name}</title>
       </Helmet>
-      <div style={{textAlign:"right",margin:"10px",fontWeight:"600"}}>
-        <p style={{cursor:"pointer"}} onClick={() => {
+      <div style={{ textAlign: "right", margin: "10px", fontWeight: "600" }}>
+        <p style={{ cursor: "pointer" }} onClick={() => {
           navigate("/track/trackingPage/TrackingOrder")
         }}>Track Order</p>
         {/* <Link to="/track/trackingPage/TrackingOrder">Track Order</Link> */}
@@ -679,7 +726,7 @@ useEffect(() => {
                           }
                         />
                         {validation.touched.username &&
-                        validation.errors.username ? (
+                          validation.errors.username ? (
                           <FormFeedback type="invalid">
                             {validation.errors.username}
                           </FormFeedback>
@@ -700,7 +747,7 @@ useEffect(() => {
                             onBlur={validation.handleBlur}
                             invalid={
                               validation.touched.password &&
-                              validation.errors.password
+                                validation.errors.password
                                 ? true
                                 : false
                             }
@@ -735,13 +782,13 @@ useEffect(() => {
                           color="danger"
                         >
                           {validation.touched.password &&
-                          validation.errors.password
+                            validation.errors.password
                             ? "Please Enter Your Password"
                             : null}
                         </div>
 
                         {validation.touched.password &&
-                        validation.errors.password ? (
+                          validation.errors.password ? (
                           <FormFeedback type="invalid">
                             {validation.errors.password}
                           </FormFeedback>
@@ -757,7 +804,7 @@ useEffect(() => {
                           //    setremember_me(!remember_me)
                           //   }}
                           readOnly={true}
-                          // checked={remember_me}
+                        // checked={remember_me}
                         />
                         <label
                           className="form-check-label"
