@@ -2133,6 +2133,192 @@ const UserInfo = () => {
                                           allperm4(idx)
                                           allperm5(idx)
                                         }
+                                        permission_title_list[idx][2] = item[2]
+                                        permission_title_list[idx][3] = item[2]
+                                        permission_title_list[idx][4] = item[2]
+                                        permission_title_list[idx][5] = item[2]
+                                        if (idx === 0) {
+                                          permission_title_list[1][2] = item[2]
+                                          permission_title_list[1][3] = item[2]
+                                          permission_title_list[1][4] = item[2]
+                                          permission_title_list[1][5] = item[2]
+
+                                          permission_title_list[2][2] = item[2]
+                                          permission_title_list[2][3] = item[2]
+                                          permission_title_list[2][4] = item[2]
+                                          permission_title_list[2][5] = item[2]
+                                        }
+                                        else if (idx === 3) {
+                                          permission_title_list[4][2] = item[2]
+                                          permission_title_list[4][3] = item[2]
+                                          permission_title_list[4][4] = item[2]
+                                          permission_title_list[4][5] = item[2]
+
+                                          permission_title_list[5][2] = item[2]
+                                          permission_title_list[5][3] = item[2]
+                                          permission_title_list[5][4] = item[2]
+                                          permission_title_list[5][5] = item[2]
+
+                                          permission_title_list[6][2] = item[2]
+                                          permission_title_list[6][3] = item[2]
+                                          permission_title_list[6][4] = item[2]
+                                          permission_title_list[6][5] = item[2]
+
+                                          permission_title_list[7][2] = item[2]
+                                          permission_title_list[7][3] = item[2]
+                                          permission_title_list[7][4] = item[2]
+                                          permission_title_list[7][5] = item[2]
+
+                                          permission_title_list[8][2] = item[2]
+                                          permission_title_list[8][3] = item[2]
+                                          permission_title_list[8][4] = item[2]
+                                          permission_title_list[8][5] = item[2]
+
+                                          permission_title_list[9][2] = item[2]
+                                          permission_title_list[9][3] = item[2]
+                                          permission_title_list[9][4] = item[2]
+                                          permission_title_list[9][5] = item[2]
+
+                                          permission_title_list[10][2] = item[2]
+                                          permission_title_list[10][3] = item[2]
+                                          permission_title_list[10][4] = item[2]
+                                          permission_title_list[10][5] = item[2]
+
+                                          permission_title_list[11][2] = item[2]
+                                          permission_title_list[11][3] = item[2]
+                                          permission_title_list[11][4] = item[2]
+                                          permission_title_list[11][5] = item[2]
+
+                                          permission_title_list[12][2] = item[2]
+                                          permission_title_list[12][3] = item[2]
+                                          permission_title_list[12][4] = item[2]
+                                          permission_title_list[12][5] = item[2]
+
+                                          permission_title_list[13][2] = item[2]
+                                          permission_title_list[13][3] = item[2]
+                                          permission_title_list[13][4] = item[2]
+                                          permission_title_list[13][5] = item[2]
+                                        }
+                                        else if (idx === 14) {
+                                          permission_title_list[15][2] = item[2]
+                                          permission_title_list[15][3] = item[2]
+                                          permission_title_list[15][4] = item[2]
+                                          permission_title_list[15][5] = item[2]
+
+                                          permission_title_list[16][2] = item[2]
+                                          permission_title_list[16][3] = item[2]
+                                          permission_title_list[16][4] = item[2]
+                                          permission_title_list[16][5] = item[2]
+
+                                          permission_title_list[17][2] = item[2]
+                                          permission_title_list[17][3] = item[2]
+                                          permission_title_list[17][4] = item[2]
+                                          permission_title_list[17][5] = item[2]
+
+                                          permission_title_list[18][2] = item[2]
+                                          permission_title_list[18][3] = item[2]
+                                          permission_title_list[18][4] = item[2]
+                                          permission_title_list[18][5] = item[2]
+
+                                          permission_title_list[19][2] = item[2]
+                                          permission_title_list[19][3] = item[2]
+                                          permission_title_list[19][4] = item[2]
+                                          permission_title_list[19][5] = item[2]
+
+                                          permission_title_list[20][2] = item[2]
+                                          permission_title_list[20][3] = item[2]
+                                          permission_title_list[20][4] = item[2]
+                                          permission_title_list[20][5] = item[2]
+
+                                          permission_title_list[21][2] = item[2]
+                                          permission_title_list[21][3] = item[2]
+                                          permission_title_list[21][4] = item[2]
+                                          permission_title_list[21][5] = item[2]
+
+                                          permission_title_list[22][2] = item[2]
+                                          permission_title_list[22][3] = item[2]
+                                          permission_title_list[22][4] = item[2]
+                                          permission_title_list[22][5] = item[2]
+
+                                          permission_title_list[23][2] = item[2]
+                                          permission_title_list[23][3] = item[2]
+                                          permission_title_list[23][4] = item[2]
+                                          permission_title_list[23][5] = item[2]
+
+                                          permission_title_list[24][2] = item[2]
+                                          permission_title_list[24][3] = item[2]
+                                          permission_title_list[24][4] = item[2]
+                                          permission_title_list[24][5] = item[2]
+
+                                          permission_title_list[25][2] = item[2]
+                                          permission_title_list[25][3] = item[2]
+                                          permission_title_list[25][4] = item[2]
+                                          permission_title_list[25][5] = item[2]
+
+                                          permission_title_list[26][2] = item[2]
+                                          permission_title_list[26][3] = item[2]
+                                          permission_title_list[26][4] = item[2]
+                                          permission_title_list[26][5] = item[2]
+
+                                          permission_title_list[27][2] = item[2]
+                                          permission_title_list[27][3] = item[2]
+                                          permission_title_list[27][4] = item[2]
+                                          permission_title_list[27][5] = item[2]
+                                        }
+                                        else if (idx === 28) {
+                                          permission_title_list[29][2] = item[2]
+                                          permission_title_list[29][3] = item[2]
+                                          permission_title_list[29][4] = item[2]
+                                          permission_title_list[29][5] = item[2]
+
+                                          permission_title_list[30][2] = item[2]
+                                          permission_title_list[30][3] = item[2]
+                                          permission_title_list[30][4] = item[2]
+                                          permission_title_list[30][5] = item[2]
+
+                                          permission_title_list[31][2] = item[2]
+                                          permission_title_list[31][3] = item[2]
+                                          permission_title_list[31][4] = item[2]
+                                          permission_title_list[31][5] = item[2]
+
+                                        }
+                                        else if (idx === 32) {
+                                          permission_title_list[33][2] = item[2]
+                                          permission_title_list[33][3] = item[2]
+                                          permission_title_list[33][4] = item[2]
+                                          permission_title_list[33][5] = item[2]
+
+                                          permission_title_list[34][2] = item[2]
+                                          permission_title_list[34][3] = item[2]
+                                          permission_title_list[34][4] = item[2]
+                                          permission_title_list[34][5] = item[2]
+
+                                          permission_title_list[35][2] = item[2]
+                                          permission_title_list[35][3] = item[2]
+                                          permission_title_list[35][4] = item[2]
+                                          permission_title_list[35][5] = item[2]
+
+                                          permission_title_list[36][2] = item[2]
+                                          permission_title_list[36][3] = item[2]
+                                          permission_title_list[36][4] = item[2]
+                                          permission_title_list[36][5] = item[2]
+
+                                          permission_title_list[37][2] = item[2]
+                                          permission_title_list[37][3] = item[2]
+                                          permission_title_list[37][4] = item[2]
+                                          permission_title_list[37][5] = item[2]
+                                        }
+                                        else if (idx === 38) {
+                                          permission_title_list[39][2] = item[2]
+                                          permission_title_list[39][3] = item[2]
+                                          permission_title_list[39][4] = item[2]
+                                          permission_title_list[39][5] = item[2]
+
+                                          permission_title_list[40][2] = item[2]
+                                          permission_title_list[40][3] = item[2]
+                                          permission_title_list[40][4] = item[2]
+                                          permission_title_list[40][5] = item[2]
+                                        }
                                       }}
                                       checked={item[2]}
                                       readOnly

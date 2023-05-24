@@ -46,6 +46,7 @@ import NSearchInput from "../../../components/formComponent/nsearchInput/NSearch
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import { Button } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
+import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
 
 const AddClient = () => {
   const { state: up_params } = useLocation();
@@ -181,23 +182,6 @@ const AddClient = () => {
     setcircle_btn6(!circle_btn6);
   };
 
-  // Later For GST ROWS
-  const addPackage = () => {
-    dimension_list = ["", "", "", ""];
-    setrow([...row, dimension_list]);
-  };
-
-  const deletePackage = (item) => {
-    let temp = [...row];
-    let temp_2 = [...package_id_list];
-    const index = temp.indexOf(item);
-    if (index > -1) {
-      temp.splice(index, 1);
-      temp_2.splice(index, 1);
-    }
-    setrow(temp);
-    setpackage_id_list(temp_2);
-  };
 
 
   // Formik Yup validation
@@ -583,6 +567,7 @@ const AddClient = () => {
           credit_limit: credit_limit,
           credit_amount: values.credit_amount,
           created_by: user_id,
+          gst_address: row2,
           //For C&M
           cm_current_department: user.user_department,
           cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
@@ -797,6 +782,8 @@ const AddClient = () => {
           credit_amount: values.credit_amount,
           modified_by: user_id,
           change_fields: change_fields,
+          gst_address: row2,
+          deleted_gst: deleted_gst_id,
           //For C&M
           cm_transit_status: status_toggle === true ? current_status : "",
           cm_current_status: (current_status).toUpperCase(),
@@ -907,9 +894,11 @@ const AddClient = () => {
   useLayoutEffect(() => {
     try {
       let client_up = up_params.client;
+      console.log("client_up---------", up_params)
       setclient(client_up);
       setclient_id(client_up.id);
       setisupdating(true);
+      setupdated_gstaddress(client_up.billto_gst);
       setpan_no(client_up.pan_no)
       setstate(toTitleCase(client_up.state_name));
       setstate_id(client_up.state_id);
@@ -1148,6 +1137,322 @@ const AddClient = () => {
       state: { client: client },
     });
   };
+
+
+    //Gst address
+    const [gst_state_id, setgst_state_id] = useState("");
+    const [gst_no, setgst_no] = useState("");
+    const [gst_address, setgst_address] = useState("");
+    const [gst_state, setgst_state] = useState(["", ""]);
+    const [gst_state_list, setgst_state_list] = useState([]);
+    const [gst_city_list, setgst_city_list] = useState([]);
+    const [gst_city, setgst_city] = useState(["", "", ""]);
+    const [gst_pincode, setgst_pincode] = useState(["", ""]);
+    const [gstpincode_list, setgstpincode_list] = useState([]);
+    const [gst_pincode_page, setgst_pincode_page] = useState(1);
+    const [gst_pincode_search_item, setgst_pincode_search_item] = useState("");
+    const [gstpincode_loaded, setgstpincode_loaded] = useState(false);
+    const [gstpincode_count, setgstpincode_count] = useState(1);
+    const [gstpincode_bottom, setgstpincode_bottom] = useState(103)
+  
+    const [gst_locality_list, setgst_locality_list] = useState([]);
+    const [gst_locality, setgst_locality] = useState(["", ""]);
+    const [gst_locality_page, setgst_locality_page] = useState(1);
+    const [gst_locality_search_item, setgst_locality_search_item] = useState("");
+    const [gstlocality_loaded, setgstlocality_loaded] = useState(false);
+    const [gstlocality_count, setgstlocality_count] = useState(1);
+    const [gstlocality_bottom, setgstlocality_bottom] = useState(103)
+  
+    const [gst_city_page, setgst_city_page] = useState(1);
+    const [gst_city_search_item, setgst_city_search_item] = useState("");
+    const [gstcity_loaded, setgstcity_loaded] = useState(false);
+    const [gstcity_count, setgstcity_count] = useState(1);
+    const [gstcity_bottom, setgstcity_bottom] = useState(103)
+    const [selected, setselected] = useState([]);
+    const [updated_gstaddress, setupdated_gstaddress] = useState([]);
+    const [active, setactive] = useState(false);
+  
+    const [gst_id_list, setgst_id_list] = useState([]);
+    const [gst_ids, setgst_ids] = useState([]);
+    const [deleted_gst_id, setdeleted_gst_id] = useState([]);
+
+    const [gst_city_id, setgst_city_id] = useState("");
+    const [gst_pincode_id, setgst_pincode_id] = useState("");
+    const [gst_val, setgst_val] = useState("");
+
+    let dimension_list2 = [
+      gst_no,
+      gst_city,
+      gst_pincode,
+      gst_locality,
+      gst_address,
+      active,
+    ];
+    const [row2, setrow2] = useState([dimension_list2]);
+
+    const addGST = () => {
+      dimension_list2 = ["", ["", "", ""], ["", ""], ["", ""], "", false];
+      setrow2([...row2, dimension_list2]);
+    };
+  
+    const deleteGST = (item) => {
+      setgst_no("gst_no");
+      setgst_state("state");
+      setgst_city("city");
+      setgst_pincode("pincode");
+      setgst_locality("gst_locality");
+      setgst_address("gst_address");
+      let temp = [...row2];
+      let temp_2 = [...gst_id_list];
+      const index = temp.indexOf(item);
+      if (index > -1) {
+        temp.splice(index, 1);
+        temp_2.splice(index, 1);
+      }
+      setrow2(temp);
+      setgst_id_list(temp_2);
+    };
+  // used to fetch data from gst number
+  const getGstStates = async (place_id, filter_by) => {
+    let state_list = [];
+    try {
+      const resp = await axios.get(
+        ServerAddress +
+        `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${1}&records=${10}&state_search=${""}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (resp.data.results.length > 0) {
+        state_list = resp.data.results.map((v) => [v.id, toTitleCase(v.state)]);
+        setgst_state_list(state_list);
+        setgst_state_id(resp.data.results[0].id);
+      }
+    } catch (err) {
+      alert(`Error Occur in Get States, ${err}`);
+    }
+  };
+
+  const getGstCities = async (place_id, filter_by) => {
+    let cities_list = [];
+
+    try {
+      const resp = await axios.get(
+        ServerAddress +
+        `master/all_cities/?search=${""}&p=${gst_city_page}&records=${10}&city_search=${gst_city_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (resp.data.results.length > 0) {
+        if (resp.data.next === null) {
+          setgstcity_loaded(false);
+        } else {
+          setgstcity_loaded(true);
+        }
+        if (gst_city_page === 1) {
+          cities_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
+            v.state,
+          ]);
+        } else {
+          cities_list = [
+            ...gst_city_list,
+            ...resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.state_name) + "-" + toTitleCase(v.city),
+              v.state,
+            ]),
+          ];
+        }
+        setgstcity_count(gstcity_count + 2);
+        setgst_city_list(cities_list);
+      } else {
+        setgst_city_list([]);
+      }
+    } catch (err) {
+      console.warn(`Error Occur in Get City, ${err}`);
+    }
+  };
+
+  const getGstPincode = async (place_id, filter_by) => {
+    let pincode_list = [];
+
+    try {
+      const resp = await axios.get(
+        ServerAddress +
+        `master/all_pincode/?search=${""}&p=${gst_pincode_page}&records=${10}&pincode_search=${gst_pincode_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (resp.data.results.length > 0) {
+        if (resp.data.next === null) {
+          setgstpincode_loaded(false);
+        } else {
+          setgstpincode_loaded(true);
+        }
+        if (gst_pincode_page === 1) {
+          pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
+        } else {
+          pincode_list = [
+            ...gstpincode_list,
+            ...resp.data.results.map((v) => [v.id, v.pincode]),
+          ];
+        }
+        setgstpincode_count(gstpincode_count + 2);
+        setgstpincode_list(pincode_list);
+      } else {
+        setgstpincode_list([]);
+      }
+    } catch (err) {
+      console.warn(`Error Occur in Get Pincode, ${err}`);
+    }
+  };
+
+  const getGstLocality = async (place_id, filter_by) => {
+    let loc_list = [];
+    try {
+      const resp = await axios.get(
+        ServerAddress +
+        `master/all_locality/?search=${""}&p=${gst_locality_page}&records=${10}&name_search=${gst_locality_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by +
+        "&state=&city=&name=&data=all",
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      if (resp.data.results.length > 0) {
+        if (resp.data.next === null) {
+          setgstlocality_loaded(false);
+        } else {
+          setgstlocality_loaded(true);
+        }
+        if (gst_pincode_page === 1) {
+          loc_list = resp.data.results.map((v) => [v.id, toTitleCase(v.name)]);
+        } else {
+          loc_list = [
+            ...gst_locality_list,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
+        }
+        setgstlocality_count(gstlocality_count + 2);
+        setgst_locality_list(loc_list);
+      } else {
+        setgst_locality_list([]);
+      }
+    } catch (err) {
+      console.warn(`Error Occur in Get City, ${err}`);
+    }
+  };
+
+  useEffect(() => {
+    if (gst_state_id !== "" && !by_pincode) {
+      getGstCities(gst_state_id, "state");
+    }
+  }, [gst_state_id, gst_city_page, gst_city_search_item]);
+
+    useLayoutEffect(() => {
+      let result = row2[row2.length - 1][0].substring(0, 12);
+      setgst_val(result);
+      setgst_city_id(row2[row2.length - 1][1][0]);
+      setgst_pincode_id(row2[row2.length - 1][2][0]);
+    }, [dimension_list2]);
+  
+    useLayoutEffect(() => {
+      if (gst_city_id !== 0) {
+        setgst_pincode_page(1);
+        setgstpincode_count(1);
+        setgstpincode_bottom(103)
+        setgstpincode_loaded(true)
+      }
+    }, [gst_city_id])
+  
+    useEffect(() => {
+      let timeoutId;
+      if (gst_city_id != "") {
+        timeoutId = setTimeout(() => {
+          getGstPincode(gst_city_id, "city");
+        }, 1);
+      }
+      return () => clearTimeout(timeoutId);
+    }, [gst_city_id, gst_pincode_page, gst_pincode_search_item]);
+  
+    useEffect(() => {
+      if (gst_pincode_id !== 0) {
+        setgst_locality_page(1);
+        setgstlocality_count(1);
+        setgstlocality_bottom(103)
+        setgstlocality_loaded(true)
+      }
+    }, [gst_pincode_id])
+  
+    useLayoutEffect(() => {
+      let timeoutId;
+      if (gst_pincode_id != "") {
+        timeoutId = setTimeout(() => {
+          getGstLocality(gst_pincode_id, "pincode");
+        }, 1);
+      }
+      return () => clearTimeout(timeoutId);
+  
+    }, [gst_pincode_id, gst_locality_page, gst_locality_search_item]);
+  
+    useEffect(() => {
+      if (isupdating) {
+        if (updated_gstaddress.length !== 0) {
+          let temp = [];
+          let temp_list = [];
+          let temp_list2 = [];
+          temp = updated_gstaddress;
+  
+          for (let index = 0; index < updated_gstaddress.length; index++) {
+            temp_list.push([
+              temp[index].gst_no,
+              [
+                temp[index].city_id,
+                toTitleCase(temp[index].state_name + "-" + temp[index].city_name),
+                temp[index].state,
+              ],
+              [temp[index].pincode, temp[index].pincode_name],
+              [temp[index].location, toTitleCase(temp[index].location_name)],
+              toTitleCase(temp[index].address),
+              temp[index].is_active,
+              temp[index].id,
+            ]);
+            temp_list2.push(temp[index].id);
+          }
+          setrow2(temp_list);
+          setgst_ids(temp_list2);
+          setgst_id_list(temp_list2);
+        }
+      }
+    }, [isupdating]);
+  
+  
+  
+    useEffect(() => {
+      if (gst_id_list !== "") {
+        let id_list = gst_ids.filter((p) => gst_id_list.indexOf(p) === -1);
+        setdeleted_gst_id(id_list);
+      }
+    }, [gst_id_list, gst_ids]);
+  
   return (
     <div>
       <Modal show={show} onHide={handleClose}>
@@ -1459,134 +1764,280 @@ const AddClient = () => {
               {circle_btn6 ? (
                 <CardBody>
                   <>
-                    <Row className="hide">
-                      <Col md={3} sm={3}>
-                        <div className="mb-3">
-                          <Label className="header-child">GST No</Label>
-                          {row.map((item, index) => {
-                            return (
-                              <Input
-                                min={0}
-                                key={index}
-                                value={item[0]}
-                                type="text"
-                                className="form-control-md"
-                                id="input"
-                                style={{ marginBottom: "15px" }}
-                                placeholder="Enter GST Number"
-                                onChange={(val) => {
-                                  item[0] = val.target.value;
-                                  setrefresh(!refresh);
-                                }}
-                                onFocus={() => {
-                                  // setclicked(true);
-                                }}
-                              />
-                            );
-                          })}
-                        </div>
-                      </Col>
-                      <Col md={3} sm={3}>
-                        <div className="mb-3">
-                          <Label className="header-child">State Code</Label>
-                          {row.map((item, index) => (
-                            <Input
-                              min={0}
-                              key={index}
-                              value={item[1]}
-                              type="number"
-                              className="form-control-md"
-                              id="input"
-                              style={{ marginBottom: "15px" }}
-                              placeholder="Enter State Code"
-                              onChange={(val) => {
-                                // setbreadth(val.target.value);
-                                item[1] = val.target.value;
-                                setrefresh(!refresh);
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </Col>
-                      <Col md={3} sm={3}>
-                        <div className="mb-3">
-                          <Label className="header-child">State Name</Label>
-                          {row.map((item, index) => (
-                            <Input
-                              min={0}
-                              key={index}
-                              value={item[2]}
-                              type="text"
-                              className="form-control-md d"
-                              id="input"
-                              style={{ marginBottom: "15px" }}
-                              placeholder="Enter State Name"
-                              onChange={(val) => {
-                                // setheight(val.target.value);
-                                item[2] = val.target.value;
-                                setrefresh(!refresh);
-                              }}
-                            />
-                          ))}
-                        </div>
-                      </Col>
-
-                      <Col lg={1}>
-                        <div className="mb-3" style={{ textAlign: "center" }}>
-                          {row.length > 1 ? (
-                            <Label className="header-child">Delete</Label>
-                          ) : null}
-                          {row.map((item, index) => (
-                            <IconContext.Provider
-                              key={index}
-                              value={{
-                                className: "icon multi-input",
-                              }}
-                            >
-                              {row.length > 1 ? (
-                                <>
-                                  <div style={{ height: "14.5px" }}></div>
-                                  <div
-                                    onClick={() => {
-                                      // isupdating
-                                      // && item[4] && delete_package(item[4])
-                                      deletePackage(item);
+                  <Row className="hide">
+                          <Col lg={2} md={3} sm={3}>
+                            <div className="mb-3">
+                              <Label className="header-child">GST No</Label>
+                              {row2.map((item, index) => {
+                                return (
+                                  <Input
+                                    min={0}
+                                    key={index}
+                                    value={item[0]}
+                                    disabled={row2.length - 1 !== index}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    style={{ marginBottom: "15px" }}
+                                    placeholder="Enter GST No. "
+                                    onChange={(val) => {
+                                      // setlength(val.target.value);
+                                      item[0] = val.target.value;
+                                      setrefresh(!refresh);
                                     }}
-                                  >
-                                    <MdDeleteForever
-                                      style={{
-                                        justifyContent: "center",
-                                        cursor: "pointer",
-                                      }}
-                                    />
-                                  </div>
-                                </>
-                              ) : null}
-                            </IconContext.Provider>
-                          ))}
-                        </div>
-                      </Col>
-                    </Row>
+                                    onBlur={() => {
+                                      // setclicked(true);
+                                      // alert("----")
+                                      let itm = item[0];
 
-                    {row.length < 20 && (
-                      <div>
-                        <span
-                          className="link-text"
-                          onClick={() => {
-                            addPackage();
-                          }}
-                        >
-                          <IconContext.Provider
-                            value={{
-                              className: "link-text",
-                            }}
-                          >
-                            <MdAdd />
-                          </IconContext.Provider>
-                          Add Another GST
-                        </span>
-                      </div>
-                    )}
+                                      if (
+                                        item[0].length == 15 &&
+                                        gst_val ==
+                                        itm[0] +
+                                        itm[1] +
+                                        pan_no
+                                      ) {
+                                        getGstStates(
+                                          itm[0] + itm[1],
+                                          "gst_code"
+                                        );
+                                      } else if (
+                                        item[0].length > 10 &&
+                                        row2.length - 1 === index
+                                      ) {
+                                        dispatch(setShowAlert(true));
+                                        dispatch(
+                                          setDataExist(`Invalid GST Number`)
+                                        );
+                                        dispatch(setAlertType("warning"));
+                                      }
+                                    }}
+                                  />
+                                );
+                              })}
+                            </div>
+                          </Col>
+
+                          <Col lg={2} md={3} sm={3}>
+                            <div className="mb-3">
+                              <Label className="header-child"> City</Label>
+                              {row2.map((item, index) => (
+                                <div className="mb-3">
+                                  <MultiRowSearchInput
+                                    data_list={gst_city_list}
+                                    setdata_list={setgst_city_list}
+                                    data_item_s={row2[index][1]}
+                                    page={gst_city_page}
+                                    setpage={setgst_city_page}
+                                    setsearch_txt={setgst_city_search_item}
+                                    refresh={refresh}
+                                    setrefresh={setrefresh}
+                                    idx={index}
+                                    loaded={gstcity_loaded}
+                                    count={gstcity_count}
+                                    bottom={gstcity_bottom}
+                                    setbottom={setgstcity_bottom}
+                                    disable_me={row2.length - 1 !== index}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </Col>
+
+                          <Col lg={2} md={3} sm={3}>
+                            <div className="mb-3">
+                              <Label className="header-child">Pincode </Label>
+                              {row2.map((item, index) => (
+                                <div className="mb-3">
+                                  <MultiRowSearchInput
+                                    data_list={gstpincode_list}
+                                    setdata_list={setgstpincode_list}
+                                    data_item_s={row2[index][2]}
+                                    page={gst_pincode_page}
+                                    setpage={setgst_pincode_page}
+                                    setsearch_txt={setgst_pincode_search_item}
+                                    refresh={refresh}
+                                    setrefresh={setrefresh}
+                                    idx={index}
+                                    count={gstpincode_count}
+                                    bottom={gstpincode_bottom}
+                                    setbottom={setgstpincode_bottom}
+                                    disable_me={row2.length - 1 !== index}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </Col>
+                          <Col lg={2} md={3} sm={3}>
+                            <div className="mb-3">
+                              <Label className="header-child">Locality </Label>
+                              {row2.map((item, index) => (
+                                <div className="mb-3">
+                                  <MultiRowSearchInput
+                                    data_list={gst_locality_list}
+                                    setdata_list={setgst_locality_list}
+                                    data_item_s={row2[index][3]}
+                                    page={gst_locality_page}
+                                    setpage={setgst_locality_page}
+                                    setsearch_txt={setgst_locality_search_item}
+                                    refresh={refresh}
+                                    setrefresh={setrefresh}
+                                    idx={index}
+                                    loaded={gstlocality_loaded}
+                                    count={gstlocality_count}
+                                    bottom={gstlocality_bottom}
+                                    setbottom={setgstlocality_bottom}
+                                    disable_me={row2.length - 1 !== index}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </Col>
+
+                          <Col lg={2} md={3} sm={3}>
+                            <div className="mb-3">
+                              <Label className="header-child">Address</Label>
+                              {row2.map((item, index) => {
+                                return (
+                                  <Input
+                                    min={0}
+                                    key={index}
+                                    value={item[4]}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    style={{ marginBottom: "15px" }}
+                                    placeholder="Enter Address "
+                                    onChange={(val) => {
+                                      item[4] = val.target.value;
+                                      setrefresh(!refresh);
+                                    }}
+                                  />
+                                );
+                              })}
+                            </div>
+                          </Col>
+                          <Col lg={1} md={3} sm={3}>
+                            <div
+                              className="mb-3"
+                              style={{ textAlign: "center" }}
+                            >
+                              <Label className="header-child">H.O</Label>
+                              {row2.map((item, index) => {
+                                return (
+                                  <div
+                                  >
+                                    {row2.some((a) => a[5] == true && a[5] === row2[index][5]) &&
+                                      (
+                                        <FiCheckSquare
+                                          onClick={() => {
+                                            if (selected.includes(index)) {
+                                              let lis = [...selected];
+                                              setselected(
+                                                lis.filter((e) => e !== index)
+                                              );
+                                              setactive(false);
+                                              item[5] = false;
+                                            } else {
+                                              setselected([...selected, index]);
+                                              setactive(true);
+                                              item[5] = true;
+                                            }
+                                          }}
+                                          style={{ marginBottom: "40px" }}
+                                        />
+                                      )
+                                    }
+
+                                    {row2.every((a) => a[5] == false) ?
+                                      <FiSquare onClick={() => {
+                                        if (selected.includes(index)) {
+                                          let lis = [...selected];
+                                          setselected(
+                                            lis.filter((e) => e !== index)
+                                          );
+                                          setactive(false);
+                                          item[5] = false;
+                                        } else {
+                                          setselected([...selected, index]);
+                                          setactive(true);
+                                          item[5] = true;
+                                        }
+                                      }} style={{ marginBottom: "40px" }} />
+                                      : row2.some((a) => a[5] !== true && a[5] === row2[index][5]) ? <FiSquare style={{ marginBottom: "40px" }} /> : null
+                                    }
+
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </Col>
+                          <Col lg={1}>
+                            <div
+                              className="mb-3"
+                              style={{ textAlign: "center" }}
+                            >
+                              {row2.length > 1 ? (
+                                <Label className="header-child">Delete</Label>
+                              ) : null}
+                              {row2.map((item, index) => (
+                                <IconContext.Provider
+                                  key={index}
+                                  value={{
+                                    className: "icon multi-input",
+                                  }}
+                                >
+                                  {row2.length > 1 ? (
+                                    <>
+                                      {/* <div style={{ height: "14.5px" }}></div> */}
+                                      <div
+                                        onClick={() => {
+                                          deleteGST(item);
+                                        }}
+                                      >
+                                        <MdDeleteForever
+                                          style={{
+                                            justifyContent: "center",
+                                            cursor: "pointer",
+                                            marginBottom: "37px",
+                                          }}
+                                        />
+                                      </div>
+                                    </>
+                                  ) : null}
+                                </IconContext.Provider>
+                              ))}
+                            </div>
+                          </Col>
+                        </Row>
+                        <>
+                          {row2.length < 20 && (
+                            <div style={{ margin: " 0 0 20px 0" }}>
+                              <span
+                                className="link-text"
+                                onClick={() => {
+                                  setgst_city_list([])
+                                  setgst_city_page(1)
+                                  setgstcity_bottom(103)
+                                  if (row2[row2.length - 1][0].length != 15) {
+                                    alert("GST No must be 15 digit");
+                                  } else {
+                                    addGST();
+                                  }
+                                }}
+                              >
+                                <IconContext.Provider
+                                  value={{
+                                    className: "link-text",
+                                  }}
+                                >
+                                  <MdAdd />
+                                </IconContext.Provider>
+                                Add Another GST
+                              </span>
+                            </div>
+                          )}
+                        </>
                   </>
                 </CardBody>
               ) : null}
