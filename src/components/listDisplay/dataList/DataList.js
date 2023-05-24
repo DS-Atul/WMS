@@ -120,15 +120,15 @@ const DataList = ({
     if (path) {
       getdata();
     }
-  }, [tog, page_num, toggle, is_search, is_deleted, cm_value]);
-  // }, [tog, page_num, toggle, is_search, is_deleted, prev, next, cm_value]);
+  // }, [tog, page_num, toggle, is_search, is_deleted, cm_value]);
+  }, [tog, page_num, toggle, is_search, is_deleted, prev, next, cm_value]);
 
   useLayoutEffect(() => {
     if (pathb) {
       getdatab();
     }
-  }, [togb, page_numb, toggle, is_search, is_deletedb]);
-  // }, [togb, page_numb, toggle, is_search, is_deletedb, prevb, nextb]);
+  // }, [togb, page_numb, toggle, is_search, is_deletedb]);
+  }, [togb, page_numb, toggle, is_search, is_deletedb, prevb, nextb]);
 
   // ------------Shorting---------------
 

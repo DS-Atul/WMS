@@ -161,6 +161,8 @@ const AddBranch = () => {
   const [locality_count, setlocality_count] = useState(1)
   //If address is same as gst
   const [same_as_gst, setsame_as_gst] = useState(false);
+  const [gst_txt, setgst_txt] = useState("")
+  const [select_gst_txt, setselect_gst_txt] = useState("")
 
   //get State wise operating city
   const [get_state_wise_op, setget_state_wise_op] = useState(false);
@@ -296,8 +298,8 @@ const AddBranch = () => {
               : toTitleCase(vendor_pan_no).toUpperCase(),
           gst_no:
             branch_type === "Own Branch"
-              ? toTitleCase(gst_number).toUpperCase()
-              : toTitleCase(select_gst).toUpperCase(),
+              ? toTitleCase(gst_txt).toUpperCase()
+              : toTitleCase(select_gst_txt).toUpperCase(),
           created_by: user.id,
           address_line_1: toTitleCase(address_line).toUpperCase(),
           pincode: pincode_id,
@@ -423,8 +425,8 @@ const AddBranch = () => {
               : toTitleCase(vendor_pan_no).toUpperCase(),
           gst_no:
             branch_type === "Own Branch"
-              ? toTitleCase(gst_number).toUpperCase()
-              : toTitleCase(select_gst).toUpperCase(),
+              ? toTitleCase(gst_txt).toUpperCase()
+              : toTitleCase(select_gst_txt).toUpperCase(),
           address_line_1: toTitleCase(address_line).toUpperCase(),
           pincode: pincode_id,
           location: locality_id,
@@ -1069,12 +1071,13 @@ console.log("location_data=====", location_data)
           if (gst_page === 1) {
             gst_temp = response.data.results.map((v) => [
               v.id,
-              v.gst_no +(v.is_active? "-"+ "H.O" : "") 
+              v.gst_no 
+              +(v.is_active ? "-"+ "H.O" : "") 
             ]);
           } else {
             gst_temp = [
               ...gst_data_list,
-              ...response.data.results.map((v) => [v.id,  v.gst_no +(v.is_active? "-"+ "H.O" : "") ]),
+              ...response.data.results.map((v) => [v.id,  v.gst_no +(v.is_active ? "-"+ "H.O" : "") ]),
             ];
           }
 
@@ -1282,6 +1285,29 @@ console.log("location_data=====", location_data)
       setgst_number("")
     }
   }, [org])
+
+    useEffect(() => {
+      let gst_data =""
+      if (gst_number.endsWith("-H.O")) {
+        gst_data = gst_number.slice(0, -4); // Remove the last 4 characters ("-H.O")
+        setgst_txt(gst_data)
+      }
+      else{
+        gst_data = gst_number
+        setgst_txt(gst_data)
+      }
+
+      let vendor_gstdata =""
+      if (select_gst.endsWith("-H.O")) {
+        vendor_gstdata = select_gst.slice(0, -4); 
+        setselect_gst_txt(vendor_gstdata)
+      }
+      else{
+        vendor_gstdata = select_gst
+        setselect_gst_txt(vendor_gstdata)
+      }
+    }, [gst_number, select_gst])
+    
   
   return (
     <>

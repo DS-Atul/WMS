@@ -63,7 +63,7 @@ const Dashboard = () => {
 
   // for dashborad type
   const [dashboard_type, setdashboard_type] = useState("Home");
-  const [dashboard_type_list] = useState([
+  const [dashboard_type_list, setdashboard_type_list] = useState([
     "Home",
     "Client",
     "Maker-Checker",

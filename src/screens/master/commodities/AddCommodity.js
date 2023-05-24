@@ -113,7 +113,7 @@ const Add_Commodity = () => {
           } else {
             setcommodity_type_loaded(true);
           }
-    
+
           if (commodity_type_page == 1) {
             commodity_list = resp.data.results.map((v) => [
               v.id,
@@ -432,14 +432,13 @@ const Add_Commodity = () => {
     setShow(true)
     setmessage_error(false)
   };
-
+console.log("user.is_superuser------", user)
   useEffect(() => {
     if (user.user_department_name === "ADMIN") {
       setcurrent_status("NOT APPROVED")
       setstatus_toggle(true)
     }
-
-    else if (user.user_department_name === "ACCOUNTANT" || user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER" || user.is_superuser) {
+    else if (user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER" || user.is_superuser) {
       setcurrent_status("APPROVED")
       setstatus_toggle(true)
     }
@@ -496,11 +495,11 @@ const Add_Commodity = () => {
   {/* For Checker Maker */ }
   const [table_data, settable_data] = useState(["", "", ""]);
   const [table_count, settable_count] = useState(0);
-  const get_orders = () => {
+  const get_commodity = (value) => {
     axios
       .get(
         ServerAddress +
-        `master/all_commodities/?search=${""}&p=${1}&records=${10}&commodity_type=${""}&commodity_name=${""}&data=&value=${"P 24Hr"}`,
+        `master/all_commodities/?search=${""}&p=${1}&records=${10}&commodity_type=${""}&commodity_name=${""}&data=&value=${value}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -520,7 +519,7 @@ const Add_Commodity = () => {
         setcommodity([])
         setcommodity_type("")
         setcommodity_type_id(0)
-        get_orders();
+        get_commodity(location.state.commodity);
       }
     }
     catch {
@@ -589,7 +588,10 @@ const Add_Commodity = () => {
               handlClk();
             }
           }}>History</div>
-          <div style={{ background: "#E6F1FF", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center" }}>Total Pending - {table_count}</div>
+          <div style={{ background: "#E6F1FF", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center" }}>
+            {/* Total Pending - {table_count} */}
+            Total {location.state.commodity === "P" ? "Pending" : location.state.commodity === "A" ? "Approved" : "Rejected"} - {table_count}
+          </div>
           <table className="table-grid">
             <thead>
               <tr style={{ lineHeight: 2, blocalWidth: 1 }}>

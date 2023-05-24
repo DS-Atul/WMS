@@ -2,7 +2,8 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import useWindowDimensions from "../../dashboard/ScreenSize";
 import "../../dashboard/Dashboard.css";
-import {AiFillDelete} from "react-icons/ai";
+import "./Orderchecker.css";
+import { AiFillDelete } from "react-icons/ai";
 import { IconContext } from "react-icons";
 import {
   MdAddCircleOutline,
@@ -144,6 +145,7 @@ const OrderCheckingPage = () => {
 
   // Shipper
   const [customer, setcustomer] = useState([]);
+  const [booking_through1, setbooking_through1] = useState(false);
 
   const [shipper_details, setshipper_details] = useState([]);
   const [shipperdata, setshipperdata] = useState([]);
@@ -197,6 +199,7 @@ const OrderCheckingPage = () => {
   const [box, setbox] = useState([]);
   const [logger, setlogger] = useState([]);
   const [both, setboth] = useState([]);
+  const [ewaybill_no1, setewaybill_no1] = useState("");
 
   //Box Type
   const [box_list, setbox_list] = useState([
@@ -379,6 +382,17 @@ const OrderCheckingPage = () => {
   const [Logger_Selected_error, setLogger_Selected_error] = useState(false);
   const [temp_selected_error, settemp_selected_error] = useState("");
   const [actual_weight_error, setactual_weight_error] = useState("");
+ const[linked_order1, setlinked_order1] = useState("")
+  const [order_type_list1, setorder_type_list1] = useState([
+    "Normal",
+    "Return",
+    "Issue",
+  ]);
+  const [order_type1, setorder_type1] = useState(order_type_list1[0])
+
+  const [billto_page1, setbillto_page1] = useState(1);
+  const [client_page1, setclient_page1] = useState(1);
+  // const [billto_page1, setbillto_page1] = useState(1);
 
   // Packages
   let p = row.length - 1;
@@ -986,7 +1000,7 @@ const OrderCheckingPage = () => {
         setbillto_list(b_temp2);
       })
       .catch((err) => {
-        alert(`Error Occur in Get Data ${err}`);
+        alert(`Error Occur in Get Datafffff ${err}`);
       });
   };
 
@@ -1009,7 +1023,7 @@ const OrderCheckingPage = () => {
         setclient_list(temp2);
       })
       .catch((err) => {
-        alert(`Error Occur in Get Data ${err}`);
+        alert(`Error Occur in Get Dataqqqq ${err}`);
       });
   };
 
@@ -1131,7 +1145,6 @@ const OrderCheckingPage = () => {
     let data = [];
     let box = [];
     let logger = [];
-    let both = [];
     axios
       .get(
         ServerAddress +
@@ -1179,30 +1192,26 @@ const OrderCheckingPage = () => {
 
   const [id, setid] = useState("");
 
- //Get order images
- const getorderImages = () => {
-  axios
-    .get(
-      ServerAddress +
-        `booking/get-order-images/` + id,
-      {
+  //Get order images
+  const getorderImages = () => {
+    let data = [];
+    axios
+      .get(ServerAddress + `booking/get-order-images/` + id, {
         headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    )
-    .then((response) => {
-      console.log("Order Images",response.data.results);
-      data = response.data.results;
-    })
-    .catch((err) => {
-      alert(`Error Occur in Get Data ${err}`);
-    });
-};
-useLayoutEffect(() => {
-  if(docket_no_value !== "") {
-    getorderImages()
-  }
- 
-}, [docket_no_value])
+      })
+      .then((response) => {
+        console.log("Order Images", response.data.results);
+        data = response.data.results;
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Data11111 ${err}`);
+      });
+  };
+  useLayoutEffect(() => {
+    if (docket_no_value !== "") {
+      getorderImages();
+    }
+  }, [docket_no_value]);
 
   // Navigation At the time of Cancel
   const handleAction = () => {
@@ -1615,11 +1624,12 @@ useLayoutEffect(() => {
     get_orders();
   }, []);
 
+  const [image_list, setimage_list] = useState(["", "", "", "", "", ""]);
 
   // This function is used to set values of selected docket
   const set_form_data = (item) => {
-console.log("-=============>>",item)
-setid(item.id);
+    console.log("-=============>>", item);
+    setid(item.id);
     setorder(item);
     setisupdating(true);
     setcurrent_status(item.current_status);
@@ -1678,17 +1688,18 @@ setid(item.id);
 
   return (
     <div style={{ display: "flex", overflow: "hidden", height: "100%" }}>
-      {/* This Code is for table Section */}
+      {/* Above code for table Section */}
       <div
         style={{
-          width: width / 8,
+          width: "calc(100% / 6)",
+          zIndex: 1,
+          height: "100%",
           overflowY: "scroll",
-          margin: "2px",
-          zIndex:1,
+          boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
         }}
         className="custom-scrollbars__content"
       >
-        <table className="table-grid">
+        <table className="styled-table">
           <thead>
             <tr style={{ lineHeight: 2, blocalWidth: 1 }}>
               <th
@@ -1697,6 +1708,9 @@ setid(item.id);
                   textAlign: "center",
                   paddingLeft: "4px",
                   paddingRight: "4px",
+                  color: "black",
+                  fontWeight: "bold",
+                  background: "#92B4EC",
                 }}
                 rowSpan={2}
               >
@@ -1706,7 +1720,7 @@ setid(item.id);
           </thead>
 
           <tbody>
-            {table_data.length == 0 ? (
+            {table_data.length === 0 ? (
               <tr>
                 <td>No Data Found</td>
               </tr>
@@ -1716,13 +1730,27 @@ setid(item.id);
                   <tr key={index}>
                     <td>
                       <span
-                        style={{ cursor: "pointer", color: "blue" }}
+                        style={{
+                          cursor: "pointer",
+                          color: "blue",
+                          fontFamily: "sans-serif",
+                          fontSize: "300",
+                        }}
                         onClick={() => {
                           set_form_data(item);
                           setselected_docket(true);
                         }}
                       >
                         {item.docket_no}
+                        <i
+                          className="bx bxs-right-arrow-circle font-size-18 bx-fade-right"
+                          style={{
+                            color: "blue",
+                            display: "flex",
+                            position: "relative",
+                            left: "13px",
+                          }}
+                        ></i>
                       </span>
                     </td>
                   </tr>
@@ -1739,12 +1767,13 @@ setid(item.id);
           width: width / 1.5,
           background: "",
           overflowY: "scroll",
-          borderRight: "1px solid black",
+          // borderRight: "1px solid black",
           // cursor:"col-resize",
           borderTopRightRadius: "8px",
-          borderLeft: "1px solid black",
+          // borderLeft: "1px solid black",
           borderBottomLeftRadius: "8px",
-          zIndex:1,
+          zIndex: 1,
+          boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
         }}
         className="custom-scrollbars__content"
       >
@@ -1790,7 +1819,93 @@ setid(item.id);
                     <CardBody>
                       {/* Booking Info */}
 
-                      <Row>
+                      <Row>  
+                      <Col lg={(order_type1 === "Return" || order_type1 === "Issue") ? 2 : 4} md={6} sm={6}>
+                      <Label className="header-child">Booking For</Label>
+                      <div className="">
+                        <NSearchInput
+                          data_list={order_type_list1}
+                          data_item_s={order_type1}
+                          show_search={false}
+                          set_data_item_s={setorder_type1}
+                          disable_me={isupdating}
+                        />
+                      </div>
+                    </Col>
+                    {(order_type1 === "Return" || order_type1 === "Issue") && (
+                      <Col lg={2} md={6} sm={6}>
+                        <Label className="header-child">
+                          Refrence Docket No
+                        </Label>
+                        <div className="">
+                          <Input
+                            type="number"
+                            className="form-control-md"
+                            id="input"
+                            value={linked_order1}
+                            onChange={(e) => setlinked_order1(e.target.value)}
+                            placeholder="Enter Docket Number"
+                            disabled={isupdating}
+                          />
+                        </div>
+                      </Col>
+                    )}
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header-child">Booking Through</Label>
+                        <Row>
+                          <Col lg={5} md={6} sm={6}>
+                            <div className="form-check mb-2">
+                              <input
+                                className="form-check-input "
+                                type="checkbox"
+                                name="booking_through"
+                                id="OrderTypeRadio"
+                                disabled={isupdating ? order_type1 : ""}
+                                onClick={() => {
+                                  setorder_type1("booking_through");
+                                }}
+                                checked={order_type1 ==="booking_through "}
+                                readOnly={true}
+                              />
+                              <label
+                                className="form-check-label input-box"
+                                htmlFor="exampleRadios1"
+                              >
+                                With Eway Bill No.
+                              </label>
+                            </div>
+                          </Col>
+                          {booking_through1&& (
+                            <Col lg={7} md={6} sm={6}>
+                              <div className="">
+                                <Input
+                                  type="number"
+                                  className="form-control-md"
+                                  id="input"
+                                  name="EWAY_BILL"
+                                  maxLength="12"
+                                  value={ewaybill_no1}
+                                  disabled={isupdating ? order_type1 : ""}
+                                  onChange={(e) => {
+                                    console.log("maxlength", e.target.value);
+                                    if (e.target.value.length === 12) {
+                                      setewaybill_no1(e.target.value);
+                                      // get_eway_detail(e.target.value);
+                                    } else if (e.target.value.length < 12) {
+                                      setewaybill_no1(e.target.value);
+                                    }
+                                  }}
+                                  placeholder="Enter Eway Bill Number"
+                                // onMouseLeave={()=>{
+                                // }}
+                                />
+                              </div>
+                            </Col>
+                          )}
+                        </Row>
+                      </div>
+                    </Col>
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">Order Type</Label>
@@ -1997,7 +2112,7 @@ setid(item.id);
                                 disabled={isupdating ? docket_no_value : ""}
                                 onChange={(event) => {
                                   setdocket_no_value(event.target.value);
-                                  if (event.target.value.length != 6) {
+                                  if (event.target.value.length !== 6) {
                                     setdocket_error(true);
                                   } else {
                                     setdocket_error(false);
@@ -2933,12 +3048,12 @@ setid(item.id);
                             overflowY: "scroll",
                           }}
                         > */}
-                          <DataList
-                            Data_Title={StatusInfoDataTitle}
-                            Data_Format={StatusInfoDataFormat}
-                            order_id={order.docket_no}
-                            checkbox={"NO"}
-                          />
+                        <DataList
+                          Data_Title={StatusInfoDataTitle}
+                          Data_Format={StatusInfoDataFormat}
+                          order_id={order.docket_no}
+                          checkbox={"NO"}
+                        />
                         {/* </div> */}
                       </>
                     ) : null}
@@ -3477,22 +3592,31 @@ setid(item.id);
           </Form>
         ) : (
           <div
+            className="Main-div"
             style={{
               textAlign: "center",
               alignContent: "center",
-              fontSize: "24px",
-              marginTop: "70px",
-              color: "red",
+              fontSize: "20px",
+              // marginTop: "70px",
+              background: "#FFFFFF",
+              width: "100%",
+              height: "100%",
             }}
           >
-            **Please Select Any Docket**
+            {" "}
+            <span className="up_er">Please Select Any Docket </span>
           </div>
         )}
       </div>
 
       {/* This code is for order image Section */}
       <div
-        style={{ width: width / 2.5, background: "", overflowY: "scroll",zIndex:1, }}
+        style={{
+          width: width / 2.5,
+          background: "",
+          overflowY: "scroll",
+          zIndex: 1,
+        }}
         className="custom-scrollbars__content"
       >
         {selected_docket ? (
@@ -3504,96 +3628,72 @@ setid(item.id);
               Order Images
             </div>
 
-            <Col lg={12}>
-              <Card className="shadow bg-white rounded" id="doc_no">
-                <CardTitle className="mb-1 header">
-                  <div className="header-text-icon header-text">
-                    Docket Image
-                    <div><AiFillDelete/></div>
-
-                  </div>
-                </CardTitle>
-                <CardBody
-                  style={{ background: "red", width: "300", height: "320px" }}
-                >
-                  Image
-                </CardBody>
-              </Card>
-            </Col>
-
-            <Col lg={12}>
-              <Card className="shadow bg-white rounded" id="doc_no">
-                <CardTitle className="mb-1 header">
-                  <div className="header-text-icon header-text">POD Image</div>
-                </CardTitle>
-                <CardBody
-                  style={{ background: "white", width: "300", height: "320px" }}
-                >
-                  Image2
-                </CardBody>
-              </Card>
-            </Col>
-
-            <Col lg={12}>
-              <Card className="shadow bg-white rounded" id="doc_no">
-                <CardTitle className="mb-1 header">
-                  <div className="header-text-icon header-text">
-                    Invoice Image
-                  </div>
-                </CardTitle>
-                <CardBody
-                  style={{ background: "blue", width: "300", height: "320px" }}
-                >
-                  Image3
-                </CardBody>
-              </Card>
-            </Col>
-
-            <Col lg={12}>
-              <Card className="shadow bg-white rounded" id="doc_no">
-                <CardTitle className="mb-1 header">
-                  <div className="header-text-icon header-text">POD Image</div>
-                </CardTitle>
-                <CardBody
-                  style={{ background: "white", width: "300", height: "320px" }}
-                >
-                  Image2
-                </CardBody>
-              </Card>
-            </Col>
-
-            <Col lg={12}>
-              <Card className="shadow bg-white rounded" id="doc_no">
-                <CardTitle className="mb-1 header">
-                  <div className="header-text-icon header-text">POD Image</div>
-                </CardTitle>
-                <CardBody
-                  style={{
-                    background: "skyblue",
-                    width: "300",
-                    height: "320px",
-                  }}
-                >
-                  Image2
-                </CardBody>
-              </Card>
-            </Col>
+            {image_list.map((itm, idx) => {
+              return (
+                <Col lg={12}>
+                  <Card className="shadow bg-white rounded" id="doc_no">
+                    <CardTitle className="mb-1 header">
+                      <div
+                        className="header-text-icon header-text"
+                        style={{ fontSize: "400", fontWeight: "0.5rem" }}
+                      >
+                        Docket Image
+                      </div>
+                    </CardTitle>
+                    <CardBody
+                      style={{
+                        width: "300",
+                        height: "280px",
+                        boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                        borderRadius: "30px",
+                        color: "#FFFDE3",
+                      }}
+                    >
+                      <div
+                        className="imgt"
+                        style={{
+                          position: "relative",
+                          paddingBottom: "56.25%",
+                          height: 0,
+                        }}
+                      >
+                        <img
+                          src="https://thumbs.dreamstime.com/b/packages-delivery-truck-many-packed-58159433.jpg"
+                          alt="React"
+                          style={{
+                            position: "absolute",
+                            top: "8px",
+                            left: "0",
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            borderRadius: "10px",
+                          }}
+                        />
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+              );
+            })}
           </div>
         ) : (
           <div
             style={{
               textAlign: "center",
               alignContent: "center",
-              fontSize: "24px",
-              marginTop: "70px",
-              color: "red",
+              fontSize: "20px",
+              // marginTop: "70px",
+              background: "#FFFFFF",
+              width: "100%",
+              height: "100%",
             }}
           >
-            **Please Select Any Docket**
+            <span className="up_err">Please Select Any Docket </span>
           </div>
         )}
       </div>
-      </div>
+    </div>
   );
 };
 

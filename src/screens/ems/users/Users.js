@@ -54,7 +54,10 @@ const Users = () => {
       }
     }, [userpermission]);
 
-    
+    useEffect(() => {
+      dispatch(setToggle(false));
+    }, []);
+
   return (
     <>
       <PageTitle page="Users" />
