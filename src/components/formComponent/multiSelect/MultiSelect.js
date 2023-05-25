@@ -19,6 +19,10 @@ const MultiSelect = ({
   setpage,
   setsearch_txt,
   type,
+  loaded=false,
+  bottom=100,
+  setbottom,
+  count=1,
 }) => {
   const dispatch = useDispatch();
   const [selected_a, setselected_a] = useState([]);
@@ -30,7 +34,7 @@ const MultiSelect = ({
 
   const [search, setsearch] = useState("");
   const ref = useRef();
-  const [bottom, setbottom] = useState(101);
+  // const [bottom, setbottom] = useState(100);
 
   const getselected = (selected, setselected, name, index) => {
     if (selected.includes(name)) {
@@ -251,6 +255,8 @@ const MultiSelect = ({
                     }}
                     value={search}
                     onChange={(val) => {
+                      setpage(1);
+                      setbottom(100);
                       setsearch(val.target.value);
                     }}
                   />
@@ -269,7 +275,9 @@ const MultiSelect = ({
                 height: "140px",
               }}
               onScroll={() => {
-                if (ref.current.scrollTop > bottom - 1 && type == "backend") {
+                console.log("bottom-------",bottom)
+                console.log("-----", ref.current.scrollTop)
+                if (ref.current.scrollTop > bottom - count && loaded && type == "backend") {
                   setpage(page + 1);
                   setbottom(bottom + 235);
                 }

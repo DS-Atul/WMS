@@ -109,7 +109,7 @@ const Assets = () => {
 
   return (
     <>
-      <Modal show={show} onHide={handleClose}>
+      <Modal size="lg" show={show} onHide={handleClose}> 
         <Modal.Header closeButton>
           <Modal.Title style={{fontSize:"14px", color:"red"}}>Please Update Calibration These Are Going To Be Expired ...</Modal.Title>
         </Modal.Header>

@@ -3738,9 +3738,6 @@ const AddOrder = () => {
                         bottom={billto_bottom}
                         setbottom={setbillto_bottom}
                       />
-                      <div className="mt-1 error-text" color="danger">
-                        {billto_error ? "Please Select Client " : null}
-                      </div>
                     </Col>
 
                     {billto && (
@@ -5748,7 +5745,7 @@ const AddOrder = () => {
                             >
                               <MdAdd />
                             </IconContext.Provider>
-                            Add Another Packages
+                            Add Another Dimensions
                           </span>
                         </div>
                       )}

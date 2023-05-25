@@ -58,6 +58,7 @@ const Add_Commodity = () => {
   const [other_commodity_type, setother_commodity_type] = useState("");
   const [commodity_type_loaded, setcommodity_type_loaded] = useState(false)
   const [commodity_type_count, setcommodity_type_count] = useState(1)
+  const [commodity_type_bottom, setcommodity_type_bottom] = useState(103)
 
   const [showModal, setShowModal] = useState(false);
   const [jsonData, setJsonData] = useState([]);
@@ -728,6 +729,8 @@ console.log("user.is_superuser------", user)
                             error_s={commodity_type_error}
                             loaded={commodity_type_loaded}
                             count={commodity_type_count}
+                            bottom={commodity_type_bottom}
+                            setbottom={setcommodity_type_bottom}
                           />
                         </div>
                       </Col>

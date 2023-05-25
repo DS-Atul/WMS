@@ -21,7 +21,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { Input } from "reactstrap";
 
 const ClientsDataFormat = ({ data, data1, can_delete }) => {
-
+console.log("data-------", data)
   // Permissions
   const user_permissions = useSelector(
     (state) => state.permissions.user_permissions
@@ -214,12 +214,12 @@ const ClientsDataFormat = ({ data, data1, can_delete }) => {
                   )}
                 </td>
               )}
-              <td>{customer.billto_name}</td>
+              <td>{toTitleCase(customer.billto_name)}</td>
               <td>
                 {can_update || user.is_superuser ? (
                   <Link
                     to="/master/clients/addclient"
-                    state={{ customer: customer }}
+                    state={{ customer: customer, type:"update" }}
                   >
                     {toTitleCase(customer.name)}
                   </Link>
@@ -229,11 +229,11 @@ const ClientsDataFormat = ({ data, data1, can_delete }) => {
               </td>
 
               <td>
-                {customer.locality_name +
+                {toTitleCase(customer.locality_name) +
                   ", " +
-                  customer.city_name +
+                  toTitleCase(customer.city_name) +
                   ", " +
-                  customer.state_name}
+                  toTitleCase(customer.state_name)}
               </td>
             </tr>
           );

@@ -50,7 +50,6 @@ import MultiRowSearchInput from "../../../components/formComponent/multiRowSearc
 
 const AddClient = () => {
   const { state: up_params } = useLocation();
-  console.log("up_params=======", up_params)
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -189,7 +188,7 @@ const AddClient = () => {
     enableReinitialize: true,
 
     initialValues: {
-      name: client.name || "",
+      name: toTitleCase(client.name) || "",
       email: client.email || "",
       phone_number: client.phone_number || "",
       authorised_person_name: toTitleCase(client.authorised_person_name) || "",
@@ -427,11 +426,9 @@ const AddClient = () => {
       )
       .then((response) => {
         data = response.data.branches;
-        console.log("data==========", data)
 
         if (data.length > 0) {
           branch_temp = data.map((v) => [v.branches, toTitleCase(v.branches__name)]);
-          console.log("branch_temp========", branch_temp)
           setassociate_branch_list_2(branch_temp)
         }
       })
@@ -452,7 +449,6 @@ const AddClient = () => {
         }
       );
       temp = response.data.results;
-      console.log("resp", response.data)
       if (temp.length > 0) {
         if (response.data.next === null) {
           setbranch_loaded(false);
@@ -795,7 +791,7 @@ const AddClient = () => {
           },
         }
       );
-
+console.log("resp--------", resp)
       if (resp.data.status === "success") {
         navigate("/master/billtos");
         dispatch(setDataExist(`BillTo '${values.name}' Updated Sucessfully`));
@@ -806,6 +802,15 @@ const AddClient = () => {
         dispatch(
           setDataExist(
             `BillTo Name "${toTitleCase(values.name)}" already exists`
+          )
+        );
+        dispatch(setAlertType("warning"));
+      }
+      else if (resp.data.data.email[0] === "BillTo with this Email *  already exists.") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `BillTo With This Email "${toTitleCase(values.email)}" already exists`
           )
         );
         dispatch(setAlertType("warning"));
@@ -894,7 +899,6 @@ const AddClient = () => {
   useLayoutEffect(() => {
     try {
       let client_up = up_params.client;
-      console.log("client_up---------", up_params)
       setclient(client_up);
       setclient_id(client_up.id);
       setisupdating(true);
@@ -1101,7 +1105,6 @@ const AddClient = () => {
             },
           }
         );
-        console.log("Organization ==>>", response);
         if (response.data === "duplicate") {
           dispatch(setDataExist(`"${pan_no}" Already Exists`));
           dispatch(setAlertType("warning"));
@@ -1189,6 +1192,7 @@ const AddClient = () => {
       active,
     ];
     const [row2, setrow2] = useState([dimension_list2]);
+    console.log("row2===========", row2)
 
     const addGST = () => {
       dimension_list2 = ["", ["", "", ""], ["", ""], ["", ""], "", false];
@@ -1415,7 +1419,7 @@ const AddClient = () => {
   
     useEffect(() => {
       if (isupdating) {
-        if (updated_gstaddress.length !== 0) {
+        if (updated_gstaddress?.length !== 0 && updated_gstaddress) {
           let temp = [];
           let temp_list = [];
           let temp_list2 = [];
@@ -2476,14 +2480,15 @@ const AddClient = () => {
                         onClick={() => {
                           navigate("/master/clients/addclient", {
                             state: {
+                              type: "same_as",
                               billto : client,
-                              bill_to_name: validation.values.name,
-                              bill_to_email: validation.values.email,
-                              bill_to_phone_number:
-                                validation.values.phone_number,
-                              bill_to_address_line_1:
-                                validation.values.address_line_1,
-                              bill_to_locality_name: locality,
+                              // bill_to_name: validation.values.name,
+                              // bill_to_email: validation.values.email,
+                              // bill_to_phone_number:
+                              //   validation.values.phone_number,
+                              // bill_to_address_line_1:
+                              //   validation.values.address_line_1,
+                              // bill_to_locality_name: locality,
                             },
                           });
                         }}
@@ -2497,6 +2502,7 @@ const AddClient = () => {
                           onClick={() => {
                             navigate("/master/clients/addclient", {
                               state: {
+                                type: "add",
                                 bill_to_id: client.id,
                                 bill_to_nm: client.name,
                               },

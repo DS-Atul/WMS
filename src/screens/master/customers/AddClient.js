@@ -41,7 +41,8 @@ const AddClient = (props) => {
 
   const { state: up_params } = useLocation();
   console.log("up_params-------", up_params)
-  
+
+  const [same_as_data, setsame_as_data] = useState(false)
 
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -103,11 +104,14 @@ const AddClient = (props) => {
   const [locality_error, setlocality_error] = useState(false);
   const [locality_error2, setlocality_error2] = useState(false);
 
+  console.log("locality_id-----", locality_id)
+  console.log("locality-----", locality)
+
   // Calculation Info
   const local_cal = useSelector((state) => state.client.local_cal);
   const air_cal = useSelector((state) => state.client.air_cal);
   const surface_cal = useSelector((state) => state.client.surface_cal)
-  console.log("up_parmsss{{{{{{{{{}}}}}}}}}",up_params)
+
   // active Tabs
   let temp_active_tabs = [
     local_cal.cal_type,
@@ -417,7 +421,6 @@ const AddClient = (props) => {
   //  Formik Yup Validation
   const validation = useFormik({
     enableReinitialize: true,
-
     initialValues: {
       customer_name: toTitleCase(customer.name) || "",
       email: customer.email || "",
@@ -575,7 +578,7 @@ const AddClient = (props) => {
           setcommodities_count(commodities_count + 2)
           setcommodities_list(com_list)
         }
-        else{
+        else {
           setcommodities_list([])
         }
         try {
@@ -797,14 +800,14 @@ const AddClient = (props) => {
       });
   };
 
-  
-  
+
+
   // Client Document Api Function
   const addClientDoc = (client_id) => {
     const docket_imageform = new FormData();
     docket_imageform.append(`client_id`, client_id);
-  docket_imageform.append(`clientdocument`, documentFiles, documentFiles?.name);
-  console.log("clientdocumentclientdocumentclientdocument",documentFiles?.name)
+    docket_imageform.append(`clientdocument`, documentFiles, documentFiles?.name);
+    console.log("clientdocumentclientdocumentclientdocument", documentFiles?.name)
     axios
       .post(ServerAddress + "master/add_client_doc/", docket_imageform, {
         headers: {
@@ -812,9 +815,9 @@ const AddClient = (props) => {
           "content-type": "multipart/form-data",
         },
       })
-      .then(function (resp) { 
+      .then(function (resp) {
 
-        console.log("resp",resp)
+        console.log("resp", resp)
       })
       .catch((err) => alert(`Error occur while add client doc , ${err}`));
   };
@@ -916,7 +919,7 @@ const AddClient = (props) => {
     let commidity_lst = [...new Set(commidity_id_list.map((v) => `${v}`))].map((v) =>
       parseInt(v.split(","))
     );
-  console.log("commidity_lst=========", commidity_lst)
+    console.log("commidity_lst=========", commidity_lst)
 
     let com_change = commidity_lst.every((v, idx) => commidity_lst_tmp.includes(v))
 
@@ -950,7 +953,7 @@ const AddClient = (props) => {
       .then(function (resp) {
         if (resp.data.status === "success") {
 
-          if (documentFiles !="") {
+          if (documentFiles != "") {
             // addClientDoc(resp.data.data.id);
           }
           if (local_cal.cal_type != "DONT" || air_cal.cal_type != "DONT" || surface_cal.cal_type !== "DONT") {
@@ -2869,56 +2872,69 @@ const AddClient = (props) => {
 
   useEffect(() => {
     if (!isupdating && state && !by_pincode) {
-      setcity("");
-      setcity_list_s([]);
-      setpincode("");
-      setpincode_list_s([]);
-      setlocality("");
-      setlocality_list_s([]);
+      if(!same_as_data){
+        setcity("");
+        setcity_list_s([]);
+        setpincode("");
+        setpincode_list_s([]);
+        setlocality("");
+        setlocality_list_s([]);
+      }
     }
   }, [state]);
 
-  
+
   useEffect(() => {
-    if (state !== "" && togstate  && !by_pincode) {
+    if (state !== "" && togstate && !by_pincode) {
+      if(!same_as_data){
       setcity("");
       setcity_list_s([]);
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
       setlocality_list_s([]);
+      }
     }
   }, [state]);
 
   useEffect(() => {
     if (!isupdating && city && !by_pincode) {
+      setsame_as_data(false)
+      if(!same_as_data){
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
       setlocality_list_s([]);
+      }
     }
   }, [city]);
 
   useEffect(() => {
-    if (city !== "" && togcity  && !by_pincode) {
+    if (city !== "" && togcity && !by_pincode) {
+      if(!same_as_data){
       setpincode("");
       setpincode_list_s([]);
       setlocality("");
       setlocality_list_s([]);
+      }
     }
   }, [city]);
 
   useEffect(() => {
-    if (pincode !== "" && togpincode  && !by_pincode) {
+    if (pincode !== "" && togpincode && !by_pincode) {
+      if(!same_as_data){
       setlocality("");
       setlocality_list_s([]);
+      }
     }
   }, [pincode]);
 
   useEffect(() => {
     if (!isupdating && pincode && !by_pincode) {
+      if(!same_as_data){
       setlocality("");
       setlocality_list_s([]);
+      }
     }
   }, [pincode]);
 
@@ -2945,26 +2961,29 @@ const AddClient = (props) => {
   }, [state_page, state_search_item, refresh]);
 
   useLayoutEffect(() => {
-    if(up_params === null){
+    if (up_params === null) {
       getCommodities("all");
     }
-    else{
-      if(up_params?.customer){
+    else {
+      if (up_params?.customer) {
         getCommodities(parseInt(up_params?.customer?.id));
       }
-      else{
+      else {
         getCommodities("all");
       }
-      
+
     }
   }, [commodities_page, commodities_search_txt, refresh]);
 
   useLayoutEffect(() => {
+    console.log("up_params-------", up_params)
     try {
-      let bill_to_name = up_params.bill_to_name;
-      let bill_to_email = up_params.bill_to_email;
-      let bill_to_phone_number = up_params.bill_to_phone_number;
-      let bill_to_address_line_1 = up_params.bill_to_address_line_1;
+      // let cust_up = up_params.billto;
+      // setcustomer(cust_up);
+      let bill_to_name = up_params.billto.name;
+      let bill_to_email = up_params.billto.email;
+      let bill_to_phone_number = up_params.billto.phone_number;
+      let bill_to_address_line_1 = up_params.billto.address_line;
 
       let bill_to_locality_name = up_params.bill_to_locality_name;
 
@@ -2973,26 +2992,25 @@ const AddClient = (props) => {
       customer["phone_number"] = bill_to_phone_number;
       customer["address_line"] = bill_to_address_line_1;
 
-      setbill_to_nm(bill_to_name);
+      setsame_as_data(true)
+
+      setstate(toTitleCase(up_params.billto.state_name))
+      setstate_id(up_params.billto.state_id)
+      setcity(toTitleCase(up_params.billto.city_name))
+      setcity_id(up_params.billto.city_id)
+      setpincode(up_params.billto.pincode_name)
+      setpincode_id(up_params.billto.pincode)
+      setlocality(toTitleCase(up_params.billto.locality_name))
+      setlocality_id(up_params.billto.location)
+      setbill_to_nm(toTitleCase(bill_to_name));
 
       getLocality(bill_to_locality_name.toUpperCase(), "locality");
     } catch (error) { }
-
     try {
-      let cl_id = up_params.bill_to_id
-        ? up_params.bill_to_id
-        : up_params.billto.id;
-
-      if (up_params.bill_to_nm) {
-        setbill_to_nm(up_params.bill_to_nm);
-      }
-    console.log("cl_id-------", cl_id)
-      setclient_id(cl_id);
-
-      if (!up_params.bill_to_id) {
+      // let cl_id = up_params.bill_to_id ? up_params.bill_to_id : up_params.billto.id;
+      // setclient_id(cl_id);
+      if(up_params.type === "update") {
         let cust_up = up_params.customer;
-
-
         // Setting Normal Client Details
         setdocumentFiles(cust_up.agreement_documents)
         setcustomer(cust_up);
@@ -3008,6 +3026,7 @@ const AddClient = (props) => {
         setbill_generation(cust_up.bill_generation_time_frame);
         setagreement_date(cust_up.agreement_start_date);
         setagreement_end_date(cust_up.agreement_end_date);
+        setclient_id(cust_up.bill_to)
 
         // Associate Charge Data Setting Local
         let temp_lis = [];
@@ -3360,13 +3379,25 @@ const AddClient = (props) => {
             }
           }
         }
-      } else {
+      }
+
+      else if(up_params.type === "same_as"){
+        setclient_id(up_params.billto.id)
+      }
+      else if(up_params.type === "add"){
+        setclient_id(up_params.bill_to_id)
+        setbill_to_nm(toTitleCase(up_params.bill_to_nm))
+      }
+      else {
         setEmpty();
       }
+  
+
     } catch (error) {
       console.log("try err", error);
     }
   }, []);
+  console.log("customer--------", customer)
 
   useLayoutEffect(() => {
     if (state !== "") {
@@ -3396,6 +3427,9 @@ const AddClient = (props) => {
       setcommodities_error(false);
     }
   }, [commodities_list2])
+
+  console.log("client_id--------", client_id)
+
   return (
     <Form
       onSubmit={(e) => {
@@ -3456,7 +3490,7 @@ const AddClient = (props) => {
                     <div className="mb-2">
                       <Label className="header-child">Bill To Name *</Label>
                       <Input
-                        value={isupdating ? customer.billto_name : bill_to_nm}
+                        value={isupdating ? toTitleCase(customer.billto_name) : bill_to_nm}
                         type="text"
                         name="billto_name"
                         className="form-control-md"
@@ -3873,7 +3907,7 @@ const AddClient = (props) => {
                 <Row>
                   <Label className="header-child">Clients Commodities</Label>
                   <Col lg={12} md={12} sm={12}>
-                    
+
                     <TransferList
                       list_a={commodities_list}
                       setlist_a={setcommodities_list}
@@ -4188,7 +4222,7 @@ const AddClient = (props) => {
                                     // id="file"
                                     multiple
                                     onChange={e => {
-                                     setdocumentFiles(e.target.files[0]);
+                                      setdocumentFiles(e.target.files[0]);
                                     }}
                                   />
                                 </div>
