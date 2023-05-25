@@ -309,19 +309,19 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {
                   (selected.includes(order.id) || order.cm_transit_status == "APPROVED") && !user.is_superuser ? (
-                    <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
+                    <><span>Dimensions</span><br /><span>Status Info</span><br /><span>Images</span></>
                   )
                     : (order.cm_current_status !== "NOT APPROVED" && order.cm_current_status !== "REJECTED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
-                      ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
+                      ? <><span>Dimensions</span><br /><span>Status Info</span><br /><span>Images</span></>
                       : (order.cm_current_status == "REJECTED" && (order.cm_transit_status == "VERIFIED OPERATION MANAGER" || order.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER") && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
-                        ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
+                        ? <><span>Dimensions</span><br /><span>Status Info</span><br /><span>Images</span></>
                         : (order.cm_current_status !== "NOT APPROVED" && order.cm_current_status !== "REJECTED" && (user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE"))
-                          ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
+                          ? <><span>Dimensions</span><br /><span>Status Info</span><br /><span>Images</span></>
                           : (order.cm_current_status !== "REJECTED" && (order.cm_transit_status == "VERIFIED CUSTOMER SUPPORT MANAGER" || order.cm_transit_status == "VERIFIED OPERATION MANAGER" || order.cm_transit_status == "VERIFIED ACCOUNTANT" || order.cm_transit_status == "VERIFIED ACCOUNT MANAGER" || order.cm_transit_status == "VERIFIED ACCOUNT MANAGER")
                             && (user.user_department_name + " " + user.designation_name === "OPERATION MANAGER" || user.user_department_name + " " + user.designation_name === "CUSTOMER SUPPORT MANAGER"))
-                            ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
+                            ? <><span>Dimensions</span><br /><span>Status Info</span><br /><span>Images</span></>
                             : (order.cm_current_status !== "REJECTED" && (order.cm_transit_status == "VERIFIED ACCOUNTANT" || order.cm_transit_status == "VERIFIED ACCOUNT MANAGER") && (user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER"))
-                              ? <><span>Packages</span><br /><span>Status Info</span><br /><span>Images</span></>
+                              ? <><span>Dimensions</span><br /><span>Status Info</span><br /><span>Images</span></>
                               :
                               <>
                                 <HashLink
@@ -335,7 +335,7 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                                   to="/booking/orders/addorder#packages"
                                   state={{ order: order, hash: "packages" }}
                                 >
-                                  Packages
+                                  Dimensions
                                 </HashLink>
                                 <br />
                                 <HashLink

@@ -159,7 +159,7 @@ function AssigneBranch() {
     axios
       .get(
         ServerAddress +
-          `master/get-asset-info/?search=${""}&p=${asset_page}&records=${20}&data=all&value=&asset_search=${asset_search}&branch_name=${""}`,
+          `master/get_asset_details/?search=${""}&p=${asset_page}&records=${20}&asset_type=BOTH&product_id_search=${asset_search}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }

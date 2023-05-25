@@ -4172,6 +4172,156 @@ const AddOrder = () => {
           </Col>
         </div>
 
+                {/*  Cold Chain Info Started  */}
+                {cold_chain && (
+          <div className="m-3">
+            <Col lg={12}>
+              <Card className="shadow bg-white rounded">
+                <CardTitle className="mb-1 header">
+                  <div className="header-text-icon header-text">
+                    Cold Chain Info
+                    <IconContext.Provider
+                      value={{
+                        className: "header-add-icon",
+                      }}
+                    >
+                      <div onClick={toggle_circle3}>
+                        {circle_btn3 ? (
+                          <MdRemoveCircleOutline />
+                        ) : (
+                          <MdAddCircleOutline />
+                        )}
+                      </div>
+                    </IconContext.Provider>
+                  </div>
+                </CardTitle>
+                {circle_btn3 ? (
+                  <CardBody>
+                    <Row>
+                      <Col lg={2} md={2} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">
+                            Qil Provide Asset
+                          </Label>
+                          <br />
+                          <Input
+                            className="form-check-input-sm"
+                            type="checkbox"
+                            // value="false"
+                            id="defaultCheck1"
+                            onClick={() => {
+                              setasset_prov(!asset_prov);
+                            }}
+                            readOnly={true}
+                            checked={asset_prov}
+                            disabled={isupdating}
+                          />
+                        </div>
+                      </Col>
+                      {asset_prov && (
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">Asset Type *</Label>
+                            <NSearchInput
+                              data_list={asset_info_list}
+                              data_item_s={asset_info_selected}
+                              show_search={false}
+                              set_data_item_s={setasset_info_selected}
+                              error_message={"Please Select Asset Type"}
+                            />
+                          </div>
+                        </Col>
+                      )}
+                      {asset_info_selected === "With Box" ? (
+                        <>
+                          <Col lg={12} md={6} sm={6}>
+                            <Label className="header-child">Box No*</Label>
+                            <TransferList
+                              list_a={box_list_1}
+                              setlist_a={setbox_list_1}
+                              list_b={box_list_2}
+                              setlist_b={setbox_list_2}
+                              page={box_list_page}
+                              setpage={setbox_list_page}
+                              setsearch_item={setsearch_box}
+                              loaded={box_loaded}
+                              count={box_count}
+                            // setlist_id={}
+                            />
+                          </Col>
+                        </>
+                      ) : null}
+
+                      {asset_info_selected === "With Logger" ? (
+                        <>
+                          <Col lg={12} md={6} sm={6}>
+                            <Label className="header-child">Logger No *</Label>
+                            <TransferList
+                              list_a={Logger_list}
+                              setlist_a={setLogger_list}
+                              list_b={Logger_Selected}
+                              setlist_b={setLogger_Selected}
+                              page={Logger_page}
+                              setpage={setLogger_page}
+                              setsearch_item={setsearch_logger}
+                              loaded={logger_loaded}
+                              count={logger_count}
+                            // setlist_id={}
+                            />
+                          </Col>
+                        </>
+                      ) : null}
+
+                      {asset_info_selected === "With Box + With Logger" ? (
+                        <>
+                          <Col lg={6} md={6} sm={6}></Col>
+                          <Col lg={6} md={6} sm={12}>
+                            <div style={{ width: "" }}>
+                              <Label className="header-child">
+                                Logger No *
+                              </Label>
+                              <TransferList
+                                list_a={Logger_list}
+                                setlist_a={setLogger_list}
+                                list_b={Logger_Selected}
+                                setlist_b={setLogger_Selected}
+                                page={Logger_page}
+                                setpage={setLogger_page}
+                                setsearch_item={setsearch_logger}
+                                loaded={logger_loaded}
+                                count={logger_count}
+                              // setlist_id={}
+                              />
+                            </div>
+                          </Col>
+
+                          <Col lg={6} md={6} sm={12}>
+                            <div style={{ width: "", marginLeft: "" }}>
+                              <Label className="header-child">Box No. *</Label>
+                              <TransferList
+                                list_a={box_list_1}
+                                setlist_a={setbox_list_1}
+                                list_b={box_list_2}
+                                setlist_b={setbox_list_2}
+                                page={box_list_page}
+                                setpage={setbox_list_page}
+                                setsearch_item={setsearch_box}
+                                loaded={box_loaded}
+                                count={box_count}
+                              // setlist_id={}
+                              />
+                            </div>
+                          </Col>
+                        </>
+                      ) : null}
+                    </Row>
+                  </CardBody>
+                ) : null}
+              </Card>
+            </Col>
+          </div>
+        )}
+
         {/*Manually Entry through  Shipper Info*/}
         {eway_confirm ? null : (
           <div className="m-3" id="shipper">
@@ -4935,155 +5085,6 @@ const AddOrder = () => {
           </div>
         ) : null}
 
-        {/*  Cold Chain Info Started  */}
-        {cold_chain && (
-          <div className="m-3">
-            <Col lg={12}>
-              <Card className="shadow bg-white rounded">
-                <CardTitle className="mb-1 header">
-                  <div className="header-text-icon header-text">
-                    Cold Chain Info
-                    <IconContext.Provider
-                      value={{
-                        className: "header-add-icon",
-                      }}
-                    >
-                      <div onClick={toggle_circle3}>
-                        {circle_btn3 ? (
-                          <MdRemoveCircleOutline />
-                        ) : (
-                          <MdAddCircleOutline />
-                        )}
-                      </div>
-                    </IconContext.Provider>
-                  </div>
-                </CardTitle>
-                {circle_btn3 ? (
-                  <CardBody>
-                    <Row>
-                      <Col lg={2} md={2} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child">
-                            Qil Provide Asset
-                          </Label>
-                          <br />
-                          <Input
-                            className="form-check-input-sm"
-                            type="checkbox"
-                            // value="false"
-                            id="defaultCheck1"
-                            onClick={() => {
-                              setasset_prov(!asset_prov);
-                            }}
-                            readOnly={true}
-                            checked={asset_prov}
-                            disabled={isupdating}
-                          />
-                        </div>
-                      </Col>
-                      {asset_prov && (
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">Asset Type *</Label>
-                            <NSearchInput
-                              data_list={asset_info_list}
-                              data_item_s={asset_info_selected}
-                              show_search={false}
-                              set_data_item_s={setasset_info_selected}
-                            />
-                          </div>
-                        </Col>
-                      )}
-                      {asset_info_selected === "With Box" ? (
-                        <>
-                          <Col lg={12} md={6} sm={6}>
-                            <Label className="header-child">Box No*</Label>
-                            <TransferList
-                              list_a={box_list_1}
-                              setlist_a={setbox_list_1}
-                              list_b={box_list_2}
-                              setlist_b={setbox_list_2}
-                              page={box_list_page}
-                              setpage={setbox_list_page}
-                              setsearch_item={setsearch_box}
-                              loaded={box_loaded}
-                              count={box_count}
-                            // setlist_id={}
-                            />
-                          </Col>
-                        </>
-                      ) : null}
-
-                      {asset_info_selected === "With Logger" ? (
-                        <>
-                          <Col lg={12} md={6} sm={6}>
-                            <Label className="header-child">Logger No *</Label>
-                            <TransferList
-                              list_a={Logger_list}
-                              setlist_a={setLogger_list}
-                              list_b={Logger_Selected}
-                              setlist_b={setLogger_Selected}
-                              page={Logger_page}
-                              setpage={setLogger_page}
-                              setsearch_item={setsearch_logger}
-                              loaded={logger_loaded}
-                              count={logger_count}
-                            // setlist_id={}
-                            />
-                          </Col>
-                        </>
-                      ) : null}
-
-                      {asset_info_selected === "With Box + With Logger" ? (
-                        <>
-                          <Col lg={6} md={6} sm={6}></Col>
-                          <Col lg={6} md={6} sm={12}>
-                            <div style={{ width: "" }}>
-                              <Label className="header-child">
-                                Logger No *
-                              </Label>
-                              <TransferList
-                                list_a={Logger_list}
-                                setlist_a={setLogger_list}
-                                list_b={Logger_Selected}
-                                setlist_b={setLogger_Selected}
-                                page={Logger_page}
-                                setpage={setLogger_page}
-                                setsearch_item={setsearch_logger}
-                                loaded={logger_loaded}
-                                count={logger_count}
-                              // setlist_id={}
-                              />
-                            </div>
-                          </Col>
-
-                          <Col lg={6} md={6} sm={12}>
-                            <div style={{ width: "", marginLeft: "" }}>
-                              <Label className="header-child">Box No. *</Label>
-                              <TransferList
-                                list_a={box_list_1}
-                                setlist_a={setbox_list_1}
-                                list_b={box_list_2}
-                                setlist_b={setbox_list_2}
-                                page={box_list_page}
-                                setpage={setbox_list_page}
-                                setsearch_item={setsearch_box}
-                                loaded={box_loaded}
-                                count={box_count}
-                              // setlist_id={}
-                              />
-                            </div>
-                          </Col>
-                        </>
-                      ) : null}
-                    </Row>
-                  </CardBody>
-                ) : null}
-              </Card>
-            </Col>
-          </div>
-        )}
-
         {/* Eway Bill  */}
         {/* {ewaybill && (
           <div className="m-3">
@@ -5517,7 +5518,8 @@ const AddOrder = () => {
                         // updateCurrentStep(1);
                       }}
                     >
-                      Packages
+                      {/* Packages */}
+                      Dimensions
                     </div>
                     <div
                       id="images"
