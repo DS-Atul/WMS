@@ -433,7 +433,6 @@ const Add_Commodity = () => {
     setShow(true)
     setmessage_error(false)
   };
-console.log("user.is_superuser------", user)
   useEffect(() => {
     if (user.user_department_name === "ADMIN") {
       setcurrent_status("NOT APPROVED")
@@ -533,6 +532,7 @@ console.log("user.is_superuser------", user)
     setcommodity_type(toTitleCase(item.type));
     setcommodity_type_id(item.commodity_type);
   }
+  
   return (
     <div style={{ display: data_type && "flex" }}>
 
