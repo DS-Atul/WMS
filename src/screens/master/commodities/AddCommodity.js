@@ -493,20 +493,20 @@ const Add_Commodity = () => {
   }
 
   {/* For Checker Maker */ }
-    const userpermission = useSelector(
-      (state) => state.authentication.userpermission
-    );
-    const [can_update, setcan_update] = useState(false);
-  
-    useEffect(() => {
-      if (
-        userpermission.some((e) => e.sub_model === "Commodity" && e.update === true)
-      ) {
-        setcan_update(true);
-      } else {
-        setcan_update(false);
-      }
-    }, [userpermission]);
+  const userpermission = useSelector(
+    (state) => state.authentication.userpermission
+  );
+  const [can_update, setcan_update] = useState(false);
+
+  useEffect(() => {
+    if (
+      userpermission.some((e) => e.sub_model === "Commodity" && e.update === true)
+    ) {
+      setcan_update(true);
+    } else {
+      setcan_update(false);
+    }
+  }, [userpermission]);
 
   const [table_data, settable_data] = useState(["", "", ""]);
   const [table_count, settable_count] = useState(0);
@@ -548,7 +548,124 @@ const Add_Commodity = () => {
     setcommodity_type(toTitleCase(item.type));
     setcommodity_type_id(item.commodity_type);
   }
+
+  //Eway
+
+  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
+
+  const post_awb = () => {
+    axios
+      .post(
+        ` https://dev.api.easywaybill.in/ezewb/v1/ewb/generate?gstin=05AAAAT2562R1Z3`,
+
+        {
+          "supplyType": "O",
+          "transactionType": "1",
+          "subSupplyType": "1",
+          "docType": "INV",
+          "docNo": "DHLMH6784",
+          "docDate": "27/05/2023",
+          "invTyp": "B2B",
+          "fromGstin": "05AAAAT2562R1Z3",
+          "fromTrdName": "R K K AGENCIES",
+          "dispatchFromGstin": "05AAAAT2562R1Z3",
+          "dispatchFromTradeNam": "Nandss entity-1",
+          "fromAddr1": "f 174 ground floor saraswati loke, ; sardhana road Roorkee road uttaranchal",
+          "fromAddr2": "shyam vihar phase 3 complex;HO 1272 indira nagar sastri nagar; GDN: 25 5/2, OPP.MANDI, DELHI ROAD,MEERUT",
+          "fromPlace": "INDRAA NAGAR",
+          "fromStateCode": "27",
+          "fromPincode": "415124",
+          "toGstin": "05AAAAU1183B2ZZ",
+          "toTrdName": "UTTARANCHALL KRISHI UTPADAN",
+          "shipToGstin": "05AAAAU1183B2ZZ",
+          "shipToTradeName": "Nina entity-2",
+          "toAddr1": "LASUDIA MORI DEWAS NAKA",
+          "toAddr2": "LASUDIA MORI DEWAS NAKA",
+          "toPlace": "INDORE",
+          "toPincode": "824124",
+          "toStateCode": "27",
+          "totInvValue": "1032",
+          "totalValue": "1000",
+          "cgstValue": "16",
+          "sgstValue": "16",
+          "igstValue": "0",
+          "cessValue": "0",
+          "cessNonAdvolValu": "0.00",
+          "otherValue": "0",
+          "transMode": "2",
+          "transDistance": "196",
+          "transDocDate": "27/05/2023",
+          "transDocNo": "124423",
+          "transId": "05AAAAR1685F1ZO",
+          "transName": "Ashwin Guj Trans",
+          "vehicleNo": null,
+          "actFromStateCode": "27",
+          "actToStateCode": "27",
+          "vehicleType": null,
+          "itemList": [
+            {
+              "itemNo": "1",
+              "productName": "Mango-1",
+              "productDesc": "Fruit",
+              "hsnCode": "71",
+              "quantity": "10.00",
+              "qtyUnit": "KGS",
+              "taxableAmount": "700",
+              "sgstRate": 2.50,
+              "cgstRate": 2.50,
+              "igstRate": 0,
+              "cessRate": "0.00",
+              "cessNonAdvol": "0.00",
+              "txp": "T"
+            },
+            {
+              "itemNo": "2",
+              "productName": "Mango-2",
+              "productDesc": "Fruit",
+              "hsnCode": "71",
+              "quantity": "10.00",
+              "qtyUnit": "KGS",
+              "taxableAmount": "400",
+              "sgstRate": 0.125,
+              "cgstRate": 0.125,
+              "igstRate": 0,
+              "cessRate": "0.00",
+              "cessNonAdvol": "0.00",
+              "txp": "T"
+            }
+          ],
+          "userGstin": "05AAAAT2562R1Z3"
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${b_acess_token}`,
+          },
+
+
+        }
+
+      )
+      .then(function (response) {
+
+        console.log("response=======eway bill detail", response);
   
+
+      })
+      .catch((error) => {
+        console.log("eroorrrrrrrr", error)
+      })
+  };
+
+  useEffect(() => {
+    post_awb()
+  }, [])
+
+  //Eway no
+
+  // 371003160104
+
   return (
     <div style={{ display: data_type && "flex" }}>
 
@@ -637,20 +754,20 @@ const Add_Commodity = () => {
                   return (
                     <tr key={index} style={{ border: "1px solid red" }}>
                       <td style={{ border: "1px solid #E6E9EC", padding: "3px" }}>
-                      {(can_update && item.cm_current_status !== "APPROVED") || user.is_superuser ?
-                        <span
-                          style={{ cursor: "pointer", color: "blue", fontSize: "11px" }}
-                          onClick={() => {
-                            set_form_data(item);
-                            // setselected_docket(true);
-                          }}
-                        >
-                          {toTitleCase(item.commodity_name)}
-                        </span>
-                        :
-                        <span  style={{ fontSize: "11px" }}>
-                           {toTitleCase(item.commodity_name)}
-                        </span> 
+                        {(can_update && item.cm_current_status !== "APPROVED") || user.is_superuser ?
+                          <span
+                            style={{ cursor: "pointer", color: "blue", fontSize: "11px" }}
+                            onClick={() => {
+                              set_form_data(item);
+                              // setselected_docket(true);
+                            }}
+                          >
+                            {toTitleCase(item.commodity_name)}
+                          </span>
+                          :
+                          <span style={{ fontSize: "11px" }}>
+                            {toTitleCase(item.commodity_name)}
+                          </span>
                         }
                       </td>
                     </tr>

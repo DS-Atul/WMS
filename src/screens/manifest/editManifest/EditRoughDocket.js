@@ -216,7 +216,7 @@ const EditRoughDocket = () => {
  
         axios 
           .put(
-            EServerAddress + `ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
+            EServerAddress + `ezewb/v1/ewbNo?gstin=${gstin_no}`,
             {
               transMode: "1",
               fromPlace: user_l_state,
