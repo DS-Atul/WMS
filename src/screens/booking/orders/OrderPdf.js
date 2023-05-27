@@ -11,6 +11,13 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
     //used for date and time
     const [booking_date, setbooking_date] = useState("");
     const [booking_date_time, setbooking_date_time] = useState("");
+    const [invoice_no, setinvoice_no] = useState([])
+    const [invoice_value, setinvoice_value] = useState([])
+    const [invoice_date, setinvoice_date] = useState([])
+    const [eway_bill, seteway_bill] = useState([])
+
+    console.log("invoice_date-----", invoice_date)
+    console.log("invoice_value-----", invoice_value)
     useLayoutEffect(() => {
         if (order.booking_at) {
             let s = new Date(order.booking_at).toLocaleString(undefined, {
@@ -19,8 +26,22 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
             let s_date = s.split(",");
             setbooking_date(s_date[0]);
             setbooking_date_time(s_date[1]);
+
+            if(order?.invice_details?.length !== 0){
+                let temp = order?.invice_details?.map((v) => v.invoice_no)
+                let temp2 = order?.invice_details?.map((v) => v.invoice_amount)
+                let temp3 = order?.invice_details?.map((v) => v.invoice_at.split('T')[0])
+                let temp4 = order?.invice_details?.map((v) => v.ewaybill_no)
+    
+                setinvoice_no(temp)
+                setinvoice_value(temp2)
+                setinvoice_date(temp3)
+                seteway_bill(temp4)
+            }
+            
         }
     }, [order.booking_at]);
+
     return (
         <div className="m-2" ref={ref} id={"invoice_div"}>
             <table
@@ -29,7 +50,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                     <tr>
                         <td colSpan={2}>
                             <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-                                <div style={{marginTop:"20px"}}> <h3>AIRWAYBILL NUMBER</h3><br></br><h2><b> {order.docket_no}</b></h2></div>
+                                <div style={{ marginTop: "20px" }}> <h3>AIRWAYBILL NUMBER</h3><br></br><h2><b> {order.docket_no}</b></h2></div>
                                 <div>
                                     <img src={order.qrcode}
                                         height="135"
@@ -61,11 +82,20 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                     </tr>
                     <tr>
                         <th rowSpan={2}>&nbsp;Address</th>
-                        <td rowSpan={2}>  {toTitleCase(order.shipper_city) +
-                            ", " +
-                            toTitleCase(order.shipper_state) +
-                            ", " +
-                            order.shipper_pincode}</td>
+                        <td rowSpan={2}>
+                            {
+                                order.shipper_address1 ?
+                                    (toTitleCase(order.shipper_address1))
+                                    :
+                                    (toTitleCase(order.shipper_city) +
+                                        ", " +
+                                        toTitleCase(order.shipper_state) +
+                                        ", " +
+                                        order.shipper_pincode)
+                            }
+
+                        </td>
+
                         <th colSpan={1}>&nbsp;Shipper,s Ref/Protocol No.</th><td colSpan={3}>--</td>
                     </tr>
                     <tr><th colSpan={1}>&nbsp;Origin</th><td colSpan={3}>
@@ -90,25 +120,73 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                         <th colSpan={1}>&nbsp;No. of Pcs</th><td colSpan={3}>{order.total_quantity}</td>
                     </tr>
                     <tr>
-                        <th rowSpan={3}>&nbsp;Address</th>
-                        <td rowSpan={3}>
-                            {toTitleCase(order.consignee_city) +
-                                ", " +
-                                toTitleCase(order.consignee_state) +
-                                ", " +
-                                order.consignee_pincode}
+                        <th rowSpan={6}>&nbsp;Address</th>
+                        <td rowSpan={6}>
+                            {
+                                order.consignee_address1 ?
+                                    (toTitleCase(order.consignee_address1))
+                                    :
+                                    (toTitleCase(order.consignee_city) +
+                                        ", " +
+                                        toTitleCase(order.consignee_state) +
+                                        ", " +
+                                        order.consignee_pincode)
+                            }
                         </td>
-                        <th colSpan={1}>&nbsp;Actual Weight.</th><td colSpan={3}>{order.total_quantity}</td>
+                        <th colSpan={1}>&nbsp;Actual Weight.</th><td colSpan={3}>{order.actual_weight}</td>
                     </tr>
                     <tr><th colSpan={1}>&nbsp;Chargeable Weight</th><td colSpan={3}>{order.chargeable_weight}</td></tr>
 
-                    <tr><th colSpan={1}>&nbsp;Customs Values</th><td colSpan={3}>--</td></tr>
+                    <tr><th colSpan={1}>&nbsp;Invoice Values</th><td colSpan={3}>
+                        {
+                            invoice_value.length !== 0 ? invoice_value.map((v) => {
+                                return <>{v}{invoice_value.at(-1) === v ? null : ", "}</>
+                            }
+                            )
+                                :
+                                '-'
+                        }
+                    </td></tr>
+                    <tr><th colSpan={1}>&nbsp;Invoice No.</th><td colSpan={3}>
+                        {
+                            invoice_no.length !== 0 ? invoice_no.map((v) => {
+                                return <>{v}{invoice_no.at(-1) === v ? null : ", "}</>
+                            }
+                            )
+                                :
+                                '-'
+                        }
+                    </td></tr>
+                    <tr><th colSpan={1}>&nbsp;Invoice Date</th><td colSpan={3}>
+                        {
+                            invoice_date.length !== 0 ? invoice_date.map((v, index) => {
+                                return (
+                                    <>
+                                        {v}
+                                        {index === invoice_date.length - 1 ? null : ", "}
+                                    </>
+                                );
+                            })
+                                :
+                                "-"
+                        }
+                    </td></tr>
+                    <tr><th colSpan={1}>&nbsp;E-way Bill No.</th><td colSpan={3}>
+                        {
+                            eway_bill.length !== 0 ? eway_bill.map((v) => {
+                                return <>{v}{eway_bill.at(-1) === v ? null : ", "}</>
+                            }
+                            )
+                                :
+                                "-"
+                        }
+                    </td></tr>
 
                     <tr>
                         <th rowSpan={2}>&nbsp;Contact No.</th><td rowSpan={2}><b>Phone:</b>--<br></br>&nbsp;</td>
                     </tr>
                     <tr>
-                        <th colSpan={1}>&nbsp;Dimensions</th><td colSpan={3}>--</td>
+                        <th colSpan={1}>&nbsp;Dimensions</th><td colSpan={3}>-</td>
                     </tr>
 
                     <tr>
@@ -344,7 +422,7 @@ const OrderPdf = () => {
            
             /*border: solid 1px black ;*/
             // margin: 5mm 5mm 5mm 5mm; /* margin you want for the content */
-        }
+        }3
       `;
                         document.head.appendChild(style);
                         // window.print();

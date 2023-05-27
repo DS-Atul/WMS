@@ -1571,7 +1571,7 @@ const AddVendor = () => {
       const response = await axios.post(
         ServerAddress + "master/check_vendor_pan/",
         {
-          pan_no: pan_no,
+          pan_no: (pan_no).toUpperCase(),
         },
         {
           headers: {

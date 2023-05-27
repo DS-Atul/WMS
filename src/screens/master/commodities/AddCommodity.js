@@ -493,6 +493,21 @@ const Add_Commodity = () => {
   }
 
   {/* For Checker Maker */ }
+    const userpermission = useSelector(
+      (state) => state.authentication.userpermission
+    );
+    const [can_update, setcan_update] = useState(false);
+  
+    useEffect(() => {
+      if (
+        userpermission.some((e) => e.sub_model === "Commodity" && e.update === true)
+      ) {
+        setcan_update(true);
+      } else {
+        setcan_update(false);
+      }
+    }, [userpermission]);
+
   const [table_data, settable_data] = useState(["", "", ""]);
   const [table_count, settable_count] = useState(0);
   const get_commodity = (value) => {
@@ -514,6 +529,7 @@ const Add_Commodity = () => {
   const [data_type, setdata_type] = useState(false);
   useLayoutEffect(() => {
     try {
+      console.log("location------", location)
       if (location.state.type) {
         setdata_type(true)
         setcommodity([])
@@ -621,6 +637,7 @@ const Add_Commodity = () => {
                   return (
                     <tr key={index} style={{ border: "1px solid red" }}>
                       <td style={{ border: "1px solid #E6E9EC", padding: "3px" }}>
+                      {(can_update && item.cm_current_status !== "APPROVED") || user.is_superuser ?
                         <span
                           style={{ cursor: "pointer", color: "blue", fontSize: "11px" }}
                           onClick={() => {
@@ -630,6 +647,11 @@ const Add_Commodity = () => {
                         >
                           {toTitleCase(item.commodity_name)}
                         </span>
+                        :
+                        <span  style={{ fontSize: "11px" }}>
+                           {toTitleCase(item.commodity_name)}
+                        </span> 
+                        }
                       </td>
                     </tr>
                   );

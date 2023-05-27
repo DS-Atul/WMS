@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 
 const CheckerDashboard = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
+  const user = useSelector((state) => state.authentication.userdetails);
   const [totalcount, setTotalcount] = useState("");
   const [pending, setPending] = useState("");
   //---------------------Api For Get User Data------------------------//
@@ -197,55 +198,61 @@ const CheckerDashboard = () => {
               class="cell"
               data-title="Quantity"
               style={{ cursor: "pointer" }}
-            >
-              {pending?.order_counts?.not_approved}{" "}
+            >            
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ? 
                 <Link
                   to={{
                     pathname: `/booking/orders/addorder`,
                   }}
                   // state={{order1: "P", type: "Order" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                  {pending?.order_counts?.not_approved}{" "}
                 </Link>
+                :
+                <>{pending?.order_counts?.not_approved}{" "}</>
+                }
               </span>
             </div>
-            <div class="cell" data-title="Date Sold">
-              {pending?.order_counts?.approved}
+            <div class="cell" data-title="Date Sold">            
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ? 
                 <Link
                   to={{
                     pathname: `/booking/orders/addorder`,
                   }}
                   // state={{order1: "A", type: "Order" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                   {pending?.order_counts?.approved}
                 </Link>
+                :
+                <>{pending?.order_counts?.approved}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.order_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/booking/orders/addorder`,
                   }}
                   // state={{order1: "", type: "Order" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                    {pending?.order_counts?.rejected}
                 </Link>
+                :
+                <>{pending?.order_counts?.rejected}</>
+                }
               </span>
             </div>
           </div>
@@ -261,33 +268,27 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.manifest_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
-                {" "}
-                <AiOutlineEllipsis />{" "}
+                {pending?.manifest_counts?.not_approved}{" "}
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.manifest_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
-                {" "}
-                <AiOutlineEllipsis />{" "}
+                 {pending?.manifest_counts?.approved}
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.manifest_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
-                {" "}
-                <AiOutlineEllipsis />{" "}
+                  {pending?.manifest_counts?.rejected}
               </span>
             </div>
           </div>
@@ -303,54 +304,60 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.runsheet_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/runsheet/changedrunsheet`,
                   }}
                   // state={{runsheetk: "P", type: "Runsheet" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                  {pending?.runsheet_counts?.not_approved}{" "}
                 </Link>
+                :
+                <>{pending?.runsheet_counts?.not_approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.runsheet_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/runsheet/changedrunsheet`,
                   }}
                   // state={{runsheetk: "A", type: "Runsheet" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.runsheet_counts?.approved}
                 </Link>
+                 :
+                 <> {pending?.runsheet_counts?.approved}</>
+                 }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.runsheet_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/runsheet/changedrunsheet`,
                   }}
                   // state={{runsheetk: "R", type: "Runsheet" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                   {pending?.runsheet_counts?.rejected}
                 </Link>
+                :
+                <>{pending?.runsheet_counts?.rejected}</>
+                }
               </span>
             </div>
           </div>
@@ -366,54 +373,60 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.issue_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/booking/docketissue/addorder`,
                   }}
                   // state={{docketr: "P", type: "Docket" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.issue_counts?.not_approved}{" "}
                 </Link>
+                :
+                <>{pending?.issue_counts?.not_approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.issue_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/booking/docketissue/addorder`,
                   }}
                   // state={{docketr: "A", type: "Docket" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                    {pending?.issue_counts?.approved}{" "}
                 </Link>
+                :
+                <> {pending?.issue_counts?.approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.runsheet_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/booking/docketissue/addorder`,
                   }}
                   // state={{docketr: "R", type: "Docket" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                  {pending?.runsheet_counts?.rejected}{" "}
                 </Link>
+                :
+                <> {pending?.runsheet_counts?.rejected}{" "}</>
+                }
               </span>
             </div>
           </div>
@@ -429,40 +442,38 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.delivery_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                   {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/runsheet/changedrunsheet`,
                   }}
                   // state={{runsheetk: "P", type: "Runsheet" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.delivery_counts?.not_approved}{" "}
                 </Link>
+                 :
+                 <> {pending?.delivery_counts?.not_approved}{" "}</>
+                 }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.delivery_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
-                {" "}
-                <AiOutlineEllipsis />{" "}
+                  {pending?.delivery_counts?.approved}
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.delivery_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
-                {" "}
-                <AiOutlineEllipsis />{" "}
+                {pending?.delivery_counts?.rejected}
               </span>
             </div>
           </div>
@@ -478,54 +489,60 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.commodity_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/commodities/addcommodity`,
                   }}
                   state={{ commodity: "P", type: "Commodity" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                  {pending?.commodity_counts?.not_approved}{" "}
                 </Link>
+                :
+                <>{pending?.commodity_counts?.not_approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.commodity_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/commodities/addcommodity`,
                   }}
                   state={{ commodity: "A", type: "Commodity" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.commodity_counts?.approved}{" "}
                 </Link>
+                :
+                <> {pending?.commodity_counts?.approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.commodity_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/commodities/addcommodity`,
                   }}
                   state={{ commodity: "R", type: "Commodity" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                {pending?.commodity_counts?.rejected}{" "}
                 </Link>
+                :
+                <>{pending?.commodity_counts?.rejected}{" "}</>
+                }
               </span>
             </div>
           </div>
@@ -541,55 +558,61 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.charge_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                   {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/charges/addcharge`,
                   }}
                   // state={{ charge: "P", type: "Charges" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                {pending?.charge_counts?.not_approved}{" "}
                 </Link>
+                :
+                <>{pending?.charge_counts?.not_approved}{" "}</>
+                }
               </span>
               
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.charge_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/charges/addcharge`,
                   }}
                   // state={{ charge: "A", type: "Charges" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                {pending?.charge_counts?.approved}{" "}
                 </Link>
+                :
+                <>{pending?.charge_counts?.approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.charge_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/charges/addcharge`,
                   }}
                   // state={{ charge: "R", type: "Charges" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                {pending?.charge_counts?.rejected}{" "}
                 </Link>
+                 :
+                 <>{pending?.charge_counts?.rejected}{" "}</>
+                 }
               </span>
             </div>
           </div>
@@ -605,54 +628,60 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.billto_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/billtos/addbillto/`,
                   }}
                   // state={{bill: "P", type: "Bill" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.billto_counts?.not_approved}{" "}
                 </Link>
+                 :
+                 <>{pending?.billto_counts?.not_approved}{" "}</>
+                 }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.billto_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/billtos/addbillto/`,
                   }}
                   // state={{bill: "A", type: "Bill" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.billto_counts?.approved}{" "}
                 </Link>
+                :
+                <>{pending?.billto_counts?.approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.billto_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/billtos/addbillto/`,
                   }}
                   // state={{bill: "R", type: "Bill" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                  {pending?.billto_counts?.rejected}{" "}
                 </Link>
+                :
+                <>{pending?.billto_counts?.rejected}{" "}</>
+                }
               </span>
             </div>
           </div>
@@ -668,54 +697,60 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.branch_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/branches/addbranch/`,
                   }}
                   // state={{branch: "A", type: "Branches" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                  {pending?.branch_counts?.not_approved}{" "}
                 </Link>
+                :
+                <>{pending?.branch_counts?.not_approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.branch_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/branches/addbranch/`,
                   }}
                   // state={{branch: "P", type: "Branches" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.branch_counts?.approved}{" "}
                 </Link>
+                :
+                <>{pending?.branch_counts?.approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.branch_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/branches/addbranch/`,
                   }}
                   // state={{branch: "R", type: "Branches" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.branch_counts?.rejected}{" "}
                 </Link>
+                :
+                <>{pending?.branch_counts?.rejected}{" "}</>
+                }
               </span>
             </div>
           </div>
@@ -731,54 +766,60 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.location_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/locations/addlocation/`,
                   }}
                   // state={{location_1: "A", type: "Location" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.location_counts?.not_approved}{" "}
                 </Link>
+                :
+                <>{pending?.location_counts?.not_approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.location_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/locations/addlocation/`,
                   }}
                   // state={{location_1: "P", type: "Location" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                {pending?.location_counts?.approved}{" "}
                 </Link>
+                :
+                <>{pending?.location_counts?.approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.location_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/locations/addlocation/`,
                   }}
                   // state={{location_1: "R", type: "Location" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.location_counts?.rejected}{" "}
                 </Link>
+                :
+                <>{pending?.location_counts?.rejected}{" "}</>
+                }
               </span>
             </div>
           </div>
@@ -794,54 +835,60 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.vendor_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/vendor/addvendor/`,
                   }}
                   // state={{vendor: "P", type: "Vendor" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                {pending?.vendor_counts?.not_approved}{" "}
                 </Link>
+                :
+                <>{pending?.vendor_counts?.not_approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.vendor_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/vendor/addvendor/`,
                   }}
                   // state={{vendor: "A", type: "Vendor" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                {pending?.vendor_counts?.approved}
                 </Link>
+                :
+                <> {pending?.vendor_counts?.approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.vendor_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/vendor/addvendor/`,
                   }}
                   // state={{vendor: "R", type: "Vendor" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                   {pending?.vendor_counts?.rejected}
                 </Link>
+                :
+                <> {pending?.vendor_counts?.rejected}{" "}</>
+                }
               </span>
             </div>
           </div>
@@ -857,54 +904,60 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              {pending?.asset_counts?.not_approved}{" "}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/add-asset`,
                   }}
                   // state={{assetr: "P", type: "Assets" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.asset_counts?.not_approved}{" "}
                 </Link>
+                :
+                <> {pending?.asset_counts?.not_approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.asset_counts?.approved}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                 {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/add-asset`,
                   }}
                   // state={{assetr: "A", type: "Assets" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.asset_counts?.approved}
                 </Link>
+                :
+                <> {pending?.asset_counts?.approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
-              {pending?.asset_counts?.rejected}
               <span
                 className="arrow"
-                style={{ color: "blue", fontSize: "22px" }}
+                style={{ color: "blue", fontSize: "15px" }}
               >
+                  {!user.is_superuser ?
                 <Link
                   to={{
                     pathname: `/master/add-asset`,
                   }}
                   // state={{assetr: "R", type: "Assets" }}
                 >
-                  {" "}
-                  <AiOutlineEllipsis />{" "}
+                 {pending?.asset_counts?.rejected}
                 </Link>
+                :
+                <> {pending?.asset_counts?.rejected}{" "}</>
+                }
               </span>
             </div>
           </div>

@@ -1097,7 +1097,7 @@ console.log("resp--------", resp)
         const response = await axios.post(
           ServerAddress + "master/check_billto_pan/",
           {
-            pan_no: pan_no,
+            pan_no: (pan_no).toUpperCase(),
           },
           {
             headers: {

@@ -368,6 +368,7 @@ const AddOrder = () => {
   const [invoice_no, setinvoice_no] = useState("");
   const [invoice_value, setinvoice_value] = useState("");
   const [e_waybill_inv, sete_waybill_inv] = useState("");
+  const [ewaybill_num, setewaybill_num] = useState([])
 
   let dimension_list2 = [
     e_waybill_inv,
@@ -927,6 +928,7 @@ const AddOrder = () => {
             setDataExist(`${ewb_no} Is Already Attached To Some Docket`)
           );
           dispatch(setAlertType("danger"));
+          setewaybill_no("")
         } else {
           get_eway_detail(ewb_no);
         }
@@ -1175,6 +1177,7 @@ const AddOrder = () => {
           barcode_no: [],
           linked_order: order_type === "New" ? null : linked_order,
           order_type: order_type.toUpperCase(),
+          ewaybill_num: ewaybill_num,
 
           cm_current_department: user.user_department,
           cm_current_status:
@@ -2472,7 +2475,6 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        alert();
         if (response.data.response !== null) {
           seteway_detail_l(response.data.response);
           seteway_confirm(true);
@@ -2497,7 +2499,6 @@ const AddOrder = () => {
   };
 
   const gefilterlocalityfrom = (pincode) => {
-    alert("===========");
     let locality_from = [];
     axios
       .get(
@@ -2529,13 +2530,13 @@ const AddOrder = () => {
   const gefilterlocalityto = (pincode) => {
     let localityto = [];
     axios
-      .get(ServerAddress + `master/filter_locality/?pincode=${pincode}`, {
+      .get(ServerAddress + `master/filter_locality/?pincode=${pincode}&p=${1}&records=${10}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
-        setto_address(response.data[0]);
-        for (let index = 0; index < response.data.length; index++) {
-          const element = [response.data[index].id, response.data[index].name];
+        setto_address(response.data.results[0]);
+        for (let index = 0; index < response.data.results.length; index++) {
+          const element = [response.data.results[index].id, response.data.results[index].name];
           localityto.push(element);
         }
         setlocslity_to_list(localityto);
@@ -3115,6 +3116,7 @@ const AddOrder = () => {
         alert(`Error Occur in Get Data ${err}`);
       });
   };
+
   useEffect(() => {
     if (
       returned_data.length !== 0 &&
@@ -3615,6 +3617,11 @@ const AddOrder = () => {
       settogpincode_c(false);
     }
   }, []);
+
+  useEffect(() => {
+    let val = row2.map((v) => [v[0]]).filter((v) => v != "")
+    setewaybill_num(val)
+  }, [e_waybill_inv])
 
   return (
     <div>
@@ -5066,12 +5073,12 @@ const AddOrder = () => {
                                 <Label className="header-child">State</Label>
                                 {isupdating ? (
                                   <Input
-                                    value={eway_detail_l.consignee_state}
+                                    value={eway_detail_l?.consignee_state}
                                     disabled
                                   />
                                 ) : (
                                   <Input
-                                    value={to_address.state_name}
+                                    value={to_address?.state_name}
                                     disabled
                                   />
                                 )}
@@ -5083,12 +5090,12 @@ const AddOrder = () => {
                                 <Label className="header-child">Pincode</Label>
                                 {isupdating ? (
                                   <Input
-                                    value={eway_detail_l.consignee_pincode}
+                                    value={eway_detail_l?.consignee_pincode}
                                     disabled
                                   />
                                 ) : (
                                   <Input
-                                    value={to_address.pincode_name}
+                                    value={to_address?.pincode_name}
                                     disabled
                                   />
                                 )}

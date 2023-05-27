@@ -1399,8 +1399,6 @@ const AddOrganization = () => {
     }
   }, [isupdating]);
 
-
-
   useEffect(() => {
     if (gst_id_list !== "") {
       let id_list = gst_ids.filter((p) => gst_id_list.indexOf(p) === -1);
@@ -1408,7 +1406,12 @@ const AddOrganization = () => {
     }
   }, [gst_id_list, gst_ids]);
 
-
+  useEffect(() => {
+    if (config_id_list !== "") {
+      let id_list = config_ids.filter((p) => config_id_list.indexOf(p) === -1);
+      setdeleted_config_id(id_list);
+    }
+  }, [config_id_list, config_ids]);
 
   useEffect(() => {
     if (isupdating) {
@@ -1547,7 +1550,7 @@ const AddOrganization = () => {
       const response = await axios.post(
         ServerAddress + "organization/check_org_pan/",
         {
-          pan_no: pan_no,
+          pan_no: (pan_no).toUpperCase(),
         },
         {
           headers: {

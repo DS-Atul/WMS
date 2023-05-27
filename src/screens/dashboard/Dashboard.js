@@ -220,7 +220,7 @@ const Dashboard = () => {
                   padding: "inherit",
                 }}
               >
-                Maker-Checker Dashboard
+               Checker/Maker Dashboard
               </div>
               <CheckerDashboard />
             </>
