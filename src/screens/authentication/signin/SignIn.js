@@ -44,7 +44,7 @@ import {
   setManifestTab,
   setRunsheetTab,
 } from "../../../store/parentFilter/ParentFilter";
-import { setEAccessToken, setBAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
+import { setEAccessToken, setBusinesssAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
 import { setShowAlert, setDataExist, setAlertType } from "../../../store/alert/Alert";
 
 const SignIn = () => {
@@ -175,7 +175,7 @@ const SignIn = () => {
       .then(function (response) {
         console.log("responseblogin", response.data);
         console.log("token", response.data.response.token);
-        dispatch(setBAccessToken(response.data.response.token));
+        dispatch(setBusinesssAccessToken(response.data.response.token));
       })
       .catch((error) => {
         dispatch(setShowAlert(true));

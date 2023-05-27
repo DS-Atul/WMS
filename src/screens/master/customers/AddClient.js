@@ -951,6 +951,7 @@ const AddClient = (props) => {
         }
       )
       .then(function (resp) {
+        console.log("update data " ,  resp.data);
         if (resp.data.status === "success") {
 
           if (documentFiles != "") {
@@ -4413,7 +4414,7 @@ const AddClient = (props) => {
         <Col lg={12}>
           <div className="mb-1 footer_btn">
             <button type="submit" className="btn btn-info m-1">
-              Save
+             {isupdating ? "Update"  : "Save" } 
             </button>
 
             <button

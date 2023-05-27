@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  e_access_token: "",
+ e_access_token: "",
   orgs: [],
-  b_access_token: "",
+  business_access_token: "",
   subscription: {},
   // userpermission: [],
 };
@@ -18,8 +18,8 @@ export const EwaySlice = createSlice({
     setOrgs: (state, action) => {
       state.orgs = action.payload;
     },
-    setBAccessToken: (state, action) => {
-      state.b_access_token = action.payload;
+    setBusinesssAccessToken: (state, action) => {
+      state.business_access_token = action.payload;
     },
     setSubrcption: (state, action) => {
       state.subscription = action.payload;
@@ -28,7 +28,7 @@ export const EwaySlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setEAccessToken, setSubrcption, setOrgs, setBAccessToken } =
+export const { setEAccessToken, setSubrcption, setOrgs, setBusinesssAccessToken } =
   EwaySlice.actions;
 
 export default EwaySlice.reducer;

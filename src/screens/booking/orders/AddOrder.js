@@ -55,7 +55,7 @@ import { CleanHands } from "@mui/icons-material";
 import DeliveryInfoDataTitle from "../../../data/booking/deliveryInfo/DeliveryInfoDataTitle";
 import DeliveryInfoDataFormat from "../../../data/booking/deliveryInfo/DeliveryInfoDataFormat";
 import {
-  setBAccessToken,
+  setBusinesssAccessToken,
   setEAccessToken,
   setOrgs,
 } from "../../../store/ewayBill/EwayBill";
@@ -68,6 +68,15 @@ const AddOrder = () => {
   const home_branch_id = useSelector(
     (state) => state.authentication.userdetails.home_branch
   );
+
+  const org_name = useSelector(
+    (state) => state.authentication.userdetails.organization
+  );
+
+  const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
+
+  const e_access_token = useSelector((state) => state.eway_bill.e_access_token);
+  const orgId = useSelector((state) => state.eway_bill.orgs[0].orgId);
 
   const user_l_state = useSelector(
     (state) => state.authentication.userdetails.branch_location_state
@@ -611,10 +620,9 @@ const AddOrder = () => {
   };
 
   useEffect(() => {
-    console.log("row4----",row4)
-    console.log("row3----",row3)
-  }, [row4,row3])
-  
+    console.log("row4----", row4);
+    console.log("row3----", row3);
+  }, [row4, row3]);
 
   //Logger PDF
 
@@ -1010,13 +1018,15 @@ const AddOrder = () => {
   //  Post Invoice Image data
 
   //Post Order Image
-  const send_order_image =async (awb) => {
-    console.log("row33333333333333",row3)
-    console.log("row44444444444444",row4)
-    let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== ""); 
-    let newrow4 = row4.filter((e) => e[1] !== "" && e[2] !== "" && e[3] !== "" && e[4] !== ""); 
+  const send_order_image = async (awb) => {
+    console.log("row33333333333333", row3);
+    console.log("row44444444444444", row4);
+    let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "");
+    let newrow4 = row4.filter(
+      (e) => e[1] !== "" && e[2] !== "" && e[3] !== "" && e[4] !== ""
+    );
     const docket_imageform = new FormData();
-    if (newrow3.length !== 0||newrow4.length !== 0) {
+    if (newrow3.length !== 0 || newrow4.length !== 0) {
       docket_imageform.append(`awb_no`, awb);
       docket_imageform.append(
         "docketcount",
@@ -1071,7 +1081,7 @@ const AddOrder = () => {
           }
         })
         .catch((err) => {
-          console.log("errrrrrrrrrrrImage",err)
+          console.log("errrrrrrrrrrrImage", err);
         });
     }
   };
@@ -2410,38 +2420,72 @@ const AddOrder = () => {
   const [locality_list, setlocality_list] = useState([]);
   const [locality_id, setlocality_id] = useState("");
   const [locality_sel, setlocality_sel] = useState("");
-  const step_1 = () => {
+
+  const [ass_token, setass_token] = useState(false);
+
+  const [euser_name, seteuser_name] = useState("");
+  const [epass, setepass] = useState("");
+  const [id_is, setid_is] = useState("");
+const [AccessToken_Modifiedat, setAccessToken_Modifiedat] = useState("");
+const [BusinessToken_Modifiedat, setBusinessToken_Modifiedat] = useState("");
+  const [time_diff, settime_diff] = useState("");
+  useEffect(() => {
+    // Calculate the time difference when AccessToken_Modifiedat changes
+    if (AccessToken_Modifiedat) {
+      var dateTime1 = new Date(AccessToken_Modifiedat);
+      var dateTime2 = new Date(); // Current date-time
+console.log("date time " , dateTime1 , dateTime2)
+      var timeDiff = Math.abs(dateTime2 - dateTime1);
+      var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
+settime_diff(diffHours);
+      console.log("time=====>>",diffHours , timeDiff); // Output: Number of hours between dateTime1 and current date-time
+    }
+  }, [AccessToken_Modifiedat]);
+
+console.log("diff hour ===", time_diff)
+
+
+const getEwayAccessToken = () => {
     axios
-      .post(
-        EServerAddress + "ezewb/v1/auth/initlogin",
+      .get(
+        ServerAddress +
+          `organization/get_eway_accesstoken/?org_name=${org_name}`,
 
         {
-          userid: "test.easywaybill@gmail.com",
-          password: "Abcd@12345",
-        },
-
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then(function (response) {
-        dispatch(setEAccessToken(response.data.response.token));
-        dispatch(setOrgs(response.data.response.orgs));
+        console.log("first get res ===>>", response.data);
+        let res_data = response.data.results[0];
+        setid_is(res_data.id);
+        seteuser_name(res_data.username);
+        setepass(res_data.password);
+        setAccessToken_Modifiedat(res_data.AccessToken_Modifiedat);
+        setBusinessToken_Modifiedat(res_data.BusinessToken_Modifiedat);
+
+        if (response.data.results[0].access_token === null) {
+          setass_token(true);
+        } else {
+          setass_token(false);
+        }
       })
       .catch((error) => {
         alert(`Error Happen while login  with eway bill ${error}`);
       });
   };
 
-  const business_token = () => {
+  console.log("id is ==>>", id_is)
+  const AddEwayAccessToken = () => {
     axios
       .post(
-        EServerAddress + "ezewb/v1/auth/completelogin",
+        EServerAddress + "ezewb/v1/auth/initlogin",
+
         {
-          token: `${e_acess_token}`,
-          orgid: "4",
+          // userid: "test.easywaybill@gmail.com",
+          // password: "Abcd@12345",
+          userid: euser_name,
+          password: epass,
         },
 
         {
@@ -2451,7 +2495,66 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        dispatch(setBAccessToken(response.data.response.token));
+        console.log("post res ===>>", response.data);
+        dispatch(setEAccessToken(response.data.response.token));
+        dispatch(setOrgs(response.data.response.orgs));
+        if(response.data.status === 1 && id_is !== "") {
+            postAssToken();
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+
+  const postAssToken = () => {
+    axios
+      .put(
+        ServerAddress + "organization/update_token/" + id_is,
+
+        {
+          access_token: e_access_token,
+          AccessToken_Modifiedat: AccessToken_Modifiedat,
+          // org_id : id_is,
+        },
+
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then(function (response) {
+        console.log("post Acc token ===>>", response);
+        // dispatch(setEAccessToken(response.data.response.token));
+        // dispatch(setOrgs(response.data.response.orgs));
+        
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+ 
+
+  const GetBusiness_token = () => {
+    axios
+      .post(
+        EServerAddress + "ezewb/v1/auth/completelogin",
+        {
+          token: `${e_access_token}`,
+          orgid: orgId,
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("Business token is ==>>", response.data);
+        dispatch(setBusinesssAccessToken(response.data.response.token));
+        if(response.data.status === 1 && id_is !== "") {
+            postBusinessToken();
+        }
       })
       .catch((error) => {
         dispatch(setShowAlert(true));
@@ -2459,6 +2562,37 @@ const AddOrder = () => {
         dispatch(setAlertType("danger"));
       });
   };
+
+  const postBusinessToken = () => {
+    axios
+      .put(
+        ServerAddress + "organization/update_token/" + id_is,
+
+        {
+          BusinessToken_Modifiedat: BusinessToken_Modifiedat,
+          business_token: business_access_token,
+        },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then(function (response) {
+        console.log("post busines token res ===>>", response.data);
+      
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+  useEffect(() => {
+
+    if(time_diff > 6) {
+      if (ass_token) {
+        AddEwayAccessToken();
+      }
+    }
+ 
+  }, [ass_token, id_is]);
 
   const [eway_detail_l, seteway_detail_l] = useState([]);
 
@@ -2547,15 +2681,17 @@ const AddOrder = () => {
   };
   //  For Step 1 Eway bill
   useLayoutEffect(() => {
-    step_1();
+    getEwayAccessToken();
   }, []);
 
   // For Step 2 Eway Bill
   useLayoutEffect(() => {
-    if (e_acess_token != "") {
-      business_token();
+    if(time_diff > 6) {
+      if (e_access_token != "") {
+        GetBusiness_token();
+      }
     }
-  }, [e_acess_token]);
+  }, [e_access_token, id_is]);
 
   // Location Info
   // Address Line 1 Shipper and consignee started
@@ -6544,7 +6680,6 @@ const AddOrder = () => {
         </div>
 
         {/* Footer Btn*/}
-
         <div className="page-control m-3">
           <Col lg={12}>
             <div className="mb-1 footer_btn">

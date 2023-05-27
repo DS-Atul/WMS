@@ -3,7 +3,7 @@
 // const ServerAddress = "http://trackingerp.ssclogistics.in/";
 const EServerAddress = "http://dev.api.easywaybill.in/";
 
-const ServerAddress = "http://192.168.1.34:8000/";
+const ServerAddress = "http://192.168.29.223:8000/";
 
 // const ServerAddress = "http://192.168.0.91:8000/";
 
