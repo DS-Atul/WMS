@@ -56,8 +56,9 @@ const getInvoiceImages = () => {
       });
   };
 const deleteOrderImg = (id) => {
+  console.log("id",id)
     axios
-      .delete(ServerAddress + `booking/delete-order-images/${id}`, {
+      .delete(ServerAddress + `booking/delete-invoice-images/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((res) => {
@@ -73,7 +74,7 @@ const deleteOrderImg = (id) => {
         }
       })
       .catch((err) => {
-        // console.log(console.log("err----delete---Order--", err))
+        console.log(console.log("err----delete---Order--", err))
       });
   };
   
