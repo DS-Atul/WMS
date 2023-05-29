@@ -1272,7 +1272,7 @@ const AddDocketIssue = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${search_billto}&data=all`,
+        `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${search_billto}&pan_no=${[]}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }

@@ -122,7 +122,7 @@ const MisDetailedReport = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_billtoes/?search=${search}&bill_to=${billTo_list}&p=${page_num}&records=${data_len}&data=all`,
+          `master/all_billtoes/?search=${search}&bill_to=${billTo_list}&p=${page_num}&records=${data_len}&pan_no=${[]}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }

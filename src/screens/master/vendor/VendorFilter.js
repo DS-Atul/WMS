@@ -19,6 +19,9 @@ function VendorFilter() {
   const [vendor_id, setvendor_id] = useState([]);
   const [page, setpage] = useState(1);
   const [vendor_search, setvendor_search] = useState("");
+  const [vendor_loaded, setvendor_loaded] = useState(false);
+  const [vendor_count, setvendor_count] = useState(1);
+  const [vendor_bottom, setvendor_bottom] = useState(100);
 
   const getvendor = () => {
     let temp = [];
@@ -33,14 +36,30 @@ function VendorFilter() {
         }
       )
       .then((response) => {
-        temp = response.data.results;
-        for (let index = 0; index < temp.length; index++) {
-          temp_list.push([temp[index].id, toTitleCase(temp[index].name)]);
+        if (response.data.next === null) {
+          setvendor_loaded(false);
+        } else {
+          setvendor_loaded(true);
         }
-        temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        setvendor_filter(temp_list);
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (page === 1) {
+            temp_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp_list = [
+              ... vendor_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setvendor_count( vendor_count + 2);
+          setvendor_filter(temp_list);
+        }
+        else {
+          setvendor_filter([])
+        }
       })
       .catch((err) => {
         alert(`Error Occur in Get ${err}`);
@@ -91,6 +110,10 @@ function VendorFilter() {
             setpage={setpage}
             setsearch_txt={setvendor_search}
             type={"backend"}
+            loaded={vendor_loaded}
+            count ={vendor_count}
+            bottom={vendor_bottom}
+            setbottom={setvendor_bottom}
           />
         </div>
 

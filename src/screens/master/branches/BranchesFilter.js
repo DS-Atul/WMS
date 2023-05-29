@@ -23,6 +23,9 @@ function BranchesFilter() {
   const [branch_name_id, setbranch_name_id] = useState([]);
   const [page, setpage] = useState(1);
   const [search_txt, setsearch_txt] = useState("");
+  const [branch_loaded, setbranch_loaded] = useState(false);
+  const [branch_count, setbranch_count] = useState(1);
+  const [branch_bottom, setbranch_bottom] = useState(100);
 
   const [vendor_filter, setvendor_filter] = useState([]);
   const [vendor, setvendor] = useState([]);
@@ -47,7 +50,9 @@ function BranchesFilter() {
 
   const getBranch = () => {
     let temp = [];
+    // console.log("the data of ........",temp)
     let temp_list = [];
+    // console.log("the temp lst data is >>>>>",temp_list)
     axios
       .get(
         ServerAddress +
@@ -61,14 +66,30 @@ function BranchesFilter() {
         }
       )
       .then((response) => {
-        temp = response.data.results;
-        for (let index = 0; index < temp.length; index++) {
-          temp_list.push([temp[index].id, toTitleCase(temp[index].name)]);
+        if (response.data.next === null) {
+          setbranch_loaded(false);
+        } else {
+          setbranch_loaded(true);
         }
-        temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        setbranch_name_filter(temp_list);
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (page === 1) {
+            temp_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp_list = [
+              ...branch_name_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setbranch_count(branch_count + 2);
+          setbranch_name_filter(temp_list);
+        }
+        else {
+          setbranch_name_filter([])
+        }
       })
       .catch((err) => {
         alert(`Error Occur in Get`, err);
@@ -214,6 +235,11 @@ function BranchesFilter() {
             setpage={setpage}
             setsearch_txt={setsearch_txt}
             type={"backend"}
+            loaded={branch_loaded}
+            count={branch_count}
+            bottom={branch_bottom}
+            setbottom={setbranch_bottom}
+
           />
         </div>
 

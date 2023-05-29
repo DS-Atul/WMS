@@ -24,11 +24,15 @@ function RunsheetFilter() {
   const [vehicle_no_id, setvehicle_no_id] = useState([]);
   const [page, setpage] = useState(1);
   const [search_txt, setsearch_txt] = useState("");
+  const [runsheet_loaded, setrunsheet_loaded] = useState(false);
+  const [runsheet_count, setrunsheet_count] = useState(1);
+  const [runsheet_bottom, setrunsheet_bottom] = useState(100);
+
 
   const getRoute = () => {
     let temp = [];
     let temp_list = [...route_filter];
-    let temp_list2 = [];
+    // let temp_list2 = [];
     axios
       .get(
         ServerAddress +
@@ -38,17 +42,34 @@ function RunsheetFilter() {
         }
       )
       .then((response) => {
-        temp = response.data.results;
-        for (let index = 0; index < temp.length; index++) {
-          temp_list.push([temp[index].id, toTitleCase(temp[index].name)]);
+        console.log(" the response ====",response)
+        if ( response.data.next === null){
+          setrunsheet_loaded(false);
+        } else {
+          setrunsheet_loaded(true);
         }
-        temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
-        v.split(",")
-      );
-        setroute_filter(temp_list);
+        temp = response.data.results;
+        if( temp.length > 0){
+          if(page === 1){
+            temp_list = response.data.results.map((v) =>[
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else{
+            temp_list = [
+              ...route_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setrunsheet_count( runsheet_count + 2);
+          setroute_filter(temp_list);
+        }
+        else {
+          setroute_filter([])
+        }
       })
       .catch((err) => {
-        alert(`Error Occur in Get`, err);
+        alert(`Error Occur in Get ${err}`);
       });
   };
 
@@ -95,6 +116,10 @@ function RunsheetFilter() {
             setpage={setpage}
             setsearch_txt={setsearch_txt}
             type={"backend"}
+            loaded={runsheet_loaded}
+            count={runsheet_count}
+            bottom={runsheet_bottom}
+            setbottom={setrunsheet_bottom}
           />
         </div>
 

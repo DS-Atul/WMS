@@ -23,10 +23,14 @@ const LocationsFilter = () => {
   const [page_search, setpage_search] = useState("")
   const [name_id, setname_id] = useState(0)
   const [page, setpage] = useState(1);
+  const [location_loaded, setlocation_loaded] = useState(false);
+  const [location_count, setlocation_count] = useState(1);
+  const [location_bottom, setlocation_bottom] = useState(100);
+
 
   const getLocationName = () => {
     let temp = [];
-    let temp_list = [...name_filter];
+    let temp_list = [];
 
     axios
       .get(
@@ -37,15 +41,31 @@ const LocationsFilter = () => {
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setlocation_loaded(false);
+        } else {
+          setlocation_loaded(true);
+        }
         temp = response.data.results;
 
-        for (let index = 0; index < temp.length; index++) {
-          temp_list.push([temp[index].id, toTitleCase(temp[index].name)]);
+        if (temp.length > 0) {
+          if (page === 1) {
+            temp_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp_list = [
+              ...name_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setlocation_count(location_count + 2);
+          setname_filter(temp_list);
         }
-        temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        setname_filter(temp_list);
+        else {
+          setname_filter([])
+        }
       })
       .catch((err) => {
         alert(`Error Occur in Get ${err}`);
@@ -94,6 +114,11 @@ const LocationsFilter = () => {
             setpage={setpage}
             setsearch_txt={setpage_search}
             type={"backend"}
+            loaded={location_loaded}
+            count={location_count}
+            bottom={location_bottom}
+            setbottom={setlocation_bottom}
+
           />
         </div>
         <div style={{ paddingTop: "10px" }}>

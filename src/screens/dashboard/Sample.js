@@ -969,7 +969,7 @@ const Sample = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_billtoes/?search=${search}&p=${page_num}&records=${data_len}`,
+          `master/all_billtoes/?search=${search}&p=${page_num}&records=${data_len}&pan_no=${[]}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }

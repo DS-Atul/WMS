@@ -24,6 +24,9 @@ const AssetsFilter = () => {
   const [branch_name_id, setbranch_name_id] = useState([]);
   const [page, setpage] = useState(1);
   const [search_txt, setsearch_txt] = useState("");
+  const [assets_loaded, setassets_loaded] = useState(false);
+  const [assets_count, setassets_count] = useState(1);
+  const [assets_bottom, setassets_bottom] = useState(100);
 
   const getBranch = () => {
     let temp = [];
@@ -41,14 +44,31 @@ const AssetsFilter = () => {
         }
       )
       .then((response) => {
-        temp = response.data.results;
-        for (let index = 0; index < temp.length; index++) {
-          temp_list.push([temp[index].id, toTitleCase(temp[index].name)]);
+        if (response.data.next === null) {
+          setassets_loaded(false);
+        } else {
+          setassets_loaded(true);
         }
-        temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        setbranch_name_filter(temp_list);
+
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (page === 1) {
+            temp_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp_list = [
+              ...branch_name_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setassets_count(assets_count + 2);
+          setbranch_name_filter(temp_list);
+        }
+        else {
+          setbranch_name_filter([])
+        }
       })
       .catch((err) => {
         alert(`Error Occur in Get`, err);
@@ -93,6 +113,10 @@ const AssetsFilter = () => {
             setpage={setpage}
             setsearch_txt={setsearch_txt}
             type={"backend"}
+            loaded={assets_loaded}
+            count={assets_count}
+            bottom={assets_bottom}
+            setbottom={setassets_bottom}
           />
         </div>
         <div style={{ paddingTop: "10px" }}>

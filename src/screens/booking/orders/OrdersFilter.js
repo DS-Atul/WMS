@@ -60,6 +60,10 @@ function OrdersFilter() {
   const [current_branch_filter, setcurrent_branch_filter] = useState([]);
   const [current_branch, setcurrent_branch] = useState([]);
   const [current_branch_id, setcurrent_branch_id] = useState([]);
+  const [current_branch_loaded, setcurrent_branch_loaded] = useState(false);
+  const [current_branch_count, setcurrent_branch_count] = useState(1);
+  const [current_branch_bottom, setcurrent_branch_bottom] = useState(100);
+
 
   const [current_status_filter, setcurrent_status_filter] = useState([
     ["1", "Shipment Delivered"],
@@ -73,6 +77,9 @@ function OrdersFilter() {
   const [created_by_filter, setcreated_by_filter] = useState([]);
   const [created_by, setcreated_by] = useState([]);
   const [created_by_id, setcreated_by_id] = useState([]);
+  const [created_loaded, setcreated_loaded] = useState(false);
+  const [created_count, setcreated_count] = useState(1);
+  const [created_bottom, setcreated_bottom] = useState(100);
   const [cold_chain_btn, setcold_chain_btn] = useState(["True", "False"]);
   const [iscompleted, setiscompleted] = useState(["True", "False"]);
 
@@ -82,7 +89,7 @@ function OrdersFilter() {
     axios
       .get(
         ServerAddress +
-          `ems/all-users/?search=${""}&p=${page_num}&records=${data_len}&home_branch=${[
+          `ems/all-users/?search=${search_txt}&p=${page_num}&records=${data_len}&home_branch=${[
             "",
           ]}&username=${[""]}`,
         {
@@ -90,15 +97,43 @@ function OrdersFilter() {
         }
       )
       .then((response) => {
-        temp = response.data.results;
-        for (let index = 0; index < temp.length; index++) {
-          temp_list.push([temp[index].id, toTitleCase(temp[index].username)]);
+        console.log("response========", )
+        if (response.data.next === null) {
+          setcreated_loaded(false);
+        } else {
+          setcreated_loaded(true);
         }
-        setcreated_by_filter(temp_list);
-      })
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (page === 1) {
+            temp_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.username),
+            ]);
+          } else {
+            temp_list = [
+              ...created_by_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.username)]),
+            ];
+          }
+          setcreated_count( created_count + 2);
+          setcreated_by_filter( temp_list);
+        }
+        else {
+          setcreated_by_filter([])
+        }
+          })
       .catch((err) => {
-        alert(`Error Occur in Get`);
+        alert(`Error Occur in Get ${err}`);
       });
+      //   for (let index = 0; index < temp.length; index++) {
+      //     temp_list.push([temp[index].id, toTitleCase(temp[index].username)]);
+      //   }
+      //   setcreated_by_filter(temp_list);
+      // })
+      // .catch((err) => {
+      //   alert(`Error Occur in Get`);
+      // });
   };
 
   // const getlocationdata = () => {
@@ -126,8 +161,8 @@ function OrdersFilter() {
   // };
 
   const getBranchdata = () => {
-    let temp2 = [];
     let temp = [];
+    let temp_list = [];
     axios
       .get(
         ServerAddress +
@@ -139,18 +174,35 @@ function OrdersFilter() {
         }
       )
       .then((response) => {
-        temp = response.data.results;
-
-        for (let index = 0; index < temp.length; index++) {
-          temp2.push([temp[index].id, toTitleCase(temp[index].name)]);
+        if (response.data.next === null) {
+          setcurrent_branch_loaded(false);
+        } else {
+          setcurrent_branch_loaded(true);
         }
-        setcurrent_branch_filter(temp2);
-      })
+        temp= response.data.results;
+        if (temp.length > 0) {
+          if (page === 1) {
+            temp_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp_list = [
+              ...current_branch_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setcurrent_branch_count(current_branch_count + 2);
+          setcurrent_branch_filter( temp_list);
+        }
+        else {
+          setcurrent_branch_filter([])
+        }
+          })
       .catch((err) => {
         alert(`Error Occur in Get ${err}`);
       });
   };
-
   const handleSubmit = () => {
     settoggle(true);
   };
@@ -160,6 +212,13 @@ function OrdersFilter() {
     // getlocationdata();
     getBranchdata();
   }, []);
+  useEffect(() => {
+    getBranchdata();
+  }, [page, search_txt]);
+
+  useEffect(() => {
+    getuserdata();
+  }, [search_txt ]);
 
   useEffect(() => {
     settoggle(false);
@@ -237,10 +296,17 @@ function OrdersFilter() {
             list_b={current_branch}
             setlist_b={setcurrent_branch}
             setlist_id={setcurrent_branch_id}
+            show_search={true}
+            get_id={false}
             page={page}
             setpage={setpage}
             setsearch_txt={setsearch_txt}
             type={"backend"}
+            loaded={current_branch_loaded}
+            count={current_branch_count}
+            bottom={current_branch_bottom}
+            setbottom={setcurrent_branch_bottom}
+
           />
         </div>
         <div>
@@ -281,6 +347,13 @@ function OrdersFilter() {
             page={page}
             setpage={setpage}
             setsearch_txt={setsearch_txt}
+            show_search={true}
+            get_id={false}
+            type={"backend"}
+            loaded={created_loaded}
+            count={created_count}
+            bottom={created_bottom}
+            setbottom={setcreated_bottom}
           />
         </div>
 

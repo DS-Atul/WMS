@@ -22,6 +22,10 @@ function RouteFilter() {
   const [route, setroute] = useState([]);
   const [route_search_item, setroute_search_item] = useState("");
   const [route_id, setroute_id] = useState([]);
+  const [route_loaded, setroute_loaded] = useState(false);
+  const [route_count, setroute_count] = useState(1);
+  const [route_bottom, setroute_bottom] = useState(100);
+
 
   const getRoute = () => {
     let temp = [];
@@ -36,14 +40,30 @@ function RouteFilter() {
         }
       )
       .then((response) => {
-        temp = response.data.results;
-        for (let index = 0; index < temp.length; index++) {
-          temp_list.push([temp[index].id, toTitleCase(temp[index].name)]);
+        if ( response.data.next === null){
+          setroute_loaded(false);
+        } else {
+          setroute_loaded(true);
         }
-        temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        setroute_filter(temp_list);
+        temp = response.data.results;
+        if( temp.length > 0){
+          if(page === 1){
+            temp_list = response.data.results.map((v) =>[
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else{
+            temp_list = [
+              ...route_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setroute_count( route_count + 2);
+          setroute_filter(temp_list);
+        }
+        else {
+          setroute_filter([])
+        }
       })
       .catch((err) => {
         alert(`Error Occur in Get ${err}`);
@@ -93,6 +113,10 @@ function RouteFilter() {
             setpage={setpage}
             setsearch_txt={setroute_search_item}
             type={"backend"}
+            loaded={route_loaded}
+            count={route_count}
+            bottom={route_bottom}
+            setbottom={setroute_bottom}
           />
         </div>
 

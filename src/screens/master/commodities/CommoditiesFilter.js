@@ -17,11 +17,13 @@ function CommoditiesFilter() {
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const [page, setpage] = useState(1);
+  const [commodity_loaded, setcommodity_loaded] = useState(false);
+  const [commodity_count, setcommodity_count] = useState(1);
+  const [commodity_bottom, setcommodity_bottom] = useState(100);
 
   const [commodity_type_filter, setcommodity_type_filter] = useState([]);
   const [commodity_type, setcommodity_type] = useState([]);
-  const [commodity_type_search_item, setcommodity_type_search_item] =
-    useState("");
+  const [commodity_type_search_item, setcommodity_type_search_item] = useState("");
   const [commodity_type_id, setcommodity_type_id] = useState([]);
 
   const [commodity_name_filter, setcommodity_name_filter] = useState([]);
@@ -41,15 +43,39 @@ function CommoditiesFilter() {
         }
       )
       .then((response) => {
-        temp = response.data.results;
-        for (let index = 0; index < temp.length; index++) {
-          temp_list.push([temp[index].id, toTitleCase(temp[index].type)]);
+        if (response.data.next === null) {
+           setcommodity_loaded(false);
+        } else {
+          setcommodity_loaded(true);
         }
-        temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        setcommodity_type_filter(temp_list);
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (page === 1) {
+            temp_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.type),
+            ]);
+          } else {
+            temp_list = [ 
+              ...setcommodity_type_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.type)]),
+            ];
+          }
+           setcommodity_count(commodity_count + 2);
+           setcommodity_type_filter(temp_list);
+        }
+        else {
+          setcommodity_type_filter([])
+        }
       })
+      //   for (let index = 0; index < temp.length; index++) {
+      //     temp_list.push([temp[index].id, toTitleCase(temp[index].type)]);
+      //   }
+      //   temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
+      //     v.split(",")
+      //   );
+      //   setcommodity_type_filter(temp_list);
+      // })
       .catch((err) => {
         alert(`Error Occur in Get ${err}`);
       });
@@ -98,6 +124,9 @@ function CommoditiesFilter() {
             setpage={setpage}
             setsearch_txt={setcommodity_type_search_item}
             type={"backend"}
+            loaded={commodity_loaded}
+            count={commodity_count}
+            setbottom={setcommodity_bottom}
           />
         </div>
         {/* <div>

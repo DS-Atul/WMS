@@ -19,6 +19,9 @@ const UserFilter = () => {
   const [branch_name_id, setbranch_name_id] = useState([]);
   const [page, setpage] = useState(1);
   const [search_txt, setsearch_txt] = useState("");
+  const [user_loaded, setuser_loaded] = useState(false);
+  const [user_count, setuser_count] = useState(1);
+  const [user_bottom, setuser_bottom] = useState(100);
   const dispatch = useDispatch();
   const gethomeBranch = () => {
     let temp = [];
@@ -33,17 +36,40 @@ const UserFilter = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
-      .then((resp) => {
-        temp = resp.data.results;
-
-        for (let index = 0; index < temp.length; index++) {
-          temp_list.push([temp[index].id, toTitleCase(temp[index].name)]);
+      .then((response) => {
+        if (response.data.next === null) {
+          setuser_loaded(false);
+        } else {
+          setuser_loaded(true);
         }
-        temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
-        console.log("temp_list====", temp_list)
-        setbranch_name_filter(temp_list);
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (page === 1) {
+            temp_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp_list = [
+              ...branch_name_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setuser_count( user_count + 2);
+          setbranch_name_filter(temp_list);
+        }
+        else {
+          setbranch_name_filter([])
+        }
+
+        // for (let index = 0; index < temp.length; index++) {
+        //   temp_list.push([temp[index].id, toTitleCase(temp[index].name)]);
+        // }
+        // temp_list = [...new Set(temp_list.map((v) => `${v}`))].map((v) =>
+        //   v.split(",")
+        // );
+        // console.log("temp_list====", temp_list)
+        // setbranch_name_filter(temp_list);
       })
       .catch((err) => {
         alert(`Error Occur in Get`);
@@ -90,6 +116,11 @@ const UserFilter = () => {
             setpage={setpage}
             setsearch_txt={setsearch_txt}
             type={"backend"}
+            loaded={user_loaded}
+            count={user_count}
+            bottom={user_bottom}
+            setbottom={setuser_bottom}
+
           />
         </div>
 

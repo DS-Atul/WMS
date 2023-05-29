@@ -12,6 +12,7 @@ import BranchesFilter from "../../../screens/master/branches/BranchesFilter";
 // import Branch_Filter from "../../pages/Master/Branches/Branch_Filter";
 // import CompanyFilter from "../../../screens/master/company/CompanyFilter";
 
+import BillTosFilter from "../../../screens/master/billtos/BillTosFilter";
 import CommoditiesFilter from "../../../screens/master/commodities/CommoditiesFilter";
 import LocationsFilter from "../../../screens/master/locations/LocationsFilter";
 import { setFilterToggle } from "../../../store/filterValue/FilterValue";
@@ -167,6 +168,8 @@ const Filter = ({ type }) => {
             <VendorFilter />
           ) : filter === "runsheet" ? (
             <RunsheetFilter />
+          ) : filter === "client" ? (
+            <BillTosFilter />
           ) : filter === "consignee_shipper" ? (
             <ShipperConsigneeFilter />
           ) : filter === "route" ? (

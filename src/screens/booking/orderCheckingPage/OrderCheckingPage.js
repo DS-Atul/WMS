@@ -987,7 +987,7 @@ const OrderCheckingPage = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_billtoes/?search=${search}&p=${page_num}&records=${data_len}&data=all`,
+          `master/all_billtoes/?search=${search}&p=${page_num}&records=${data_len}&pan_no=${[]}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
