@@ -17,6 +17,7 @@ const AllRunsheet = () => {
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
   const route = useSelector((state) => state.filtervalue.data_a);
+  const driver = useSelector((state) => state.filtervalue.data_b);
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
 
@@ -68,7 +69,7 @@ const AllRunsheet = () => {
             Data_Title={RunsheetDataTitle}
             Data_Format={RunsheetDataFormat}
             // path={toggle == false ? `manifestation/api/all-runsheets/?&search=${search}&p=${page_num}&records=${data_len}` : `manifestation/api/get_runsheetfilter_data/?route=${route}&vehicle_no=${vehicle_no}&p=${page_num}&records=${data_len}`}
-            path={`runsheet/get_runsheet/?&search=${search}&p=${page_num}&records=${data_len}&route=${route}&value=${cm_value}`}
+            path={`runsheet/get_runsheet/?&search=${search}&p=${page_num}&records=${data_len}&route=${route}&driver=${driver}&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>

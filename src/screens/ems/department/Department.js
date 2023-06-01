@@ -46,7 +46,7 @@ const Users = () => {
                   form_path="/ems/department/adddepartment"
                 />
                 {/* Filter Tool */}
-                <Filter type={"Users"} />
+                {/* <Filter type={""} /> */}
               </div>
             </div>
           </div>

@@ -43,6 +43,7 @@ import ShipperConsigneeFilter from "../../../screens/master/orderOrigins/OrderOr
 import VendorFilter from "../../../screens/master/vendor/VendorFilter";
 import RouteFilter from "../../../screens/master/route/RouteFilter";
 import AssetsFilter from "../../../screens/master/assets/AssetsFilter";
+import ManifestFilter from "../../../screens/manifest/allmanifest/ManifestFilter";
 
 const Filter = ({ type }) => {
   const dispatch = useDispatch();
@@ -168,6 +169,8 @@ const Filter = ({ type }) => {
             <VendorFilter />
           ) : filter === "runsheet" ? (
             <RunsheetFilter />
+          ) : filter === "manifest" ? (
+            <ManifestFilter />
           ) : filter === "client" ? (
             <BillTosFilter />
           ) : filter === "consignee_shipper" ? (

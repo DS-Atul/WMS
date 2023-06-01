@@ -17,6 +17,10 @@ import Navigate from "../navigateTab/Navigate";
 const Vendor = () => {
   const dispatch = useDispatch();
   const vendorname = useSelector((state) => state.filtervalue.data_a);
+  const companytype = useSelector((state) => state.filtervalue.data_b);
+  const lob = useSelector((state) => state.filtervalue.data_c);
+  const service = useSelector((state) => state.filtervalue.data_d);
+
   const user = useSelector((state) => state.authentication.userdetails);
 
   // // Additional Fields
@@ -24,6 +28,7 @@ const Vendor = () => {
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
+
 
   useEffect(() => {
     dispatch(setToggle(false));
@@ -94,7 +99,7 @@ const Vendor = () => {
             can_delete={can_delete}
             Data_Title={VendorDataTitle}
             Data_Format={VendorDataFormat}
-            path={`master/all_vendor/?search=${search}&p=${page_num}&records=${data_len}&vendor_name=${vendorname}&data=&value=${cm_value}`}
+            path={`master/all_vendor/?search=${search}&p=${page_num}&records=${data_len}&vendor_name=${vendorname}&company_type=${companytype}&lob_type=${lob}&service_type=${service}&data=&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>

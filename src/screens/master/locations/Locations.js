@@ -22,6 +22,8 @@ const Locations = () => {
   const toggle = useSelector((state) => state.parentfilter.toggle);
   const user = useSelector((state) => state.authentication.userdetails);
   const name = useSelector((state) => state.filtervalue.data_a);
+  const state_name = useSelector((state) => state.filtervalue.data_b);
+  const city_name = useSelector((state) => state.filtervalue.data_c);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
 
   // // Permissions
@@ -106,7 +108,7 @@ const Locations = () => {
             can_delete={can_delete}
             Data_Title={LocationDataTitle}
             Data_Format={LocationDataFormat}
-            path={`master/all_locality/?place_id=all&filter_by=all&search=${search}&p=${page_num}&records=${data_len}&state=&city=&name=${name}&data=&value=${cm_value}`}
+            path={`master/all_locality/?place_id=all&filter_by=all&search=${search}&p=${page_num}&records=${data_len}&state=${state_name}&city=${city_name}&name=${name}&data=&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>

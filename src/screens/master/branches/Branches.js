@@ -20,6 +20,8 @@ const Branches = () => {
   const branchname = useSelector((state) => state.filtervalue.data_a);
   const vendorid = useSelector((state) => state.filtervalue.data_b);
   const branch_cityid = useSelector((state) => state.filtervalue.data_c);
+  const branchtype = useSelector((state) => state.filtervalue.data_d);
+  const organization = useSelector((state) => state.filtervalue.data_e);
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
@@ -107,7 +109,7 @@ const Branches = () => {
             path={
               `master/all-branches/?search=${search}&p=${page_num}&records=${data_len}&branch_name=${[
                 branchname,
-              ]}&branch_city=${[branch_cityid]}&vendor=${[vendorid]}&data=&value=${cm_value}`
+              ]}&branch_city=${[branch_cityid]}&vendor=${[vendorid]}&branch_type=${branchtype}&organization=${organization}&data=&value=${cm_value}`
               // &branch_name=${branch_name}&branch_city=${branch_city_id}
             }
           />

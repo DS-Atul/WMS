@@ -34,7 +34,11 @@ const AllManifest = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
 
-  const origin = useSelector((state) => state.filtervalue.data_a);
+  const originbranch = useSelector((state) => state.filtervalue.data_b);
+  const destinationbranch = useSelector((state) => state.filtervalue.data_c);
+  const origincity  = useSelector((state) => state.filtervalue.data_d);
+  const destinationcity = useSelector((state) => state.filtervalue.data_e);
+  const weight = useSelector((state) => state.filtervalue.data_a);
 
   // // Permissions
   const user_permissions = useSelector(
@@ -83,7 +87,7 @@ const AllManifest = () => {
                 onClick={() => dispatch(setPageNumber(1))}
               >
                 {/* Filter Tool */}
-                <Filter type={"client"} />
+                <Filter type={"manifest"} />
               </div>
             </div>
             {(!user.is_superuser) &&
@@ -98,7 +102,7 @@ const AllManifest = () => {
             can_delete={can_delete}
             Data_Title={AllManifestTitle}
             Data_Format={AllManifestDataFormat}
-            path={`manifest/all_manifest/?search=${search}&p=${page_num}&records=${data_len}&origin=${origin}&value=${cm_value}`}
+            path={`manifest/all_manifest/?search=${search}&p=${page_num}&records=${data_len}&origin_branch=${originbranch}&destination_branch=${destinationbranch}&origin_city=${origincity}&destination_city=${destinationcity}&weight=${weight}&value=${cm_value}`}
             checkbox={"NO"}
           />
           <NumPagination path={"path"} />

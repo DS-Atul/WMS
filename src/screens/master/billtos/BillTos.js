@@ -16,14 +16,16 @@ import Navigate from "../navigateTab/Navigate";
 
 const Clients = () => {
   const dispatch = useDispatch();
-  const client_name = useSelector((state) => state.filtervalue.data_a);
-
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
   const panno = useSelector((state) => state.filtervalue.data_a);
+  const name_search = useSelector((state) => state.filtervalue.data_b);
+  const state_name = useSelector((state) => state.filtervalue.data_c);
+
+
   
   // // Permissions
   const user_permissions = useSelector(
@@ -103,7 +105,7 @@ const Clients = () => {
             can_delete={can_delete}
             Data_Title={BillTosDataTitles}
             Data_Format={BillTosDataFormat}
-            path={`master/all_billtoes/?search=${search}&p=${page_num}&records=${data_len}&pan_no=${panno}&data=&value=${cm_value}`}
+            path={`master/all_billtoes/?search=${search}&p=${page_num}&records=${data_len}&pan_no=${panno}&name=${name_search}&state=${state_name}&data=&value=${cm_value}`}
           />
           <NumPagination path={"client"} />
         </div>

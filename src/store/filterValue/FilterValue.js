@@ -11,6 +11,7 @@ const initialState = {
   data_g: [],
   data_h: [],
   data_i: [],
+  data_j: [],
 };
 
 export const filterValueSlice = createSlice({
@@ -47,6 +48,9 @@ export const filterValueSlice = createSlice({
     setFilterI: (state, action) => {
       state.data_i = action.payload;
     },
+    setFilterJ: (state, action) => {
+      state.data_j = action.payload;
+    },
   },
 });
 
@@ -62,6 +66,7 @@ export const {
   setFilterG,
   setFilterH,
   setFilterI,
+  setFilterJ,
 } = filterValueSlice.actions;
 
 export default filterValueSlice.reducer;

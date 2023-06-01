@@ -19,6 +19,7 @@ import {
   setFilterG,
   setFilterH,
   setFilterI,
+  setFilterJ,
 } from "../../../store/filterValue/FilterValue";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
@@ -59,7 +60,9 @@ function OrdersFilter() {
 
   const [current_branch_filter, setcurrent_branch_filter] = useState([]);
   const [current_branch, setcurrent_branch] = useState([]);
-  const [current_branch_id, setcurrent_branch_id] = useState([]);
+  const [current_branch_id, setcurrent_branch_id] = useState("");
+  const [branch_page, setbranch_page] = useState(1);
+  const [branch_page_search, setbranch_page_search] = useState("")
   const [current_branch_loaded, setcurrent_branch_loaded] = useState(false);
   const [current_branch_count, setcurrent_branch_count] = useState(1);
   const [current_branch_bottom, setcurrent_branch_bottom] = useState(100);
@@ -83,13 +86,21 @@ function OrdersFilter() {
   const [cold_chain_btn, setcold_chain_btn] = useState(["True", "False"]);
   const [iscompleted, setiscompleted] = useState(["True", "False"]);
 
+  const [order_type_filter, setorder_type_filter] = useState([
+    ["1","New"],
+    ["2","Return"],
+    ["3","Issue"],
+  ]);
+  const [order_type, setorder_type] = useState([]);
+  const [order_type_id, setorder_type_id] = useState([]);
+
   const getuserdata = () => {
     let temp = [];
     let temp_list = [];
     axios
       .get(
         ServerAddress +
-          `ems/all-users/?search=${search_txt}&p=${page_num}&records=${data_len}&home_branch=${[
+          `ems/all-users/?search=${search_txt}&p=${page}&records=${data_len}&home_branch=${[
             "",
           ]}&username=${[""]}`,
         {
@@ -166,7 +177,7 @@ function OrdersFilter() {
     axios
       .get(
         ServerAddress +
-          `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
+          `master/all-branches/?search=${branch_page_search}&p=${branch_page}&records=${10}&branch_name=${[
             "",
           ]}&branch_city=${[""]}&branch_search=${search_txt}&vendor=&data=all`,
         {
@@ -181,7 +192,7 @@ function OrdersFilter() {
         }
         temp= response.data.results;
         if (temp.length > 0) {
-          if (page === 1) {
+          if (branch_page === 1) {
             temp_list = response.data.results.map((v) => [
               v.id,
               toTitleCase(v.name),
@@ -207,18 +218,18 @@ function OrdersFilter() {
     settoggle(true);
   };
 
+  // useEffect(() => {
+  //   getuserdata();
+  //   // getlocationdata();
+  //   getBranchdata();
+  // }, []);
   useEffect(() => {
-    getuserdata();
-    // getlocationdata();
     getBranchdata();
-  }, []);
-  useEffect(() => {
-    getBranchdata();
-  }, [page, search_txt]);
+  }, [branch_page, branch_page_search]);
 
   useEffect(() => {
     getuserdata();
-  }, [search_txt ]);
+  }, [page,search_txt ]);
 
   useEffect(() => {
     settoggle(false);
@@ -238,6 +249,7 @@ function OrdersFilter() {
     // dispatch(setFilterG([order_origin_id]));
     // dispatch(setFilterH([order_destination_id]));
     dispatch(setFilterI([iscompleted]));
+    dispatch(setFilterJ([String(order_type).toUpperCase()]));
   }, [
     delivery_type,
     cold_chain_btn,
@@ -248,6 +260,7 @@ function OrdersFilter() {
     created_by_id,
     current_branch_id,
     iscompleted,
+    order_type,
   ]);
 
   return (
@@ -266,6 +279,19 @@ function OrdersFilter() {
             setlist_b={setdelivery_type}
             show_search={false}
             setlist_id={setdelivery_type_id}
+            page={page}
+            setpage={setpage}
+            setsearch_txt={setsearch_txt}
+          />
+        </div>
+        <div>
+          <Label className="filter-label">Order Type </Label>
+          <MultiSelect
+            list_a={order_type_filter}
+            list_b={order_type}
+            setlist_b={setorder_type}
+            show_search={false}
+            setlist_id={setorder_type_id}
             page={page}
             setpage={setpage}
             setsearch_txt={setsearch_txt}
@@ -293,14 +319,14 @@ function OrdersFilter() {
           <Label className="filter-label">By current branch</Label>
           <MultiSelect
             list_a={current_branch_filter}
+            setlist_a={setcurrent_branch_filter}
             list_b={current_branch}
             setlist_b={setcurrent_branch}
             setlist_id={setcurrent_branch_id}
             show_search={true}
-            get_id={false}
-            page={page}
-            setpage={setpage}
-            setsearch_txt={setsearch_txt}
+            page={branch_page}
+            setpage={setbranch_page}
+            setsearch_txt={setbranch_page_search}
             type={"backend"}
             loaded={current_branch_loaded}
             count={current_branch_count}
@@ -348,7 +374,6 @@ function OrdersFilter() {
             setpage={setpage}
             setsearch_txt={setsearch_txt}
             show_search={true}
-            get_id={false}
             type={"backend"}
             loaded={created_loaded}
             count={created_count}

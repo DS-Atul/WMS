@@ -9,6 +9,8 @@ import {
   setFilterA,
   setFilterB,
   setFilterC,
+  setFilterD,
+  setFilterE,
 } from "../../../store/filterValue/FilterValue";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
@@ -41,18 +43,32 @@ function BranchesFilter() {
   const [branch_city_id, setbranch_city_id] = useState([]);
   const [branch_city_page, setbranch_city_page] = useState(1);
   const [search_branch_city, setsearch_branch_city] = useState("");
-  const [branch_city_count, setbranch_city_count] = useState(1)
-  const [branch_city_loaded, setbranch_city_loaded] = useState(false)
-  const [branch_city_bottom, setbranch_city_bottom] = useState(100)
+  const [branch_city_count, setbranch_city_count] = useState(1);
+  const [branch_city_loaded, setbranch_city_loaded] = useState(false);
+  const [branch_city_bottom, setbranch_city_bottom] = useState(100);
+
+  const [org_filter, setorg_filter] = useState([]);
+  const [org, setorg] = useState([]);
+  const [org_id, setorg_id] = useState([]);
+  const [org_page, setorg_page] = useState(1);
+  const [search_org, setsearch_org] = useState("");
+  const [org_count, setorg_count] = useState(1);
+  const [org_loaded, setorg_loaded] = useState(false);
+  const [org_bottom, setorg_bottom] = useState(100);
+
+  const [branch_type_filter, setbranch_type_filter] = useState([
+    ["OB","Own Branch"],
+    ["VR","Vendor"],
+  ]);
+  const [branch_type, setbranch_type] = useState([]);
+  const [branch_type_id, setbranch_type_id] = useState([]);
 
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
 
   const getBranch = () => {
     let temp = [];
-    // console.log("the data of ........",temp)
     let temp_list = [];
-    // console.log("the temp lst data is >>>>>",temp_list)
     axios
       .get(
         ServerAddress +
@@ -89,6 +105,48 @@ function BranchesFilter() {
         }
         else {
           setbranch_name_filter([])
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get`, err);
+      });
+  };
+  const getOrg = () => {
+    let temp = [];
+    let temp_list = [];
+    axios
+      .get(
+        ServerAddress +
+        `organization/get_organization/?search=${search_org}&p=${org_page}&records=${10}&name=${[]}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        if (response.data.next === null) {
+        console.log("the org data is ======",response)
+          setorg_loaded(false);
+        } else {
+          setorg_loaded(true);
+        }
+        temp = response.data.results;
+        if (temp.length > 0) {
+          if (page === 1) {
+            temp_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp_list = [
+              ...branch_name_filter,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setorg_count(org_count + 2);
+          setorg_filter(temp_list);
+        }
+        else {
+          setorg_filter([])
         }
       })
       .catch((err) => {
@@ -190,6 +248,10 @@ function BranchesFilter() {
   }, [page, search_txt]);
 
   useEffect(() => {
+    getOrg();
+  }, [org_page, search_org]);
+
+  useEffect(() => {
     getVendor();
   }, [vendor_page, search_vendor]);
 
@@ -211,7 +273,9 @@ function BranchesFilter() {
     dispatch(setFilterA([String(branch_name).toUpperCase()]));
     dispatch(setFilterB([vendor_id]));
     dispatch(setFilterC([branch_city_id]));
-  }, [branch_name, vendor_id, branch_city_id]);
+    dispatch(setFilterD([String(branch_type_id).toUpperCase()]));
+    dispatch(setFilterE([String(org).toUpperCase()]));
+  }, [branch_name, vendor_id, branch_city_id,branch_type_id,org]);
 
   return (
     <>
@@ -221,6 +285,19 @@ function BranchesFilter() {
           handleSubmit();
         }}
       >
+        <div>
+          <Label className="filter-label">Branch Type </Label>
+          <MultiSelect
+            list_a={branch_type_filter}
+            list_b={branch_type}
+            setlist_b={setbranch_type}
+            show_search={false}
+            setlist_id={setbranch_type_id}
+            page={page}
+            setpage={setpage}
+            setsearch_txt={setsearch_txt}
+          />
+        </div>
         <div>
           <Label className="filter-label">Branch Name</Label>
           <MultiSelect
@@ -239,7 +316,27 @@ function BranchesFilter() {
             count={branch_count}
             bottom={branch_bottom}
             setbottom={setbranch_bottom}
+          />
+        </div>
 
+        <div>
+          <Label className="filter-label">	Organization Name </Label>
+          <MultiSelect
+            list_a={org_filter}
+            setlist_a={setorg_filter}
+            list_b={org}
+            setlist_b={setorg}
+            setlist_id={setorg_id}
+            show_search={true}
+            get_id={false}
+            page={org_page}
+            setpage={setorg_page}
+            setsearch_txt={setsearch_org}
+            type={"backend"}
+            loaded={org_loaded}
+            count={org_count}
+            bottom={org_bottom}
+            setbottom={setorg_bottom}
           />
         </div>
 

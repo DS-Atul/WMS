@@ -24,6 +24,10 @@ const Assets = () => {
   const cm_value = useSelector((state) => state.datalist.cm_filter);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const branchname = useSelector((state) => state.filtervalue.data_a);
+  const assettype = useSelector((state) => state.filtervalue.data_b);
+  const loggertype = useSelector((state) => state.filtervalue.data_c);
+  const boxtype = useSelector((state) => state.filtervalue.data_d);
+
   // // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
@@ -198,7 +202,7 @@ const Assets = () => {
             Data_Format={AssetsDataFormat}
             path={`master/get-asset-info/?search=${search}&p=${page_num}&records=${data_len}&branch_name=${[
               branchname,
-            ]}&data=&value=${cm_value}`}
+            ]}&asset_type=${assettype}&logger_type=${loggertype}&box_type=${boxtype}&data=&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>

@@ -18,8 +18,11 @@ const Users = () => {
   const page_num = useSelector((state) => state.pagination.page_number);
   const toggle = useSelector((state) => state.parentfilter.toggle);
   const home_branch = useSelector((state) => state.filtervalue.data_a);
+  const usertype = useSelector((state) => state.filtervalue.data_b);
+  const accesstype = useSelector((state) => state.filtervalue.data_c);
+  const department = useSelector((state) => state.filtervalue.data_d);
+  const is_active = useSelector((state) => state.filtervalue.data_e);
   const search = useSelector((state) => state.searchbar.search_item);
-  const username = useSelector((state) => state.filtervalue.data_b);
   const user = useSelector((state) => state.authentication.userdetails);
 
   const user_permissions = useSelector(
@@ -90,7 +93,7 @@ const Users = () => {
             can_delete={can_delete}
             Data_Title={UsersDataTitle}
             Data_Format={UsersDataFormat}
-            path={`ems/all-users/?search=${search}&p=${page_num}&records=${data_len}&home_branch=${home_branch}&username=${username}`}
+            path={`ems/all-users/?search=${search}&p=${page_num}&records=${data_len}&home_branch=${home_branch}&access_type=${accesstype}&user_type=${usertype}&is_active=${is_active}&department=${department}`}
           />
           <NumPagination path={"path"} />
         </div>

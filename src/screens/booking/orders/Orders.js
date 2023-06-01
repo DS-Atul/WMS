@@ -26,6 +26,7 @@ const Orders = () => {
   const iscompleted = useSelector((state) => state.filtervalue.data_i);
   const current_branch = useSelector((state) => state.filtervalue.data_f);
   const created_by_id = useSelector((state) => state.filtervalue.data_e);
+  const ordertype = useSelector((state) => state.filtervalue.data_j);
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
 
@@ -115,7 +116,7 @@ const Orders = () => {
            can_delete={can_delete}
             Data_Title={OrderDataTitle}
             Data_Format={OrderDataFormat}
-            path={`booking/all_orders/?search=${search}&p=${page_num}&records=${data_len}&delivery_type=${delivery_type}&cold_chain_order=${cold_chain_btn}&transportation_mode=${transportation_mode}&created_by=${created_by_id}&current_branch=${current_branch}&current_status=${current_status}&iscompleted=${iscompleted}&value=${cm_value}`}
+            path={`booking/all_orders/?search=${search}&p=${page_num}&records=${data_len}&delivery_type=${delivery_type}&cold_chain_order=${cold_chain_btn}&transportation_mode=${transportation_mode}&created_by=${created_by_id}&current_branch=${current_branch}&current_status=${current_status}&iscompleted=${iscompleted}&order_type=${ordertype}&value=${cm_value}`}
             // `bookings/api/get_orderfilter_data/?delivery_type=${delivery_type}&cold_chain_order=${cold_chain_btn}&transportation_mode=${transportation_mode}&current_status=${current_status}&created_by=${created_by_id}&current_branch=${current_branch}&order_origin=${order_origin_id}&order_destination=${order_destination_id}&iscompleted=${iscompleted}&p=${page_num}&records=${data_len}`
           />
           <NumPagination path={"path"} />
