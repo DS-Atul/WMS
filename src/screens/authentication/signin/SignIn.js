@@ -158,6 +158,7 @@ const SignIn = () => {
   };
 
   const business_token = () => {
+    alert()
     axios
       .post(
         "https://dev.api.easywaybill.in/ezewb/v1/auth/completelogin",
@@ -178,6 +179,7 @@ const SignIn = () => {
         dispatch(setBusinesssAccessToken(response.data.response.token));
       })
       .catch((error) => {
+        alert(error)
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Eway Bill Server Is Currently Down`));
         dispatch(setAlertType("danger"));
@@ -186,15 +188,16 @@ const SignIn = () => {
 
 
   useEffect(() => {
-    step_1();
+    // step_1();
   }, [])
 
 
-  useEffect(() => {
-    if (!e_acess_token) {
-      business_token();
-    }
-  }, [e_acess_token])
+  // useEffect(() => {
+  //   if (!e_acess_token) {
+  //     alert()
+  //     // business_token();
+  //   }
+  // }, [e_acess_token])
 
 
 

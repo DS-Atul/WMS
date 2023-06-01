@@ -549,25 +549,25 @@ const Add_Commodity = () => {
     setcommodity_type_id(item.commodity_type);
   }
 
-  //Eway
+  //To Save Eway data through API'S
 
-  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
+  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
 
   const post_awb = () => {
     axios
       .post(
-        ` https://dev.api.easywaybill.in/ezewb/v1/ewb/generate?gstin=05AAAAT2562R1Z3`,
+        `https://dev.api.easywaybill.in/ezewb/v1/ewb/generate?gstin=05AAAAT2562R1Z3`,
 
         {
           "supplyType": "O",
           "transactionType": "1",
           "subSupplyType": "1",
           "docType": "INV",
-          "docNo": "DHLMH6784",
-          "docDate": "27/05/2023",
+          "docNo": "DHLMH67101",
+          "docDate": "01/06/2023",
           "invTyp": "B2B",
           "fromGstin": "05AAAAT2562R1Z3",
-          "fromTrdName": "R K K AGENCIES",
+          "fromTrdName": "K R AGENCIES",
           "dispatchFromGstin": "05AAAAT2562R1Z3",
           "dispatchFromTradeNam": "Nandss entity-1",
           "fromAddr1": "f 174 ground floor saraswati loke, ; sardhana road Roorkee road uttaranchal",
@@ -576,13 +576,13 @@ const Add_Commodity = () => {
           "fromStateCode": "27",
           "fromPincode": "415124",
           "toGstin": "05AAAAU1183B2ZZ",
-          "toTrdName": "UTTARANCHALL KRISHI UTPADAN",
+          "toTrdName": "UTTARANCHALL KRISHI K R UTPADAN",
           "shipToGstin": "05AAAAU1183B2ZZ",
           "shipToTradeName": "Nina entity-2",
           "toAddr1": "LASUDIA MORI DEWAS NAKA",
           "toAddr2": "LASUDIA MORI DEWAS NAKA",
-          "toPlace": "INDORE",
-          "toPincode": "824124",
+          "toPlace": "Ichalkaranji",
+          "toPincode": "416115",
           "toStateCode": "27",
           "totInvValue": "1032",
           "totalValue": "1000",
@@ -594,7 +594,7 @@ const Add_Commodity = () => {
           "otherValue": "0",
           "transMode": "2",
           "transDistance": "196",
-          "transDocDate": "27/05/2023",
+          "transDocDate": "01/06/2023",
           "transDocNo": "124423",
           "transId": "05AAAAR1685F1ZO",
           "transName": "Ashwin Guj Trans",
@@ -650,7 +650,7 @@ const Add_Commodity = () => {
       .then(function (response) {
 
         console.log("response=======eway bill detail", response);
-  
+
 
       })
       .catch((error) => {
@@ -659,12 +659,12 @@ const Add_Commodity = () => {
   };
 
   useEffect(() => {
-    post_awb()
+    // post_awb()
   }, [])
 
   //Eway no
 
-  // 371003160104
+  // 381003162989, 341003162990, 311003162991, 381003162992, 351003162993
 
   return (
     <div style={{ display: data_type && "flex" }}>

@@ -79,6 +79,23 @@ const AddDocketStatus = () => {
   const [transit_to_branch_id, settransit_to_branch_id] = useState("");
   const [search_transit_branch, setsearch_transit_branch] = useState("");
 
+  //Vehicle
+  const [vehicle_list_s, setvehicle_list_s] = useState([])
+  const [vehicle, setvehicle] = useState("")
+  const [vehicle_id, setvehicle_id] = useState("")
+  const [vehicle_page, setvehicle_page] = useState(1)
+  const [vehicle_error, setvehicle_error] = useState(false)
+  const [vehicle_search_item, setvehicle_search_item] = useState("")
+  const [vehicle_loaded, setvehicle_loaded] = useState(false)
+  const [vehicle_count, setvehicle_count] = useState(1)
+  const [vehicle_bottom, setvehicle_bottom] = useState(103)
+
+  const [is_valid_barcode, setis_valid_barcode] = useState(false)
+  const [box_bq, setbox_bq] = useState("");
+  let dimension_list = [box_bq];
+  const [row, setrow] = useState([dimension_list]);
+  console.log("row====", row)
+
   // Image
   const [selectedFile, setSelectedFile] = useState("");
   const [photoURL, setphotoURL] = useState("");
@@ -110,7 +127,12 @@ const AddDocketStatus = () => {
         alert("Please Add Transist Status");
       } else if (status == "SHIPMENT IN TRANSIT" && transit_to_branch == null) {
         alert("Please Add Transist To Branch");
-      } else {
+      }
+      else if (status == "SHIPMENT PICKED UP" && vehicle === "") {
+        alert("111")
+      }
+      else {
+        // alert("run")
         add_order_status(values);
       }
     },
@@ -164,11 +186,11 @@ const AddDocketStatus = () => {
     axios
       .get(
         ServerAddress +
-          `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
-            "",
-          ]}&branch_city=${[""]}&vendor=${[
-            "",
-          ]}&branch_search=${search_transit_branch}&vendor=&data=all`,
+        `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
+          "",
+        ]}&branch_city=${[""]}&vendor=${[
+          "",
+        ]}&branch_search=${search_transit_branch}&vendor=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -192,6 +214,47 @@ const AddDocketStatus = () => {
         alert(`Error Occur in Get`, err);
       });
   };
+
+  const getvehicles = () => {
+    // let state_list = [...state_list_s];
+    let vehicle_list = [];
+    axios
+      .get(
+        ServerAddress +
+        `master/all_vehcile/?search=${vehicle_search_item}&place_id=all&filter_by=all&p=${vehicle_page}&records=${10}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (resp.data.next === null) {
+          setvehicle_loaded(false);
+        } else {
+          setvehicle_loaded(true);
+        }
+        if (resp.data.results.length > 0) {
+          if (vehicle_page == 1) {
+            vehicle_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.vehcile_no),
+            ]);
+          } else {
+            vehicle_list = [
+              ...vehicle_list_s,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.vehcile_no)]),
+            ];
+          }
+          setvehicle_count(vehicle_count + 2);
+          setvehicle_list_s(vehicle_list);
+        } else {
+          setvehicle_list_s([]);
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get States, ${err}`);
+      });
+  };
+
   useLayoutEffect(() => {
     getBranches();
   }, [page, search_transit_branch]);
@@ -228,6 +291,8 @@ const AddDocketStatus = () => {
           docket: location.state.order.docket
             ? [location.state.order.docket]
             : [location.state.order.id],
+          // barcode: row,
+          // vehicle_no: vehicle,
         },
         {
           headers: {
@@ -240,10 +305,9 @@ const AddDocketStatus = () => {
           // dispatch(setLastActiveOrderStatus(status));
           dispatch(
             setDataExist(
-              `New Order Status '${status}' for Order ${
-                location.state.order
-                  ? location.state.order.docket_no
-                  : location.state.order.docket_no
+              `New Order Status '${status}' for Order ${location.state.order
+                ? location.state.order.docket_no
+                : location.state.order.docket_no
               } Added Sucessfully`
             )
           );
@@ -283,8 +347,25 @@ const AddDocketStatus = () => {
   }, []);
 
   useEffect(() => {
+    if (status == "SHIPMENT PICKED UP") {
+      getvehicles()
+    }
+  }, [vehicle_page, vehicle_search_item, status]);
+
+  useEffect(() => {
     // get_transit_to_branch();
   }, []);
+
+  useEffect(() => {
+    if (status == "SHIPMENT PICKED UP") {
+      let val = location?.state?.order?.total_quantity;
+      let val_box = [];
+      for (let index = 0; index < val; index++) {
+        val_box.push([""]);
+      }
+      setrow(val_box);
+    }
+  }, [location, status]);
 
   useLayoutEffect(() => {
     setOrderStatus();
@@ -305,7 +386,7 @@ const AddDocketStatus = () => {
       setord_status(status_ul);
 
       setstatus(status_ul.status);
-    } catch {}
+    } catch { }
   }, []);
 
   useEffect(() => {
@@ -313,11 +394,29 @@ const AddDocketStatus = () => {
   }, [location.state.order.docket_no]);
   console.log("location----", location)
   useLayoutEffect(() => {
-    if (location.state.type == "add"&& status_item !== []) {
+    if (location.state.type == "add" && status_item !== []) {
       let a = status_list.filter((v) => status_item.indexOf(v) === -1);
       setstatus_list(a);
     }
   }, [status_item]);
+
+  useEffect(() => {
+    if (status == "SHIPMENT PICKED UP" && row?.length > 0) {
+      let result = row.every((item, index, array) => {
+        console.log("array-----", array)
+        if (item[0] !== " " && item[0].startsWith("SSCL") && array.findIndex((el) => el[0] === item[0]) === index) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      setis_valid_barcode(result)
+
+    }
+
+  }, [dimension_list, status])
+
 
   return OpenCrop ? (
     <Modal show={OpenCrop} onHide={handleClose}>
@@ -417,7 +516,30 @@ const AddDocketStatus = () => {
                           />
                         </div>
                       </Col>
-
+                      {status == "SHIPMENT PICKED UP" ? (
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">Vehicle *</Label>
+                            <SearchInput
+                              data_list={vehicle_list_s}
+                              setdata_list={setvehicle_list_s}
+                              data_item_s={vehicle}
+                              set_data_item_s={setvehicle}
+                              set_id={setvehicle_id}
+                              page={vehicle_page}
+                              setpage={setvehicle_page}
+                              error_message={"Please Select Any State"}
+                              error_s={vehicle_error}
+                              search_item={vehicle_search_item}
+                              setsearch_item={setvehicle_search_item}
+                              loaded={vehicle_loaded}
+                              count={vehicle_count}
+                              bottom={vehicle_bottom}
+                              setbottom={setvehicle_bottom}
+                            />
+                          </div>
+                        </Col>
+                      ) : null}
                       {status == "SHIPMENT IN TRANSIT" ? (
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
@@ -464,7 +586,7 @@ const AddDocketStatus = () => {
                               value={validation.values.remarks || ""}
                               invalid={
                                 validation.touched.remarks &&
-                                validation.errors.remarks
+                                  validation.errors.remarks
                                   ? true
                                   : false
                               }
@@ -475,7 +597,7 @@ const AddDocketStatus = () => {
                               placeholder="Enter Remarks"
                             />
                             {validation.touched.remarks &&
-                            validation.errors.remarks ? (
+                              validation.errors.remarks ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.remarks}
                               </FormFeedback>
@@ -483,6 +605,60 @@ const AddDocketStatus = () => {
                           </div>
                         </div>
                       </Col>
+                      {status == "SHIPMENT PICKED UP" ? (
+                        // <Row className="hide">
+                        // <Col lg={4} md={6} sm={6}>
+                        //   <div className="mb-2">
+                        //     <Label className="header-child">
+                        //       Add Barcode *
+                        //     </Label>
+                        //     {row.map((item, index) => {
+                        //       return (
+                        //         <Input
+                        //           min={0}
+                        //           key={index}
+                        //           value={item[0]}
+                        //           type="text"
+                        //           className="form-control-md"
+                        //           id="input"
+                        //           style={{ marginBottom: "15px" }}
+                        //           placeholder="Enter Value"
+                        //           onChange={(val) => {
+                        //             setbox_bq(val.target.value);
+                        //             item[0] = val.target.value;
+                        //           }}
+                        //         />
+                        //       );
+                        //     })}
+                        //   </div>
+                        // </Col>
+                        // </Row>
+                        <Row className="hide">
+                          <Label className="header-child">Add Barcode *</Label>
+                          <div style={{ display: "flex", flexWrap: "wrap" }}>
+                            {row.map((item, index) => (
+                              <Col lg={2} md={2} sm={4} key={index}>
+                                <div className="mb-2" style={{ marginLeft: "3px" }}>
+                                  <Input
+                                    min={0}
+                                    value={item[0]}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    style={{ marginBottom: "15px" }}
+                                    placeholder="Enter Value"
+                                    onChange={(val) => {
+                                      setbox_bq(val.target.value);
+                                      item[0] = val.target.value;
+                                    }}
+                                  />
+                                </div>
+                              </Col>
+                            ))}
+                          </div>
+                        </Row>
+                      ) : null}
+
                     </Row>
                   </Form>
                 </CardBody>
@@ -496,7 +672,7 @@ const AddDocketStatus = () => {
           <Col lg={12}>
             <div className="mb-1 footer_btn">
               <Button type="submit" className="btn btn-info m-1 cu_btn"
-              disabled={status==="SHIPMENT ORDER RECEIVED"}
+                disabled={status === "SHIPMENT ORDER RECEIVED"}
               >
                 {isupdating ? "Update" : "Save"}
               </Button>

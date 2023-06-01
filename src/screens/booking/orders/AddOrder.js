@@ -76,7 +76,7 @@ const AddOrder = () => {
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
 
   const e_access_token = useSelector((state) => state.eway_bill.e_access_token);
-  const orgId = useSelector((state) => state.eway_bill.orgs[0].orgId);
+  const orgId = useSelector((state) => state.eway_bill?.orgs[0]?.orgId);
 
   const user_l_state = useSelector(
     (state) => state.authentication.userdetails.branch_location_state
@@ -332,7 +332,7 @@ const AddOrder = () => {
 
   const [search_commodity, setsearch_commodity] = useState("");
   const e_acess_token = useSelector((state) => state.eway_bill.e_access_token);
-  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
+  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
   //Transportation cost
   const [transportation_cost, settransportation_cost] = useState("");
 
@@ -509,6 +509,7 @@ const AddOrder = () => {
     value: false,
     ind: "",
   });
+  const [img_index, setimg_index] = useState("")
 
   const [doc_result_image, setdoc_result_image] = useState([]);
 
@@ -618,11 +619,6 @@ const AddOrder = () => {
     setrow2(temp2);
     setrow4(temp4);
   };
-
-  useEffect(() => {
-    console.log("row4----", row4);
-    console.log("row3----", row3);
-  }, [row4, row3]);
 
   //Logger PDF
 
@@ -801,16 +797,16 @@ const AddOrder = () => {
   const [box_bq, setbox_bq] = useState("");
   let dimension_list8 = [box_bq];
   const [row6, setrow6] = useState([dimension_list8]);
-  useEffect(() => {
-    if (validation.values.total_quantity !== 0) {
-      let val = validation.values.total_quantity;
-      let val_box = [];
-      for (let index = 0; index < val; index++) {
-        val_box.push([""]);
-      }
-      setrow6(val_box);
-    }
-  }, [validation.values.total_quantity]);
+  // useEffect(() => {
+  //   if (validation.values.total_quantity !== 0) {
+  //     let val = validation.values.total_quantity;
+  //     let val_box = [];
+  //     for (let index = 0; index < val; index++) {
+  //       val_box.push([""]);
+  //     }
+  //     setrow6(val_box);
+  //   }
+  // }, [validation.values.total_quantity]);
 
   // Get Packages
   const get_packages = () => {
@@ -1019,8 +1015,6 @@ const AddOrder = () => {
 
   //Post Order Image
   const send_order_image = async (awb) => {
-    console.log("row33333333333333", row3)
-    console.log("row44444444444444", row4)
     let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "");
     let newrow4 = row4.filter((e) => e[1] !== "" && e[2] !== "" && e[3] !== "" && e[4] !== "");
     const docket_imageform = new FormData();
@@ -1079,7 +1073,7 @@ const AddOrder = () => {
           }
         })
         .catch((err) => {
-          console.log("errrrrrrrrrrrImage", err);
+          alert("errrrrrrrrrrrImage", err);
         });
     }
   };
@@ -1765,10 +1759,10 @@ const AddOrder = () => {
 
   // Type Of Booking
   const booking_type = () => {
-    if (cold_chain === true) {
+    if (cold_chain === true && location.state === null) {
       settype_of_booking(type_of_booking_list[0]);
-    } else {
-      settype_of_booking(type_of_booking_list[1]);
+    } else if(cold_chain !== true && location.state === null){
+      settype_of_booking("");
     }
   };
 
@@ -1966,6 +1960,7 @@ const AddOrder = () => {
   useLayoutEffect(() => {
     try {
       let order_data = location.state.order;
+      setisupdating(true);
       setshipper_n(toTitleCase(order_data.shipper));
       setorder_type(toTitleCase(order_data.order_type));
 
@@ -1981,9 +1976,9 @@ const AddOrder = () => {
       setconsignee_n(toTitleCase(order_data.consignee));
       setpincode(order_data.shipper_pincode);
       setconsginee_st(toTitleCase(order_data.consignee_state));
-      setlocality_sel_to(order_data.consignee_locality);
+      setlocality_sel_to(toTitleCase(order_data.consignee_locality));
       setlocality_id_to(order_data.consignee_location);
-      setlocality_sel(order_data.shipper_locality);
+      setlocality_sel(toTitleCase(order_data.shipper_locality));
       setlocality_id(order_data.shipper_location);
       setconsignee_address(toTitleCase(order_data.consignee_address1));
       setconsginee_c(toTitleCase(order_data.consignee_city));
@@ -2007,7 +2002,7 @@ const AddOrder = () => {
       setorder(location.state.order);
       setcurrent_status(order_data.current_status);
       setdocket_no_value(order_data.docket_no);
-      setisupdating(true);
+
       setorder_id(order_data.id);
       setdocket_no_value(order_data.docket_no);
       dispatch(setCurOrderId(order_data.id));
@@ -2065,6 +2060,18 @@ const AddOrder = () => {
       setdestinationcity_id(toTitleCase(order_data.consignee_city_id));
     } catch (error) { }
   }, []);
+
+  useEffect(() => {
+    if (location?.state?.order?.qrcode_details?.length !== 0 && location.state !== null) {
+      let data2 = []
+      data2 = location.state.order.qrcode_details.map(data => {
+        return ([data.barcode_no])
+
+      })
+      setrow6(data2)
+    }
+
+  }, [location])
 
   useEffect(() => {
     if (asset_info_selected === "With Box") {
@@ -2412,41 +2419,67 @@ const AddOrder = () => {
   //  step 1
   const [eway_confirm, seteway_confirm] = useState(false);
   const [eway_list, seteway_list] = useState([]);
+  const [eway_pincode_s, seteway_pincode_s] = useState("")
+  const [eway_pincode_c, seteway_pincode_c] = useState("")
   const [from_address, setfrom_address] = useState([]);
   const [to_address, setto_address] = useState([]);
   const [locality_list, setlocality_list] = useState([]);
   const [locality_id, setlocality_id] = useState("");
   const [locality_sel, setlocality_sel] = useState("");
+  const [locality_sel_page, setlocality_sel_page] = useState(1)
+  const [locality_sel_error, setlocality_sel_error] = useState(false)
+  const [locality_sel_search_item, setlocality_sel_search_item] = useState("")
+  const [locality_sel_loaded, setlocality_sel_loaded] = useState(false)
+  const [locality_sel_count, setlocality_sel_count] = useState(1)
+  const [locality_sel_bottom, setlocality_sel_bottom] = useState(103)
 
   const [ass_token, setass_token] = useState(false);
 
   const [euser_name, seteuser_name] = useState("");
   const [epass, setepass] = useState("");
   const [id_is, setid_is] = useState("");
-const [AccessToken_Modifiedat, setAccessToken_Modifiedat] = useState("");
-const [BusinessToken_Modifiedat, setBusinessToken_Modifiedat] = useState("");
+  const [AccessToken_Modifiedat, setAccessToken_Modifiedat] = useState("");
+  // console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
+  const [BusinessToken_Modifiedat, setBusinessToken_Modifiedat] = useState("");
+  // console.log("BusinessToken_Modifiedat-----", BusinessToken_Modifiedat)
   const [time_diff, settime_diff] = useState("");
+
   useEffect(() => {
     // Calculate the time difference when AccessToken_Modifiedat changes
     if (AccessToken_Modifiedat) {
       var dateTime1 = new Date(AccessToken_Modifiedat);
       var dateTime2 = new Date(); // Current date-time
-console.log("date time " , dateTime1 , dateTime2)
+      console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
+      console.log("date time1---- ", dateTime1)
+      console.log("date time2--- ", dateTime2)
       var timeDiff = Math.abs(dateTime2 - dateTime1);
       var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
-settime_diff(diffHours);
-      console.log("time=====>>",diffHours , timeDiff); // Output: Number of hours between dateTime1 and current date-time
+      settime_diff(diffHours);
+      console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
     }
+    // else{
+    //   const sixHoursInMilliseconds = 6 * 60 * 60 * 1000;
+    //   const currentTime = new Date().getTime();
+    //   const sixHoursFromNow = currentTime + sixHoursInMilliseconds;
+
+    //   if (currentTime > sixHoursFromNow && e_access_token != "" && BusinessToken_Modifiedat === null && AccessToken_Modifiedat === null) {
+    //     // Run your code here
+    //     GetBusiness_token();
+    //     alert("----current GetBusiness_token")
+    //   }
+    //   if (currentTime > sixHoursFromNow && BusinessToken_Modifiedat === null && AccessToken_Modifiedat === null) {
+    //     // Run your code here
+    //     AddEwayAccessToken();
+    //     alert("----- current AddEwayAccessToken")
+    //   }
+    // }
   }, [AccessToken_Modifiedat]);
 
-console.log("diff hour ===", time_diff)
-
-
-const getEwayAccessToken = () => {
+  const getEwayAccessToken = () => {
     axios
       .get(
         ServerAddress +
-          `organization/get_eway_accesstoken/?org_name=${org_name}`,
+        `organization/get_eway_accesstoken/?org_name=${org_name}`,
 
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -2454,17 +2487,29 @@ const getEwayAccessToken = () => {
       )
       .then(function (response) {
         console.log("first get res ===>>", response.data);
-        let res_data = response.data.results[0];
-        setid_is(res_data.id);
-        seteuser_name(res_data.username);
-        setepass(res_data.password);
-        setAccessToken_Modifiedat(res_data.AccessToken_Modifiedat);
-        setBusinessToken_Modifiedat(res_data.BusinessToken_Modifiedat);
+        if (response.data.results.length !== 0) {
+          let res_data = response.data.results[0];
+          setid_is(res_data.id);
+          seteuser_name(res_data.username);
+          setepass(res_data.password);
+          setAccessToken_Modifiedat(res_data.AccessToken_Modifiedat);
+          setBusinessToken_Modifiedat(res_data.BusinessToken_Modifiedat);
+          if (e_access_token === "") {
+            dispatch(setEAccessToken(res_data.access_token));
+          }
+          if (business_access_token === "") {
+            dispatch(setBusinesssAccessToken(res_data.business_token));
+          }
 
-        if (response.data.results[0].access_token === null) {
-          setass_token(true);
-        } else {
-          setass_token(false);
+          if (response.data.results[0].access_token === null) {
+            setass_token(true);
+          } else {
+            setass_token(false);
+          }
+        }
+        else {
+          dispatch(setEAccessToken(""));
+          dispatch(setBusinesssAccessToken(""));
         }
       })
       .catch((error) => {
@@ -2472,8 +2517,8 @@ const getEwayAccessToken = () => {
       });
   };
 
-  console.log("id is ==>>", id_is)
   const AddEwayAccessToken = () => {
+
     axios
       .post(
         EServerAddress + "ezewb/v1/auth/initlogin",
@@ -2492,11 +2537,20 @@ const getEwayAccessToken = () => {
         }
       )
       .then(function (response) {
-        console.log("post res ===>>", response.data);
-        dispatch(setEAccessToken(response.data.response.token));
-        dispatch(setOrgs(response.data.response.orgs));
-        if(response.data.status === 1 && id_is !== "") {
+
+        console.log("access token post res ===>>", response.data.message
+        );
+        if (response.data.message !== "Please verify account (or sign up first).") {
+          dispatch(setEAccessToken(response.data.response.token));
+          dispatch(setOrgs(response.data.response.orgs));
+          if (response.data.status === 1 && id_is !== "") {
             postAssToken();
+          }
+        }
+        else {
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Invalid Username And Password Sign Up First`));
+          dispatch(setAlertType("warning"));
         }
       })
       .catch((error) => {
@@ -2510,8 +2564,9 @@ const getEwayAccessToken = () => {
         ServerAddress + "organization/update_token/" + id_is,
 
         {
+          type: "access_token",
           access_token: e_access_token,
-          AccessToken_Modifiedat: AccessToken_Modifiedat,
+          // AccessToken_Modifiedat: AccessToken_Modifiedat,
           // org_id : id_is,
         },
 
@@ -2523,13 +2578,13 @@ const getEwayAccessToken = () => {
         console.log("post Acc token ===>>", response);
         // dispatch(setEAccessToken(response.data.response.token));
         // dispatch(setOrgs(response.data.response.orgs));
-        
+
       })
       .catch((error) => {
         alert(`Error Happen while login  with eway bill ${error}`);
       });
   };
- 
+
 
   const GetBusiness_token = () => {
     axios
@@ -2547,10 +2602,10 @@ const getEwayAccessToken = () => {
         }
       )
       .then(function (response) {
-        console.log("Business token is ==>>", response.data);
+        console.log("response-----", response.data)
         dispatch(setBusinesssAccessToken(response.data.response.token));
-        if(response.data.status === 1 && id_is !== "") {
-            postBusinessToken();
+        if (response.data.status === 1 && id_is !== "") {
+          postBusinessToken();
         }
       })
       .catch((error) => {
@@ -2566,7 +2621,8 @@ const getEwayAccessToken = () => {
         ServerAddress + "organization/update_token/" + id_is,
 
         {
-          BusinessToken_Modifiedat: BusinessToken_Modifiedat,
+          type: "business_token",
+          // BusinessToken_Modifiedat: BusinessToken_Modifiedat,
           business_token: business_access_token,
         },
         {
@@ -2575,30 +2631,27 @@ const getEwayAccessToken = () => {
       )
       .then(function (response) {
         console.log("post busines token res ===>>", response.data);
-      
+
       })
       .catch((error) => {
         alert(`Error Happen while login  with eway bill ${error}`);
       });
   };
-  useEffect(() => {
 
-    if(time_diff > 6) {
-      if (ass_token) {
-        AddEwayAccessToken();
-      }
+  useLayoutEffect(() => {
+    if (ass_token) {
+      AddEwayAccessToken();
     }
- 
-  }, [ass_token, id_is]);
+    if (time_diff >= 6) {
+      AddEwayAccessToken();
+    }
+  }, [ass_token, time_diff]);
 
   const [eway_detail_l, seteway_detail_l] = useState([]);
 
   const [eway_value, seteway_value] = useState([])
 
-
-
   const get_eway_detail = (eway, is_eway) => {
-    let inv_list = [];
     axios
       .get(
         EServerAddress + `ezewb/v1/ewb/data?ewbNo=${eway}&gstin=${gstin_no}`,
@@ -2610,8 +2663,9 @@ const getEwayAccessToken = () => {
         }
       )
       .then(function (response) {
-        if (response.data.response !== null) {
-          console.log("response----,", response)
+        console.log("response----", response)
+        if (response.data.response !== null && typeof (response.data) !== "string") {
+          // if (response.data.length > 0) {
           if (is_eway === "yes") {
             seteway_detail_l(response.data.response);
             seteway_value([...eway_value, response.data.response])
@@ -2620,11 +2674,19 @@ const getEwayAccessToken = () => {
             dispatch(setDataExist(`Eway Bill no Details Matched`));
             dispatch(setAlertType("success"));
             seteway_list(response.data.response);
-            gefilterlocalityfrom(response.data.response.fromPincode);
-            gefilterlocalityto(response.data.response.toPincode);
+            seteway_pincode_s(response.data.response.fromPincode)
+            seteway_pincode_c(response.data.response.toPincode)
           }
           else {
-            seteway_value([...eway_value, response.data.response])
+            if(eway_detail_l.fromTrdName === response.data.response.fromTrdName && eway_detail_l.toTrdName === response.data.response.toTrdName && eway_detail_l.toPincode === response.data.response.toPincode &&  eway_detail_l.fromPincode === response.data.response.fromPincode){
+              seteway_value([...eway_value, response.data.response])
+            }
+            else{
+              dispatch(setShowAlert(true));
+            dispatch(setDataExist(`Previous Eway Bill details is not same as entered Eway Bill Number`));
+            dispatch(setAlertType("warning"));
+            }
+           
           }
 
         } else {
@@ -2636,37 +2698,62 @@ const getEwayAccessToken = () => {
       .catch((error) => {
         seteway_confirm(false);
         dispatch(setShowAlert(true));
-        dispatch(setDataExist(`Entered EwayBill No Is Wrong`));
+        dispatch(setDataExist(`Entered EwayBill No Is Wrong Or You Are Unauthorized`));
         dispatch(setAlertType("danger"));
       });
   };
-  console.log("eway_value========", eway_value)
 
   const gefilterlocalityfrom = (pincode) => {
     let locality_from = [];
     axios
       .get(
         ServerAddress +
-        `master/filter_locality/?pincode=${pincode}&p=${1}&records=${10}&locality_search=${""}`,
+        `master/filter_locality/?pincode=${pincode}&p=${locality_sel_page}&records=${10}&locality_search=${locality_sel_search_item}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
-      .then((response) => {
-        if (response.data.results.length !== 0) {
-          setfrom_address(response.data.results[0]);
-          for (let index = 0; index < response.data.results.length; index++) {
-            const element = [
-              response.data.results[index].id,
-              response.data.results[index].name,
+      .then((resp) => {
+        if (resp.data.next === null) {
+          setlocality_sel_loaded(false);
+        } else {
+          setlocality_sel_loaded(true);
+        }
+        if (resp.data.results.length !== 0) {
+          setfrom_address(resp.data.results[0]);
+          if (locality_sel_page == 1) {
+            locality_from = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            locality_from = [
+              ...locality_list,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
             ];
-            locality_from.push(element);
           }
+          setlocality_sel_count(locality_sel_count + 2);
           setlocality_list(locality_from);
+
         }
         else {
-          alert("not")
+          setlocality_list([])
         }
+
+        // if (response.data.results.length !== 0) {
+        //   setfrom_address(response.data.results[0]);
+        //   for (let index = 0; index < response.data.results.length; index++) {
+        //     const element = [
+        //       response.data.results[index].id,
+        //       response.data.results[index].name,
+        //     ];
+        //     locality_from.push(element);
+        //   }
+        //   setlocality_list(locality_from);
+        // }
+        // else {
+        //   alert("not")
+        // }
 
       })
       .catch((err) => {
@@ -2677,19 +2764,44 @@ const getEwayAccessToken = () => {
   const [locslity_to_list, setlocslity_to_list] = useState([]);
   const [locality_sel_to, setlocality_sel_to] = useState("");
   const [locality_id_to, setlocality_id_to] = useState("");
+  const [locality_sel_to_page, setlocality_sel_to_page] = useState(1)
+  const [locality_sel_to_error, setlocality_sel_to_error] = useState(false)
+  const [locality_sel_to_search_item, setlocality_sel_to_search_item] = useState("")
+  const [locality_sel_to_loaded, setlocality_sel_to_loaded] = useState(false)
+  const [locality_sel_to_count, setlocality_sel_to_count] = useState(1)
+  const [locality_sel_to_bottom, setlocality_sel_to_bottom] = useState(103)
+
   const gefilterlocalityto = (pincode) => {
     let localityto = [];
     axios
-      .get(ServerAddress + `master/filter_locality/?pincode=${pincode}&p=${1}&records=${10}`, {
+      .get(ServerAddress + `master/filter_locality/?pincode=${pincode}&p=${locality_sel_to_page}&records=${10}&locality_search=${locality_sel_to_search_item}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
-      .then((response) => {
-        setto_address(response.data.results[0]);
-        for (let index = 0; index < response.data.results.length; index++) {
-          const element = [response.data.results[index].id, response.data.results[index].name];
-          localityto.push(element);
+      .then((resp) => {
+        if (resp.data.results.length > 0) {
+          setto_address(resp.data.results[0]);
+          if (resp.data.next === null) {
+            setlocality_sel_to_loaded(false);
+          } else {
+            setlocality_sel_to_loaded(true);
+          }
+          if (locality_sel_to_page == 1) {
+            localityto = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            localityto = [
+              ...state_list_c,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setlocality_sel_to_count(locality_sel_to_count + 2);
+          setlocslity_to_list(localityto);
         }
-        setlocslity_to_list(localityto);
+        else {
+          setlocslity_to_list([])
+        }
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
@@ -2702,12 +2814,13 @@ const getEwayAccessToken = () => {
 
   // For Step 2 Eway Bill
   useLayoutEffect(() => {
-    if(time_diff > 6) {
-      if (e_access_token != "") {
-        GetBusiness_token();
-      }
+    if (e_access_token != "" && ass_token && orgId) {
+      GetBusiness_token();
     }
-  }, [e_access_token, id_is]);
+    if (time_diff >= 6 && orgId) {
+      GetBusiness_token();
+    }
+  }, [e_access_token, ass_token, time_diff]);
 
   // Location Info
   // Address Line 1 Shipper and consignee started
@@ -3046,6 +3159,19 @@ const getEwayAccessToken = () => {
       });
   };
 
+
+  useEffect(() => {
+    if (eway_pincode_s !== "") {
+      gefilterlocalityfrom(eway_pincode_s);
+    }
+  }, [eway_pincode_s, locality_sel_page, locality_sel_search_item])
+
+  useEffect(() => {
+    if (eway_pincode_c !== "") {
+      gefilterlocalityto(eway_pincode_c);
+    }
+  }, [eway_pincode_c, locality_sel_to_page, locality_sel_to_search_item])
+
   useLayoutEffect(() => {
     if (state_id !== 0) {
       setcity_page(1);
@@ -3161,9 +3287,13 @@ const getEwayAccessToken = () => {
               ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
             ];
           }
+          setstatec_count(statec_count + 2);
+          setstate_list_c(state_list);
         }
-        setstatec_count(statec_count + 2);
-        setstate_list_c(state_list);
+        else {
+          setstate_list_c([])
+        }
+
       })
       .catch((err) => {
         alert(`Error Occur in Get States, ${err}`);
@@ -3222,7 +3352,7 @@ const getEwayAccessToken = () => {
     if (delivery_type === "INTERNATIONAL") {
       settransport_mode_data_list(["Cargo", "Courier"]);
     } else {
-      settransport_mode_data_list(["Air", "Surface", "Train"]);
+      settransport_mode_data_list(["Air", "Surface", "By Road", "Train"]);
     }
   }, [delivery_type]);
 
@@ -3365,7 +3495,7 @@ const getEwayAccessToken = () => {
       // setisupdating(true);
       setorder_id("");
       setdocket_no_value("");
-      settype_of_booking(type_of_booking_list[1]);
+      settype_of_booking("");
 
       // setdelivery_mode(returned_data[0].delivery_mode);
       settransportation_cost("");
@@ -3435,7 +3565,7 @@ const getEwayAccessToken = () => {
     });
   };
   useEffect(() => {
-    if (eway_detail_l.length !== 0) {
+    if (eway_detail_l.length !== 0 && eway_detail_l) {
       const dateStr = eway_detail_l.docDate ?? "";
       // const [day, month, year] = dateStr.split("-");
       const [day, month, year] = dateStr?.split("-") ?? ["", "", ""];
@@ -3459,70 +3589,42 @@ const getEwayAccessToken = () => {
 
   useEffect(() => {
     let temp_list = [];
-  for (let index = 0; index < eway_value.length; index++) {
-    const element = eway_value[index];
-    console.log("element--------", element)
-    const dateStr = element.docDate ?? "";
-      // const [day, month, year] = dateStr.split("-");
-      const [day, month, year] = dateStr?.split("-") ?? ["", "", ""];
-      const isoDate = `${year}-${(month || "").padStart(2, "0")}-${(
-        day || ""
-      ).padStart(2, "0")}`;
-    temp_list.push([
-      element.ewbNo,
-      isoDate,
-      element.docNo,
-      element.totInvValue,
-      "",
-    ]);
-    setrow2(temp_list);
-    
+ 
+    if (eway_value && eway_value.length > 0) {
+      const uniqueValues = eway_value.filter(
+        (value, index, self) => index === self.findIndex(obj => obj.ewbNo === value.ewbNo)
+      );
+
+      for (let index = 0; index < uniqueValues.length; index++) {
+        const element = uniqueValues[index];
+        const dateStr = element.docDate ?? "";
+        const [day, month, year] = dateStr?.split("-") ?? ["", "", ""];
+        const isoDate = `${year}-${(month || "").padStart(2, "0")}-${(day || "").padStart(2, "0")}`;
+        temp_list.push([
+          String(element.ewbNo),
+          String(isoDate),
+          String(element.docNo),
+          String(element.totInvValue),
+          ""
+        ]);
+       
+      }
+      setrow2(temp_list);
+     
+    }
+  }, [eway_value]);
+
+
+  useEffect(() => {
+    let temp_list2 = [];
+    if (eway_value && eway_value.length > 0) {
+    for (let index = 0; index < row2.length; index++) {
+      const element = row2[index];
+      temp_list2.push([element[0],element[1],element[2],element[3],''])
+    }
+    setrow4(temp_list2);
   }
-  }, [eway_value])
-  
-
-  // const update_ewayBill = (dkt_no, eway_no,date) => {
-
-  //   let inv_list = [];
-  //   console.log("dkt_nooooooooooooooo",dkt_no);
-  //   console.log("eway_nooooooooooo",eway_no)
-  //   axios
-  //     .put(
-  //       EServerAddress +`ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
-  //       {
-
-  //         "transMode": "3",
-  //         "fromPlace": user_l_state,
-  //         "fromState": user_l_statecode,
-  //         "transDocNo": dkt_no,
-  //         "transDocDate": null,
-  //         "vehicleNo": null,
-  //         "reasonCode": "1",
-  //         "reasonRem": "Assigning  Trans Doc no",
-  //         "userGstin": "05AAAAT2562R1Z3",
-  //         "ewbNo": eway_no
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${b_acess_token}`,
-  //         },
-  //       }
-  //     )
-  //     .then(function (response) {
-  //       console.log("response(((((9999999999", response);
-  //       dispatch(setToggle(true));
-  //       dispatch(setShowAlert(true));
-  //       dispatch(
-  //         setDataExist(`${eway_no} Sucessfully Attached To Docket No =>${dkt_no}`)
-  //       )
-  //       dispatch(setAlertType("success"));
-
-  //     })
-  //     .catch((error) => {
-
-  //     });
-  // };
+  }, [row2])
 
   useEffect(() => {
     if (client !== "") {
@@ -3794,7 +3896,7 @@ const getEwayAccessToken = () => {
   }, [e_waybill_inv, row2])
 
   useEffect(() => {
-    if (e_waybill_inv.length === 12 && booking_through) {
+    if (e_waybill_inv.length === 12 && booking_through && b_acess_token) {
       get_eway_detail(e_waybill_inv, "no")
     }
     else if (e_waybill_inv.length > 12) {
@@ -3804,7 +3906,7 @@ const getEwayAccessToken = () => {
       );
       dispatch(setAlertType("warning"));
     }
-  }, [e_waybill_inv])
+  }, [e_waybill_inv, b_acess_token])
 
 
   return (
@@ -5088,9 +5190,9 @@ const getEwayAccessToken = () => {
                           <div className="mb-3">
                             <Label className="header-child">Shipper *</Label>
                             {isupdating ? (
-                              <Input value={eway_detail_l.shipper} disabled />
+                              <Input value={toTitleCase(eway_detail_l.shipper)} disabled id="input"/>
                             ) : (
-                              <Input value={eway_list?.fromTrdName} disabled />
+                              <Input value={toTitleCase(eway_list?.fromTrdName)} disabled id="input"/>
                             )}
                           </div>
                         </Col>
@@ -5102,7 +5204,7 @@ const getEwayAccessToken = () => {
 
                               {isupdating ? (
                                 <Input
-                                  value={eway_detail_l.shipper_state}
+                                  value={toTitleCase(eway_detail_l.shipper_state)}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -5110,7 +5212,7 @@ const getEwayAccessToken = () => {
                                 />
                               ) : (
                                 <Input
-                                  value={from_address.state_name}
+                                  value={toTitleCase(from_address.state_name)}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -5127,6 +5229,7 @@ const getEwayAccessToken = () => {
                                 <Input
                                   value={eway_detail_l.shipper_pincode}
                                   disabled
+                                  id="input"
                                 />
                               ) : (
                                 <Input
@@ -5146,14 +5249,22 @@ const getEwayAccessToken = () => {
                                 Locality shipper
                               </Label>
 
-                              <NSearchInput
+                              <SearchInput
                                 data_list={locality_list}
+                                setdata_list={setlocality_list}
                                 data_item_s={locality_sel}
                                 set_data_item_s={setlocality_sel}
                                 set_id={setlocality_id}
-                                show_search={false}
+                                page={locality_sel_page}
+                                setpage={setlocality_sel_page}
                                 error_message={"Please Select Locality Type"}
-                              // error_s={branch_type_error}
+                                error_s={locality_sel_error}
+                                search_item={locality_sel_search_item}
+                                setsearch_item={setlocality_sel_search_item}
+                                loaded={locality_sel_loaded}
+                                count={locality_sel_count}
+                                bottom={locality_sel_bottom}
+                                setbottom={setlocality_sel_bottom}
                               />
                             </div>
                           </Col>
@@ -5174,7 +5285,7 @@ const getEwayAccessToken = () => {
                                       borderColor: "#aaa",
                                     }}
                                   >
-                                    {eway_detail_l.shipper_address1}
+                                    {toTitleCase(eway_detail_l.shipper_address1)}
                                   </div>
                                 ) : (
                                   <div
@@ -5186,9 +5297,9 @@ const getEwayAccessToken = () => {
                                       borderColor: "#aaa",
                                     }}
                                   >
-                                    {eway_list.fromAddr1 +
+                                    {toTitleCase(eway_list.fromAddr1) +
                                       "," +
-                                      eway_list.fromAddr2}
+                                      toTitleCase(eway_list.fromAddr2)}
                                   </div>
                                 )
                                 // {/* <Input
@@ -5243,9 +5354,9 @@ const getEwayAccessToken = () => {
                           <div className="mb-3">
                             <Label className="header-child">Consignee *</Label>
                             {isupdating ? (
-                              <Input value={eway_detail_l.consignee} disabled />
+                              <Input value={toTitleCase(eway_detail_l.consignee)} disabled id="input"/>
                             ) : (
-                              <Input value={eway_list?.toTrdName} disabled />
+                              <Input value={toTitleCase(eway_list?.toTrdName)} disabled id="input"/>
                             )}
                           </div>
                         </Col>
@@ -5257,13 +5368,15 @@ const getEwayAccessToken = () => {
                                 <Label className="header-child">State</Label>
                                 {isupdating ? (
                                   <Input
-                                    value={eway_detail_l?.consignee_state}
+                                    value={toTitleCase(eway_detail_l?.consignee_state)}
                                     disabled
+                                    id="input"
                                   />
                                 ) : (
                                   <Input
-                                    value={to_address?.state_name}
+                                    value={toTitleCase(to_address?.state_name)}
                                     disabled
+                                    id="input"
                                   />
                                 )}
                               </div>
@@ -5276,11 +5389,13 @@ const getEwayAccessToken = () => {
                                   <Input
                                     value={eway_detail_l?.consignee_pincode}
                                     disabled
+                                    id="input"
                                   />
                                 ) : (
                                   <Input
                                     value={to_address?.pincode_name}
                                     disabled
+                                    id="input"
                                   />
                                 )}
                               </div>
@@ -5289,14 +5404,23 @@ const getEwayAccessToken = () => {
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
                                 <Label className="header-child">Locality</Label>
-                                <NSearchInput
+                              
+                                <SearchInput
                                   data_list={locslity_to_list}
+                                  setdata_list={setlocslity_to_list}
                                   data_item_s={locality_sel_to}
                                   set_data_item_s={setlocality_sel_to}
                                   set_id={setlocality_id_to}
-                                  show_search={false}
+                                  page={locality_sel_to_page}
+                                  setpage={setlocality_sel_to_page}
                                   error_message={"Please Select Locality Type"}
-                                // error_s={branch_type_error}
+                                  error_s={locality_sel_to_error}
+                                  search_item={locality_sel_to_search_item}
+                                  setsearch_item={setlocality_sel_to_search_item}
+                                  loaded={locality_sel_to_loaded}
+                                  count={locality_sel_to_count}
+                                  bottom={locality_sel_to_bottom}
+                                  setbottom={setlocality_sel_to_bottom}
                                 />
                               </div>
                             </Col>
@@ -5307,10 +5431,22 @@ const getEwayAccessToken = () => {
                                   Address Line
                                 </Label>
                                 {isupdating ? (
-                                  <Input
-                                    value={eway_detail_l.consignee_address1}
-                                    disabled
-                                  />
+                                  // <Input
+                                  //   value={toTitleCase(eway_detail_l.consignee_address1)}
+                                  //   disabled
+                                  //   id="input"
+                                  // />
+                                  <div
+                                  style={{
+                                    border: "1px solid",
+                                    padding: "8px",
+                                    backgroundColor: "#eff2f7",
+                                    borderRadius: 5,
+                                    borderColor: "#aaa",
+                                  }}
+                                >
+                                  {toTitleCase(eway_detail_l.consignee_address1)}
+                                </div>
                                 ) : (
                                   // <Input value={eway_list?.toAddr1} disabled />
                                   <div
@@ -5322,9 +5458,9 @@ const getEwayAccessToken = () => {
                                       borderColor: "#aaa",
                                     }}
                                   >
-                                    {eway_list.toAddr1 +
+                                    {toTitleCase(eway_list.toAddr1) +
                                       "," +
-                                      eway_list.toAddr2}
+                                      toTitleCase(eway_list.toAddr2)}
                                   </div>
                                 )}
                               </div>
@@ -5769,8 +5905,8 @@ const getEwayAccessToken = () => {
                       }}
                       className="btn1 footer-text"
                       onClick={() => {
-                        // setorder_active_btn("first");
-                        // updateCurrentStep(1);
+                        setorder_active_btn("first");
+                        updateCurrentStep(1);
                       }}
                     >
                       {/* Packages */}
@@ -5785,8 +5921,8 @@ const getEwayAccessToken = () => {
                       }}
                       className="btn2 footer-text"
                       onClick={() => {
-                        // setorder_active_btn("second");
-                        // updateCurrentStep(2);
+                        setorder_active_btn("second");
+                        updateCurrentStep(2);
                       }}
                     >
                       Order Images
@@ -5798,8 +5934,8 @@ const getEwayAccessToken = () => {
                       }}
                       className="btn3 footer-text"
                       onClick={() => {
-                        // setorder_active_btn("third");
-                        // updateCurrentStep(3);
+                        setorder_active_btn("third");
+                        updateCurrentStep(3);
                       }}
                     >
                       Invoices
@@ -5812,14 +5948,14 @@ const getEwayAccessToken = () => {
                         }}
                         className="btn3 footer-text"
                         onClick={() => {
-                          // setorder_active_btn("forth");
-                          // updateCurrentStep(3);
+                          setorder_active_btn("forth");
+                          updateCurrentStep(3);
                         }}
                       >
                         Logger Report
                       </div>
                     )}
-                    {validation.values.total_quantity > 0 && (
+                    {isupdating && validation.values.total_quantity > 0 && (
                       <div
                         style={{
                           background:
@@ -5827,8 +5963,8 @@ const getEwayAccessToken = () => {
                         }}
                         className="btn3 footer-text"
                         onClick={() => {
-                          // setorder_active_btn("fifth");
-                          // updateCurrentStep(3);
+                          setorder_active_btn("fifth");
+                          updateCurrentStep(3);
                         }}
                       >
                         Box Barcode
@@ -6275,14 +6411,17 @@ const getEwayAccessToken = () => {
                                   ind: "",
                                 });
                               } else {
-                                row4[row4.length - 1][4] = val;
+                                // row4[row4.length - 1][4] = val;
+                                row4[img_index][4] = val;
                               }
                             }}
                             result_image={(val) => {
                               if (showModalInvoice.ind !== "") {
                                 row2[showModalInvoice.ind][4] = val;
+                                // row2[img_index][4] = val;
                               } else {
-                                row2[row2.length - 1][4] = val;
+                                // row2[row2.length - 1][4] = val;
+                                row2[img_index][4] = val;
                                 setinvoice_img(val);
                               }
                             }}
@@ -6323,7 +6462,7 @@ const getEwayAccessToken = () => {
                                     //   // row4[index2][0] = val.target.value;
                                     // }
                                   }}
-                                  disabled={eway_confirm && index2 == 0}
+                                // disabled={eway_confirm && index2 == 0}
                                 />
                               </div>
                             ))}
@@ -6350,7 +6489,7 @@ const getEwayAccessToken = () => {
                                     item2[1] = event.target.value;
                                     row4[index2][1] = event.target.value;
                                   }}
-                                  disabled={eway_confirm && index2 == 0}
+                                // disabled={eway_confirm && index2 == 0}
                                 />
                               </div>
                             ))}
@@ -6411,7 +6550,7 @@ const getEwayAccessToken = () => {
                                     item2[3] = val.target.value;
                                     row4[index2][3] = val.target.value;
                                   }}
-                                  disabled={eway_confirm && index2 == 0}
+                                // disabled={eway_confirm && index2 == 0}
                                 />
                               </div>
                             ))}
@@ -6432,7 +6571,7 @@ const getEwayAccessToken = () => {
                                         height: "110px",
                                         width: "110px",
                                         borderRadius: "10px",
-                                        // padding: 20,
+                                        paddingBottom: "5px",
                                       }}
                                       onClick={() => {
                                         setshowModalInvoice({
@@ -6460,6 +6599,7 @@ const getEwayAccessToken = () => {
                                           height: 31,
                                         }}
                                         onClick={() => {
+                                          setimg_index(index1)
                                           setshowModalInvoice({
                                             ...showModalInvoice,
                                             value: true,
@@ -6557,22 +6697,22 @@ const getEwayAccessToken = () => {
                           <span
                             className="link-text"
                             onClick={() => {
-                              if (
-                                // row2[row2.length - 1][0] &&
-                                row2[row2.length - 1][1] &&
-                                row2[row2.length - 1][2] &&
-                                row2[row2.length - 1][3] &&
-                                row2[row2.length - 1][4]
-                              ) {
-                                setshowModalInvoice({
-                                  ...showModalInvoice,
-                                  value: false,
-                                  ind: "",
-                                });
-                                addinvoice();
-                              } else {
-                                alert("Invoice is required");
-                              }
+                              // if (
+                              //   // row2[row2.length - 1][0] &&
+                              //   row2[row2.length - 1][1] &&
+                              //   row2[row2.length - 1][2] &&
+                              //   row2[row2.length - 1][3] &&
+                              //   row2[row2.length - 1][4]
+                              // ) {
+                              setshowModalInvoice({
+                                ...showModalInvoice,
+                                value: false,
+                                ind: "",
+                              });
+                              addinvoice();
+                              // } else {
+                              //   alert("Invoice is required");
+                              // }
                             }}
                           >
                             <IconContext.Provider
@@ -6696,38 +6836,37 @@ const getEwayAccessToken = () => {
                     ""
                   )}
 
-                  {order_active_btn === "fifth" &&
-                    validation.values.total_quantity > 0 && (
-                      <>
-                        <Row className="hide">
-                          <Col lg={4} md={6} sm={6}>
-                            <div className="mb-2">
-                              <Label className="header-child">
+                  {isupdating && order_active_btn === "fifth" && (
+                    <>
+                      <Row className="hide">
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            {/* <Label className="header-child">
                                 Enter Value*
-                              </Label>
-                              {row6.map((item, index) => {
-                                return (
-                                  <Input
-                                    min={0}
-                                    key={index}
-                                    value={item[0]}
-                                    type="text"
-                                    className="form-control-md"
-                                    id="input"
-                                    style={{ marginBottom: "15px" }}
-                                    placeholder="Enter Value"
-                                    onChange={(val) => {
-                                      setbox_bq(val.target.value);
-                                      item[0] = val.target.value;
-                                    }}
-                                  />
-                                );
-                              })}
-                            </div>
-                          </Col>
-                        </Row>
-                      </>
-                    )}
+                              </Label> */}
+                            {row6.map((item, index) => {
+                              return (
+                                <Input
+                                  min={0}
+                                  key={index}
+                                  value={item[0]}
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  style={{ marginBottom: "15px" }}
+                                  placeholder="Enter Value"
+                                  onChange={(val) => {
+                                    setbox_bq(val.target.value);
+                                    item[0] = val.target.value;
+                                  }}
+                                />
+                              );
+                            })}
+                          </div>
+                        </Col>
+                      </Row>
+                    </>
+                  )}
                 </CardBody>
               ) : null}
             </Card>

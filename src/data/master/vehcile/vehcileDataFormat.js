@@ -200,7 +200,6 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
                     <FiSquare size={14} />
                   )}
                 </td>
-                    {console.log("hello ji",vehcile)}
               <td>
               
                   <Link

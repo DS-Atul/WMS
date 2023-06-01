@@ -91,9 +91,9 @@ const DashboardChartSection = () => {
         consignee_wise_disribution,
       } = resp.data;
       //---Sets the values of three local state variables called local_order_data, domestic_order_data, and international_order_data to the total count of delivery types returned from the server, or zero if the delivery type data is not available.
-      setlocal_order_data(delivery_type[0] ? delivery_type[0].total_count : 0);
+      setlocal_order_data(delivery_type[1] ? delivery_type[1].total_count : 0);
       setdomestic_order_data(
-        delivery_type[1] ? delivery_type[1].total_count : 0
+        delivery_type[0] ? delivery_type[0].total_count : 0
       );
       setinternational_order_data(
         delivery_type[2] ? delivery_type[2].total_count : 0

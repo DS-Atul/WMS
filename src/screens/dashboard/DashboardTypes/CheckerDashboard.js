@@ -198,41 +198,22 @@ const CheckerDashboard = () => {
               class="cell"
               data-title="Quantity"
               style={{ cursor: "pointer" }}
-            >            
+            >
               <span
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {!user.is_superuser ? 
-                <Link
-                  to={{
-                    pathname: `/booking/orders/addorder`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/booking/orders/addorder`,
+                    }}
                   // state={{order1: "P", type: "Order" }}
-                >
-                  {pending?.order_counts?.not_approved}{" "}
-                </Link>
-                :
-                <>{pending?.order_counts?.not_approved}{" "}</>
-                }
-              </span>
-            </div>
-            <div class="cell" data-title="Date Sold">            
-              <span
-                className="arrow"
-                style={{ color: "blue", fontSize: "15px" }}
-              >
-                  {!user.is_superuser ? 
-                <Link
-                  to={{
-                    pathname: `/booking/orders/addorder`,
-                  }}
-                  // state={{order1: "A", type: "Order" }}
-                >
-                   {pending?.order_counts?.approved}
-                </Link>
-                :
-                <>{pending?.order_counts?.approved}</>
+                  >
+                    {pending?.order_counts?.not_approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.order_counts?.not_approved}{" "}</>
                 }
               </span>
             </div>
@@ -241,17 +222,36 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/booking/orders/addorder`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/booking/orders/addorder`,
+                    }}
+                  // state={{order1: "A", type: "Order" }}
+                  >
+                    {pending?.order_counts?.approved}
+                  </Link>
+                  :
+                  <>{pending?.order_counts?.approved}</>
+                }
+              </span>
+            </div>
+            <div class="cell" data-title="Date Sold">
+              <span
+                className="arrow"
+                style={{ color: "blue", fontSize: "15px" }}
+              >
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/booking/orders/addorder`,
+                    }}
                   // state={{order1: "", type: "Order" }}
-                >
+                  >
                     {pending?.order_counts?.rejected}
-                </Link>
-                :
-                <>{pending?.order_counts?.rejected}</>
+                  </Link>
+                  :
+                  <>{pending?.order_counts?.rejected}</>
                 }
               </span>
             </div>
@@ -280,7 +280,7 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {pending?.manifest_counts?.approved}
+                {pending?.manifest_counts?.approved}
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
@@ -288,7 +288,7 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {pending?.manifest_counts?.rejected}
+                {pending?.manifest_counts?.rejected}
               </span>
             </div>
           </div>
@@ -309,16 +309,16 @@ const CheckerDashboard = () => {
                 style={{ color: "blue", fontSize: "15px" }}
               >
                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/runsheet/changedrunsheet`,
-                  }}
+                  <Link
+                    to={{
+                      pathname: `/runsheet/changedrunsheet`,
+                    }}
                   // state={{runsheetk: "P", type: "Runsheet" }}
-                >
-                  {pending?.runsheet_counts?.not_approved}{" "}
-                </Link>
-                :
-                <>{pending?.runsheet_counts?.not_approved}{" "}</>
+                  >
+                    {pending?.runsheet_counts?.not_approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.runsheet_counts?.not_approved}{" "}</>
                 }
               </span>
             </div>
@@ -327,18 +327,18 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/runsheet/changedrunsheet`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/runsheet/changedrunsheet`,
+                    }}
                   // state={{runsheetk: "A", type: "Runsheet" }}
-                >
-                 {pending?.runsheet_counts?.approved}
-                </Link>
-                 :
-                 <> {pending?.runsheet_counts?.approved}</>
-                 }
+                  >
+                    {pending?.runsheet_counts?.approved}
+                  </Link>
+                  :
+                  <> {pending?.runsheet_counts?.approved}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
@@ -346,17 +346,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/runsheet/changedrunsheet`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/runsheet/changedrunsheet`,
+                    }}
                   // state={{runsheetk: "R", type: "Runsheet" }}
-                >
-                   {pending?.runsheet_counts?.rejected}
-                </Link>
-                :
-                <>{pending?.runsheet_counts?.rejected}</>
+                  >
+                    {pending?.runsheet_counts?.rejected}
+                  </Link>
+                  :
+                  <>{pending?.runsheet_counts?.rejected}</>
                 }
               </span>
             </div>
@@ -377,17 +377,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/booking/docketissue/addorder`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/booking/docketissue/addorder`,
+                    }}
                   // state={{docketr: "P", type: "Docket" }}
-                >
-                 {pending?.issue_counts?.not_approved}{" "}
-                </Link>
-                :
-                <>{pending?.issue_counts?.not_approved}{" "}</>
+                  >
+                    {pending?.issue_counts?.not_approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.issue_counts?.not_approved}{" "}</>
                 }
               </span>
             </div>
@@ -396,17 +396,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/booking/docketissue/addorder`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/booking/docketissue/addorder`,
+                    }}
                   // state={{docketr: "A", type: "Docket" }}
-                >
+                  >
                     {pending?.issue_counts?.approved}{" "}
-                </Link>
-                :
-                <> {pending?.issue_counts?.approved}{" "}</>
+                  </Link>
+                  :
+                  <> {pending?.issue_counts?.approved}{" "}</>
                 }
               </span>
             </div>
@@ -415,17 +415,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/booking/docketissue/addorder`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/booking/docketissue/addorder`,
+                    }}
                   // state={{docketr: "R", type: "Docket" }}
-                >
-                  {pending?.runsheet_counts?.rejected}{" "}
-                </Link>
-                :
-                <> {pending?.runsheet_counts?.rejected}{" "}</>
+                  >
+                    {pending?.runsheet_counts?.rejected}{" "}
+                  </Link>
+                  :
+                  <> {pending?.runsheet_counts?.rejected}{" "}</>
                 }
               </span>
             </div>
@@ -446,18 +446,18 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                   {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/runsheet/changedrunsheet`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/runsheet/changedrunsheet`,
+                    }}
                   // state={{runsheetk: "P", type: "Runsheet" }}
-                >
-                 {pending?.delivery_counts?.not_approved}{" "}
-                </Link>
-                 :
-                 <> {pending?.delivery_counts?.not_approved}{" "}</>
-                 }
+                  >
+                    {pending?.delivery_counts?.not_approved}{" "}
+                  </Link>
+                  :
+                  <> {pending?.delivery_counts?.not_approved}{" "}</>
+                }
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
@@ -465,7 +465,7 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {pending?.delivery_counts?.approved}
+                {pending?.delivery_counts?.approved}
               </span>
             </div>
             <div class="cell" data-title="Date Sold">
@@ -489,61 +489,67 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              <span
-                className="arrow"
-                style={{ color: "blue", fontSize: "15px" }}
-              >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/commodities/addcommodity`,
-                  }}
-                  state={{ commodity: "P", type: "Commodity" }}
+
+              {!user.is_superuser ?
+                <span
+                  className="arrow"
+                  style={{ color: "blue", fontSize: "15px" }}
                 >
-                  {pending?.commodity_counts?.not_approved}{" "}
-                </Link>
+                  <Link
+                    to={{
+                      pathname: `/master/commodities/addcommodity`,
+                    }}
+                    state={{ commodity: "P", type: "Commodity" }}
+                  >
+                    {pending?.commodity_counts?.not_approved}{" "}
+                  </Link>
+                </span>
                 :
-                <>{pending?.commodity_counts?.not_approved}{" "}</>
-                }
-              </span>
+                <span>{pending?.commodity_counts?.not_approved}{" "}</span>
+              }
+
             </div>
             <div class="cell" data-title="Date Sold">
-              <span
-                className="arrow"
-                style={{ color: "blue", fontSize: "15px" }}
-              >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/commodities/addcommodity`,
-                  }}
-                  state={{ commodity: "A", type: "Commodity" }}
+
+              {!user.is_superuser ?
+                <span
+                  className="arrow"
+                  style={{ color: "blue", fontSize: "15px" }}
                 >
-                 {pending?.commodity_counts?.approved}{" "}
-                </Link>
+                  <Link
+                    to={{
+                      pathname: `/master/commodities/addcommodity`,
+                    }}
+                    state={{ commodity: "A", type: "Commodity" }}
+                  >
+                    {pending?.commodity_counts?.approved}{" "}
+                  </Link>
+                </span>
                 :
-                <> {pending?.commodity_counts?.approved}{" "}</>
-                }
-              </span>
+                <span> {pending?.commodity_counts?.approved}{" "}</span>
+              }
+
             </div>
             <div class="cell" data-title="Date Sold">
-              <span
-                className="arrow"
-                style={{ color: "blue", fontSize: "15px" }}
-              >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/commodities/addcommodity`,
-                  }}
-                  state={{ commodity: "R", type: "Commodity" }}
+
+              {!user.is_superuser && user.user_department_name === "ADMIN" ?
+                <span
+                  className="arrow"
+                  style={{ color: "blue", fontSize: "15px" }}
                 >
-                {pending?.commodity_counts?.rejected}{" "}
-                </Link>
+                  <Link
+                    to={{
+                      pathname: `/master/commodities/addcommodity`,
+                    }}
+                    state={{ commodity: "R", type: "Commodity" }}
+                  >
+                    {pending?.commodity_counts?.rejected}{" "}
+                  </Link>
+                </span>
                 :
-                <>{pending?.commodity_counts?.rejected}{" "}</>
-                }
-              </span>
+                <span>{pending?.commodity_counts?.rejected}{" "}</span>
+              }
+
             </div>
           </div>
           <div class="row1">
@@ -558,62 +564,68 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              <span
-                className="arrow"
-                style={{ color: "blue", fontSize: "15px" }}
-              >
-                   {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/charges/addcharge`,
-                  }}
-                  // state={{ charge: "P", type: "Charges" }}
-                >
-                {pending?.charge_counts?.not_approved}{" "}
-                </Link>
-                :
-                <>{pending?.charge_counts?.not_approved}{" "}</>
-                }
-              </span>
               
-            </div>
-            <div class="cell" data-title="Date Sold">
-              <span
+                {!user.is_superuser ?
+                <span
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/charges/addcharge`,
-                  }}
-                  // state={{ charge: "A", type: "Charges" }}
-                >
-                {pending?.charge_counts?.approved}{" "}
-                </Link>
-                :
-                <>{pending?.charge_counts?.approved}{" "}</>
+                  <Link
+                    to={{
+                      pathname: `/master/charges/addcharge`,
+                    }}
+                  state={{ charge: "P", type: "Charges" }}
+                  >
+                    {pending?.charge_counts?.not_approved}{" "}
+                  </Link>
+                  </span>
+                  :
+                  <span>{pending?.charge_counts?.not_approved}{" "}</span>
                 }
-              </span>
+             
+
             </div>
             <div class="cell" data-title="Date Sold">
-              <span
-                className="arrow"
-                style={{ color: "blue", fontSize: "15px" }}
-              >
-                  {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/charges/addcharge`,
-                  }}
-                  // state={{ charge: "R", type: "Charges" }}
-                >
-                {pending?.charge_counts?.rejected}{" "}
-                </Link>
-                 :
-                 <>{pending?.charge_counts?.rejected}{" "}</>
-                 }
-              </span>
+             
+                {!user.is_superuser ?
+                 <span
+                 className="arrow"
+                 style={{ color: "blue", fontSize: "15px" }}
+               >
+                  <Link
+                    to={{
+                      pathname: `/master/charges/addcharge`,
+                    }}
+                  state={{ charge: "A", type: "Charges" }}
+                  >
+                    {pending?.charge_counts?.approved}{" "}
+                  </Link>
+                  </span>
+                  :
+                  <span>{pending?.charge_counts?.approved}{" "}</span>
+                }
+             
+            </div>
+            <div class="cell" data-title="Date Sold">
+             
+                {!user.is_superuser && user.user_department_name === "ADMIN" ?
+                 <span
+                 className="arrow"
+                 style={{ color: "blue", fontSize: "15px" }}
+               >
+                  <Link
+                    to={{
+                      pathname: `/master/charges/addcharge`,
+                    }}
+                  state={{ charge: "R", type: "Charges" }}
+                  >
+                    {pending?.charge_counts?.rejected}{" "}
+                  </Link>
+                  </span>
+                  :
+                  <span>{pending?.charge_counts?.rejected}{" "}</span>
+                }
+             
             </div>
           </div>
           <div class="row1">
@@ -632,36 +644,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/billtos/addbillto/`,
-                  }}
-                  // state={{bill: "P", type: "Bill" }}
-                >
-                 {pending?.billto_counts?.not_approved}{" "}
-                </Link>
-                 :
-                 <>{pending?.billto_counts?.not_approved}{" "}</>
-                 }
-              </span>
-            </div>
-            <div class="cell" data-title="Date Sold">
-              <span
-                className="arrow"
-                style={{ color: "blue", fontSize: "15px" }}
-              >
                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/billtos/addbillto/`,
-                  }}
-                  // state={{bill: "A", type: "Bill" }}
-                >
-                 {pending?.billto_counts?.approved}{" "}
-                </Link>
-                :
-                <>{pending?.billto_counts?.approved}{" "}</>
+                  <Link
+                    to={{
+                      pathname: `/master/billtos/addbillto/`,
+                    }}
+                  // state={{bill: "P", type: "Bill" }}
+                  >
+                    {pending?.billto_counts?.not_approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.billto_counts?.not_approved}{" "}</>
                 }
               </span>
             </div>
@@ -670,17 +663,36 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/billtos/addbillto/`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/billtos/addbillto/`,
+                    }}
+                  // state={{bill: "A", type: "Bill" }}
+                  >
+                    {pending?.billto_counts?.approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.billto_counts?.approved}{" "}</>
+                }
+              </span>
+            </div>
+            <div class="cell" data-title="Date Sold">
+              <span
+                className="arrow"
+                style={{ color: "blue", fontSize: "15px" }}
+              >
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/billtos/addbillto/`,
+                    }}
                   // state={{bill: "R", type: "Bill" }}
-                >
-                  {pending?.billto_counts?.rejected}{" "}
-                </Link>
-                :
-                <>{pending?.billto_counts?.rejected}{" "}</>
+                  >
+                    {pending?.billto_counts?.rejected}{" "}
+                  </Link>
+                  :
+                  <>{pending?.billto_counts?.rejected}{" "}</>
                 }
               </span>
             </div>
@@ -701,36 +713,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/branches/addbranch/`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/branches/addbranch/`,
+                    }}
                   // state={{branch: "A", type: "Branches" }}
-                >
-                  {pending?.branch_counts?.not_approved}{" "}
-                </Link>
-                :
-                <>{pending?.branch_counts?.not_approved}{" "}</>
-                }
-              </span>
-            </div>
-            <div class="cell" data-title="Date Sold">
-              <span
-                className="arrow"
-                style={{ color: "blue", fontSize: "15px" }}
-              >
-                  {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/branches/addbranch/`,
-                  }}
-                  // state={{branch: "P", type: "Branches" }}
-                >
-                 {pending?.branch_counts?.approved}{" "}
-                </Link>
-                :
-                <>{pending?.branch_counts?.approved}{" "}</>
+                  >
+                    {pending?.branch_counts?.not_approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.branch_counts?.not_approved}{" "}</>
                 }
               </span>
             </div>
@@ -740,16 +733,35 @@ const CheckerDashboard = () => {
                 style={{ color: "blue", fontSize: "15px" }}
               >
                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/branches/addbranch/`,
-                  }}
+                  <Link
+                    to={{
+                      pathname: `/master/branches/addbranch/`,
+                    }}
+                  // state={{branch: "P", type: "Branches" }}
+                  >
+                    {pending?.branch_counts?.approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.branch_counts?.approved}{" "}</>
+                }
+              </span>
+            </div>
+            <div class="cell" data-title="Date Sold">
+              <span
+                className="arrow"
+                style={{ color: "blue", fontSize: "15px" }}
+              >
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/branches/addbranch/`,
+                    }}
                   // state={{branch: "R", type: "Branches" }}
-                >
-                 {pending?.branch_counts?.rejected}{" "}
-                </Link>
-                :
-                <>{pending?.branch_counts?.rejected}{" "}</>
+                  >
+                    {pending?.branch_counts?.rejected}{" "}
+                  </Link>
+                  :
+                  <>{pending?.branch_counts?.rejected}{" "}</>
                 }
               </span>
             </div>
@@ -770,17 +782,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/locations/addlocation/`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/locations/addlocation/`,
+                    }}
                   // state={{location_1: "A", type: "Location" }}
-                >
-                 {pending?.location_counts?.not_approved}{" "}
-                </Link>
-                :
-                <>{pending?.location_counts?.not_approved}{" "}</>
+                  >
+                    {pending?.location_counts?.not_approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.location_counts?.not_approved}{" "}</>
                 }
               </span>
             </div>
@@ -789,17 +801,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/locations/addlocation/`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/locations/addlocation/`,
+                    }}
                   // state={{location_1: "P", type: "Location" }}
-                >
-                {pending?.location_counts?.approved}{" "}
-                </Link>
-                :
-                <>{pending?.location_counts?.approved}{" "}</>
+                  >
+                    {pending?.location_counts?.approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.location_counts?.approved}{" "}</>
                 }
               </span>
             </div>
@@ -808,17 +820,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/locations/addlocation/`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/locations/addlocation/`,
+                    }}
                   // state={{location_1: "R", type: "Location" }}
-                >
-                 {pending?.location_counts?.rejected}{" "}
-                </Link>
-                :
-                <>{pending?.location_counts?.rejected}{" "}</>
+                  >
+                    {pending?.location_counts?.rejected}{" "}
+                  </Link>
+                  :
+                  <>{pending?.location_counts?.rejected}{" "}</>
                 }
               </span>
             </div>
@@ -839,17 +851,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/vendor/addvendor/`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/vendor/addvendor/`,
+                    }}
                   // state={{vendor: "P", type: "Vendor" }}
-                >
-                {pending?.vendor_counts?.not_approved}{" "}
-                </Link>
-                :
-                <>{pending?.vendor_counts?.not_approved}{" "}</>
+                  >
+                    {pending?.vendor_counts?.not_approved}{" "}
+                  </Link>
+                  :
+                  <>{pending?.vendor_counts?.not_approved}{" "}</>
                 }
               </span>
             </div>
@@ -858,17 +870,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/vendor/addvendor/`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/vendor/addvendor/`,
+                    }}
                   // state={{vendor: "A", type: "Vendor" }}
-                >
-                {pending?.vendor_counts?.approved}
-                </Link>
-                :
-                <> {pending?.vendor_counts?.approved}{" "}</>
+                  >
+                    {pending?.vendor_counts?.approved}
+                  </Link>
+                  :
+                  <> {pending?.vendor_counts?.approved}{" "}</>
                 }
               </span>
             </div>
@@ -877,17 +889,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/vendor/addvendor/`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/vendor/addvendor/`,
+                    }}
                   // state={{vendor: "R", type: "Vendor" }}
-                >
-                   {pending?.vendor_counts?.rejected}
-                </Link>
-                :
-                <> {pending?.vendor_counts?.rejected}{" "}</>
+                  >
+                    {pending?.vendor_counts?.rejected}
+                  </Link>
+                  :
+                  <> {pending?.vendor_counts?.rejected}{" "}</>
                 }
               </span>
             </div>
@@ -909,16 +921,16 @@ const CheckerDashboard = () => {
                 style={{ color: "blue", fontSize: "15px" }}
               >
                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/add-asset`,
-                  }}
+                  <Link
+                    to={{
+                      pathname: `/master/add-asset`,
+                    }}
                   // state={{assetr: "P", type: "Assets" }}
-                >
-                 {pending?.asset_counts?.not_approved}{" "}
-                </Link>
-                :
-                <> {pending?.asset_counts?.not_approved}{" "}</>
+                  >
+                    {pending?.asset_counts?.not_approved}{" "}
+                  </Link>
+                  :
+                  <> {pending?.asset_counts?.not_approved}{" "}</>
                 }
               </span>
             </div>
@@ -927,17 +939,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                 {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/add-asset`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/add-asset`,
+                    }}
                   // state={{assetr: "A", type: "Assets" }}
-                >
-                 {pending?.asset_counts?.approved}
-                </Link>
-                :
-                <> {pending?.asset_counts?.approved}{" "}</>
+                  >
+                    {pending?.asset_counts?.approved}
+                  </Link>
+                  :
+                  <> {pending?.asset_counts?.approved}{" "}</>
                 }
               </span>
             </div>
@@ -946,17 +958,17 @@ const CheckerDashboard = () => {
                 className="arrow"
                 style={{ color: "blue", fontSize: "15px" }}
               >
-                  {!user.is_superuser ?
-                <Link
-                  to={{
-                    pathname: `/master/add-asset`,
-                  }}
+                {!user.is_superuser ?
+                  <Link
+                    to={{
+                      pathname: `/master/add-asset`,
+                    }}
                   // state={{assetr: "R", type: "Assets" }}
-                >
-                 {pending?.asset_counts?.rejected}
-                </Link>
-                :
-                <> {pending?.asset_counts?.rejected}{" "}</>
+                  >
+                    {pending?.asset_counts?.rejected}
+                  </Link>
+                  :
+                  <> {pending?.asset_counts?.rejected}{" "}</>
                 }
               </span>
             </div>

@@ -14,6 +14,7 @@ const OrderDataTitle = [
   "	Manifest Pdf",
   "Runsheet No.",
   "Created By",
+  "Modified By",
   "Is Completed",
   "Cold Chain",
   "Delivered",

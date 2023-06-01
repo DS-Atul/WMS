@@ -51,7 +51,7 @@ const DeliveryInfoDataFormat = ({ order_id }) => {
       axios
         .get(
           ServerAddress +
-          `booking/get_delivery_info/?order_id=${order_id}&p=1&records=50`,
+          `booking/get_delivery_info/?order_id=${order_id}&signature_person_name=${''}&p=1&records=50`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           }

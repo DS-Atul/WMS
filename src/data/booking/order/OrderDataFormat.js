@@ -428,6 +428,7 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                   )}
                 </td>
                 <td>{toTitleCase(order.order_created_by)}</td>
+                <td>{order.order_modified_by ? toTitleCase(order.order_modified_by) : "-"}</td>
                 <td>
                   {order.is_completed ? (
                     <div>
