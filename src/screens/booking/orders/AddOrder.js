@@ -76,6 +76,10 @@ const AddOrder = () => {
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
 
   const e_access_token = useSelector((state) => state.eway_bill.e_access_token);
+
+  // const [e_access_token, sete_access_token] = useState("")
+  // const [business_access_token, setbusiness_access_token] = useState("")
+
   const orgId = useSelector((state) => state.eway_bill?.orgs[0]?.orgId);
 
   const user_l_state = useSelector(
@@ -331,8 +335,6 @@ const AddOrder = () => {
   const [commodity_bottom, setcommodity_bottom] = useState(103);
 
   const [search_commodity, setsearch_commodity] = useState("");
-  const e_acess_token = useSelector((state) => state.eway_bill.e_access_token);
-  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
   //Transportation cost
   const [transportation_cost, settransportation_cost] = useState("");
 
@@ -1761,7 +1763,7 @@ const AddOrder = () => {
   const booking_type = () => {
     if (cold_chain === true && location.state === null) {
       settype_of_booking(type_of_booking_list[0]);
-    } else if(cold_chain !== true && location.state === null){
+    } else if (cold_chain !== true && location.state === null) {
       settype_of_booking("");
     }
   };
@@ -2518,7 +2520,6 @@ const AddOrder = () => {
   };
 
   const AddEwayAccessToken = () => {
-
     axios
       .post(
         EServerAddress + "ezewb/v1/auth/initlogin",
@@ -2537,14 +2538,13 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-
-        console.log("access token post res ===>>", response.data.message
-        );
+        console.log("AddEwayAccessToken response----", response)
         if (response.data.message !== "Please verify account (or sign up first).") {
+          // sete_access_token(response.data.response.token)
           dispatch(setEAccessToken(response.data.response.token));
           dispatch(setOrgs(response.data.response.orgs));
           if (response.data.status === 1 && id_is !== "") {
-            postAssToken();
+            postAssToken(response.data.response.token);
           }
         }
         else {
@@ -2558,14 +2558,15 @@ const AddOrder = () => {
       });
   };
 
-  const postAssToken = () => {
+  const postAssToken = (access_token) => {
     axios
       .put(
         ServerAddress + "organization/update_token/" + id_is,
 
         {
           type: "access_token",
-          access_token: e_access_token,
+          access_token: access_token,
+          // access_token: e_access_token,
           // AccessToken_Modifiedat: AccessToken_Modifiedat,
           // org_id : id_is,
         },
@@ -2575,7 +2576,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("post Acc token ===>>", response);
+        console.log("postAssToken Acc token ===>>", response);
         // dispatch(setEAccessToken(response.data.response.token));
         // dispatch(setOrgs(response.data.response.orgs));
 
@@ -2602,10 +2603,11 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("response-----", response.data)
+        console.log("GetBusiness_token response-----", response.data)
+        // setbusiness_access_token(response.data.response.token)
         dispatch(setBusinesssAccessToken(response.data.response.token));
         if (response.data.status === 1 && id_is !== "") {
-          postBusinessToken();
+          postBusinessToken(response.data.response.token);
         }
       })
       .catch((error) => {
@@ -2615,7 +2617,7 @@ const AddOrder = () => {
       });
   };
 
-  const postBusinessToken = () => {
+  const postBusinessToken = (business_token) => {
     axios
       .put(
         ServerAddress + "organization/update_token/" + id_is,
@@ -2623,7 +2625,8 @@ const AddOrder = () => {
         {
           type: "business_token",
           // BusinessToken_Modifiedat: BusinessToken_Modifiedat,
-          business_token: business_access_token,
+          business_token: business_token,
+          // business_token: business_access_token,
         },
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -2658,12 +2661,11 @@ const AddOrder = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${b_acess_token}`,
+            Authorization: `Bearer ${business_access_token}`,
           },
         }
       )
       .then(function (response) {
-        console.log("response----", response)
         if (response.data.response !== null && typeof (response.data) !== "string") {
           // if (response.data.length > 0) {
           if (is_eway === "yes") {
@@ -2678,15 +2680,15 @@ const AddOrder = () => {
             seteway_pincode_c(response.data.response.toPincode)
           }
           else {
-            if(eway_detail_l.fromTrdName === response.data.response.fromTrdName && eway_detail_l.toTrdName === response.data.response.toTrdName && eway_detail_l.toPincode === response.data.response.toPincode &&  eway_detail_l.fromPincode === response.data.response.fromPincode){
+            if (eway_detail_l.fromTrdName === response.data.response.fromTrdName && eway_detail_l.toTrdName === response.data.response.toTrdName && eway_detail_l.toPincode === response.data.response.toPincode && eway_detail_l.fromPincode === response.data.response.fromPincode) {
               seteway_value([...eway_value, response.data.response])
             }
-            else{
+            else {
               dispatch(setShowAlert(true));
-            dispatch(setDataExist(`Previous Eway Bill details is not same as entered Eway Bill Number`));
-            dispatch(setAlertType("warning"));
+              dispatch(setDataExist(`Previous Eway Bill details is not same as entered Eway Bill Number`));
+              dispatch(setAlertType("warning"));
             }
-           
+
           }
 
         } else {
@@ -3589,7 +3591,7 @@ const AddOrder = () => {
 
   useEffect(() => {
     let temp_list = [];
- 
+
     if (eway_value && eway_value.length > 0) {
       const uniqueValues = eway_value.filter(
         (value, index, self) => index === self.findIndex(obj => obj.ewbNo === value.ewbNo)
@@ -3607,10 +3609,10 @@ const AddOrder = () => {
           String(element.totInvValue),
           ""
         ]);
-       
+
       }
       setrow2(temp_list);
-     
+
     }
   }, [eway_value]);
 
@@ -3618,12 +3620,12 @@ const AddOrder = () => {
   useEffect(() => {
     let temp_list2 = [];
     if (eway_value && eway_value.length > 0) {
-    for (let index = 0; index < row2.length; index++) {
-      const element = row2[index];
-      temp_list2.push([element[0],element[1],element[2],element[3],''])
+      for (let index = 0; index < row2.length; index++) {
+        const element = row2[index];
+        temp_list2.push([element[0], element[1], element[2], element[3], ''])
+      }
+      setrow4(temp_list2);
     }
-    setrow4(temp_list2);
-  }
   }, [row2])
 
   useEffect(() => {
@@ -3896,7 +3898,7 @@ const AddOrder = () => {
   }, [e_waybill_inv, row2])
 
   useEffect(() => {
-    if (e_waybill_inv.length === 12 && booking_through && b_acess_token) {
+    if (e_waybill_inv.length === 12 && booking_through && business_access_token) {
       get_eway_detail(e_waybill_inv, "no")
     }
     else if (e_waybill_inv.length > 12) {
@@ -3906,7 +3908,7 @@ const AddOrder = () => {
       );
       dispatch(setAlertType("warning"));
     }
-  }, [e_waybill_inv, b_acess_token])
+  }, [e_waybill_inv, business_access_token])
 
 
   return (
@@ -4145,6 +4147,7 @@ const AddOrder = () => {
                                 }}
                                 checked={booking_through}
                                 readOnly={true}
+                                disabled={isupdating}
                               />
                               <label
                                 className="form-check-label input-box"
@@ -4172,6 +4175,7 @@ const AddOrder = () => {
                                     }
                                   }}
                                   placeholder="Enter Eway Bill Number"
+                                  disabled={isupdating}
                                 />
                               </div>
                             </Col>
@@ -5190,9 +5194,9 @@ const AddOrder = () => {
                           <div className="mb-3">
                             <Label className="header-child">Shipper *</Label>
                             {isupdating ? (
-                              <Input value={toTitleCase(eway_detail_l.shipper)} disabled id="input"/>
+                              <Input value={toTitleCase(eway_detail_l.shipper)} disabled id="input" />
                             ) : (
-                              <Input value={toTitleCase(eway_list?.fromTrdName)} disabled id="input"/>
+                              <Input value={toTitleCase(eway_list?.fromTrdName)} disabled id="input" />
                             )}
                           </div>
                         </Col>
@@ -5354,9 +5358,9 @@ const AddOrder = () => {
                           <div className="mb-3">
                             <Label className="header-child">Consignee *</Label>
                             {isupdating ? (
-                              <Input value={toTitleCase(eway_detail_l.consignee)} disabled id="input"/>
+                              <Input value={toTitleCase(eway_detail_l.consignee)} disabled id="input" />
                             ) : (
-                              <Input value={toTitleCase(eway_list?.toTrdName)} disabled id="input"/>
+                              <Input value={toTitleCase(eway_list?.toTrdName)} disabled id="input" />
                             )}
                           </div>
                         </Col>
@@ -5404,7 +5408,7 @@ const AddOrder = () => {
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
                                 <Label className="header-child">Locality</Label>
-                              
+
                                 <SearchInput
                                   data_list={locslity_to_list}
                                   setdata_list={setlocslity_to_list}
@@ -5437,16 +5441,16 @@ const AddOrder = () => {
                                   //   id="input"
                                   // />
                                   <div
-                                  style={{
-                                    border: "1px solid",
-                                    padding: "8px",
-                                    backgroundColor: "#eff2f7",
-                                    borderRadius: 5,
-                                    borderColor: "#aaa",
-                                  }}
-                                >
-                                  {toTitleCase(eway_detail_l.consignee_address1)}
-                                </div>
+                                    style={{
+                                      border: "1px solid",
+                                      padding: "8px",
+                                      backgroundColor: "#eff2f7",
+                                      borderRadius: 5,
+                                      borderColor: "#aaa",
+                                    }}
+                                  >
+                                    {toTitleCase(eway_detail_l.consignee_address1)}
+                                  </div>
                                 ) : (
                                   // <Input value={eway_list?.toAddr1} disabled />
                                   <div
@@ -6697,22 +6701,22 @@ const AddOrder = () => {
                           <span
                             className="link-text"
                             onClick={() => {
-                              // if (
-                              //   // row2[row2.length - 1][0] &&
-                              //   row2[row2.length - 1][1] &&
-                              //   row2[row2.length - 1][2] &&
-                              //   row2[row2.length - 1][3] &&
-                              //   row2[row2.length - 1][4]
-                              // ) {
+                              if (
+                                row2[row2.length - 1][0] &&
+                                row2[row2.length - 1][1] &&
+                                row2[row2.length - 1][2] &&
+                                row2[row2.length - 1][3] &&
+                                row2[row2.length - 1][4]
+                              ) {
                               setshowModalInvoice({
                                 ...showModalInvoice,
                                 value: false,
                                 ind: "",
                               });
                               addinvoice();
-                              // } else {
-                              //   alert("Invoice is required");
-                              // }
+                              } else {
+                                alert("Invoice All Details is required");
+                              }
                             }}
                           >
                             <IconContext.Provider

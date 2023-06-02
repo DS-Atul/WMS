@@ -551,6 +551,9 @@ const Add_Commodity = () => {
 
   //To Save Eway data through API'S
 
+  //Eway no
+  // 301003165872, 371003165873, 341003165874, 311003165875
+  // 381003165876, 351003165877, 321003165878, 391003165879, 351003165880, 321003165881;
   const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
 
   const post_awb = () => {
@@ -563,8 +566,8 @@ const Add_Commodity = () => {
           "transactionType": "1",
           "subSupplyType": "1",
           "docType": "INV",
-          "docNo": "DHLMH67101",
-          "docDate": "01/06/2023",
+          "docNo": "DHLMH67128",
+          "docDate": "02/06/2023",
           "invTyp": "B2B",
           "fromGstin": "05AAAAT2562R1Z3",
           "fromTrdName": "K R AGENCIES",
@@ -594,7 +597,7 @@ const Add_Commodity = () => {
           "otherValue": "0",
           "transMode": "2",
           "transDistance": "196",
-          "transDocDate": "01/06/2023",
+          "transDocDate": "02/06/2023",
           "transDocNo": "124423",
           "transId": "05AAAAR1685F1ZO",
           "transName": "Ashwin Guj Trans",
@@ -659,12 +662,8 @@ const Add_Commodity = () => {
   };
 
   useEffect(() => {
-    // post_awb()
+    post_awb()
   }, [])
-
-  //Eway no
-
-  // 381003162989, 341003162990, 311003162991, 381003162992, 351003162993
 
   return (
     <div style={{ display: data_type && "flex" }}>

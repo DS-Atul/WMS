@@ -26,7 +26,7 @@ const Orders = () => {
   const iscompleted = useSelector((state) => state.filtervalue.data_i);
   const current_branch = useSelector((state) => state.filtervalue.data_f);
   const created_by_id = useSelector((state) => state.filtervalue.data_e);
-  const ordertype = useSelector((state) => state.filtervalue.data_j);
+  const ordertype = useSelector((state) => state.filtervalue.data_g);
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
 

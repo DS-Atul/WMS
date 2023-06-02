@@ -32,16 +32,19 @@ import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
+import { gstin_no } from "../../../constants/CompanyDetails";
+import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 
 const AddDocketStatus = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [page, setpage] = useState(1);
-
+  const userDetail = useSelector((state) => state.authentication.userdetails);
   const [isupdating, setisupdating] = useState(false);
 
   const location = useLocation();
+  console.log("location----------", location)
   const order_docket_no = useSelector(
     (state) => state.order.cur_order_docket_no
   );
@@ -129,10 +132,12 @@ const AddDocketStatus = () => {
         alert("Please Add Transist To Branch");
       }
       else if (status == "SHIPMENT PICKED UP" && vehicle === "") {
-        alert("111")
+        alert("Please Add Vehicle Number")
+      }
+      else if (status == "SHIPMENT PICKED UP" && !is_valid_barcode) {
+        alert("Please Enter Add Barcode With Unique Value")
       }
       else {
-        // alert("run")
         add_order_status(values);
       }
     },
@@ -178,6 +183,34 @@ const AddDocketStatus = () => {
         alert(`Error Happen while Geting Order Status Data ${error}`);
       });
   };
+
+
+// For Barcode validation
+const check_barcode = (barcode, index) => {
+  axios
+    .get(
+      ServerAddress +`booking/checkDuplicateBarcode/${barcode}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    )
+    .then(function (response) {
+      console.log("barcode---------",response.data);
+      if(response.data==="true"){
+        console.log("row-----", row, index)
+        row[index]=['']
+        dispatch(setDataExist(`This Barcode Is Already Used`));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+        
+      }
+    })
+    .catch((error) => {
+      alert(`Error Happen while Geting Order Status Data ${error}`);
+    });
+};
 
   // Get Transit Branch
   const getBranches = () => {
@@ -236,12 +269,12 @@ const AddDocketStatus = () => {
           if (vehicle_page == 1) {
             vehicle_list = resp.data.results.map((v) => [
               v.id,
-              toTitleCase(v.vehcile_no),
+              v.vehcile_no,
             ]);
           } else {
             vehicle_list = [
               ...vehicle_list_s,
-              ...resp.data.results.map((v) => [v.id, toTitleCase(v.vehcile_no)]),
+              ...resp.data.results.map((v) => [v.id, v.vehcile_no]),
             ];
           }
           setvehicle_count(vehicle_count + 2);
@@ -291,8 +324,56 @@ const AddDocketStatus = () => {
           docket: location.state.order.docket
             ? [location.state.order.docket]
             : [location.state.order.id],
-          // barcode: row,
-          // vehicle_no: vehicle,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.statusText == "Created") {
+          if (status == "SHIPMENT PICKED UP") {
+            add_barcode();
+          }
+          if (list_data.length > 0 && status == "SHIPMENT PICKED UP") {
+            const EwayUpdate = UpateEwaybillPartB({
+              gstin_no: gstin_no,
+              Data: list_data,
+              ewayTokenB: business_access_token,
+              access_token: accessToken,
+            });
+            EwayUpdate();
+          }
+  
+          dispatch(
+            setDataExist(
+              `New Order Status '${status}' for Order ${location.state.order
+                ? location.state.order.docket_no
+                : location.state.order.docket_no
+              } Added Successfully`
+            )
+          );
+          dispatch(setAlertType("success"));
+          dispatch(setShowAlert(true));
+          navigate(-1);
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happened while posting Order Status Data: ${error}`);
+      });
+  };
+
+  const add_barcode = () => {
+    axios
+      .post(
+        ServerAddress + "booking/orderboxqrcode/",
+        {
+          vehicle_no: vehicle,
+          order: location.state.order.id,
+          docket_no: location.state.order.docket_no,
+          barcode_no: row.flat(),
+          is_active: true,
         },
         {
           headers: {
@@ -305,15 +386,10 @@ const AddDocketStatus = () => {
           // dispatch(setLastActiveOrderStatus(status));
           dispatch(
             setDataExist(
-              `New Order Status '${status}' for Order ${location.state.order
-                ? location.state.order.docket_no
-                : location.state.order.docket_no
-              } Added Sucessfully`
-            )
-          );
+              `Barcode Added Successfully`));
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
-          navigate(-1);
+          // navigate(-1);
         }
       })
       .catch((error) => {
@@ -390,8 +466,8 @@ const AddDocketStatus = () => {
   }, []);
 
   useEffect(() => {
-    get_order_status(location.state.order.docket_no);
-  }, [location.state.order.docket_no]);
+    get_order_status(location?.state?.order?.docket_no);
+  }, [location?.state?.order?.docket_no]);
   console.log("location----", location)
   useLayoutEffect(() => {
     if (location.state.type == "add" && status_item !== []) {
@@ -417,6 +493,78 @@ const AddDocketStatus = () => {
 
   }, [dimension_list, status])
 
+  //For Update Part B
+  const [EwayBillData, setEwayBillData] = useState([])
+  const [list_data, setlist_data] = useState([])
+  const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
+
+
+  const getEwayBills = (docket_no) => {
+    axios
+      .get(
+        ServerAddress +
+          `booking/get_all_ewaybill/?type=${"order"}&value=${docket_no}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(
+          "EwayBillData-------------------------------------",
+          res.data
+        );
+        console.log("", EwayBillData);
+        if (res?.data?.length !== 0) {
+          setEwayBillData(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log("rerrerer", err);
+      });
+  };
+
+  useEffect(() => {
+    if (status == "SHIPMENT PICKED UP"){
+      getEwayBills(location?.state?.order?.docket_no)
+    }
+  }, [status])
+
+  useEffect(() => {
+    let li = [];
+    EwayBillData?.forEach((e) => {
+      let obj = {
+        transMode: "1",
+        fromPlace: userDetail.branch_nm,
+        fromState: userDetail.branch_location_state_code,
+        transDocNo: e.trans_doc_no,
+        transDocDate: String(
+          e.docDate.split("-")[1] +
+            "/" +
+            e.docDate.split("-")[2] +
+            "/" +
+            e.docDate.split("-")[0]
+        ),
+        vehicleNo:vehicle,
+        reasonCode: "2",
+        reasonRem: "text",
+        userGstin: gstin_no,
+        ewbNo: e.ewb_no,
+      };
+      li.push(obj);
+    });
+    setlist_data(li)
+    console.log("li--------", li)
+    // Rest of your code...
+  }, [EwayBillData, vehicle]);
+  
+  
+  // useEffect(() => {
+  //     const EwayUpdate = UpateEwaybillPartB({ gstin_no: gstin_no, Data:list_data, ewayTokenB: business_access_token, access_token: accessToken });
+  //     EwayUpdate();
+  // }, [third])
+  
 
   return OpenCrop ? (
     <Modal show={OpenCrop} onHide={handleClose}>
@@ -650,6 +798,17 @@ const AddDocketStatus = () => {
                                     onChange={(val) => {
                                       setbox_bq(val.target.value);
                                       item[0] = val.target.value;
+                                    }}
+                                    onBlur={() => {
+                                      if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
+                                        check_barcode(item[0], index);
+                                      } else if(item[0].length >= 4 && !item[0].startsWith("SSCL")){
+                                        dispatch(setShowAlert(true));
+                                        dispatch(
+                                          setDataExist(`Invalid Barcode`)
+                                        );
+                                        dispatch(setAlertType("warning"));
+                                      }
                                     }}
                                   />
                                 </div>

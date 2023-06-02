@@ -36,6 +36,7 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
   // const active_order_no = useSelector(state => state.orders.active_order_no);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [order_status_list, setorder_status_list] = useState([]);
+  console.log("order_status_list-----", order_status_list)
 
   const [modal_backdrop, setmodal_backdrop] = useState(false);
   function tog_backdrop() {
@@ -72,7 +73,7 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
 
   const delete_order_status = (id, status) => {
     axios
-      .delete(ServerAddress + "booking/delete_order_status/" + id, {
+      .delete(ServerAddress + `booking/delete_order_status/` + id, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

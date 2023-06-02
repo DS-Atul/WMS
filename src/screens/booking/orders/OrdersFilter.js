@@ -249,7 +249,7 @@ function OrdersFilter() {
     // dispatch(setFilterG([order_origin_id]));
     // dispatch(setFilterH([order_destination_id]));
     dispatch(setFilterI([iscompleted]));
-    dispatch(setFilterJ([String(order_type).toUpperCase()]));
+    dispatch(setFilterG([String(order_type).toUpperCase()]));
   }, [
     delivery_type,
     cold_chain_btn,
