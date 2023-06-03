@@ -42,20 +42,25 @@ import {
   setDataExist,
   setShowAlert,
 } from "../../store/alert/Alert";
+import { gstin_no } from "../../constants/CompanyDetails";
+import UpateEwaybillPartB from "../authentication/signin/UpateEwaybillPartB";
 
 const ChangedRusheet = () => {
   const dispatch = useDispatch();
+  const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
+  const userDetail = useSelector((state) => state.authentication.userdetails);
+  const success = useSelector((state) => state.alert.show_alert);
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user = useSelector((state) => state.authentication.userdetails);
   const location = useLocation();
-  console.log("location-----", location)
   const [isupdating, setisupdating] = useState(false);
   const navigate = useNavigate();
   const [runsheet, setrunsheet] = useState([]);
-
+  console.log("runsheet-------", runsheet)
+  const [runsheet_orders, setrunsheet_orders] = useState([])
   //Vehicle
 
   const [contract_based_vehicle_no, setcontract_based_vehicle_no] = useState("");
@@ -209,6 +214,7 @@ const ChangedRusheet = () => {
       });
   };
 
+
   // Update Runsheet
   const update_runsheet = (id) => {
     let fields_names = Object.entries({
@@ -261,6 +267,15 @@ const ChangedRusheet = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
+          if (runsheet.vehicle_number !== vehicle_no){
+          const EwayUpdate = UpateEwaybillPartB({
+            gstin_no: gstin_no,
+            Data: list_data,
+            ewayTokenB: business_access_token,
+            access_token: accessToken,
+          });
+          EwayUpdate();
+        }
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
           dispatch(
@@ -279,6 +294,30 @@ const ChangedRusheet = () => {
   const handleSubmit = () => {
     update_runsheet(runsheet.id);
   };
+
+  const get_runsheetorder = (runsheet_no) => {
+    axios
+      .get(
+        ServerAddress +
+        "runsheet/get_runsheetorder/?runsheet_no=" +
+        runsheet_no,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        setrunsheet_orders(response.data);
+      })
+      .catch((err) => {
+        alert(`Error Occur while Order Delivery Info, ${err}`);
+      });
+  };
+
+  useEffect(() => {
+    if (runsheet_no !== "") {
+      get_runsheetorder(runsheet_no);
+    }
+  }, [runsheet_no, success]);
 
   useEffect(() => {
     getRoutes();
@@ -418,6 +457,98 @@ const ChangedRusheet = () => {
       // setstatus_toggle(false)
     }
   }, [user, isupdating]);
+
+  const [docket_nos, setdocket_nos] = useState([])
+
+  useEffect(() => {
+    if (runsheet_orders.length > 0 && runsheet.vehicle_number !== vehicle_no) {
+      let data = runsheet_orders.map((v) => v.docket_no)
+      console.log("data-------",data)
+      setdocket_nos(data)
+   
+    }
+  }, [runsheet_orders, vehicle_no, runsheet])
+
+
+  //For Update Part B
+  const [EwayBillData, setEwayBillData] = useState([])
+  const [list_data, setlist_data] = useState([])
+
+  const getEwayBills = (docket_num) => {
+    axios
+      .get(
+        ServerAddress +
+          `booking/get_all_ewaybill/?type=${"order"}&value=${docket_num}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log("resres----", res);
+        if (res?.data?.length !== 0) {
+          setEwayBillData((prevData) => {
+            // Filter out items with duplicate docket_no
+            const newData = res.data.filter((item) => {
+              return (
+                !prevData.some(
+                  (prevItem) => prevItem.docket_no === item.docket_no
+                )
+              );
+            });
+            return [...prevData, ...newData];
+          });
+        }
+      })
+      .catch((err) => {
+        console.log("rerrerer", err);
+      });
+  };
+  
+
+  useEffect(() => {
+    let li = [];
+    EwayBillData?.forEach((e) => {
+      let obj = {
+        transMode: "1",
+        fromPlace: userDetail.branch_nm,
+        fromState: userDetail.branch_location_state_code,
+        transDocNo: e.trans_doc_no,
+        transDocDate: String(
+          e.docDate.split("-")[1] +
+          "/" +
+          e.docDate.split("-")[2] +
+          "/" +
+          e.docDate.split("-")[0]
+        ),
+        vehicleNo: vehicle_no,
+        reasonCode: "2",
+        reasonRem: "text",
+        userGstin: gstin_no,
+        ewbNo: e.ewb_no,
+      };
+      li.push(obj);
+    });
+    setlist_data(li)
+    console.log("li--------", li)
+    // Rest of your code...
+  }, [EwayBillData, vehicle_no]);
+console.log("EwayBillData-----", EwayBillData)
+console.log("docket_nos-----", docket_nos)
+
+  useEffect(() => {
+
+    if (docket_nos.length > 0 && runsheet.vehicle_number !== vehicle_no) {
+      for (let index = 0; index < docket_nos.length; index++) {
+        getEwayBills(docket_nos[index])
+      }
+    }
+    // else{
+    //   setEwayBillData([])
+    // }
+  }, [docket_nos, runsheet])
+
   return (
     <div>
       <Modal show={show} onHide={handleClose}>

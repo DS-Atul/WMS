@@ -58,10 +58,11 @@ const Manifest_pdf = () => {
   // };
 
   useLayoutEffect(() => {
+    console.log("location======", location)
     try {
       setmanifest(location.state.manifest);
       setloading_err(false);
-      console.log("location======", location)
+     
       setmn_orders_s(location.state.manifest.orders);
       if (location.state.mn_coloader) {
         alert(location.state.mn_coloader);
@@ -261,6 +262,7 @@ const Manifest_pdf = () => {
 export const ComponentToPrint = React.forwardRef((props, ref) => {
   const { manifest, mn_orders } = props;
   console.log("manifest--------nnn000", mn_orders)
+  console.log("manifest--------manifest", manifest)
   return (
     <div ref={ref}>
       {/* Manifest {value} */}

@@ -29,6 +29,7 @@ const PendingToDelivery = () => {
   const [total_pieces, settotal_pieces] = useState()
 
   const [awbno_list, setawbno_list] = useState([]);
+  const [docket_no, setdocket_no] = useState([])
 
   const remove_transfer_list = (index) => {
     let remove_list = createRunsheet_list;
@@ -69,6 +70,7 @@ const PendingToDelivery = () => {
   useEffect(() => {
     if (createRunsheet_list.length !== 0) {
       let awb_no_list = [];
+      let docket_no = [];
       let received = []
       let sum_received = []
       let non_received = []
@@ -79,6 +81,7 @@ const PendingToDelivery = () => {
       for (let index = 0; index < createRunsheet_list.length; index++) {
         const loc = createRunsheet_list[index];
         awb_no_list.push(loc.id);
+        docket_no.push(loc.docket_no);
         received.push(loc.issue)
         non_received.push(loc.issue_notreceived)
         total_pkt.push(loc.total_quantity)
@@ -99,6 +102,7 @@ const PendingToDelivery = () => {
       setreceived_total(sumrec)
       setissuenon_received_total(sumnonrec)
       setawbno_list(awb_no_list);
+      setdocket_no(docket_no)
       settotal_pieces(total_pcs)
     } else {
       setawbno_list([]);
@@ -164,7 +168,7 @@ const PendingToDelivery = () => {
             <CardBody style={{ paddingTop: "5px" }}>
               <Row>
                 <Col lg={4}>
-                  <CreateRunsheet awb_numbers={awbno_list} issuereceived_total={issuereceived_total} issuenon_received_total={issuenon_received_total} total_pieces={total_pieces}/>
+                  <CreateRunsheet awb_numbers={awbno_list} docket_no={docket_no} issuereceived_total={issuereceived_total} issuenon_received_total={issuenon_received_total} total_pieces={total_pieces}/>
                 </Col>
               </Row>
 

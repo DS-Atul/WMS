@@ -32,6 +32,7 @@ import { Button } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import * as XLSX from "xlsx";
+
 const Add_Commodity = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authentication.userdetails);
@@ -552,10 +553,8 @@ const Add_Commodity = () => {
   //To Save Eway data through API'S
 
   //Eway no
-  // 301003165872, 371003165873, 341003165874, 311003165875
-  // 381003165876, 351003165877, 321003165878, 391003165879, 351003165880, 321003165881;
   const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
-
+// 361003171398,  800179
   const post_awb = () => {
     axios
       .post(
@@ -566,7 +565,7 @@ const Add_Commodity = () => {
           "transactionType": "1",
           "subSupplyType": "1",
           "docType": "INV",
-          "docNo": "DHLMH67128",
+          "docNo": "DHLMH67143",
           "docDate": "02/06/2023",
           "invTyp": "B2B",
           "fromGstin": "05AAAAT2562R1Z3",
@@ -662,8 +661,11 @@ const Add_Commodity = () => {
   };
 
   useEffect(() => {
-    post_awb()
+    // post_awb()
   }, [])
+
+  
+
 
   return (
     <div style={{ display: data_type && "flex" }}>

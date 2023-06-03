@@ -185,32 +185,32 @@ const AddDocketStatus = () => {
   };
 
 
-// For Barcode validation
-const check_barcode = (barcode, index) => {
-  axios
-    .get(
-      ServerAddress +`booking/checkDuplicateBarcode/${barcode}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    )
-    .then(function (response) {
-      console.log("barcode---------",response.data);
-      if(response.data==="true"){
-        console.log("row-----", row, index)
-        row[index]=['']
-        dispatch(setDataExist(`This Barcode Is Already Used`));
-        dispatch(setAlertType("warning"));
-        dispatch(setShowAlert(true));
-        
-      }
-    })
-    .catch((error) => {
-      alert(`Error Happen while Geting Order Status Data ${error}`);
-    });
-};
+  // For Barcode validation
+  const check_barcode = (barcode, index) => {
+    axios
+      .get(
+        ServerAddress + `booking/checkDuplicateBarcode/${barcode}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("barcode---------", response.data);
+        if (response.data === "true") {
+          console.log("row-----", row, index)
+          row[index] = ['']
+          dispatch(setDataExist(`This Barcode Is Already Used`));
+          dispatch(setAlertType("warning"));
+          dispatch(setShowAlert(true));
+
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while Geting Order Status Data ${error}`);
+      });
+  };
 
   // Get Transit Branch
   const getBranches = () => {
@@ -345,7 +345,7 @@ const check_barcode = (barcode, index) => {
             });
             EwayUpdate();
           }
-  
+
           dispatch(
             setDataExist(
               `New Order Status '${status}' for Order ${location.state.order
@@ -429,10 +429,6 @@ const check_barcode = (barcode, index) => {
   }, [vehicle_page, vehicle_search_item, status]);
 
   useEffect(() => {
-    // get_transit_to_branch();
-  }, []);
-
-  useEffect(() => {
     if (status == "SHIPMENT PICKED UP") {
       let val = location?.state?.order?.total_quantity;
       let val_box = [];
@@ -497,13 +493,13 @@ const check_barcode = (barcode, index) => {
   const [EwayBillData, setEwayBillData] = useState([])
   const [list_data, setlist_data] = useState([])
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
-
+  console.log("EwayBillData------", EwayBillData)
 
   const getEwayBills = (docket_no) => {
     axios
       .get(
         ServerAddress +
-          `booking/get_all_ewaybill/?type=${"order"}&value=${docket_no}`,
+        `booking/get_all_ewaybill/?type=${"order"}&value=${docket_no}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -526,7 +522,7 @@ const check_barcode = (barcode, index) => {
   };
 
   useEffect(() => {
-    if (status == "SHIPMENT PICKED UP"){
+    if (status == "SHIPMENT PICKED UP") {
       getEwayBills(location?.state?.order?.docket_no)
     }
   }, [status])
@@ -541,12 +537,12 @@ const check_barcode = (barcode, index) => {
         transDocNo: e.trans_doc_no,
         transDocDate: String(
           e.docDate.split("-")[1] +
-            "/" +
-            e.docDate.split("-")[2] +
-            "/" +
-            e.docDate.split("-")[0]
+          "/" +
+          e.docDate.split("-")[2] +
+          "/" +
+          e.docDate.split("-")[0]
         ),
-        vehicleNo:vehicle,
+        vehicleNo: vehicle,
         reasonCode: "2",
         reasonRem: "text",
         userGstin: gstin_no,
@@ -558,13 +554,13 @@ const check_barcode = (barcode, index) => {
     console.log("li--------", li)
     // Rest of your code...
   }, [EwayBillData, vehicle]);
-  
-  
+
+
   // useEffect(() => {
   //     const EwayUpdate = UpateEwaybillPartB({ gstin_no: gstin_no, Data:list_data, ewayTokenB: business_access_token, access_token: accessToken });
   //     EwayUpdate();
   // }, [third])
-  
+
 
   return OpenCrop ? (
     <Modal show={OpenCrop} onHide={handleClose}>
@@ -802,7 +798,7 @@ const check_barcode = (barcode, index) => {
                                     onBlur={() => {
                                       if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
                                         check_barcode(item[0], index);
-                                      } else if(item[0].length >= 4 && !item[0].startsWith("SSCL")){
+                                      } else if (item[0].length >= 4 && !item[0].startsWith("SSCL")) {
                                         dispatch(setShowAlert(true));
                                         dispatch(
                                           setDataExist(`Invalid Barcode`)

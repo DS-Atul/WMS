@@ -2064,10 +2064,11 @@ const AddOrder = () => {
   }, []);
 
   useEffect(() => {
-    if (location?.state?.order?.qrcode_details?.length !== 0 && location.state !== null) {
+    console.log("location-----", location)
+    if (location?.state?.order?.qrcode_details?.length !== 0 && location.state !== null && location?.state?.order?.qrcode_details) {
       let data2 = []
-      data2 = location.state.order.qrcode_details.map(data => {
-        return ([data.barcode_no])
+      data2 = location?.state?.order?.qrcode_details.map(data => {
+        return ([data?.barcode_no])
 
       })
       setrow6(data2)
@@ -2459,22 +2460,7 @@ const AddOrder = () => {
       settime_diff(diffHours);
       console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
     }
-    // else{
-    //   const sixHoursInMilliseconds = 6 * 60 * 60 * 1000;
-    //   const currentTime = new Date().getTime();
-    //   const sixHoursFromNow = currentTime + sixHoursInMilliseconds;
 
-    //   if (currentTime > sixHoursFromNow && e_access_token != "" && BusinessToken_Modifiedat === null && AccessToken_Modifiedat === null) {
-    //     // Run your code here
-    //     GetBusiness_token();
-    //     alert("----current GetBusiness_token")
-    //   }
-    //   if (currentTime > sixHoursFromNow && BusinessToken_Modifiedat === null && AccessToken_Modifiedat === null) {
-    //     // Run your code here
-    //     AddEwayAccessToken();
-    //     alert("----- current AddEwayAccessToken")
-    //   }
-    // }
   }, [AccessToken_Modifiedat]);
 
   const getEwayAccessToken = () => {
@@ -2811,7 +2797,9 @@ const AddOrder = () => {
   };
   //  For Step 1 Eway bill
   useLayoutEffect(() => {
-    getEwayAccessToken();
+    if(org_name){
+      getEwayAccessToken();
+    }   
   }, []);
 
   // For Step 2 Eway Bill
@@ -6705,8 +6693,8 @@ const AddOrder = () => {
                                 row2[row2.length - 1][0] &&
                                 row2[row2.length - 1][1] &&
                                 row2[row2.length - 1][2] &&
-                                row2[row2.length - 1][3] &&
-                                row2[row2.length - 1][4]
+                                row2[row2.length - 1][3] 
+                                // && row2[row2.length - 1][4]
                               ) {
                               setshowModalInvoice({
                                 ...showModalInvoice,

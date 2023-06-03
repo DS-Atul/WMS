@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
-import { ServerAddress } from "../../../constants/ServerAddress";
+import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
 import {
   Col,
   Row,
@@ -22,8 +22,11 @@ import {
 } from "../../../store/alert/Alert";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
+import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
+import { gstin_no } from "../../../constants/CompanyDetails";
+import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 
-function CreateRunsheet({ awb_numbers, issuereceived_total, issuenon_received_total, total_pieces }) {
+function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_received_total, total_pieces }) {
   console.log("awb_numbers------", awb_numbers)
   console.log("issuereceived_total--------", issuereceived_total)
   console.log("issuenon_received_total--------", issuenon_received_total)
@@ -73,6 +76,7 @@ function CreateRunsheet({ awb_numbers, issuereceived_total, issuenon_received_to
   const [driver_name_error, setdriver_name_error] = useState(false);
   const [contract_base_vehicle_error, setcontract_base_vehicle_error] =
     useState(false);
+    const userDetail = useSelector((state) => state.authentication.userdetails);
 
   const [is_contract_based, setis_contract_based] = useState(false);
   const [contract_based_vehicle_no, setcontract_based_vehicle_no] =
@@ -81,6 +85,8 @@ function CreateRunsheet({ awb_numbers, issuereceived_total, issuenon_received_to
   const [defined_route, setdefined_route] = useState(false);
 
   const awb_no_list = awb_numbers;
+  const docket_nos = docket_no;
+  console.log("awb_no_list------", awb_no_list)
 
   const handleClose = () => {
     setShow(false)
@@ -99,6 +105,76 @@ function CreateRunsheet({ awb_numbers, issuereceived_total, issuenon_received_to
       send_runsheet_data(values);
     },
   });
+
+    //For Update Part B
+    const [EwayBillData, setEwayBillData] = useState([])
+    const [list_data, setlist_data] = useState([])
+
+    const getEwayBills = (docket_num) => {
+      axios
+        .get(
+          ServerAddress +
+          `booking/get_all_ewaybill/?type=${"order"}&value=${docket_num}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then((res) => {
+          console.log("resres----", res)
+          if (res?.data?.length !== 0) {
+            setEwayBillData(prevData => prevData.concat(res.data));
+            // setEwayBillData((prevData) => [...prevData, res.data]);
+            // setEwayBillData(...EwayBillData, res.data);
+          }
+          
+        })
+        .catch((err) => {
+          console.log("rerrerer", err);
+        });
+    };
+
+useEffect(() => {
+  let li = [];
+  EwayBillData?.forEach((e) => {
+    let obj = {
+      transMode: "1",
+      fromPlace: userDetail.branch_nm,
+      fromState: userDetail.branch_location_state_code,
+      transDocNo: e.trans_doc_no,
+      transDocDate: String(
+        e.docDate.split("-")[1] +
+        "/" +
+        e.docDate.split("-")[2] +
+        "/" +
+        e.docDate.split("-")[0]
+      ),
+      vehicleNo: vehicle_no,
+      reasonCode: "2",
+      reasonRem: "text",
+      userGstin: gstin_no,
+      ewbNo: e.ewb_no,
+    };
+    li.push(obj);
+  });
+  setlist_data(li)
+  console.log("li--------", li)
+  // Rest of your code...
+}, [EwayBillData, vehicle_no]);
+
+
+        
+    useEffect(() => {
+      setEwayBillData([])
+      if (docket_nos.length>0 && show) {
+        for (let index = 0; index < docket_nos.length; index++) {
+          getEwayBills(docket_nos[index])
+        }
+       
+      }
+    }, [docket_nos, show])
+
   // Post Runsheet Data
   const send_runsheet_data = () => {
     axios
@@ -131,6 +207,14 @@ function CreateRunsheet({ awb_numbers, issuereceived_total, issuenon_received_to
       .then(function (response) {
         console.log("done", response.data);
         if (response.data.status === "success") {
+          const EwayUpdate = UpateEwaybillPartB({
+            gstin_no: gstin_no,
+            Data: list_data,
+            ewayTokenB: business_access_token,
+            access_token: accessToken,
+          });
+          EwayUpdate();
+
           setShow(false);
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
@@ -271,6 +355,220 @@ function CreateRunsheet({ awb_numbers, issuereceived_total, issuenon_received_to
     }
   }, [route, vehicle_no, driver_name, contract_based_vehicle_no]);
 
+  //For Eway Bill
+
+  const orgId = useSelector((state) => state.eway_bill?.orgs[0]?.orgId);
+
+  const org_name = useSelector(
+    (state) => state.authentication.userdetails.organization
+  );
+  const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
+
+  const e_access_token = useSelector((state) => state.eway_bill.e_access_token);
+
+  const [ass_token, setass_token] = useState(false);
+  const [euser_name, seteuser_name] = useState("");
+  const [epass, setepass] = useState("");
+  const [id_is, setid_is] = useState("");
+
+  const [AccessToken_Modifiedat, setAccessToken_Modifiedat] = useState("");
+  const [time_diff, settime_diff] = useState("");
+ 
+  const getEwayAccessToken = () => {
+    axios
+      .get(
+        ServerAddress +
+        `organization/get_eway_accesstoken/?org_name=${org_name}`,
+
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then(function (response) {
+        console.log("first get ressssss ===>>", response.data);
+        if (response.data.results.length !== 0) {
+          let res_data = response.data.results[0];
+          setid_is(res_data.id);
+          seteuser_name(res_data.username);
+          setepass(res_data.password);
+          setAccessToken_Modifiedat(res_data.AccessToken_Modifiedat);
+          if (e_access_token === "") {
+            dispatch(setEAccessToken(res_data.access_token));
+          }
+          if (business_access_token === "") {
+            dispatch(setBusinesssAccessToken(res_data.business_token));
+          }
+
+          if (response.data.results[0].access_token === null) {
+            setass_token(true);
+          } else {
+            setass_token(false);
+          }
+        }
+        else {
+          dispatch(setEAccessToken(""));
+          dispatch(setBusinesssAccessToken(""));
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+
+  const AddEwayAccessToken = () => {
+    axios
+      .post(
+        EServerAddress + "ezewb/v1/auth/initlogin",
+
+        {
+          // userid: "test.easywaybill@gmail.com",
+          // password: "Abcd@12345",
+          userid: euser_name,
+          password: epass,
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("AddEwayAccessToken response----", response)
+        if (response.data.message !== "Please verify account (or sign up first).") {
+          dispatch(setEAccessToken(response.data.response.token));
+          dispatch(setOrgs(response.data.response.orgs));
+          if (response.data.status === 1 && id_is !== "") {
+            postAssToken(response.data.response.token);
+          }
+        }
+        else {
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Invalid Username And Password Sign Up First`));
+          dispatch(setAlertType("warning"));
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+
+  const postAssToken = (access_token) => {
+    axios
+      .put(
+        ServerAddress + "organization/update_token/" + id_is,
+
+        {
+          type: "access_token",
+          access_token: access_token,
+        },
+
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then(function (response) {
+
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+
+
+  const GetBusiness_token = () => {
+    axios
+      .post(
+        EServerAddress + "ezewb/v1/auth/completelogin",
+        {
+          token: `${e_access_token}`,
+          orgid: orgId,
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        dispatch(setBusinesssAccessToken(response.data.response.token));
+        if (response.data.status === 1 && id_is !== "") {
+          postBusinessToken(response.data.response.token);
+        }
+      })
+      .catch((error) => {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Eway Bill Server Is Currently Down`));
+        dispatch(setAlertType("danger"));
+      });
+  };
+
+  const postBusinessToken = (business_token) => {
+    axios
+      .put(
+        ServerAddress + "organization/update_token/" + id_is,
+
+        {
+          type: "business_token",
+          business_token: business_token,
+        },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then(function (response) {
+        console.log("post busines token res ===>>", response.data);
+
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+  
+  useLayoutEffect(() => {
+    if (ass_token) {
+      AddEwayAccessToken();
+    }
+    if (time_diff >= 6) {
+      AddEwayAccessToken();
+    }
+  }, [ass_token, time_diff]);
+
+    //  For Step 1 Eway bill
+    useLayoutEffect(() => {
+      if(org_name){
+        getEwayAccessToken();
+      }   
+    }, []);
+  
+    // For Step 2 Eway Bill
+    useLayoutEffect(() => {
+      if (e_access_token != "" && ass_token && orgId) {
+        GetBusiness_token();
+      }
+      if (time_diff >= 6 && orgId) {
+        GetBusiness_token();
+      }
+    }, [e_access_token, ass_token, time_diff]);
+
+    useEffect(() => {
+      // Calculate the time difference when AccessToken_Modifiedat changes
+      if (AccessToken_Modifiedat) {
+        var dateTime1 = new Date(AccessToken_Modifiedat);
+        var dateTime2 = new Date(); // Current date-time
+        console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
+        console.log("date time1---- ", dateTime1)
+        console.log("date time2--- ", dateTime2)
+        var timeDiff = Math.abs(dateTime2 - dateTime1);
+        var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
+        settime_diff(diffHours);
+        console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
+      }
+  
+    }, [AccessToken_Modifiedat]);
+
+      
   return (
     <>
       <Button

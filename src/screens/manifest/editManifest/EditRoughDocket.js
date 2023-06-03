@@ -177,8 +177,8 @@ const EditRoughDocket = () => {
     axios
       .get(
         ServerAddress +
-          // `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
-          `manifest/get_all_manifest_order/?manifest_no=${manifest_no}`,
+        // `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
+        `manifest/get_all_manifest_order/?manifest_no=${manifest_no}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -211,10 +211,10 @@ const EditRoughDocket = () => {
 
   useEffect(() => {
     if (is_checked) {
-     
-      ewb_no_l.forEach((item,index) => {
- 
-        axios 
+
+      ewb_no_l.forEach((item, index) => {
+
+        axios
           .put(
             EServerAddress + `ezewb/v1/ewbNo?gstin=${gstin_no}`,
             {
@@ -247,12 +247,12 @@ const EditRoughDocket = () => {
               )
             );
             dispatch(setAlertType("success"));
-            if (index === (ewb_no_l.length)-1) {
-             updateManifest()
+            if (index === (ewb_no_l.length) - 1) {
+              updateManifest()
               setis_checked(false)
             }
           })
-          .catch((error) => {});
+          .catch((error) => { });
 
       });
     }
@@ -309,7 +309,7 @@ const EditRoughDocket = () => {
   };
 
   const updateManifest = () => {
-    
+
     axios
       .put(
         ServerAddress + "manifest/update_manifest/" + manifest_id,
@@ -387,7 +387,7 @@ const EditRoughDocket = () => {
     axios
       .get(
         ServerAddress +
-          `master/all_vehcile/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
+        `master/all_vehcile/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -418,6 +418,66 @@ const EditRoughDocket = () => {
   useLayoutEffect(() => {
     get_vehcile_no();
   }, [vendor_n_page, search_vendor_name, refresh_r]);
+
+  // For Barcode
+  const [old_barcodes, setold_barcodes] = useState([])
+  const [bag_bq, setbag_bq] = useState("");
+  let dimension_list_barcode = [bag_bq];
+  const [row_barcode, setrow_barcode] = useState([dimension_list_barcode]);
+  console.log("row_barcode====", row_barcode)
+
+  const [box_bq, setbox_bq] = useState("");
+  let dimension_list_barcodebox = [box_bq];
+  const [row_barcodebox, setrow_barcodebox] = useState([dimension_list_barcodebox]);
+  console.log("row_barcode====", row_barcodebox)
+
+  //   useEffect(() => {
+  //   if (total_bags !== "") {
+  //     let val = total_bags;
+  //     let val_box = [];
+  //     for (let index = 0; index < val; index++) {
+  //       val_box.push([""]);
+  //     }
+  //     setrow_barcode(val_box);
+  //   }
+  // }, [total_bags]);
+  useEffect(() => {
+    if (total_bags !== "" && total_bags?.toString().length < 4) {
+      let val = total_bags;
+      let val_bag = Array.from({ length: val }, () => [""]);
+      setrow_barcode(val_bag);
+    }
+    else{
+      setrow_barcode([])
+    }
+  }, [total_bags]);
+
+  useEffect(() => {
+    if (total_box !== "" && total_box?.toString().length < 4) {
+      let val = total_box;
+      let val_box = Array.from({ length: val }, () => [""]);
+      setrow_barcodebox(val_box);
+    }
+    else{
+      setrow_barcodebox([])
+    }
+  }, [total_box]);
+
+  useEffect(() => {
+    console.log("data------", data)
+    if(data.length>0){
+      let barcode =  data.map(v=>v?.qrcode_details).flat().map((v)=>v?.barcode_no)
+  
+      setold_barcodes(barcode)
+    }
+    else{
+      setold_barcodes([])
+    }
+
+  }, [data])
+
+  console.log("old_barcodes----", old_barcodes)
+  
 
   return (
     <>
@@ -599,6 +659,89 @@ const EditRoughDocket = () => {
                         </div>
                       </Col>
                     </Row>
+                    {(row_barcode.length>0) &&
+                      <Row className="hide">
+                        <Label className="header-child">Add Bag Barcode *</Label>
+                        <div style={{ display: "flex", flexWrap: "wrap" }}>
+                          {row_barcode.map((item, index) => (
+                            <Col lg={2} md={2} sm={4} key={index}>
+                              <div className="mb-2" style={{ marginLeft: "3px" }}>
+                                <Input
+                                  min={0}
+                                  value={item[0]}
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  style={{ marginBottom: "15px" }}
+                                  placeholder="Enter Barcode"
+                                  onChange={(val) => {
+                                    setbag_bq(val.target.value);
+                                    item[0] = val.target.value;
+                                  }}
+                                onBlur={() => {
+                                  if (old_barcodes.some((v)=>v === item[0]) && row_barcode.some((v)=>v !== item[0])) {
+                                    dispatch(setShowAlert(true));
+                                    dispatch(
+                                      setDataExist(`Barcode Mached`)
+                                    );
+                                    dispatch(setAlertType("success"));
+                                    // check_barcode(item[0], index);
+                                  }  
+                                  // else if (item[0].length >= 4 && old_barcodes.some((v)=>v !== item[0])) {
+                                  else {
+                                    row_barcode[index] = ['']
+                                    dispatch(setShowAlert(true));
+                                    dispatch(
+                                      setDataExist(`Invalid Barcode`)
+                                    );
+                                    dispatch(setAlertType("warning"));
+                                  }
+                                }}
+                                />
+                              </div>
+                            </Col>
+                          ))}
+                        </div>
+                      </Row>
+                     } 
+
+                  {(row_barcodebox.length>0) && 
+                      <Row className="hide">
+                        <Label className="header-child">Add Box Barcode *</Label>
+                        <div style={{ display: "flex", flexWrap: "wrap" }}>
+                          {row_barcodebox.map((item, index) => (
+                            <Col lg={2} md={2} sm={4} key={index}>
+                              <div className="mb-2" style={{ marginLeft: "3px" }}>
+                                <Input
+                                  min={0}
+                                  value={item[0]}
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  style={{ marginBottom: "15px" }}
+                                  placeholder="Enter Barcode"
+                                  onChange={(val) => {
+                                    setbox_bq(val.target.value);
+                                    item[0] = val.target.value;
+                                  }}
+                                // onBlur={() => {
+                                //   if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
+                                //     check_barcode(item[0], index);
+                                //   } else if (item[0].length >= 4 && !item[0].startsWith("SSCL")) {
+                                //     dispatch(setShowAlert(true));
+                                //     dispatch(
+                                //       setDataExist(`Invalid Barcode`)
+                                //     );
+                                //     dispatch(setAlertType("warning"));
+                                //   }
+                                // }}
+                                />
+                              </div>
+                            </Col>
+                          ))}
+                        </div>
+                      </Row>
+                   } 
                   </CardBody>
                 ) : null}
               </Card>
