@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MdDeleteForever, MdAdd } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
 import {
   Card,
   Col,
@@ -44,6 +44,7 @@ import SearchInput from "../../../components/formComponent/searchInput/SearchInp
 import EditManifestDataFormat from "./editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "./AddAnotherOrder";
 import { gstin_no } from "../../../constants/CompanyDetails";
+import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 
 const EditRoughDocket = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -51,6 +52,8 @@ const EditRoughDocket = () => {
   const user_l_state = useSelector(
     (state) => state.authentication.userdetails.branch_location_state
   );
+  const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
+
   const user_l_statecode = useSelector(
     (state) => state.authentication.userdetails.branch_location_state_code
   );
@@ -145,14 +148,6 @@ const EditRoughDocket = () => {
   const [data, setdata] = useState([]);
   const [data2, setdata2] = useState([]);
 
-  const [coloader_mode_list, setcoloader_mode_list] = useState([
-    // "Direct Awb",
-    // "Air Console",
-    // "By Road (Surface)",
-    // "By Train",
-    // "Direct Vehicle",
-    // "Partload",
-  ]);
   useLayoutEffect(() => {
     let manifest_data = location_data.state.manifest;
     setmanifest_data(manifest_data);
@@ -197,116 +192,116 @@ const EditRoughDocket = () => {
   }, [manifest_no, success, refresh]);
 
   const [ewb_no_l, setewb_no_l] = useState([]);
-  const [is_checked, setis_checked] = useState(false);
+  // const [is_checked, setis_checked] = useState(false);
 
   // const today_r = new Date();
   // const  date = today_r.toLocaleDateString('en-GB'); // 'en-GB' specifies the format as day-month-year
   // console.log("dateeeeeeeeeeeee",date);
 
-  useLayoutEffect(() => {
-    let m = data?.map((item) => [item?.eway_bill_no, item?.docket_no]);
-    let filteredArr = m?.filter((subArr) => subArr[0]?.length !== 0);
-    setewb_no_l(filteredArr);
-  }, [data]);
+  // useLayoutEffect(() => {
+  //   let m = data?.map((item) => [item?.eway_bill_no, item?.docket_no]);
+  //   let filteredArr = m?.filter((subArr) => subArr[0]?.length !== 0);
+  //   setewb_no_l(filteredArr);
+  // }, [data]);
 
-  useEffect(() => {
-    if (is_checked) {
+  // useEffect(() => {
+  //   if (is_checked) {
 
-      ewb_no_l.forEach((item, index) => {
+  //     ewb_no_l.forEach((item, index) => {
 
-        axios
-          .put(
-            EServerAddress + `ezewb/v1/ewbNo?gstin=${gstin_no}`,
-            {
-              transMode: "1",
-              fromPlace: user_l_state,
-              fromState: user_l_statecode,
-              transDocNo: item[1],
-              transDocDate: date,
-              vehicleNo: rental ? vehicle_no : vendor_name,
-              reasonCode: "1",
-              reasonRem: "Assigning  Trans Doc no",
-              userGstin: "05AAAAT2562R1Z3",
-              ewbNo: item[0],
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${b_acess_token}`,
-              },
-            }
-          )
-          .then(function (response) {
-            console.log("response(((((9999999999", response);
-            // alert(item[1]);
-            dispatch(setToggle(true));
-            dispatch(setShowAlert(true));
-            dispatch(
-              setDataExist(
-                `${item[0]} Sucessfully Attached To Docket No =>${item[1]}`
-              )
-            );
-            dispatch(setAlertType("success"));
-            if (index === (ewb_no_l.length) - 1) {
-              updateManifest()
-              setis_checked(false)
-            }
-          })
-          .catch((error) => { });
+  //       axios
+  //         .put(
+  //           EServerAddress + `ezewb/v1/ewbNo?gstin=${gstin_no}`,
+  //           {
+  //             transMode: "1",
+  //             fromPlace: user_l_state,
+  //             fromState: user_l_statecode,
+  //             transDocNo: item[1],
+  //             transDocDate: date,
+  //             vehicleNo: rental ? vehicle_no : vendor_name,
+  //             reasonCode: "1",
+  //             reasonRem: "Assigning  Trans Doc no",
+  //             userGstin: "05AAAAT2562R1Z3",
+  //             ewbNo: item[0],
+  //           },
+  //           {
+  //             headers: {
+  //               "Content-Type": "application/json",
+  //               Authorization: `Bearer ${b_acess_token}`,
+  //             },
+  //           }
+  //         )
+  //         .then(function (response) {
+  //           console.log("response(((((9999999999", response);
+  //           // alert(item[1]);
+  //           dispatch(setToggle(true));
+  //           dispatch(setShowAlert(true));
+  //           dispatch(
+  //             setDataExist(
+  //               `${item[0]} Sucessfully Attached To Docket No =>${item[1]}`
+  //             )
+  //           );
+  //           dispatch(setAlertType("success"));
+  //           if (index === (ewb_no_l.length) - 1) {
+  //             updateManifest()
+  //             setis_checked(false)
+  //           }
+  //         })
+  //         .catch((error) => { });
 
-      });
-    }
-  }, [is_checked]);
+  //     });
+  //   }
+  // }, [is_checked]);
 
-  const update_eway_b = (values) => {
-    axios
-      .post(
-        EServerAddress + `ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
+  // const update_eway_b = (values) => {
+  //   axios
+  //     .post(
+  //       EServerAddress + `ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
 
-        {
-          fromPlace: user_l_state,
-          fromState: user_l_statecode,
-          vehicleNo: rental ? vehicle_no : vendor_name,
-          transMode: "1",
-          transDocNo: null,
-          transDocDate: null,
-          ewbNos: ewb_no_l,
-          userGstin: gstin_no,
-        },
+  //       {
+  //         fromPlace: user_l_state,
+  //         fromState: user_l_statecode,
+  //         vehicleNo: rental ? vehicle_no : vendor_name,
+  //         transMode: "1",
+  //         transDocNo: null,
+  //         transDocDate: null,
+  //         ewbNos: ewb_no_l,
+  //         userGstin: gstin_no,
+  //       },
 
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${b_acess_token}`,
-          },
-        }
-      )
-      .then(function (response) {
-        if (response.data.status === 1) {
-          dispatch(setToggle(true));
-          dispatch(setShowAlert(true));
-          dispatch(setDataExist(`Updated  ${ewb_no_l}sucessfully`));
-          dispatch(setAlertType("success"));
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${b_acess_token}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.data.status === 1) {
+  //         dispatch(setToggle(true));
+  //         dispatch(setShowAlert(true));
+  //         dispatch(setDataExist(`Updated  ${ewb_no_l}sucessfully`));
+  //         dispatch(setAlertType("success"));
 
-          updateManifest(values);
-        } else {
-          dispatch(setToggle(true));
-          dispatch(setShowAlert(true));
-          dispatch(setDataExist(`Updated  ${ewb_no_l} Failed `));
-          dispatch(setAlertType("danger"));
+  //         updateManifest(values);
+  //       } else {
+  //         dispatch(setToggle(true));
+  //         dispatch(setShowAlert(true));
+  //         dispatch(setDataExist(`Updated  ${ewb_no_l} Failed `));
+  //         dispatch(setAlertType("danger"));
 
-          updateManifest();
-        }
-      })
-      .catch((error) => {
-        dispatch(setToggle(true));
-        dispatch(setShowAlert(true));
-        dispatch(setDataExist(`Updated  ${ewb_no_l} Failed `));
-        dispatch(setAlertType("danger"));
-        setShow(false);
-        updateManifest();
-      });
-  };
+  //         updateManifest();
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       dispatch(setToggle(true));
+  //       dispatch(setShowAlert(true));
+  //       dispatch(setDataExist(`Updated  ${ewb_no_l} Failed `));
+  //       dispatch(setAlertType("danger"));
+  //       setShow(false);
+  //       updateManifest();
+  //     });
+  // };
 
   const updateManifest = () => {
 
@@ -317,8 +312,8 @@ const EditRoughDocket = () => {
           coloader_mode: coloader_mode,
           coloader: coloader_id,
           airwaybill_no: airway_bill_no,
-          bag_count: total_bags,
-          box_count: total_box,
+          bag_count: total_bags ? total_bags : 0,
+          box_count: total_box ? total_box : 0,
           total_weight: manifest_weight,
           coloader_name: coloader_selected,
           carrier_name: flight_name,
@@ -326,7 +321,7 @@ const EditRoughDocket = () => {
           forwarded: "False",
           manifested: "False",
           departed: "False",
-          is_scanned: same_box ? manifest_data.is_scanned : false,
+          is_scanned: true,
           modified_by: user_id,
           forwarded_branch_name: "",
           forwarded_branch: null,
@@ -334,7 +329,7 @@ const EditRoughDocket = () => {
           manifest_no: manifest_no,
           deleted_packages: deleted_packages_id,
           vehicle_no: vehicle_no,
-          vehcile_no_f: vendor_id,
+          vehcile_no_f: vehicle_id,
           is_rented_vehcile: rental ? "True" : "False",
         },
         {
@@ -345,6 +340,16 @@ const EditRoughDocket = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
+          if (list_data.length>0){
+            const EwayUpdate = UpateEwaybillPartB({
+              gstin_no: gstin_no,
+              Data: list_data,
+              ewayTokenB: business_access_token,
+              access_token: accessToken,
+            });
+            EwayUpdate();
+          }
+          add_manifestbarcode()
           dispatch(setToggle(true));
           dispatch(setShowAlert(true));
           dispatch(
@@ -370,45 +375,56 @@ const EditRoughDocket = () => {
     }
   }, [total_bags, total_box, manifest_data]);
 
-  const [vendor_list, setvendor_list] = useState([]);
-  const [vendor_name, setvendor_name] = useState("");
-  const [vendor_id, setvendor_id] = useState("");
-  const [vendor_n_page, setvendor_n_page] = useState(1);
-  const [search_vendor_name, setsearch_vendor_name] = useState("");
-  const [vendor_error, setvendor_error] = useState(false);
+  const [vehicle_list, setvehicle_list] = useState([]);
+  const [vehicle_id, setvehicle_id] = useState("");
+  const [vehicle_n_page, setvehicle_n_page] = useState(1);
+  const [search_vehicle_name, setsearch_vehicle_name] = useState("");
+  const [vehicle_error, setvehicle_error] = useState(false);
+  const [vehicle_loaded, setvehicle_loaded] = useState(false)
+  const [vehicle_count, setvehicle_count] = useState(1)
+  const [vehicle_bottom, setvehicle_bottom] = useState(103)
+
   const [refresh_r, setrefresh_r] = useState(false);
-  const [vendor_data, setvendor_data] = useState([]);
   const [rental, setrental] = useState(false);
   const [vehicle_no, setvehicle_no] = useState("");
   //  For getting Vehcile number
   const get_vehcile_no = () => {
-    let vendor_temp = [];
+    let vehicle_temp = [];
     let data = [];
     axios
       .get(
         ServerAddress +
-        `master/all_vehcile/?search=${""}&p=${vendor_n_page}&records=${10}&name_search=${search_vendor_name}&vendor_name=&data=all`,
+        `master/all_vehcile/?search=${search_vehicle_name}&p=${vehicle_n_page}&records=${10}&name_search=${''}&vehicle_name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
+        if (response.data.next === null) {
+          setvehicle_loaded(false);
+        } else {
+          setvehicle_loaded(true);
+        }
         data = response.data.results;
-        setvendor_data(data);
         if (response.data.results.length > 0) {
-          if (vendor_n_page == 1) {
-            vendor_temp = response.data.results.map((v) => [
+          if (vehicle_n_page == 1) {
+            vehicle_temp = response.data.results.map((v) => [
               v.id,
-              toTitleCase(v.vehcile_no),
+              v.vehcile_no,
             ]);
           } else {
-            vendor_temp = [
-              ...vendor_list,
+            vehicle_temp = [
+              ...vehicle_list,
               ...response.data.results.map((v) => [v.id, v.vehcile_no]),
             ];
           }
+          setvehicle_count(vehicle_count + 2);
+          setvehicle_list(vehicle_temp);
         }
-        setvendor_list(vendor_temp);
+        else {
+          setvehicle_list([])
+        }
+
       })
       .catch((err) => {
         alert(`Error Occur in Get , ${err}`);
@@ -417,37 +433,85 @@ const EditRoughDocket = () => {
 
   useLayoutEffect(() => {
     get_vehcile_no();
-  }, [vendor_n_page, search_vendor_name, refresh_r]);
+  }, [vehicle_n_page, search_vehicle_name]);
 
   // For Barcode
+  const [is_valid_barcode, setis_valid_barcode] = useState(false)
+  const [is_valid_box, setis_valid_box] = useState(false)
   const [old_barcodes, setold_barcodes] = useState([])
   const [bag_bq, setbag_bq] = useState("");
   let dimension_list_barcode = [bag_bq];
   const [row_barcode, setrow_barcode] = useState([dimension_list_barcode]);
-  console.log("row_barcode====", row_barcode)
 
   const [box_bq, setbox_bq] = useState("");
   let dimension_list_barcodebox = [box_bq];
   const [row_barcodebox, setrow_barcodebox] = useState([dimension_list_barcodebox]);
-  console.log("row_barcode====", row_barcodebox)
 
-  //   useEffect(() => {
-  //   if (total_bags !== "") {
-  //     let val = total_bags;
-  //     let val_box = [];
-  //     for (let index = 0; index < val; index++) {
-  //       val_box.push([""]);
-  //     }
-  //     setrow_barcode(val_box);
-  //   }
-  // }, [total_bags]);
+
+  // For Barcode validation
+  const check_barcode = (barcode, index, type) => {
+    axios
+      .get(
+        ServerAddress + `manifest/checkDuplicateManifestBarcode/${barcode}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("barcode---------", response.data);
+        if (response.data === "true") {
+          if (type === "bag") {
+            row_barcode[index] = ['']
+            dispatch(setDataExist(`This Barcode Is Already Used In Manifest`));
+            dispatch(setAlertType("warning"));
+            dispatch(setShowAlert(true));
+          }
+          else {
+            row_barcodebox[index] = ['']
+            dispatch(setDataExist(`This Barcode Is Already Used In Manifest`));
+            dispatch(setAlertType("warning"));
+            dispatch(setShowAlert(true));
+          }
+
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while Geting Order Status Data ${error}`);
+      });
+  };
+  const check_order_barcode = (barcode, index) => {
+    axios
+      .get(
+        ServerAddress + `booking/checkDuplicateBarcode/${barcode}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data === "true") {
+          row_barcodebox[index] = ['']
+          dispatch(setDataExist(`This Barcode Is Already Used`));
+          dispatch(setAlertType("warning"));
+          dispatch(setShowAlert(true));
+
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while Geting Order Status Data ${error}`);
+      });
+  };
+
   useEffect(() => {
     if (total_bags !== "" && total_bags?.toString().length < 4) {
       let val = total_bags;
       let val_bag = Array.from({ length: val }, () => [""]);
       setrow_barcode(val_bag);
     }
-    else{
+    else {
       setrow_barcode([])
     }
   }, [total_bags]);
@@ -458,52 +522,420 @@ const EditRoughDocket = () => {
       let val_box = Array.from({ length: val }, () => [""]);
       setrow_barcodebox(val_box);
     }
-    else{
+    else {
       setrow_barcodebox([])
     }
   }, [total_box]);
 
   useEffect(() => {
-    console.log("data------", data)
-    if(data.length>0){
-      let barcode =  data.map(v=>v?.qrcode_details).flat().map((v)=>v?.barcode_no)
-  
+
+    if (data.length > 0) {
+      let barcode = data.map(v => v?.qrcode_details).flat().map((v) => v?.barcode_no)
+
       setold_barcodes(barcode)
     }
-    else{
+    else {
       setold_barcodes([])
     }
 
   }, [data])
 
-  console.log("old_barcodes----", old_barcodes)
-  
+  useEffect(() => {
+    if (vehicle_no !== "" || vehicle_no?.toString().length === 10) {
+      setvehicle_error(false)
+    }
+  }, [vehicle_no])
 
+  useEffect(() => {
+    if (row_barcode?.length > 0) {
+      let result = row_barcode.every((item, index, array) => {
+        if (item[0] !== " " && item[0].startsWith("SSCL") && array.findIndex((el) => el[0] === item[0]) === index) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      setis_valid_barcode(result)
+
+    }
+
+  }, [dimension_list_barcode])
+
+  useEffect(() => {
+    if (row_barcodebox?.length > 0) {
+      let result2 = row_barcodebox.every((item, index, array) => {
+        if (item[0] !== " " && item[0].startsWith("SSCL") && array.findIndex((el) => el[0] === item[0]) === index) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      setis_valid_box(result2)
+
+    }
+
+  }, [dimension_list_barcodebox])
+
+  console.log("data------", old_barcodes)
+  // console.log("row_barcode====", row_barcode)
+  // console.log("row_barcode====", row_barcodebox)
+  const [total_barcodes, settotal_barcodes] = useState([])
+  console.log("total_barcodes------", total_barcodes)
+
+  useEffect(() => {
+    
+    let result = [
+      ...row_barcode.filter((barcode) => barcode[0] !== "").map((barcode) => ({
+        'menifest_id': manifest_id,
+        'menifest_no': manifest_no,
+        'barcode_no': barcode[0],
+        'is_active': true,
+        'vehicle_no': vehicle_no,
+        'box_tpye': 'BAG'
+      })),
+      ...row_barcodebox.filter((barcode) => barcode[0] !== "").map((barcode) => ({
+        'menifest_id': manifest_id,
+        'menifest_no': manifest_no,
+        'barcode_no': barcode[0],
+        'is_active': true,
+        'vehicle_no': vehicle_no,
+        'box_tpye': 'BOX'
+      }))
+    ];
+    settotal_barcodes(result)
+  }, [box_bq,bag_bq,vehicle_no]);
+
+  const add_manifestbarcode = () => {
+    let data = total_barcodes
+    axios
+      .post(
+        ServerAddress + `manifest/manifestBagqrcode/`, data,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+
+        console.log("barcode response====", response)
+      })
+      .catch((error) => {
+        alert(`Error Happen while posting Commodity  Data ${error}`);
+      });
+  };
+
+  //For Eway Bill
+
+  const orgId = useSelector((state) => state.eway_bill?.orgs[0]?.orgId);
+
+  const org_name = useSelector(
+    (state) => state.authentication.userdetails.organization
+  );
+
+  const e_access_token = useSelector((state) => state.eway_bill.e_access_token);
+
+  const [ass_token, setass_token] = useState(false);
+  const [euser_name, seteuser_name] = useState("");
+  const [epass, setepass] = useState("");
+  const [id_is, setid_is] = useState("");
+
+  const [AccessToken_Modifiedat, setAccessToken_Modifiedat] = useState("");
+  const [time_diff, settime_diff] = useState("");
+
+  const getEwayAccessToken = () => {
+    axios
+      .get(
+        ServerAddress +
+        `organization/get_eway_accesstoken/?org_name=${org_name}`,
+
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then(function (response) {
+        console.log("first get ressssss ===>>", response.data);
+        if (response.data.results.length !== 0) {
+          let res_data = response.data.results[0];
+          setid_is(res_data.id);
+          seteuser_name(res_data.username);
+          setepass(res_data.password);
+          setAccessToken_Modifiedat(res_data.AccessToken_Modifiedat);
+          if (e_access_token === "") {
+            dispatch(setEAccessToken(res_data.access_token));
+          }
+          if (business_access_token === "") {
+            dispatch(setBusinesssAccessToken(res_data.business_token));
+          }
+
+          if (response.data.results[0].access_token === null) {
+            setass_token(true);
+          } else {
+            setass_token(false);
+          }
+        }
+        else {
+          dispatch(setEAccessToken(""));
+          dispatch(setBusinesssAccessToken(""));
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+
+  const AddEwayAccessToken = () => {
+    axios
+      .post(
+        EServerAddress + "ezewb/v1/auth/initlogin",
+
+        {
+          // userid: "test.easywaybill@gmail.com",
+          // password: "Abcd@12345",
+          userid: euser_name,
+          password: epass,
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("AddEwayAccessToken response----", response)
+        if (response.data.message !== "Please verify account (or sign up first).") {
+          dispatch(setEAccessToken(response.data.response.token));
+          dispatch(setOrgs(response.data.response.orgs));
+          if (response.data.status === 1 && id_is !== "") {
+            postAssToken(response.data.response.token);
+          }
+        }
+        else {
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Invalid Username And Password Sign Up First`));
+          dispatch(setAlertType("warning"));
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+
+  const postAssToken = (access_token) => {
+    axios
+      .put(
+        ServerAddress + "organization/update_token/" + id_is,
+
+        {
+          type: "access_token",
+          access_token: access_token,
+        },
+
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then(function (response) {
+
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+
+
+  const GetBusiness_token = () => {
+    axios
+      .post(
+        EServerAddress + "ezewb/v1/auth/completelogin",
+        {
+          token: `${e_access_token}`,
+          orgid: orgId,
+        },
+
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(function (response) {
+        dispatch(setBusinesssAccessToken(response.data.response.token));
+        if (response.data.status === 1 && id_is !== "") {
+          postBusinessToken(response.data.response.token);
+        }
+      })
+      .catch((error) => {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Eway Bill Server Is Currently Down`));
+        dispatch(setAlertType("danger"));
+      });
+  };
+
+  const postBusinessToken = (business_token) => {
+    axios
+      .put(
+        ServerAddress + "organization/update_token/" + id_is,
+
+        {
+          type: "business_token",
+          business_token: business_token,
+        },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then(function (response) {
+        console.log("post busines token res ===>>", response.data);
+
+      })
+      .catch((error) => {
+        alert(`Error Happen while login  with eway bill ${error}`);
+      });
+  };
+
+  useLayoutEffect(() => {
+    if (ass_token) {
+      AddEwayAccessToken();
+    }
+    if (time_diff >= 6) {
+      AddEwayAccessToken();
+    }
+  }, [ass_token, time_diff]);
+
+  //  For Step 1 Eway bill
+  useLayoutEffect(() => {
+    if (org_name) {
+      getEwayAccessToken();
+    }
+  }, []);
+
+  // For Step 2 Eway Bill
+  useLayoutEffect(() => {
+    if (e_access_token != "" && ass_token && orgId) {
+      GetBusiness_token();
+    }
+    if (time_diff >= 6 && orgId) {
+      GetBusiness_token();
+    }
+  }, [e_access_token, ass_token, time_diff]);
+
+  useEffect(() => {
+    // Calculate the time difference when AccessToken_Modifiedat changes
+    if (AccessToken_Modifiedat) {
+      var dateTime1 = new Date(AccessToken_Modifiedat);
+      var dateTime2 = new Date(); // Current date-time
+      console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
+      console.log("date time1---- ", dateTime1)
+      console.log("date time2--- ", dateTime2)
+      var timeDiff = Math.abs(dateTime2 - dateTime1);
+      var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
+      settime_diff(diffHours);
+      console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
+    }
+
+  }, [AccessToken_Modifiedat]);
+
+  //For Update Part B
+  const userDetail = useSelector((state) => state.authentication.userdetails);
+
+  const [EwayBillData, setEwayBillData] = useState([])
+  const [list_data, setlist_data] = useState([])
+  console.log("list_data------", list_data)
+
+  const getEwayBills = (manifest_num) => {
+    axios
+      .get(
+        ServerAddress +
+        `booking/get_all_ewaybill/?type=${"hub"}&value=${manifest_num}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log("resres----", res)
+        if (res?.data?.length !== 0) {
+          setEwayBillData(res.data);
+        //   // setEwayBillData((prevData) => [...prevData, res.data]);
+        //   // setEwayBillData(...EwayBillData, res.data);
+        }
+
+      })
+      .catch((err) => {
+        console.log("rerrerer", err);
+      });
+  };
+
+  useEffect(() => {
+    if(EwayBillData?.length>0){
+      let li = [];
+      EwayBillData?.forEach((e) => {
+        let obj = {
+          transMode: "1",
+          fromPlace: userDetail.branch_nm,
+          fromState: userDetail.branch_location_state_code,
+          transDocNo: e.trans_doc_no,
+          transDocDate: String(
+            e.docDate.split("-")[1] +
+            "/" +
+            e.docDate.split("-")[2] +
+            "/" +
+            e.docDate.split("-")[0]
+          ),
+          vehicleNo: vehicle_no,
+          reasonCode: "2",
+          reasonRem: "text",
+          userGstin: gstin_no,
+          ewbNo: e.ewb_no,
+        };
+        li.push(obj);
+      });
+      setlist_data(li)
+      console.log("li--------", li)
+    }
+
+    // Rest of your code...
+  }, [EwayBillData,vehicle_no]);
+
+  useEffect(() => {
+    console.log("list_data----", list_data)
+    if(manifest_no !== ""){
+      getEwayBills(manifest_no)
+    }
+  }, [manifest_no])
   return (
     <>
       <div>
         <Form
           onSubmit={(e) => {
             e.preventDefault();
-            if (total_bags == "") {
-              settotal_bag_error(true);
+            if (!total_bags && !total_box) {
+              alert("Please Enter Either Bag and Box Value")
+              // settotal_bag_error(true);
             }
-            if (manifest_weight == "") {
-              setmanifest_weight_error(true);
+            else if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
+              setvehicle_error(true);
             }
-            if (airway_bill_no == "") {
-              setairway_bill_no_error(true);
+            else if (!is_valid_barcode && total_bags !== "" && total_bags) {
+              alert("Please Add Barcode Bag With Unique Value")
             }
-            if (flight_name == "") {
-              setflight_name_error(true);
+            else if (!is_valid_box && total_box !== "" && total_box) {
+              alert("Please Add Barcode Box With Unique Value")
             }
-            validation.handleSubmit(e.values);
+            else {
+              updateManifest();
+            }
             return false;
           }}
         >
           <div className="mt-3">
             <PageTitle page={"Edit Manifest"} />
-            <Title title={"Edit Manifest "} parent_title="Manifests" />
+            <Title title={"Edit Manifest"} parent_title="Manifests" />
           </div>
 
           {/* Company Info */}
@@ -560,21 +992,21 @@ const EditRoughDocket = () => {
                             onChange={(e) => {
                               settotal_bags(e.target.value);
                             }}
-                            onBlur={() => {
-                              settotal_bag_error(true);
-                            }}
-                            invalid={total_bags == "" && total_bag_error}
+                            // onBlur={() => {
+                            //   settotal_bag_error(true);
+                            // }}
+                            // invalid={total_bags == "" && total_bag_error}
                             type="text"
                             className="form-control-md"
                             id="input"
                             name="total_bags"
                             placeholder="Enter No Of Bags"
                           />
-                          {total_bags == "" && total_bag_error ? (
+                          {/* {total_bags == "" && total_bag_error ? (
                             <FormFeedback type="invalid">
                               Total Bages is required
                             </FormFeedback>
-                          ) : null}
+                          ) : null} */}
                         </div>
                       </Col>
 
@@ -594,11 +1026,13 @@ const EditRoughDocket = () => {
                           />
                         </div>
                       </Col>
-                      <Col>
-                        <div className="mb-2" style={{ marginTop: "25px" }}>
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
                           <Label className="header-child">
                             Market Vehcile:
                           </Label>
+                          <Row>
+                          <Col lg={12} md={12} sm={12}>
                           {rental ? (
                             <FiCheckSquare
                               size={20}
@@ -614,9 +1048,11 @@ const EditRoughDocket = () => {
                               }}
                             />
                           )}
+                          </Col>
+                          </Row>
                         </div>
                       </Col>
-                      <Col lg={4} md={8} sm={8}>
+                      <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           {rental ? (
                             <Label className="header-child">
@@ -630,36 +1066,56 @@ const EditRoughDocket = () => {
                           )}
                           {rental ? null : (
                             <SearchInput
-                              data_list={vendor_list}
-                              setdata_list={setvendor_list}
-                              data_item_s={vendor_name}
-                              set_data_item_s={setvendor_name}
-                              set_id={setvendor_id}
-                              page={vendor_n_page}
-                              setpage={setvendor_n_page}
-                              search_item={search_vendor_name}
-                              setsearch_item={setsearch_vendor_name}
+                              data_list={vehicle_list}
+                              setdata_list={setvehicle_list}
+                              data_item_s={vehicle_no}
+                              set_data_item_s={setvehicle_no}
+                              set_id={setvehicle_id}
+                              page={vehicle_n_page}
+                              setpage={setvehicle_n_page}
+                              search_item={search_vehicle_name}
+                              setsearch_item={setsearch_vehicle_name}
                               error_message={"Please Select Any Vechile Number"}
-                              error_s={vendor_error}
+                              error_s={vehicle_error}
+                              loaded={vehicle_loaded}
+                              count={vehicle_count}
+                              bottom={vehicle_bottom}
+                              setbottom={setvehicle_bottom}
                             />
                           )}
 
-                          {rental && (
-                            <Input
-                              name="vehicle_no"
-                              type="text"
-                              id="input"
-                              maxLength={10}
-                              value={vehicle_no}
-                              onChange={(e) => {
-                                setvehicle_no(e.target.value);
-                              }}
-                            />
-                          )}
+                          {rental &&
+                            <div className="mb-2">
+                              <Input
+                                name="vehicle_no"
+                                type="text"
+                                id="input"
+                                maxLength={10}
+                                value={vehicle_no}
+                                onChange={(e) => {
+                                  setvehicle_no(e.target.value);
+                                }}
+                                onBlur={() => {
+                                  if (vehicle_no === "" || vehicle_no?.toString().length !== 10) {
+                                    setvehicle_error(true)
+                                  }
+                                }
+                                }
+                                invalid={
+                                  vehicle_error
+                                }
+                              />
+                              {vehicle_error && (
+                                <FormFeedback type="invalid">
+                                  Vehicle Number Must Have 10 Character
+                                </FormFeedback>
+                              )}
+                            </div>
+                          }
                         </div>
                       </Col>
                     </Row>
-                    {(row_barcode.length>0) &&
+                    {(row_barcode.length > 0) &&
                       <Row className="hide">
                         <Label className="header-child">Add Bag Barcode *</Label>
                         <div style={{ display: "flex", flexWrap: "wrap" }}>
@@ -678,34 +1134,32 @@ const EditRoughDocket = () => {
                                     setbag_bq(val.target.value);
                                     item[0] = val.target.value;
                                   }}
-                                onBlur={() => {
-                                  if (old_barcodes.some((v)=>v === item[0]) && row_barcode.some((v)=>v !== item[0])) {
-                                    dispatch(setShowAlert(true));
-                                    dispatch(
-                                      setDataExist(`Barcode Mached`)
-                                    );
-                                    dispatch(setAlertType("success"));
-                                    // check_barcode(item[0], index);
-                                  }  
-                                  // else if (item[0].length >= 4 && old_barcodes.some((v)=>v !== item[0])) {
-                                  else {
-                                    row_barcode[index] = ['']
-                                    dispatch(setShowAlert(true));
-                                    dispatch(
-                                      setDataExist(`Invalid Barcode`)
-                                    );
-                                    dispatch(setAlertType("warning"));
-                                  }
-                                }}
+                                  onBlur={() => {
+                                    if (old_barcodes.some((v) => v === item[0])) {
+                                      check_barcode(item[0], index, "bag");
+                                      dispatch(setShowAlert(true));
+                                      dispatch(
+                                        setDataExist(`Barcode Mached`)
+                                      );
+                                      dispatch(setAlertType("success"));
+                                    } else  {
+                                      row_barcode[index] = ['']
+                                      dispatch(setShowAlert(true));
+                                      dispatch(
+                                        setDataExist(`Invalid Barcode`)
+                                      );
+                                      dispatch(setAlertType("warning"));
+                                    }
+                                  }}
                                 />
                               </div>
                             </Col>
                           ))}
                         </div>
                       </Row>
-                     } 
+                    }
 
-                  {(row_barcodebox.length>0) && 
+                    {(row_barcodebox.length > 0) &&
                       <Row className="hide">
                         <Label className="header-child">Add Box Barcode *</Label>
                         <div style={{ display: "flex", flexWrap: "wrap" }}>
@@ -724,24 +1178,26 @@ const EditRoughDocket = () => {
                                     setbox_bq(val.target.value);
                                     item[0] = val.target.value;
                                   }}
-                                // onBlur={() => {
-                                //   if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
-                                //     check_barcode(item[0], index);
-                                //   } else if (item[0].length >= 4 && !item[0].startsWith("SSCL")) {
-                                //     dispatch(setShowAlert(true));
-                                //     dispatch(
-                                //       setDataExist(`Invalid Barcode`)
-                                //     );
-                                //     dispatch(setAlertType("warning"));
-                                //   }
-                                // }}
+                                  onBlur={() => {
+                                    if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
+                                      check_order_barcode(item[0], index);
+                                      check_barcode(item[0], index, "box");
+                                    } else if ((item[0].length >= 4 && !item[0].startsWith("SSCL"))) {
+                                      row_barcodebox[index] = ['']
+                                      dispatch(setShowAlert(true));
+                                      dispatch(
+                                        setDataExist(`Invalid Barcode`)
+                                      );
+                                      dispatch(setAlertType("warning"));
+                                    }
+                                  }}
                                 />
                               </div>
                             </Col>
                           ))}
                         </div>
                       </Row>
-                   } 
+                    }
                   </CardBody>
                 ) : null}
               </Card>
@@ -798,13 +1254,13 @@ const EditRoughDocket = () => {
             <Col lg={12}>
               <div className="mb-1 footer_btn">
                 <Button
-                  type="button"
+                  type="submit"
                   className="btn btn-info m-1 cu_btn"
-                  onClick={() => {
-                    // updateManifest();
-                    // update_eway_b()
-                    setis_checked(true);
-                  }}
+                // onClick={() => {
+                // updateManifest();
+                // update_eway_b()
+                // setis_checked(true);
+                // }}
                 >
                   Save
                 </Button>

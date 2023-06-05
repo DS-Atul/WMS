@@ -18,6 +18,11 @@ import {
 } from "../../store/alert/Alert";
 import { gstin_no } from "../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../authentication/signin/UpateEwaybillPartB";
+import {
+  setBusinesssAccessToken,
+  setEAccessToken,
+  setOrgs,
+} from "../../store/ewayBill/EwayBill";
 
 function AddDocket({ runsheet }) {
   console.log("runsheet------", runsheet)
@@ -202,6 +207,7 @@ function AddDocket({ runsheet }) {
   };
 
   useEffect(() => {
+    if(EwayBillData?.length>0){
     let li = [];
     EwayBillData?.forEach((e) => {
       let obj = {
@@ -225,7 +231,7 @@ function AddDocket({ runsheet }) {
       li.push(obj);
     });
     setlist_data(li)
-    console.log("li--------", li)
+  }
     // Rest of your code...
   }, [EwayBillData, runsheet]);
 

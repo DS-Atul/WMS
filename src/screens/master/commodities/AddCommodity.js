@@ -555,6 +555,8 @@ const Add_Commodity = () => {
   //Eway no
   const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
 // 361003171398,  800179
+
+// 
   const post_awb = () => {
     axios
       .post(
@@ -565,8 +567,8 @@ const Add_Commodity = () => {
           "transactionType": "1",
           "subSupplyType": "1",
           "docType": "INV",
-          "docNo": "DHLMH67143",
-          "docDate": "02/06/2023",
+          "docNo": "DHLMH67148",
+          "docDate": "05/06/2023",
           "invTyp": "B2B",
           "fromGstin": "05AAAAT2562R1Z3",
           "fromTrdName": "K R AGENCIES",
@@ -596,7 +598,7 @@ const Add_Commodity = () => {
           "otherValue": "0",
           "transMode": "2",
           "transDistance": "196",
-          "transDocDate": "02/06/2023",
+          "transDocDate": "05/06/2023",
           "transDocNo": "124423",
           "transId": "05AAAAR1685F1ZO",
           "transName": "Ashwin Guj Trans",
@@ -661,6 +663,10 @@ const Add_Commodity = () => {
   };
 
   useEffect(() => {
+    // for (let index = 0; index < array.length; index++) {
+    //   const element = array[index];
+      
+    // }
     // post_awb()
   }, [])
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect ,useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 // import "../../../assets/scss/forms/form.scss";
 import {
   Card,
@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 // import CreateRunsheet from "./CreateRunsheet";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import { ServerAddress } from "../../../constants/ServerAddress";
+import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
 import Modal from "react-bootstrap/Modal";
 import {
   setAlertType,
@@ -27,16 +27,17 @@ import EditUnmanifestDataFormat from "./addAnother/unmanifests/UnrunsheetsDataFo
 import EditDeliveryDataFormat from "./addAnother/manifests/PendingDeliveryDataFormat";
 import { useNavigate } from "react-router-dom";
 import { Select } from "@mui/material";
+import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
+import { gstin_no } from "../../../constants/CompanyDetails";
 // import "./addanother.css";
 
-const AddAnotherOrder = ({ id_m, edit = false, data2, setrefresh2 }) => {
+const AddAnotherOrder = ({ id_m, edit = false, data2, setrefresh2}) => {
   const [refresh, setrefresh] = useState(false);
   const [old_data2, setold_data2] = useState(data2);
   const data2Ref = useRef(data2);
-  console.log("id_m--------", id_m)
-  
-const [deleted_ids, setdeleted_ids] = useState([])
-const [new_ids, setnew_ids] = useState([])
+  console.log("data2--------", data2)
+  const [deleted_ids, setdeleted_ids] = useState([])
+  const [new_ids, setnew_ids] = useState([])
   // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
@@ -237,31 +238,31 @@ const [new_ids, setnew_ids] = useState([])
       });
   };
 
-// const [a, seta] = useState(data2)
-// console.log("aaaaaaaaaaaaaaaaa[[]]", a)
-// useLayoutEffect(() => {
-//   if(refresh){
-//     seta(data2)
-//   }
-// }, [refresh])
+  // const [a, seta] = useState(data2)
+  // console.log("aaaaaaaaaaaaaaaaa[[]]", a)
+  // useLayoutEffect(() => {
+  //   if(refresh){
+  //     seta(data2)
+  //   }
+  // }, [refresh])
 
-useEffect(() => {
-  data2Ref.current = data2;
-}, [data2]);
+  useEffect(() => {
+    data2Ref.current = data2;
+  }, [data2]);
 
-useLayoutEffect(() => {
-  if (refresh) {
-    setold_data2([...data2Ref.current]);
-  }
-}, [refresh]);
+  useLayoutEffect(() => {
+    if (refresh) {
+      setold_data2([...data2Ref.current]);
+    }
+  }, [refresh]);
 
   useEffect(() => {
     // get list of IDs from createRunsheet_list
     const createRunsheet_ids = createRunsheet_list.map((item) => item.id);
-    
+
     // get list of IDs from old_data2
     const old_data2_ids = old_data2.map((item) => item.id);
-  
+
     // find new IDs in createRunsheet_list that are not in old_data2
     let new_list = createRunsheet_ids.filter((id) => !old_data2_ids.includes(id));
     setnew_ids(new_list)
@@ -269,8 +270,9 @@ useLayoutEffect(() => {
     // find deleted IDs in old_data2 that are not in createRunsheet_list
     let deleted_ids = old_data2_ids.filter((id) => !createRunsheet_ids.includes(id));
     setdeleted_ids(deleted_ids)
-  
+
   }, [createRunsheet_list, old_data2, unmanifest_list])
+
 
   return (
     <>
@@ -375,11 +377,10 @@ useLayoutEffect(() => {
           <Button
             variant="primary"
             onClick={() => {
-              if(createRunsheet_list.length>0)
-              {
-              send_manifest_data();
+              if (createRunsheet_list.length > 0) {
+                send_manifest_data();
               }
-              else{
+              else {
                 alert("Please Select At Least One Docket")
               }
             }}

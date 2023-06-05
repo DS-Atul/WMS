@@ -267,7 +267,7 @@ const ChangedRusheet = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          if (runsheet.vehicle_number !== vehicle_no){
+          if (runsheet.vehicle_number !== vehicle_no && list_data.length>0){
           const EwayUpdate = UpateEwaybillPartB({
             gstin_no: gstin_no,
             Data: list_data,
@@ -508,6 +508,7 @@ const ChangedRusheet = () => {
   
 
   useEffect(() => {
+    if(EwayBillData?.length>0){
     let li = [];
     EwayBillData?.forEach((e) => {
       let obj = {
@@ -531,7 +532,7 @@ const ChangedRusheet = () => {
       li.push(obj);
     });
     setlist_data(li)
-    console.log("li--------", li)
+  }
     // Rest of your code...
   }, [EwayBillData, vehicle_no]);
 console.log("EwayBillData-----", EwayBillData)

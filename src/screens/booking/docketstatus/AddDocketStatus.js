@@ -135,7 +135,7 @@ const AddDocketStatus = () => {
         alert("Please Add Vehicle Number")
       }
       else if (status == "SHIPMENT PICKED UP" && !is_valid_barcode) {
-        alert("Please Enter Add Barcode With Unique Value")
+        alert("Please Add Barcode With Unique Value")
       }
       else {
         add_order_status(values);
@@ -336,7 +336,7 @@ const AddDocketStatus = () => {
           if (status == "SHIPMENT PICKED UP") {
             add_barcode();
           }
-          if (list_data.length > 0 && status == "SHIPMENT PICKED UP") {
+          if (list_data.length > 0 && status == "SHIPMENT PICKED UP" && list_data.length>0) {
             const EwayUpdate = UpateEwaybillPartB({
               gstin_no: gstin_no,
               Data: list_data,
@@ -528,6 +528,7 @@ const AddDocketStatus = () => {
   }, [status])
 
   useEffect(() => {
+    if(EwayBillData?.length>0){
     let li = [];
     EwayBillData?.forEach((e) => {
       let obj = {
@@ -551,7 +552,7 @@ const AddDocketStatus = () => {
       li.push(obj);
     });
     setlist_data(li)
-    console.log("li--------", li)
+  }
     // Rest of your code...
   }, [EwayBillData, vehicle]);
 
@@ -798,7 +799,8 @@ const AddDocketStatus = () => {
                                     onBlur={() => {
                                       if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
                                         check_barcode(item[0], index);
-                                      } else if (item[0].length >= 4 && !item[0].startsWith("SSCL")) {
+                                      } else if ((item[0].length >= 4 && !item[0].startsWith("SSCL")) || (row.some((v)=>v === item[0]))) {
+                                        row[index] = ['']
                                         dispatch(setShowAlert(true));
                                         dispatch(
                                           setDataExist(`Invalid Barcode`)

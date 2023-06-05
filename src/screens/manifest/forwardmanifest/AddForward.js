@@ -870,6 +870,7 @@ const formattedDate = `${day}/${month}/${year}`;
                               id="input"
                               name="no_of_bags"
                               placeholder="Enter Total  Bags"
+                              disabled
                             />
                             {/* {validation.touched.no_of_bags &&
                               validation.errors.no_of_bags ? (
@@ -898,6 +899,7 @@ const formattedDate = `${day}/${month}/${year}`;
                               id="input"
                               name="no_of_box"
                               placeholder="Enter Total Box"
+                              disabled
                             />
                             {/* {validation.touched.no_of_box &&
                               validation.errors.no_of_box ? (
