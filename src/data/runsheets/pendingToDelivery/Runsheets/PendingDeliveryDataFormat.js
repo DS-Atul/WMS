@@ -81,6 +81,16 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
                           ", " +
                           toTitleCase(local.consignee_state)}
                       </td>
+                      <td>
+                      {
+                        local.eway_bill_no ?
+                        toTitleCase(local.eway_bill_no)
+
+                        :
+                        <div style={{color:"red"}}>No EwayBill</div>
+                      }
+                      
+                      </td>
                       <td>{local.actual_weight}</td>
                       <td>{local.total_quantity}</td>
 

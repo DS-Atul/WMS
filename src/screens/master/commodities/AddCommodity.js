@@ -554,10 +554,15 @@ const Add_Commodity = () => {
 
   //Eway no
   const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
-// 361003171398,  800179
+  // 361003171398,  800179
 
-// 
-  const post_awb = () => {
+  // 341003179578, 311003179579, 371003179580, 341003179581, 311003179582, 381003179583, 321003179585, 391003179586, 361003179587, 361003179590, 301003179589, 331003179591
+  // 371003179593, 341003179594, 301003179592, ['321003179598', '391003179599', '321003179600']
+ const [a, seta] = useState([])
+  const post_awb = (index) => {
+    // alert()
+   
+  
     axios
       .post(
         `https://dev.api.easywaybill.in/ezewb/v1/ewb/generate?gstin=05AAAAT2562R1Z3`,
@@ -567,7 +572,7 @@ const Add_Commodity = () => {
           "transactionType": "1",
           "subSupplyType": "1",
           "docType": "INV",
-          "docNo": "DHLMH67148",
+          "docNo": `DHLMH67178${index}`,
           "docDate": "05/06/2023",
           "invTyp": "B2B",
           "fromGstin": "05AAAAT2562R1Z3",
@@ -647,14 +652,13 @@ const Add_Commodity = () => {
             Authorization: `Bearer ${b_acess_token}`,
           },
 
-
         }
 
       )
       .then(function (response) {
-
-        console.log("response=======eway bill detail", response);
-
+        console.log("response.data-ewb------", response.data)
+        console.log("response=======eway bill detail", response.data.response['ewbNo']);
+        seta(prevState => [...prevState, response.data.response['ewbNo']]);
 
       })
       .catch((error) => {
@@ -663,14 +667,17 @@ const Add_Commodity = () => {
   };
 
   useEffect(() => {
-    // for (let index = 0; index < array.length; index++) {
-    //   const element = array[index];
-      
-    // }
-    // post_awb()
+    for (let index = 0; index < 3; index++) {
+      // post_awb(index)
+
+    }
   }, [])
 
-  
+useEffect(() => {
+  console.log("a---------", a)
+
+}, [a])
+
 
 
   return (

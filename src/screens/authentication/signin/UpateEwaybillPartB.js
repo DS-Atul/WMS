@@ -2,7 +2,7 @@ import React from 'react';
 import axios from "axios";
 import { ServerAddress } from '../../../constants/ServerAddress';
 function UpateEwaybillPartB({ gstin_no, Data, ewayTokenB, access_token }) {
-    // alert("--------")
+    alert("1111")
     console.log("Data----", Data)
     console.log("gstin_no-----", gstin_no)
     console.log("ewayTokenB----", ewayTokenB)
@@ -44,6 +44,7 @@ function UpateEwaybillPartB({ gstin_no, Data, ewayTokenB, access_token }) {
               }
               if (Data.length - 1 === i) {
                 // setcount(li)
+                alert("222222")
                 li2 = li;
                 console.log("li", li);
                 alert(res.data.message)

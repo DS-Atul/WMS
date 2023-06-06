@@ -125,8 +125,6 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
           console.log("resres----", res)
           if (res?.data?.length !== 0) {
             setEwayBillData(prevData => prevData.concat(res.data));
-            // setEwayBillData((prevData) => [...prevData, res.data]);
-            // setEwayBillData(...EwayBillData, res.data);
           }
           
         })

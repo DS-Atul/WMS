@@ -787,7 +787,12 @@ const AddOrder = () => {
         returned_data[0].issue_notreceived.length === 0
       ) {
         alert("This Docket Number Does Not Have Any Issue");
-      } else {
+      }
+      else if (row2[row2.length - 1][0].length !== 12 && row2[row2.length - 1][0].length !== 0) {
+        alert("Eway Bill Number Must Be 12 Digit");
+      }
+
+      else {
         // setShowOrder(!isupdating && true);
         // aa(values)
         isupdating ? update_order(values) : send_order_data(values);
@@ -799,6 +804,7 @@ const AddOrder = () => {
   const [box_bq, setbox_bq] = useState("");
   let dimension_list8 = [box_bq];
   const [row6, setrow6] = useState([dimension_list8]);
+  console.log("row6==========", row6)
   // useEffect(() => {
   //   if (validation.values.total_quantity !== 0) {
   //     let val = validation.values.total_quantity;
@@ -936,6 +942,9 @@ const AddOrder = () => {
           dispatch(setAlertType("danger"));
           setewaybill_no("")
         } else {
+          if (e_waybill_inv.length === 12 && booking_through && business_access_token && booking_through) {
+            get_eway_detail(e_waybill_inv, "no")
+          }
           get_eway_detail(ewb_no, "yes");
         }
       })
@@ -1357,7 +1366,7 @@ const AddOrder = () => {
           assetnew_ids: assetnew_ids,
           linked_order: order_type === "New" ? null : linked_order,
           order_type: order_type?.toUpperCase(),
-
+          eway_detail: eway_confirm ? eway_value : [],
           cm_transit_status: status_toggle === true ? cm_current_status : "",
           cm_current_status: cm_current_status.toUpperCase(),
           cm_remarks: toTitleCase(message).toUpperCase(),
@@ -2064,7 +2073,6 @@ const AddOrder = () => {
   }, []);
 
   useEffect(() => {
-    console.log("location-----", location)
     if (location?.state?.order?.qrcode_details?.length !== 0 && location.state !== null && location?.state?.order?.qrcode_details) {
       let data2 = []
       data2 = location?.state?.order?.qrcode_details.map(data => {
@@ -2452,13 +2460,13 @@ const AddOrder = () => {
     if (AccessToken_Modifiedat) {
       var dateTime1 = new Date(AccessToken_Modifiedat);
       var dateTime2 = new Date(); // Current date-time
-      console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
-      console.log("date time1---- ", dateTime1)
-      console.log("date time2--- ", dateTime2)
+      // console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
+      // console.log("date time1---- ", dateTime1)
+      // console.log("date time2--- ", dateTime2)
       var timeDiff = Math.abs(dateTime2 - dateTime1);
       var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
       settime_diff(diffHours);
-      console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
+      // console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
     }
 
   }, [AccessToken_Modifiedat]);
@@ -2474,7 +2482,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("first get res ===>>", response.data);
+        // console.log("first get res ===>>", response.data);
         if (response.data.results.length !== 0) {
           let res_data = response.data.results[0];
           setid_is(res_data.id);
@@ -2524,7 +2532,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("AddEwayAccessToken response----", response)
+        // console.log("AddEwayAccessToken response----", response)
         if (response.data.message !== "Please verify account (or sign up first).") {
           // sete_access_token(response.data.response.token)
           dispatch(setEAccessToken(response.data.response.token));
@@ -2562,7 +2570,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("postAssToken Acc token ===>>", response);
+        // console.log("postAssToken Acc token ===>>", response);
         // dispatch(setEAccessToken(response.data.response.token));
         // dispatch(setOrgs(response.data.response.orgs));
 
@@ -2589,7 +2597,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("GetBusiness_token response-----", response.data)
+        // console.log("GetBusiness_token response-----", response.data)
         // setbusiness_access_token(response.data.response.token)
         dispatch(setBusinesssAccessToken(response.data.response.token));
         if (response.data.status === 1 && id_is !== "") {
@@ -2619,7 +2627,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        console.log("post busines token res ===>>", response.data);
+        // console.log("post busines token res ===>>", response.data);
 
       })
       .catch((error) => {
@@ -2639,7 +2647,7 @@ const AddOrder = () => {
   const [eway_detail_l, seteway_detail_l] = useState([]);
 
   const [eway_value, seteway_value] = useState([])
-
+  console.log("eway_value=====", eway_value)
   const get_eway_detail = (eway, is_eway) => {
     axios
       .get(
@@ -2652,11 +2660,18 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
+        console.log("responsedat======", response)
         if (response.data.response !== null && typeof (response.data) !== "string") {
           // if (response.data.length > 0) {
           if (is_eway === "yes") {
             seteway_detail_l(response.data.response);
-            seteway_value([...eway_value, response.data.response])
+            // seteway_value([...eway_value, response.data.response])
+            seteway_value(prevEwayValue => {
+              const newEwayValue = [...prevEwayValue, response.data.response];
+              const uniqueEwayValue = Array.from(new Set(newEwayValue.map(item => item.ewbNo)))
+                .map(ewbNo => newEwayValue.find(item => item.ewbNo === ewbNo));
+              return uniqueEwayValue;
+            });
             seteway_confirm(true);
             dispatch(setShowAlert(true));
             dispatch(setDataExist(`Eway Bill no Details Matched`));
@@ -2667,7 +2682,14 @@ const AddOrder = () => {
           }
           else {
             if (eway_detail_l.fromTrdName === response.data.response.fromTrdName && eway_detail_l.toTrdName === response.data.response.toTrdName && eway_detail_l.toPincode === response.data.response.toPincode && eway_detail_l.fromPincode === response.data.response.fromPincode) {
-              seteway_value([...eway_value, response.data.response])
+              // seteway_value([...eway_value, response.data.response])
+              seteway_value(prevEwayValue => {
+                const newEwayValue = [...prevEwayValue, response.data.response];
+                const uniqueEwayValue = Array.from(new Set(newEwayValue.map(item => item.ewbNo)))
+                  .map(ewbNo => newEwayValue.find(item => item.ewbNo === ewbNo));
+                return uniqueEwayValue;
+              });
+
             }
             else {
               dispatch(setShowAlert(true));
@@ -2797,9 +2819,9 @@ const AddOrder = () => {
   };
   //  For Step 1 Eway bill
   useLayoutEffect(() => {
-    if(org_name){
+    if (org_name) {
       getEwayAccessToken();
-    }   
+    }
   }, []);
 
   // For Step 2 Eway Bill
@@ -3884,19 +3906,21 @@ const AddOrder = () => {
     let val = row2.map((v) => [v[0]]).filter((v) => v != "")
     setewaybill_num(val)
   }, [e_waybill_inv, row2])
-
+  // console.log("e_waybill_inv====", e_waybill_inv)
+  // console.log("booking_through====", booking_through)
   useEffect(() => {
-    if (e_waybill_inv.length === 12 && booking_through && business_access_token) {
-      get_eway_detail(e_waybill_inv, "no")
-    }
-    else if (e_waybill_inv.length > 12) {
+    // if (e_waybill_inv.length === 12 && booking_through && business_access_token && !is_used_eway) {
+    //   get_eway_detail(e_waybill_inv, "no")
+    // }
+    // else
+    if (e_waybill_inv.length > 12) {
       dispatch(setShowAlert(true));
       dispatch(
         setDataExist(`Number Should be 12 digit only`)
       );
       dispatch(setAlertType("warning"));
     }
-  }, [e_waybill_inv, business_access_token])
+  }, [e_waybill_inv])
 
 
   return (
@@ -6438,6 +6462,12 @@ const AddOrder = () => {
                                   placeholder="Enter EwayBill No"
 
                                   onChange={(val) => {
+                                    if (val.target.value.length === 12 && booking_through) {
+                                      check_ewb_attached(val.target.value);
+                                    }
+                                    // else if (e.target.value.length < 12) {
+                                    //   setewaybill_no(e.target.value);
+                                    // }
                                     sete_waybill_inv(val.target.value);
                                     item2[0] = val.target.value;
                                     row4[index2][0] = val.target.value;
@@ -6453,6 +6483,15 @@ const AddOrder = () => {
                                     //   // item2[0] = val.target.value;
                                     //   // row4[index2][0] = val.target.value;
                                     // }
+                                  }}
+                                  onBlur={() => {
+                                    if (e_waybill_inv.length !== 12) {
+                                      dispatch(setShowAlert(true));
+                                      dispatch(
+                                        setDataExist(`Number Should be 12 digit`)
+                                      );
+                                      dispatch(setAlertType("warning"));
+                                    }
                                   }}
                                 // disabled={eway_confirm && index2 == 0}
                                 />
@@ -6551,7 +6590,7 @@ const AddOrder = () => {
                         <Col md={3} sm={2}>
                           <div className="mb-3">
                             <Label className="header-child">
-                              Invoice Images
+                              Invoice Images *
                             </Label>
                             {row2.map((item1, index1) => {
                               return (
@@ -6690,20 +6729,20 @@ const AddOrder = () => {
                             className="link-text"
                             onClick={() => {
                               if (
-                                row2[row2.length - 1][0] &&
+                                row2[row2.length - 1][0].length === 12 &&
                                 row2[row2.length - 1][1] &&
                                 row2[row2.length - 1][2] &&
-                                row2[row2.length - 1][3] 
+                                row2[row2.length - 1][3]
                                 // && row2[row2.length - 1][4]
                               ) {
-                              setshowModalInvoice({
-                                ...showModalInvoice,
-                                value: false,
-                                ind: "",
-                              });
-                              addinvoice();
+                                setshowModalInvoice({
+                                  ...showModalInvoice,
+                                  value: false,
+                                  ind: "",
+                                });
+                                addinvoice();
                               } else {
-                                alert("Invoice All Details is required");
+                                alert("Invoice All Details Is Required");
                               }
                             }}
                           >
@@ -6830,17 +6869,13 @@ const AddOrder = () => {
 
                   {isupdating && order_active_btn === "fifth" && (
                     <>
-                      <Row className="hide">
-                        <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                            {/* <Label className="header-child">
-                                Enter Value*
-                              </Label> */}
-                            {row6.map((item, index) => {
-                              return (
+                      <Row>
+                        <div style={{ display: "flex", flexWrap: "wrap" }}>
+                          {row6.map((item, index) => (
+                            <Col lg={2} md={2} sm={4} key={index}>
+                              <div className="mb-2" style={{ marginLeft: "3px" }}>
                                 <Input
                                   min={0}
-                                  key={index}
                                   value={item[0]}
                                   type="text"
                                   className="form-control-md"
@@ -6851,12 +6886,14 @@ const AddOrder = () => {
                                     setbox_bq(val.target.value);
                                     item[0] = val.target.value;
                                   }}
+                                  disabled
                                 />
-                              );
-                            })}
-                          </div>
-                        </Col>
+                              </div>
+                            </Col>
+                          ))}
+                        </div>
                       </Row>
+
                     </>
                   )}
                 </CardBody>

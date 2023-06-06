@@ -184,7 +184,7 @@ const AddDocketStatus = () => {
       });
   };
 
-
+const [refresh, setrefresh] = useState(false)
   // For Barcode validation
   const check_barcode = (barcode, index) => {
     axios
@@ -197,14 +197,12 @@ const AddDocketStatus = () => {
         }
       )
       .then(function (response) {
-        console.log("barcode---------", response.data);
         if (response.data === "true") {
-          console.log("row-----", row, index)
           row[index] = ['']
+          setrefresh(!refresh)
           dispatch(setDataExist(`This Barcode Is Already Used`));
           dispatch(setAlertType("warning"));
           dispatch(setShowAlert(true));
-
         }
       })
       .catch((error) => {
@@ -799,7 +797,7 @@ const AddDocketStatus = () => {
                                     onBlur={() => {
                                       if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
                                         check_barcode(item[0], index);
-                                      } else if ((item[0].length >= 4 && !item[0].startsWith("SSCL")) || (row.some((v)=>v === item[0]))) {
+                                      } else if (item[0].length >= 4 && !item[0].startsWith("SSCL")) {
                                         row[index] = ['']
                                         dispatch(setShowAlert(true));
                                         dispatch(

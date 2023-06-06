@@ -3,6 +3,7 @@ const PendingDeliveryDataTitle = [
   "Booking Date",
   "Origin",
   "Destination",
+  "Eway Bill No.",
   "Weight",
   "Total Quantity",
   "Damaged",

@@ -231,6 +231,8 @@ const TrackingOrder = () => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -253,6 +255,8 @@ const TrackingOrder = () => {
                                     Shipment Arrived At Destination
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -318,6 +322,8 @@ const TrackingOrder = () => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -340,6 +346,8 @@ const TrackingOrder = () => {
                                     Shipment Arrived At Destination
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step">
                                   {" "}
                                   <span className="icon">
@@ -406,6 +414,10 @@ const TrackingOrder = () => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                               {order_id.t}
+                               { last_ele.delivery_type !== "LOCAL" ? (
+                              
+                                  <>
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -441,6 +453,8 @@ const TrackingOrder = () => {
                                     Shipment Out for Delivery
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -496,6 +510,8 @@ const TrackingOrder = () => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step active">
                                   {" "}
                                   <span className="icon">
@@ -519,6 +535,8 @@ const TrackingOrder = () => {
                                     Shipment Arrived At Destination
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -584,6 +602,8 @@ const TrackingOrder = () => {
                                       Shipment Arrived at Hub
                                     </span>{" "}
                                   </div>
+                                  { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                   <div className="step active">
                                     {" "}
                                     <span className="icon">
@@ -605,6 +625,8 @@ const TrackingOrder = () => {
                                       Shipment Arrived At Destination
                                     </span>
                                   </div>
+                                  </>
+                                  ): null }
                                   <div className="step ">
                                     {" "}
                                     <span className="icon">
@@ -671,6 +693,8 @@ const TrackingOrder = () => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step active">
                                   {" "}
                                   <span className="icon">
@@ -691,6 +715,8 @@ const TrackingOrder = () => {
                                     Shipment Arrived At Destination
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step active ">
                                   {" "}
                                   <span className="icon">
@@ -746,6 +772,8 @@ const TrackingOrder = () => {
                                     Shipment Picked up
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step active">
                                   {" "}
                                   <span className="icon">
@@ -778,6 +806,8 @@ const TrackingOrder = () => {
                                     Shipment Arrived At Destination
                                   </span>{" "}
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step active">
                                   {" "}
                                   <span className="icon">
@@ -893,18 +923,10 @@ const TrackingOrder = () => {
                                       "not last entry",
                                       item1.updated_at
                                     );
-                                    let update_date = String(
-                                      item1.created_at
-                                    ).split("T");
-                                    let d_update_date = String(
-                                      update_date[0]
-                                    ).substring(0, 10);
-                                    let update_time = String(
-                                      update_date[1]
-                                    ).substring(16, 25);
-
-                                    console.log("Date", d_update_date);
-                                    // let update_date1  = update_date.
+                                    const [date, timeWithOffset] = (item1.created_at).split("T");
+                                    const [time] = timeWithOffset.split(".");
+                                    const d_update_date = date; 
+                                    const update_time = time.substring(0, 8);
                                     return (
                                       <tr key={index}>
                                         <td>{item1.status}</td>

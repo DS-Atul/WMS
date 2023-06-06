@@ -474,11 +474,11 @@ const ChangedRusheet = () => {
   const [EwayBillData, setEwayBillData] = useState([])
   const [list_data, setlist_data] = useState([])
 
-  const getEwayBills = (runsheet_num) => {
+  const getEwayBills = (docket_num) => {
     axios
       .get(
         ServerAddress +
-          `booking/get_all_ewaybill/?type=${"runsheet"}&value=${runsheet_num}`,
+          `booking/get_all_ewaybill/?type=${"order"}&value=${docket_num}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -488,7 +488,17 @@ const ChangedRusheet = () => {
       .then((res) => {
         console.log("resres----", res);
         if (res?.data?.length !== 0) {
-          setEwayBillData(res.data);
+          setEwayBillData((prevData) => {
+            // Filter out items with duplicate docket_no
+            const newData = res.data.filter((item) => {
+              return (
+                !prevData.some(
+                  (prevItem) => prevItem.docket_no === item.docket_no
+                )
+              );
+            });
+            return [...prevData, ...newData];
+          });
         }
       })
       .catch((err) => {
@@ -525,12 +535,20 @@ const ChangedRusheet = () => {
   }
     // Rest of your code...
   }, [EwayBillData, vehicle_no]);
+console.log("EwayBillData-----", EwayBillData)
+console.log("docket_nos-----", docket_nos)
 
   useEffect(() => {
-    if (runsheet_no !== "" && runsheet.vehicle_number !== vehicle_no) {
-        getEwayBills(runsheet_no)
+
+    if (docket_nos.length > 0 && runsheet.vehicle_number !== vehicle_no) {
+      for (let index = 0; index < docket_nos.length; index++) {
+        getEwayBills(docket_nos[index])
+      }
     }
-  }, [runsheet_no, vehicle_no, success])
+    // else{
+    //   setEwayBillData([])
+    // }
+  }, [docket_nos, runsheet])
 
   return (
     <div>
