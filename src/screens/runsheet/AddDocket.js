@@ -89,13 +89,13 @@ function AddDocket({ runsheet }) {
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          const EwayUpdate = UpateEwaybillPartB({
+          UpateEwaybillPartB({
             gstin_no: gstin_no,
             Data: list_data,
             ewayTokenB: business_access_token,
             access_token: accessToken,
           });
-          EwayUpdate();
+          // EwayUpdate();
           setShow(false);
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));

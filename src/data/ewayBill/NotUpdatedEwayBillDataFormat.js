@@ -5,8 +5,11 @@ import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import axios from "axios";
 import { ServerAddress } from "../../constants/ServerAddress";
 import { setIsDeleted, setToggle } from "../../store/pagination/Pagination";
-import { HiQuestionMarkCircle } from "react-icons/hi";
+import correct from "../../assets/images/bookings/check-mark.png";
+import cross from "../../assets/images/bookings/remove.png";
+import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+
 import {
   setClose,
   setDeleteId,
@@ -20,25 +23,24 @@ import {
   setShowAlert,
 } from "../../store/alert/Alert";
 import toTitleCase from "../../lib/titleCase/TitleCase";
-import { Button } from "react-bootstrap";
-import { gstin_no } from "../../constants/CompanyDetails";
-import FileSaver from 'file-saver';
+
 // import { saveAs } from 'file-saver';
 
-const EwayDocDataFormat = ({ data, data1, can_delete }) => {
-  console.log("dataaaaaaaaaa", data)
+const NotUpdatedEwayBillDataFormat = ({ data, data1, can_delete }) => {
+    console.log("dataaaaaaaaaa",data)
   const dispatch = useDispatch();
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const ids = useSelector((state) => state.datalist.ids);
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
   const user = useSelector((state) => state.authentication.userdetails);
+  const success = useSelector((state) => state.alert.show_alert);
 
-  //  For Delete Eay Bill
-  const delete_ewaybill = (id) => {
+  // For Delete Eay Bill Part B
+  const delete_ewaybill_partb = (id) => {
     axios
       .post(
-        ServerAddress + "analytic/delete_ewaybill/",
+        ServerAddress + "analytic/delete_ewaybill_partb/",
         {
           data: id,
         },
@@ -65,6 +67,7 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
         alert(`Error While delete Commidity ${err}`);
       });
   };
+
   //Multi Delete
   const close = useSelector((state) => state.datalist.close);
   const select_all = useSelector((state) => state.datalist.select_all);
@@ -104,7 +107,7 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
 
   useEffect(() => {
     if (delete_id === true) {
-      delete_ewaybill(ids);
+      delete_ewaybill_partb(ids);
     }
   }, [delete_id]);
 
@@ -129,10 +132,16 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
       dispatch(setIndexValue("ewb_id"));
     }
     else if (index === 3) {
-      dispatch(setIndexValue("valid_upto"));
+      dispatch(setIndexValue("vehicle_no"));
     }
     else if (index === 4) {
+      dispatch(setIndexValue("valid_upto"));
+    }
+    else if (index === 5) {
       dispatch(setIndexValue("created_at"));
+    }
+    else if (index === 6) {
+      dispatch(setIndexValue("is_updated"));
     }
   }, [index]);
 
@@ -140,66 +149,80 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
   );
-  // const [can_update, setcan_update] = useState(false);
 
-  // useEffect(() => {
-  //   if (
-  //     userpermission.some((e) => e.sub_model === "Commodity" && e.update === true)
-  //   ) {
-  //     setcan_update(true);
-  //   } else {
-  //     setcan_update(false);
-  //   }
-  // }, [userpermission]);
+//For Modal
+const [ewaypartb_id, setewaypartb_id] = useState("")
+const [eway_no, seteway_no] = useState("")
+console.log("ewaypartb_id=====", ewaypartb_id)
+const [show, setShow] = useState(false);
 
-  //For C&M
-  const [showM, setShowM] = useState(false);
+const handleClose = () => {
+  setewaypartb_id("")
+  setShow(false);
+}
+const handleShow = (e,val) =>{
+  seteway_no(val)
+  setewaypartb_id(e)
+  setShow(true);
+} 
 
-  const handleCloseM = () => setShowM(false);
-  const handleShowM = () => setShowM(true);
-  const [reject_resion, setreject_resion] = useState("")
+const update_partb = async () => {
 
-  const handleModal = (ewaybill) => {
-    console.log("NOT APPROVED-----", ewaybill)
-    handleShowM()
-    setreject_resion(ewaybill)
-    console.log("reject_resion----", reject_resion)
+  try {
+    const response = await axios.put(
+      ServerAddress + "analytic/update_partb/" + ewaypartb_id,
+      {
+        is_updated: true,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    if (response.data.status === "success") {
+      dispatch(setToggle(true));
+      dispatch(
+        setDataExist(`"${eway_no}" Updated Sucessfully`)
+      );
+      dispatch(setAlertType("info"));
+      dispatch(setShowAlert(true));
+      setShow(false);
+    } else {
+      dispatch(setShowAlert(true));
+      dispatch(
+        setDataExist(
+          `Some Thing Went Wrong`
+        )
+      );
+      dispatch(setAlertType("warning"));
+      setShow(false);
+    }
+  } catch (error) {
+    alert("Error Error While Updateing branches");
   }
-
-
-
-  const downloadEwayBill = (ewb) => {
-    axios({
-      url: `https://dev.api.easywaybill.in/ezewb/v1/reports/generatePdf?gstin=${gstin_no}`,
-      method: 'POST',
-      responseType: 'blob',
-      data: {
-        ewbNo: [ewb],
-        type: 4,
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${b_acess_token}`,
-      },
-    })
-      .then(response => {
-        console.log("Img response=====", response)
-        const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-        FileSaver.saveAs(pdfBlob, 'eway-bill.pdf');
-        // const contentDisposition = response.headers['content-disposition'];
-        // const filename = contentDisposition.split(';')[1].split('filename')[1].split('=')[1].trim();
-        // const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-        // saveAs(pdfBlob, filename);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  };
-
+};
+useEffect(() => {
+  dispatch(setToggle(false));
+}, [success])
 
   return (
     <>
 
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Eway Bill</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{`Is Eway Bill Part B update with "${eway_no}" Eway Bill Number ?`}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={()=>update_partb()}>
+           Update
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       {(list_toggle === true ? data1 : data).length === 0 ? (
         <tr>
@@ -207,17 +230,17 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
         </tr>
       ) : (
         (list_toggle === true ? data1 : data).map((ewaybill, index) => {
-          var time = new Date(ewaybill.valid_upto).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
-          var crtime = new Date(ewaybill.created_at).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
+            var time = new Date(ewaybill.valid_upto).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+            var crtime = new Date(ewaybill.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
           return (
-
+            
             <tr
               key={index}
               style={{
                 borderWidth: 1,
               }}
             >
-              {(can_delete || user.is_superuser) && (
+         {(can_delete || user.is_superuser) && (
                 <td
                   className="selection-cell"
                   onClick={() => {
@@ -233,18 +256,30 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
                     <FiSquare size={14} />
                   )}
                 </td>
-              )}
+         ) }             
               <td>{ewaybill.ewb_no}</td>
               <td>{ewaybill.docket_no}</td>
               <td>{ewaybill.ewb_id}</td>
+              <td>{ewaybill.vehicle_no}</td>
               <td>{time}</td>
               <td>{crtime}</td>
               <td>
-                <Button size="sm" variant="success" onClick={() => {
-                  downloadEwayBill(ewaybill.ewb_no);
-                }}>Download</Button>
+                  {ewaybill.is_updated ? (
+                    <div>
+                      <img src={correct} width="18" height="18" />
+                    </div>
+                  ) : (
+                    <div>
+                      <img src={cross} width="18" height="18" />
+                    </div>
+                  )}
+                </td>
+              <td>
+                <Button size="sm" variant="success" onClick={()=>{
+                    handleShow(ewaybill.id, ewaybill.ewb_no)
+                }}>Updated</Button>
               </td>
-
+             
             </tr>
           );
         })
@@ -253,4 +288,4 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
   );
 };
 
-export default EwayDocDataFormat;
+export default NotUpdatedEwayBillDataFormat;

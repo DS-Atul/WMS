@@ -804,7 +804,7 @@ const AddOrder = () => {
   const [box_bq, setbox_bq] = useState("");
   let dimension_list8 = [box_bq];
   const [row6, setrow6] = useState([dimension_list8]);
-  console.log("row6==========", row6)
+
   // useEffect(() => {
   //   if (validation.values.total_quantity !== 0) {
   //     let val = validation.values.total_quantity;
@@ -2472,6 +2472,7 @@ const AddOrder = () => {
   }, [AccessToken_Modifiedat]);
 
   const getEwayAccessToken = () => {
+    // alert("First Resp========")
     axios
       .get(
         ServerAddress +
@@ -2482,7 +2483,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        // console.log("first get res ===>>", response.data);
+        console.log("first get resp ===>>", response.data);
         if (response.data.results.length !== 0) {
           let res_data = response.data.results[0];
           setid_is(res_data.id);
@@ -2514,6 +2515,7 @@ const AddOrder = () => {
   };
 
   const AddEwayAccessToken = () => {
+    // alert("AddEwayAccessToken---")
     axios
       .post(
         EServerAddress + "ezewb/v1/auth/initlogin",
@@ -2532,7 +2534,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        // console.log("AddEwayAccessToken response----", response)
+        console.log("AddEwayAccessToken response----", response)
         if (response.data.message !== "Please verify account (or sign up first).") {
           // sete_access_token(response.data.response.token)
           dispatch(setEAccessToken(response.data.response.token));
@@ -2553,12 +2555,12 @@ const AddOrder = () => {
   };
 
   const postAssToken = (access_token) => {
+    // alert("postAssToken access_token===", access_token)
     axios
       .put(
         ServerAddress + "organization/update_token/" + id_is,
 
         {
-          type: "access_token",
           access_token: access_token,
           // access_token: e_access_token,
           // AccessToken_Modifiedat: AccessToken_Modifiedat,
@@ -2570,7 +2572,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        // console.log("postAssToken Acc token ===>>", response);
+        console.log("postAssToken Acc token Resp===>>", response);
         // dispatch(setEAccessToken(response.data.response.token));
         // dispatch(setOrgs(response.data.response.orgs));
 
@@ -2582,6 +2584,7 @@ const AddOrder = () => {
 
 
   const GetBusiness_token = () => {
+  //  alert("GetBusiness_token==========")
     axios
       .post(
         EServerAddress + "ezewb/v1/auth/completelogin",
@@ -2597,7 +2600,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        // console.log("GetBusiness_token response-----", response.data)
+        console.log("GetBusiness_token response-----", response.data)
         // setbusiness_access_token(response.data.response.token)
         dispatch(setBusinesssAccessToken(response.data.response.token));
         if (response.data.status === 1 && id_is !== "") {
@@ -2612,12 +2615,12 @@ const AddOrder = () => {
   };
 
   const postBusinessToken = (business_token) => {
+    // alert("postBusinessToken=========")
     axios
       .put(
         ServerAddress + "organization/update_token/" + id_is,
 
         {
-          type: "business_token",
           // BusinessToken_Modifiedat: BusinessToken_Modifiedat,
           business_token: business_token,
           // business_token: business_access_token,
@@ -2627,7 +2630,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-        // console.log("post busines token res ===>>", response.data);
+        console.log("post busines token res ===>>", response.data);
 
       })
       .catch((error) => {
@@ -2647,7 +2650,7 @@ const AddOrder = () => {
   const [eway_detail_l, seteway_detail_l] = useState([]);
 
   const [eway_value, seteway_value] = useState([])
-  console.log("eway_value=====", eway_value)
+
   const get_eway_detail = (eway, is_eway) => {
     axios
       .get(
@@ -2655,12 +2658,11 @@ const AddOrder = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${business_access_token}`,
+            Authorization: `Bearer ${'eyJhbGciOiJIUzI1NiJ9.eyJzIjowLCJ1IjoxNTcsImV4cCI6MTY4NjEzNjc2OSwiaWF0IjoxNjg2MTE1MTY5LCJuIjoiSGFpIGxvZ2ljcyIsIm8iOjR9.P8t80i5c14mnfWZFn2ZB0Gis_fotYPZzm71BUt0P8DQ'}`,
           },
         }
       )
       .then(function (response) {
-        console.log("responsedat======", response)
         if (response.data.response !== null && typeof (response.data) !== "string") {
           // if (response.data.length > 0) {
           if (is_eway === "yes") {

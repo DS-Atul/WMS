@@ -1,63 +1,66 @@
 import React from 'react';
-import axios from "axios";
+import axios from 'axios';
 import { ServerAddress } from '../../../constants/ServerAddress';
-function UpateEwaybillPartB({ gstin_no, Data, ewayTokenB, access_token }) {
-    alert("1111")
-    console.log("Data----", Data)
-    console.log("gstin_no-----", gstin_no)
-    console.log("ewayTokenB----", ewayTokenB)
-    const EwayUpdate = async () => {
-        console.log("DATA-----------------------------------------------",Data)
-        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", ewayTokenB);
-        let li = 0;
-        let li2 = 0;
-        Data.forEach(async (e, i) => {
-          console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-          await axios
-            .put(
-              `https://dev.api.easywaybill.in/ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
-              e,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${ewayTokenB}`,
-                },
-              }
-            )
-            .then((res) => {
-              if (res.data.status == 1) {
-                li = li + 1;
-                axios.post(ServerAddress+`analytic/add_eway_partb/`,{
-                  ewb_no:e.ewbNo,
-                  vehicle_no:e.vehicleNo,
-                  trans_mode:e.transMode
-                },{
-                  headers: {
-                    Authorization: `Bearer ${access_token}`,
-                  },
-                }).then((res)=>{
-                  console.log("resupdate eeweee",res.data)
-                }).catch((err)=>{
-                  console.log("errrrupdqatetee",err,)
-                })
-                console.log("li", li);
-              }
-              if (Data.length - 1 === i) {
-                // setcount(li)
-                alert("222222")
-                li2 = li;
-                console.log("li", li);
-                alert(res.data.message)
-                console.log("resEwayBillllll", res.data);
-                return li
-              }
-            })
-            .catch((err) => {
-              alert("Eway Bill Not Updated ",err)
-            });
-        });
-        return li2;
-      };
-  return EwayUpdate;
+
+async function UpateEwaybillPartB({ gstin_no, Data, ewayTokenB, access_token }) {
+  console.log('Data=====', Data);
+  console.log('ewayTokenB=====', ewayTokenB);
+
+  const send_data = async (e, val) => {
+    console.log('val------', val);
+    try {
+      const response = await axios.post(
+        ServerAddress + 'analytic/add_eway_partb/',
+        {
+          ewb_no: e.ewbNo,
+          vehicle_no: e.vehicleNo,
+          trans_mode: e.transMode,
+          is_updated: val,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        }
+      );
+      console.log('response=========', response);
+    } catch (error) {
+      alert(`Error Happened while posting Commodity Type Data: ${error}`);
+    }
+  };
+
+  const EwayUpdate = async (e, i) => {
+    console.log('e=====', e);
+    console.log('i=====', i);
+    try {
+      const resp = await axios.put(
+        `https://dev.api.easywaybill.in/ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
+        e,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${ewayTokenB}`,
+          },
+        }
+      );
+      console.log('res=======', resp);
+      await send_data(e, resp.data?.status === 1 ? true : false);
+      alert(
+        resp.data?.response?.ewbNo
+          ? resp.data.message + ', ' + resp.data?.response?.ewbNo
+          : resp.data.errorList[0].message + ', ' + e?.ewbNo
+      );
+    } catch (err) {
+      alert(`Eway Bill Not Updated: ${err}`);
+    }
+  };
+
+  // Call EwayUpdate function for each key-value pair in Data array
+  if (ewayTokenB) {
+    await Promise.all(Data.map((e, i) => EwayUpdate(e, i)));
+  }
+
+  return null; // or JSX element if needed
 }
+
 export default UpateEwaybillPartB;

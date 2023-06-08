@@ -250,7 +250,7 @@ const UserFilter = () => {
           />
         </div>
         <div>
-          <Label className="filter-label">By  User Active</Label>
+          <Label className="filter-label">By User Active</Label>
           <Row>
             <Col lg={6} md={6} sm={6}>
               <div className="form-check mb-2">

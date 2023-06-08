@@ -335,13 +335,13 @@ const [refresh, setrefresh] = useState(false)
             add_barcode();
           }
           if (list_data.length > 0 && status == "SHIPMENT PICKED UP" && list_data.length>0) {
-            const EwayUpdate = UpateEwaybillPartB({
+            UpateEwaybillPartB({
               gstin_no: gstin_no,
               Data: list_data,
               ewayTokenB: business_access_token,
               access_token: accessToken,
             });
-            EwayUpdate();
+            // EwayUpdate();
           }
 
           dispatch(
@@ -553,12 +553,6 @@ const [refresh, setrefresh] = useState(false)
   }
     // Rest of your code...
   }, [EwayBillData, vehicle]);
-
-
-  // useEffect(() => {
-  //     const EwayUpdate = UpateEwaybillPartB({ gstin_no: gstin_no, Data:list_data, ewayTokenB: business_access_token, access_token: accessToken });
-  //     EwayUpdate();
-  // }, [third])
 
 
   return OpenCrop ? (

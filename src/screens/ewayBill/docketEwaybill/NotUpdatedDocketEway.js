@@ -12,16 +12,14 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
-import EwayDocDataFormat from "../../../data/ewayBill/EwayBillDataFormat";
-import EwayDataTitle from "../../../data/ewayBill/EwayBillTitle";
 import Navigate from "../ewayBillTab/Navigate";
+import NotUpdatedEwayDataTitle from "../../../data/ewayBill/NotUpdatedEwayBillTitle";
+import NotUpdatedEwayBillDataFormat from "../../../data/ewayBill/NotUpdatedEwayBillDataFormat";
 
 
-const DocketEway = () => {
+const NotUpdatedDocketEway = () => {
   const dispatch = useDispatch();
-  const commodity_type = useSelector((state) => state.filtervalue.data_a);
-  const commodity_name = useSelector((state) => state.filtervalue.data_b);
-
+  const is_updated = useSelector((state) => state.filtervalue.data_a);
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
 
@@ -57,9 +55,9 @@ const DocketEway = () => {
   
   return (
     <>
-     <Navigate />
-      <PageTitle page="Part A" />
-      <Title title="Eway Bill Dockets's" parent_title="Eway Bill" />
+    <Navigate />
+      <PageTitle page="Not Updated Eway Bill" />
+      <Title title="Not Updated Eway Bill" parent_title="Eway Bill" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
           <div className="mb-2 row">
@@ -79,7 +77,7 @@ const DocketEway = () => {
                   /> */}
               
                 {/* Filter Tool */}
-                {/* <Filter type={"commodity"} /> */}
+                <Filter type={"notupdated_eway"} />
               </div>
             </div>
           
@@ -88,9 +86,9 @@ const DocketEway = () => {
           {/* DataTable */}
           <DataList
             can_delete={can_delete}
-            Data_Title={EwayDataTitle}
-            Data_Format={EwayDocDataFormat}
-            path={`analytic/all_eway/?search=${search}&p=${page_num}&records=${data_len}`}
+            Data_Title={NotUpdatedEwayDataTitle}
+            Data_Format={NotUpdatedEwayBillDataFormat}
+            path={`analytic/all_notupdated_eway_partb/?search=${search}&p=${page_num}&records=${data_len}&is_updated=${is_updated}`}
           />
           <NumPagination path={"path"} />
         </div>
@@ -98,4 +96,4 @@ const DocketEway = () => {
     </>
   );
 };
-export default DocketEway;
+export default NotUpdatedDocketEway;

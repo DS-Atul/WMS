@@ -1,5 +1,6 @@
 import React, { lazy } from "react";
 import { Navigate } from "react-router-dom";
+
 // Authentication
 const SignIn = React.lazy(() =>
   import("./screens/authentication/signin/SignIn.js")
@@ -425,6 +426,7 @@ const BoxDetail =React.lazy(()=>import("./screens/manifest/incomingVehcile/BoxDe
 const EloginIn =React.lazy(()=>import("./screens/ewayBill/EwayBill.js"));
 const EDashboard =React.lazy(()=>import("./screens/ewayBill/dashboard/Dashboard.js"));
 const DocEwayBill =React.lazy(()=>import("./screens/ewayBill/docketEwaybill/DocketEway.js"))
+const NotUpdatedDocketEway =React.lazy(()=>import("./screens/ewayBill/docketEwaybill/NotUpdatedDocketEway.js"))
 const Vehcile=React.lazy(()=>import("./screens/master/vehcile/vehcile.js"))
 const AddVehcile=React.lazy(()=>import("./screens/master/vehcile/add_Vehcile.js"))
 const Extent_eway=React.lazy(()=>import("./screens/ewayBill/ewayTable/EwbExpiredYesterday.js"))
@@ -517,6 +519,10 @@ const routes = [
   {
     path: "/ewaybill/docketEwayBill",
     element: <DocEwayBill />,
+  },
+  {
+    path: "/ewaybill/notupdateddocketEwayBill",
+    element: <NotUpdatedDocketEway />,
   },
   {
     path: "/ewaybill/pendingPartB",

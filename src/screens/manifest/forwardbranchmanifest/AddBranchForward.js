@@ -290,13 +290,13 @@ const AddBranchForward = (manifest) => {
         console.log("response-----", response.data)
         if (response.data.status === "success") {
           if (list_data.length>0){
-            const EwayUpdate = UpateEwaybillPartB({
+            UpateEwaybillPartB({
               gstin_no: gstin_no,
               Data: list_data,
               ewayTokenB: business_access_token,
               access_token: accessToken,
             });
-            EwayUpdate();
+            // EwayUpdate();
           }
           dispatch(setToggle(true));
           dispatch(setShowAlert(true));
