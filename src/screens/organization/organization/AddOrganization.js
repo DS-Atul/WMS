@@ -113,6 +113,7 @@ const AddOrganization = () => {
   const [mobile_error, setmobile_error] = useState(false);
 
   const [pan_no, setpan_no] = useState("")
+  const [pan_no_error, setpan_no_error] = useState(false);
   const [isupdating, setisupdating] = useState(false);
   //Get Updated Location Data
   const [organization, setOrganization] = useState([]);
@@ -264,7 +265,45 @@ const AddOrganization = () => {
     }),
     onSubmit: (values) => {
       let data = row.some((a) => a[5] == true)
-      if (
+      let shaw = Object.entries(validation.values);
+      let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+      let map_value = filter_value.map((m) => m[0]);
+      let all_value = map_value[0];
+
+      let fields1 = [
+        "organisation_name",
+        "email",
+        "tollfree_no",
+        "registeration_number",
+        "pan_no",
+        "phone_numberp",
+
+        // "web_url",
+      ];
+      let fields2 = [
+        "contact_person_name",
+        "contact_person_email",
+        "contact_person_ph_no",
+      ];
+      
+    
+      if (pan_no === "") {
+        setpan_no_error(true);
+        document.getElementById("org_id").scrollIntoView();
+      }
+      else  if (fields1.includes(all_value)) {
+        document.getElementById("org_id").scrollIntoView();
+      } 
+      else if(row[row.length - 1].some((some) => some === "")){
+        document.getElementById('gst_details').scrollIntoView();
+      }  
+      else if (data === false) {
+        document.getElementById('gst_details').scrollIntoView();
+     }
+      else if( row1[row1.length -1][0] !== "" &&  row1[row1.length - 1].some((some) => some === "")){
+        document.getElementById('config_details').scrollIntoView();
+      }
+       else if (
         office_add_line1 !== "" &&
         office_state !== "" &&
         office_city !== "" &&
@@ -298,20 +337,18 @@ const AddOrganization = () => {
         setlocal_err2(true);
         document.getElementById("add").scrollIntoView();
       }
-      else if (pan_no.length !== 10) {
-        alert("Pan Number Must be 10 Degit")
+      else if (fields2.includes(all_value)) {
+        document.getElementById("section2").scrollIntoView();
       }
+      
+      
 
-      else if (data === false) {
-        alert("Please Select Head Office")
-      }
       else {
         isupdating ? update_organisation(values) : send_organisation_data(values);
 
       }
     },
   });
-
 
   // Post Branch
   const send_organisation_data = async (values) => {
@@ -1587,6 +1624,12 @@ const AddOrganization = () => {
       }
   }, [pan_no])
 
+  useEffect(() => {
+    if (pan_no !== "" && (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+        setpan_no_error(false);
+      }
+  }, [pan_no]);
+
   return (
     <>
       <div>
@@ -1598,6 +1641,7 @@ const AddOrganization = () => {
             let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
             let map_value = filter_value.map((m) => m[0]);
             let all_value = map_value[0];
+            let data = row.some((a) => a[5] == true)
 
             let fields1 = [
               "organisation_name",
@@ -1607,16 +1651,37 @@ const AddOrganization = () => {
               "pan_no",
               "phone_numberp",
 
-              // "web_url",
+              "web_url",
             ];
             let fields2 = [
               "contact_person_name",
               "contact_person_email",
               "contact_person_ph_no",
             ];
-
-            if (fields1.includes(all_value)) {
-              document.getElementById("section1").scrollIntoView();
+            
+          
+            if (pan_no === "") {
+              setpan_no_error(true);
+              document.getElementById("org_id").scrollIntoView();
+            }
+            else if(company_type===""){
+              setcompany_type_error(true);
+              document.getElementById("org_id").scrollIntoView();
+            }
+            else  if (fields1.includes(all_value)) {
+              document.getElementById("org_id").scrollIntoView();
+            } 
+            else if(row[row.length - 1].some((some) => some === "")){
+              document.getElementById('gst_details').scrollIntoView();
+              alert("Please Fill GST Details")
+            }
+            else if (data === false) {
+              document.getElementById('gst_details').scrollIntoView();
+                  alert("Please Select Head Office")
+           }
+            else if( row1[row1.length -1][0] !== "" &&  row1[row1.length - 1].some((some) => some === "")){
+              document.getElementById('config_details').scrollIntoView();
+              alert("Please Fill COnfig Details")
             }
             else if (office_add_line1 === "") {
               setoffice_add1_err(true);
@@ -1625,19 +1690,23 @@ const AddOrganization = () => {
             else if (office_state === "") {
               setstate_error(true);
               document.getElementById("add").scrollIntoView();
-            } else if (office_city === "") {
+            }
+             else if (office_city === "") {
               setcity_error(true);
               document.getElementById("add").scrollIntoView();
-            } else if (office_pincode === "") {
+            }
+             else if (office_pincode === "") {
               setpincode_error(true);
               document.getElementById("add").scrollIntoView();
-            } else if (office_locality === "") {
+            } 
+            else if (office_locality === "") {
               setlocal_err(true);
               document.getElementById("add").scrollIntoView();
-            } else if (fields2.includes(all_value)) {
+            }
+             else if (fields2.includes(all_value)) {
               document.getElementById("section2").scrollIntoView();
             }
-
+            
 
             // else if (
             //   office_add_line1 !== "" &&
@@ -1706,7 +1775,7 @@ const AddOrganization = () => {
           )}
 
           {/* organization Info */}
-          <div className="m-3">
+          <div className="m-3" id="org_id">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
@@ -1735,25 +1804,31 @@ const AddOrganization = () => {
                         <div className="mb-2">
                           <Label className="header-child">PAN Number *:</Label>
                           <Input
-                            // onBlur={() => {
-                            //   if (pan_no.length === 10) {
-                            //     setloaded_pan(true)
-                            //     // alert("True")
-                            //   }
-                            //   else {
-                            //     setloaded_pan(false)
-                            //     // alert("False")
-                            //   }
-                            // }
-                            // }
                             value={pan_no}
                             onChange={(e) =>
                               setpan_no(e.target.value)
                             }
+                            onBlur={()=>{                          
+                              if (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no)) {
+                                setpan_no_error(true)
+                                dispatch(
+                                  setDataExist(
+                                    `PAN Number must be 10 digits and follow the correct format (e.g., ABCDE1234F)`
+                                  )
+                                );
+                                dispatch(setAlertType("warning"));
+                                dispatch(setShowAlert(true));
+                                setpan_no("")
+                              }
+                            }}
                             id="input"
                             type="text"
                             placeholder="Please Enter PAN Number"
+                            invalid={pan_no_error}
                           />
+                          <FormFeedback type="invalid">
+                                PAN Number must be provided
+                                </FormFeedback>
                         </div>
                       </Col>
 
@@ -1795,7 +1870,7 @@ const AddOrganization = () => {
                             show_search={false}
                             error_message={"Please Select Company Type"}
                             error_s={company_type_error}
-                          />
+                          />                          
                         </div>
                       </Col>
 
@@ -1937,6 +2012,7 @@ const AddOrganization = () => {
                             type="number"
                             name="phone_numberp"
                             placeholder="Enter Phone Number"
+                            min={0}
                           />
                           {validation.touched.phone_numberp &&
                             validation.errors.phone_numberp ? (
@@ -1962,6 +2038,7 @@ const AddOrganization = () => {
                             id="input"
                             name="phone_numbers"
                             type="number"
+                            min={0}
                             placeholder="Enter Phone Number"
                           />
                         </div>
@@ -2017,7 +2094,7 @@ const AddOrganization = () => {
           </div>
 
           {/*  GST Address */}
-          <div className="m-3">
+          <div className="m-3" id="gst_details">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
@@ -2297,12 +2374,13 @@ const AddOrganization = () => {
                                   setgst_city_list([])
                                   setgst_city_page(1)
                                   setgstcity_bottom(103)
-                                  if (row[row.length - 1][0].length != 15) {
-                                    alert("GST No must be 15 digit");
+                                  const lastRow = row[row.length - 1];
+                                  if(row[row.length -1].some((data) => data === "")) {
+                                    alert("Please Fill GST Details")
                                   } else {
                                     addGST();
                                   }
-                                }}
+                                }}  
                               >
                                 <IconContext.Provider
                                   value={{
@@ -2325,7 +2403,7 @@ const AddOrganization = () => {
           </div>
 
           {/*  Organisaziation Configration */}
-          <div className="m-3">
+          <div className="m-3" id="config_details">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
@@ -2378,7 +2456,7 @@ const AddOrganization = () => {
                                       defaultValue="Select status"
                                     >
 
-                                      <option>-----</option>
+                                      <option>    </option>
                                       <option>PANCARD</option>
                                       <option>EWAYBILL</option>
                                       <option>AADHAR</option>
@@ -2508,7 +2586,12 @@ const AddOrganization = () => {
                               <span
                                 className="link-text"
                                 onClick={() => {
-                                  addConfig();
+                                  const lastRow = row1[row1.length - 1];
+                                  if(row1[row1.length -1].some((data) => data === "")) {
+                                    alert("Please Fill Organization Configuration Details");
+                                  } else {
+                                    addConfig();
+                                  }
                                 }}
                               >
                                 <IconContext.Provider
