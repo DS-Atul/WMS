@@ -1,4 +1,4 @@
-import React, { useState,useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { Input, Col, Row, Label } from "reactstrap";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
 import { Button } from "react-bootstrap";
@@ -8,6 +8,7 @@ import { setAlertType, setDataExist, setShowAlert } from "../../../store/alert/A
 import { useDispatch } from "react-redux";
 import correct from "../../../assets/images/bookings/check-mark.png";
 import cross from "../../../assets/images/bookings/remove.png";
+import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 const PacketTitle = [
   "Ewb No",
@@ -19,11 +20,11 @@ const PacketTitle = [
   "Consignee Address",
   "Shipper Gstin",
   "Consignee Gstin",
-  
+
 ];
 
 const AssignedDataFormat = ({ data }) => {
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
 
 
@@ -51,51 +52,51 @@ const AssignedDataFormat = ({ data }) => {
             </tr>
           </thead>
           <tbody>
-  {!data ? (
-    <tr>
-      <td>No Data Found</td>
-    </tr>
-  ) : (
-    (() => {
-      // const currentDate = new Date();
-      const rows = data.map((ewb, index) => {
-        const dateString = ewb.validUpto;
-const [datePart, timePart] = dateString.split(" ");
-const [day, month, year] = datePart.split("/");
-const [hours, minutes, seconds] = timePart.split(":");
-const validUptoDate = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
-const currentDate = new Date();
-const expired = currentDate.getTime() > validUptoDate.getTime();
-console.log("validUptoDate", validUptoDate);
-console.log("current date", currentDate);
-        return (
-          <tr key={index} style={{ borderWidth: 1 }}>
-            {console.log(
-              "reyanzzz",ewb
+            {!data ? (
+              <tr>
+                <td>No Data Found</td>
+              </tr>
+            ) : (
+              (() => {
+                // const currentDate = new Date();
+                const rows = data.map((ewb, index) => {
+                  const dateString = ewb.validUpto;
+                  const [datePart, timePart] = dateString.split(" ");
+                  const [day, month, year] = datePart.split("/");
+                  const [hours, minutes, seconds] = timePart.split(":");
+                  const validUptoDate = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+                  const currentDate = new Date();
+                  const expired = currentDate.getTime() > validUptoDate.getTime();
+                  console.log("validUptoDate", validUptoDate);
+                  console.log("current date", currentDate);
+                  return (
+                    <tr key={index} style={{ borderWidth: 1 }}>
+                      {console.log(
+                        "reyanzzz", ewb
+                      )}
+
+                      <td>{ewb.ewbNo}</td>
+                      <td>{ewb.validUpto}</td>
+                      <td>{toTitleCase(ewb.fromTrdName)}</td>
+                      <td>{toTitleCase(ewb.toTrdName)}</td>
+                      <td>{expired ?
+                        <img src={correct} height="20px" width="20px" />
+                        :
+                        <img src={cross} height="20px" width="20px" />
+
+
+                      }</td>
+                      <td> {toTitleCase(ewb.fromPlace) + "," + ewb.fromPincode}</td>
+                      <td>{toTitleCase(ewb.toPlace) + "," + ewb.toPincode}</td>
+                      <td>{ewb.fromGstin}</td>
+                      <td>{ewb.toGstin}</td>
+                    </tr>
+                  );
+                });
+                return rows;
+              })()
             )}
-          
-            <td>{ewb.ewbNo}</td>
-            <td>{ewb.validUpto}</td>
-            <td>{ewb.fromTrdName}</td>
-            <td>{ewb.toTrdName}</td>
-            <td>{expired ? 
-            <img src={correct} height="20px" width="20px" />
-            : 
-            <img src={cross} height="20px" width="20px" />
-            
-            
-            }</td>
-            <td> {ewb.fromPlace + "," + ewb.fromPincode}</td>
-            <td>{ewb.toPlace + "," + ewb.toPincode}</td>
-            <td>{ewb.fromGstin}</td>
-            <td>{ewb.toGstin}</td>
-          </tr>
-        );
-      });
-      return rows;
-    })()
-  )}
-</tbody>
+          </tbody>
         </table>
       </div>
     </>

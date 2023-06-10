@@ -74,7 +74,7 @@ const AddOrder = () => {
   );
 
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
-
+console.log("business_access_token====", business_access_token)
   const e_access_token = useSelector((state) => state.eway_bill.e_access_token);
 
   // const [e_access_token, sete_access_token] = useState("")
@@ -2460,13 +2460,13 @@ const AddOrder = () => {
     if (AccessToken_Modifiedat) {
       var dateTime1 = new Date(AccessToken_Modifiedat);
       var dateTime2 = new Date(); // Current date-time
-      // console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
-      // console.log("date time1---- ", dateTime1)
-      // console.log("date time2--- ", dateTime2)
+      console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
+      console.log("date time1---- ", dateTime1)
+      console.log("date time2--- ", dateTime2)
       var timeDiff = Math.abs(dateTime2 - dateTime1);
       var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
       settime_diff(diffHours);
-      // console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
+      console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
     }
 
   }, [AccessToken_Modifiedat]);
@@ -2658,7 +2658,7 @@ const AddOrder = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${'eyJhbGciOiJIUzI1NiJ9.eyJzIjowLCJ1IjoxNTcsImV4cCI6MTY4NjEzNjc2OSwiaWF0IjoxNjg2MTE1MTY5LCJuIjoiSGFpIGxvZ2ljcyIsIm8iOjR9.P8t80i5c14mnfWZFn2ZB0Gis_fotYPZzm71BUt0P8DQ'}`,
+            Authorization: `Bearer ${business_access_token}`,
           },
         }
       )

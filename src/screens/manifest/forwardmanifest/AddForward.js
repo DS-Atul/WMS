@@ -50,7 +50,7 @@ const AddForward = (manifest) => {
   const [data2, setdata2] = useState([])
   // const location= useLocation
   const success = useSelector((state) => state.alert.show_alert);
-  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
+  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
   const dispatch = useDispatch();
   const location_data = useLocation();
   console.log("location_data-----", location_data);

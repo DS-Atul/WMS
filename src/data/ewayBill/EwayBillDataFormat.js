@@ -5,8 +5,7 @@ import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import axios from "axios";
 import { ServerAddress } from "../../constants/ServerAddress";
 import { setIsDeleted, setToggle } from "../../store/pagination/Pagination";
-import { HiQuestionMarkCircle } from "react-icons/hi";
-import Modal from 'react-bootstrap/Modal';
+import pdf from "../../assets/images/Pdf/printer.png";
 import {
   setClose,
   setDeleteId,
@@ -69,7 +68,7 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
   const close = useSelector((state) => state.datalist.close);
   const select_all = useSelector((state) => state.datalist.select_all);
   const delete_id = useSelector((state) => state.datalist.delete_id);
-  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
+  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
   const [selected, setselected] = useState([]);
   const handlefunn = (id) => {
     if (selected.includes(id)) {
@@ -239,12 +238,18 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
               <td>{ewaybill.ewb_id}</td>
               <td>{time}</td>
               <td>{crtime}</td>
-              <td>
+              {/* <td>
                 <Button size="sm" variant="success" onClick={() => {
                   downloadEwayBill(ewaybill.ewb_no);
                 }}>Download</Button>
+              </td> */}
+              <td>
+                <div style={{cursor:"pointer"}}>
+                  <img src={pdf} width="18" height="18" onClick={() => {
+                  downloadEwayBill(ewaybill.ewb_no);
+                }}/>
+                </div>
               </td>
-
             </tr>
           );
         })

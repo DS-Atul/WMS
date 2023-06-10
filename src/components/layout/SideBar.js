@@ -17,7 +17,7 @@ import {
   setFilterC,
   setFilterD,
 } from "../../store/filterValue/FilterValue";
-import { setHubTab, setIncomingTab, setManifestTab, setRoughTab, setRunsheetTab } from "../../store/parentFilter/ParentFilter";
+import { setEwayBilltTab, setHubTab, setIncomingTab, setManifestTab, setRoughTab, setRunsheetTab } from "../../store/parentFilter/ParentFilter";
 
 const SideBar = () => {
   const dispatch = useDispatch();
@@ -72,6 +72,9 @@ const SideBar = () => {
     }
     else if(e[0] === "All Runsheet"){
       dispatch(setRunsheetTab(2));
+    }
+    else if(e[0] === "DocketWithEwayBill"){
+      dispatch(setEwayBilltTab(1));
     }
   }
 

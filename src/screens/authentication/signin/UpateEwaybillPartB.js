@@ -16,6 +16,8 @@ async function UpateEwaybillPartB({ gstin_no, Data, ewayTokenB, access_token }) 
           vehicle_no: e.vehicleNo,
           trans_mode: e.transMode,
           is_updated: val,
+          reason_code: 2,
+          reason_remarks: "DUE TO TRANSSHIPMENT",
         },
         {
           headers: {
@@ -23,6 +25,7 @@ async function UpateEwaybillPartB({ gstin_no, Data, ewayTokenB, access_token }) 
           },
         }
       );
+    
       console.log('response=========', response);
     } catch (error) {
       alert(`Error Happened while posting Commodity Type Data: ${error}`);

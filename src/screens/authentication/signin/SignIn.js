@@ -62,7 +62,7 @@ const SignIn = () => {
 
   const userData = useSelector((state) => state.authentication.userdetails);
   const e_acess_token = useSelector((state) => state.eway_bill.e_access_token);
-  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
+  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
 
   const [showPass, setshowPass] = useState(false);
   const [error, seterror] = useState(false);

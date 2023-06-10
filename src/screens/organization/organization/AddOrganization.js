@@ -1681,7 +1681,7 @@ const AddOrganization = () => {
            }
             else if( row1[row1.length -1][0] !== "" &&  row1[row1.length - 1].some((some) => some === "")){
               document.getElementById('config_details').scrollIntoView();
-              alert("Please Fill COnfig Details")
+              alert("Please Fill Config Details")
             }
             else if (office_add_line1 === "") {
               setoffice_add1_err(true);

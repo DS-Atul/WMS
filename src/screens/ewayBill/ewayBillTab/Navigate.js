@@ -7,6 +7,7 @@ const Navigate = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const ewaybill_tab = useSelector((state) => state.parentfilter.ewaybill_tab);
+  console.log("ewaybill_tab-----", ewaybill_tab)
   const user = useSelector((state) => state.authentication.userdetails);
   //Permission
   const userpermission = useSelector(

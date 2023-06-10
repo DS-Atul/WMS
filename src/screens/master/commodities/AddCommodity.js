@@ -560,7 +560,7 @@ const Add_Commodity = () => {
   // 341003179578, 311003179579, 371003179580, 341003179581, 311003179582, 381003179583, 321003179585, 391003179586, 361003179587, 361003179590, 301003179589, 331003179591
   // 371003179593, 341003179594, 301003179592, ['321003179598', '391003179599', '321003179600']
  const [a, seta] = useState([])
- const post_awb = () => {
+ const post_awb = (index) => {
   axios
     .post(
       `https://dev.api.easywaybill.in/ezewb/v1/ewb/generate?gstin=05AAAAT2562R1Z3`,
@@ -569,8 +569,8 @@ const Add_Commodity = () => {
         "transactionType": "1",
         "subSupplyType": "1",
         "docType": "INV",
-        "docNo": "DHLMH67143",
-        "docDate": "02/06/2023",
+        "docNo": `DHLMH67139${index}`,
+        "docDate": "08/06/2023",
         "invTyp": "B2B",
         "fromGstin": "05AAAAT2562R1Z3",
         "fromTrdName": "K R AGENCIES",
@@ -600,7 +600,7 @@ const Add_Commodity = () => {
         "otherValue": "0",
         "transMode": "2",
         "transDistance": "196",
-        "transDocDate": "02/06/2023",
+        "transDocDate": "08/06/2023",
         "transDocNo": "124423",
         "transId": "05AAAAR1685F1ZO",
         "transName": "Ashwin Guj Trans",
@@ -651,6 +651,11 @@ const Add_Commodity = () => {
     )
     .then(function (response) {
       console.log("response=======eway bill detail", response);
+      if(response.data?.response){
+        seta(prevData => prevData.concat(response.data.response.ewbNo))
+      }
+     
+
     })
     .catch((error) => {
       console.log("eroorrrrrrrr", error)
@@ -658,10 +663,10 @@ const Add_Commodity = () => {
 };
 
   useEffect(() => {
-    // for (let index = 0; index < 10; index++) {
-      post_awb()
+    for (let index = 0; index < 2; index++) {
+      post_awb(index)
 
-    // }
+    }
   }, [])
 
 useEffect(() => {

@@ -72,7 +72,7 @@ const NotUpdatedEwayBillDataFormat = ({ data, data1, can_delete }) => {
   const close = useSelector((state) => state.datalist.close);
   const select_all = useSelector((state) => state.datalist.select_all);
   const delete_id = useSelector((state) => state.datalist.delete_id);
-  const b_acess_token = useSelector((state) => state.eway_bill.b_access_token);
+  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
   const [selected, setselected] = useState([]);
   const handlefunn = (id) => {
     if (selected.includes(id)) {
