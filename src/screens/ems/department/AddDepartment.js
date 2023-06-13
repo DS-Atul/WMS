@@ -180,6 +180,17 @@ function AddDepartment() {
           dispatch(setAlertType("info"));
           navigate("/ems/department");
         }
+        else if (response.data === "duplicate") {
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(
+              ` "${toTitleCase(
+                values.department
+              )}" already exists`
+            )
+          );
+          dispatch(setAlertType("warning"));
+        }
       })
       .catch(function (error) {
         alert(`Error Happen while Updating Department Data ${error}`);

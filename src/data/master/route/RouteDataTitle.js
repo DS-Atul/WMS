@@ -1,3 +1,3 @@
-const RouteDataTitle = ["Name", "Created By", "Current Status"];
+const RouteDataTitle = ["Name", "Created By","Organization Name", "Current Status"];
 
 export default RouteDataTitle;

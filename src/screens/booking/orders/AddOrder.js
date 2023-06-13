@@ -1095,6 +1095,7 @@ console.log("business_access_token====", business_access_token)
       const response = await axios.post(
         ServerAddress + "booking/add_order/",
         {
+          // organization: user.organization,
           docket_no: entry_type_btn === "AUTO GENERATE" ? "" : docket_no_value,
           entry_type: entry_type_btn,
           delivery_type: String(delivery_type).toUpperCase(),
@@ -1292,6 +1293,7 @@ console.log("business_access_token====", business_access_token)
         ServerAddress + "booking/update_order/" + id,
         {
           change_fields: change_fields,
+          // organization: user.organization,
           docket_no: docket_no_value,
           entry_type: entry_type_btn,
           delivery_type: String(delivery_type).toUpperCase(),
@@ -2472,7 +2474,6 @@ console.log("business_access_token====", business_access_token)
   }, [AccessToken_Modifiedat]);
 
   const getEwayAccessToken = () => {
-    // alert("First Resp========")
     axios
       .get(
         ServerAddress +
@@ -4442,7 +4443,7 @@ console.log("business_access_token====", business_access_token)
 
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-3">
-                        <Label className="header-child">Type Of Booking</Label>
+                        <Label className="header-child">Type Of Booking*</Label>
                         <NSearchInput
                           data_list={type_of_booking_list}
                           data_item_s={type_of_booking}

@@ -286,6 +286,7 @@ const BillTosDataFormat = ({ data, data1, can_delete }) => {
                   {client.total_client_count}
                 </HashLink>
               </td>
+              <td>{client.organization_name ? toTitleCase(client.organization_name) : "-"}</td>
               <td>
                 {
                   client.cm_current_status === "APPROVED" ?

@@ -285,7 +285,8 @@ const AddBranch = () => {
         {
           name: toTitleCase(values.branch_name).toUpperCase(),
           type: branch_type_short,
-          organizaton: branch_type === "Own Branch" ? org_id : null,
+          // organization: branch_type === "Own Branch" ? org_id : null,
+          organization: org_id,
           vendor: branch_type === "Own Branch" ? "" : vendor_id,
           email: values.branch_email,
           contact_number: values.branch_phone_number,
@@ -412,7 +413,8 @@ const AddBranch = () => {
         {
           name: toTitleCase(values.branch_name).toUpperCase(),
           type: branch_type_short,
-          organizaton: branch_type === "Own Branch" ? org_id : null,
+          // organization: branch_type === "Own Branch" ? org_id : null,
+          organization: org_id,
           vendor: branch_type === "Own Branch" ? "" : vendor_id,
           email: values.branch_email,
           contact_number: values.branch_phone_number,
@@ -792,7 +794,7 @@ console.log("location_data=====", location_data)
           ]);
         } else {
           orgs_list = [
-            ...state_list_s,
+            ...org_list_s,
             ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
           ];
         }
@@ -846,7 +848,7 @@ console.log("location_data=====", location_data)
 
   useEffect(() => {
     let timeoutId;
-    if (pincode_id !== 0) {
+    if (pincode_id !== 0 && pincode_id) {
       timeoutId = setTimeout(() => {
         getLocality(pincode_id, "pincode");
       }, 1);
@@ -855,8 +857,13 @@ console.log("location_data=====", location_data)
   }, [pincode_id, locality_page, locality_search_item]);
 
   useEffect(() => {
-    getOrganization()
-  }, [org_page, org_search_item])
+    if(branch_type==="Own Branch" && !user.organization_name){
+      getOrganization()
+    }
+    setorg(toTitleCase(user.organization_name))
+    setorg_id(user.organization)
+    // !user.is_superuser || user.organization_name
+  }, [org_page, org_search_item, branch_type])
 
 
   useLayoutEffect(() => {
@@ -964,7 +971,7 @@ console.log("location_data=====", location_data)
         setselect_gst(location_data.state.branch.gst_no);
       }
       setorg(toTitleCase(location_data.state.branch.organization_name))
-      setorg_id(location_data.state.branch.organizaton)
+      setorg_id(location_data.state.branch.organization)
       setaddress_line(location_data.state.branch.address_line_1);
       setstate(toTitleCase(location_data.state.branch.state_name));
       setstate_id(location_data.state.branch.state_id);
@@ -1463,7 +1470,6 @@ console.log("location_data=====", location_data)
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">Organization*</Label>
-                            <span onClick={() => setby_pincode(false)}>
                               <SearchInput
                                 data_list={org_list_s}
                                 setdata_list={setorg_list_s}
@@ -1480,8 +1486,8 @@ console.log("location_data=====", location_data)
                                 count={org_count}
                                 bottom={org_bottom}
                                 setbottom={setorg_bottom}
+                                disable_me={user.organization_name}
                               />
-                            </span>
                             {/* <div className="mt-1 error-text" color="danger">
                             {state_error ? "Please Select Any State" : null}
                           </div> */}

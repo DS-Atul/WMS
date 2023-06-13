@@ -1,3 +1,3 @@
-const DesignationDataTitle = ["Designation Name ", "Created Date "];
+const DesignationDataTitle = ["Designation Name ","Organization", "Created Date "];
 
 export default DesignationDataTitle;

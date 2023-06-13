@@ -240,6 +240,7 @@ const PendingForDispatch = () => {
           steps: "FIRST",
           origin: user_home_branch_location_id,
           // created_by: user.id,
+          // organization: user.userdetails.organization,
 
           destination_branch_name: branch_selected.toUpperCase(),
           destination: branch_dest_id,
@@ -286,6 +287,7 @@ const PendingForDispatch = () => {
           destination_branch_name: branch_selected.toUpperCase(),
           origin_location_name: user_home_branch_city,
           destination_location_name: branch_dest,
+          // organization: user.userdetails.organization,
         },
         {
           headers: {

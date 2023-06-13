@@ -1,5 +1,6 @@
 const OrderDataTitle = [
   "Docket Number* ",
+  "Organization Name",
   "Booking Date",
   "Current Status",
   "Navigate To",

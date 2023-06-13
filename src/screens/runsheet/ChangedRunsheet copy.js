@@ -267,7 +267,7 @@ const ChangedRusheet = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          if (runsheet.vehicle_number !== vehicle_no && list_data.length>0){
+          if (list_data.length>0){
           UpateEwaybillPartB({
             gstin_no: gstin_no,
             Data: list_data,
@@ -517,9 +517,9 @@ const ChangedRusheet = () => {
         fromState: userDetail.branch_location_state_code,
         transDocNo: e.trans_doc_no,
         transDocDate: String(
-          e.docDate.split("-")[1] +
-          "/" +
           e.docDate.split("-")[2] +
+          "/" +
+          e.docDate.split("-")[1] +
           "/" +
           e.docDate.split("-")[0]
         ),
@@ -540,7 +540,7 @@ console.log("docket_nos-----", docket_nos)
 
   useEffect(() => {
 
-    if (docket_nos.length > 0 && runsheet.vehicle_number !== vehicle_no) {
+    if (docket_nos.length > 0) {
       for (let index = 0; index < docket_nos.length; index++) {
         getEwayBills(docket_nos[index])
       }

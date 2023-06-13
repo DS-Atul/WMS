@@ -331,9 +331,9 @@ const RecieveManifest = ({ depart }) => {
           fromState: userDetail.branch_location_state_code,
           transDocNo: e.trans_doc_no,
           transDocDate: String(
-            e.docDate.split("-")[1] +
-            "/" +
             e.docDate.split("-")[2] +
+            "/" +
+            e.docDate.split("-")[1] +
             "/" +
             e.docDate.split("-")[0]
           ),
@@ -353,7 +353,7 @@ const RecieveManifest = ({ depart }) => {
 
   useEffect(() => {
 
-    if (manifest_no !== "" && location_data?.state?.depart?.vehicle_number !== vehicle_no) {
+    if (manifest_no !== "") {
       getEwayBills(manifest_no);
     }
   }, [manifest_no])

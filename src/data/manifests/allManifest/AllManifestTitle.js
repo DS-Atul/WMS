@@ -1,5 +1,6 @@
 const AllManifestTitle = [
   "Manifest No",
+  "Organization Name",
   "Date",
   "Status",
   "Orgin",

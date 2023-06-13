@@ -64,9 +64,14 @@ const ChangedRusheet = () => {
   //Vehicle
 
   const [contract_based_vehicle_no, setcontract_based_vehicle_no] = useState("");
+  const [vehicle_error, setvehicle_error] = useState(false)
   const [contract_based_vehicle_list, setcontract_based_vehicle_list] = useState([])
   const [contract_based_vehicle_id, setcontract_based_vehicle_id] = useState("")
   const [search_setcontract_based_vehicle, setsearch_setcontract_based_vehicle] = useState("")
+  const [vehicle_loaded, setvehicle_loaded] = useState(false)
+  const [vehicle_count, setvehicle_count] = useState(1)
+  const [vehicle_bottom, setvehicle_bottom] = useState(103)
+  const [vehicle_page, setvehicle_page] = useState(1)
 
   const [vehicle_type_list, setvehicle_type_list] = useState([]);
   const [vehicle_type, setvehicle_type] = useState(vehicle_type_list[0]);
@@ -195,25 +200,46 @@ const ChangedRusheet = () => {
       });
   };
 
-  const getVehicles = () => {
+
+  const getvehicles = () => {
+    // let state_list = [...state_list_s];
+    let vehicle_list = [];
     axios
-      .get(ServerAddress + `vms/get_vehicle/?p=1&records=10`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => {
-        if (response.data.results.length > 0) {
-          let vehicles_list = response.data.results.map((v) => [
-            v.id,
-            v.registeration_no,
-          ]);
-          setcontract_based_vehicle_list(vehicles_list);
+      .get(
+        ServerAddress +
+        `master/all_vehcile/?search=${search_setcontract_based_vehicle}&place_id=all&filter_by=all&p=${vehicle_page}&records=${10}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (resp.data.next === null) {
+          setvehicle_loaded(false);
+        } else {
+          setvehicle_loaded(true);
+        }
+        if (resp.data.results.length > 0) {
+          if (vehicle_page == 1) {
+            vehicle_list = resp.data.results.map((v) => [
+              v.id,
+              v.vehcile_no,
+            ]);
+          } else {
+            vehicle_list = [
+              ...contract_based_vehicle_list,
+              ...resp.data.results.map((v) => [v.id, v.vehcile_no]),
+            ];
+          }
+          setvehicle_count(vehicle_count + 2);
+          setcontract_based_vehicle_list(vehicle_list);
+        } else {
+          setcontract_based_vehicle_list([]);
         }
       })
       .catch((err) => {
-        alert(`Error Occur in Get Data ${err}`);
+        alert(`Error Occur in Get States, ${err}`);
       });
   };
-
 
   // Update Runsheet
   const update_runsheet = (id) => {
@@ -267,15 +293,15 @@ const ChangedRusheet = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          if (runsheet.vehicle_number !== vehicle_no && list_data.length>0){
-          UpateEwaybillPartB({
-            gstin_no: gstin_no,
-            Data: list_data,
-            ewayTokenB: business_access_token,
-            access_token: accessToken,
-          });
-          // EwayUpdate();
-        }
+          if (runsheet.vehicle_number !== vehicle_no && list_data.length > 0) {
+            UpateEwaybillPartB({
+              gstin_no: gstin_no,
+              Data: list_data,
+              ewayTokenB: business_access_token,
+              access_token: accessToken,
+            });
+            // EwayUpdate();
+          }
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
           dispatch(
@@ -324,8 +350,8 @@ const ChangedRusheet = () => {
   }, [search_route, route_page]);
 
   useEffect(() => {
-    getVehicles();
-  }, []);
+    getvehicles();
+  }, [search_setcontract_based_vehicle, vehicle_page]);
 
   useEffect(() => {
     getDrivers();
@@ -351,7 +377,7 @@ const ChangedRusheet = () => {
 
       if (runsheets.is_contract_vehicle) {
         setcontract_based_vehicle_id(runsheets.contracted_vehicle)
-        setcontract_based_vehicle_no(runsheets.contracted_vehicle_no)
+        setcontract_based_vehicle_no(runsheets.contracted_vehicle_number)
       }
       else {
         setvehicle_no(runsheets.vehicle_number)
@@ -463,9 +489,9 @@ const ChangedRusheet = () => {
   useEffect(() => {
     if (runsheet_orders.length > 0 && runsheet.vehicle_number !== vehicle_no) {
       let data = runsheet_orders.map((v) => v.docket_no)
-      console.log("data-------",data)
+      console.log("data-------", data)
       setdocket_nos(data)
-   
+
     }
   }, [runsheet_orders, vehicle_no, runsheet])
 
@@ -478,7 +504,7 @@ const ChangedRusheet = () => {
     axios
       .get(
         ServerAddress +
-          `booking/get_all_ewaybill/?type=${"runsheet"}&value=${runsheet_num}`,
+        `booking/get_all_ewaybill/?type=${"runsheet"}&value=${runsheet_num}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -495,40 +521,42 @@ const ChangedRusheet = () => {
         console.log("rerrerer", err);
       });
   };
-  
+
 
   useEffect(() => {
-    if(EwayBillData?.length>0){
-    let li = [];
-    EwayBillData?.forEach((e) => {
-      let obj = {
-        transMode: "1",
-        fromPlace: userDetail.branch_nm,
-        fromState: userDetail.branch_location_state_code,
-        transDocNo: e.trans_doc_no,
-        transDocDate: String(
-          e.docDate.split("-")[1] +
-          "/" +
-          e.docDate.split("-")[2] +
-          "/" +
-          e.docDate.split("-")[0]
-        ),
-        vehicleNo: vehicle_no,
-        reasonCode: "2",
-        reasonRem: "text",
-        userGstin: gstin_no,
-        ewbNo: e.ewb_no,
-      };
-      li.push(obj);
-    });
-    setlist_data(li)
-  }
+    if (EwayBillData?.length > 0) {
+      let li = [];
+      EwayBillData?.forEach((e) => {
+        let obj = {
+          transMode: "1",
+          fromPlace: userDetail.branch_nm,
+          fromState: userDetail.branch_location_state_code,
+          transDocNo: e.trans_doc_no,
+          transDocDate: String(
+            e.docDate.split("-")[2] +
+            "/" +
+            e.docDate.split("-")[1] +
+            "/" +
+            e.docDate.split("-")[0]
+          ),
+          vehicleNo: vehicle_no,
+          reasonCode: "2",
+          reasonRem: "text",
+          userGstin: gstin_no,
+          ewbNo: e.ewb_no,
+        };
+        li.push(obj);
+      });
+      setlist_data(li)
+    }
     // Rest of your code...
   }, [EwayBillData, vehicle_no]);
+  console.log("EwayBillData=====", EwayBillData)
+  console.log("list_data===", list_data)
 
   useEffect(() => {
-    if (runsheet_no !== "" && runsheet.vehicle_number !== vehicle_no) {
-        getEwayBills(runsheet_no)
+    if (runsheet_no !== "") {
+      getEwayBills(runsheet_no)
     }
   }, [runsheet_no, vehicle_no, success])
 
@@ -665,7 +693,7 @@ const ChangedRusheet = () => {
                             name="route"
                             className="form-control-md"
                             id="input"
-                            placeholder="Enter Vehicle Number"
+                            placeholder="Enter Route Name"
                           />
                         </div>
                       </Col>
@@ -696,11 +724,21 @@ const ChangedRusheet = () => {
                         <div className="mb-3">
                           <Label>Vehicle Number</Label>
                           <SearchInput
-                            data_list={setcontract_based_vehicle_list}
+                            data_list={contract_based_vehicle_list}
+                            setdata_list={setcontract_based_vehicle_list}
                             data_item_s={contract_based_vehicle_no}
                             set_data_item_s={setcontract_based_vehicle_no}
                             set_id={setcontract_based_vehicle_id}
+                            error_message={"Please Select Any State"}
+                            error_s={vehicle_error}
+                            search_item={search_setcontract_based_vehicle}
                             setsearch_item={setsearch_setcontract_based_vehicle}
+                            page={vehicle_page}
+                            setpage={setvehicle_page}
+                            loaded={vehicle_loaded}
+                            count={vehicle_count}
+                            bottom={vehicle_bottom}
+                            setbottom={setvehicle_bottom}
                           />
                         </div>
                       </Col>

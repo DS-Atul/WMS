@@ -209,6 +209,7 @@ const UsersDataFormat = ({ data, data1, can_delete }) => {
               <td>{user.email}</td>
               <td>{toTitleCase(user.first_name)}</td>
               <td>{user.mobilenumber}</td>
+              <td>{user.organization_name ? toTitleCase(user.organization_name) : "-"}</td>
               <td>{toTitleCase(user.branch_nm)}</td>
               <td>{toTitleCase(user.channel_access)}</td>
               <td>

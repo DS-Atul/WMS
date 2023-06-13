@@ -292,6 +292,7 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                                 </Link>)
                 }
               </td>
+              <td>{order.organization_name ? toTitleCase(order.organization_name) : "-"}</td>
               <td>{l_fdate}</td>
               <td>
                 {

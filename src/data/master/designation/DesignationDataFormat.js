@@ -207,6 +207,7 @@ const DesignationDataFormat = ({ data, data1, can_delete }) => {
                   toTitleCase(designation.name)
                 )}
               </td>
+              <td>{designation.organization_name ? toTitleCase(designation.organization_name) : "-"}</td>
               <td>
                 {toTitleCase(
                   designation.created_at

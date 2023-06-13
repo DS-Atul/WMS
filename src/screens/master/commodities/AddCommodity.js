@@ -569,8 +569,8 @@ const Add_Commodity = () => {
         "transactionType": "1",
         "subSupplyType": "1",
         "docType": "INV",
-        "docNo": `DHLMH67139${index}`,
-        "docDate": "08/06/2023",
+        "docNo": `DHLMH6${index}`,
+        "docDate": "13/06/2023",
         "invTyp": "B2B",
         "fromGstin": "05AAAAT2562R1Z3",
         "fromTrdName": "K R AGENCIES",
@@ -600,7 +600,7 @@ const Add_Commodity = () => {
         "otherValue": "0",
         "transMode": "2",
         "transDistance": "196",
-        "transDocDate": "08/06/2023",
+        "transDocDate": "13/06/2023",
         "transDocNo": "124423",
         "transId": "05AAAAR1685F1ZO",
         "transName": "Ashwin Guj Trans",
@@ -664,7 +664,7 @@ const Add_Commodity = () => {
 
   useEffect(() => {
     for (let index = 0; index < 2; index++) {
-      post_awb(index)
+      // post_awb(index)
 
     }
   }, [])
@@ -674,66 +674,6 @@ useEffect(() => {
 
 }, [a])
 
-const AddEwayAccessToken = () => {
-  axios
-    .post(
-      EServerAddress + "ezewb/v1/auth/initlogin",
-
-      {
-        userid: "test.easywaybill@gmail.com",
-        password: "Abcd@12345",
-        // userid: euser_name,
-        // password: epass,
-      },
-
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-    .then(function (response) {
-      console.log("AddEwayAccessToken response----", response)
-      // GetBusiness_token
-    })
-    .catch((error) => {
-      alert(`Error Happen while login  with eway bill ${error}`);
-    });
-};
-
-useEffect(() => {
-  // AddEwayAccessToken()
-}, [])
-
-
-const GetBusiness_token = () => {
-
-   axios
-     .post(
-       EServerAddress + "ezewb/v1/auth/completelogin",
-       {
-        //  token: `${e_access_token}`,
-        //  orgid: orgId,
-         token: "eyJhbGciOiJIUzI1NiJ9.eyJ1IjoxNTcsInYiOmZhbHNlLCJleHAiOjE2ODYxMzk3NTksIm0iOmZhbHNlLCJpYXQiOjE2ODYxMTgxNTl9.Gi6kXx1KUz0ZQguoJUaKL8yThOCRpEVBtDlXsk4Ep1E",
-         orgid: 4,
-       },
-
-       {
-         headers: {
-           "Content-Type": "application/json",
-         },
-       }
-     )
-     .then(function (response) {
-       console.log("GetBusiness_token response-----", response.data)
-
-     })
-     .catch((error) => {
-     });
- };
- useEffect(() => {
-  // GetBusiness_token()
- }, [])
  
 
 return (

@@ -1,3 +1,3 @@
-const DepartmentsDataTitle = ["Department Name", "Creted By"];
+const DepartmentsDataTitle = ["Department Name","Organization", "Creted By"];
 
 export default DepartmentsDataTitle;

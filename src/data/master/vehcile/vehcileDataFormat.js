@@ -211,6 +211,7 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
                 
           
               </td>
+              <td>{vehcile.organization_name ? toTitleCase(vehcile.organization_name) : "-"}</td>
               <td>{toTitleCase(vehcile.branch_name)}</td>
                <td>{toTitleCase(vehcile.vehcile_type)}</td>
                <td>{toTitleCase(vehcile.vehcile_model)}</td>

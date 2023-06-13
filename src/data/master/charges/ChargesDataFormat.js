@@ -226,6 +226,7 @@ const ChargesDataFormat = ({ data, data1, can_delete }) => {
                 )}
               </td>
               <td>{toTitleCase(charge.charge_category)}</td>
+              <td>{charge.organization_name ? toTitleCase(charge.organization_name) : "-"}</td>
               <td>
                 {
                   charge.cm_current_status === "APPROVED" ?

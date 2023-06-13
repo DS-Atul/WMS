@@ -69,7 +69,9 @@ const UserInfo = () => {
   const [designation_count, setdesignation_count] = useState(1)
   const [designation_bottom, setdesignation_bottom] = useState(103)
 
-  const userid = useSelector((state) => state.authentication.userdetails);
+  const [toOrg, settoOrg] = useState(false)
+
+  const user_detail = useSelector((state) => state.authentication.userdetails);
   const username = useSelector(
     (state) => state.authentication.userdetails.username
   );
@@ -122,6 +124,18 @@ const UserInfo = () => {
   const [ass_department_page, setass_department_page] = useState(1);
   const [search_ass_department, setsearch_ass_department] = useState("");
 
+  //Organization
+  const [org_list_s, setorg_list_s] = useState([])
+  const [org, setorg] = useState(toTitleCase(user_detail.organization_name))
+  const [org_id, setorg_id] = useState(user_detail.organization)
+  const [org_page, setorg_page] = useState(1)
+  const [org_error, setorg_error] = useState(false)
+  const [org_search_item, setorg_search_item] = useState("")
+  const [org_loaded, setorg_loaded] = useState(false)
+  const [org_count, setorg_count] = useState(1)
+  const [org_bottom, setorg_bottom] = useState(103)
+
+
   const dispatch = useDispatch();
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
@@ -142,20 +156,19 @@ const UserInfo = () => {
   const [document, setdocument] = useState("");
   const [doc_result_image, setdoc_result_image] = useState("");
 
-  const getBranches = () => {
+  const getBranches = (val) => {
     let temp3 = [];
 
     axios
       .get(
         ServerAddress +
-        `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
-          "",
-        ]}&branch_city=${[""]}&vendor=${[""]}&branch_search=${search_branch}&data=all`,
+        `master/get_org_branch/?org_id=${org_id}&search=${search_branch}&p=${page}&records=${10}&type=${val}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
+        settoOrg(true);
         if (response.data.next === null) {
           setbranch_loaded(false);
         } else {
@@ -482,6 +495,42 @@ const UserInfo = () => {
       });
   };
 
+  const getOrganization = async () => {
+    let orgs_list = [];
+    try {
+      const resp = await axios.get(
+        ServerAddress +
+        `organization/get_organization/?search=${""}&p=${org_page}&records=${10}&name=${[]}&organization_search=${org_search_item}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      if (resp.data.next === null) {
+        setorg_loaded(false);
+      } else {
+        setorg_loaded(true);
+      }
+
+      if (resp.data.results.length > 0) {
+        if (org_page === 1) {
+          orgs_list = resp.data.results.map((v) => [
+            v.id,
+            toTitleCase(v.name),
+          ]);
+        } else {
+          orgs_list = [
+            ...org_list_s,
+            ...resp.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+          ];
+        }
+      }
+      setorg_count(org_count + 2);
+      setorg_list_s(orgs_list);
+    } catch (err) {
+      console.warn(`Error Occur in Get States, ${err}`);
+    }
+  };
+
   const add_user = (values) => {
     let branch_id = ass_branch_list2.map((v) => v[0]);
 
@@ -514,6 +563,7 @@ const UserInfo = () => {
           // associated_department: ass_department_list2,
           is_docket_entry: is_docket,
           starting_docket_no: docket_no === "" ? null : docket_no,
+          organization: org_id,
         },
         {
           headers: {
@@ -582,7 +632,7 @@ const UserInfo = () => {
         {
           user: user.id,
           permissions_list: newarrdata,
-          modified_by: userid.id,
+          modified_by: user_detail.id,
         },
         {
           headers: {
@@ -632,6 +682,7 @@ const UserInfo = () => {
           // associated_department: ass_department_list2,
           is_docket_entry: is_docket,
           starting_docket_no: docket_no,
+          organization: org_id,
         },
         {
           headers: {
@@ -690,7 +741,7 @@ const UserInfo = () => {
         {
           user: user_id,
           permissions_list: newarrdata,
-          created_by: userid.id,
+          created_by: user_detail.id,
         },
         {
           headers: {
@@ -833,6 +884,7 @@ const UserInfo = () => {
     ["QU", "QIL User"],
     ["COM", "Company User"],
     ["CU", "Client User"],
+    ["DRIVER", "DRIVER"],
   ]);
 
   const [channel_access_list, setchannel_access_list] = useState([
@@ -926,6 +978,8 @@ const UserInfo = () => {
       setchannel_access(toTitleCase(user_u.channel_access));
       setdesignation(toTitleCase(user_u.designation_name));
       setdesignation_id(user_u.designation)
+      setorg_id(user_u.organization)
+      setorg(toTitleCase(user_u.organization_name))
       // setuser_role(toTitleCase(user_u.user_role));
       setis_staff(user_u.is_staff);
       setis_active(user_u.is_active);
@@ -939,12 +993,21 @@ const UserInfo = () => {
   }, []);
 
   useLayoutEffect(() => {
-    getBranches();
-  }, [page, search_branch]);
+    if(org_id !== "" && org_id && user_detail.organization){
+      getBranches("User")
+    }
+    else{
+      getBranches("Organization");
+    }
+  }, [page, search_branch, org_id]);
 
   useEffect(() => {
     getDesignations()
   }, [designation_page, designation_search])
+
+  useEffect(() => {
+    getOrganization()
+  }, [org_page, org_search_item])
 
   useLayoutEffect(() => {
     if (locations.state === null) {
@@ -1434,6 +1497,46 @@ const UserInfo = () => {
     // setold_branch_ids(old_data)
 
   }, [ass_branch_ids, ass_branch_list2, ass_branch_list])
+
+  // const getBranches = async (org_id) => {
+  //   try {
+  //     const resp = await axios.get(
+  //       ServerAddress +
+  //       `master/get_org_branch/?org_id=${org_id}&search=${search_branch}&p=${page}&records=${10}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     );
+  //     console.log("Org-----resp", resp)
+  //     if (resp.data?.branch_org?.length > 0) {
+  //     // setorg(toTitleCase(resp.data?.branch_org[0].organizaton__name));
+  //     // setorg_id(resp.data?.branch_org[0].organizaton);
+  //     }
+
+  //   } catch (err) {
+  //     console.warn(`Error Occur in Get States, ${err}`);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if(home_branch_id && home_branch_id !== "" && !user_detail.organization_name && (!user.is_superuser || user.organization_name)){
+  //   // if(home_branch_id && home_branch_id !== "" && !user_detail.organization_name && user.organization_name){
+  //     getBranchOrganization(home_branch_id)
+  //   }    
+  // }, [home_branch_id])
+  useEffect(() => {
+    if (org !== "" && toOrg) {
+      sethome_branch("");
+      sethome_branch_list([]);
+    }
+  }, [org]);
+
+  useEffect(() => {
+    if (is_update) {
+      settoOrg(false);
+    }
+  }, []);
+
   return (
     <div>
       <Form
@@ -1697,6 +1800,30 @@ const UserInfo = () => {
                       </div>
                     </Col>
                     <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">Organization*</Label>
+                        
+                              <SearchInput
+                                data_list={org_list_s}
+                                setdata_list={setorg_list_s}
+                                data_item_s={org}
+                                set_data_item_s={setorg}
+                                set_id={setorg_id}
+                                page={org_page}
+                                setpage={setorg_page}
+                                error_message={"Please Select Any Organization"}
+                                error_s={org_error}
+                                search_item={org_search_item}
+                                setsearch_item={setorg_search_item}
+                                loaded={org_loaded}
+                                count={org_count}
+                                bottom={org_bottom}
+                                setbottom={setorg_bottom}
+                                // disable_me={!user.is_superuser || user.organization_name}
+                              />
+                          </div>
+                        </Col>
+                    <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">Home Branch *:</Label>
                         <SearchInput
@@ -1934,6 +2061,7 @@ const UserInfo = () => {
                       result_image={setdoc_result_image}
 
                     /> : null}
+
                     <Col lg={6} md={6} sm={6}>
                       <div className="mb-3">
                         <Label className="header-child">
@@ -1947,7 +2075,7 @@ const UserInfo = () => {
                           style={{
                             display: "flex",
                             flexDirection: "row",
-                            height: "38px",
+                            height: "35px",
                             border: "1px solid #dad7d7",
                             alignItems: "center"
                           }}

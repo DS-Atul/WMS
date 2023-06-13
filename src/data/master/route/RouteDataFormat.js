@@ -206,6 +206,7 @@ const RouteDataFormat = ({ data, data1, can_delete }) => {
                 )}
               </td>
               <td>{toTitleCase(route.created_by_name)}</td>
+              <td>{route.organization_name ? toTitleCase(route.organization_name) : "-"}</td>
               <td>
                 {
                   route.cm_current_status === "APPROVED" ?

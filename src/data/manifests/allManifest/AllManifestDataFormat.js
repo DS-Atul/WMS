@@ -258,6 +258,7 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
                                 </Link>)
                 }
               </td>
+              <td>{manifest.organization_name ? toTitleCase(manifest.organization_name) : "-"}</td>
               <td>{l_fdate}</td>
               <td>
                 {

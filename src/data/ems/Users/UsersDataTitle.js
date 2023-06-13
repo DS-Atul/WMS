@@ -1,13 +1,14 @@
 const UsersDataTitle = [
   "Username",
   "Email",
-  "First Name*",
-  "Phone Number*",
-  "Home Branch *",
-  "Channel Access*",
+  "First Name",
+  "Phone Number",
+  "Organization",
+  "Home Branch",
+  "Channel Access",
   "Is Active",
-  "User Department *",
-  "User Type *",
+  "User Department",
+  "User Type",
   // "Action",
 ];
 

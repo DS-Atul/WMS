@@ -231,7 +231,7 @@ const RunsheetDataFormat = ({ can_delete, data, data1 }) => {
                 <td>
                   <span>{runsheet.runsheet_no}</span>
                 </td>
-
+                <td>{runsheet.organization_name ? toTitleCase(runsheet.organization_name) : "-"}</td>
                 <td>{runsheet.orders.length}</td>
                 <td>
                   {
@@ -250,7 +250,7 @@ const RunsheetDataFormat = ({ can_delete, data, data1 }) => {
                 {/* <td>{runsheet.modified_at}</td> */}
                 <td>{runsheet.is_defined_route ? toTitleCase(runsheet.defined_route_name) : toTitleCase(runsheet.route_name)}</td>
                 <td>
-                  {runsheet.vehicle_number}
+                  {runsheet.vehicle_number ? runsheet.vehicle_number : runsheet.contracted_vehicle_number}
                 </td>
                 <td>{toTitleCase(runsheet.driver_name)}</td>
                 <td>

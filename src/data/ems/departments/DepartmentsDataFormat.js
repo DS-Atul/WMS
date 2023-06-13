@@ -184,6 +184,7 @@ const DepartmentsDataFormat = ({ data, data1 }) => {
                     {toTitleCase(user.name)}
                   </Link>
                 </td>
+                <td>{user.organization_name ? toTitleCase(user.organization_name) : "-"}</td>
                 {/* <td>{toTitleCase(user.first_name)}</td> */}
                 <td>{toTitleCase(user.user_name)}</td>
               </tr>

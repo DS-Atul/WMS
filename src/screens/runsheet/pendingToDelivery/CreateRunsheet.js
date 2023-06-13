@@ -55,10 +55,16 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
   const [route_page, setroute_page] = useState(1)
 
   //Vehicle
-  const [veh_list, setveh_list] = useState([]);
-  const [vehicle_no, setvehicle_no] = useState("");
-  const [vehicle_id, setvehicle_id] = useState(0);
-  const [search_vehicle_no, setsearch_vehicle_no] = useState("");
+ //Vehicle
+ const [vehicle_list_s, setvehicle_list_s] = useState([])
+ const [vehicle_no, setvehicle_no] = useState("")
+ const [vehicle_id, setvehicle_id] = useState("")
+ const [vehicle_page, setvehicle_page] = useState(1)
+ const [vehicle_error, setvehicle_error] = useState(false)
+ const [vehicle_search_item, setvehicle_search_item] = useState("")
+ const [vehicle_loaded, setvehicle_loaded] = useState(false)
+ const [vehicle_count, setvehicle_count] = useState(1)
+ const [vehicle_bottom, setvehicle_bottom] = useState(103)
   const [close, setclose] = useState(false)
   //Driver
   const [driver_list, setdriver_list] = useState([]);
@@ -142,9 +148,9 @@ useEffect(() => {
       fromState: userDetail.branch_location_state_code,
       transDocNo: e.trans_doc_no,
       transDocDate: String(
-        e.docDate.split("-")[1] +
-        "/" +
         e.docDate.split("-")[2] +
+        "/" +
+        e.docDate.split("-")[1] +
         "/" +
         e.docDate.split("-")[0]
       ),
@@ -179,6 +185,7 @@ useEffect(() => {
       .post(
         ServerAddress + "runsheet/add_runsheet/",
         {
+          // organization: user.organization,
           branch: user.home_branch,
           route: defined_route ? route_id : null,
           route_name: !defined_route ? (route).toUpperCase() : "",
@@ -189,7 +196,7 @@ useEffect(() => {
           branch_name: user.branch_nm,
           driver: driver_id,
           contracted_vehicle: is_contract_based ? vehicle_id : null,
-          vehicle_number: !is_contract_based ? (vehicle_no).toUpperCase() : "",
+          vehicle_number: (vehicle_no).toUpperCase(),
           is_contract_vehicle: is_contract_based,
           // contracted_vehicle_no: (contract_based_vehicle_no).toUpperCase(),
           awb_no_list: awb_no_list,
@@ -267,24 +274,46 @@ useEffect(() => {
       });
   };
 
-  const getVehicles = () => {
+  const getvehicles = () => {
+    // let state_list = [...state_list_s];
+    let vehicle_list = [];
     axios
-      .get(ServerAddress + `vms/get_vehicle/?p=1&records=10`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => {
-        if (response.data.results.length > 0) {
-          let vehicles_list = response.data.results.map((v) => [
-            v.id,
-            v.registeration_no,
-          ]);
-          setveh_list(vehicles_list);
+      .get(
+        ServerAddress +
+        `master/all_vehcile/?search=${vehicle_search_item}&place_id=all&filter_by=all&p=${vehicle_page}&records=${10}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (resp.data.next === null) {
+          setvehicle_loaded(false);
+        } else {
+          setvehicle_loaded(true);
+        }
+        if (resp.data.results.length > 0) {
+          if (vehicle_page == 1) {
+            vehicle_list = resp.data.results.map((v) => [
+              v.id,
+              v.vehcile_no,
+            ]);
+          } else {
+            vehicle_list = [
+              ...vehicle_list_s,
+              ...resp.data.results.map((v) => [v.id, v.vehcile_no]),
+            ];
+          }
+          setvehicle_count(vehicle_count + 2);
+          setvehicle_list_s(vehicle_list);
+        } else {
+          setvehicle_list_s([]);
         }
       })
       .catch((err) => {
-        alert(`Error Occur in Get Data ${err}`);
+        alert(`Error Occur in Get States, ${err}`);
       });
   };
+
 
   const getDrivers = () => {
     let driver_lists = []
@@ -330,9 +359,10 @@ useEffect(() => {
     getRoutes();
   }, [search_route, route_page]);
 
+
   useEffect(() => {
-    getVehicles();
-  }, []);
+    getvehicles()
+  }, [vehicle_page, vehicle_search_item]);
 
   useEffect(() => {
     getDrivers();
@@ -724,13 +754,23 @@ useEffect(() => {
                 {is_contract_based ? (
                   <div>
                     <SearchInput
-                      data_list={veh_list}
-                      data_item_s={vehicle_no}
-                      set_data_item_s={setvehicle_no}
-                      set_id={setvehicle_id}
-                      setsearch_item={setsearch_vehicle_no}
-                    />
-                    {contract_base_vehicle_error && (
+                        data_list={vehicle_list_s}
+                        setdata_list={setvehicle_list_s}
+                        data_item_s={vehicle_no}
+                        set_data_item_s={setvehicle_no}
+                        set_id={setvehicle_id}
+                        page={vehicle_page}
+                        setpage={setvehicle_page}
+                        error_message={"Please Select Any State"}
+                        error_s={vehicle_error}
+                        search_item={vehicle_search_item}
+                        setsearch_item={setvehicle_search_item}
+                        loaded={vehicle_loaded}
+                        count={vehicle_count}
+                        bottom={vehicle_bottom}
+                        setbottom={setvehicle_bottom}
+                      />
+                    {vehicle_no_error && (
                       <div className="mt-1 error-text" color="danger">
                         Please Select Vehicle
                       </div>
