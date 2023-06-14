@@ -30,10 +30,9 @@ const ExtendDataFormat = ({ type, count }) => {
   const [show, setshow] = useState(false);
   const [docDate, setdocDate] = useState("")
   const [toggle, settoggle] = useState(false)
-  console.log("user===", user)
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [state_code, setstate_code] = useState("")
-  const [current_place, setcurrent_place] = useState(toTitleCase(""))
+  const [current_place, setcurrent_place] = useState("")
   const [d_pincode, setd_pincode] = useState("");
   const [c_pincode, setc_pincode] = useState("");
   const [vehicle_no, setvehicle_no] = useState("")
@@ -52,16 +51,13 @@ const ExtendDataFormat = ({ type, count }) => {
     ["5", "Accident"],
     ["99", "Others"]
   ]);
-  console.log("ext_reason_l====", ext_reason_l)
-  console.log("consigment_l====", consigment_l)
+
   const [consigment_sel, setconsigment_sel] = useState(consigment_l[0][1]);
   const [ext_reason_sel, setext_reason_sel] = useState(ext_reason_l[2][1]);
   const [ext_reason_id, setext_reason_id] = useState(ext_reason_l[2][0]);
   const [ext_reason_error, setext_reason_error] = useState(false)
   const [consigment_id, setconsigment_id] = useState(consigment_l[0][0]);
-  console.log("consigment_sel=======", consigment_id)
   const [all_data, setall_data] = useState([])
-  console.log("all_data======", all_data)
   const [transport_mode_l, settransport_mode_l] = useState([
     ["1", "Road"],
     ["3", "Air"],
@@ -90,9 +86,11 @@ const ExtendDataFormat = ({ type, count }) => {
 
   // }, [])
 
+  const [eway_extend, seteway_extend] = useState([])
+const [tog_extd, settog_extd] = useState(false)
+
   useLayoutEffect(() => {
     const currentTime = new Date().getHours();
-    console.log("currentTime", currentTime);
     if (currentTime >= 16 || currentTime < 8) {
       setis_ready(true);
     } else {
@@ -108,23 +106,36 @@ const ExtendDataFormat = ({ type, count }) => {
   }
 
   const send_data = async () => {
+    alert()
+    // For  valid_upto
+    const [datePart, timePart] = all_data?.validUpto.split(' ');
+    const [day, month, year] = datePart.split('/');
+    const convertedDate = `${year}-${month}-${day}`;    
+    // Combine the converted date and time with timezone offset
+    const convertedDateTime = `${convertedDate} ${timePart}+00:00`; 
+
+    // For trans_doc_date
+    const [datePart2, timePart2] = all_data?.transDocDate.split(' '); 
+    const [day2, month2, year2] = datePart2.split('/');
+    const convertedDocDate = `${year2}-${month2}-${day2}`;
+
 
     try {
+      alert("-----")
       const response = await axios.post(
         ServerAddress + 'analytic/add_extended_ewb/',
         {
-          ewb: all_data.ewb,
-          valid_upto: all_data.valid_upto,
-          trans_doc_no: all_data.trans_doc_no,
-          trans_doc_date: all_data.trans_doc_date,
-          vehicle_no: all_data.vehicle_no,
-          trans_mode: all_data.trans_mode === 1 ? "ROAD" : "AIR",
-          from_state: all_data.branch_location_state,
-          from_place: all_data.branch_location_city,
-          from_pincode: all_data.branch_location_pincode,
-          reason_code: all_data.reason_code,
-          reason_remarks: all_data.reason_remarks,
-          reason_remarks: all_data.reason_remarks,
+          ewb: tog_extd ? all_data.ewb : null,
+          valid_upto: tog_extd ? all_data.valid_upto : convertedDateTime,
+          trans_doc_no: tog_extd ? all_data.trans_doc_no : all_data.transDocNo,
+          trans_doc_date: tog_extd ? all_data.trans_doc_date : convertedDocDate,
+          vehicle_no: tog_extd ? all_data.vehicle_no  : all_data.vehicleNo,
+          trans_mode: tog_extd ? (all_data.trans_mode === 1 ? "ROAD" : "AIR") : (all_data.transMode === 1 ? "ROAD" : "AIR"),
+          from_state: tog_extd ? all_data.branch_location_state  : (all_data.fromGstin).substring(0, 2),
+          from_place: tog_extd ? all_data.branch_location_city  : all_data.fromPlace,
+          from_pincode: tog_extd ? all_data.branch_location_pincode  : all_data.fromPincode,
+          reason_code: tog_extd ? all_data.reason_code  : 2,
+          reason_remarks : tog_extd ? all_data.reason_remarks : "DUE TO TRANSSHIPMENT",
 
         },
         {
@@ -133,22 +144,14 @@ const ExtendDataFormat = ({ type, count }) => {
           },
         }
       );
-
-      console.log('response=========', response);
+      console.log("Extended response====", response)
     } catch (error) {
-      console.warn(`Error Happened while posting Commodity Type Data: ${error}`);
+      console.warn(`Error Happened while posting Extended EWB Type Data: ${error}`);
     }
   };
 
   const ExtendEwb = () => {
-    console.log("ewbNo=======", ewb_no)
-    console.log("fromState=======", state_code)
-    console.log("fromPlace=======", current_place)
-    console.log("transDocDate=======", docDate)
-    console.log("fromPincode=======", c_pincode)
-    console.log("consignmentStatus=======", consigment_id)
-    console.log("extnRsnCode=======", ext_reason_id)
-    console.log("transMode=======", transport_mode_id)
+
     axios
       .put(
         EServerAddress + `ezewb/v1/ewb/extendValidityByNo?gstin=${gstin_no}`,
@@ -181,7 +184,7 @@ const ExtendDataFormat = ({ type, count }) => {
         }
       )
       .then(function (response) {
-        console.log("Extend response----", response)
+        console.log("Ewb response=====", response)
         if (response.data?.status === 1) {
           settoggle(true)
           send_data()
@@ -192,6 +195,7 @@ const ExtendDataFormat = ({ type, count }) => {
           dispatch(setAlertType("success"));
         }
         else {
+          send_data()
           setshow(false);
           alert(response.data.message)
         }
@@ -203,8 +207,6 @@ const ExtendDataFormat = ({ type, count }) => {
   };
 
   const getExtendedEwb = (ewb) => {
-    // let state_list = [...state_list_s];
-    let state_list = [];
     axios
       .get(
         ServerAddress +
@@ -215,13 +217,20 @@ const ExtendDataFormat = ({ type, count }) => {
       )
       .then((resp) => {
         console.log("Etd resp===========", resp)
+        setshow(true);
         if (resp.data.results.length === 0) {
+          settog_extd(false)        
           dispatch(setShowAlert(true));
-          dispatch(setDataExist(`First Update Eway Bill Part B`));
+          dispatch(setDataExist(`Eway Bill Part B Not Updated Yet in this Eway Bill No.`));
           dispatch(setAlertType("warning"));
+          // setstate_code((eway_extend.fromGstin).substring(0, 2))
+          // setcurrent_place(toTitleCase(eway_extend.fromPlace))
+          // setc_pincode(eway_extend.fromPincode)
+          // setvehicle_no(eway_extend.vehicleNo)
+          // settrans_doc_no(eway_extend.transDocNo)
         }
         else {
-          setshow(true);
+          settog_extd(true)         
           setall_data(resp.data.results[0])
           setstate_code(resp.data.results[0].branch_location_state_code)
           setcurrent_place(toTitleCase(resp.data.results[0].branch_location_city))
@@ -235,7 +244,9 @@ const ExtendDataFormat = ({ type, count }) => {
         alert(`Error Occur in Get States, ${err}`);
       });
   };
-
+  console.log("current_place ===========", current_place)
+  console.log("eway_extend=======", eway_extend)
+  console.log("all_data=======", all_data)
   const get_expire_eway = () => {
     axios
       .post(
@@ -255,7 +266,6 @@ const ExtendDataFormat = ({ type, count }) => {
         }
       )
       .then(function (response) {
-        console.log("response=======eway bill part b 12", response.data.response);
         // setpart_b_12(response.data.response);
         setdata(response.data.response);
 
@@ -274,6 +284,32 @@ const ExtendDataFormat = ({ type, count }) => {
       .toLowerCase()
       .includes(searchQuery?.toLowerCase())
   );
+
+  useEffect(() => {
+    if(!tog_extd && show){
+      setstate_code((eway_extend?.fromGstin).substring(0, 2))
+      setcurrent_place(toTitleCase(eway_extend.fromPlace))
+      setc_pincode(eway_extend.fromPincode)
+      setvehicle_no(eway_extend.vehicleNo)
+      settrans_doc_no(eway_extend.transDocNo)
+      setall_data(eway_extend)
+    }
+
+  }, [eway_extend,tog_extd,show])
+
+  useEffect(() => {
+      if(!show){
+      setstate_code("")
+      setcurrent_place("")
+      setc_pincode("")
+      setvehicle_no("")
+      settrans_doc_no("")
+      setall_data([])
+      seteway_extend([])
+    }
+  }, [show])
+  
+  
   return (
     <>
       <Modal show={show} onHide={handleCloseM}
@@ -313,8 +349,8 @@ const ExtendDataFormat = ({ type, count }) => {
           <div style={{ marginTop: "10px" }}>
             <Label>Current Place *</Label>
             <Input
-              value={current_place}
-              placeholder="Enter Current Pincode"
+              value={current_place ? current_place : ""}
+              placeholder="Enter Current Place"
               onChange={(e) => {
                 setcurrent_place(e.target.value);
               }}
@@ -463,12 +499,19 @@ const ExtendDataFormat = ({ type, count }) => {
                           color="success"
                           onClick={() => {
                             if (is_ready) {
+                              // setstate_code("")
+                              // setcurrent_place("")
+                              // setcurrent_place("")
+                              // setc_pincode("")
+                              // setvehicle_no("")
+                              // settrans_doc_no("")
+                              // setall_data([])
                               settoggle(false)
+                              seteway_extend(ewb)
                               setdocDate(ewb?.docDate.split(" ")[0])
                               getExtendedEwb(ewb.ewbNo)
                               handleEData(ewb.toPincode, index, ewb.ewbNo)
                             } else {
-                              // setshow(true);
                               dispatch(setShowAlert(true));
                               dispatch(setDataExist(`EwayBill Can Only Extend From 4 P.M To 8 A.M Onwards`));
                               dispatch(setAlertType("danger"));

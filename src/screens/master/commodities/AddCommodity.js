@@ -569,7 +569,7 @@ const Add_Commodity = () => {
         "transactionType": "1",
         "subSupplyType": "1",
         "docType": "INV",
-        "docNo": `DHLMH68${index}`,
+        "docNo": `DHLMH8${index}`,
         "docDate": "13/06/2023",
         "invTyp": "B2B",
         "fromGstin": "05AAAAT2562R1Z3",
