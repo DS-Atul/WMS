@@ -233,11 +233,11 @@ const AddOrganization = () => {
     },
 
     validationSchema: Yup.object({
-      organisation_name: Yup.string().required("Organisation Name is required"),
+      organisation_name: Yup.string().required("Organization Name is required"),
       registeration_number: Yup.string()
         .min(21, "Number must be 21 digit")
         .max(21, "Number must be 21 digit")
-        .required("Registeration Number is required"),
+        .required("Registration Number is required"),
       toll_free_number: Yup.string()
         .min(11, "Number must be 11 digit")
         .max(11, "Number must be 11 digit")
@@ -1600,7 +1600,9 @@ const AddOrganization = () => {
         dispatch(setDataExist(`"${pan_no}" Already Exists`));
         dispatch(setAlertType("warning"));
         dispatch(setShowAlert(true));
-        setpan_no("")
+        setpan_no_error(true)
+
+        // setpan_no("")
       }
       setloaded_pan(false)
     } catch (error) {
@@ -1625,7 +1627,7 @@ const AddOrganization = () => {
   }, [pan_no])
 
   useEffect(() => {
-    if (pan_no !== "" && (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+    if (pan_no !== "" && (pan_no.length === 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
         setpan_no_error(false);
       }
   }, [pan_no]);
@@ -1664,6 +1666,10 @@ const AddOrganization = () => {
               setpan_no_error(true);
               document.getElementById("org_id").scrollIntoView();
             }
+             else if (pan_no !== "" && (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+              setpan_no_error(true);
+              document.getElementById("org_id").scrollIntoView();
+            }
             else if(company_type===""){
               setcompany_type_error(true);
               document.getElementById("org_id").scrollIntoView();
@@ -1673,11 +1679,11 @@ const AddOrganization = () => {
             } 
             else if(row[row.length - 1].some((some) => some === "")){
               document.getElementById('gst_details').scrollIntoView();
-              alert("Please Fill GST Details")
+              alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
             }
             else if (data === false) {
               document.getElementById('gst_details').scrollIntoView();
-                  alert("Please Select Head Office")
+                  alert("Please Checked, checkBox of Head Office")
            }
             else if( row1[row1.length -1][0] !== "" &&  row1[row1.length - 1].some((some) => some === "")){
               document.getElementById('config_details').scrollIntoView();
@@ -1804,6 +1810,7 @@ const AddOrganization = () => {
                         <div className="mb-2">
                           <Label className="header-child">PAN Number *:</Label>
                           <Input
+                          maxLength={10}
                             value={pan_no}
                             onChange={(e) =>
                               setpan_no(e.target.value)
@@ -1811,23 +1818,18 @@ const AddOrganization = () => {
                             onBlur={()=>{                          
                               if (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no)) {
                                 setpan_no_error(true)
-                                dispatch(
-                                  setDataExist(
-                                    `PAN Number must be 10 digits and follow the correct format (e.g., ABCDE1234F)`
-                                  )
-                                );
-                                dispatch(setAlertType("warning"));
-                                dispatch(setShowAlert(true));
-                                setpan_no("")
                               }
+                              else {
+                                  setpan_no_error(false)
+                                }
                             }}
                             id="input"
                             type="text"
-                            placeholder="Please Enter PAN Number"
+                            placeholder="Please Enter PAN"
                             invalid={pan_no_error}
                           />
                           <FormFeedback type="invalid">
-                                PAN Number must be provided
+                                PAN is required (e.g. ABCDE1234F)
                                 </FormFeedback>
                         </div>
                       </Col>
@@ -1849,7 +1851,7 @@ const AddOrganization = () => {
                             className="form-control-md"
                             id="input"
                             name="organisation_name"
-                            placeholder="Enter Organisation Name"
+                            placeholder="Enter Organization Name"
                           />
                           {validation.touched.organisation_name &&
                             validation.errors.organisation_name ? (
@@ -1965,7 +1967,7 @@ const AddOrganization = () => {
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">
-                            Tan Number*:
+                            TAN Number*:
                           </Label>
                           <Input
                             onChange={validation.handleChange}
@@ -2376,7 +2378,7 @@ const AddOrganization = () => {
                                   setgstcity_bottom(103)
                                   const lastRow = row[row.length - 1];
                                   if(row[row.length -1].some((data) => data === "")) {
-                                    alert("Please Fill GST Details")
+                                    alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
                                   } else {
                                     addGST();
                                   }

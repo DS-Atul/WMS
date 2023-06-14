@@ -83,6 +83,7 @@ const AddVendor = () => {
     "Others",
   ]);
   const [pan_no, setpan_no] = useState("")
+  const [pan_no_error, setpan_no_error] = useState(false);
   const [business_selected, setbusiness_selected] = useState("");
   const [business_list, setbusiness_list] = useState([
     "Manufacturing",
@@ -104,8 +105,12 @@ const AddVendor = () => {
     useState(false);
   const [msme_No_length, setmsme_No_length] = useState(false);
   const [msme_certificate, setmsme_certificate] = useState("");
+  const [msme_certificate_error, setmsme_certificate_error ] = useState(false);
+
 
   const [registration_date, setregistration_date] = useState("")
+  const [reg_no_error, setreg_no_error] = useState(false);
+
   //Service Offered
   const [by_air, setby_air] = useState([]);
   const [by_air2, setby_air2] = useState([]);
@@ -157,6 +162,7 @@ const AddVendor = () => {
 
   // used for error
   const [company_type_error, setcompany_type_error] = useState(false);
+  const [city_error, setcity_error] = useState(false);
   const [business_line_error, setbusiness_line_error] = useState(false);
   const [service_region_selected_error, setservice_region_selected_error] =
     useState(false);
@@ -244,27 +250,41 @@ const AddVendor = () => {
 
     onSubmit: (values) => {
       let data= row.some((a) => a[5] == true)
-      if (msme_registerd === true && msme_registerd_number === "") {
+      if (pan_no === "") {
+        setpan_no_error(true);
+        document.getElementById("vendor_info").scrollIntoView();
+      }
+      else if (msme_registerd === true && msme_registerd_number === "") {
         setmsme_registerd_number_error(true);
         document.getElementById("vendor_info").scrollIntoView();
       }
-      else if (
-        msme_registerd_number !== "" &&
-        msme_registerd_number.length !== 12
-      ) {
+      else if ( msme_registerd_number !== "" && msme_registerd_number.length !== 12){
         document.getElementById("vendor_info").scrollIntoView();
         setmsme_No_length(true);
+      }
+      else if ( msme_registerd === true && registration_date === ""){
+        document.getElementById("vendor_info").scrollIntoView();
+        setreg_no_error(true);
       }
       else if (company_type === "") {
         document.getElementById("vendor_servies").scrollIntoView();
         setcompany_type_error(true);
-      } else if (business_selected === "") {
+      } 
+      else if (business_selected === "") {
         document.getElementById("vendor_servies").scrollIntoView();
         setbusiness_line_error(true);
-      } else if (service_region_selected === "") {
+      }
+       else if (service_region_selected === "") {
         document.getElementById("vendor_servies").scrollIntoView();
         setservice_region_selected_error(true);
-      } else if (
+      }
+      else if(row[row.length - 1].some((some) => some === "")){
+        document.getElementById('vendor_servies').scrollIntoView();
+      }
+      else if(data===false){
+        document.getElementById('vendor_servies').scrollIntoView();
+      }
+       else if (
         Select_forward_by_air === false &&
         Select_forward_by_road === false &&
         forward_by_train === false &&
@@ -273,12 +293,7 @@ const AddVendor = () => {
         Select_other_service_offerd === false && (business_selected === "Transportation" || business_selected === "Coloader")
       ) {
         alert("Please Select Any Service Offered");
-      } else if(pan_no.length !== 10){
-        alert("Pan Number Must be 10 Degit")
-      }
-      else if(data===false){
-        alert("Please Select Head Office")
-      }
+      } 
        else {
         isupdating ? update_vendor(values) : add_vendor(values);
       }
@@ -874,7 +889,13 @@ const AddVendor = () => {
     if (msme_registerd_number !== "" && msme_registerd_number.length === 12) {
       setmsme_No_length(false);
     }
-  }, [msme_registerd, msme_registerd_number]);
+    if (msme_registerd === true && registration_date !== "") {
+      setreg_no_error(false);
+    }
+    if (msme_registerd === true && msme_certificate !== "") {
+      setmsme_certificate_error(false);
+    }
+  }, [msme_registerd, msme_registerd_number,registration_date,msme_certificate]);
 
   useEffect(() => {
     if (other_list_id !== "") {
@@ -1607,6 +1628,11 @@ const AddVendor = () => {
         setloaded_pan(false)
       }
   }, [pan_no])
+  useEffect(() => {
+    if (pan_no !== "" && (pan_no.length === 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+        setpan_no_error(false);
+      }
+  }, [pan_no]);
 
 
   return (
@@ -1654,23 +1680,61 @@ const AddVendor = () => {
             );
             let map_value = filter_value.map((m) => m[0]);
             let all_value = map_value[0];
-
+            let data = row.some((a) => a[5] == true)
             let filed1 = ["vendor_name"];
             let field2 = ["vendor_email", "vendor_ph_no"];
-            let field3 = ["pan_number"];
 
-            if (filed1.includes(all_value)) {
+            if (pan_no === "") {
+              setpan_no_error(true);
               document.getElementById("vendor_info").scrollIntoView();
             }
-
-            if (field2.includes(all_value)) {
+            else if (pan_no !== "" && (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+              setpan_no_error(true);
+              document.getElementById("vendor_info").scrollIntoView();
+            }
+            else if(company_type===""){
+              setcompany_type_error(true);
+              document.getElementById("vendor_info").scrollIntoView();
+            }
+            else  if (filed1.includes(all_value)) {
+              document.getElementById("vendor_info").scrollIntoView();
+            }
+            else if (msme_registerd === true && msme_registerd_number === "") {
+              setmsme_registerd_number_error(true);
+              document.getElementById("vendor_info").scrollIntoView();
+            }
+            else if ( msme_registerd_number !== "" && msme_registerd_number.length !== 12){
+              document.getElementById("vendor_info").scrollIntoView();
+              setmsme_No_length(true);
+            }
+            else if ( msme_registerd_number !== "" && msme_certificate ===""){
+              document.getElementById("vendor_info").scrollIntoView();
+              setmsme_certificate_error(true);
+            }
+            else if ( msme_registerd === true && registration_date === ""){
+              document.getElementById("vendor_info").scrollIntoView();
+              setreg_no_error(true);
+            }
+            else if (field2.includes(all_value)) {
               document.getElementById("contact_info").scrollIntoView();
             }
-
-            if (field3.includes(all_value)) {
+            else if (business_selected === "") {
               document.getElementById("vendor_servies").scrollIntoView();
+              setbusiness_line_error(true);
             }
-            if (others_services_offerd === true && row1[0] == "") {
+             else if (service_region_selected === "") {
+              document.getElementById("vendor_servies").scrollIntoView();
+              setservice_region_selected_error(true);
+            }
+            else if(row[row.length - 1].some((some) => some === "")){
+              document.getElementById('vendor_servies').scrollIntoView();
+              alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+            }
+            else if (data === false) {
+              document.getElementById('vendor_servies').scrollIntoView();
+                  alert("Please Checked, checkBox of Head Office")
+           }
+            else if (others_services_offerd === true && row1[0] == "") {
               setother_err(true);
             }
             validation.handleSubmit(e.values);
@@ -1725,20 +1789,18 @@ const AddVendor = () => {
                     <Row>
 
                     <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
+                        <div className="mb-2" >
                           <Label className="header-child">PAN Number *:</Label>
                           <Input
-                            // onBlur={() => {
-                            //   if (pan_no.length === 10) {
-                            //     setloaded_pan(true)
-                            //     // alert("True")
-                            //   }
-                            //   else {
-                            //     setloaded_pan(false)
-                            //     // alert("False")
-                            //   }
-                            // }
-                            // }
+                          maxLength={10}
+                           onBlur={()=>{                          
+                            if (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no)) {
+                              setpan_no_error(true)
+                            }
+                            else {
+                              setpan_no_error(false)
+                            }
+                          }}
                             value={pan_no}
                             onChange={(e) =>
                               setpan_no(e.target.value)
@@ -1746,7 +1808,11 @@ const AddVendor = () => {
                             id="input"
                             type="text"
                             placeholder="Please Enter PAN Number"
+                            invalid={pan_no_error}
                           />
+                          <FormFeedback type="invalid">
+                             PAN is required (e.g. ABCDE1234F)
+                                </FormFeedback>
                         </div>
                       </Col>
 
@@ -1909,10 +1975,14 @@ const AddVendor = () => {
                                 id="input"
                                 name="logo"
                                 type="file"
+                                invalid={msme_certificate_error}
                                 onChange={(val) => {
                                   setmsme_certificate(val.target.value);
                                 }}
                               />
+                              <FormFeedback type="invalid">
+                                 MSME Certificate Required
+                                </FormFeedback>
                             </div>
                           </Col>
 
@@ -1929,10 +1999,14 @@ const AddVendor = () => {
                                 id="input"
                                 name="logo"
                                 type="date"
+                                invalid={reg_no_error}
                                 onChange={(val) => {
                                   setregistration_date(val.target.value);
                                 }}
                               />
+                              <FormFeedback type="invalid">
+                                 MSME Registration Date Required
+                                </FormFeedback>
                             </div>
                           </Col>
                         </>
@@ -2207,6 +2281,7 @@ const AddVendor = () => {
                                       setpage={setgst_city_page}
                                       setsearch_txt={setgst_city_search_item}
                                       error_message={"Please Select Any Option"}
+                                      error_s={city_error}
                                       refresh={refresh}
                                       setrefresh={setrefresh}
                                       idx={index}
@@ -2404,8 +2479,9 @@ const AddVendor = () => {
                                       setgst_city_list([])
                                       setgst_city_page(1)
                                       setgstcity_bottom(103)
-                                      if (row[row.length - 1][0].length != 15) {
-                                        alert("GST No must be 15 digit");
+                                      const lastRow = row[row.length - 1];
+                                      if(row[row.length -1].some((data) => data === "")) {
+                                        alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
                                       } else {
                                         addGST();
                                       }

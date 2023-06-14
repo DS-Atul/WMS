@@ -59,6 +59,8 @@ const Add_Vehcile = () => {
   const [vehcile_type_s, setvehcile_type_s] = useState("");
   const [trans_name, settrans_name] = useState("");
   const [vehcile_no, setvehcile_no] = useState("");
+  const [vehcile_img, setvehcile_img] = useState("");
+  const [vehcile_img_error, setvehcile_img_error] = useState(false);
   const [vehcile_model, setvehcile_model] = useState("");
   const [vendor_data, setvendor_data] = useState([]);
   const [vehcile, setvehicle] = useState([]);
@@ -325,16 +327,25 @@ const Add_Vehcile = () => {
     if (vehcile_model !== "") {
       setvehicle_model_error(false);
     }
+    if (vehcile_img !==""){
+      setvehcile_img_error(false)
+    }
     if (vehcile_no !== "" && vehcile_no.length !== 10) {
       setvehicle_len_error(true);
     } else {
       setvehicle_len_error(false);
     }
-  }, [vehcile_type_s, vehcile_no, vehcile_model]);
+  }, [vehcile_type_s, vehcile_no, vehcile_model,vehcile_img]);
 
   return (
     <div>
-      <Form>
+      <Form 
+      // onSubmit={(e) => {
+      //   e.preventDefault();
+      //   ValidationError.handleSubmit(e.values);
+      //   return false;
+      // }}
+      >
         {/* Commodity */}
         <div className="mt-3">
           <PageTitle page={is_updating ? "Update Vehicle" : "Add Vehicle"} />
@@ -416,9 +427,9 @@ const Add_Vehcile = () => {
                         }}
                         invalid={vehicle_number_error}
                       />
-                      {vehicle_len_error && (
+                      {vehicle_number_error && (
                         <div style={{ fontSize: "10.5px", color: "#f46a6a" }}>
-                          Please Enter a valid Vehicle No.
+                           Vehicle No is required
                         </div>
                       )}
                     </div>
@@ -444,9 +455,9 @@ const Add_Vehcile = () => {
                           setbottom={setbranch_bottom}
                         />
                       </div>
-                      <div className="mt-1 error-text" color="danger">
+                      {/* <div className="mt-1 error-text" color="danger">
                         {branch_err ? "Please Select Any Branch" : null}
-                      </div>
+                      </div> */}
                     </Col>
 
                   <Col lg={4} md={4} sm={4}>
@@ -464,16 +475,23 @@ const Add_Vehcile = () => {
                       />
                       {vehicle_model_error && (
                         <div style={{ fontSize: "10.5px", color: "#f46a6a" }}>
-                          Please Enter a valid Vehicle No.
+                           Vehicle Model Name is required
                         </div>
                       )}
                     </div>
                   </Col>
 
                   <Col lg={4} md={4} sm={4}>
-                    <div className="mb-3">
+                    <div className="mb-3" id="vehicle_img">
                       <Label className="header-child">Vehicle Image*</Label>
-                      <Input type="file" name="file" id="input" />
+                      <Input type="file" name="file" id="input" invalid={vehcile_img_error} 
+                       onChange={(val) => {
+                        setvehcile_img(val.target.value);
+                       }}
+                      />
+                      <FormFeedback type="invalid">
+                       Vehcile Image is required
+                      </FormFeedback>
                     </div>
                   </Col>
 
@@ -511,11 +529,13 @@ const Add_Vehcile = () => {
                     setvendor_error(true);
                   } else if (vehcile_no === "" || vehcile_no.length !== 10) {
                     setvehicle_number_error(true);
-                  } else if (vehcile_model === "") {
-                    setvehicle_model_error(true);
                   } else if (branch === "") {
                     setbranch_err(true);
-                  } 
+                  } else if (vehcile_model === "") {
+                    setvehicle_model_error(true);
+                  } else if (vehcile_img ===""){
+                    setvehcile_img_error(true);
+                  }
                   else {
                     is_updating ? upadte_vehcile() :
                       add_vehcile();

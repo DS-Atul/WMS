@@ -136,6 +136,7 @@ const AddClient = () => {
   const [package_id_list, setpackage_id_list] = useState([]);
 
   const [pan_no, setpan_no] = useState("")
+  const [pan_no_error, setpan_no_error] = useState(false);
 
   let dimension_list = ["", "", "", ""];
   const [row, setrow] = useState([dimension_list]);
@@ -228,7 +229,63 @@ const AddClient = () => {
     }),
 
     onSubmit: (values) => {
-      isupdating ? updateBillTo(values) : addBillTo(values);
+      let data = row2.some((a) => a[5] == true)
+      let shaw = Object.entries(validation.values);
+      let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+      let map_value = filter_value.map((m) => m[0]);
+      let all_value = map_value[0];
+      let field = ["address_line_1"]
+      let fields2 = ["authorised_person_name","authorised_email","authorised_number"]
+      let fields3 = ["name","email","phone_number"]
+
+      if (pan_no === "") {
+        setpan_no_error(true);
+        document.getElementById("billto_details").scrollIntoView();
+      }
+      else if (fields3.includes(all_value)){
+        document.getElementById('billto_details').scrollIntoView();
+       }
+       else if(row2[row2.length - 1].some((some) => some === "")){
+        document.getElementById('gst_details').scrollIntoView();
+        alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+      }
+      else if (data === false) {
+        document.getElementById('gst_details').scrollIntoView();
+            alert("Please Checked, checkBox of Head Office")
+      }
+      else if (field.includes(all_value)){
+      document.getElementById('location_info').scrollIntoView();
+      }
+      else if (state === "") {
+        setstate_error(true);
+      document.getElementById('location_info').scrollIntoView();
+      }
+      else if (city === "") {
+        setcity_error(true);
+      document.getElementById('location_info').scrollIntoView();
+      } 
+      else if (pincode === "") {
+      document.getElementById('location_info').scrollIntoView();
+      setsetselect_pincode_error(true);
+      }
+      else if (pincode_loaded && pincode === "") {
+        setsetselect_pincode_error(true);
+      document.getElementById('location_info').scrollIntoView();
+      } 
+      else  if (locality === "") {
+      document.getElementById('location_info').scrollIntoView();
+        setlocality_error(true);
+      }
+      else if (pincode_loaded && locality === "") {
+        setlocality_error(true);
+      document.getElementById('location_info').scrollIntoView();
+      }
+      else if (fields2.includes(all_value)){
+        document.getElementById('info_authorised').scrollIntoView();
+      }
+      else{
+        isupdating ? updateBillTo(values) : addBillTo(values);
+      }
     },
   });
 
@@ -1456,6 +1513,11 @@ console.log("resp--------", resp)
         setdeleted_gst_id(id_list);
       }
     }, [gst_id_list, gst_ids]);
+    useEffect(() => {
+      if (pan_no !== "" && (pan_no.length === 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+          setpan_no_error(false);
+        }
+    }, [pan_no]);
   
   return (
     <div>
@@ -1494,24 +1556,67 @@ console.log("resp--------", resp)
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          if (state === "") {
+          let data = row2.some((a) => a[5] == true)
+          let shaw = Object.entries(validation.values);
+            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+            let map_value = filter_value.map((m) => m[0]);
+            let all_value = map_value[0];
+          let field = ["address_line_1"];
+          let fields2 = ["authorised_person_name","authorised_email","authorised_number"];
+          let fields3 = ["name","email","phone_number"];
+
+
+          if (pan_no === "") {
+            setpan_no_error(true);
+            document.getElementById("billto_details").scrollIntoView();
+          }
+          else if (pan_no !== "" && (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+            setpan_no_error(true);
+            document.getElementById("billto_details").scrollIntoView();
+          }
+          else if (fields3.includes(all_value)){
+            document.getElementById('billto_details').scrollIntoView();
+           }
+           else if(row2[row2.length - 1].some((some) => some === "")){
+            document.getElementById('gst_details').scrollIntoView();
+            alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+          }
+          else if (data === false) {
+            document.getElementById('gst_details').scrollIntoView();
+                alert("Please Checked, checkBox of Head Office")
+         }
+         else if (field.includes(all_value)){
+          document.getElementById('location_info').scrollIntoView();
+         }
+          else if (state === "") {
             setstate_error(true);
+          document.getElementById('location_info').scrollIntoView();
           }
-          if (city === "") {
+          else if (city === "") {
             setcity_error(true);
-          } if (pincode === "") {
-            setpincode_error(true);
+          document.getElementById('location_info').scrollIntoView();
+          } 
+          else if (pincode === "") {
+          document.getElementById('location_info').scrollIntoView();
+          setsetselect_pincode_error(true);
           }
-          if (pincode_loaded && pincode === "") {
+          else if (pincode_loaded && pincode === "") {
             setsetselect_pincode_error(true);
-          } if (locality === "") {
+          document.getElementById('location_info').scrollIntoView();
+          } 
+          else  if (locality === "") {
+          document.getElementById('location_info').scrollIntoView();
             setlocality_error(true);
           }
-          if (pincode_loaded && locality === "") {
+          else if (pincode_loaded && locality === "") {
             setlocality_error(true);
+          document.getElementById('location_info').scrollIntoView();
           }
-          validation.handleSubmit(e.values);
-          return false;
+          else if (fields2.includes(all_value)){
+            document.getElementById('info_authorised').scrollIntoView();
+           }
+             validation.handleSubmit(e.values);
+             return false;
         }}
       >
         {/* Client details */}
@@ -1539,7 +1644,7 @@ console.log("resp--------", resp)
           {/* <Col lg={12}> */}
           <Card className="shadow bg-white rounded" >
             <CardTitle className="mb-1 header">
-              <div className="header-text-icon header-text" id="1">
+              <div className="header-text-icon header-text" id="billto_details">
                 Bill To Details
                 <IconContext.Provider
                   value={{
@@ -1567,10 +1672,23 @@ console.log("resp--------", resp)
                          onChange={(e) =>
                            setpan_no(e.target.value)
                          }
+                         onBlur={()=>{                          
+                          if (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no)) {
+                            setpan_no_error(true)
+                              }
+                              else {
+                                  setpan_no_error(false)
+                                }
+                        }}
                          id="input"
                          type="text"
-                         placeholder="Please Enter PAN Number"
+                         placeholder="Please Enter PAN "
+                         invalid={pan_no_error}
+                         maxLength={10}
                       />
+                      <FormFeedback type="invalid">
+                       PAN is required (e.g. ABCDE1234F)
+                      </FormFeedback>
                     </div>
                   </Col>
 
@@ -1646,6 +1764,7 @@ console.log("resp--------", resp)
                         className="form-control-md"
                         id="input"
                         placeholder="Enter phone number"
+                        min={0}
                       />
                       {validation.touched.phone_number &&
                         validation.errors.phone_number ? (
@@ -1733,6 +1852,7 @@ console.log("resp--------", resp)
                           className="form-control-md"
                           id="input"
                           placeholder="Enter Amount"
+                          min={0}
                         />
                       </div>
                     </Col>
@@ -1744,7 +1864,7 @@ console.log("resp--------", resp)
         </div>
 
         {/*GST info authorised*/}
-        <div className="m-4">
+        <div className="m-4" id="gst_details">
           <Col lg={12}>
             <Card className="shadow bg-white rounded">
               <CardTitle className="mb-1 header">
@@ -2019,16 +2139,27 @@ console.log("resp--------", resp)
                             <div style={{ margin: " 0 0 20px 0" }}>
                               <span
                                 className="link-text"
+                                // onClick={() => {
+                                //   setgst_city_list([])
+                                //   setgst_city_page(1)
+                                //   setgstcity_bottom(103)
+                                //   if (row2[row2.length - 1][0].length != 15) {
+                                //     alert("GST No must be 15 digit");
+                                //   } else {
+                                //     addGST();
+                                //   }
+                                // }}
                                 onClick={() => {
                                   setgst_city_list([])
                                   setgst_city_page(1)
                                   setgstcity_bottom(103)
-                                  if (row2[row2.length - 1][0].length != 15) {
-                                    alert("GST No must be 15 digit");
+                                  const lastRow = row[row.length - 1];
+                                  if(row2[row2.length -1].some((data) => data === "")) {
+                                    alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
                                   } else {
                                     addGST();
                                   }
-                                }}
+                                }}  
                               >
                                 <IconContext.Provider
                                   value={{
@@ -2050,7 +2181,7 @@ console.log("resp--------", resp)
         </div>
 
         {/* Location Info */}
-        <div className=" m-4">
+        <div className=" m-4" id="location_info">
           <Card className="shadow bg-white rounded">
             <CardTitle className="mb-1 header">
               <div className="header-text-icon header-text">
@@ -2365,7 +2496,7 @@ console.log("resp--------", resp)
                 <CardBody>
                   <Row>
                     <Col lg={4} md="6" sm="6">
-                      <div className="mb-3">
+                      <div className="mb-3" id="info_authorised">
                         <Label className="header-child">
                           Authorised Person Name *
                         </Label>
@@ -2443,6 +2574,7 @@ console.log("resp--------", resp)
                           name="authorised_number"
                           className="form-control-md"
                           id="input"
+                          min={0}
                           placeholder="Enter Authorised Person Number"
                         />
                         {validation.touched.authorised_number &&
