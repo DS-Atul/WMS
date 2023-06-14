@@ -76,8 +76,7 @@ function AddRoute() {
   const [city_search_item, setcity_search_item] = useState("");
   const [city_loaded, setcity_loaded] = useState(false);
   const [city_count, setcity_count] = useState(1);
-  const [togcity, settogcity] = useState(false)
-
+  const [togcity, settogcity] = useState(false);
 
   //state used for get data for update
   const [isupdating, setisupdating] = useState(false);
@@ -385,7 +384,7 @@ function AddRoute() {
         }
       })
       .catch(function () {
-        alert("Error Error While Updateing branches");
+        console.warn("Error Error While Updateing branches");
       });
   };
 
@@ -438,9 +437,13 @@ function AddRoute() {
   }, [location_page, location_search, city_id]);
 
   useEffect(() => {
+    let timeoutId;
     if (city_id !== 0) {
-      get_locations(city_id, "city");
+      timeoutId = setTimeout(() => {
+        get_locations(city_id, "city");
+      }, 1);
     }
+    return () => clearTimeout(timeoutId);
   }, [location_page, location_search, city_id]);
 
   useEffect(() => {
@@ -527,6 +530,7 @@ function AddRoute() {
     });
   };
 
+  // Location Functions Call
   useLayoutEffect(() => {
     getStates();
   }, [state_page, state_search_item]);
@@ -548,8 +552,17 @@ function AddRoute() {
       }, 1);
     }
     return () => clearTimeout(timeoutId);
+
   }, [state_id, city_page, city_search_item]);
 
+  useLayoutEffect(() => {
+    if (city_id !== 0) {
+      setlocation_page(1);
+      setlocation_count(1);
+      // setpincode_bottom(103)
+      // setload_pincode(true)
+    }
+  }, [city_id])
 
   return (
     <div>

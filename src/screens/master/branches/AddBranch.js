@@ -230,7 +230,71 @@ const AddBranch = () => {
     }),
 
     onSubmit: (values) => {
-      isupdating ? update_branch(values) : send_branch_data(values);
+      let shaw = Object.entries(validation.values);
+            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+            let map_value = filter_value.map((m) => m[0]);
+            let all_value = map_value[0];
+
+            let fields = ["branch_name", "branch_email", "branch_phone_number"];
+
+            if (branch_type === "") {
+              setbranch_type_error(true);
+              document.getElementById("branch_info").scrollIntoView();
+            }
+            else if (branch_type === "Vendor" && vendor_name === "") {
+              setvendor_error(true);
+              document.getElementById("branch_info").scrollIntoView();
+            } 
+            else if(branch_type === "Own Branch" && org ===""){
+              setorg_error(true);
+              document.getElementById("branch_info").scrollIntoView();
+            }
+            else if (fields.includes(all_value)) {
+              document.getElementById("branch_info").scrollIntoView();
+            } 
+            else if (branch_type === "Vendor" && select_gst === "") {
+              setselect_gst_error(true);
+              document.getElementById("branch_info").scrollIntoView();
+            }
+             else if (branch_type === "Own Branch" && own_pan_number == "") {
+              setown_pan_error(true);
+              document.getElementById("branch_info").scrollIntoView();
+            }
+             else if (branch_type === "Own Branch" && gst_number === "") {
+              setown_gst_error(true);
+              document.getElementById("branch_info").scrollIntoView();
+            }
+             else if (address_line === "") {
+              setaddress_line_err(true);
+              document.getElementById("location_info").scrollIntoView();
+            }
+             else if (state === "") {
+              setstate_error(true);
+              document.getElementById("location_info").scrollIntoView();
+            } 
+             else if (city === "") {
+              setcity_error(true);
+              document.getElementById("location_info").scrollIntoView();
+            } 
+             else if (pincode_loaded && pincode === "") {
+              setpincode_list_error(true);
+              document.getElementById("location_info").scrollIntoView();
+            }
+             else if (pincode_loaded === false && pincode === "") {
+              setpincode_error(true);
+              document.getElementById("location_info").scrollIntoView();
+            }
+             else if (pincode_loaded && locality === "") {
+              setlocality_error(true);
+              document.getElementById("location_info").scrollIntoView();
+            }
+             else  if (operating_city_list2.length === 0) {
+             setoperating_city_error(true);
+             document.getElementById("operating_city").scrollIntoView();
+            }
+             else{
+           isupdating ? update_branch(values) : send_branch_data(values);
+         }
     },
   });
 
@@ -1363,39 +1427,56 @@ console.log("location_data=====", location_data)
             if (branch_type === "") {
               setbranch_type_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            } else if (branch_type === "Vendor" && vendor_name === "") {
+            }
+             else if (branch_type === "Vendor" && vendor_name === "") {
               setvendor_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            } else if (fields.includes(all_value)) {
+            } 
+            else if(branch_type === "Own Branch" && org ===""){
+              setorg_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            } else if (branch_type === "Vendor" && select_gst === "") {
+            }
+            else if (fields.includes(all_value)) {
+              document.getElementById("branch_info").scrollIntoView();
+            }
+            else if (branch_type === "Vendor" && select_gst === "") {
               setselect_gst_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            } else if (branch_type === "Own Branch" && own_pan_number == "") {
+            }
+             else if (branch_type === "Own Branch" && own_pan_number == "") {
               setown_pan_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            } else if (branch_type === "Own Branch" && gst_number === "") {
+            }
+             else if (branch_type === "Own Branch" && gst_number === "") {
+              document.getElementById("branch_info").scrollIntoView();
               setown_gst_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            } else if (address_line === "") {
+            } 
+            else if (address_line === "") {
               setaddress_line_err(true);
               document.getElementById("location_info").scrollIntoView();
-            } else if (state === "") {
+            } 
+            else if (state === "") {
               setstate_error(true);
               document.getElementById("location_info").scrollIntoView();
-            } else if (city === "") {
+            }
+             else if (city === "") {
               setcity_error(true);
               document.getElementById("location_info").scrollIntoView();
-            } else if (pincode_loaded && pincode === "") {
+            }
+             else if (pincode_loaded && pincode === "") {
               setpincode_list_error(true);
               document.getElementById("location_info").scrollIntoView();
-            } else if (pincode_loaded === false && pincode === "") {
+            } 
+            else if (pincode_loaded === false && pincode === "") {
               setpincode_error(true);
               document.getElementById("location_info").scrollIntoView();
-            } else if (pincode_loaded && locality === "") {
+            }
+             else if (pincode_loaded && locality === "") {
               setlocality_error(true);
               document.getElementById("location_info").scrollIntoView();
-            } else if (operating_city_list2.length === 0) {
+            } 
+            else if (operating_city_list2.length === 0) {
               setoperating_city_error(true);
               document.getElementById("operating_city").scrollIntoView();
             }

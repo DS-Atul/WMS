@@ -442,7 +442,51 @@ const AddClient = (props) => {
     }),
 
     onSubmit: (values) => {
-      isupdating ? updateClient(values) : addClient(values);
+      let shaw = Object.entries(validation.values);
+            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+            let map_value = filter_value.map((m) => m[0]);
+            let all_value = map_value[0];
+        let fields = ["customer_name","email","phone_number"];
+        let fields2= ["address_line_1"];
+
+
+         if (fields.includes(all_value)) {
+          document.getElementById("client_details").scrollIntoView();
+        }
+        else if (fields2.includes(all_value)){
+          document.getElementById('location_info').scrollIntoView();
+         }  
+        else if (state === "") {
+          setstate_error(true);
+          document.getElementById('location_info').scrollIntoView();
+        }
+         else if (city === "") {
+          setcity_error(true);
+          document.getElementById('location_info').scrollIntoView();
+        }
+        else if (pincode === "") {
+          setpin_code_error(true);
+          document.getElementById('location_info').scrollIntoView();
+        } 
+        else if (pincode_loaded === false && pincode === "") {
+          setpincode_error2(true);
+          document.getElementById('location_info').scrollIntoView();
+        }
+        else if (pincode_loaded === false && locality === "") {
+          setlocality_error2(true);
+          document.getElementById('location_info').scrollIntoView();
+        }
+         else if (locality === "") {
+          setlocality_error(true);
+          document.getElementById('location_info').scrollIntoView();
+        }
+         else if (commodities_list2.length === 0) {
+          setcommodities_error(true);
+          document.getElementById("commidity_list").scrollIntoView();
+        }
+      else{
+        isupdating ? updateClient(values) : addClient(values);
+      }
     },
   });
 
@@ -3435,32 +3479,55 @@ const AddClient = (props) => {
     <Form
       onSubmit={(e) => {
         e.preventDefault();
-        if (state === "") {
+        let shaw = Object.entries(validation.values);
+            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+            let map_value = filter_value.map((m) => m[0]);
+            let all_value = map_value[0];
+        let fields = ["customer_name","email","phone_number"];
+        let fields2= ["address_line_1"];
+
+
+         if (fields.includes(all_value)) {
+          document.getElementById("client_details").scrollIntoView();
+        }
+        else if (fields2.includes(all_value)){
+          document.getElementById('location_info').scrollIntoView();
+         }  
+        else if (state === "") {
           setstate_error(true);
+          document.getElementById('location_info').scrollIntoView();
         }
-        if (city === "") {
+         else if (city === "") {
           setcity_error(true);
+          document.getElementById('location_info').scrollIntoView();
         }
-        if (pincode === "") {
+         else if (pincode === "") {
           setpincode_error(true);
-        } if (pincode_loaded === false && pincode === "") {
+          document.getElementById('location_info').scrollIntoView();
+        } 
+        else if (pincode_loaded === false && pincode === "") {
           setpin_code_error(true);
+          document.getElementById('location_info').scrollIntoView();
         }
-        if (pincode_loaded === false && locality === "") {
+        else if (pincode_loaded === false && locality === "") {
           setlocality_error(true);
+          document.getElementById('location_info').scrollIntoView();
         }
-        if (locality === "") {
+         else if (locality === "") {
           setlocality_error2(true);
+          document.getElementById('location_info').scrollIntoView();
         }
-        if (commodities_list2.length == 0) {
+         else if (commodities_list2.length === 0) {
           setcommodities_error(true);
+          document.getElementById("commidity_list").scrollIntoView();
         }
-        validation.handleSubmit(e.values);
+          validation.handleSubmit(e.values);
         return false;
+        
       }}
     >
       {/* Client Details */}
-      <div className="m-4">
+      <div className="m-4" id="client_details">
         <div className=" mb-2 main-header">
           {isupdating ? "Update Client" : "Add Client"}
         </div>
@@ -3575,6 +3642,7 @@ const AddClient = (props) => {
                         className="form-control-md"
                         id="input"
                         placeholder="Enter phone number"
+                        min={0}
                       />
                       {validation.touched.phone_number &&
                         validation.errors.phone_number ? (
@@ -3592,7 +3660,7 @@ const AddClient = (props) => {
       </div>
 
       {/* Location info */}
-      <div className=" m-4">
+      <div className=" m-4" id="location_info">
         <Col lg={12}>
           <Card className="shadow bg-white rounded">
             <CardTitle className="mb-1 header">
@@ -3880,7 +3948,7 @@ const AddClient = (props) => {
       </div>
 
       {/* Commidity Transer List */}
-      <div className="m-4">
+      <div className="m-4" id="commidity_list">
         <Col lg={12}>
           <Card className="shadow bg-white rounded">
             <CardTitle className="mb-1 header">
@@ -3922,12 +3990,17 @@ const AddClient = (props) => {
                       count={commodities_count}
 
                     />
-                    <div style={{
+                    {commodities_error ? (
+                        <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
+                          Please Select Any Commodities
+                        </div>
+                      ) : null}
+                    {/* <div style={{
                       color: "#F46E6E",
                       fontSize: "10.4px",
                     }}>
                       {commodities_error && "Please Select Any Commodities"}
-                    </div>
+                    </div> */}
 
                   </Col>
                 </Row>

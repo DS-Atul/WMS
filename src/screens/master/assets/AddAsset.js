@@ -165,6 +165,7 @@ const AddAsset = () => {
   ];
 
   const [row, setrow] = useState([dimensiton_list]);
+  const [callibaration_from_date_error, setcallibaration_from_date_error] = useState(false);
 
   const add_callibration = () => {
     setcallibration_from_date("");
@@ -1268,6 +1269,7 @@ useEffect(() => {
                                 value={item[0]}
                                 className="form-control-md"
                                 id="input"
+                               invalid={callibration_from_date_error}
                                 onChange={(val) => {
                                   item[0] = val.target.value;
                                   setrefresh(!refresh);
@@ -1275,6 +1277,9 @@ useEffect(() => {
                               />
                             );
                           })}
+                          <FormFeedback type="invalid">
+                          Callibration From Date is required
+                                </FormFeedback>
                         </div>
                       </Col>
 
@@ -1422,14 +1427,13 @@ useEffect(() => {
                         <span
                           className="link-text"
                           onClick={() => {
-                            if (row[row.length - 1][0] === "") {
-                              alert("Add Callibration Info");
+                            const lastRow = row[row.length - 1];
+                            if(row[row.length -1].some((data) => data === "")) {
+                              alert("Please Fill Asset Callibration info")
                             } else {
                               add_callibration();
                             }
-
-                            // }
-                          }}
+                          }} 
                         >
                           <IconContext.Provider
                             value={{
@@ -1482,6 +1486,7 @@ useEffect(() => {
                    }
                    else if(logger_box_no == ""){
                     setlogger_number_error(true);
+                    document.getElementById("asset_info").scrollIntoView();
                    }
                    else if(row[row.length - 1][0] === ""){
                     alert("Please Add Callibration info")
