@@ -248,7 +248,7 @@ const UserInfo = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_user_ass_branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_search=${search_ass_branch}&data=${val}`,
+        `master/all_user_ass_branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_search=${search_ass_branch}&data=${val}&org_id=${org_id}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1010,13 +1010,13 @@ const UserInfo = () => {
   }, [org_page, org_search_item])
 
   useLayoutEffect(() => {
-    if (locations.state === null) {
+    if (org_id !== "" && org_id && locations.state === null) {
       getAssBranches("all");
     }
-    else {
+    else if (org_id !== "" && org_id && locations.state !== null)  {
       getAssBranches(parseInt(up_params.user.id));
     }
-  }, [ass_branch_page, search_ass_branch]);
+  }, [ass_branch_page, search_ass_branch, org_id]);
 
   useLayoutEffect(() => {
     getDepartments();

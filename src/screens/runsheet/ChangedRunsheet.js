@@ -293,7 +293,7 @@ const ChangedRusheet = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          if (runsheet.vehicle_number !== vehicle_no && list_data.length > 0) {
+          if (list_data.length > 0) {
             UpateEwaybillPartB({
               gstin_no: gstin_no,
               Data: list_data,
@@ -487,7 +487,7 @@ const ChangedRusheet = () => {
   const [docket_nos, setdocket_nos] = useState([])
 
   useEffect(() => {
-    if (runsheet_orders.length > 0 && runsheet.vehicle_number !== vehicle_no) {
+    if (runsheet_orders.length > 0) {
       let data = runsheet_orders.map((v) => v.docket_no)
       console.log("data-------", data)
       setdocket_nos(data)
@@ -539,7 +539,7 @@ const ChangedRusheet = () => {
             "/" +
             e.docDate.split("-")[0]
           ),
-          vehicleNo: vehicle_no,
+          vehicleNo: runsheet.is_contract_vehicle ? contract_based_vehicle_no : vehicle_no,
           reasonCode: "2",
           reasonRem: "text",
           userGstin: gstin_no,
@@ -550,7 +550,7 @@ const ChangedRusheet = () => {
       setlist_data(li)
     }
     // Rest of your code...
-  }, [EwayBillData, vehicle_no]);
+  }, [EwayBillData, vehicle_no, contract_based_vehicle_no]);
   console.log("EwayBillData=====", EwayBillData)
   console.log("list_data===", list_data)
 

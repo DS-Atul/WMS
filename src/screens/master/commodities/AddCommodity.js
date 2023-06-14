@@ -569,7 +569,7 @@ const Add_Commodity = () => {
         "transactionType": "1",
         "subSupplyType": "1",
         "docType": "INV",
-        "docNo": `DHLMH6${index}`,
+        "docNo": `DHLMH68${index}`,
         "docDate": "13/06/2023",
         "invTyp": "B2B",
         "fromGstin": "05AAAAT2562R1Z3",
@@ -663,7 +663,7 @@ const Add_Commodity = () => {
 };
 
   useEffect(() => {
-    for (let index = 0; index < 2; index++) {
+    for (let index = 0; index < 10; index++) {
       // post_awb(index)
 
     }

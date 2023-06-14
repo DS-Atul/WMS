@@ -850,7 +850,7 @@ const EditRoughDocket = () => {
     axios
       .get(
         ServerAddress +
-        `booking/get_all_ewaybill/?type=${"hub"}&value=${manifest_num}`,
+        `booking/get_all_ewaybill/?type=${"manifest"}&value=${manifest_num}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

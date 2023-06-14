@@ -222,7 +222,7 @@ function AddDocket({ runsheet }) {
           "/" +
           e.docDate.split("-")[0]
         ),
-        vehicleNo: runsheet?.vehicle_number,
+        vehicleNo: runsheet?.vehicle_number ? runsheet?.vehicle_number : runsheet?.contracted_vehicle_number,
         reasonCode: "2",
         reasonRem: "text",
         userGstin: gstin_no,
