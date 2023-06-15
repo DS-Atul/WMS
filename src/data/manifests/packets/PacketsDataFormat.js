@@ -166,6 +166,11 @@ const PacketsDataFormat = ({ data,   received,
                                 name="file"
                                 id="exampleFile"
                                 size={"sm"}
+                                onChange={(val) => {
+                                  received[index]["issue_image"] =
+                                  val.target.files[0];
+                                  setrefresh(!refresh);
+                                }}
                                 style={{ width: "12vw" }}
                               />
                             </td>
@@ -177,7 +182,7 @@ const PacketsDataFormat = ({ data,   received,
                             <td colSpan={12}>
                               <Input
                                 type="text"
-                                placeholder="Enter Issue"
+                                placeholder="Enter Issue Remarks"
                                 onChange={(val) => {
                                   received[index]["remarks"] =
                                     val.target.value;

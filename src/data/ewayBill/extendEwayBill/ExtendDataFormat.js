@@ -87,7 +87,7 @@ const ExtendDataFormat = ({ type, count }) => {
   // }, [])
 
   const [eway_extend, seteway_extend] = useState([])
-const [tog_extd, settog_extd] = useState(false)
+  const [tog_extd, settog_extd] = useState(false)
 
   useLayoutEffect(() => {
     const currentTime = new Date().getHours();
@@ -106,22 +106,20 @@ const [tog_extd, settog_extd] = useState(false)
   }
 
   const send_data = async () => {
-    alert()
     // For  valid_upto
     const [datePart, timePart] = all_data?.validUpto.split(' ');
     const [day, month, year] = datePart.split('/');
-    const convertedDate = `${year}-${month}-${day}`;    
+    const convertedDate = `${year}-${month}-${day}`;
     // Combine the converted date and time with timezone offset
-    const convertedDateTime = `${convertedDate} ${timePart}+00:00`; 
+    const convertedDateTime = `${convertedDate} ${timePart}+00:00`;
 
     // For trans_doc_date
-    const [datePart2, timePart2] = all_data?.transDocDate.split(' '); 
+    const [datePart2, timePart2] = all_data?.transDocDate.split(' ');
     const [day2, month2, year2] = datePart2.split('/');
     const convertedDocDate = `${year2}-${month2}-${day2}`;
 
 
     try {
-      alert("-----")
       const response = await axios.post(
         ServerAddress + 'analytic/add_extended_ewb/',
         {
@@ -129,14 +127,14 @@ const [tog_extd, settog_extd] = useState(false)
           valid_upto: tog_extd ? all_data.valid_upto : convertedDateTime,
           trans_doc_no: tog_extd ? all_data.trans_doc_no : all_data.transDocNo,
           trans_doc_date: tog_extd ? all_data.trans_doc_date : convertedDocDate,
-          vehicle_no: tog_extd ? all_data.vehicle_no  : all_data.vehicleNo,
+          vehicle_no: tog_extd ? all_data.vehicle_no : vehicle_no,
           trans_mode: tog_extd ? (all_data.trans_mode === 1 ? "ROAD" : "AIR") : (all_data.transMode === 1 ? "ROAD" : "AIR"),
-          from_state: tog_extd ? all_data.branch_location_state  : (all_data.fromGstin).substring(0, 2),
-          from_place: tog_extd ? all_data.branch_location_city  : all_data.fromPlace,
-          from_pincode: tog_extd ? all_data.branch_location_pincode  : all_data.fromPincode,
-          reason_code: tog_extd ? all_data.reason_code  : 2,
-          reason_remarks : tog_extd ? all_data.reason_remarks : "DUE TO TRANSSHIPMENT",
-
+          from_state: tog_extd ? all_data.branch_location_state : (all_data.fromGstin).substring(0, 2),
+          from_place: tog_extd ? all_data.branch_location_city : all_data.fromPlace,
+          from_pincode: tog_extd ? all_data.branch_location_pincode : all_data.fromPincode,
+          reason_code: tog_extd ? all_data.reason_code : 2,
+          reason_remarks: tog_extd ? all_data.reason_remarks : "DUE TO TRANSSHIPMENT",
+          ewb_no: tog_extd ? all_data.ewb_no : all_data.ewbNo,
         },
         {
           headers: {
@@ -151,7 +149,8 @@ const [tog_extd, settog_extd] = useState(false)
   };
 
   const ExtendEwb = () => {
-
+    console.log("vehicle_n1o-----", vehicle_no)
+    console.log("state_code-----1", state_code)
     axios
       .put(
         EServerAddress + `ezewb/v1/ewb/extendValidityByNo?gstin=${gstin_no}`,
@@ -219,7 +218,7 @@ const [tog_extd, settog_extd] = useState(false)
         console.log("Etd resp===========", resp)
         setshow(true);
         if (resp.data.results.length === 0) {
-          settog_extd(false)        
+          settog_extd(false)
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Eway Bill Part B Not Updated Yet in this Eway Bill No.`));
           dispatch(setAlertType("warning"));
@@ -230,14 +229,14 @@ const [tog_extd, settog_extd] = useState(false)
           // settrans_doc_no(eway_extend.transDocNo)
         }
         else {
-          settog_extd(true)         
+          settog_extd(true)
           setall_data(resp.data.results[0])
           setstate_code(resp.data.results[0].branch_location_state_code)
           setcurrent_place(toTitleCase(resp.data.results[0].branch_location_city))
           setc_pincode(resp.data.results[0].branch_location_pincode)
           setvehicle_no(resp.data.results[0].vehicle_no)
           settrans_doc_no(resp.data.results[0].trans_doc_no)
-       
+
         }
       })
       .catch((err) => {
@@ -286,8 +285,8 @@ const [tog_extd, settog_extd] = useState(false)
   );
 
   useEffect(() => {
-    if(!tog_extd && show){
-      setstate_code((eway_extend?.fromGstin).substring(0, 2))
+    if (!tog_extd && show) {
+      setstate_code(eway_extend?.actFromStateCode)
       setcurrent_place(toTitleCase(eway_extend.fromPlace))
       setc_pincode(eway_extend.fromPincode)
       setvehicle_no(eway_extend.vehicleNo)
@@ -295,10 +294,10 @@ const [tog_extd, settog_extd] = useState(false)
       setall_data(eway_extend)
     }
 
-  }, [eway_extend,tog_extd,show])
+  }, [eway_extend, tog_extd, show])
 
   useEffect(() => {
-      if(!show){
+    if (!show) {
       setstate_code("")
       setcurrent_place("")
       setc_pincode("")
@@ -308,8 +307,8 @@ const [tog_extd, settog_extd] = useState(false)
       seteway_extend([])
     }
   }, [show])
-  
-  
+
+
   return (
     <>
       <Modal show={show} onHide={handleCloseM}
@@ -409,10 +408,32 @@ const [tog_extd, settog_extd] = useState(false)
               error_s={transport_mode_error}
             />
           </div>
-
+          {/* {(!vehicle_no )&& */}
+            <div style={{ marginTop: "10px" }}>
+              <Label>Vehicle Number *</Label>
+              <Input
+                max={10}
+                value={vehicle_no}
+                placeholder="Enter Vehicle Number"
+                onChange={(e) => {
+                  setvehicle_no(e.target.value);
+                }}
+                id="input"
+              />
+            </div>
+          {/* } */}
         </Modal.Body>
         <Modal.Footer>
-          <Button color="success" onClick={() => ExtendEwb()}>Save</Button>
+          <Button color="success" onClick={() =>{
+          if(vehicle_no){
+            ExtendEwb()
+          }
+          else{
+            alert("Please Add Vehicle Number")
+          }
+           
+          }
+             }>Save</Button>
           <Button color="danger" onClick={() => handleCloseM()}>Cancel</Button>
         </Modal.Footer>
       </Modal>
