@@ -188,6 +188,7 @@ console.log("business_access_token====", business_access_token)
   const [type_of_booking, settype_of_booking] = useState(
     type_of_booking_list[1]
   );
+  const [booking_type_error, setbooking_type_error] = useState(false);
 
   //For Booking Date
   const [booking_date, setbooking_date] = useState("");
@@ -714,6 +715,8 @@ console.log("business_access_token====", business_access_token)
       // TO Scroll the page
       let doc_no_scroll = window.document.getElementById("doc_no");
       let shipper = window.document.getElementById("shipper");
+      let consignee = window.document.getElementById("consignee");
+      let tariff_info = window.document.getElementById("tariff_info");
 
       if (
         entry_type_btn === "MANUALLY" &&
@@ -731,36 +734,42 @@ console.log("business_access_token====", business_access_token)
       } else if (client === "") {
         setclient_error(true);
         doc_no_scroll.scrollIntoView();
+      } else if (type_of_booking === "") {
+        setbooking_type_error(true);
+        doc_no_scroll.scrollIntoView();
       } else if (state === "" && !booking_through) {
         setstate_error(true);
-        doc_no_scroll.scrollIntoView();
+        shipper.scrollIntoView();
       } else if (city === "" && !booking_through) {
         setcity_error(true);
-        doc_no_scroll.scrollIntoView();
+        shipper.scrollIntoView();
       } else if (pincode === "" && !booking_through) {
         setpincode_list_error(true);
-        doc_no_scroll.scrollIntoView();
+        shipper.scrollIntoView();
       } else if (locality === "" && !booking_through) {
         setlocality_error(true);
-        doc_no_scroll.scrollIntoView();
+        shipper.scrollIntoView();
       } else if (consginee_st === "" && !booking_through) {
         setstate_error_c(true);
-        doc_no_scroll.scrollIntoView();
+        consignee.scrollIntoView();
       } else if (consginee_c === "" && !booking_through) {
         setcity_error_c(true);
-        doc_no_scroll.scrollIntoView();
+        consignee.scrollIntoView();
       } else if (consignee_pincode === "" && !booking_through) {
         setpincode_list_error_c(true);
-        doc_no_scroll.scrollIntoView();
+        consignee.scrollIntoView();
       } else if (locality_c === "" && !booking_through) {
         setlocality_error_c(true);
-        doc_no_scroll.scrollIntoView();
+        consignee.scrollIntoView();
       } else if (commodity === "") {
         setcommodity_error(true);
+        tariff_info.scrollIntoView();
       } else if (delivery_type === "LOCAL" && local_delivery_type === "") {
         setlocal_delivery_type_error(true);
+        tariff_info.scrollIntoView();
       } else if (d_cod === "") {
         setd_cod_error(true);
+        tariff_info.scrollIntoView();
       } else if (
         cal_type === "DIMENSION" &&
         (length === "" || breadth === "" || height === "" || pieces === "")
@@ -4139,9 +4148,9 @@ console.log("business_access_token====", business_access_token)
                           bottom={client_bottom}
                           setbottom={setclient_bottom}
                         />
-                        <div className="mt-1 error-text" color="danger">
+                        {/* <div className="mt-1 error-text" color="danger">
                           {client_error ? "Please Select Client " : null}
-                        </div>
+                        </div> */}
                       </Col>
                     )}
 
@@ -4449,6 +4458,8 @@ console.log("business_access_token====", business_access_token)
                           data_item_s={type_of_booking}
                           set_data_item_s={settype_of_booking}
                           show_search={false}
+                          error_message={"Please Select Type Of Booking"}
+                          error_s={booking_type_error}
                         />
                       </div>
                     </Col>
@@ -5550,7 +5561,7 @@ console.log("business_access_token====", business_access_token)
           <Col lg={12}>
             <Card className="shadow bg-white rounded">
               <CardTitle className="mb-1 header">
-                <div className="header-text-icon header-text">
+                <div className="header-text-icon header-text" id="tariff_info">
                   Tariff Info
                   <IconContext.Provider
                     value={{
