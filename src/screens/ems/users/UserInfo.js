@@ -156,13 +156,13 @@ const UserInfo = () => {
   const [document, setdocument] = useState("");
   const [doc_result_image, setdoc_result_image] = useState("");
 
-  const getBranches = (val) => {
+  const getBranches = () => {
     let temp3 = [];
 
     axios
       .get(
         ServerAddress +
-        `master/get_org_branch/?org_id=${org_id}&search=${search_branch}&p=${page}&records=${10}&type=${val}`,
+        `master/get_org_branch/?org_id=${org_id ? org_id : ""}&search=${search_branch}&p=${page}&records=${10}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -248,7 +248,7 @@ const UserInfo = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_user_ass_branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_search=${search_ass_branch}&data=${val}&org_id=${org_id}`,
+        `master/all_user_ass_branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_search=${search_ass_branch}&data=${val}&org_id=${org_id ? org_id : ""}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -993,12 +993,34 @@ const UserInfo = () => {
   }, []);
 
   useLayoutEffect(() => {
-    if(org_id !== "" && org_id && user_detail.organization){
-      getBranches("User")
+    if (org_id !== 0) {
+      setpage(1);
+      setbranch_count(1);
+      setbranch_bottom(103)
+      setbranch_loaded(true);
+    }
+  }, [org_id])
+
+  
+  useLayoutEffect(() => {
+    if (org_id !== 0) {
+      setass_branch_page(1);
+      setass_branch_list_count(1);
+      setass_branch_list_loaded(true);
+    }
+  }, [org_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if(org_id !== "" && org_id){
+      timeoutId = setTimeout(() => {
+        getBranches()
+      }, 1);
     }
     else{
-      getBranches("Organization");
+      getBranches()
     }
+    return () => clearTimeout(timeoutId);
   }, [page, search_branch, org_id]);
 
   useEffect(() => {
@@ -1010,12 +1032,24 @@ const UserInfo = () => {
   }, [org_page, org_search_item])
 
   useLayoutEffect(() => {
-    if (org_id !== "" && org_id && locations.state === null) {
-      getAssBranches("all");
+    let timeoutId;
+    if (locations.state === null && org_id !== "" && org_id) {
+      timeoutId = setTimeout(() => {
+        getAssBranches("all");
+      }, 1);
     }
-    else if (org_id !== "" && org_id && locations.state !== null)  {
+    else if (locations.state === null) {
+        getAssBranches("all");
+    }
+    else if (locations.state !== null && org_id !== "" && org_id)  {
       getAssBranches(parseInt(up_params.user.id));
     }
+    else if (locations.state !== null)  {
+      timeoutId = setTimeout(() => {
+        getAssBranches(parseInt(up_params.user.id));
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [ass_branch_page, search_ass_branch, org_id]);
 
   useLayoutEffect(() => {
