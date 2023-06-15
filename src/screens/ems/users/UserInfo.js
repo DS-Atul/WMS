@@ -1819,7 +1819,7 @@ const UserInfo = () => {
                                 count={org_count}
                                 bottom={org_bottom}
                                 setbottom={setorg_bottom}
-                                // disable_me={!user.is_superuser || user.organization_name}
+                                disable_me={!user_detail.is_superuser}
                               />
                           </div>
                         </Col>
@@ -1841,6 +1841,7 @@ const UserInfo = () => {
                           count={branch_count}
                           bottom={branch_bottom}
                           setbottom={setbranch_bottom}
+                          disable_me={!user_detail.is_superuser}
                         />
                       </div>
                       {/* <div className="mt-1 error-text" color="danger">
@@ -1887,6 +1888,30 @@ const UserInfo = () => {
                           : null}
                       </div> */}
                     </Col>
+                    {!is_superuser && (
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Department * :</Label>
+                          <SearchInput
+                            data_list={user_department_list}
+                            setdata_list={setuser_department_list}
+                            data_item_s={user_department}
+                            set_data_item_s={setuser_department}
+                            page={user_department_page}
+                            error_message={"Please Select Any Department"}
+                            error_s={user_department_err}
+                            setpage={setuser_department_page}
+                            set_id={setuser_department_id}
+                            setsearch_item={setsearch_user_department}
+                            loaded={department_loaded}
+                            count={department_count}
+                            bottom={department_bottom}
+                            setbottom={setdepartment_bottom}
+                          />
+                        </div>
+                      </Col>
+                    )}
+
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">Designation*:</Label>
@@ -1931,34 +1956,7 @@ const UserInfo = () => {
                         {user_role_err ? "Please Select Any Designation" : null}
                       </div>
                     </Col> */}
-                    {!is_superuser && (
-                      <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">Department * :</Label>
-                          <SearchInput
-                            data_list={user_department_list}
-                            setdata_list={setuser_department_list}
-                            data_item_s={user_department}
-                            set_data_item_s={setuser_department}
-                            page={user_department_page}
-                            error_message={"Please Select Any Department"}
-                            error_s={user_department_err}
-                            setpage={setuser_department_page}
-                            set_id={setuser_department_id}
-                            setsearch_item={setsearch_user_department}
-                            loaded={department_loaded}
-                            count={department_count}
-                            bottom={department_bottom}
-                            setbottom={setdepartment_bottom}
-                          />
-                        </div>
-                        {/* <div className="mt-1 error-text" color="danger">
-                          {user_department_err
-                            ? "Please Select Any Designation"
-                            : null}
-                        </div> */}
-                      </Col>
-                    )}
+
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">Joined Date :</Label>

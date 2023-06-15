@@ -74,7 +74,7 @@ const AddOrder = () => {
   );
 
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
-console.log("business_access_token====", business_access_token)
+  console.log("business_access_token====", business_access_token)
   const e_access_token = useSelector((state) => state.eway_bill.e_access_token);
 
   // const [e_access_token, sete_access_token] = useState("")
@@ -493,6 +493,7 @@ console.log("business_access_token====", business_access_token)
   const [destination_city_error, setdestination_city_error] = useState(false);
   const [shipper_error, setshipper_error] = useState(false);
   const [consignee_error, setconsignee_error] = useState(false);
+  const [ewaybill_no_error, setewaybill_no_error] = useState(false)
   const [commodity_error, setcommodity_error] = useState(false);
   const [local_delivery_type_error, setlocal_delivery_type_error] =
     useState(false);
@@ -734,8 +735,15 @@ console.log("business_access_token====", business_access_token)
       } else if (client === "") {
         setclient_error(true);
         doc_no_scroll.scrollIntoView();
-      } else if (type_of_booking === "") {
+      } 
+      else if (ewaybill_no.length !== 12 && booking_through) {
+        setewaybill_no_error(true);
+        doc_no_scroll.scrollIntoView();      
+      }else if (type_of_booking === "") {
         setbooking_type_error(true);
+        doc_no_scroll.scrollIntoView();
+      } else if (shipper_n === "" && !booking_through) {
+        setshipper_error(true);
         doc_no_scroll.scrollIntoView();
       } else if (state === "" && !booking_through) {
         setstate_error(true);
@@ -749,7 +757,15 @@ console.log("business_access_token====", business_access_token)
       } else if (locality === "" && !booking_through) {
         setlocality_error(true);
         shipper.scrollIntoView();
-      } else if (consginee_st === "" && !booking_through) {
+      } else if (locality_sel === "" && booking_through) {
+        setlocality_sel_error(true);
+        shipper.scrollIntoView();
+      }
+      else if (consignee_n === "" && !booking_through) {
+        setconsignee_error(true);
+        doc_no_scroll.scrollIntoView();
+      } 
+      else if (consginee_st === "" && !booking_through) {
         setstate_error_c(true);
         consignee.scrollIntoView();
       } else if (consginee_c === "" && !booking_through) {
@@ -758,7 +774,11 @@ console.log("business_access_token====", business_access_token)
       } else if (consignee_pincode === "" && !booking_through) {
         setpincode_list_error_c(true);
         consignee.scrollIntoView();
-      } else if (locality_c === "" && !booking_through) {
+      } else if (locality_sel_to === "" && booking_through) {
+        setlocality_sel_to_error(true);
+        consignee.scrollIntoView();
+      }
+      else if (locality_c === "" && !booking_through) {
         setlocality_error_c(true);
         consignee.scrollIntoView();
       } else if (commodity === "") {
@@ -2594,7 +2614,7 @@ console.log("business_access_token====", business_access_token)
 
 
   const GetBusiness_token = () => {
-  //  alert("GetBusiness_token==========")
+    //  alert("GetBusiness_token==========")
     axios
       .post(
         EServerAddress + "ezewb/v1/auth/completelogin",
@@ -2712,6 +2732,9 @@ console.log("business_access_token====", business_access_token)
           }
 
         } else {
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Entered EwayBill No Is Wrong`));
+          dispatch(setAlertType("danger"));
           seteway_confirm(false);
           seteway_detail_l([]);
           seteway_list([]);
@@ -3660,12 +3683,28 @@ console.log("business_access_token====", business_access_token)
     if (state !== "") {
       setstate_error(false);
     }
+    if (locality_sel !== "") {
+      setlocality_sel_error(false);
+    }
+    if (locality_sel_to !== "") {
+      setlocality_sel_to_error(false);
+    }
     if (city !== "") {
       setcity_error(false);
     }
     if (pincode !== "") {
       setpincode_list_error(false);
     }
+    if (shipper_n !== "") {
+      setshipper_error(false);
+    }
+    if (consignee_n !== "") {
+      setconsignee_error(false);
+    }
+    if (ewaybill_no.length === 12 && booking_through) {
+      setewaybill_no_error(false);
+    }
+
     if (locality !== "") {
       setlocality_error(false);
     }
@@ -3684,12 +3723,7 @@ console.log("business_access_token====", business_access_token)
     if (transport_mode !== "") {
       settransport_mode_error(false);
     }
-    if (shipper !== "") {
-      setshipper_error(false);
-    }
-    if (consignee !== "") {
-      setconsignee_error(false);
-    }
+
     if (commodity !== "") {
       setcommodity_error(false);
     }
@@ -3705,7 +3739,8 @@ console.log("business_access_token====", business_access_token)
     transport_mode,
     shipper,
     consignee,
-    commodity,
+    shipper_n,
+    consignee_n,
     local_delivery_type,
     d_cod,
     billto,
@@ -3717,6 +3752,9 @@ console.log("business_access_token====", business_access_token)
     consginee_c,
     consignee_pincode,
     locality_c,
+    locality_sel_to,
+    locality_sel,
+    ewaybill_no
   ]);
 
   useEffect(() => {
@@ -4185,23 +4223,42 @@ console.log("business_access_token====", business_access_token)
                             <Col lg={7} md={6} sm={6}>
                               <div className="">
                                 <Input
+                                  // max={12}
                                   type="number"
                                   className="form-control-md"
                                   id="input"
-                                  maxLength="12"
                                   value={ewaybill_no}
                                   onChange={(e) => {
+                                    setewaybill_no(e.target.value);
                                     if (e.target.value.length === 12) {
-                                      setewaybill_no(e.target.value);
                                       check_ewb_attached(e.target.value);
-                                    } else if (e.target.value.length < 12) {
-                                      setewaybill_no(e.target.value);
+                                    }
+                                    else{
+                                      setewaybill_no_error(true);
+                                    }
+                                  }}
+                                  onBlur={() => {
+                                    if (ewaybill_no.length !== 12 && booking_through) {
+                                      setewaybill_no_error(true);
                                     }
                                   }}
                                   placeholder="Enter Eway Bill Number"
                                   disabled={isupdating}
+                                  invalid={
+                                    ewaybill_no_error
+                                  }
                                 />
                               </div>
+                              {ewaybill_no_error && (
+                                <div
+                                  className="error-text" color="danger"
+                                  style={{
+                                    marginTop: 1,
+                                  }}
+                                >
+                                  Please Add Eway Bill No. (12 Digit)
+                                </div>
+                              )}
                             </Col>
                           )}
                         </Row>
@@ -4746,8 +4803,26 @@ console.log("business_access_token====", business_access_token)
                               onChange={(e) => {
                                 setshipper_n(e.target.value);
                               }}
+                              onBlur={() => {
+                                if (shipper_n === "" && !booking_through) {
+                                  setshipper_error(true);
+                                }
+                              }}
+                              invalid={
+                                shipper_error
+                              }
                             />
                           </div>
+                          {shipper_error && (
+                            <div
+                              className="error-text" color="danger"
+                              style={{
+                                marginTop: -14,
+                              }}
+                            >
+                              Please Add Shipper Name
+                            </div>
+                          )}
                         </Col>
 
                         <>
@@ -4986,9 +5061,27 @@ console.log("business_access_token====", business_access_token)
                               onChange={(e) => {
                                 setconsignee_n(e.target.value);
                               }}
+                              onBlur={() => {
+                                if (consignee_n === "" && !booking_through) {
+                                  setconsignee_error(true);
+                                }
+                              }}
+                              invalid={
+                                consignee_error
+                              }
                               placeholder="Enter Consignee Name"
                             />
                           </div>
+                          {consignee_error && (
+                            <div
+                              className="error-text" color="danger"
+                              style={{
+                                marginTop: -14,
+                              }}
+                            >
+                              Please Add Consignee Name
+                            </div>
+                          )}
                         </Col>
 
                         <>
@@ -5664,15 +5757,17 @@ console.log("business_access_token====", business_access_token)
                             className="form-control-md"
                             id="input"
                             placeholder="Enter Transportation cost"
+                            invalid={
+                              transportation_cost_err
+                            }
                           />
                         </div>
 
                         {transportation_cost_err && (
                           <div
+                            className="error-text" color="danger"
                             style={{
-                              color: "red",
-                              marginTop: -15,
-                              fontSize: 12,
+                              marginTop: -14,
                             }}
                           >
                             Please Add Transportation Cost

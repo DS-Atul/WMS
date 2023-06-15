@@ -526,7 +526,7 @@ function AddRoute() {
   //used for history
   const handlClk = () => {
     navigate("/route/routeHistory/RouteHistoryPage", {
-      state: { routes: routes },
+      state: { routes: routedata },
     });
   };
 

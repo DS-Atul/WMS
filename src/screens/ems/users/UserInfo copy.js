@@ -1372,7 +1372,7 @@ const [ass_branch_list_count, setass_branch_list_count] = useState(1)
                     {!is_superuser && (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
-                          <Label className="header-child">Department * :</Label>
+                          <Label className="header-child"></Label>
                           <SearchInput
                             data_list={user_department_list}
                             setdata_list={setuser_department_list}
