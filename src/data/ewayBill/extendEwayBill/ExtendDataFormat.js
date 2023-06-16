@@ -463,7 +463,7 @@ const ExtendDataFormat = ({ type, count }) => {
           </button>
         </div>
       </div>
-      <div className="table">
+      <div className="fixTableHead" style={{ overflowY: "auto", maxHeight: "58.2vh"}}>
 
         {/* <div className="col-sm-4">
               <input
@@ -518,6 +518,7 @@ const ExtendDataFormat = ({ type, count }) => {
                       <td>
                         <Button
                           color="success"
+                          size="sm"
                           onClick={() => {
                             if (is_ready) {
                               // setstate_code("")

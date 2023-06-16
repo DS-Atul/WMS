@@ -26,13 +26,9 @@ const PacketTitle = [
 const AssignedDataFormat = ({ data }) => {
   const dispatch = useDispatch();
 
-
-
-
-
   return (
     <>
-      <div className="table">
+         <div className="fixTableHead" style={{ overflowY: "auto", maxHeight: "58.2vh"}}>
         <table
           className="topheader table-light"
           style={{ borderCollapse: "collapse", width: "100%", borderWidth: 1 }}

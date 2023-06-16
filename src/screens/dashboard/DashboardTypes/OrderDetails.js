@@ -138,13 +138,12 @@ if(resp.data.delay_cold_chain_order.length > 0) {
   const get_daily_status_detail = async () => {
     try {
       const resp = await axios.get(
-        ServerAddress + "analytic/get_dailyStatusDashboard/",
+        ServerAddress + "analytic/get_dailyDetailedDashboard/",
+        // ServerAddress + "analytic/get_dailyStatusDashboard/",
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      console.log("daily status deatils-----", resp.data);
-
 
     } catch (err) {
       alert(`Error Occur in , ${err}`);

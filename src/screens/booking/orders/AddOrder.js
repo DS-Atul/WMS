@@ -131,6 +131,7 @@ const AddOrder = () => {
   //Cold chain
   const [cold_chain, setcold_chain] = useState(false);
   const [nonecold_chain, setnonecold_chain] = useState(false);
+  const [coldchain_error, setcoldchain_error] = useState(false)
   const [cod_list, setcod_list] = useState(["Yes", "No"]);
   const [asset_prov, setasset_prov] = useState(false);
   const [d_cod, setd_cod] = useState("No");
@@ -738,7 +739,11 @@ const AddOrder = () => {
       else if (ewaybill_no?.length !== 12 && booking_through) {
         setewaybill_no_error(true);
         doc_no_scroll.scrollIntoView();      
-      }else if (type_of_booking === "") {
+      } else if (!cold_chain && !nonecold_chain) {
+        setcoldchain_error(true);
+        doc_no_scroll.scrollIntoView();  
+      }
+      else if (type_of_booking === "") {
         setbooking_type_error(true);
         doc_no_scroll.scrollIntoView();
       } else if (shipper_n === "" && !booking_through) {
@@ -1246,6 +1251,7 @@ const AddOrder = () => {
         }
       );
       // .then(function (response) {
+        console.log("response--", response)
       if (response.data.status === "success") {
         // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no,response.data.data.booking_at)
         if (row3[0][0] !== "" || row4[0][0] !== "") {
@@ -1258,7 +1264,13 @@ const AddOrder = () => {
         dispatch(setDataExist(`Order  ${docket_no_value} Added sucessfully`));
         dispatch(setAlertType("success"));
         setShowOrder(true);
-      } else {
+      } 
+      else if (response.data === "duplicate") {
+        dispatch(setShowAlert(true));
+        dispatch(setDataExist(`Docket Number "${docket_no_value}"  Already Exist`));
+        dispatch(setAlertType("warning"));
+      }
+      else {
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Somthing Went Wrong`));
         dispatch(setAlertType("warning"));
@@ -1426,7 +1438,8 @@ const AddOrder = () => {
         dispatch(setAlertType("info"));
         dispatch(setShowAlert(true));
         navigate("/booking/orders");
-      } else {
+      }
+       else {
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Somthing Went Wrong`));
         dispatch(setAlertType("warning"));
@@ -3737,7 +3750,15 @@ const AddOrder = () => {
     if (d_cod !== "") {
       setd_cod_error(false);
     }
+    if (transportation_cost !== "") {
+      settransportation_cost_err(false);
+    }
+    if (cold_chain || nonecold_chain) {
+      setcoldchain_error(false);
+    }
   }, [
+    cold_chain,
+    nonecold_chain,
     temp_selected,
     client,
     transport_mode,
@@ -3758,7 +3779,8 @@ const AddOrder = () => {
     locality_c,
     locality_sel_to,
     locality_sel,
-    ewaybill_no
+    ewaybill_no,
+    transportation_cost
   ]);
 
   useEffect(() => {
@@ -4436,7 +4458,7 @@ const AddOrder = () => {
                           {docket_error && (
                             <div className="mt-1 error-text" color="danger">
                               {/* <FormFeedback type="invalid"> */}
-                              Docket number must be 8 digit
+                              Docket number must be 6 digit
                               {/* </FormFeedback> */}
                             </div>
                           )}
@@ -4480,8 +4502,21 @@ const AddOrder = () => {
                             readOnly={true}
                             checked={cold_chain}
                             disabled={isupdating}
+                            invalid={
+                              coldchain_error
+                            }
                           />
                         </div>
+                        {coldchain_error && (
+                          <div
+                            className="error-text" color="danger"
+                            style={{
+                              marginTop: -14,
+                            }}
+                          >
+                            Select Any One Option
+                          </div>
+                        )}
                       </Col>
                     )}
                     <Col
@@ -4503,6 +4538,9 @@ const AddOrder = () => {
                           readOnly={true}
                           checked={nonecold_chain}
                           disabled={isupdating}
+                          invalid={
+                            coldchain_error
+                          }
                         />
                       </div>
                     </Col>
