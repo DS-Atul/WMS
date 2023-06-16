@@ -1603,18 +1603,6 @@ const UserInfo = () => {
       });
   };
 
-  useEffect(() => {
-    console.log("locations=====", locations.state.user.username)
-    console.log("username=====", username)
-    // if (is_update && username === locations.state.user.username) {
-    //   alert()
-    //   getUserDetails(username)
-    //   getUserPermissions(username)
-    // }
-
-  }, [locations])
-
-
   return (
     <div>
       <Form

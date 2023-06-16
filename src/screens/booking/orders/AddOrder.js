@@ -2456,11 +2456,6 @@ const AddOrder = () => {
     setShowOrder(false);
   };
 
-  //   useEffect(() => {
-  // if(toggle_order===true){
-  //   alert("111111")
-  // }
-  //   }, [toggle_order])
   useEffect(() => {
     if (same_as && showOrder) {
       navigate("/booking/orders");
