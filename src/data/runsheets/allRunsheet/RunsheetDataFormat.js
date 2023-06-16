@@ -257,7 +257,7 @@ const RunsheetDataFormat = ({ can_delete, data, data1 }) => {
                   <div>
                     <Link
                       to="/runsheet/runsheetPdf/RunsheetPDF"
-                      state={{ runsheet: runsheet }}
+                      state={{ runsheet: runsheet, is_runsheet:true }}
                     >
                       <img src={pdf} width="20" height="20" />
                     </Link>

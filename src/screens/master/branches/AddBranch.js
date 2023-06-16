@@ -180,6 +180,9 @@ const AddBranch = () => {
   const [vendor_error, setvendor_error] = useState(false);
   const [own_gst_error, setown_gst_error] = useState(false);
   const [own_pan_error, setown_pan_error] = useState(false);
+  const [vendor_loaded, setvendor_loaded] = useState(false);
+  const [vendor_count, setvendor_count] = useState(1);
+  const [vendor_bottom, setvendor_bottom] = useState(103)
   const [logistic_partner_error, setlogistic_partner_error] = useState(false);
   const [operating_city_error, setoperating_city_error] = useState(false);
 
@@ -231,70 +234,70 @@ const AddBranch = () => {
 
     onSubmit: (values) => {
       let shaw = Object.entries(validation.values);
-            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
-            let map_value = filter_value.map((m) => m[0]);
-            let all_value = map_value[0];
+      let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+      let map_value = filter_value.map((m) => m[0]);
+      let all_value = map_value[0];
 
-            let fields = ["branch_name", "branch_email", "branch_phone_number"];
+      let fields = ["branch_name", "branch_email", "branch_phone_number"];
 
-            if (branch_type === "") {
-              setbranch_type_error(true);
-              document.getElementById("branch_info").scrollIntoView();
-            }
-            else if (branch_type === "Vendor" && vendor_name === "") {
-              setvendor_error(true);
-              document.getElementById("branch_info").scrollIntoView();
-            } 
-            else if(branch_type === "Own Branch" && org ===""){
-              setorg_error(true);
-              document.getElementById("branch_info").scrollIntoView();
-            }
-            else if (fields.includes(all_value)) {
-              document.getElementById("branch_info").scrollIntoView();
-            } 
-            else if (branch_type === "Vendor" && select_gst === "") {
-              setselect_gst_error(true);
-              document.getElementById("branch_info").scrollIntoView();
-            }
-             else if (branch_type === "Own Branch" && own_pan_number == "") {
-              setown_pan_error(true);
-              document.getElementById("branch_info").scrollIntoView();
-            }
-             else if (branch_type === "Own Branch" && gst_number === "") {
-              setown_gst_error(true);
-              document.getElementById("branch_info").scrollIntoView();
-            }
-             else if (address_line === "") {
-              setaddress_line_err(true);
-              document.getElementById("location_info").scrollIntoView();
-            }
-             else if (state === "") {
-              setstate_error(true);
-              document.getElementById("location_info").scrollIntoView();
-            } 
-             else if (city === "") {
-              setcity_error(true);
-              document.getElementById("location_info").scrollIntoView();
-            } 
-             else if (pincode_loaded && pincode === "") {
-              setpincode_list_error(true);
-              document.getElementById("location_info").scrollIntoView();
-            }
-             else if (pincode_loaded === false && pincode === "") {
-              setpincode_error(true);
-              document.getElementById("location_info").scrollIntoView();
-            }
-             else if (pincode_loaded && locality === "") {
-              setlocality_error(true);
-              document.getElementById("location_info").scrollIntoView();
-            }
-             else  if (operating_city_list2.length === 0) {
-             setoperating_city_error(true);
-             document.getElementById("operating_city").scrollIntoView();
-            }
-             else{
-           isupdating ? update_branch(values) : send_branch_data(values);
-         }
+      if (branch_type === "") {
+        setbranch_type_error(true);
+        document.getElementById("branch_info").scrollIntoView();
+      }
+      else if (branch_type === "Vendor" && vendor_name === "") {
+        setvendor_error(true);
+        document.getElementById("branch_info").scrollIntoView();
+      }
+      else if (branch_type === "Own Branch" && org === "") {
+        setorg_error(true);
+        document.getElementById("branch_info").scrollIntoView();
+      }
+      else if (fields.includes(all_value)) {
+        document.getElementById("branch_info").scrollIntoView();
+      }
+      else if (branch_type === "Vendor" && select_gst === "") {
+        setselect_gst_error(true);
+        document.getElementById("branch_info").scrollIntoView();
+      }
+      else if (branch_type === "Own Branch" && own_pan_number == "") {
+        setown_pan_error(true);
+        document.getElementById("branch_info").scrollIntoView();
+      }
+      else if (branch_type === "Own Branch" && gst_number === "") {
+        setown_gst_error(true);
+        document.getElementById("branch_info").scrollIntoView();
+      }
+      else if (address_line === "") {
+        setaddress_line_err(true);
+        document.getElementById("location_info").scrollIntoView();
+      }
+      else if (state === "") {
+        setstate_error(true);
+        document.getElementById("location_info").scrollIntoView();
+      }
+      else if (city === "") {
+        setcity_error(true);
+        document.getElementById("location_info").scrollIntoView();
+      }
+      else if (pincode_loaded && pincode === "") {
+        setpincode_list_error(true);
+        document.getElementById("location_info").scrollIntoView();
+      }
+      else if (pincode_loaded === false && pincode === "") {
+        setpincode_error(true);
+        document.getElementById("location_info").scrollIntoView();
+      }
+      else if (pincode_loaded && locality === "") {
+        setlocality_error(true);
+        document.getElementById("location_info").scrollIntoView();
+      }
+      else if (operating_city_list2.length === 0) {
+        setoperating_city_error(true);
+        document.getElementById("operating_city").scrollIntoView();
+      }
+      else {
+        isupdating ? update_branch(values) : send_branch_data(values);
+      }
     },
   });
 
@@ -316,6 +319,11 @@ const AddBranch = () => {
       data = response.data.results;
       setvendor_data(data);
       if (response.data.results.length > 0) {
+        if (response.data.next === null) {
+          setvendor_loaded(false);
+        } else {
+          setvendor_loaded(true);
+        }
         if (vendor_n_page == 1) {
           vendor_temp = response.data.results.map((v) => [
             v.id,
@@ -328,6 +336,7 @@ const AddBranch = () => {
           ];
         }
       }
+      setvendor_count(vendor_count + 2);
       setvendor_list(vendor_temp);
     } catch (error) {
       alert(`Error Occur in Get , ${error}`);
@@ -560,10 +569,10 @@ const AddBranch = () => {
             ...resp.data.results.map((v) => [v.id, toTitleCase(v.state)]),
           ];
         }
-      setstate_count(state_count + 2);
-      setstate_list_s(state_list);
+        setstate_count(state_count + 2);
+        setstate_list_s(state_list);
       }
-      else{
+      else {
         setstate_list_s([])
       }
     } catch (err) {
@@ -792,7 +801,7 @@ const AddBranch = () => {
       alert(`Error Occur in Get Pincode, ${err}`);
     }
   };
-console.log("location_data=====", location_data)
+  console.log("location_data=====", location_data)
   // get locality
   const getLocality = async (place_id, filter_by) => {
     try {
@@ -835,6 +844,7 @@ console.log("location_data=====", location_data)
   };
 
   const getOrganization = async () => {
+    alert()
     let orgs_list = [];
     try {
       const resp = await axios.get(
@@ -921,13 +931,17 @@ console.log("location_data=====", location_data)
   }, [pincode_id, locality_page, locality_search_item]);
 
   useEffect(() => {
-    if(branch_type==="Own Branch" && !user.organization_name){
+    if (branch_type === "Own Branch" && !user.organization_name) {
       getOrganization()
     }
-    setorg(toTitleCase(user.organization_name))
-    setorg_id(user.organization)
     // !user.is_superuser || user.organization_name
   }, [org_page, org_search_item, branch_type])
+
+  useEffect(() => {
+    setorg(toTitleCase(user.organization_name))
+    setorg_id(user.organization)
+  }, [user])
+
 
 
   useLayoutEffect(() => {
@@ -957,7 +971,7 @@ console.log("location_data=====", location_data)
     if (!get_state_wise_op && location_data.state === null) {
       getop_cities('all', 'all', 'all');
     }
-    else if(!get_state_wise_op && location_data.state !== null) {
+    else if (!get_state_wise_op && location_data.state !== null) {
       getop_cities('all', 'all', parseInt(location_data.state.branch.id));
     }
   }, [get_state_wise_op, op_city_page, search_op_city]);
@@ -966,7 +980,7 @@ console.log("location_data=====", location_data)
     if (get_state_wise_op && location_data.state === null) {
       getop_cities(state_id, "state", 'all');
     }
-    else if(get_state_wise_op && location_data.state !== null) {
+    else if (get_state_wise_op && location_data.state !== null) {
       getop_cities(state_id, "state", parseInt(location_data.state.branch.id));
     }
   }, [state_id, get_state_wise_op, op_city_page, search_op_city]);
@@ -1142,13 +1156,13 @@ console.log("location_data=====", location_data)
           if (gst_page === 1) {
             gst_temp = response.data.results.map((v) => [
               v.id,
-              v.gst_no 
-              +(v.is_active ? "-"+ "H.O" : "") 
+              v.gst_no
+              + (v.is_active ? "-" + "H.O" : "")
             ]);
           } else {
             gst_temp = [
               ...gst_data_list,
-              ...response.data.results.map((v) => [v.id,  v.gst_no +(v.is_active ? "-"+ "H.O" : "") ]),
+              ...response.data.results.map((v) => [v.id, v.gst_no + (v.is_active ? "-" + "H.O" : "")]),
             ];
           }
 
@@ -1196,12 +1210,12 @@ console.log("location_data=====", location_data)
         if (vendor_gst_page === 1) {
           vgst_temp = response.data.results.map((v) => [
             v.id,
-            v.gst_no +(v.is_active? "-"+ "H.O" : "")        
+            v.gst_no + (v.is_active ? "-" + "H.O" : "")
           ]);
         } else {
           vgst_temp = [
             ...gst_list,
-            ...response.data.results.map((v) => [v.id, v.gst_no +(v.is_active? "-"+ "H.O" : "")]),
+            ...response.data.results.map((v) => [v.id, v.gst_no + (v.is_active ? "-" + "H.O" : "")]),
           ];
         }
       }
@@ -1213,10 +1227,10 @@ console.log("location_data=====", location_data)
   };
 
   useEffect(() => {
-    if (org_id !== null ) {
+    if (org_id !== null && branch_type === "Own Branch") {
       get_gstDetails();
     }
-  }, [org_id, gst_page, gst_search]);
+  }, [org_id, gst_page, gst_search, branch_type]);
 
   useEffect(() => {
     if (vendor_id !== null && vendor_id !== "") {
@@ -1334,52 +1348,52 @@ console.log("location_data=====", location_data)
   };
 
   useEffect(() => {
-    if (vendor_name !== "" && toggst){
+    if (vendor_name !== "" && toggst) {
       setselect_gst("")
     }
   }, [vendor_name])
 
   useEffect(() => {
-    if (!location_data.state && vendor_name){
+    if (!location_data.state && vendor_name) {
       setselect_gst("")
     }
   }, [vendor_name])
 
   useEffect(() => {
-    if (org !== "" && toggst){
+    if (org !== "" && toggst) {
       setgst_number("")
     }
   }, [org])
 
   useEffect(() => {
-    if (!location_data.state && org){
+    if (!location_data.state && org) {
       setgst_number("")
     }
   }, [org])
 
-    useEffect(() => {
-      let gst_data =""
-      if (gst_number.endsWith("-H.O")) {
-        gst_data = gst_number.slice(0, -4); // Remove the last 4 characters ("-H.O")
-        setgst_txt(gst_data)
-      }
-      else{
-        gst_data = gst_number
-        setgst_txt(gst_data)
-      }
+  useEffect(() => {
+    let gst_data = ""
+    if (gst_number.endsWith("-H.O")) {
+      gst_data = gst_number.slice(0, -4); // Remove the last 4 characters ("-H.O")
+      setgst_txt(gst_data)
+    }
+    else {
+      gst_data = gst_number
+      setgst_txt(gst_data)
+    }
 
-      let vendor_gstdata =""
-      if (select_gst.endsWith("-H.O")) {
-        vendor_gstdata = select_gst.slice(0, -4); 
-        setselect_gst_txt(vendor_gstdata)
-      }
-      else{
-        vendor_gstdata = select_gst
-        setselect_gst_txt(vendor_gstdata)
-      }
-    }, [gst_number, select_gst])
-    
-  
+    let vendor_gstdata = ""
+    if (select_gst.endsWith("-H.O")) {
+      vendor_gstdata = select_gst.slice(0, -4);
+      setselect_gst_txt(vendor_gstdata)
+    }
+    else {
+      vendor_gstdata = select_gst
+      setselect_gst_txt(vendor_gstdata)
+    }
+  }, [gst_number, select_gst])
+
+
   return (
     <>
       <div>
@@ -1428,11 +1442,11 @@ console.log("location_data=====", location_data)
               setbranch_type_error(true);
               document.getElementById("branch_info").scrollIntoView();
             }
-             else if (branch_type === "Vendor" && vendor_name === "") {
+            else if (branch_type === "Vendor" && vendor_name === "") {
               setvendor_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            } 
-            else if(branch_type === "Own Branch" && org ===""){
+            }
+            else if (branch_type === "Own Branch" && org === "") {
               setorg_error(true);
               document.getElementById("branch_info").scrollIntoView();
             }
@@ -1443,39 +1457,39 @@ console.log("location_data=====", location_data)
               setselect_gst_error(true);
               document.getElementById("branch_info").scrollIntoView();
             }
-             else if (branch_type === "Own Branch" && own_pan_number == "") {
+            else if (branch_type === "Own Branch" && own_pan_number == "") {
               setown_pan_error(true);
               document.getElementById("branch_info").scrollIntoView();
             }
-             else if (branch_type === "Own Branch" && gst_number === "") {
+            else if (branch_type === "Own Branch" && gst_number === "") {
               document.getElementById("branch_info").scrollIntoView();
               setown_gst_error(true);
               document.getElementById("branch_info").scrollIntoView();
-            } 
+            }
             else if (address_line === "") {
               setaddress_line_err(true);
               document.getElementById("location_info").scrollIntoView();
-            } 
+            }
             else if (state === "") {
               setstate_error(true);
               document.getElementById("location_info").scrollIntoView();
             }
-             else if (city === "") {
+            else if (city === "") {
               setcity_error(true);
               document.getElementById("location_info").scrollIntoView();
             }
-             else if (pincode_loaded && pincode === "") {
+            else if (pincode_loaded && pincode === "") {
               setpincode_list_error(true);
               document.getElementById("location_info").scrollIntoView();
-            } 
+            }
             else if (pincode_loaded === false && pincode === "") {
               setpincode_error(true);
               document.getElementById("location_info").scrollIntoView();
             }
-             else if (pincode_loaded && locality === "") {
+            else if (pincode_loaded && locality === "") {
               setlocality_error(true);
               document.getElementById("location_info").scrollIntoView();
-            } 
+            }
             else if (operating_city_list2.length === 0) {
               setoperating_city_error(true);
               document.getElementById("operating_city").scrollIntoView();
@@ -1551,24 +1565,24 @@ console.log("location_data=====", location_data)
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">Organization*</Label>
-                              <SearchInput
-                                data_list={org_list_s}
-                                setdata_list={setorg_list_s}
-                                data_item_s={org}
-                                set_data_item_s={setorg}
-                                set_id={setorg_id}
-                                page={org_page}
-                                setpage={setorg_page}
-                                error_message={"Please Select Any Organization"}
-                                error_s={org_error}
-                                search_item={org_search_item}
-                                setsearch_item={setorg_search_item}
-                                loaded={org_loaded}
-                                count={org_count}
-                                bottom={org_bottom}
-                                setbottom={setorg_bottom}
-                                disable_me={user.organization_name}
-                              />
+                            <SearchInput
+                              data_list={org_list_s}
+                              setdata_list={setorg_list_s}
+                              data_item_s={org}
+                              set_data_item_s={setorg}
+                              set_id={setorg_id}
+                              page={org_page}
+                              setpage={setorg_page}
+                              error_message={"Please Select Any Organization"}
+                              error_s={org_error}
+                              search_item={org_search_item}
+                              setsearch_item={setorg_search_item}
+                              loaded={org_loaded}
+                              count={org_count}
+                              bottom={org_bottom}
+                              setbottom={setorg_bottom}
+                              disable_me={user.organization_name}
+                            />
                             {/* <div className="mt-1 error-text" color="danger">
                             {state_error ? "Please Select Any State" : null}
                           </div> */}
@@ -1594,6 +1608,10 @@ console.log("location_data=====", location_data)
                               setsearch_item={setsearch_vendor_name}
                               error_message={"Please Select Any Vendor"}
                               error_s={vendor_error}
+                              loaded={vendor_loaded}
+                              count={vendor_count}
+                              bottom={vendor_bottom}
+                              setbottom={setvendor_bottom}
                             />
                             {/* <div className="mt-1 error-text" color="danger">
                               {vendor_error ? "Please Select Any Vendor" : null}

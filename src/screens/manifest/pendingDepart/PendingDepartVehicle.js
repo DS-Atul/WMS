@@ -22,8 +22,11 @@ import PendingHubDataFormat from "../../../data/manifests/pendingForHub/PendingF
 import Navigate from "../navigateTab/Navigate";
 import DepartTab from "../navigateTab/DepartTab";
 
-const PendingDepart = () => {
+const PendingDepartVehicle = () => {
   const dispatch = useDispatch();
+  const toggle = useSelector((state) => state.parentfilter.toggle);
+  const commodity_type = useSelector((state) => state.filtervalue.data_a);
+  const commodity_name = useSelector((state) => state.filtervalue.data_b);
 
   // // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
@@ -64,34 +67,7 @@ const PendingDepart = () => {
       <PageTitle page="Pending For Depart" />
       <Navigate />
       <DepartTab/>
-      <Title title="Pending For Depart" parent_title="Manifests" />
-      <div className="mx-3">
-        <div className="container-fluid " style={{ background: "white" }}>
-          <div className="mb-2 row ">
-            <div className="col-sm-4">
-              <SearchList />
-            </div>
-            <div className="col-sm-8">
-              <div
-                className="text-sm-end"
-                onClick={() => dispatch(setPageNumber(1))}
-              ></div>
-            </div>
-          </div>
-
-          {/* DataTable */}
-          <DataList
-            can_delete={can_delete}
-            Data_Title={PendingDepartTitle}
-            Data_Format={PendingDepartDataFormat}
-            path={`manifest/get_depart_manifest/?search=${search}&p=${page_num}&records=${data_len}`}
-            checkbox={"NO"}
-          />
-          <NumPagination path={"path"} />
-        </div>
-      </div>
-
-      {/* <Title title="Pending For Depart Hub" parent_title="Manifests" />
+      <Title title="Pending For Depart Hub" parent_title="Manifests" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
           <div className="mb-2 row ">
@@ -110,13 +86,13 @@ const PendingDepart = () => {
             can_delete={can_delete}
             Data_Title={PendingHubTitle}
             Data_Format={PendingHubDataFormat}
-            pathb={`manifest/get_depart_hub/?search=${search}&p=${page_num}&records=${data_len}`}
+            path={`manifest/get_depart_hub/?search=${search}&p=${page_num}&records=${data_len}`}
             checkbox={"NO"}
           />
-          <NumPagination pathb={"pathb"} />
+          <NumPagination path={"path"} />
         </div>
-      </div> */}
+      </div>
     </>
   );
 };
-export default PendingDepart;
+export default PendingDepartVehicle;

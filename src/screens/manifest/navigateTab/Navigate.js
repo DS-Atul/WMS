@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setHubTab, setIncomingTab, setManifestTab, setRoughTab } from "../../../store/parentFilter/ParentFilter";
+import { setDepartTab, setHubTab, setIncomingTab, setManifestTab, setRoughTab } from "../../../store/parentFilter/ParentFilter";
 
 const Navigate = () => {
   const navigate = useNavigate();
@@ -150,6 +150,7 @@ const Navigate = () => {
           }}
           onClick={() => {
             dispatch(setManifestTab(4));
+            dispatch(setDepartTab(1));
             navigate("/manifest/pendingtodepart");
           }}
         >

@@ -211,14 +211,14 @@ useEffect(() => {
 
     onSubmit: (values) => {
       if (docket_weight + 5 >= values.actual_weight) {
-        // updateManifest(values);
-        update_eway_b(values);
+        updateManifest(values);
+        // update_eway_b(values);
       }
       else {
         const result = window.confirm('Docket Weight Is Not Equal To Coloader Actual Weight Are you sure you want to proceed?');
         if (result) {
-          // updateManifest(values);
-          update_eway_b(values);
+          updateManifest(values);
+          // update_eway_b(values);
         }
       }
     },
@@ -504,79 +504,85 @@ useEffect(() => {
 
   const user_l_state = useSelector((state) => state.authentication.userdetails.branch_location_state);
   const user_l_statecode = useSelector((state) => state.authentication.userdetails.branch_location_state_code);
-  const update_eway_b = (values) => { 
-    const dateString = '2023-04-16T16:45';
-const date = new Date(dateString);
-const day = String(date.getDate()).padStart(2, '0');
-const month = String(date.getMonth() + 1).padStart(2, '0');
-const year = date.getFullYear();
-const formattedDate = `${day}/${month}/${year}`;
-    axios
-      .post(
-        `https://dev.api.easywaybill.in/ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
+//   const update_eway_b = (values) => { 
+//     const dateString = '2023-04-16T16:45';
+// const date = new Date(dateString);
+// const day = String(date.getDate()).padStart(2, '0');
+// const month = String(date.getMonth() + 1).padStart(2, '0');
+// const year = date.getFullYear();
+// const formattedDate = `${day}/${month}/${year}`;
+//     axios
+//       .post(
+//         `https://dev.api.easywaybill.in/ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
    
-        {
+//         {
             
-          "fromPlace":user_l_state,
-          "fromState": user_l_statecode,
-          "vehicleNo": null,
-          "transMode": "3",
-          "transDocNo": values.coloader_no,
-          "transDocDate": formattedDate, 
-          "ewbNos": ewb_no,
-          "userGstin": gstin_no,
-         },
+//           "fromPlace":user_l_state,
+//           "fromState": user_l_statecode,
+//           "vehicleNo": null,
+//           "transMode": "3",
+//           "transDocNo": values.coloader_no,
+//           "transDocDate": formattedDate, 
+//           "ewbNos": ewb_no,
+//           "userGstin": gstin_no,
+//          },
   
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${b_acess_token}`,
-          },
+//         {
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${b_acess_token}`,
+//           },
     
   
-          }
+//           }
         
-      )
-      .then(function (response) {
+//       )
+//       .then(function (response) {
   
-        console.log("response=======eway bill detail", response);
-        if (response.data.status === 1) {
-          dispatch(setToggle(true));
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(`Updated  ${ewb_no}sucessfully`)
-          )
-          dispatch(setAlertType("success"));
-            setShow(false)
-            updateManifest(values)
-        }else{
-          dispatch(setToggle(true));
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(`Updated  ${ewb_no} Failed `)
-          )
-          dispatch(setAlertType("danger"));
-            setShow(false)
-            updateManifest(values)
-        }
+//         console.log("response=======eway bill detail", response);
+//         if (response.data.status === 1) {
+//           dispatch(setToggle(true));
+//           dispatch(setShowAlert(true));
+//           dispatch(
+//             setDataExist(`Updated  ${ewb_no}sucessfully`)
+//           )
+//           dispatch(setAlertType("success"));
+//             setShow(false)
+//             updateManifest(values)
+//         }else{
+//           dispatch(setToggle(true));
+//           dispatch(setShowAlert(true));
+//           dispatch(
+//             setDataExist(`Updated  ${ewb_no} Failed `)
+//           )
+//           dispatch(setAlertType("danger"));
+//             setShow(false)
+//             updateManifest(values)
+//         }
        
-      })
-      .catch((error) => {
-        console.log("eroorrrrrrrr",error)
-        dispatch(setToggle(true));
-        dispatch(setShowAlert(true));
-        dispatch(
-          setDataExist(`Updated  ${ewb_no} Failed `)
-        )
-        dispatch(setAlertType("danger"));
-          setShow(false)
-          updateManifest(values)
+//       })
+//       .catch((error) => {
+//         console.log("eroorrrrrrrr",error)
+//         dispatch(setToggle(true));
+//         dispatch(setShowAlert(true));
+//         dispatch(
+//           setDataExist(`Updated  ${ewb_no} Failed `)
+//         )
+//         dispatch(setAlertType("danger"));
+//           setShow(false)
+//           updateManifest(values)
      
-      })
-  };
+//       })
+//   };
+const showFun = () =>{
+  setcoloader_selected("")
+  setcoloader_selcted_m("")
+  setShow(true)
+}
+
   return (
     <>
-      <Button size="sm" outline color="primary" type="button" onClick={() => setShow(true)}>
+      <Button size="sm" outline color="primary" type="button" onClick={() => showFun()}>
         Forward
       </Button>
 

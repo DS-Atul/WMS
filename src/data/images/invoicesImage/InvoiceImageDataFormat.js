@@ -1,9 +1,9 @@
-import React, { useState,useLayoutEffect,useEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { ServerAddress, bucket_address } from "../../../constants/ServerAddress";
-import { BsFillTrashFill,BsFillPencilFill } from "react-icons/bs";
+import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 import axios from "axios";
 import { setAlertType, setDataExist, setShowAlert } from "../../../store/alert/Alert";
 
@@ -18,25 +18,25 @@ const PacketTitle = [
 ];
 
 const InvoiceImgDataFormat = ({ id }) => {
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.authentication.access_token);
- const [openModal, setopenModal] = useState(false);
- const [img, setimg] = useState("");
+  const [openModal, setopenModal] = useState(false);
+  const [img, setimg] = useState("");
 
- const [data, setdata] = useState([]);
+  const [data, setdata] = useState([]);
 
-const handleCloseM=()=>{
+  const handleCloseM = () => {
     setopenModal(false);
-}
-const handle_img = (a) =>{
-setimg(a)
-}
-console.log("Invoiceiddd",id)
-useLayoutEffect(() => {
- id && getInvoiceImages();
-}, [id])
+  }
+  const handle_img = (a) => {
+    setimg(a)
+  }
+  console.log("Invoiceiddd", id)
+  useLayoutEffect(() => {
+    id && getInvoiceImages();
+  }, [id])
 
-const getInvoiceImages = () => {
+  const getInvoiceImages = () => {
     axios
       .get(
         ServerAddress + `booking/get-invoice-images/${id}`,
@@ -46,29 +46,29 @@ const getInvoiceImages = () => {
       )
       .then((res) => {
         let data = res.data.Data;
-        console.log("datataaaaaaaaaaaaaaa",data)
-     setdata(data);
-        
+        console.log("datataaaaaaaaaaaaaaa", data)
+        setdata(data);
+
         // setrow2(aa);
       })
       .catch((err) => {
         // console.log("errrrrrrrrrrrrrankit----", err)
       });
   };
-const deleteOrderImg = (id) => {
-  console.log("id",id)
+  const deleteOrderImg = (id) => {
+    console.log("id", id)
     axios
       .delete(ServerAddress + `booking/delete-invoice-images/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((res) => {
         if (res.data.message === "Image deleted successfully.") {
-            dispatch(setShowAlert(true));
-            dispatch(
-              setDataExist(`Image Deleted Successfully !`)
-            );
-            dispatch(setAlertType("danger"));
-            getInvoiceImages();
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(`Image Deleted Successfully !`)
+          );
+          dispatch(setAlertType("danger"));
+          getInvoiceImages();
         } else {
           alert(res.data.message);
         }
@@ -77,27 +77,27 @@ const deleteOrderImg = (id) => {
         console.log(console.log("err----delete---Order--", err))
       });
   };
-  
+
 
 
   return (
     <>
-    <Modal show={openModal} onHide={handleCloseM} 
-      
+      <Modal show={openModal} onHide={handleCloseM}
+
       >
         <Modal.Header closeButton>
           <Modal.Title>
-        
+
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        
-          <img  src={img} style={{maxWidth:"100%",maxHeight:"100%",display:"block",margin:"auto",borderRaidus:"15px"}}/>
-         
+
+          <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px" }} />
+
         </Modal.Body>
-     
+
       </Modal>
-      
+
       <div className="table">
         <table
           className="topheader table-light"
@@ -105,7 +105,7 @@ const deleteOrderImg = (id) => {
         >
           <thead>
             <tr style={{ lineHeight: 2, borderWidth: 2 }}>
-              
+
               {PacketTitle.map((i, j) => {
                 return (
                   <th
@@ -126,47 +126,47 @@ const deleteOrderImg = (id) => {
             ) : (
               data.map((ewb, index) => {
                 const timestamp = ewb.invoice_at;
-const date = new Date(timestamp);
-const formattedDate = date.toLocaleDateString();   
-console.log("formattedDate",formattedDate);
+                const date = new Date(timestamp);
+                const formattedDate = date.toLocaleDateString();
+                console.log("formattedDate", formattedDate);
                 return (
                   <>
-                  
+
                     <tr
                       key={index}
                       style={{
                         borderWidth: 1,
                       }}
                     >
-                    {console.log("ewb",ewb)}
-                    
-                    <td>{ewb.ewaybill_no}</td>
-                    <td>{ewb.invoice_no}</td>
-                    <td>{formattedDate}</td>
-                    <td>{ewb.invoice_amount}</td>
-                    <td>
-                        <div  onClick={()=>{
-                            handle_img(bucket_address + ewb.invoice_image);
-                            setopenModal(true)
+                      {console.log("ewb", ewb)}
+
+                      <td>{ewb.ewaybill_no}</td>
+                      <td>{ewb.invoice_no}</td>
+                      <td>{formattedDate}</td>
+                      <td>{ewb.invoice_amount}</td>
+                      <td>
+                        <div onClick={() => {
+                          handle_img(bucket_address + ewb.invoice_image);
+                          setopenModal(true)
                         }}>
-                          {console.log("bucket_address + ewb.image",bucket_address + ewb.invoice_image)}
-                        <img src={bucket_address + ewb.invoice_image} height="70px" width="70px"
-                       
-                        />
+                          {console.log("bucket_address + ewb.image", bucket_address + ewb.invoice_image)}
+                          <img src={bucket_address + ewb.invoice_image} height="70px" width="70px"
+
+                          />
                         </div>
-                    </td>
-                    <td>
-                        <div style={{display:"flex",flexDirection:"row",justifyContent:"space-evenly"}}>
-                            <div>
-                                <BsFillPencilFill  color="blue" size={17}/>
-                            </div>
-                            <div>
-                                <BsFillTrashFill color="red" size={17} onClick={()=>{
-                                    deleteOrderImg(ewb.id);
-                                }} />
-                            </div>
+                      </td>
+                      <td>
+                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", cursor:"pointer" }}>
+                          {/* <div>
+                            <BsFillPencilFill color="blue" size={17} />
+                          </div> */}
+                          <div>
+                            <BsFillTrashFill color="red" size={17} onClick={() => {
+                              deleteOrderImg(ewb.id);
+                            }} />
+                          </div>
                         </div>
-                    </td>
+                      </td>
                     </tr>
                   </>
                 );

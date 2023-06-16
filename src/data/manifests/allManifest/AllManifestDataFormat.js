@@ -280,7 +280,7 @@ const AllManifestDataFormat = ({ data, data1, can_delete }) => {
                 <div>
                   <Link
                     to="/manifest/roughmanfest"
-                    state={{ manifest: manifest }}
+                    state={{ manifest: manifest , is_manifest:true }}
                   >
                     <img src={pdf} width="20" height="20" />
                   </Link>

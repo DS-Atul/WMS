@@ -17,7 +17,7 @@ import {
   setFilterC,
   setFilterD,
 } from "../../store/filterValue/FilterValue";
-import { setEwayBilltTab, setHubTab, setIncomingTab, setManifestTab, setRoughTab, setRunsheetTab } from "../../store/parentFilter/ParentFilter";
+import { setDepartTab, setEwayBilltTab, setHubTab, setIncomingTab, setManifestTab, setRoughTab, setRunsheetTab } from "../../store/parentFilter/ParentFilter";
 
 const SideBar = () => {
   const dispatch = useDispatch();
@@ -59,6 +59,7 @@ const SideBar = () => {
     }
     else if(e[0] === "Pending To Depart"){
       dispatch(setManifestTab(4));
+      dispatch(setDepartTab(1));
     }
     else if(e[0] === "Incoming Manifest"){
       dispatch(setManifestTab(5));

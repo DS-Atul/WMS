@@ -380,7 +380,6 @@ const AddOrder = () => {
   const [invoice_no, setinvoice_no] = useState("");
   const [invoice_value, setinvoice_value] = useState("");
   const [e_waybill_inv, sete_waybill_inv] = useState("");
-  const [ewaybill_num, setewaybill_num] = useState([])
 
   let dimension_list2 = [
     e_waybill_inv,
@@ -736,7 +735,7 @@ const AddOrder = () => {
         setclient_error(true);
         doc_no_scroll.scrollIntoView();
       } 
-      else if (ewaybill_no.length !== 12 && booking_through) {
+      else if (ewaybill_no?.length !== 12 && booking_through) {
         setewaybill_no_error(true);
         doc_no_scroll.scrollIntoView();      
       }else if (type_of_booking === "") {
@@ -1056,7 +1055,7 @@ const AddOrder = () => {
   //Post Order Image
   const send_order_image = async (awb) => {
     let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "");
-    let newrow4 = row4.filter((e) => e[1] !== "" && e[2] !== "" && e[3] !== "" && e[4] !== "");
+    let newrow4 = row4.filter((e) =>  e[2] !== "" && e[3] !== "");
     const docket_imageform = new FormData();
     if (newrow3.length !== 0 || newrow4.length !== 0) {
       docket_imageform.append(`awb_no`, awb);
@@ -1085,11 +1084,13 @@ const AddOrder = () => {
       );
       if (row4.length !== 0 && row4[0][0] !== "") {
         for (let index = 0; index < row4.length; index++) {
-          docket_imageform.append(
-            `InvoiceImage${index}`,
-            row4[index][4],
-            row4[index][4]?.nane
-          );
+          if(row4[index][4]){
+            docket_imageform.append(
+              `InvoiceImage${index}`,
+              row4[index][4],
+              row4[index][4]?.nane
+            );
+          }
           docket_imageform.append(`invoice_date${index}`, row4[index][1]);
           docket_imageform.append(`invoice_no${index}`, row4[index][2]);
           docket_imageform.append(`invoice_amount${index}`, row4[index][3]);
@@ -1221,7 +1222,6 @@ const AddOrder = () => {
           barcode_no: [],
           linked_order: order_type === "New" ? null : linked_order,
           order_type: order_type.toUpperCase(),
-          ewaybill_num: ewaybill_num,
 
           cm_current_department: user.user_department,
           cm_current_status:
@@ -2443,6 +2443,15 @@ const AddOrder = () => {
     setsame_as(true);
   };
   const handleClsOrder = () => {
+    setewaybill_no("")
+    seteway_value([])
+    setrow2([])
+    seteway_list([])
+    seteway_value([])
+    seteway_detail_l([])
+    setlocality_sel("")
+    setlocality_sel_to("")
+    setrow4([["", "", "", "", ""]])
     settoggle_order(true);
     setShowOrder(false);
   };
@@ -3701,7 +3710,7 @@ const AddOrder = () => {
     if (consignee_n !== "") {
       setconsignee_error(false);
     }
-    if (ewaybill_no.length === 12 && booking_through) {
+    if (ewaybill_no?.length === 12 && booking_through) {
       setewaybill_no_error(false);
     }
 
@@ -3952,10 +3961,6 @@ const AddOrder = () => {
     }
   }, []);
 
-  useEffect(() => {
-    let val = row2.map((v) => [v[0]]).filter((v) => v != "")
-    setewaybill_num(val)
-  }, [e_waybill_inv, row2])
   // console.log("e_waybill_inv====", e_waybill_inv)
   // console.log("booking_through====", booking_through)
   useEffect(() => {

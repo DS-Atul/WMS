@@ -10,6 +10,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 const Manifest_pdf = () => {
   //   const [order, setorder] = useState([]);
   const location = useLocation();
+  console.log("location---", location)
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [mn_orders_s, setmn_orders_s] = useState([]);
   const [loading_err, setloading_err] = useState(true);
@@ -20,54 +21,38 @@ const Manifest_pdf = () => {
     content: () => componentRef.current,
   });
 
-  // const mn_orders = (manifest_no) => {
-  //   axios
-  //     .get(
-  //       ServerAddress +
-  //       `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
 
-  //       {
-  //         headers: { Authorization: `Bearer ${accessToken}` },
-  //       }
-  //     )
-  //     .then((response) => {
-  //       if (response.data.length > 0) {
-  //         setmn_orders_s(response.data);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get Manifest Order Data , ${err}`);
-  //     });
-  // };
+  const get_mn_details = (mn_no) => {
 
-  // const get_mn_details = (mn_no) => {
-  //   // get_manifest/
-
-  //   axios
-  //     .get(ServerAddress + "manifestation/api/get_manifest/?mn_no=" + mn_no, {
-  //       headers: { Authorization: `Bearer ${accessToken}` },
-  //     })
-  //     .then((response) => {
-  //       setmanifest(response.data);
-  //       mn_orders(response.data.manifest_no);
-  //       setloading_err(false);
-  //     })
-  //     .catch((err) => {
-  //       alert(`Error Occur in Get Manifest Order Data , ${err}`);
-  //     });
-  // };
+    axios
+      .get(ServerAddress + `manifest/get_manifestpdf/?mn_no=${mn_no}&p=1&records=1`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((response) => {
+        console.log("response====", response)
+        if(response.data.results.length > 0){
+          setloading_err(false);
+          setmanifest(response.data.results[0])
+          setmn_orders_s(response.data.results[0].orders)
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Manifest Order Data , ${err}`);
+      });
+  };
 
   useLayoutEffect(() => {
-    console.log("location======", location)
-    try {
-      setmanifest(location.state.manifest);
+    if (location.state.is_manifest) {
+      let data = location.state.manifest
+      setmanifest(data);
       setloading_err(false);
-     
+
       setmn_orders_s(location.state.manifest.orders);
       if (location.state.mn_coloader) {
         alert(location.state.mn_coloader);
       }
-    } catch (error) {
+    }
+    else {
       get_mn_details(location.state.manifest_no);
     }
   }, []);

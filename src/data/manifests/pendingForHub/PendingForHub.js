@@ -7,6 +7,7 @@ import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setIsDeleted,
+  setToggle,
   setToggleB,
 } from "../../../store/pagination/Pagination";
 import {
@@ -27,11 +28,11 @@ import { MdDelete } from "react-icons/md";
 import Modal from "react-bootstrap/Modal";
 import Question from "../../../assets/images/bookings/question.png";
 
-const PendingHubDataFormat = ({ datab, data1 }) => {
+const PendingHubDataFormat = ({ data, data1 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log("datab-----", datab);
-  const total_data = useSelector((state) => state.pagination.total_datab);
+  console.log("data33-----", data);
+  const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
   const user = useSelector((state) => state.authentication.userdetails);
@@ -74,11 +75,11 @@ const PendingHubDataFormat = ({ datab, data1 }) => {
       .then(function (response) {
         if (response.data.status === "success") {
           setopenModal(false);
-          dispatch(setToggleB(true));
+          dispatch(setToggle(true));
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Manifest Departed Updated sucessfully`));
           dispatch(setAlertType("info"));
-          navigate("/manifest/pendingtodepart");
+          navigate("/manifest/pendingtodepartvehicle");
         } else if (response.data === "duplicate") {
           dispatch(setShowAlert(true));
           dispatch(
@@ -244,12 +245,12 @@ useEffect(() => {
         </Modal.Body>
       </Modal>
 
-      {(list_toggle === true ? data1 : datab).length === 0 ? (
+      {(list_toggle === true ? data1 : data).length === 0 ? (
         <tr>
           <td>No Data Found</td>
         </tr>
       ) : (
-        (list_toggle === true ? data1 : datab).map((hub, index) => {
+        (list_toggle === true ? data1 : data).map((hub, index) => {
           return (
             <tr
               key={index}

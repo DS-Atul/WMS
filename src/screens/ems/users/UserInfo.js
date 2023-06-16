@@ -35,6 +35,7 @@ import { useLayoutEffect } from "react";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
 import Main_c from "../../../components/crop/main";
+import { setUserDetails, setUserPermission } from "../../../store/authentication/Authentication";
 const UserInfo = () => {
   const locations = useLocation();
 
@@ -691,6 +692,11 @@ const UserInfo = () => {
         }
       )
       .then(function (resp) {
+        if (is_update && username === locations.state.user.username && resp.status == 202) {
+          getUserDetails(username)
+          getUserPermissions(username)
+        }
+    
         if (resp.status == 202 && is_superuser === false && permission_title_list[1][6] !== "") {
           // setlodated(true)
           update_user_permission();
@@ -750,7 +756,7 @@ const UserInfo = () => {
         }
       )
       .then(function (resp) {
-        if (resp.data.status == "success" && is_superuser === false && permission_title_list[1][6] === ""){
+        if (resp.data.status == "success" && is_superuser === false && permission_title_list[1][6] === "") {
           dispatch(setDataExist(`Permission Updated Sucessfully`));
           dispatch(setAlertType("info"));
           dispatch(setShowAlert(true));
@@ -1001,7 +1007,7 @@ const UserInfo = () => {
     }
   }, [org_id])
 
-  
+
   useLayoutEffect(() => {
     if (org_id !== 0) {
       setass_branch_page(1);
@@ -1012,12 +1018,12 @@ const UserInfo = () => {
 
   useEffect(() => {
     let timeoutId;
-    if(org_id !== "" && org_id){
+    if (org_id !== "" && org_id) {
       timeoutId = setTimeout(() => {
         getBranches()
       }, 1);
     }
-    else{
+    else {
       getBranches()
     }
     return () => clearTimeout(timeoutId);
@@ -1039,12 +1045,12 @@ const UserInfo = () => {
       }, 1);
     }
     else if (locations.state === null) {
-        getAssBranches("all");
+      getAssBranches("all");
     }
-    else if (locations.state !== null && org_id !== "" && org_id)  {
+    else if (locations.state !== null && org_id !== "" && org_id) {
       getAssBranches(parseInt(up_params.user.id));
     }
-    else if (locations.state !== null)  {
+    else if (locations.state !== null) {
       timeoutId = setTimeout(() => {
         getAssBranches(parseInt(up_params.user.id));
       }, 1);
@@ -1571,6 +1577,44 @@ const UserInfo = () => {
     }
   }, []);
 
+  const getUserDetails = (usern) => {
+    axios
+      .get(ServerAddress + "ems/get_user_details/?username=" + usern, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((resp) => {
+        dispatch(setUserDetails(resp.data));
+      })
+      .catch((err) => {
+        alert(`Error Occur While Getting User Details, ${err}`);
+      });
+  };
+
+  const getUserPermissions = (usern) => {
+    axios
+      .get(ServerAddress + "ems/get_userpermission/?username=" + usern, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((resp) => {
+        dispatch(setUserPermission(resp.data.permission));
+      })
+      .catch((err) => {
+        alert(`Error Occur While Getting User Details, ${err}`);
+      });
+  };
+
+  useEffect(() => {
+    console.log("locations=====", locations.state.user.username)
+    console.log("username=====", username)
+    // if (is_update && username === locations.state.user.username) {
+    //   alert()
+    //   getUserDetails(username)
+    //   getUserPermissions(username)
+    // }
+
+  }, [locations])
+
+
   return (
     <div>
       <Form
@@ -1834,29 +1878,29 @@ const UserInfo = () => {
                       </div>
                     </Col>
                     <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">Organization*</Label>
-                        
-                              <SearchInput
-                                data_list={org_list_s}
-                                setdata_list={setorg_list_s}
-                                data_item_s={org}
-                                set_data_item_s={setorg}
-                                set_id={setorg_id}
-                                page={org_page}
-                                setpage={setorg_page}
-                                error_message={"Please Select Any Organization"}
-                                error_s={org_error}
-                                search_item={org_search_item}
-                                setsearch_item={setorg_search_item}
-                                loaded={org_loaded}
-                                count={org_count}
-                                bottom={org_bottom}
-                                setbottom={setorg_bottom}
-                                disable_me={!user_detail.is_superuser}
-                              />
-                          </div>
-                        </Col>
+                      <div className="mb-2">
+                        <Label className="header-child">Organization*</Label>
+
+                        <SearchInput
+                          data_list={org_list_s}
+                          setdata_list={setorg_list_s}
+                          data_item_s={org}
+                          set_data_item_s={setorg}
+                          set_id={setorg_id}
+                          page={org_page}
+                          setpage={setorg_page}
+                          error_message={"Please Select Any Organization"}
+                          error_s={org_error}
+                          search_item={org_search_item}
+                          setsearch_item={setorg_search_item}
+                          loaded={org_loaded}
+                          count={org_count}
+                          bottom={org_bottom}
+                          setbottom={setorg_bottom}
+                          disable_me={!user_detail.is_superuser}
+                        />
+                      </div>
+                    </Col>
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">Home Branch *:</Label>

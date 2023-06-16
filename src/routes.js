@@ -296,6 +296,9 @@ const UpdateManifest = React.lazy(() =>
 const PendingDepart = React.lazy(() =>
   import("./screens/manifest/pendingDepart/PendingDepart.js")
 );
+const PendingDepartVehicle = React.lazy(() =>
+  import("./screens/manifest/pendingDepart/PendingDepartVehicle.js")
+);
 const IncomingManifest = React.lazy(() =>
   import("./screens/manifest/incomingManifest/IncomingManifest.js")
 );
@@ -909,6 +912,10 @@ const routes = [
   {
     path: "/manifest/pendingtodepart",
     element: <PendingDepart />,
+  },
+  {
+    path: "/manifest/pendingtodepartvehicle",
+    element: <PendingDepartVehicle />,
   },
   {
     path: "/manifest/incomingmanifest",

@@ -807,10 +807,14 @@ console.log("docket_nos-----", docket_nos)
      }
  
    }, [AccessToken_Modifiedat]);
-
+   const showFun = () =>{
+    setcoloader_selected("")
+    setcoloader_selcted_m("")
+    setShow(true)
+  }
   return (
     <>
-      <Button size="sm" outline color="primary" type="button" onClick={() => setShow(true)}>
+      <Button size="sm" outline color="primary" type="button" onClick={() =>  showFun()}>
         Forward
       </Button>
 

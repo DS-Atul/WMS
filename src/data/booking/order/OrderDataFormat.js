@@ -409,8 +409,8 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                     "-"
                   ) : (
                     <Link
-                      to="/manifests/manifest-pdf"
-                      state={{ manifest_no: order.manifest_no }}
+                    to="/manifest/roughmanfest"
+                      state={{ manifest_no: order.manifest_no, is_manifest:false }}
                     >
                       {order.manifest_no}
                     </Link>
@@ -421,8 +421,8 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                     <div>-</div>
                   ) : (
                     <Link
-                      to="/runsheet/runsheet-pdf"
-                      state={{ rn_no: order.runsheet_no }}
+                    to="/runsheet/runsheetPdf/RunsheetPDF"
+                      state={{ rn_no: order.runsheet_no, is_runsheet:false }}
                     >
                       {order.runsheet_no}
                     </Link>

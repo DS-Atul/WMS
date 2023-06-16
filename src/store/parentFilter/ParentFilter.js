@@ -7,6 +7,7 @@ const initialState = {
   ewaybill_tab: 1,
   incoming_tab:1,
   rough_tab:1,
+  depart_tab:1,
   hub_tab:1,
 };
 
@@ -32,6 +33,9 @@ export const parentFilterSlice = createSlice({
     setRoughTab: (state, action) => {
       state.rough_tab = action.payload;
     },
+    setDepartTab: (state, action) => {
+      state.depart_tab = action.payload;
+    },
     setHubTab: (state, action) => {
       state.hub_tab = action.payload;
     },
@@ -39,7 +43,7 @@ export const parentFilterSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setToggle, setManifestTab, setRunsheetTab ,setIncomingTab,setRoughTab, setHubTab, setEwayBilltTab } =
+export const { setToggle, setManifestTab, setRunsheetTab ,setIncomingTab,setRoughTab, setHubTab, setEwayBilltTab, setDepartTab} =
   parentFilterSlice.actions;
 
 export default parentFilterSlice.reducer;

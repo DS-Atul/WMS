@@ -5,9 +5,10 @@ import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
+import { ServerAddress } from "../../../constants/ServerAddress";
 
 export const ComponentToPrint = React.forwardRef((props, ref) => {
-  const { runsheet, rn_orders_s } = props;
+  const { runsheet } = props;
   console.log("runsheet=====", runsheet)
 
   const [order_data, setorder_data] = useState("");
@@ -24,11 +25,6 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
       setbooking_date(book_date);
     }
   }, [runsheet.orders]);
-
-  // let f_date_f = runsheet.added_at.split("T");
-  // let f_date = f_date_f[0];
-  // let f_time_r = String(f_date_f[1]).substring(0, 5);
-  // let l_fdate = f_date + " " + f_time_r;;
 
   return (
     <div style={{ border: "2px solid black", margin: "20px" }} ref={ref}>
@@ -263,15 +259,29 @@ const RunsheetPDF = () => {
     content: () => componentRef.current,
   });
 
+  const get_rn_details = (rn_no) => {
+    axios
+      .get(ServerAddress + `runsheet/get_runsheetpdf/?rn_no=${rn_no}&p=1&records=1`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((response) => {
+        if(response.data.results.length > 0){
+          setloading_err(false);
+          setrunsheet(response.data.results[0]);
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Manifest Order Data , ${err}`);
+      });
+  };
+
   useLayoutEffect(() => {
-    // setloading_err(true);
-    try {
+    if (location.state.is_runsheet) {
       setrunsheet(location.state.runsheet);
-      // get_rn_orders(location.state.runsheet.runsheet_no);
       setloading_err(false);
-    } catch (error) {
-      // get_rn_details(location.state.rn_no);
-      // get_mn_details(location.state.rn_no)
+    } 
+    else{
+      get_rn_details(location.state.rn_no)
     }
   }, []);
 
