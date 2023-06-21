@@ -57,7 +57,9 @@ function AssetsCallibration() {
   const [asset_search, setasset_search] = useState("");
   const [asset_loaded, setasset_loaded] = useState(false)
   const [asset_count, setasset_count] = useState(1)
+  const [asset_bottom, setasset_bottom] = useState(56)
 
+    const [multiasset_error, setmultiasset_error] = useState(false)
 
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
@@ -166,17 +168,27 @@ function AssetsCallibration() {
     getAsset();
   }, [asset_page, asset_search]);
 
+  useEffect(() => {
+    if (asset_list_2.length !== 0) {
+      setmultiasset_error(false);
+    }
+  }, [asset_list_2])
+  
+
   return (
     <div>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          // if (multiasset == "") {
-          //   setmultiasset_error(true);
-          // }
-          // else{
+          if (callibration_from_date === "" || callibration_to_date === "" || issued_by === "" || issued_date === ""  || certificate === ""){
+            alert("Please Fill All Callibaration Details")
+          }
+          else if (asset_list_2.length === 0) {
+            setmultiasset_error(true);
+          }
+          else{
             update_asset_callibration()
-          // }
+          }
         }}
       >
         <div className="mt-3">
@@ -288,7 +300,7 @@ function AssetsCallibration() {
                         <div className="mb-3">
                           <Label className="header-child">
                             {/* Callibration */}
-                            Certificate 
+                            Certificate *
                           </Label>
                               <Input
                                 type="file"
@@ -316,7 +328,14 @@ function AssetsCallibration() {
                         setsearch_item={setasset_search}
                         loaded={asset_loaded}
                         count={asset_count}
+                        bottom={asset_bottom}
+                        setbottom={setasset_bottom}
                       />
+                       {multiasset_error ? (
+                        <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
+                          Please Select At Least One Asset
+                        </div>
+                      ) : null}
                     </Col>
                   </Row>
                 </CardBody>

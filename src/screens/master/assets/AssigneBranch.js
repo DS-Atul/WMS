@@ -49,7 +49,9 @@ function AssigneBranch() {
   const [asset_page, setasset_page] = useState(1);
   const [asset_search, setasset_search] = useState("");
   const [asset_loaded, setasset_loaded] = useState(false)
+  const [asset_bottom, setasset_bottom] = useState(56)
   const [asset_count, setasset_count] = useState(1)
+  const [asset_error, setasset_error] = useState(false)
 
   //BranCh
   const [branch_id, setbranch_id] = useState("");
@@ -61,6 +63,7 @@ function AssigneBranch() {
   const [branch_loaded, setbranch_loaded] = useState(false)
   const [branch_count, setbranch_count] = useState(1)
   const [branch_bottom, setbranch_bottom] = useState(103)
+  const [branch_error, setbranch_error] = useState(false)
 
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
@@ -216,12 +219,32 @@ function AssigneBranch() {
     getAsset();
   }, [asset_page, asset_search]);
 
+  useEffect(() => {
+    if (branch !== "") {
+      setbranch_error(false);
+    }
+  }, [branch])
+
+  useEffect(() => {
+    if (asset_list_2.length !== 0) {
+      setasset_error(false);
+    }
+  }, [asset_list_2])
+
   return (
     <div>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
+          if (branch === ""){
+            setbranch_error(true)
+          }
+          else if (asset_list_2.length === 0) {
+            setasset_error(true);
+          }
+          else{
           update_asset_branch()
+          }
         }}
       >
         <div className="mt-3">
@@ -270,6 +293,8 @@ function AssigneBranch() {
                           page={page}
                           setpage={setpage}
                           set_id={setbranch_id}
+                          error_message={"Please Select Branch"}
+                          error_s={branch_error}
                           setsearch_item={setsearch_branch}
                           loaded={branch_loaded}
                           count={branch_count}
@@ -294,7 +319,14 @@ function AssigneBranch() {
                         setsearch_item={setasset_search}
                         loaded={asset_loaded}
                         count={asset_count}
+                        bottom={asset_bottom}
+                        setbottom={setasset_bottom}
                       />
+                      {asset_error ? (
+                        <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
+                          Please Select At Least One Asset
+                        </div>
+                      ) : null}
                     </Col>
                   </Row>
                 </CardBody>

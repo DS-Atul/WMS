@@ -309,12 +309,14 @@ const AddOrder = () => {
   const [search_box, setsearch_box] = useState("");
   const [box_loaded, setbox_loaded] = useState(false);
   const [box_count, setbox_count] = useState(1);
+  const [box_bottom, setbox_bottom] = useState(56)
 
   //Logger Number
   const [Logger_list, setLogger_list] = useState([]);
   const [Logger_Selected, setLogger_Selected] = useState([]);
   const [logger_loaded, setlogger_loaded] = useState(false);
   const [logger_count, setlogger_count] = useState(1);
+  const [logger_bottom, setlogger_bottom] = useState(56)
   const [Logger_selected_id, setLogger_selected_id] = useState("");
   const [Logger_page, setLogger_page] = useState(1);
   const [search_logger, setsearch_logger] = useState("");
@@ -4743,6 +4745,8 @@ const AddOrder = () => {
                               setsearch_item={setsearch_box}
                               loaded={box_loaded}
                               count={box_count}
+                              bottom={box_bottom}
+                              setbottom={setbox_bottom}
                             // setlist_id={}
                             />
                           </Col>
@@ -4763,6 +4767,8 @@ const AddOrder = () => {
                               setsearch_item={setsearch_logger}
                               loaded={logger_loaded}
                               count={logger_count}
+                              bottom={logger_bottom}
+                              setbottom={setlogger_bottom}
                             // setlist_id={}
                             />
                           </Col>
@@ -4787,6 +4793,8 @@ const AddOrder = () => {
                                 setsearch_item={setsearch_logger}
                                 loaded={logger_loaded}
                                 count={logger_count}
+                                bottom={logger_bottom}
+                                setbottom={setlogger_bottom}
                               // setlist_id={}
                               />
                             </div>
@@ -4805,6 +4813,8 @@ const AddOrder = () => {
                                 setsearch_item={setsearch_box}
                                 loaded={box_loaded}
                                 count={box_count}
+                                bottom={box_bottom}
+                                setbottom={setbox_bottom}
                               // setlist_id={}
                               />
                             </div>

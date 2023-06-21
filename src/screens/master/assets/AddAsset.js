@@ -47,7 +47,7 @@ const AddAsset = () => {
   const [circle_btn, setcircle_btn] = useState(true);
 
   const [circle_btn1, setcircle_btn1] = useState(true);
-   const [circle_btn2, setcircle_btn2] = useState(true);
+  const [circle_btn2, setcircle_btn2] = useState(true);
   const [isupdating, setisupdating] = useState(false);
   const location_data = useLocation();
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -127,7 +127,7 @@ const AddAsset = () => {
   const [branch_bottom, setbranch_bottom] = useState(103)
 
   const [useproduct_id, setuseproduct_id] = useState("");
-
+const [product_id_error, setproduct_id_error] = useState(false)
   const [isChecked, setisChecked] = useState(true);
   const [is_defective, setis_defective] = useState(false)
   const [purchase_date, setpurchase_date] = useState("");
@@ -266,7 +266,7 @@ const AddAsset = () => {
       alert(`Error Occur in Get Commodity Type, ${err}`);
     }
   };
-  
+
 
   const setManufactureName = async () => {
     try {
@@ -310,21 +310,21 @@ const AddAsset = () => {
       alert(`Error Happen while posting Manufacture Data ${error}`);
     }
   };
-  
+
 
   const get_branch = async () => {
     try {
       let branch_list_is = [];
       const response = await axios.get(
         ServerAddress +
-          `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
-            "",
-          ]}&branch_city=${[""]}&vendor=${[""]}&branch_search=${search_branch}&data=all`,
+        `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
+          "",
+        ]}&branch_city=${[""]}&vendor=${[""]}&branch_search=${search_branch}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-  
+
       console.log("State is ===>", response.data);
       if (response.data.next === null) {
         setbranch_loaded(false);
@@ -346,19 +346,19 @@ const AddAsset = () => {
       }
       setbranch_count(branch_count + 2);
       setbranch_list(branch_list_is);
-        // let temp = [];
-        // let temp2 = [...branch_list];
-        // temp = response.data.results;
-        // for (let index = 0; index < temp.length; index++) {
-        //   temp2.push([temp[index].id, toTitleCase(temp[index].name)]);
-        // }
-        // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
-        // setbranch_list(temp2);
+      // let temp = [];
+      // let temp2 = [...branch_list];
+      // temp = response.data.results;
+      // for (let index = 0; index < temp.length; index++) {
+      //   temp2.push([temp[index].id, toTitleCase(temp[index].name)]);
+      // }
+      // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+      // setbranch_list(temp2);
     } catch (err) {
       alert(`Error While Loading Client , ${err}`);
     }
   };
-  
+
 
   useLayoutEffect(() => {
     get_branch();
@@ -480,7 +480,7 @@ const AddAsset = () => {
       alert(`Error while posting Data ${error}`);
     }
   };
-  
+
   const updateAsset = async () => {
 
     let fields_names = Object.entries({
@@ -498,9 +498,9 @@ const AddAsset = () => {
       temperature_type:
         asset_type === "Logger" ? temperature_log_type : temperature_type_box,
     });
-  
+
     let change_fields = {};
-  
+
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.asset[`${ele[0]}`];
@@ -509,7 +509,7 @@ const AddAsset = () => {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
-  
+
     try {
       const response = await axios.put(
         ServerAddress + "master/update_asset/" + asset.id,
@@ -529,7 +529,7 @@ const AddAsset = () => {
             asset_type == "Logger"
               ? logger_box_no.toUpperCase()
               : useproduct_id.toUpperCase(),
-  
+
           assigned_branch: branch_short_id,
           created_branch: user.home_branch, // It will not updated
           checked_by: isChecked ? user_id : null,
@@ -553,7 +553,7 @@ const AddAsset = () => {
           },
         }
       );
-  
+
       if (response.data.status === "success") {
         dispatch(setToggle(true));
         dispatch(setShowAlert(true));
@@ -579,7 +579,7 @@ const AddAsset = () => {
       alert(`Error While  Updateing Asset ${err}`);
     }
   };
-  
+
 
   useLayoutEffect(() => {
     if (box_type !== "") {
@@ -651,25 +651,31 @@ const AddAsset = () => {
   }, [calibration_id_list, calibration_ids]);
 
   useEffect(() => {
-    if(manufacture_type){
+    if (manufacture_type) {
       setmanufacture_type_error(false);
     }
     if (manufacture_type === "Add New") {
       setother_manufacture_type("");
     }
-   
+
   }, [manufacture_type]);
   useEffect(() => {
-     if(other_manufacture_type){
+    if (other_manufacture_type) {
       setAdd_manufacture_err(false);
     }
   }, [other_manufacture_type]);
-  
-useEffect(() => {
-  if(logger_box_no){
-    setlogger_number_error(false);
-  }
-}, [logger_box_no]);
+
+  useEffect(() => {
+    if (logger_box_no) {
+      setlogger_number_error(false);
+    }
+  }, [logger_box_no]);
+
+  useEffect(() => {
+    if (useproduct_id) {
+      setproduct_id_error(false);
+    }
+  }, [useproduct_id]);
 
 
   useEffect(() => {
@@ -929,9 +935,9 @@ useEffect(() => {
                                       setmanufacture_type("");
                                     }
                                   }
-                                  if(other_manufacture_type === ""){
+                                  if (other_manufacture_type === "") {
                                     setAdd_manufacture_err(true);
-                                   }
+                                  }
                                 }}
                                 value={other_manufacture_type}
                                 invalid={Add_manufacture_err}
@@ -943,8 +949,8 @@ useEffect(() => {
                               />
                             </div>
                             <div className="mt-1 error-text" color="danger">
-                                  {Add_manufacture_err ? "Add manufacture name" : null}
-                                </div>
+                              {Add_manufacture_err ? "Add manufacture name" : null}
+                            </div>
                           </Col>
                         ) : null}
 
@@ -979,22 +985,23 @@ useEffect(() => {
                                 setlogger_box_no(r.target.value);
                               }}
                               onBlur={() => {
-                                setlogger_number_error(true);
-                              
-                              if(logger_box_no){
-                                  setlogger_number_error(false);   
-                              }
-                            }}
+                                if (logger_box_no) {
+                                  setlogger_number_error(false);
+                                }
+                                else{
+                                  setlogger_number_error(true);
+                                }
+                              }}
                               invalid={logger_number_error}
                             />
                             {/* <div className="mt-1 error-text" color="danger">
                                   {logger_number_error ? "Logger Number  is required" : null}
                                 </div> */}
-                            {logger_box_no == "" && logger_number_error ? (
+                            {logger_number_error ? (
                               <FormFeedback type="invalid">
                                 Logger Number is required
-                              </FormFeedback> 
-                             ) : null}
+                              </FormFeedback>
+                            ) : null}
                           </div>
                         </Col>
                       </>
@@ -1054,7 +1061,7 @@ useEffect(() => {
 
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
-                            <Label className="header-child">Product ID</Label>
+                            <Label className="header-child">Product ID *</Label>
                             <Input
                               type="text"
                               className="form-control-md"
@@ -1064,7 +1071,22 @@ useEffect(() => {
                               onChange={(e) => {
                                 setuseproduct_id(e.target.value);
                               }}
+                              onBlur={() => {
+
+                                if (useproduct_id) {
+                                  setproduct_id_error(false);
+                                }
+                                else{
+                                  setproduct_id_error(true);
+                                }
+                              }}
+                              invalid={product_id_error}
                             />
+                                 {product_id_error ? (
+                              <FormFeedback type="invalid">
+                               Product ID is required
+                              </FormFeedback>
+                            ) : null}
                           </div>
                         </Col>
                       </>
@@ -1269,7 +1291,7 @@ useEffect(() => {
                                 value={item[0]}
                                 className="form-control-md"
                                 id="input"
-                               invalid={callibration_from_date_error}
+                                invalid={callibration_from_date_error}
                                 onChange={(val) => {
                                   item[0] = val.target.value;
                                   setrefresh(!refresh);
@@ -1278,8 +1300,8 @@ useEffect(() => {
                             );
                           })}
                           <FormFeedback type="invalid">
-                          Callibration From Date is required
-                                </FormFeedback>
+                            Callibration From Date is required
+                          </FormFeedback>
                         </div>
                       </Col>
 
@@ -1329,7 +1351,7 @@ useEffect(() => {
                                   item[2] = val.target.value;
                                   setrefresh(!refresh);
                                 }}
-                              
+
                               />
                             );
                           })}
@@ -1365,7 +1387,7 @@ useEffect(() => {
                         <div className="mb-3">
                           <Label className="header-child">
                             {/* Callibration */}
-                            Certificate 
+                            Certificate *
                           </Label>
                           {row.map((item, index) => {
                             return (
@@ -1428,12 +1450,12 @@ useEffect(() => {
                           className="link-text"
                           onClick={() => {
                             const lastRow = row[row.length - 1];
-                            if(row[row.length -1].some((data) => data === "")) {
+                            if (row[row.length - 1].some((data) => data === "")) {
                               alert("Please Fill Asset Callibration info")
                             } else {
                               add_callibration();
                             }
-                          }} 
+                          }}
                         >
                           <IconContext.Provider
                             value={{
@@ -1465,95 +1487,57 @@ useEffect(() => {
                     setasset_type_error(true);
                     document.getElementById("asset_info").scrollIntoView();
                   }
+                  else if (logger_box_type === "" && asset_type === "Logger") {
+                    setlogger_box_type_error(true);
+                    document.getElementById("log").scrollIntoView();
 
-                  else if (asset_type === "Logger")
-                   {
+                  }
 
-                    if (logger_box_type === "") {
-                      setlogger_box_type_error(true);
-                      
-                      document.getElementById("log").scrollIntoView();
-                    
-                    }
-                    
-                  else if (manufacture_type === "") {
+                  else if (manufacture_type === "" && asset_type === "Logger") {
                     setmanufacture_type_error(true);
                     document.getElementById("asset_info").scrollIntoView();
                   }
-                 
-                   else if(temperature_log_type === ""){
+
+                  else if (temperature_log_type === "" && asset_type === "Logger") {
                     settemperature_log_type_error(true);
-                   }
-                   else if(logger_box_no == ""){
+                  }
+                  else if (logger_box_no == "" && asset_type === "Logger") {
                     setlogger_number_error(true);
                     document.getElementById("asset_info").scrollIntoView();
-                   }
-                   else if(row[row.length - 1][0] === ""){
-                    alert("Please Add Callibration info")
-                   }
-                   if(other_manufacture_type === ""){
+                  }
+                  else if (other_manufacture_type === "" && manufacture_type === "Add New" && asset_type === "Logger") {
                     setAdd_manufacture_err(true);
-                   }
-
                   }
-                   else if (asset_type === "Temperature Control Box") {
+                  else if ((row[row.length - 1][0] === "" || row[row.length - 1][1] === "" || row[row.length - 1][2] === "" || row[row.length - 1][3] === "" || row[row.length - 1][4] === "") && asset_type === "Logger") {
+                    alert("Please Fill All Callibration info")
+                  }
+
+                  else if (box_type === "" && asset_type === "Temperature Control Box") {
+                    setbox_type_error(true);
+                    document.getElementById("box").scrollIntoView();
+                  }
+                  else if (temperature_type_box === "" && asset_type === "Temperature Control Box") {
+                    settemperature_type_box_error(true);
+                    document.getElementById("box").scrollIntoView();
+                  }
+                  else if (box_cap === "" && asset_type === "Temperature Control Box") {
+                    setbox_capacity_error(true);
+                    document.getElementById("box").scrollIntoView();
+                  }
+                  else if (useproduct_id == "" && asset_type === "Temperature Control Box") {
+                    setproduct_id_error(true);
+                    document.getElementById("box").scrollIntoView();
+                  }
                   
-                    if(box_type === ""){
-                      setbox_type_error(true);
-                      document.getElementById("box").scrollIntoView();
-                    }
-                    else if(temperature_type_box === ""){
-                      settemperature_type_box_error(true);
-                    }
-                    else if(box_cap === "")
-                    {
-                      setbox_capacity_error(true);
-                    }
-                  }
-
-            
-           
-                  if (branch_selected === "") {
+                  else if (branch_selected === "") {
                     setbranch_error(true);
                     document.getElementById("asset_details").scrollIntoView();
 
                   }
+
                   else {
                     isupdating ? updateAsset() : add_asset();
                   }
-                  // else {
-                  //   if (asset_type === "Temperature Control Box") {
-                  //     if (box_type == "") {
-                  //       setbox_type_error(true);
-                  //     }
-                  //     if (temperature_type_box == "") {
-                  //       settemperature_type_box_error(true);
-                  //     }
-                  //     if (box_cap == "") {
-                  //       setbox_capacity_error(true);
-                  //     }
-                  //   } else {
-                  //     if (logger_box_type == "") {
-                  //       setlogger_box_type_error(true);
-                  //     }
-                  //     if (manufacture_type == "") {
-                  //       setmanufacture_type_error(true);
-                  //     }
-                  //     if (temperature_log_type == "") {
-                  //       settemperature_log_type_error(true);
-                  //     }
-                  //     if (logger_box_no == "") {
-                  //       setlogger_number_error(true);
-                  //     }
-                  //   }
-                  //   if (branch_selected === "") {
-                  //     // alert("Please Select Initial Assign Branch")
-                  //     setbranch_error(true);
-                  //   }
-                  // }
-                  //  else if (purchase_date === "" & expiry_date === "" & asset_type === "Logger") {
-                  //   alert("You Can Not Send Asset Callibration info Blank")
-                  // }
 
                 }}
               >

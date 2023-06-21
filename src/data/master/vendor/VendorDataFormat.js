@@ -243,7 +243,7 @@ const VendorDataFormat = ({ data, data1, can_delete }) => {
               
               )}
             </td>
-              <td>{toTitleCase(vendor.emailp)}</td>
+              <td>{vendor.emailp}</td>
               <td>{vendor.mobile_numberp}</td>
               <td>{toTitleCase(vendor.company_type)}</td>
               <td>{toTitleCase(vendor.service_region)}</td>

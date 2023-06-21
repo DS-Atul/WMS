@@ -285,25 +285,37 @@ const AddOrganization = () => {
         "contact_person_email",
         "contact_person_ph_no",
       ];
-      
-    
+
+
       if (pan_no === "") {
         setpan_no_error(true);
         document.getElementById("org_id").scrollIntoView();
       }
-      else  if (fields1.includes(all_value)) {
+      else if (pan_no !== "" && (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+        setpan_no_error(true);
         document.getElementById("org_id").scrollIntoView();
-      } 
-      else if(row[row.length - 1].some((some) => some === "")){
+      }
+      else if (fields1.includes(all_value)) {
+        document.getElementById("org_id").scrollIntoView();
+      }
+      else if (row[row.length - 1].some((some) => some === "")) {
         document.getElementById('gst_details').scrollIntoView();
-      }  
+      }
       else if (data === false) {
         document.getElementById('gst_details').scrollIntoView();
-     }
-      else if( row1[row1.length -1][0] !== "" &&  row1[row1.length - 1].some((some) => some === "")){
+      }
+      else if (row[row.length - 1][0].length !== 15) {
+        document.getElementById('gst_details').scrollIntoView();
+        alert("Gst Number Must Be 15 Digit")
+      }
+      else if (row[row.length - 1][0].substring(2, 12) !== pan_no) {
+        document.getElementById('gst_details').scrollIntoView();
+        alert("PAN Number Is Not Mached with Gst Number")
+      }
+      else if (row1[row1.length - 1][0] !== "" && row1[row1.length - 1].some((some) => some === "")) {
         document.getElementById('config_details').scrollIntoView();
       }
-       else if (
+      else if (
         office_add_line1 !== "" &&
         office_state !== "" &&
         office_city !== "" &&
@@ -340,8 +352,8 @@ const AddOrganization = () => {
       else if (fields2.includes(all_value)) {
         document.getElementById("section2").scrollIntoView();
       }
-      
-      
+
+
 
       else {
         isupdating ? update_organisation(values) : send_organisation_data(values);
@@ -415,7 +427,7 @@ const AddOrganization = () => {
         response.data.data.pan_no[0] ===
         "organization with this PAN Number * already exists."
       ) {
-        dispatch(setDataExist(`"${values.pan_no}" already exists`));
+        dispatch(setDataExist(`"${pan_no}" already exists`));
         dispatch(setAlertType("warning"));
         dispatch(setShowAlert(true));
       } else if (
@@ -1618,18 +1630,18 @@ const AddOrganization = () => {
   }, [loaded_pan])
 
   useEffect(() => {
-      if (pan_no.length === 10) {
-        setloaded_pan(true)
-      }
-      else {
-        setloaded_pan(false)
-      }
+    if (pan_no.length === 10) {
+      setloaded_pan(true)
+    }
+    else {
+      setloaded_pan(false)
+    }
   }, [pan_no])
 
   useEffect(() => {
     if (pan_no !== "" && (pan_no.length === 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
-        setpan_no_error(false);
-      }
+      setpan_no_error(false);
+    }
   }, [pan_no]);
 
   return (
@@ -1660,32 +1672,36 @@ const AddOrganization = () => {
               "contact_person_email",
               "contact_person_ph_no",
             ];
-            
-          
+
+
             if (pan_no === "") {
               setpan_no_error(true);
               document.getElementById("org_id").scrollIntoView();
             }
-             else if (pan_no !== "" && (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+            else if (pan_no !== "" && (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
               setpan_no_error(true);
               document.getElementById("org_id").scrollIntoView();
             }
-            else if(company_type===""){
+            else if (company_type === "") {
               setcompany_type_error(true);
               document.getElementById("org_id").scrollIntoView();
             }
-            else  if (fields1.includes(all_value)) {
+            else if (fields1.includes(all_value)) {
               document.getElementById("org_id").scrollIntoView();
-            } 
-            else if(row[row.length - 1].some((some) => some === "")){
+            }
+            else if (row[row.length - 1].some((some) => some === "")) {
               document.getElementById('gst_details').scrollIntoView();
               alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
             }
+            // else if(row[row.length - 1][0].length !== 15){
+            //   document.getElementById('gst_details').scrollIntoView();
+            //   alert("Gst Number Must Be 15 Digit")
+            // }
             else if (data === false) {
               document.getElementById('gst_details').scrollIntoView();
-                  alert("Please Checked, checkBox of Head Office")
-           }
-            else if( row1[row1.length -1][0] !== "" &&  row1[row1.length - 1].some((some) => some === "")){
+              alert("Please Checked, checkBox of Head Office")
+            }
+            else if (row1[row1.length - 1][0] !== "" && row1[row1.length - 1].some((some) => some === "")) {
               document.getElementById('config_details').scrollIntoView();
               alert("Please Fill Config Details")
             }
@@ -1697,22 +1713,22 @@ const AddOrganization = () => {
               setstate_error(true);
               document.getElementById("add").scrollIntoView();
             }
-             else if (office_city === "") {
+            else if (office_city === "") {
               setcity_error(true);
               document.getElementById("add").scrollIntoView();
             }
-             else if (office_pincode === "") {
+            else if (office_pincode === "") {
               setpincode_error(true);
               document.getElementById("add").scrollIntoView();
-            } 
+            }
             else if (office_locality === "") {
               setlocal_err(true);
               document.getElementById("add").scrollIntoView();
             }
-             else if (fields2.includes(all_value)) {
+            else if (fields2.includes(all_value)) {
               document.getElementById("section2").scrollIntoView();
             }
-            
+
 
             // else if (
             //   office_add_line1 !== "" &&
@@ -1810,18 +1826,18 @@ const AddOrganization = () => {
                         <div className="mb-2">
                           <Label className="header-child">PAN Number *:</Label>
                           <Input
-                          maxLength={10}
+                            maxLength={10}
                             value={pan_no}
                             onChange={(e) =>
                               setpan_no(e.target.value)
                             }
-                            onBlur={()=>{                          
+                            onBlur={() => {
                               if (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no)) {
                                 setpan_no_error(true)
                               }
                               else {
-                                  setpan_no_error(false)
-                                }
+                                setpan_no_error(false)
+                              }
                             }}
                             id="input"
                             type="text"
@@ -1829,8 +1845,8 @@ const AddOrganization = () => {
                             invalid={pan_no_error}
                           />
                           <FormFeedback type="invalid">
-                                PAN is required (e.g. ABCDE1234F)
-                                </FormFeedback>
+                            PAN is required (e.g. ABCDE1234F)
+                          </FormFeedback>
                         </div>
                       </Col>
 
@@ -1872,7 +1888,7 @@ const AddOrganization = () => {
                             show_search={false}
                             error_message={"Please Select Company Type"}
                             error_s={company_type_error}
-                          />                          
+                          />
                         </div>
                       </Col>
 
@@ -2377,12 +2393,12 @@ const AddOrganization = () => {
                                   setgst_city_page(1)
                                   setgstcity_bottom(103)
                                   const lastRow = row[row.length - 1];
-                                  if(row[row.length -1].some((data) => data === "")) {
+                                  if (row[row.length - 1].some((data) => data === "")) {
                                     alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
                                   } else {
                                     addGST();
                                   }
-                                }}  
+                                }}
                               >
                                 <IconContext.Provider
                                   value={{
@@ -2589,7 +2605,7 @@ const AddOrganization = () => {
                                 className="link-text"
                                 onClick={() => {
                                   const lastRow = row1[row1.length - 1];
-                                  if(row1[row1.length -1].some((data) => data === "")) {
+                                  if (row1[row1.length - 1].some((data) => data === "")) {
                                     alert("Please Fill Organization Configuration Details");
                                   } else {
                                     addConfig();

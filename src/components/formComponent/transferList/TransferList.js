@@ -19,11 +19,13 @@ const TransferList = ({
   setpage,
   setsearch_item,
   loaded=false,
-  count=1
+  count=1,
+  bottom=56,
+  setbottom,
 }) => {
   //for multi select Groups
   const ref = useRef();
-  const [bottom, setbottom] = useState(56);
+  // const [bottom, setbottom] = useState(56);
   const [search, setsearch] = useState("");
   const [searching, setsearching] = useState(false);
   const [data_list_s, setdata_list_s] = useState(list_a);

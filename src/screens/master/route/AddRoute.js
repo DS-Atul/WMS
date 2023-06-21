@@ -57,6 +57,7 @@ function AddRoute() {
   const [location_search, setlocation_search] = useState("");
   const [location_loaded, setlocation_loaded] = useState(false)
   const [location_count, setlocation_count] = useState(1)
+  const [location_bottom, setlocation_bottom] = useState(56)
 
   const [state_list_s, setstate_list_s] = useState([]);
   const [state, setstate] = useState("");
@@ -187,7 +188,7 @@ function AddRoute() {
         } catch (error) { }
       })
       .catch((err) => {
-        alert(`Error Occur in Get , ${err}`);
+        console.worn(`Error Occur in Get , ${err}`);
       });
   };
 
@@ -681,7 +682,7 @@ function AddRoute() {
                     </Col>
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">State*</Label>
+                        <Label className="header-child">State</Label>
                         <SearchInput
                           data_list={state_list_s}
                           setdata_list={setstate_list_s}
@@ -690,8 +691,8 @@ function AddRoute() {
                           set_id={setstate_id}
                           page={state_page}
                           setpage={setstate_page}
-                          error_message={"Please Select Any State"}
-                          error_s={state_error}
+                          // error_message={"Please Select Any State"}
+                          // error_s={state_error}
                           search_item={state_search_item}
                           setsearch_item={setstate_search_item}
                           loaded={state_loaded}
@@ -704,7 +705,7 @@ function AddRoute() {
 
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">City*</Label>
+                        <Label className="header-child">City</Label>
 
                         <SearchInput
                           data_list={city_list_s}
@@ -714,8 +715,8 @@ function AddRoute() {
                           set_id={setcity_id}
                           page={city_page}
                           setpage={setcity_page}
-                          error_message={"Please Select Any City"}
-                          error_s={city_error}
+                          // error_message={"Please Select Any City"}
+                          // error_s={city_error}
                           search_item={city_search_item}
                           setsearch_item={setcity_search_item}
                           loaded={city_loaded}
@@ -739,6 +740,8 @@ function AddRoute() {
                         setsearch_item={setlocation_search}
                         loaded={location_loaded}
                         count={location_count}
+                        bottom={location_bottom}
+                        setbottom={setlocation_bottom}
                       />
                       {location_error ? (
                         <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>

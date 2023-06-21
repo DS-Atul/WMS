@@ -394,7 +394,7 @@ const AddClient = (props) => {
   const [commodities_error, setcommodities_error] = useState(false);
   const [commodities_loaded, setcommodities_loaded] = useState(false);
   const [commodities_count, setcommodities_count] = useState(1);
-
+  const [commodities_bottom, setcommodities_bottom] = useState(103)
 
   // Card Control
   const [circle_btn, setcircle_btn] = useState(true);
@@ -3988,7 +3988,8 @@ const AddClient = (props) => {
                       setsearch_item={setcommodities_search_txt}
                       loaded={commodities_loaded}
                       count={commodities_count}
-
+                      bottom={commodities_bottom}
+                      setbottom={setcommodities_bottom}
                     />
                     {commodities_error ? (
                         <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>

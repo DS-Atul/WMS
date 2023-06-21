@@ -175,6 +175,7 @@ const AddBranch = () => {
   const [search_op_city, setsearch_op_city] = useState("");
   const [operating_city_loaded, setoperating_city_loaded] = useState(false);
   const [operating_city_count, setoperating_city_count] = useState(1);
+  const [operating_city_bottom, setoperating_city_bottom] = useState(56)
   // Error State
   const [branch_type_error, setbranch_type_error] = useState(false);
   const [vendor_error, setvendor_error] = useState(false);
@@ -558,6 +559,7 @@ const AddBranch = () => {
       }
 
       if (resp.data.results.length > 0) {
+      
         if (state_page === 1) {
           state_list = resp.data.results.map((v) => [
             v.id,
@@ -579,6 +581,14 @@ const AddBranch = () => {
       console.warn(`Error Occur in Get States, ${err}`);
     }
   };
+
+  useLayoutEffect(() => {
+    if(get_state_wise_op && state){
+      setoperating_city_list([])
+    }
+  }, [get_state_wise_op,state])
+  
+console.log("operating_city_list---", operating_city_list)
 
   const getCities = async (place_id, filter_by) => {
     setby_pincode(false);
@@ -632,7 +642,7 @@ const AddBranch = () => {
 
   const getop_cities = (place_id, filter_by, val) => {
     let temp_2 = [];
-    let temp = [...operating_city_list];
+    let temp = [];
     axios
       .get(
         ServerAddress +
@@ -641,8 +651,9 @@ const AddBranch = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
-      .then((response) => {
+      .then((response) => {        
         temp = response.data.results;
+        console.log("temp-----", temp)
         if (temp.length > 0) {
           if (response.data.next === null) {
             setoperating_city_loaded(false);
@@ -953,6 +964,15 @@ const AddBranch = () => {
     }
   }, [city_id])
 
+  useLayoutEffect(() => {
+    if (state_id !== 0 && get_state_wise_op) {
+      setop_city_page(1);
+      setoperating_city_count(1);
+      setoperating_city_loaded(false)
+      setoperating_city_bottom(56)
+    }
+  }, [state_id, get_state_wise_op])
+
   useEffect(() => {
     let timeoutId;
     if (city_id !== 0 && by_pincode === false) {
@@ -987,6 +1007,7 @@ const AddBranch = () => {
 
 
   useEffect(() => {
+    
     if (location_data.state !== null && branch.length !== 0) {
       get_OpCitiesDetails(branch.id)
     }
@@ -1262,6 +1283,7 @@ const AddBranch = () => {
       setlocality(toTitleCase(selected_gst[0].location_name));
       setlocality_id(selected_gst[0].location);
     } else if (!same_as_gst && !location_data.state) {
+      setaddress_line("")
       setstate("");
       setgstaddress("");
       setcity("");
@@ -2076,10 +2098,12 @@ const AddBranch = () => {
                         setsearch_item={setsearch_op_city}
                         loaded={operating_city_loaded}
                         count={operating_city_count}
+                        bottom={operating_city_bottom}
+                        setbottom={setoperating_city_bottom}
                       />
                       {operating_city_error ? (
                         <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
-                          Please Select Any Operating City
+                          Please Select At Least One Operating City
                         </div>
                       ) : null}
                     </Col>

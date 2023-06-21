@@ -118,7 +118,7 @@ const UserInfo = () => {
   const [search_ass_branch, setsearch_ass_branch] = useState("");
   const [ass_branch_list_loaded, setass_branch_list_loaded] = useState(false)
   const [ass_branch_list_count, setass_branch_list_count] = useState(1)
-
+  const [ass_branch_bottom, setass_branch_bottom] = useState(56)
   // Ass Branch
   const [ass_department_list, setass_department_list] = useState([]);
   const [ass_department_list2, setass_department_list2] = useState([]);
@@ -2075,8 +2075,8 @@ const UserInfo = () => {
                         </div>
                       </div>
                     </Col>
-
-                    <Col lg={2} md={3} sm={3}>
+                  {/* Need To Add */}
+                    {/* <Col lg={2} md={3} sm={3}>
                       <div className="mb-3">
                         <Label className="header-child">Docket Start From</Label>
                         <div onClick={() => setis_docket(!is_docket)}>
@@ -2104,7 +2104,7 @@ const UserInfo = () => {
                           />
                         </div>
                       </Col>
-                    }
+                    } */}
                     {user.is_superuser && is_update &&
                       <Col lg={2} md={3} sm={3}>
                         <div className="mb-3">
@@ -2170,6 +2170,8 @@ const UserInfo = () => {
                           setsearch_item={setsearch_ass_branch}
                           loaded={ass_branch_list_loaded}
                           count={ass_branch_list_count}
+                          bottom={ass_branch_bottom}
+                          setbottom={setass_branch_bottom}
                         // width={"width"}
                         />
                       </div>

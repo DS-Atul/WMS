@@ -79,7 +79,7 @@ const AddClient = () => {
   const [branch_search, setbranch_search] = useState("");
   const [branch_loaded, setbranch_loaded] = useState(false)
   const [branch_count, setbranch_count] = useState(1)
-
+  const [branch_bottom, setbranch_bottom] = useState(56)
 
   const [credit_limit, setcredit_limit] = useState(false);
 
@@ -235,55 +235,55 @@ const AddClient = () => {
       let map_value = filter_value.map((m) => m[0]);
       let all_value = map_value[0];
       let field = ["address_line_1"]
-      let fields2 = ["authorised_person_name","authorised_email","authorised_number"]
-      let fields3 = ["name","email","phone_number"]
+      let fields2 = ["authorised_person_name", "authorised_email", "authorised_number"]
+      let fields3 = ["name", "email", "phone_number"]
 
       if (pan_no === "") {
         setpan_no_error(true);
         document.getElementById("billto_details").scrollIntoView();
       }
-      else if (fields3.includes(all_value)){
+      else if (fields3.includes(all_value)) {
         document.getElementById('billto_details').scrollIntoView();
-       }
-       else if(row2[row2.length - 1].some((some) => some === "")){
+      }
+      else if (row2[row2.length - 1].some((some) => some === "")) {
         document.getElementById('gst_details').scrollIntoView();
         alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
       }
       else if (data === false) {
         document.getElementById('gst_details').scrollIntoView();
-            alert("Please Checked, checkBox of Head Office")
+        alert("Please Checked, checkBox of Head Office")
       }
-      else if (field.includes(all_value)){
-      document.getElementById('location_info').scrollIntoView();
+      else if (field.includes(all_value)) {
+        document.getElementById('location_info').scrollIntoView();
       }
       else if (state === "") {
         setstate_error(true);
-      document.getElementById('location_info').scrollIntoView();
+        document.getElementById('location_info').scrollIntoView();
       }
       else if (city === "") {
         setcity_error(true);
-      document.getElementById('location_info').scrollIntoView();
-      } 
+        document.getElementById('location_info').scrollIntoView();
+      }
       else if (pincode === "") {
-      document.getElementById('location_info').scrollIntoView();
-      setsetselect_pincode_error(true);
+        document.getElementById('location_info').scrollIntoView();
+        setsetselect_pincode_error(true);
       }
       else if (pincode_loaded && pincode === "") {
         setsetselect_pincode_error(true);
-      document.getElementById('location_info').scrollIntoView();
-      } 
-      else  if (locality === "") {
-      document.getElementById('location_info').scrollIntoView();
+        document.getElementById('location_info').scrollIntoView();
+      }
+      else if (locality === "") {
+        document.getElementById('location_info').scrollIntoView();
         setlocality_error(true);
       }
       else if (pincode_loaded && locality === "") {
         setlocality_error(true);
-      document.getElementById('location_info').scrollIntoView();
+        document.getElementById('location_info').scrollIntoView();
       }
-      else if (fields2.includes(all_value)){
+      else if (fields2.includes(all_value)) {
         document.getElementById('info_authorised').scrollIntoView();
       }
-      else{
+      else {
         isupdating ? updateBillTo(values) : addBillTo(values);
       }
     },
@@ -493,14 +493,14 @@ const AddClient = () => {
         alert(`Error Occur in Get OpCity, ${err}`);
       });
   };
-  
+
   const getBranches = async (val) => {
     let temp_2 = [];
     let temp = [];
     try {
       const response = await axios.get(
         ServerAddress +
-        `master/all_branches_billto/?search=${""}&p=${page_num}&records=${data_len}&branch_search=${branch_search}&data=${val}`,
+        `master/all_branches_billto/?search=${""}&p=${branch_page}&records=${data_len}&branch_search=${branch_search}&data=${val}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -848,7 +848,7 @@ const AddClient = () => {
           },
         }
       );
-console.log("resp--------", resp)
+      console.log("resp--------", resp)
       if (resp.data.status === "success") {
         navigate("/master/billtos");
         dispatch(setDataExist(`BillTo '${values.name}' Updated Sucessfully`));
@@ -945,10 +945,10 @@ console.log("resp--------", resp)
   }, [state_page, state_search_item, refresh]);
 
   useLayoutEffect(() => {
-    if(up_params === null){
+    if (up_params === null) {
       getBranches("all");
     }
-    else{
+    else {
       getBranches(parseInt(up_params?.client?.id));
     }
   }, [branch_page, branch_search]);
@@ -1148,31 +1148,31 @@ console.log("resp--------", resp)
     }
   }
 
-    //  For Check Pan Validation
-    const send_billto_pan = async () => {
-      try {
-        const response = await axios.post(
-          ServerAddress + "master/check_billto_pan/",
-          {
-            pan_no: (pan_no).toUpperCase(),
+  //  For Check Pan Validation
+  const send_billto_pan = async () => {
+    try {
+      const response = await axios.post(
+        ServerAddress + "master/check_billto_pan/",
+        {
+          pan_no: (pan_no).toUpperCase(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        if (response.data === "duplicate") {
-          dispatch(setDataExist(`"${pan_no}" Already Exists`));
-          dispatch(setAlertType("warning"));
-          dispatch(setShowAlert(true));
-          setpan_no("")
         }
-        setloaded_pan(false)
-      } catch (error) {
-        alert(`Error Happen while posting Organisation Data ${error}`);
+      );
+      if (response.data === "duplicate") {
+        dispatch(setDataExist(`"${pan_no}" Already Exists`));
+        dispatch(setAlertType("warning"));
+        dispatch(setShowAlert(true));
+        setpan_no("")
       }
-    };
+      setloaded_pan(false)
+    } catch (error) {
+      alert(`Error Happen while posting Organisation Data ${error}`);
+    }
+  };
 
   const [loaded_pan, setloaded_pan] = useState(false)
 
@@ -1182,13 +1182,13 @@ console.log("resp--------", resp)
     }
   }, [loaded_pan])
 
-    useEffect(() => {
-      if (pan_no.length === 10) {
-        setloaded_pan(true)
-      }
-      else {
-        setloaded_pan(false)
-      }
+  useEffect(() => {
+    if (pan_no.length === 10) {
+      setloaded_pan(true)
+    }
+    else {
+      setloaded_pan(false)
+    }
   }, [pan_no])
 
   // for history
@@ -1199,80 +1199,80 @@ console.log("resp--------", resp)
   };
 
 
-    //Gst address
-    const [gst_state_id, setgst_state_id] = useState("");
-    const [gst_no, setgst_no] = useState("");
-    const [gst_address, setgst_address] = useState("");
-    const [gst_state, setgst_state] = useState(["", ""]);
-    const [gst_state_list, setgst_state_list] = useState([]);
-    const [gst_city_list, setgst_city_list] = useState([]);
-    const [gst_city, setgst_city] = useState(["", "", ""]);
-    const [gst_pincode, setgst_pincode] = useState(["", ""]);
-    const [gstpincode_list, setgstpincode_list] = useState([]);
-    const [gst_pincode_page, setgst_pincode_page] = useState(1);
-    const [gst_pincode_search_item, setgst_pincode_search_item] = useState("");
-    const [gstpincode_loaded, setgstpincode_loaded] = useState(false);
-    const [gstpincode_count, setgstpincode_count] = useState(1);
-    const [gstpincode_bottom, setgstpincode_bottom] = useState(103)
-  
-    const [gst_locality_list, setgst_locality_list] = useState([]);
-    const [gst_locality, setgst_locality] = useState(["", ""]);
-    const [gst_locality_page, setgst_locality_page] = useState(1);
-    const [gst_locality_search_item, setgst_locality_search_item] = useState("");
-    const [gstlocality_loaded, setgstlocality_loaded] = useState(false);
-    const [gstlocality_count, setgstlocality_count] = useState(1);
-    const [gstlocality_bottom, setgstlocality_bottom] = useState(103)
-  
-    const [gst_city_page, setgst_city_page] = useState(1);
-    const [gst_city_search_item, setgst_city_search_item] = useState("");
-    const [gstcity_loaded, setgstcity_loaded] = useState(false);
-    const [gstcity_count, setgstcity_count] = useState(1);
-    const [gstcity_bottom, setgstcity_bottom] = useState(103)
-    const [selected, setselected] = useState([]);
-    const [updated_gstaddress, setupdated_gstaddress] = useState([]);
-    const [active, setactive] = useState(false);
-  
-    const [gst_id_list, setgst_id_list] = useState([]);
-    const [gst_ids, setgst_ids] = useState([]);
-    const [deleted_gst_id, setdeleted_gst_id] = useState([]);
+  //Gst address
+  const [gst_state_id, setgst_state_id] = useState("");
+  const [gst_no, setgst_no] = useState("");
+  const [gst_address, setgst_address] = useState("");
+  const [gst_state, setgst_state] = useState(["", ""]);
+  const [gst_state_list, setgst_state_list] = useState([]);
+  const [gst_city_list, setgst_city_list] = useState([]);
+  const [gst_city, setgst_city] = useState(["", "", ""]);
+  const [gst_pincode, setgst_pincode] = useState(["", ""]);
+  const [gstpincode_list, setgstpincode_list] = useState([]);
+  const [gst_pincode_page, setgst_pincode_page] = useState(1);
+  const [gst_pincode_search_item, setgst_pincode_search_item] = useState("");
+  const [gstpincode_loaded, setgstpincode_loaded] = useState(false);
+  const [gstpincode_count, setgstpincode_count] = useState(1);
+  const [gstpincode_bottom, setgstpincode_bottom] = useState(103)
 
-    const [gst_city_id, setgst_city_id] = useState("");
-    const [gst_pincode_id, setgst_pincode_id] = useState("");
-    const [gst_val, setgst_val] = useState("");
+  const [gst_locality_list, setgst_locality_list] = useState([]);
+  const [gst_locality, setgst_locality] = useState(["", ""]);
+  const [gst_locality_page, setgst_locality_page] = useState(1);
+  const [gst_locality_search_item, setgst_locality_search_item] = useState("");
+  const [gstlocality_loaded, setgstlocality_loaded] = useState(false);
+  const [gstlocality_count, setgstlocality_count] = useState(1);
+  const [gstlocality_bottom, setgstlocality_bottom] = useState(103)
 
-    let dimension_list2 = [
-      gst_no,
-      gst_city,
-      gst_pincode,
-      gst_locality,
-      gst_address,
-      active,
-    ];
-    const [row2, setrow2] = useState([dimension_list2]);
-    console.log("row2===========", row2)
+  const [gst_city_page, setgst_city_page] = useState(1);
+  const [gst_city_search_item, setgst_city_search_item] = useState("");
+  const [gstcity_loaded, setgstcity_loaded] = useState(false);
+  const [gstcity_count, setgstcity_count] = useState(1);
+  const [gstcity_bottom, setgstcity_bottom] = useState(103)
+  const [selected, setselected] = useState([]);
+  const [updated_gstaddress, setupdated_gstaddress] = useState([]);
+  const [active, setactive] = useState(false);
 
-    const addGST = () => {
-      dimension_list2 = ["", ["", "", ""], ["", ""], ["", ""], "", false];
-      setrow2([...row2, dimension_list2]);
-    };
-  
-    const deleteGST = (item) => {
-      setgst_no("gst_no");
-      setgst_state("state");
-      setgst_city("city");
-      setgst_pincode("pincode");
-      setgst_locality("gst_locality");
-      setgst_address("gst_address");
-      let temp = [...row2];
-      let temp_2 = [...gst_id_list];
-      const index = temp.indexOf(item);
-      if (index > -1) {
-        temp.splice(index, 1);
-        temp_2.splice(index, 1);
-      }
-      setrow2(temp);
-      setgst_id_list(temp_2);
-    };
+  const [gst_id_list, setgst_id_list] = useState([]);
+  const [gst_ids, setgst_ids] = useState([]);
+  const [deleted_gst_id, setdeleted_gst_id] = useState([]);
+
+  const [gst_city_id, setgst_city_id] = useState("");
+  const [gst_pincode_id, setgst_pincode_id] = useState("");
+  const [gst_val, setgst_val] = useState("");
+
+  let dimension_list2 = [
+    gst_no,
+    gst_city,
+    gst_pincode,
+    gst_locality,
+    gst_address,
+    active,
+  ];
+  const [row2, setrow2] = useState([dimension_list2]);
+  console.log("row2===========", row2)
+
+  const addGST = () => {
+    dimension_list2 = ["", ["", "", ""], ["", ""], ["", ""], "", false];
+    setrow2([...row2, dimension_list2]);
+  };
+
+  const deleteGST = (item) => {
+    setgst_no("gst_no");
+    setgst_state("state");
+    setgst_city("city");
+    setgst_pincode("pincode");
+    setgst_locality("gst_locality");
+    setgst_address("gst_address");
+    let temp = [...row2];
+    let temp_2 = [...gst_id_list];
+    const index = temp.indexOf(item);
+    if (index > -1) {
+      temp.splice(index, 1);
+      temp_2.splice(index, 1);
+    }
+    setrow2(temp);
+    setgst_id_list(temp_2);
+  };
   // used to fetch data from gst number
   const getGstStates = async (place_id, filter_by) => {
     let state_list = [];
@@ -1428,97 +1428,97 @@ console.log("resp--------", resp)
     }
   }, [gst_state_id, gst_city_page, gst_city_search_item]);
 
-    useLayoutEffect(() => {
-      let result = row2[row2.length - 1][0].substring(0, 12);
-      setgst_val(result);
-      setgst_city_id(row2[row2.length - 1][1][0]);
-      setgst_pincode_id(row2[row2.length - 1][2][0]);
-    }, [dimension_list2]);
-  
-    useLayoutEffect(() => {
-      if (gst_city_id !== 0) {
-        setgst_pincode_page(1);
-        setgstpincode_count(1);
-        setgstpincode_bottom(103)
-        setgstpincode_loaded(true)
-      }
-    }, [gst_city_id])
-  
-    useEffect(() => {
-      let timeoutId;
-      if (gst_city_id != "") {
-        timeoutId = setTimeout(() => {
-          getGstPincode(gst_city_id, "city");
-        }, 1);
-      }
-      return () => clearTimeout(timeoutId);
-    }, [gst_city_id, gst_pincode_page, gst_pincode_search_item]);
-  
-    useEffect(() => {
-      if (gst_pincode_id !== 0) {
-        setgst_locality_page(1);
-        setgstlocality_count(1);
-        setgstlocality_bottom(103)
-        setgstlocality_loaded(true)
-      }
-    }, [gst_pincode_id])
-  
-    useLayoutEffect(() => {
-      let timeoutId;
-      if (gst_pincode_id != "") {
-        timeoutId = setTimeout(() => {
-          getGstLocality(gst_pincode_id, "pincode");
-        }, 1);
-      }
-      return () => clearTimeout(timeoutId);
-  
-    }, [gst_pincode_id, gst_locality_page, gst_locality_search_item]);
-  
-    useEffect(() => {
-      if (isupdating) {
-        if (updated_gstaddress?.length !== 0 && updated_gstaddress) {
-          let temp = [];
-          let temp_list = [];
-          let temp_list2 = [];
-          temp = updated_gstaddress;
-  
-          for (let index = 0; index < updated_gstaddress.length; index++) {
-            temp_list.push([
-              temp[index].gst_no,
-              [
-                temp[index].city_id,
-                toTitleCase(temp[index].state_name + "-" + temp[index].city_name),
-                temp[index].state,
-              ],
-              [temp[index].pincode, temp[index].pincode_name],
-              [temp[index].location, toTitleCase(temp[index].location_name)],
-              toTitleCase(temp[index].address),
-              temp[index].is_active,
-              temp[index].id,
-            ]);
-            temp_list2.push(temp[index].id);
-          }
-          setrow2(temp_list);
-          setgst_ids(temp_list2);
-          setgst_id_list(temp_list2);
+  useLayoutEffect(() => {
+    let result = row2[row2.length - 1][0].substring(0, 12);
+    setgst_val(result);
+    setgst_city_id(row2[row2.length - 1][1][0]);
+    setgst_pincode_id(row2[row2.length - 1][2][0]);
+  }, [dimension_list2]);
+
+  useLayoutEffect(() => {
+    if (gst_city_id !== 0) {
+      setgst_pincode_page(1);
+      setgstpincode_count(1);
+      setgstpincode_bottom(103)
+      setgstpincode_loaded(true)
+    }
+  }, [gst_city_id])
+
+  useEffect(() => {
+    let timeoutId;
+    if (gst_city_id != "") {
+      timeoutId = setTimeout(() => {
+        getGstPincode(gst_city_id, "city");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [gst_city_id, gst_pincode_page, gst_pincode_search_item]);
+
+  useEffect(() => {
+    if (gst_pincode_id !== 0) {
+      setgst_locality_page(1);
+      setgstlocality_count(1);
+      setgstlocality_bottom(103)
+      setgstlocality_loaded(true)
+    }
+  }, [gst_pincode_id])
+
+  useLayoutEffect(() => {
+    let timeoutId;
+    if (gst_pincode_id != "") {
+      timeoutId = setTimeout(() => {
+        getGstLocality(gst_pincode_id, "pincode");
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+
+  }, [gst_pincode_id, gst_locality_page, gst_locality_search_item]);
+
+  useEffect(() => {
+    if (isupdating) {
+      if (updated_gstaddress?.length !== 0 && updated_gstaddress) {
+        let temp = [];
+        let temp_list = [];
+        let temp_list2 = [];
+        temp = updated_gstaddress;
+
+        for (let index = 0; index < updated_gstaddress.length; index++) {
+          temp_list.push([
+            temp[index].gst_no,
+            [
+              temp[index].city_id,
+              toTitleCase(temp[index].state_name + "-" + temp[index].city_name),
+              temp[index].state,
+            ],
+            [temp[index].pincode, temp[index].pincode_name],
+            [temp[index].location, toTitleCase(temp[index].location_name)],
+            toTitleCase(temp[index].address),
+            temp[index].is_active,
+            temp[index].id,
+          ]);
+          temp_list2.push(temp[index].id);
         }
+        setrow2(temp_list);
+        setgst_ids(temp_list2);
+        setgst_id_list(temp_list2);
       }
-    }, [isupdating]);
-  
-  
-  
-    useEffect(() => {
-      if (gst_id_list !== "") {
-        let id_list = gst_ids.filter((p) => gst_id_list.indexOf(p) === -1);
-        setdeleted_gst_id(id_list);
-      }
-    }, [gst_id_list, gst_ids]);
-    useEffect(() => {
-      if (pan_no !== "" && (pan_no.length === 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
-          setpan_no_error(false);
-        }
-    }, [pan_no]);
-  
+    }
+  }, [isupdating]);
+
+
+
+  useEffect(() => {
+    if (gst_id_list !== "") {
+      let id_list = gst_ids.filter((p) => gst_id_list.indexOf(p) === -1);
+      setdeleted_gst_id(id_list);
+    }
+  }, [gst_id_list, gst_ids]);
+  useEffect(() => {
+    if (pan_no !== "" && (pan_no.length === 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no))) {
+      setpan_no_error(false);
+    }
+  }, [pan_no]);
+
   return (
     <div>
       <Modal show={show} onHide={handleClose}>
@@ -1558,12 +1558,12 @@ console.log("resp--------", resp)
           e.preventDefault();
           let data = row2.some((a) => a[5] == true)
           let shaw = Object.entries(validation.values);
-            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
-            let map_value = filter_value.map((m) => m[0]);
-            let all_value = map_value[0];
+          let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+          let map_value = filter_value.map((m) => m[0]);
+          let all_value = map_value[0];
           let field = ["address_line_1"];
-          let fields2 = ["authorised_person_name","authorised_email","authorised_number"];
-          let fields3 = ["name","email","phone_number"];
+          let fields2 = ["authorised_person_name", "authorised_email", "authorised_number"];
+          let fields3 = ["name", "email", "phone_number"];
 
 
           if (pan_no === "") {
@@ -1574,49 +1574,49 @@ console.log("resp--------", resp)
             setpan_no_error(true);
             document.getElementById("billto_details").scrollIntoView();
           }
-          else if (fields3.includes(all_value)){
+          else if (fields3.includes(all_value)) {
             document.getElementById('billto_details').scrollIntoView();
-           }
-           else if(row2[row2.length - 1].some((some) => some === "")){
+          }
+          else if (row2[row2.length - 1].some((some) => some === "")) {
             document.getElementById('gst_details').scrollIntoView();
             alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
           }
           else if (data === false) {
             document.getElementById('gst_details').scrollIntoView();
-                alert("Please Checked, checkBox of Head Office")
-         }
-         else if (field.includes(all_value)){
-          document.getElementById('location_info').scrollIntoView();
-         }
+            alert("Please Checked, checkBox of Head Office")
+          }
+          else if (field.includes(all_value)) {
+            document.getElementById('location_info').scrollIntoView();
+          }
           else if (state === "") {
             setstate_error(true);
-          document.getElementById('location_info').scrollIntoView();
+            document.getElementById('location_info').scrollIntoView();
           }
           else if (city === "") {
             setcity_error(true);
-          document.getElementById('location_info').scrollIntoView();
-          } 
+            document.getElementById('location_info').scrollIntoView();
+          }
           else if (pincode === "") {
-          document.getElementById('location_info').scrollIntoView();
-          setsetselect_pincode_error(true);
+            document.getElementById('location_info').scrollIntoView();
+            setsetselect_pincode_error(true);
           }
           else if (pincode_loaded && pincode === "") {
             setsetselect_pincode_error(true);
-          document.getElementById('location_info').scrollIntoView();
-          } 
-          else  if (locality === "") {
-          document.getElementById('location_info').scrollIntoView();
+            document.getElementById('location_info').scrollIntoView();
+          }
+          else if (locality === "") {
+            document.getElementById('location_info').scrollIntoView();
             setlocality_error(true);
           }
           else if (pincode_loaded && locality === "") {
             setlocality_error(true);
-          document.getElementById('location_info').scrollIntoView();
+            document.getElementById('location_info').scrollIntoView();
           }
-          else if (fields2.includes(all_value)){
+          else if (fields2.includes(all_value)) {
             document.getElementById('info_authorised').scrollIntoView();
-           }
-             validation.handleSubmit(e.values);
-             return false;
+          }
+          validation.handleSubmit(e.values);
+          return false;
         }}
       >
         {/* Client details */}
@@ -1668,26 +1668,26 @@ console.log("resp--------", resp)
                     <div className="mb-2">
                       <Label className="header-child">PAN Number *:</Label>
                       <Input
-                         value={pan_no}
-                         onChange={(e) =>
-                           setpan_no(e.target.value)
-                         }
-                         onBlur={()=>{                          
+                        value={pan_no}
+                        onChange={(e) =>
+                          setpan_no(e.target.value)
+                        }
+                        onBlur={() => {
                           if (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no)) {
                             setpan_no_error(true)
-                              }
-                              else {
-                                  setpan_no_error(false)
-                                }
+                          }
+                          else {
+                            setpan_no_error(false)
+                          }
                         }}
-                         id="input"
-                         type="text"
-                         placeholder="Please Enter PAN "
-                         invalid={pan_no_error}
-                         maxLength={10}
+                        id="input"
+                        type="text"
+                        placeholder="Please Enter PAN "
+                        invalid={pan_no_error}
+                        maxLength={10}
                       />
                       <FormFeedback type="invalid">
-                       PAN is required (e.g. ABCDE1234F)
+                        PAN is required (e.g. ABCDE1234F)
                       </FormFeedback>
                     </div>
                   </Col>
@@ -1788,6 +1788,8 @@ console.log("resp--------", resp)
                       setsearch_item={setbranch_search}
                       loaded={branch_loaded}
                       count={branch_count}
+                      bottom={branch_bottom}
+                      setbottom={setbranch_bottom}
                     />
                   </Col>
                   {/* <Col lg={4} md={6} sm={6}>
@@ -1888,193 +1890,173 @@ console.log("resp--------", resp)
               {circle_btn6 ? (
                 <CardBody>
                   <>
-                  <Row className="hide">
-                          <Col lg={2} md={3} sm={3}>
-                            <div className="mb-3">
-                              <Label className="header-child">GST No</Label>
-                              {row2.map((item, index) => {
-                                return (
-                                  <Input
-                                    min={0}
-                                    key={index}
-                                    value={item[0]}
-                                    disabled={row2.length - 1 !== index}
-                                    type="text"
-                                    className="form-control-md"
-                                    id="input"
-                                    style={{ marginBottom: "15px" }}
-                                    placeholder="Enter GST No. "
-                                    onChange={(val) => {
-                                      // setlength(val.target.value);
-                                      item[0] = val.target.value;
-                                      setrefresh(!refresh);
-                                    }}
-                                    onBlur={() => {
-                                      // setclicked(true);
-                                      // alert("----")
-                                      let itm = item[0];
+                    <Row className="hide">
+                      <Col lg={2} md={3} sm={3}>
+                        <div className="mb-3">
+                          <Label className="header-child">GST No</Label>
+                          {row2.map((item, index) => {
+                            return (
+                              <Input
+                                min={0}
+                                key={index}
+                                value={item[0]}
+                                disabled={row2.length - 1 !== index}
+                                type="text"
+                                className="form-control-md"
+                                id="input"
+                                style={{ marginBottom: "15px" }}
+                                placeholder="Enter GST No. "
+                                onChange={(val) => {
+                                  // setlength(val.target.value);
+                                  item[0] = val.target.value;
+                                  setrefresh(!refresh);
+                                }}
+                                onBlur={() => {
+                                  // setclicked(true);
+                                  // alert("----")
+                                  let itm = item[0];
 
-                                      if (
-                                        item[0].length == 15 &&
-                                        gst_val ==
-                                        itm[0] +
-                                        itm[1] +
-                                        pan_no
-                                      ) {
-                                        getGstStates(
-                                          itm[0] + itm[1],
-                                          "gst_code"
-                                        );
-                                      } else if (
-                                        item[0].length > 10 &&
-                                        row2.length - 1 === index
-                                      ) {
-                                        dispatch(setShowAlert(true));
-                                        dispatch(
-                                          setDataExist(`Invalid GST Number`)
-                                        );
-                                        dispatch(setAlertType("warning"));
-                                      }
-                                    }}
-                                  />
-                                );
-                              })}
-                            </div>
-                          </Col>
+                                  if (
+                                    item[0].length == 15 &&
+                                    gst_val ==
+                                    itm[0] +
+                                    itm[1] +
+                                    pan_no
+                                  ) {
+                                    getGstStates(
+                                      itm[0] + itm[1],
+                                      "gst_code"
+                                    );
+                                  } else if (
+                                    item[0].length > 10 &&
+                                    row2.length - 1 === index
+                                  ) {
+                                    dispatch(setShowAlert(true));
+                                    dispatch(
+                                      setDataExist(`Invalid GST Number`)
+                                    );
+                                    dispatch(setAlertType("warning"));
+                                  }
+                                }}
+                              />
+                            );
+                          })}
+                        </div>
+                      </Col>
 
-                          <Col lg={2} md={3} sm={3}>
+                      <Col lg={2} md={3} sm={3}>
+                        <div className="mb-3">
+                          <Label className="header-child"> City</Label>
+                          {row2.map((item, index) => (
                             <div className="mb-3">
-                              <Label className="header-child"> City</Label>
-                              {row2.map((item, index) => (
-                                <div className="mb-3">
-                                  <MultiRowSearchInput
-                                    data_list={gst_city_list}
-                                    setdata_list={setgst_city_list}
-                                    data_item_s={row2[index][1]}
-                                    page={gst_city_page}
-                                    setpage={setgst_city_page}
-                                    setsearch_txt={setgst_city_search_item}
-                                    refresh={refresh}
-                                    setrefresh={setrefresh}
-                                    idx={index}
-                                    loaded={gstcity_loaded}
-                                    count={gstcity_count}
-                                    bottom={gstcity_bottom}
-                                    setbottom={setgstcity_bottom}
-                                    disable_me={row2.length - 1 !== index}
-                                  />
-                                </div>
-                              ))}
+                              <MultiRowSearchInput
+                                data_list={gst_city_list}
+                                setdata_list={setgst_city_list}
+                                data_item_s={row2[index][1]}
+                                page={gst_city_page}
+                                setpage={setgst_city_page}
+                                setsearch_txt={setgst_city_search_item}
+                                refresh={refresh}
+                                setrefresh={setrefresh}
+                                idx={index}
+                                loaded={gstcity_loaded}
+                                count={gstcity_count}
+                                bottom={gstcity_bottom}
+                                setbottom={setgstcity_bottom}
+                                disable_me={row2.length - 1 !== index}
+                              />
                             </div>
-                          </Col>
+                          ))}
+                        </div>
+                      </Col>
 
-                          <Col lg={2} md={3} sm={3}>
+                      <Col lg={2} md={3} sm={3}>
+                        <div className="mb-3">
+                          <Label className="header-child">Pincode </Label>
+                          {row2.map((item, index) => (
                             <div className="mb-3">
-                              <Label className="header-child">Pincode </Label>
-                              {row2.map((item, index) => (
-                                <div className="mb-3">
-                                  <MultiRowSearchInput
-                                    data_list={gstpincode_list}
-                                    setdata_list={setgstpincode_list}
-                                    data_item_s={row2[index][2]}
-                                    page={gst_pincode_page}
-                                    setpage={setgst_pincode_page}
-                                    setsearch_txt={setgst_pincode_search_item}
-                                    refresh={refresh}
-                                    setrefresh={setrefresh}
-                                    idx={index}
-                                    count={gstpincode_count}
-                                    bottom={gstpincode_bottom}
-                                    setbottom={setgstpincode_bottom}
-                                    disable_me={row2.length - 1 !== index}
-                                  />
-                                </div>
-                              ))}
+                              <MultiRowSearchInput
+                                data_list={gstpincode_list}
+                                setdata_list={setgstpincode_list}
+                                data_item_s={row2[index][2]}
+                                page={gst_pincode_page}
+                                setpage={setgst_pincode_page}
+                                setsearch_txt={setgst_pincode_search_item}
+                                refresh={refresh}
+                                setrefresh={setrefresh}
+                                idx={index}
+                                count={gstpincode_count}
+                                bottom={gstpincode_bottom}
+                                setbottom={setgstpincode_bottom}
+                                disable_me={row2.length - 1 !== index}
+                              />
                             </div>
-                          </Col>
-                          <Col lg={2} md={3} sm={3}>
+                          ))}
+                        </div>
+                      </Col>
+                      <Col lg={2} md={3} sm={3}>
+                        <div className="mb-3">
+                          <Label className="header-child">Locality </Label>
+                          {row2.map((item, index) => (
                             <div className="mb-3">
-                              <Label className="header-child">Locality </Label>
-                              {row2.map((item, index) => (
-                                <div className="mb-3">
-                                  <MultiRowSearchInput
-                                    data_list={gst_locality_list}
-                                    setdata_list={setgst_locality_list}
-                                    data_item_s={row2[index][3]}
-                                    page={gst_locality_page}
-                                    setpage={setgst_locality_page}
-                                    setsearch_txt={setgst_locality_search_item}
-                                    refresh={refresh}
-                                    setrefresh={setrefresh}
-                                    idx={index}
-                                    loaded={gstlocality_loaded}
-                                    count={gstlocality_count}
-                                    bottom={gstlocality_bottom}
-                                    setbottom={setgstlocality_bottom}
-                                    disable_me={row2.length - 1 !== index}
-                                  />
-                                </div>
-                              ))}
+                              <MultiRowSearchInput
+                                data_list={gst_locality_list}
+                                setdata_list={setgst_locality_list}
+                                data_item_s={row2[index][3]}
+                                page={gst_locality_page}
+                                setpage={setgst_locality_page}
+                                setsearch_txt={setgst_locality_search_item}
+                                refresh={refresh}
+                                setrefresh={setrefresh}
+                                idx={index}
+                                loaded={gstlocality_loaded}
+                                count={gstlocality_count}
+                                bottom={gstlocality_bottom}
+                                setbottom={setgstlocality_bottom}
+                                disable_me={row2.length - 1 !== index}
+                              />
                             </div>
-                          </Col>
+                          ))}
+                        </div>
+                      </Col>
 
-                          <Col lg={2} md={3} sm={3}>
-                            <div className="mb-3">
-                              <Label className="header-child">Address</Label>
-                              {row2.map((item, index) => {
-                                return (
-                                  <Input
-                                    min={0}
-                                    key={index}
-                                    value={item[4]}
-                                    type="text"
-                                    className="form-control-md"
-                                    id="input"
-                                    style={{ marginBottom: "15px" }}
-                                    placeholder="Enter Address "
-                                    onChange={(val) => {
-                                      item[4] = val.target.value;
-                                      setrefresh(!refresh);
-                                    }}
-                                  />
-                                );
-                              })}
-                            </div>
-                          </Col>
-                          <Col lg={1} md={3} sm={3}>
-                            <div
-                              className="mb-3"
-                              style={{ textAlign: "center" }}
-                            >
-                              <Label className="header-child">H.O</Label>
-                              {row2.map((item, index) => {
-                                return (
-                                  <div
-                                  >
-                                    {row2.some((a) => a[5] == true && a[5] === row2[index][5]) &&
-                                      (
-                                        <FiCheckSquare
-                                          onClick={() => {
-                                            if (selected.includes(index)) {
-                                              let lis = [...selected];
-                                              setselected(
-                                                lis.filter((e) => e !== index)
-                                              );
-                                              setactive(false);
-                                              item[5] = false;
-                                            } else {
-                                              setselected([...selected, index]);
-                                              setactive(true);
-                                              item[5] = true;
-                                            }
-                                          }}
-                                          style={{ marginBottom: "40px" }}
-                                        />
-                                      )
-                                    }
-
-                                    {row2.every((a) => a[5] == false) ?
-                                      <FiSquare onClick={() => {
+                      <Col lg={2} md={3} sm={3}>
+                        <div className="mb-3">
+                          <Label className="header-child">Address</Label>
+                          {row2.map((item, index) => {
+                            return (
+                              <Input
+                                min={0}
+                                key={index}
+                                value={item[4]}
+                                type="text"
+                                className="form-control-md"
+                                id="input"
+                                style={{ marginBottom: "15px" }}
+                                placeholder="Enter Address "
+                                onChange={(val) => {
+                                  item[4] = val.target.value;
+                                  setrefresh(!refresh);
+                                }}
+                              />
+                            );
+                          })}
+                        </div>
+                      </Col>
+                      <Col lg={1} md={3} sm={3}>
+                        <div
+                          className="mb-3"
+                          style={{ textAlign: "center" }}
+                        >
+                          <Label className="header-child">H.O</Label>
+                          {row2.map((item, index) => {
+                            return (
+                              <div
+                              >
+                                {row2.some((a) => a[5] == true && a[5] === row2[index][5]) &&
+                                  (
+                                    <FiCheckSquare
+                                      onClick={() => {
                                         if (selected.includes(index)) {
                                           let lis = [...selected];
                                           setselected(
@@ -2087,92 +2069,112 @@ console.log("resp--------", resp)
                                           setactive(true);
                                           item[5] = true;
                                         }
-                                      }} style={{ marginBottom: "40px" }} />
-                                      : row2.some((a) => a[5] !== true && a[5] === row2[index][5]) ? <FiSquare style={{ marginBottom: "40px" }} /> : null
-                                    }
+                                      }}
+                                      style={{ marginBottom: "40px" }}
+                                    />
+                                  )
+                                }
 
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </Col>
-                          <Col lg={1}>
-                            <div
-                              className="mb-3"
-                              style={{ textAlign: "center" }}
+                                {row2.every((a) => a[5] == false) ?
+                                  <FiSquare onClick={() => {
+                                    if (selected.includes(index)) {
+                                      let lis = [...selected];
+                                      setselected(
+                                        lis.filter((e) => e !== index)
+                                      );
+                                      setactive(false);
+                                      item[5] = false;
+                                    } else {
+                                      setselected([...selected, index]);
+                                      setactive(true);
+                                      item[5] = true;
+                                    }
+                                  }} style={{ marginBottom: "40px" }} />
+                                  : row2.some((a) => a[5] !== true && a[5] === row2[index][5]) ? <FiSquare style={{ marginBottom: "40px" }} /> : null
+                                }
+
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </Col>
+                      <Col lg={1}>
+                        <div
+                          className="mb-3"
+                          style={{ textAlign: "center" }}
+                        >
+                          {row2.length > 1 ? (
+                            <Label className="header-child">Delete</Label>
+                          ) : null}
+                          {row2.map((item, index) => (
+                            <IconContext.Provider
+                              key={index}
+                              value={{
+                                className: "icon multi-input",
+                              }}
                             >
                               {row2.length > 1 ? (
-                                <Label className="header-child">Delete</Label>
+                                <>
+                                  {/* <div style={{ height: "14.5px" }}></div> */}
+                                  <div
+                                    onClick={() => {
+                                      deleteGST(item);
+                                    }}
+                                  >
+                                    <MdDeleteForever
+                                      style={{
+                                        justifyContent: "center",
+                                        cursor: "pointer",
+                                        marginBottom: "37px",
+                                      }}
+                                    />
+                                  </div>
+                                </>
                               ) : null}
-                              {row2.map((item, index) => (
-                                <IconContext.Provider
-                                  key={index}
-                                  value={{
-                                    className: "icon multi-input",
-                                  }}
-                                >
-                                  {row2.length > 1 ? (
-                                    <>
-                                      {/* <div style={{ height: "14.5px" }}></div> */}
-                                      <div
-                                        onClick={() => {
-                                          deleteGST(item);
-                                        }}
-                                      >
-                                        <MdDeleteForever
-                                          style={{
-                                            justifyContent: "center",
-                                            cursor: "pointer",
-                                            marginBottom: "37px",
-                                          }}
-                                        />
-                                      </div>
-                                    </>
-                                  ) : null}
-                                </IconContext.Provider>
-                              ))}
-                            </div>
-                          </Col>
-                        </Row>
-                        <>
-                          {row2.length < 20 && (
-                            <div style={{ margin: " 0 0 20px 0" }}>
-                              <span
-                                className="link-text"
-                                // onClick={() => {
-                                //   setgst_city_list([])
-                                //   setgst_city_page(1)
-                                //   setgstcity_bottom(103)
-                                //   if (row2[row2.length - 1][0].length != 15) {
-                                //     alert("GST No must be 15 digit");
-                                //   } else {
-                                //     addGST();
-                                //   }
-                                // }}
-                                onClick={() => {
-                                  setgst_city_list([])
-                                  setgst_city_page(1)
-                                  setgstcity_bottom(103)
-                                  const lastRow = row[row.length - 1];
-                                  if(row2[row2.length -1].some((data) => data === "")) {
-                                    alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
-                                  } else {
-                                    addGST();
-                                  }
-                                }}  
-                              >
-                                <IconContext.Provider
-                                  value={{
-                                    className: "link-text",
-                                  }}
-                                >
-                                  <MdAdd />
-                                </IconContext.Provider>
-                                Add Another GST
-                              </span>
-                            </div>
-                          )}
-                        </>
+                            </IconContext.Provider>
+                          ))}
+                        </div>
+                      </Col>
+                    </Row>
+                    <>
+                      {row2.length < 20 && (
+                        <div style={{ margin: " 0 0 20px 0" }}>
+                          <span
+                            className="link-text"
+                            // onClick={() => {
+                            //   setgst_city_list([])
+                            //   setgst_city_page(1)
+                            //   setgstcity_bottom(103)
+                            //   if (row2[row2.length - 1][0].length != 15) {
+                            //     alert("GST No must be 15 digit");
+                            //   } else {
+                            //     addGST();
+                            //   }
+                            // }}
+                            onClick={() => {
+                              setgst_city_list([])
+                              setgst_city_page(1)
+                              setgstcity_bottom(103)
+                              const lastRow = row[row.length - 1];
+                              if (row2[row2.length - 1].some((data) => data === "")) {
+                                alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+                              } else {
+                                addGST();
+                              }
+                            }}
+                          >
+                            <IconContext.Provider
+                              value={{
+                                className: "link-text",
+                              }}
+                            >
+                              <MdAdd />
+                            </IconContext.Provider>
+                            Add Another GST
+                          </span>
+                        </div>
+                      )}
+                    </>
                   </>
                 </CardBody>
               ) : null}
@@ -2613,7 +2615,7 @@ console.log("resp--------", resp)
                           navigate("/master/clients/addclient", {
                             state: {
                               type: "same_as",
-                              billto : client,
+                              billto: client,
                               // bill_to_name: validation.values.name,
                               // bill_to_email: validation.values.email,
                               // bill_to_phone_number:
