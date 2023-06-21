@@ -715,7 +715,7 @@ let docket_no_list = []
                   <div className="mb-2 row ">
                     
                      <div style={{color:"blue",fontSize:"15px",marginTop:"10px"}}> 
-                      Docket Present In This Manifestqq = [
+                      Docket Present In This Manifest = [
                         {
                           docket_no_list.map((v)=>{
                               return <a>{v}{docket_no_list[docket_no_list.length-1]===v?null:", "}</a>

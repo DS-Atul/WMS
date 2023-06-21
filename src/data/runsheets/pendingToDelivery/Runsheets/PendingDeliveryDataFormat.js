@@ -16,7 +16,6 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
     console.log("a-------------", a)
   }, [local_list])
 
-
   return (
     <>
       <div className="table">
@@ -74,12 +73,12 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
                       <td>
                         {toTitleCase(local.shipper_city) +
                           ", " +
-                          toTitleCase(local.shipper_state)}
+                          toTitleCase(local.shipper_locality)}
                       </td>
                       <td>
                         {toTitleCase(local.consignee_city) +
                           ", " +
-                          toTitleCase(local.consignee_state)}
+                          toTitleCase(local.consignee_locality)}
                       </td>
                       <td>
                       {

@@ -26,7 +26,7 @@ import {
 } from "reactstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { setToggle } from "../../../store/parentFilter/ParentFilter";
+import { setIncomingTab, setManifestTab, setToggle } from "../../../store/parentFilter/ParentFilter";
 import {
   setAlertType,
   setDataExist,
@@ -100,6 +100,7 @@ const AddOrder = () => {
 
   //Get Updated Location Data
   const [order, setorder] = useState([]);
+  console.log("order====", order)
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
@@ -377,7 +378,19 @@ const AddOrder = () => {
   // }, [selectedFile]);
   // adding extra input fields in Invoice
   const [invoice_img, setinvoice_img] = useState("");
-  const [today, settoday] = useState("");
+  let date = new Date();
+  let added_date_time =
+    String(date.getDate()).length === 1
+      ? "0" + String(date.getDate())
+      : String(date.getDate());
+  let month =
+    String(date.getMonth() + 1).length === 1
+      ? "0" + String(date.getMonth() + 1)
+      : String(date.getMonth() + 1);
+  let year = String(date.getFullYear());
+  let val = (`${year}-${month}-${added_date_time}`)
+  const [today, settoday] = useState(val);
+  console.log("today=====", today)
   const [invoice_no, setinvoice_no] = useState("");
   const [invoice_value, setinvoice_value] = useState("");
   const [e_waybill_inv, sete_waybill_inv] = useState("");
@@ -389,8 +402,11 @@ const AddOrder = () => {
     invoice_value,
     invoice_img,
   ];
+
   const [row2, setrow2] = useState([dimension_list2]);
-  const [row4, setrow4] = useState([["", "", "", "", ""]]);
+  console.log("row2---", row2)
+  const [row4, setrow4] = useState([["", val, "", "", ""]]);
+  console.log("row4====", row4[row4.length - 1])
 
   //For Calculation Info
   const [cal_type, setcal_type] = useState("");
@@ -604,12 +620,12 @@ const AddOrder = () => {
   // Invoice
   const addinvoice = () => {
     setinvoice_img("");
-    settoday("");
+    // settoday("");
     setinvoice_no("");
     setinvoice_value("");
-    dimension_list2 = ["", "", "", ""];
+    dimension_list2 = ["", val, "", "", ""];
     setrow2([...row2, dimension_list2]);
-    setrow4([...row4, ["", "", "", "", ""]]);
+    setrow4([...row4, ["", val, "", "", ""]]);
   };
   const deleteinvoice = (item2) => {
     let temp2 = [...row2];
@@ -669,6 +685,7 @@ const AddOrder = () => {
 
   const [same_as, setsame_as] = useState(false);
   const [showOrder, setShowOrder] = useState(false);
+  console.log("showOrder=====", showOrder)
   const [toggle_order, settoggle_order] = useState(false);
 
   const [linked_order, setlinked_order] = useState("");
@@ -735,13 +752,13 @@ const AddOrder = () => {
       } else if (client === "") {
         setclient_error(true);
         doc_no_scroll.scrollIntoView();
-      } 
+      }
       else if (ewaybill_no?.length !== 12 && booking_through) {
         setewaybill_no_error(true);
-        doc_no_scroll.scrollIntoView();      
+        doc_no_scroll.scrollIntoView();
       } else if (!cold_chain && !nonecold_chain) {
         setcoldchain_error(true);
-        doc_no_scroll.scrollIntoView();  
+        doc_no_scroll.scrollIntoView();
       }
       else if (type_of_booking === "") {
         setbooking_type_error(true);
@@ -768,7 +785,7 @@ const AddOrder = () => {
       else if (consignee_n === "" && !booking_through) {
         setconsignee_error(true);
         doc_no_scroll.scrollIntoView();
-      } 
+      }
       else if (consginee_st === "" && !booking_through) {
         setstate_error_c(true);
         consignee.scrollIntoView();
@@ -826,9 +843,9 @@ const AddOrder = () => {
       }
 
       else {
-        // setShowOrder(!isupdating && true);
         // aa(values)
-        isupdating ? update_order(values) : send_order_data(values);
+        // isupdating ? update_order(values) : send_order_data(values);
+        isupdating ? update_order(values) : setShowOrder(true);
       }
     },
   });
@@ -1060,7 +1077,7 @@ const AddOrder = () => {
   //Post Order Image
   const send_order_image = async (awb) => {
     let newrow3 = row3.filter((e) => e[0] !== "" && e[1] !== "");
-    let newrow4 = row4.filter((e) =>  e[2] !== "" && e[3] !== "");
+    let newrow4 = row4.filter((e) => e[2] !== "" && e[3] !== "");
     const docket_imageform = new FormData();
     if (newrow3.length !== 0 || newrow4.length !== 0) {
       docket_imageform.append(`awb_no`, awb);
@@ -1085,23 +1102,23 @@ const AddOrder = () => {
 
       docket_imageform.append(
         "invoice_count",
-        row4[0][0] !== "" ? row4.length : 0
+        row4.length
       );
-      if (row4.length !== 0 && row4[0][0] !== "") {
-        for (let index = 0; index < row4.length; index++) {
-          if(row4[index][4]){
-            docket_imageform.append(
-              `InvoiceImage${index}`,
-              row4[index][4],
-              row4[index][4]?.nane
-            );
-          }
-          docket_imageform.append(`invoice_date${index}`, row4[index][1]);
-          docket_imageform.append(`invoice_no${index}`, row4[index][2]);
-          docket_imageform.append(`invoice_amount${index}`, row4[index][3]);
-          docket_imageform.append(`ewayBill_no${index}`, row4[index][0]);
+      // if (row4[row4.length-1][2] !== "" &&  row4[row4.length-1][3] !== "") {
+      for (let index = 0; index < row4.length; index++) {
+        if (row4[index][4]) {
+          docket_imageform.append(
+            `InvoiceImage${index}`,
+            row4[index][4],
+            row4[index][4]?.nane
+          );
         }
+        docket_imageform.append(`invoice_date${index}`, row4[index][1]);
+        docket_imageform.append(`invoice_no${index}`, row4[index][2]);
+        docket_imageform.append(`invoice_amount${index}`, row4[index][3]);
+        docket_imageform.append(`ewayBill_no${index}`, row4[index][0]);
       }
+      // }
 
       await axios
         .post(ServerAddress + "booking/add-order-images/", docket_imageform, {
@@ -1112,20 +1129,19 @@ const AddOrder = () => {
         })
         .then((res) => {
           if (res.data.Data === "Done") {
-            dispatch(setShowAlert(true));
-            dispatch(setDataExist(`Image Has Been Saved Successfully !`));
-            dispatch(setAlertType("success"));
-            // alert(`Your Docket Image Saved Successfully`);
+            // dispatch(setShowAlert(true));
+            // dispatch(setDataExist(`Image Has Been Saved Successfully !`));
+            // dispatch(setAlertType("success"));
           }
         })
         .catch((err) => {
-          alert("errrrrrrrrrrrImage", err);
+          alert("Error While Post Image", err);
         });
     }
   };
 
   // Post Order Data
-  const send_order_data = async (values) => {
+  const send_order_data = async (values, type) => {
     try {
       const response = await axios.post(
         ServerAddress + "booking/add_order/",
@@ -1251,10 +1267,27 @@ const AddOrder = () => {
         }
       );
       // .then(function (response) {
-        console.log("response--", response)
+      console.log("response--", response)
       if (response.data.status === "success") {
+        if (type === "yes") {
+          setewaybill_no("")
+          seteway_value([])
+          setrow2([["", val, "", "", ""]])
+          seteway_list([])
+          seteway_value([])
+          seteway_detail_l([])
+          setlocality_sel("")
+          setlocality_sel_to("")
+          setrow4([["", val, "", "", ""]])
+          settoggle_order(true);
+          setShowOrder(false);
+        }
+        else {
+          setShowOrder(false);
+          navigate("/booking/orders");
+        }
         // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no,response.data.data.booking_at)
-        if (row3[0][0] !== "" || row4[0][0] !== "") {
+        if (row4[row4.length - 1][2] !== "" && row4[row4.length - 1][3] !== "") {
           send_order_image(response.data.data.docket_no);
         }
         dispatch(setToggle(true));
@@ -1263,8 +1296,8 @@ const AddOrder = () => {
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Order  ${docket_no_value} Added sucessfully`));
         dispatch(setAlertType("success"));
-        setShowOrder(true);
-      } 
+        // setShowOrder(true);
+      }
       else if (response.data === "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Docket Number "${docket_no_value}"  Already Exist`));
@@ -1439,7 +1472,7 @@ const AddOrder = () => {
         dispatch(setShowAlert(true));
         navigate("/booking/orders");
       }
-       else {
+      else {
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Somthing Went Wrong`));
         dispatch(setAlertType("warning"));
@@ -1991,19 +2024,19 @@ const AddOrder = () => {
     }
   }, [client_id]);
 
-  useEffect(() => {
-    let date = new Date();
-    let date_n =
-      String(date.getDate()).length === 1
-        ? "0" + String(date.getDate())
-        : String(date.getDate());
-    let month =
-      String(date.getMonth() + 1).length === 1
-        ? "0" + String(date.getMonth() + 1)
-        : String(date.getMonth() + 1);
-    let year = String(date.getFullYear());
-    settoday(`${year}-${month}-${date_n}`);
-  }, []);
+  // useEffect(() => {
+  //   let date = new Date();
+  //   let date_n =
+  //     String(date.getDate()).length === 1
+  //       ? "0" + String(date.getDate())
+  //       : String(date.getDate());
+  //   let month =
+  //     String(date.getMonth() + 1).length === 1
+  //       ? "0" + String(date.getMonth() + 1)
+  //       : String(date.getMonth() + 1);
+  //   let year = String(date.getFullYear());
+  //   settoday(`${year}-${month}-${date_n}`);
+  // }, []);
 
   // useEffect(() => {
   //   if(isupdating && order.is_delivered)
@@ -2455,25 +2488,6 @@ const AddOrder = () => {
     settoggle_order(true);
     setsame_as(true);
   };
-  const handleClsOrder = () => {
-    setewaybill_no("")
-    seteway_value([])
-    setrow2([])
-    seteway_list([])
-    seteway_value([])
-    seteway_detail_l([])
-    setlocality_sel("")
-    setlocality_sel_to("")
-    setrow4([["", "", "", "", ""]])
-    settoggle_order(true);
-    setShowOrder(false);
-  };
-
-  useEffect(() => {
-    if (same_as && showOrder) {
-      navigate("/booking/orders");
-    }
-  }, [showOrder, same_as]);
 
   //  step 1
   const [eway_confirm, seteway_confirm] = useState(false);
@@ -3997,20 +4011,6 @@ const AddOrder = () => {
 
   return (
     <div>
-      <Modal show={showOrder} onHide={handleCloseOrder}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>If Client is same as previous Client</Modal.Body>
-        <Modal.Footer>
-          <Button type="button" variant="secondary" onClick={handleClsOrder}>
-            Yes
-          </Button>
-          <Button type="button" variant="primary" onClick={handleSubmitOrder}>
-            No
-          </Button>
-        </Modal.Footer>
-      </Modal>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
@@ -4049,6 +4049,21 @@ const AddOrder = () => {
         }}
         encType="multipart/form-data"
       >
+        <Modal show={showOrder} onHide={handleCloseOrder}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>If Client is same as previous Client</Modal.Body>
+          <Modal.Footer>
+            <Button type="button" variant="secondary" onClick={() => send_order_data(validation.values, "yes")}>
+              Yes
+            </Button>
+            <Button type="button" variant="primary" onClick={() => send_order_data(validation.values, "no")}>
+              {/* <Button type="button" variant="primary" onClick={handleSubmitOrder}> */}
+              No
+            </Button>
+          </Modal.Footer>
+        </Modal>
         {/* Booking type */}
 
         <div className="m-3">
@@ -4255,7 +4270,7 @@ const AddOrder = () => {
                                     if (e.target.value.length === 12) {
                                       check_ewb_attached(e.target.value);
                                     }
-                                    else{
+                                    else {
                                       setewaybill_no_error(true);
                                     }
                                   }}
@@ -5944,7 +5959,7 @@ const AddOrder = () => {
                               onClick={() => {
                                 if (
                                   order.current_status === "SHIPMENT PICKED UP"
-                                ) {
+                                ) {                       
                                   navigate("/manifest/pickeduporders");
                                 } else {
                                   navigate("/booking/orders/adddocketstatus", {
@@ -5952,6 +5967,7 @@ const AddOrder = () => {
                                   });
                                 }
                               }}
+                              disabled={order.current_status !==  "SHIPMENT PICKED UP" && order.current_status !== "SHIPMENT ORDER RECEIVED"}
                             >
                               Add Status
                             </Button>
@@ -6067,10 +6083,10 @@ const AddOrder = () => {
                           order_active_btn === "first" ? "#C4D7FE" : null,
                       }}
                       className="btn1 footer-text"
-                      onClick={() => {
-                        setorder_active_btn("first");
-                        updateCurrentStep(1);
-                      }}
+                      // onClick={() => {
+                      //   setorder_active_btn("first");
+                      //   updateCurrentStep(1);
+                      // }}
                     >
                       {/* Packages */}
                       Dimensions
@@ -6083,10 +6099,10 @@ const AddOrder = () => {
                           order_active_btn === "second" ? "#C4D7FE" : null,
                       }}
                       className="btn2 footer-text"
-                      onClick={() => {
-                        setorder_active_btn("second");
-                        updateCurrentStep(2);
-                      }}
+                      // onClick={() => {
+                      //   setorder_active_btn("second");
+                      //   updateCurrentStep(2);
+                      // }}
                     >
                       Order Images
                     </div>
@@ -6096,10 +6112,10 @@ const AddOrder = () => {
                           order_active_btn === "third" ? "#C4D7FE" : null,
                       }}
                       className="btn3 footer-text"
-                      onClick={() => {
-                        setorder_active_btn("third");
-                        updateCurrentStep(3);
-                      }}
+                      // onClick={() => {
+                      //   setorder_active_btn("third");
+                      //   updateCurrentStep(3);
+                      // }}
                     >
                       Invoices
                     </div>
@@ -7067,8 +7083,33 @@ const AddOrder = () => {
                 <Button
                   type="button"
                   className="btn btn-info m-1 cu_btn"
-                  // disabled={currentStep === labelArray.length}
-                  onClick={() => updateStep(currentStep + 1)}
+                  onClick={() => {
+                    let total_no_of_pieces = 0;
+                    row.forEach((package_i) => {
+                      let no_pi = package_i[3];
+                      total_no_of_pieces += no_pi !== "" ? parseInt(no_pi) : 0;
+                    });
+                    if (
+                      (length !== "" || breadth !== "" || height !== "" || pieces !== "") &&
+                      (length === "" || breadth === "" || height === "" || pieces === "")
+                    ) {
+                      alert(
+                        "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
+                      );
+                    }
+                    else if (total_no_of_pieces !== parseInt(validation.values.total_quantity)) {
+                      alert(
+                        "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
+                      );
+                    }
+                    else {
+                      updateStep(currentStep + 1)
+                    }
+                  }
+                  }
+                // disabled={currentStep === labelArray.length}
+                // onClick={() => 
+                //   updateStep(currentStep + 1)}
                 >
                   Next <BiSkipNext size={18} />
                 </Button>

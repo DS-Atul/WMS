@@ -5,6 +5,7 @@ import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import Modal from "react-bootstrap/Modal";
 import Question from "../../../assets/images/bookings/question.png";
 import correct from "../../../assets/images/bookings/check-mark.png";
+import pdf from "../../../assets/images/Pdf/printer.png";
 import cross from "../../../assets/images/bookings/remove.png";
 // import { setMain_checkbox } from "../../../store/Components/ListDisplay/Main_Checkbox/action";
 import axios from "axios";
@@ -302,6 +303,16 @@ const IncomingManifestDataFormat = ({ data, data1, can_delete }) => {
               }</td> */}
               <td>{depart.box_count }</td>
               <td>{depart.total_weight}</td>
+              <td>
+                <div>
+                  <Link
+                    to="/manifest/roughmanfest"
+                    state={{ manifest: depart, is_manifest:true }}
+                  >
+                    <img src={pdf} width="20" height="20" />
+                  </Link>
+                </div>
+              </td>
 
               {(can_update || user.is_superuser) && (
 

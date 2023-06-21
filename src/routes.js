@@ -118,6 +118,14 @@ const HiredDetails = React.lazy(() =>
 // Master
 const Assets = React.lazy(() => import("./screens/master/assets/Assets.js"));
 
+const City = React.lazy(() => import("./screens/master/locations/City.js"));
+
+const AddCity = React.lazy(() => import("./screens/master/locations/AddCity.js"));
+
+const Pincode = React.lazy(() => import("./screens/master/locations/Pincode.js"));
+
+const AddPincode = React.lazy(() => import("./screens/master/locations/AddPincode.js"));
+
 const AssetHistoryPage = React.lazy(() => import("./screens/master/assets/assetHistory/AssetHistoryPage.js"));
 
 const AssigneBranch = React.lazy(() =>
@@ -666,6 +674,22 @@ const routes = [
   {
     path: "/master/assets",
     element: <Assets />,
+  },
+  {
+    path: "/master/city",
+    element: <City />,
+  },
+  {
+    path: "/master/city/AddCity",
+    element: <AddCity />,
+  },
+  {
+    path: "/master/pincode",
+    element: <Pincode />,
+  },
+  {
+    path: "/master/pincode/AddPincode",
+    element: <AddPincode />,
   },
   {
     path: "/master/assets/assignbranch",

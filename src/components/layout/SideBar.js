@@ -17,7 +17,7 @@ import {
   setFilterC,
   setFilterD,
 } from "../../store/filterValue/FilterValue";
-import { setDepartTab, setEwayBilltTab, setHubTab, setIncomingTab, setManifestTab, setRoughTab, setRunsheetTab } from "../../store/parentFilter/ParentFilter";
+import { setDepartTab, setEwayBilltTab, setHubTab, setIncomingTab, setLocationTab, setManifestTab, setRoughTab, setRunsheetTab } from "../../store/parentFilter/ParentFilter";
 
 const SideBar = () => {
   const dispatch = useDispatch();
@@ -46,6 +46,7 @@ const SideBar = () => {
   };
 
   const handleClick = (e) => {
+    console.log(e)
     if(e[0] ==="Pending For Dispatch"){
       dispatch(setManifestTab(1));
     }
@@ -76,6 +77,9 @@ const SideBar = () => {
     }
     else if(e[0] === "DocketWithEwayBill"){
       dispatch(setEwayBilltTab(1));
+    }
+    else if(e[0] === "Locations"){
+      dispatch(setLocationTab(1));
     }
   }
 

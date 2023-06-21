@@ -201,7 +201,11 @@ const AddBranchForward = (manifest) => {
       chargeable_weight: "",
       driver_name:"",
       supporting_staff:"",
-      no_of_box: hub_data.box_count || ""
+      no_of_box: hub_data.box_count || "",
+      tsp: "",
+      rate: "",
+      carrier_charges: "",
+      tax_slab: "",
     },
 
     validationSchema: Yup.object({
@@ -210,6 +214,7 @@ const AddBranchForward = (manifest) => {
       .max(10, "Vehicle Number must be at most 10").required("Vehicle Number is required"),
       // no_of_bags: Yup.string().required("Bags is required"),
       // no_of_box: Yup.string().required("Box is required"),
+      chargeable_weight: Yup.string().required("Enter Chargable Weight"),
       actual_weight: Yup.string().required("Manifest Weight is required"),
       driver_name: Yup.string().required("Driver Name is required"),
       supporting_staff: Yup.string().required("Spporting Staff Name is required"),
@@ -278,6 +283,10 @@ const AddBranchForward = (manifest) => {
           supporting_staff: values.supporting_staff,
           change_fields:change_fields,
           hubtransfer_no:manifest_no,
+          tsp: values.tsp ? values.tsp : 0,
+          rate:  values.rate ? values.rate : 0,
+          carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
+          tax_slab: values.tax_slab,
         },
 
         {
@@ -1216,10 +1225,21 @@ console.log("docket_nos-----", docket_nos)
                             />
                           </div>
                         </Col>
+
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
-                            <Label className="header-child">TSP* :</Label>
-                            <Input id="input" disabled placeholder="TSP Value" />
+                            <Label className="header-child">TSP :</Label>
+                            <Input
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={validation.values.tsp || ""}
+                              type="number"
+                              min={0}
+                              className="form-control-md"
+                              id="input"
+                              name="tsp"
+                              placeholder="Enter TSP"
+                            />
                           </div>
                         </Col>
 
@@ -1243,11 +1263,13 @@ console.log("docket_nos-----", docket_nos)
                               className="form-control-md"
                               id="input"
                               name="actual_weight"
-                              placeholder="Enter Manifest Weight"
+                              placeholder="Enter Actual Weight"
                             />
+                               <FormFeedback type="invalid">
+                              Please Enter Actual Weight
+                            </FormFeedback>
                           </div>
                         </Col>
-
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">
@@ -1268,26 +1290,45 @@ console.log("docket_nos-----", docket_nos)
                               className="form-control-md"
                               id="input"
                               name="chargeable_weight"
-                              placeholder="Enter Manifest Weight"
+                              placeholder="Enter Chargeable Weight"
                             />
+                              <FormFeedback type="invalid">
+                              Please Enter Chargeable Weight
+                            </FormFeedback>
                           </div>
                         </Col>
 
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
-                            <Label className="header-child">Rate* :</Label>
-                            <Input id="input" disabled placeholder="Enter Rate" />
+                            <Label className="header-child">Rate :</Label>
+                            <Input
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={validation.values.rate || ""}
+                              type="number"
+                              min={0}
+                              className="form-control-md"
+                              id="input"
+                              name="rate"
+                              placeholder="Enter Rate"
+                            />
                           </div>
                         </Col>
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">
-                              Other Charges* :
+                              Other Charges :
                             </Label>
                             <Input
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={validation.values.other_charges || ""}
+                              type="number"
+                              min={0}
+                              className="form-control-md"
                               id="input"
-                              disabled
-                              placeholder="Enter Charges"
+                              name="other_charges"
+                              placeholder="Enter Other Charges"
                             />
                           </div>
                         </Col>
@@ -1297,9 +1338,15 @@ console.log("docket_nos-----", docket_nos)
                               Carrier Charges
                             </Label>
                             <Input
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={validation.values.carrier_charges || ""}
+                              type="number"
+                              min={0}
+                              className="form-control-md"
                               id="input"
-                              disabled
-                              placeholder="Enter Charges"
+                              name="carrier_charges"
+                              placeholder="Enter Carrier Charges"
                             />
                           </div>
                         </Col>
@@ -1307,8 +1354,13 @@ console.log("docket_nos-----", docket_nos)
                           <div className="mb-2">
                             <Label className="header-child">Tax Slab</Label>
                             <Input
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={validation.values.tax_slab || ""}
+                              type="text"
+                              className="form-control-md"
                               id="input"
-                              disabled
+                              name="tax_slab"
                               placeholder="Enter Tax Slab"
                             />
                           </div>

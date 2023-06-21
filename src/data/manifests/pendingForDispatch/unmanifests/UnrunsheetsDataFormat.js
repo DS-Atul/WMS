@@ -51,8 +51,8 @@ const UnrunsheetsDataFormat = ({ Manifest_list, remove_list }) => {
                     <td>{Manifest.docket_no}</td>
 
                     <td>{booking_date_n}</td>
-                    <td>{toTitleCase(Manifest.shipper_city)}</td>
-                    <td>{toTitleCase(Manifest.consignee_city)}</td>
+                    <td>{toTitleCase(Manifest.shipper_city)+", "+toTitleCase(Manifest.shipper_locality)}</td>
+                    <td>{toTitleCase(Manifest.consignee_city)+", "+toTitleCase(Manifest.consignee_locality)}</td>
                     <td>{Manifest.actual_weight}</td>
                     <td>{Manifest.total_quantity}</td>
                     <td>{(Manifest.issue).length}</td>

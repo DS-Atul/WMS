@@ -8,6 +8,7 @@ const IncomingManifestTitle = [
   // "Is Open Box",
   "Total Box",
   "Total Weight",
+  "Print",
   "Action",
 ];
 

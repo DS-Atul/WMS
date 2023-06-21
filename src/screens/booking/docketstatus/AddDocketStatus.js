@@ -4,6 +4,7 @@ import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IconContext } from "react-icons";
+import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -84,6 +85,7 @@ const AddDocketStatus = () => {
 
   //Vehicle
   const [vehicle_list_s, setvehicle_list_s] = useState([])
+  const [rental, setrental] = useState(false);
   const [vehicle, setvehicle] = useState("")
   const [vehicle_id, setvehicle_id] = useState("")
   const [vehicle_page, setvehicle_page] = useState(1)
@@ -184,7 +186,7 @@ const AddDocketStatus = () => {
       });
   };
 
-const [refresh, setrefresh] = useState(false)
+  const [refresh, setrefresh] = useState(false)
   // For Barcode validation
   const check_barcode = (barcode, index) => {
     axios
@@ -334,7 +336,7 @@ const [refresh, setrefresh] = useState(false)
           if (status == "SHIPMENT PICKED UP") {
             add_barcode();
           }
-          if (list_data.length > 0 && status == "SHIPMENT PICKED UP" && list_data.length>0) {
+          if (list_data.length > 0 && status == "SHIPMENT PICKED UP" && list_data.length > 0) {
             UpateEwaybillPartB({
               gstin_no: gstin_no,
               Data: list_data,
@@ -526,34 +528,38 @@ const [refresh, setrefresh] = useState(false)
   }, [status])
 
   useEffect(() => {
-    if(EwayBillData?.length>0){
-    let li = [];
-    EwayBillData?.forEach((e) => {
-      let obj = {
-        transMode: "1",
-        fromPlace: userDetail.branch_nm,
-        fromState: userDetail.branch_location_state_code,
-        transDocNo: e.trans_doc_no,
-        transDocDate: String(
-          e.docDate.split("-")[2] +
-          "/" +
-          e.docDate.split("-")[1] +
-          "/" +
-          e.docDate.split("-")[0]
-        ),
-        vehicleNo: vehicle,
-        reasonCode: "2",
-        reasonRem: "text",
-        userGstin: gstin_no,
-        ewbNo: e.ewb_no,
-      };
-      li.push(obj);
-    });
-    setlist_data(li)
-  }
+    if (EwayBillData?.length > 0) {
+      let li = [];
+      EwayBillData?.forEach((e) => {
+        let obj = {
+          transMode: "1",
+          fromPlace: userDetail.branch_nm,
+          fromState: userDetail.branch_location_state_code,
+          transDocNo: e.trans_doc_no,
+          transDocDate: String(
+            e.docDate.split("-")[2] +
+            "/" +
+            e.docDate.split("-")[1] +
+            "/" +
+            e.docDate.split("-")[0]
+          ),
+          vehicleNo: vehicle,
+          reasonCode: "2",
+          reasonRem: "text",
+          userGstin: gstin_no,
+          ewbNo: e.ewb_no,
+        };
+        li.push(obj);
+      });
+      setlist_data(li)
+    }
     // Rest of your code...
   }, [EwayBillData, vehicle]);
-
+  useEffect(() => {
+    if (vehicle !== "" || vehicle?.toString().length === 10) {
+      setvehicle_error(false)
+    }
+  }, [vehicle])
 
   return OpenCrop ? (
     <Modal show={OpenCrop} onHide={handleClose}>
@@ -654,28 +660,97 @@ const [refresh, setrefresh] = useState(false)
                         </div>
                       </Col>
                       {status == "SHIPMENT PICKED UP" ? (
-                        <Col lg={4} md={6} sm={6}>
+                        <>
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Market Vehcile:
+                              </Label>
+                              <Row>
+                                <Col lg={12} md={12} sm={12}>
+                                  {rental ? (
+                                    <FiCheckSquare
+                                      size={20}
+                                      onClick={() => {
+                                        setrental(false);
+                                      }}
+                                    />
+                                  ) : (
+                                    <FiSquare
+                                      size={20}
+                                      onClick={() => {
+                                        setrental(true);
+                                      }}
+                                    />
+                                  )}
+                                </Col>
+                              </Row>
+                            </div>
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
-                            <Label className="header-child">Vehicle *</Label>
-                            <SearchInput
-                              data_list={vehicle_list_s}
-                              setdata_list={setvehicle_list_s}
-                              data_item_s={vehicle}
-                              set_data_item_s={setvehicle}
-                              set_id={setvehicle_id}
-                              page={vehicle_page}
-                              setpage={setvehicle_page}
-                              error_message={"Please Select Any State"}
-                              error_s={vehicle_error}
-                              search_item={vehicle_search_item}
-                              setsearch_item={setvehicle_search_item}
-                              loaded={vehicle_loaded}
-                              count={vehicle_count}
-                              bottom={vehicle_bottom}
-                              setbottom={setvehicle_bottom}
-                            />
-                          </div>
-                        </Col>
+                          {rental ? (
+                            <Label className="header-child">
+                              {" "}
+                              Market Vehcile No* :
+                            </Label>
+                          ) : (
+                            <Label className="header-child">
+                              Vehcile No* :
+                            </Label>
+                          )}
+                          {rental ? null : (
+                              <SearchInput
+                                data_list={vehicle_list_s}
+                                setdata_list={setvehicle_list_s}
+                                data_item_s={vehicle}
+                                set_data_item_s={setvehicle}
+                                set_id={setvehicle_id}
+                                page={vehicle_page}
+                                setpage={setvehicle_page}
+                                error_message={"Please Select Any State"}
+                                error_s={vehicle_error}
+                                search_item={vehicle_search_item}
+                                setsearch_item={setvehicle_search_item}
+                                loaded={vehicle_loaded}
+                                count={vehicle_count}
+                                bottom={vehicle_bottom}
+                                setbottom={setvehicle_bottom}
+                              />
+                              )}
+
+                              {rental &&
+                                <div className="mb-2">
+                                  <Input
+                                    name="vehicle_no"
+                                    type="text"
+                                    id="input"
+                                    maxLength={10}
+                                    value={vehicle}
+                                    onChange={(e) => {
+                                      setvehicle(e.target.value);
+                                    }}
+                                    onBlur={() => {
+                                      if (vehicle === "" || vehicle?.toString().length !== 10) {
+                                        setvehicle_error(true)
+                                      }
+                                    }
+                                    }
+                                    invalid={
+                                      vehicle_error
+                                    }
+                                  />
+                                  {vehicle_error && (
+                                    <FormFeedback type="invalid">
+                                      Vehicle Number Must Have 10 Character
+                                    </FormFeedback>
+                                  )}
+                                </div>
+                              }
+                            </div>
+                          </Col>
+                        </>
                       ) : null}
                       {status == "SHIPMENT IN TRANSIT" ? (
                         <Col lg={4} md={6} sm={6}>
@@ -713,7 +788,7 @@ const [refresh, setrefresh] = useState(false)
                         </Col>
                       ) : null}
 
-                      <Col lg={8} md={8} sm={8}>
+                      <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">Remarks:</Label>
                           <div>

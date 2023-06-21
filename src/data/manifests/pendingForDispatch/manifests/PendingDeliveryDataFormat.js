@@ -9,6 +9,7 @@ import PendingDeliveryDataTitle from "./PendingDeliveryDataTitle";
 import { useEffect } from "react";
 
 const PendingDeliveryDataFormat = ({ check, local_list }) => {
+  console.log("local_list===", local_list)
   const searchData = useSelector((state) => state.searchbar.search_item);
   const [data_title, setdata_title] = useState(PendingDeliveryDataTitle);
 
@@ -85,9 +86,9 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
                     >
                       <td>{local.docket_no}</td>
                       <td>{local.booking_at ? booking_date_n : "-"}</td>
-                      <td>{toTitleCase(local.shipper_city)}</td>
+                      <td>{toTitleCase(local.shipper_city)+", "+toTitleCase(local.shipper_locality)}</td>
 
-                      <td>{toTitleCase(local.consignee_city)}</td>
+                      <td>{toTitleCase(local.consignee_city)+", "+toTitleCase(local.consignee_locality)}</td>
                       <td>{local.actual_weight}</td>
                       <td>{local.total_quantity}</td>
                       <td>{(local.issue).length}</td>

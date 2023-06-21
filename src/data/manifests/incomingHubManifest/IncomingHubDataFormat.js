@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 // import { setMain_checkbox } from "../../../store/Components/ListDisplay/Main_Checkbox/action";
 import axios from "axios";
+import pdf from "../../../assets/images/Pdf/printer.png";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setIsDeleted,
@@ -201,6 +202,16 @@ const IncomingHubDataFormat = ({ data, data1 }) => {
               <td>{hub.bag_count}</td>
               <td>{hub.box_count}</td>
               <td>{hub.total_weight}</td>
+              <td>
+                <div>
+                  <Link
+                    to="/manifest/branch_pdf"
+                    state={{ manifest: hub }}
+                  >
+                    <img src={pdf} width="20" height="20" />
+                  </Link>
+                </div>
+              </td>
               <td>
                 <div style={{ marginLeft: "20px" }}>
                   {hub.is_recieved ? (

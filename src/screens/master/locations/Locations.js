@@ -12,6 +12,7 @@ import Nav_Btn from "../../../components/btn/NavBtn";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import { setPageNumber } from "../../../store/pagination/Pagination";
 import { useSelector, useDispatch } from "react-redux";
+import LocationNavigate from "./locationTab/LocationNavigate";
 import Navigate from "../navigateTab/Navigate";
 
 const Locations = () => {
@@ -73,6 +74,7 @@ const Locations = () => {
   return (
     <>
       <PageTitle page="Locations" />
+      <LocationNavigate />
       <Title title="Locations" parent_title="Masters" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>

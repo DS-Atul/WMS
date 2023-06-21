@@ -92,9 +92,9 @@ const UserInfo = () => {
 
   const [designation_err, setdesignation_err] = useState(false);
   const [user_role_err, setuser_role_err] = useState(false);
-  const [home_branch_id, sethome_branch_id] = useState("");
+  const [home_branch_id, sethome_branch_id] = useState(user_detail.home_branch);
   const [home_branch_list, sethome_branch_list] = useState([]);
-  const [home_branch, sethome_branch] = useState("");
+  const [home_branch, sethome_branch] = useState(toTitleCase(user_detail?.branch_nm));
   const [search_branch, setsearch_branch] = useState("");
   const [branch_count, setbranch_count] = useState(1)
   const [branch_loaded, setbranch_loaded] = useState(false)
@@ -243,13 +243,13 @@ const UserInfo = () => {
       });
   };
 
-  const getAssBranches = (val) => {
+  const getAssBranches = (val, branch) => {
     let temp_2 = [];
     let temp = [...ass_branch_list];
     axios
       .get(
         ServerAddress +
-        `master/all_user_ass_branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_search=${search_ass_branch}&data=${val}&org_id=${org_id ? org_id : ""}`,
+        `master/all_user_ass_branches/?search=${""}&p=${ass_branch_page}&records=${10}&branch_search=${search_ass_branch}&data=${val}&org_id=${org_id ? org_id : ""}&branch=${branch}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -890,7 +890,7 @@ const UserInfo = () => {
     ["QU", "QIL User"],
     ["COM", "Company User"],
     ["CU", "Client User"],
-    ["DRIVER", "DRIVER"],
+    ["DRIVER", "Driver"],
   ]);
 
   const [channel_access_list, setchannel_access_list] = useState([
@@ -1041,22 +1041,22 @@ const UserInfo = () => {
     let timeoutId;
     if (locations.state === null && org_id !== "" && org_id) {
       timeoutId = setTimeout(() => {
-        getAssBranches("all");
+        getAssBranches("all",home_branch_id);
       }, 1);
     }
     else if (locations.state === null) {
-      getAssBranches("all");
+      getAssBranches("all",home_branch_id);
     }
     else if (locations.state !== null && org_id !== "" && org_id) {
-      getAssBranches(parseInt(up_params.user.id));
+      getAssBranches(parseInt(up_params.user.id),home_branch_id);
     }
     else if (locations.state !== null) {
       timeoutId = setTimeout(() => {
-        getAssBranches(parseInt(up_params.user.id));
+        getAssBranches(parseInt(up_params.user.id),home_branch_id);
       }, 1);
     }
     return () => clearTimeout(timeoutId);
-  }, [ass_branch_page, search_ass_branch, org_id]);
+  }, [ass_branch_page, search_ass_branch, org_id, home_branch_id]);
 
   useLayoutEffect(() => {
     getDepartments();
@@ -1907,7 +1907,7 @@ const UserInfo = () => {
                           count={branch_count}
                           bottom={branch_bottom}
                           setbottom={setbranch_bottom}
-                          disable_me={!user_detail.is_superuser}
+                          disable_me={!user_detail.is_superuser && is_update}
                         />
                       </div>
                       {/* <div className="mt-1 error-text" color="danger">

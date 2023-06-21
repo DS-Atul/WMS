@@ -6,6 +6,7 @@ import { ServerAddress, bucket_address } from "../../../constants/ServerAddress"
 import { BsFillTrashFill,BsFillPencilFill } from "react-icons/bs";
 import axios from "axios";
 import { setAlertType, setDataExist, setShowAlert } from "../../../store/alert/Alert";
+import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 const PacketTitle = [
   "Caption",
@@ -127,7 +128,7 @@ const deleteOrderImg = (id) => {
                       }}
                     >
                     {console.log("ewb",ewb)}
-                    <td>{(ewb.caption).toUpperCase()}</td>
+                    <td>{toTitleCase(ewb.caption)}</td>
                     <td>
                         <div  onClick={()=>{
                             handle_img(bucket_address + ewb.image);
@@ -141,9 +142,9 @@ const deleteOrderImg = (id) => {
                     </td>
                     <td>
                         <div style={{display:"flex",flexDirection:"row",justifyContent:"space-evenly"}}>
-                            <div>
+                            {/* <div>
                                 <BsFillPencilFill  color="blue" size={17}/>
-                            </div>
+                            </div> */}
                             <div>
                                 <BsFillTrashFill color="red" size={17} onClick={()=>{
                                     deleteOrderImg(ewb.id);

@@ -3,8 +3,9 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { MdDeleteForever, MdAdd } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiSquare, FiCheckSquare } from "react-icons/fi";
+import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
 import {
   Card,
   Col,
@@ -23,9 +24,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
+import { FiSquare, FiCheckSquare } from "react-icons/fi";
 
 import TransferList from "../../../components/formComponent/transferList/TransferList";
-import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
+import {
+  EServerAddress,
+  ServerAddress,
+} from "../../../constants/ServerAddress";
 import {
   setAlertType,
   setDataExist,
@@ -35,38 +40,41 @@ import {
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
+import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import EditManifestDataFormat from "./editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "./AddAnotherOrder";
-import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
-import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
 import { gstin_no } from "../../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 
-const EditHubDocket = () => {
+const EditRoughDocket = () => {
   const user = useSelector((state) => state.authentication.userdetails);
-  const accessToken = useSelector((state) => state.authentication.access_token);
-  const search = useSelector((state) => state.searchbar.search_item);
-  const [page, setpage] = useState(1);
-  const user_branch = useSelector(
-    (state) => state.authentication.userdetails.home_branch
+  const user_id = useSelector((state) => state.authentication.userdetails.id);
+  const user_l_state = useSelector(
+    (state) => state.authentication.userdetails.branch_location_state
   );
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
+
+  const user_l_statecode = useSelector(
+    (state) => state.authentication.userdetails.branch_location_state_code
+  );
+  const accessToken = useSelector((state) => state.authentication.access_token);
+  const success = useSelector((state) => state.alert.show_alert);
 
   const [refresh, setrefresh] = useState(false);
   const dispatch = useDispatch();
   const location_data = useLocation();
-  const [same_box, setsame_box] = useState(true)
-  console.log("location_data--------hub-", location_data)
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
   const navigate = useNavigate();
-  const [hub_data, sethub_data] = useState([])
+
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
   };
-  const [data2, setdata2] = useState([])
-  console.log("data2data2data2data2data2data2'''''", data2)
+  const [circle_btn4, setcircle_btn4] = useState(true);
+  const toggle_circle4 = () => {
+    setcircle_btn4(!circle_btn4);
+  };
+
   const [circle_btn1, setcircle_btn1] = useState(true);
   const toggle_circle1 = () => {
     setcircle_btn1(!circle_btn1);
@@ -76,31 +84,21 @@ const EditHubDocket = () => {
   const toggle_circle2 = () => {
     setcircle_btn2(!circle_btn2);
   };
-  const [circle_btn4, setcircle_btn4] = useState(true);
-  const toggle_circle4 = () => {
-    setcircle_btn4(!circle_btn4);
-  };
 
   // Navigation At the time of Cancel
   const handleAction = () => {
     dispatch(setToggle(true));
     navigate(-1);
+    // navigate("/manifest/pendingtomanifest");
   };
-
   const [order_active_btn, setorder_active_btn] = useState("first");
-
-  //  State For Cropping In React Crop
-  const [showModal, setshowModal] = useState(false);
-  const [document, setdocument] = useState([]);
-  const [doc_result_image, setdoc_result_image] = useState([]);
-
+  const [manifest_data, setmanifest_data] = useState([]);
+  const [same_box, setsame_box] = useState(true);
   // adding extra input fields in Packages
   const [length, setlength] = useState("");
   const [breadth, setbreadth] = useState("");
   const [height, setheight] = useState("");
   const [pieces, setpieces] = useState("");
-  const [package_id_list, setpackage_id_list] = useState("");
-  const [packages_id, setpackages_id] = useState([]);
   const [deleted_packages_id, setdeleted_packages_id] = useState([]);
 
   let dimension_list = [length, breadth, height, pieces];
@@ -116,127 +114,71 @@ const EditHubDocket = () => {
   const [invoice_img, setinvoice_img] = useState("");
   const [invoice_no, setinvoice_no] = useState("");
   const [invoice_value, setinvoice_value] = useState("");
+  const [today, settoday] = useState("");
 
-  let dimension_list2 = [invoice_img, invoice_no, invoice_value];
+  let dimension_list2 = [invoice_img, today, invoice_no, invoice_value];
   const [row2, setrow2] = useState([dimension_list2]);
 
   // Packages
   let p = row.length - 1;
   const a = parseInt(row[p][3]) + parseInt(row[p][3]);
-  const addPackage = () => {
-    setlength("");
-    setbreadth("");
-    setheight("");
-    setpieces("");
-    dimension_list = ["", "", "", ""];
-    setrow([...row, dimension_list]);
-  };
 
-  const deletePackage = (item) => {
-    setlength("length");
-    setbreadth("breadth");
-    setheight("height");
-    setpieces("pieces");
+  // used for validation
+  const [total_bag_error, settotal_bag_error] = useState(false);
+  const [manifest_weight_error, setmanifest_weight_error] = useState(false);
+  const [airway_bill_no_error, setairway_bill_no_error] = useState(false);
+  const [flight_name_error, setflight_name_error] = useState(false);
 
-    let temp = [...row];
-    let temp_2 = [...package_id_list];
-
-    const index = temp.indexOf(item);
-
-    if (index > -1) {
-      temp.splice(index, 1);
-      temp_2.splice(index, 1);
-    }
-    setrow(temp);
-    setpackage_id_list(temp_2);
-  };
-  const [from_branch, setfrom_branch] = useState("");
-  const [to_branch, setto_branch] = useState("");
-  const [hub_no, sethub_no] = useState("");
-  const [hub_id, sethub_id] = useState("");
-  const success = useSelector((state) => state.alert.show_alert);
-
-  const [data, setdata] = useState([]);
-
-  const [coloader_mode_list, setcoloader_mode_list] = useState([
-
-  ]);
-  const [coloader_mode, setcoloader_mode] = useState("");
-  const [search_text, setsearch_text] = useState("")
   const [coloader_list, setcoloader_list] = useState([]);
   const [coloader_selected, setcoloader_selected] = useState("");
   const [coloader_id, setcoloader_id] = useState("");
 
+  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
+  const [from_branch, setfrom_branch] = useState("");
+  const [to_branch, setto_branch] = useState("");
+  const [manifest_no, setmanifest_no] = useState("");
+  const [manifest_id, setmanifest_id] = useState("");
   const [total_bags, settotal_bags] = useState(0);
-  const [total_box, settotal_box] = useState(0)
-  console.log("total_bags----", total_bags)
-
-  // Validation
-  const validation = useFormik({
-    enableReinitialize: true,
-    initialValues: {
-      coloader_no: hub_data.airwaybill_no || "",
-      actual_weight: hub_data.total_weight || "",
-      chargeable_weight: hub_data.chargeable_weight || "",
-      driver_name: hub_data.driver_name || "",
-      supporting_staff: hub_data.supporting_staff || "",
-    },
-
-    validationSchema: Yup.object({
-      // coloader_no: Yup.string().required("Coloader No is required"),
-      // vehicle_no: Yup.string().required("Vehicle Number is required"),
-      // actual_weight: Yup.string().required("Manifest Weight is required"),
-      // driver_name: Yup.string().required("Driver Name is required"),
-      // supporting_staff: Yup.string().required("Spporting Staff Name is required"),
-    }),
-
-    onSubmit: (values) => {
-      if (!total_bags && !total_box) {
-        alert("Please Enter Either Bag and Box Value")
-        // settotal_bag_error(true);
-      }
-      else if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
-        setvehicle_error(true);
-      }
-      else if (!is_valid_barcode && total_bags !== "" && total_bags) {
-        alert("Please Add Barcode Bag With Unique Value")
-      }
-      else if (!is_valid_box && total_box !== "" && total_box) {
-        alert("Please Add Barcode Box With Unique Value")
-      }
-      else {
-        updateManifest(values);
-      }
-   
-    },
-  });
-
+  const [total_box, settotal_box] = useState(0);
+  const [manifest_weight, setmanifest_weight] = useState("");
+  const [airway_bill_no, setairway_bill_no] = useState("");
+  const [coloader_mode, setcoloader_mode] = useState("");
+  const [company_slected_list, setcompany_slected_list] = useState("");
+  const [flight_name, setflight_name] = useState("");
+  const [data, setdata] = useState([]);
+  const [data2, setdata2] = useState([]);
 
   useLayoutEffect(() => {
-    let manifest_data = location_data.state.hub;
-    console.log("manifest_data----", manifest_data)
-    sethub_data(manifest_data)
-    sethub_no(manifest_data.hub_transfer_no);
-    sethub_id(manifest_data.id);
-    setfrom_branch(toTitleCase(manifest_data.orgin_branch_name));
-    setto_branch(toTitleCase(manifest_data.destination_branch_name));
+    let manifest_data = location_data.state.manifest;
+    setmanifest_data(manifest_data);
+    setmanifest_no(manifest_data.manifest_no);
+    setmanifest_id(manifest_data.id);
+    setfrom_branch(toTitleCase(manifest_data.from_branch_n));
+    setto_branch(toTitleCase(manifest_data.to_branch_n));
+    setcoloader_mode(toTitleCase(manifest_data.coloader_mode));
+    setcoloader_id(manifest_data.coloader);
+    setcoloader_selected(toTitleCase(manifest_data.coloader_name));
     settotal_bags(manifest_data.bag_count);
     settotal_box(manifest_data.box_count);
+    setmanifest_weight(manifest_data.total_weight);
+    setairway_bill_no(manifest_data.airwaybill_no);
+    setflight_name(toTitleCase(manifest_data.carrier_name));
     setvehicle_no(manifest_data.vehicle_no);
     setrental(manifest_data.is_rented_vehcile);
+    // setvendor_id(manifest_data.)
   }, []);
 
   const get_orderof_manifest = () => {
     axios
-      // .get(ServerAddress + `manifest/get_hub_orders/?hub_no=${hub_no}`, 
-      .get(ServerAddress + `manifest/get_all_hub_orders/?hub_no=${hub_no}`,
-
+      .get(
+        ServerAddress +
+        // `manifest/get_manifest_order/?manifest_no=${manifest_no}`,
+        `manifest/get_all_manifest_order/?manifest_no=${manifest_no}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
-        })
+        }
+      )
       .then((response) => {
-
-        console.log("responsesss==hub===", response)
         setdata(response.data[0].orders);
         setdata2(response.data[0].orders);
       })
@@ -246,42 +188,150 @@ const EditHubDocket = () => {
   };
 
   useLayoutEffect(() => {
-    hub_no && get_orderof_manifest();
-  }, [hub_no, success]);
+    manifest_no && get_orderof_manifest();
+  }, [manifest_no, success, refresh]);
 
-  const updateManifest = (values) => {
+  const [ewb_no_l, setewb_no_l] = useState([]);
+  // const [is_checked, setis_checked] = useState(false);
+
+  // const today_r = new Date();
+  // const  date = today_r.toLocaleDateString('en-GB'); // 'en-GB' specifies the format as day-month-year
+  // console.log("dateeeeeeeeeeeee",date);
+
+  // useLayoutEffect(() => {
+  //   let m = data?.map((item) => [item?.eway_bill_no, item?.docket_no]);
+  //   let filteredArr = m?.filter((subArr) => subArr[0]?.length !== 0);
+  //   setewb_no_l(filteredArr);
+  // }, [data]);
+
+  // useEffect(() => {
+  //   if (is_checked) {
+
+  //     ewb_no_l.forEach((item, index) => {
+
+  //       axios
+  //         .put(
+  //           EServerAddress + `ezewb/v1/ewbNo?gstin=${gstin_no}`,
+  //           {
+  //             transMode: "1",
+  //             fromPlace: user_l_state,
+  //             fromState: user_l_statecode,
+  //             transDocNo: item[1],
+  //             transDocDate: date,
+  //             vehicleNo: rental ? vehicle_no : vendor_name,
+  //             reasonCode: "1",
+  //             reasonRem: "Assigning  Trans Doc no",
+  //             userGstin: "05AAAAT2562R1Z3",
+  //             ewbNo: item[0],
+  //           },
+  //           {
+  //             headers: {
+  //               "Content-Type": "application/json",
+  //               Authorization: `Bearer ${b_acess_token}`,
+  //             },
+  //           }
+  //         )
+  //         .then(function (response) {
+  //           console.log("response(((((9999999999", response);
+  //           // alert(item[1]);
+  //           dispatch(setToggle(true));
+  //           dispatch(setShowAlert(true));
+  //           dispatch(
+  //             setDataExist(
+  //               `${item[0]} Sucessfully Attached To Docket No =>${item[1]}`
+  //             )
+  //           );
+  //           dispatch(setAlertType("success"));
+  //           if (index === (ewb_no_l.length) - 1) {
+  //             updateManifest()
+  //             setis_checked(false)
+  //           }
+  //         })
+  //         .catch((error) => { });
+
+  //     });
+  //   }
+  // }, [is_checked]);
+
+  // const update_eway_b = (values) => {
+  //   axios
+  //     .post(
+  //       EServerAddress + `ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
+
+  //       {
+  //         fromPlace: user_l_state,
+  //         fromState: user_l_statecode,
+  //         vehicleNo: rental ? vehicle_no : vendor_name,
+  //         transMode: "1",
+  //         transDocNo: null,
+  //         transDocDate: null,
+  //         ewbNos: ewb_no_l,
+  //         userGstin: gstin_no,
+  //       },
+
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${b_acess_token}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       if (response.data.status === 1) {
+  //         dispatch(setToggle(true));
+  //         dispatch(setShowAlert(true));
+  //         dispatch(setDataExist(`Updated  ${ewb_no_l}sucessfully`));
+  //         dispatch(setAlertType("success"));
+
+  //         updateManifest(values);
+  //       } else {
+  //         dispatch(setToggle(true));
+  //         dispatch(setShowAlert(true));
+  //         dispatch(setDataExist(`Updated  ${ewb_no_l} Failed `));
+  //         dispatch(setAlertType("danger"));
+
+  //         updateManifest();
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       dispatch(setToggle(true));
+  //       dispatch(setShowAlert(true));
+  //       dispatch(setDataExist(`Updated  ${ewb_no_l} Failed `));
+  //       dispatch(setAlertType("danger"));
+  //       setShow(false);
+  //       updateManifest();
+  //     });
+  // };
+
+  const updateManifest = () => {
+
     axios
       .put(
-        ServerAddress + "manifest/update_hub_manifest/" + hub_data.id,
+        ServerAddress + "manifest/update_manifest/" + manifest_id,
         {
-          coloader_mode: coloader_mode.toUpperCase(),
+          coloader_mode: coloader_mode,
           coloader: coloader_id,
-          airwaybill_no: values.coloader_no,
-          // forwarded_at: today,
+          airwaybill_no: airway_bill_no,
           bag_count: total_bags ? total_bags : 0,
           box_count: total_box ? total_box : 0,
-          total_weight: 0,
-          chargeable_weight: 0,
-          coloader_name: coloader_selected.toUpperCase(),
-          carrier_name: "",
-
-          is_scanned: true,
+          total_weight: manifest_weight,
+          coloader_name: coloader_selected,
+          carrier_name: flight_name,
           update: "True",
-          forwarded_by: user_id,
           forwarded: "False",
+          manifested: "False",
           departed: "False",
-          forwarded_branch: null,
+          is_scanned: true,
           modified_by: user_id,
-          hub_packages: row,
-          driver_name: values.driver_name,
-          supporting_staff: values.supporting_staff,
+          forwarded_branch_name: "",
+          forwarded_branch: null,
+          manifest_packages: row,
+          manifest_no: manifest_no,
           deleted_packages: deleted_packages_id,
-          hubtransfer_no: hub_no,
           vehicle_no: vehicle_no,
           vehcile_no_f: vehicle_id,
           is_rented_vehcile: rental ? "True" : "False",
         },
-
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -289,10 +339,9 @@ const EditHubDocket = () => {
         }
       )
       .then(function (response) {
-        console.log("response-----", response.data)
         if (response.data.status === "success") {
           if (list_data.length>0){
-            UpateEwaybillPartB({
+             UpateEwaybillPartB({
               gstin_no: gstin_no,
               Data: list_data,
               ewayTokenB: business_access_token,
@@ -304,61 +353,28 @@ const EditHubDocket = () => {
           dispatch(setToggle(true));
           dispatch(setShowAlert(true));
           dispatch(
-            setDataExist(`Manifest Updated sucessfully`)
+            setDataExist(`Manifest of  ${manifest_no} Forwarded sucessfully`)
           );
           dispatch(setAlertType("info"));
-          navigate(-1)
-          let form = new FormData();
-          if (document.length !== 0) {
-            document.forEach((e, i) => {
-              form.append(`manifestImage${i}`, e, e.name);
-            });
-            let imageLength = document.length;
-            form.append(`manifest_count`, imageLength);
-            form.append(`manifest_no`, response.data.data.manifest_no);
-            axios
-              .post(ServerAddress + `manifest/add-manifest-image/`, form, {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                  "content-type": "multipart/form-data",
-                },
-              })
-              .then((res) => {
-                console.log("ImageResssssssssssssssssssss", res.data);
-                successMSg();
-              })
-              .catch((err) => {
-                console.log("ImaeErrrrrrrrrrrrrrrrrrr", err);
-              });
-          } else {
-            console.log("Manifest created without image");
-          }
-        } else if (response.data === "duplicate") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Already exists`
-            )
-          );
-          dispatch(setAlertType("warning"));
+          navigate(-1);
         }
       })
       .catch(function (err) {
-        alert(`Error While  Updateing Manifest ${err}`);
+        alert(`Error While  Updating Manifest ${err}`);
       });
   };
+
   useEffect(() => {
-    if (total_bags == hub_data.bag_count && total_box == hub_data.box_count) {
-      setsame_box(true)
+    if (
+      total_bags == manifest_data.bag_count &&
+      total_box == manifest_data.box_count
+    ) {
+      setsame_box(true);
+    } else {
+      setsame_box(false);
     }
-    else {
-      setsame_box(false)
-    }
+  }, [total_bags, total_box, manifest_data]);
 
-  }, [total_bags, total_box, hub_data])
-
-  const [rental, setrental] = useState(false);
-  const [vehicle_no, setvehicle_no] = useState("");
   const [vehicle_list, setvehicle_list] = useState([]);
   const [vehicle_id, setvehicle_id] = useState("");
   const [vehicle_n_page, setvehicle_n_page] = useState(1);
@@ -368,6 +384,9 @@ const EditHubDocket = () => {
   const [vehicle_count, setvehicle_count] = useState(1)
   const [vehicle_bottom, setvehicle_bottom] = useState(103)
 
+  const [refresh_r, setrefresh_r] = useState(false);
+  const [rental, setrental] = useState(false);
+  const [vehicle_no, setvehicle_no] = useState("");
   //  For getting Vehcile number
   const get_vehcile_no = () => {
     let vehicle_temp = [];
@@ -416,201 +435,198 @@ const EditHubDocket = () => {
     get_vehcile_no();
   }, [vehicle_n_page, search_vehicle_name]);
 
-    // For Barcode
-    const [is_valid_barcode, setis_valid_barcode] = useState(false)
-    const [is_valid_box, setis_valid_box] = useState(false)
-    const [old_barcodes, setold_barcodes] = useState([])
-    console.log("old_barcodes-----", old_barcodes)
-    const [bag_bq, setbag_bq] = useState("");
-    let dimension_list_barcode = [bag_bq];
-    const [row_barcode, setrow_barcode] = useState([dimension_list_barcode]);
-    console.log("row_barcode----", row_barcode)
-  
-    const [box_bq, setbox_bq] = useState("");
-    let dimension_list_barcodebox = [box_bq];
-    const [row_barcodebox, setrow_barcodebox] = useState([dimension_list_barcodebox]);
-  
-  
-    // For Barcode validation
-    const check_barcode = (barcode, index, type) => {
-      axios
-        .get(
-          ServerAddress + `manifest/checkDuplicateManifestBarcode/${barcode}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
-        .then(function (response) {
-          console.log("barcode---------", response.data);
-          if (response.data === "true") {
-            if (type === "bag") {
-              row_barcode[index] = ['']
-              dispatch(setDataExist(`This Barcode Is Already Used In Manifest`));
-              dispatch(setAlertType("warning"));
-              dispatch(setShowAlert(true));
-            }
-            else {
-              row_barcodebox[index] = ['']
-              dispatch(setDataExist(`This Barcode Is Already Used In Manifest`));
-              dispatch(setAlertType("warning"));
-              dispatch(setShowAlert(true));
-            }
-  
-          }
-        })
-        .catch((error) => {
-          alert(`Error Happen while Geting Order Status Data ${error}`);
-        });
-    };
-    const check_order_barcode = (barcode, index) => {
-      axios
-        .get(
-          ServerAddress + `booking/checkDuplicateBarcode/${barcode}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
-        .then(function (response) {
-          if (response.data === "true") {
+  // For Barcode
+  const [is_valid_barcode, setis_valid_barcode] = useState(false)
+  const [is_valid_box, setis_valid_box] = useState(false)
+  const [old_barcodes, setold_barcodes] = useState([])
+  const [bag_bq, setbag_bq] = useState("");
+  let dimension_list_barcode = [bag_bq];
+  const [row_barcode, setrow_barcode] = useState([dimension_list_barcode]);
+
+  const [box_bq, setbox_bq] = useState("");
+  let dimension_list_barcodebox = [box_bq];
+  const [row_barcodebox, setrow_barcodebox] = useState([dimension_list_barcodebox]);
+
+
+  // For Barcode validation
+  const check_barcode = (barcode, index, type) => {
+    axios
+      .get(
+        ServerAddress + `manifest/checkDuplicateManifestBarcode/${barcode}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("barcode---------", response.data);
+        if (response.data === "true") {
+          if (type === "bag") {
             row_barcode[index] = ['']
-            dispatch(setDataExist(`This Barcode Is Already Used`));
+            dispatch(setDataExist(`This Barcode Is Already Used In Manifest`));
             dispatch(setAlertType("warning"));
             dispatch(setShowAlert(true));
-  
           }
-        })
-        .catch((error) => {
-          alert(`Error Happen while Geting Order Status Data ${error}`);
-        });
-    };
-  
-    useEffect(() => {
-      if (total_bags !== "" && total_bags?.toString().length < 4) {
-        let val = total_bags;
-        let val_bag = Array.from({ length: val }, () => [""]);
-        setrow_barcode(val_bag);
-      }
-      else {
-        setrow_barcode([])
-      }
-    }, [total_bags]);
-  
-    useEffect(() => {
-      if (total_box !== "" && total_box?.toString().length < 4) {
-        let val = total_box;
-        let val_box = Array.from({ length: val }, () => [""]);
-        setrow_barcodebox(val_box);
-      }
-      else {
-        setrow_barcodebox([])
-      }
-    }, [total_box]);
-  
-    useEffect(() => {
-  
-      if (data.length > 0) {
-        let barcode = data.map(v => v?.qrcode_details).flat().map((v) => v?.barcode_no)
-  
-        setold_barcodes(barcode)
-      }
-      else {
-        setold_barcodes([])
-      }
-  
-    }, [data])
-  
-    useEffect(() => {
-      if (vehicle_no !== "" || vehicle_no?.toString().length === 10) {
-        setvehicle_error(false)
-      }
-    }, [vehicle_no])
-  
-    useEffect(() => {
-      if (row_barcode?.length > 0) {
-        let result = row_barcode.every((item, index, array) => {
-          if (item[0] !== " " && item[0].startsWith("SSCL") && array.findIndex((el) => el[0] === item[0]) === index) {
-            return true;
-          } else {
-            return false;
+          else {
+            row_barcodebox[index] = ['']
+            dispatch(setDataExist(`This Barcode Is Already Used In Manifest`));
+            dispatch(setAlertType("warning"));
+            dispatch(setShowAlert(true));
           }
-        });
-  
-        setis_valid_barcode(result)
-  
-      }
-  
-    }, [dimension_list_barcode])
-  
-    useEffect(() => {
-      if (row_barcodebox?.length > 0) {
-        let result2 = row_barcodebox.every((item, index, array) => {
-          if (item[0] !== " " && item[0].startsWith("SSCL") && array.findIndex((el) => el[0] === item[0]) === index) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-  
-        setis_valid_box(result2)
-  
-      }
-  
-    }, [dimension_list_barcodebox])
-  
-    console.log("data------", old_barcodes)
-    // console.log("row_barcode====", row_barcode)
-    // console.log("row_barcode====", row_barcodebox)
-    const [total_barcodes, settotal_barcodes] = useState([])
-    console.log("total_barcodes------", total_barcodes)
-  
-    useEffect(() => {
-      
-      let result = [
-        ...row_barcode.filter((barcode) => barcode[0] !== "").map((barcode) => ({
 
-          'hub_transfer_id': hub_id,
-          'hub_transfer_no': hub_no,
-          'barcode_no': barcode[0],
-          'is_active': true,
-          'vehicle_no': vehicle_no,
-          'box_tpye': 'BAG'
-        })),
-        ...row_barcodebox.filter((barcode) => barcode[0] !== "").map((barcode) => ({
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while Geting Order Status Data ${error}`);
+      });
+  };
+  const check_order_barcode = (barcode, index) => {
+    axios
+      .get(
+        ServerAddress + `booking/checkDuplicateBarcode/${barcode}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data === "true") {
+          row_barcodebox[index] = ['']
+          dispatch(setDataExist(`This Barcode Is Already Used`));
+          dispatch(setAlertType("warning"));
+          dispatch(setShowAlert(true));
 
-          'hub_transfer_id': hub_id,
-          'hub_transfer_no': hub_no,
-          'barcode_no': barcode[0],
-          'is_active': true,
-          'vehicle_no': vehicle_no,
-          'box_tpye': 'BOX'
-        }))
-      ];
-      settotal_barcodes(result)
-    }, [box_bq,bag_bq,vehicle_no]);
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while Geting Order Status Data ${error}`);
+      });
+  };
 
-    const add_manifestbarcode = () => {
-      let data = total_barcodes
-      axios
-        .post(
-          ServerAddress + `manifest/manifestBagqrcode/`, data,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
-        .then(function (response) {
-  
-          console.log("barcode response====", response)
-        })
-        .catch((error) => {
-          alert(`Error Happen while posting Commodity  Data ${error}`);
-        });
-    };
+  useEffect(() => {
+    if (total_bags !== "" && total_bags?.toString().length < 4) {
+      let val = total_bags;
+      let val_bag = Array.from({ length: val }, () => [""]);
+      setrow_barcode(val_bag);
+    }
+    else {
+      setrow_barcode([])
+    }
+  }, [total_bags]);
+
+  useEffect(() => {
+    if (total_box !== "" && total_box?.toString().length < 4) {
+      let val = total_box;
+      let val_box = Array.from({ length: val }, () => [""]);
+      setrow_barcodebox(val_box);
+    }
+    else {
+      setrow_barcodebox([])
+    }
+  }, [total_box]);
+
+  useEffect(() => {
+
+    if (data.length > 0) {
+      let barcode = data.map(v => v?.qrcode_details).flat().map((v) => v?.barcode_no)
+
+      setold_barcodes(barcode)
+    }
+    else {
+      setold_barcodes([])
+    }
+
+  }, [data])
+
+  useEffect(() => {
+    if (vehicle_no !== "" || vehicle_no?.toString().length === 10) {
+      setvehicle_error(false)
+    }
+  }, [vehicle_no])
+
+  useEffect(() => {
+    if (row_barcode?.length > 0) {
+      let result = row_barcode.every((item, index, array) => {
+        if (item[0] !== " " && item[0].startsWith("SSCL") && array.findIndex((el) => el[0] === item[0]) === index) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      setis_valid_barcode(result)
+
+    }
+
+  }, [dimension_list_barcode])
+
+  useEffect(() => {
+    if (row_barcodebox?.length > 0) {
+      let result2 = row_barcodebox.every((item, index, array) => {
+        if (item[0] !== " " && item[0].startsWith("SSCL") && array.findIndex((el) => el[0] === item[0]) === index) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+
+      setis_valid_box(result2)
+
+    }
+
+  }, [dimension_list_barcodebox])
+
+  console.log("data------", old_barcodes)
+  // console.log("row_barcode====", row_barcode)
+  // console.log("row_barcode====", row_barcodebox)
+  const [total_barcodes, settotal_barcodes] = useState([])
+  console.log("total_barcodes------", total_barcodes)
+
+  useEffect(() => {
+    
+    let result = [
+      ...row_barcode.filter((barcode) => barcode[0] !== "").map((barcode) => ({
+        'menifest_id': manifest_id,
+        'menifest_no': manifest_no,
+        'barcode_no': barcode[0],
+        'is_active': true,
+        'vehicle_no': vehicle_no,
+        'box_tpye': 'BAG'
+      })),
+      ...row_barcodebox.filter((barcode) => barcode[0] !== "").map((barcode) => ({
+        'menifest_id': manifest_id,
+        'menifest_no': manifest_no,
+        'barcode_no': barcode[0],
+        'is_active': true,
+        'vehicle_no': vehicle_no,
+        'box_tpye': 'BOX'
+      }))
+    ];
+    settotal_barcodes(result)
+  }, [box_bq,bag_bq,vehicle_no]);
+
+  const add_manifestbarcode = () => {
+    let data = total_barcodes
+    axios
+      .post(
+        ServerAddress + `manifest/manifestBagqrcode/`, data,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+
+        console.log("barcode response====", response)
+      })
+      .catch((error) => {
+        alert(`Error Happen while posting Commodity  Data ${error}`);
+      });
+  };
+
   //For Eway Bill
 
   const orgId = useSelector((state) => state.eway_bill?.orgs[0]?.orgId);
@@ -830,11 +846,11 @@ const EditHubDocket = () => {
   const [list_data, setlist_data] = useState([])
   console.log("list_data------", list_data)
 
-  const getEwayBills = (hub_num) => {
+  const getEwayBills = (manifest_num) => {
     axios
       .get(
         ServerAddress +
-        `booking/get_all_ewaybill/?type=${"hub"}&value=${hub_num}`,
+        `booking/get_all_ewaybill/?type=${"manifest"}&value=${manifest_num}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -888,24 +904,38 @@ const EditHubDocket = () => {
 
   useEffect(() => {
     console.log("list_data----", list_data)
-    if(hub_no !== ""){
-      getEwayBills(hub_no)
+    if(manifest_no !== ""){
+      getEwayBills(manifest_no)
     }
-  }, [hub_no])
-
+  }, [manifest_no])
   return (
     <>
       <div>
         <Form
           onSubmit={(e) => {
             e.preventDefault();
-            validation.handleSubmit(e.values);
+            if (!total_bags && !total_box) {
+              alert("Please Enter Either Bag and Box Value")
+              // settotal_bag_error(true);
+            }
+            else if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
+              setvehicle_error(true);
+            }
+            else if (!is_valid_barcode && total_bags !== "" && total_bags) {
+              alert("Please Add Barcode Bag With Unique Value")
+            }
+            else if (!is_valid_box && total_box !== "" && total_box) {
+              alert("Please Add Barcode Box With Unique Value")
+            }
+            else {
+              updateManifest();
+            }
             return false;
           }}
         >
           <div className="mt-3">
-            <PageTitle page={"Edit Hub Manifest"} />
-            <Title title={"Edit Hub Manifest"} parent_title="Manifests" />
+            <PageTitle page={"Edit Manifest"} />
+            <Title title={"Edit Manifest"} parent_title="Manifests" />
           </div>
 
           {/* Company Info */}
@@ -914,7 +944,7 @@ const EditHubDocket = () => {
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
                   <div className="header-text-icon header-text">
-                    Hub Manifest Info :
+                    Forwarding Info :
                     <IconContext.Provider
                       value={{
                         className: "header-add-icon",
@@ -937,7 +967,7 @@ const EditHubDocket = () => {
                         <div className="mb-2">
                           <Label className="header-child">Manifest No* :</Label>
 
-                          <Input id="input" disabled value={hub_no} />
+                          <Input id="input" disabled value={manifest_no} />
                         </div>
                       </Col>
                       <Col lg={4} md={6} sm={6}>
@@ -953,7 +983,6 @@ const EditHubDocket = () => {
                           <Input id="input" disabled value={to_branch} />
                         </div>
                       </Col>
-
 
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
@@ -997,7 +1026,6 @@ const EditHubDocket = () => {
                           />
                         </div>
                       </Col>
-
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">
@@ -1086,7 +1114,6 @@ const EditHubDocket = () => {
                           }
                         </div>
                       </Col>
-                   
                     </Row>
                     {(row_barcode.length > 0) &&
                       <Row className="hide">
@@ -1108,10 +1135,14 @@ const EditHubDocket = () => {
                                     item[0] = val.target.value;
                                   }}
                                   onBlur={() => {
-                                    if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
-                                      check_order_barcode(item[0], index);
-                                      check_barcode(item[0], index, "bag");  
-                                    } else if ((item[0].length >= 4 && !item[0].startsWith("SSCL"))) {
+                                    if (old_barcodes.some((v) => v === item[0])) {
+                                      check_barcode(item[0], index, "bag");
+                                      dispatch(setShowAlert(true));
+                                      dispatch(
+                                        setDataExist(`Barcode Mached`)
+                                      );
+                                      dispatch(setAlertType("success"));
+                                    } else  {
                                       row_barcode[index] = ['']
                                       dispatch(setShowAlert(true));
                                       dispatch(
@@ -1120,7 +1151,6 @@ const EditHubDocket = () => {
                                       dispatch(setAlertType("warning"));
                                     }
                                   }}
-                                  
                                 />
                               </div>
                             </Col>
@@ -1149,14 +1179,10 @@ const EditHubDocket = () => {
                                     item[0] = val.target.value;
                                   }}
                                   onBlur={() => {
-                                    if (old_barcodes.some((v) => v === item[0])) {                                    
+                                    if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
+                                      check_order_barcode(item[0], index);
                                       check_barcode(item[0], index, "box");
-                                      dispatch(setShowAlert(true));
-                                      dispatch(
-                                        setDataExist(`Barcode Mached`)
-                                      );
-                                      dispatch(setAlertType("success"));
-                                    } else {
+                                    } else if ((item[0].length >= 4 && !item[0].startsWith("SSCL"))) {
                                       row_barcodebox[index] = ['']
                                       dispatch(setShowAlert(true));
                                       dispatch(
@@ -1194,7 +1220,7 @@ const EditHubDocket = () => {
                     >
                       <AddAnotherOrder
                         data2={data2}
-                        id_m={hub_no}
+                        id_m={manifest_no}
                         refresh2={refresh}
                         setrefresh2={setrefresh}
                       />
@@ -1227,7 +1253,15 @@ const EditHubDocket = () => {
           <div className="m-3">
             <Col lg={12}>
               <div className="mb-1 footer_btn">
-                <Button type="submit" className="btn btn-info m-1 cu_btn">
+                <Button
+                  type="submit"
+                  className="btn btn-info m-1 cu_btn"
+                // onClick={() => {
+                // updateManifest();
+                // update_eway_b()
+                // setis_checked(true);
+                // }}
+                >
                   Save
                 </Button>
 
@@ -1247,4 +1281,4 @@ const EditHubDocket = () => {
   );
 };
 
-export default EditHubDocket;
+export default EditRoughDocket;

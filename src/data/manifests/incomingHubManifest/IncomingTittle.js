@@ -7,6 +7,7 @@ const IncomingHubTitle = [
     "Total Bags",
     "Total Box",
     "Total Weight",
+    "Print",
     "Action"];
 
 export default IncomingHubTitle;

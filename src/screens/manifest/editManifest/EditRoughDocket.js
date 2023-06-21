@@ -384,7 +384,6 @@ const EditRoughDocket = () => {
   const [vehicle_count, setvehicle_count] = useState(1)
   const [vehicle_bottom, setvehicle_bottom] = useState(103)
 
-  const [refresh_r, setrefresh_r] = useState(false);
   const [rental, setrental] = useState(false);
   const [vehicle_no, setvehicle_no] = useState("");
   //  For getting Vehcile number
@@ -493,7 +492,7 @@ const EditRoughDocket = () => {
       )
       .then(function (response) {
         if (response.data === "true") {
-          row_barcodebox[index] = ['']
+          row_barcode[index] = ['']
           dispatch(setDataExist(`This Barcode Is Already Used`));
           dispatch(setAlertType("warning"));
           dispatch(setShowAlert(true));
@@ -1135,14 +1134,10 @@ const EditRoughDocket = () => {
                                     item[0] = val.target.value;
                                   }}
                                   onBlur={() => {
-                                    if (old_barcodes.some((v) => v === item[0])) {
-                                      check_barcode(item[0], index, "bag");
-                                      dispatch(setShowAlert(true));
-                                      dispatch(
-                                        setDataExist(`Barcode Mached`)
-                                      );
-                                      dispatch(setAlertType("success"));
-                                    } else  {
+                                    if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
+                                    check_order_barcode(item[0], index);
+                                      check_barcode(item[0], index, "bag");                                   
+                                    } else if ((item[0].length >= 4 && !item[0].startsWith("SSCL"))) {
                                       row_barcode[index] = ['']
                                       dispatch(setShowAlert(true));
                                       dispatch(
@@ -1179,10 +1174,15 @@ const EditRoughDocket = () => {
                                     item[0] = val.target.value;
                                   }}
                                   onBlur={() => {
-                                    if (item[0].length >= 4 && item[0].startsWith("SSCL")) {
-                                      check_order_barcode(item[0], index);
+                                    if (old_barcodes.some((v) => v === item[0])) {
+                                    
                                       check_barcode(item[0], index, "box");
-                                    } else if ((item[0].length >= 4 && !item[0].startsWith("SSCL"))) {
+                                      dispatch(setShowAlert(true));
+                                      dispatch(
+                                        setDataExist(`Barcode Mached`)
+                                      );
+                                      dispatch(setAlertType("success"));
+                                    } else {
                                       row_barcodebox[index] = ['']
                                       dispatch(setShowAlert(true));
                                       dispatch(

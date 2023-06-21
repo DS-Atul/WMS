@@ -454,10 +454,6 @@ const PendingForDispatch = () => {
                       set_data_item_s={(value) => {
                         let cv = branch_list.forEach((e) => {
                           if (e[1] === value) {
-                            console.log(
-                              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-                              e[2]
-                            );
                             setbranch_dest(e[2]);
                             setbranch_dest_id(e[3]);
                           }

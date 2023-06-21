@@ -17,6 +17,7 @@ const TrackingOrder = () => {
 
   // _________
   const [get_orders, setget_orders] = useState([]);
+  console.log("get_orders====", get_orders)
   const [get_status, setget_status] = useState([]);
 
   const get_order_data = () => {
@@ -69,7 +70,7 @@ const TrackingOrder = () => {
                 return false;
               }}
             >
-              <div className="search">
+            <div className="search">
                 <input
                   type="text"
                   name="Search"
@@ -884,11 +885,10 @@ const TrackingOrder = () => {
                             <ImCross style={{ fontSize: "15px" }} />
                           </div>
                         </h5>
-                        <div className="card-text" style={{ margin: "5px" }}>
-                          <strong>Docket No. :</strong>{" "}
-                          {/* {item[0].order_detail[0].awb_no} */}
-                          {last_ele.docket_no}
-                        </div>
+                        {/* <div className="card-text" style={{ margin: "5px" }}> */}
+                          {/* <strong>Docket No. :</strong>{" "} */}
+                          {/* {last_ele.docket_no}
+                        </div> */}
                         <div>
                           <table
                             className="table table-bordered"
@@ -929,15 +929,15 @@ const TrackingOrder = () => {
                                     const update_time = time.substring(0, 8);
                                     return (
                                       <tr key={index}>
-                                        <td>{item1.status}</td>
+                                        <td>{toTitleCase(item1.status)}</td>
                                         <td>{d_update_date}</td>
                                         <td>{update_time}</td>
                                         <td>
-                                          {item1.state}
-                                          {/* {" ,  "} */}
-                                          {item1.current_city}
-                                          {/* {" ,  "} */}
-                                          {item1.pincode}
+                                          {toTitleCase(item1.current_city)}
+                                          {", "}
+                                          {toTitleCase(item1.current_locality)}
+                                          {", "}
+                                          {toTitleCase(item1.current_pincode)}
                                         </td>
                                       </tr>
                                     );

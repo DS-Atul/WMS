@@ -17,6 +17,7 @@ import {
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { Button } from "reactstrap";
+import { setIncomingTab, setManifestTab } from "../../../store/parentFilter/ParentFilter";
 
 const StatusInfoDataFormat = ({ order_id, data }) => {
   console.log("order_id---------", order_id)
@@ -120,7 +121,14 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
                   }}
                 >
                   <td>{index + 1}</td>
-                  <td>
+                  <td
+                  
+                  onClick={()=>{
+                    status.status!=="SHIPMENT ORDER RECEIVED" &&
+                    dispatch(setManifestTab(5))
+                    dispatch(setIncomingTab(3))
+                  }
+                  }>
                     {status.status==="SHIPMENT ORDER RECEIVED" ?
                     toTitleCase(status.status)
                     :
@@ -134,6 +142,7 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
                         order_id: order_id,
                         type:"update" 
                       }}
+                    
                     >
                       {toTitleCase(status.status)}
                     </Link>

@@ -55,16 +55,16 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
   const [route_page, setroute_page] = useState(1)
 
   //Vehicle
- //Vehicle
- const [vehicle_list_s, setvehicle_list_s] = useState([])
- const [vehicle_no, setvehicle_no] = useState("")
- const [vehicle_id, setvehicle_id] = useState("")
- const [vehicle_page, setvehicle_page] = useState(1)
- const [vehicle_error, setvehicle_error] = useState(false)
- const [vehicle_search_item, setvehicle_search_item] = useState("")
- const [vehicle_loaded, setvehicle_loaded] = useState(false)
- const [vehicle_count, setvehicle_count] = useState(1)
- const [vehicle_bottom, setvehicle_bottom] = useState(103)
+  //Vehicle
+  const [vehicle_list_s, setvehicle_list_s] = useState([])
+  const [vehicle_no, setvehicle_no] = useState("")
+  const [vehicle_id, setvehicle_id] = useState("")
+  const [vehicle_page, setvehicle_page] = useState(1)
+  const [vehicle_error, setvehicle_error] = useState(false)
+  const [vehicle_search_item, setvehicle_search_item] = useState("")
+  const [vehicle_loaded, setvehicle_loaded] = useState(false)
+  const [vehicle_count, setvehicle_count] = useState(1)
+  const [vehicle_bottom, setvehicle_bottom] = useState(103)
   const [close, setclose] = useState(false)
   //Driver
   const [driver_list, setdriver_list] = useState([]);
@@ -80,13 +80,9 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
   const [route_error, setroute_error] = useState(false);
   const [vehicle_no_error, setvehicle_no_error] = useState(false);
   const [driver_name_error, setdriver_name_error] = useState(false);
-  const [contract_base_vehicle_error, setcontract_base_vehicle_error] =
-    useState(false);
-    const userDetail = useSelector((state) => state.authentication.userdetails);
+  const userDetail = useSelector((state) => state.authentication.userdetails);
 
   const [is_contract_based, setis_contract_based] = useState(false);
-  const [contract_based_vehicle_no, setcontract_based_vehicle_no] =
-    useState("");
 
   const [defined_route, setdefined_route] = useState(false);
 
@@ -99,85 +95,89 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
     setclose(false)
   };
   const handleShow = () => setShow(true);
-  const handleSuccess = () => {
-    // send_runsheet_data();
-  };
 
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {},
 
     onSubmit: (values) => {
+      if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
+        setvehicle_error(true);
+      }
       send_runsheet_data(values);
     },
   });
 
-    //For Update Part B
-    const [EwayBillData, setEwayBillData] = useState([])
-    const [list_data, setlist_data] = useState([])
+  //For Update Part B
+  const [EwayBillData, setEwayBillData] = useState([])
+  const [list_data, setlist_data] = useState([])
 
-    const getEwayBills = (docket_num) => {
-      axios
-        .get(
-          ServerAddress +
-          `booking/get_all_ewaybill/?type=${"order"}&value=${docket_num}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
-        .then((res) => {
-          console.log("resres----", res)
-          if (res?.data?.length !== 0) {
-            setEwayBillData(prevData => prevData.concat(res.data));
-          }
-          
-        })
-        .catch((err) => {
-          console.log("rerrerer", err);
-        });
-    };
-
-useEffect(() => {
-  let li = [];
-  EwayBillData?.forEach((e) => {
-    let obj = {
-      transMode: "1",
-      fromPlace: userDetail.branch_nm,
-      fromState: userDetail.branch_location_state_code,
-      transDocNo: e.trans_doc_no,
-      transDocDate: String(
-        e.docDate.split("-")[2] +
-        "/" +
-        e.docDate.split("-")[1] +
-        "/" +
-        e.docDate.split("-")[0]
-      ),
-      vehicleNo: vehicle_no,
-      reasonCode: "2",
-      reasonRem: "text",
-      userGstin: gstin_no,
-      ewbNo: e.ewb_no,
-    };
-    li.push(obj);
-  });
-  setlist_data(li)
-  console.log("li--------", li)
-  // Rest of your code...
-}, [EwayBillData, vehicle_no]);
-
-
-        
-    useEffect(() => {
-      setEwayBillData([])
-      if (docket_nos.length>0 && show) {
-        for (let index = 0; index < docket_nos.length; index++) {
-          getEwayBills(docket_nos[index])
+  const getEwayBills = (docket_num) => {
+    axios
+      .get(
+        ServerAddress +
+        `booking/get_all_ewaybill/?type=${"order"}&value=${docket_num}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
-       
+      )
+      .then((res) => {
+        console.log("resres----", res)
+        if (res?.data?.length !== 0) {
+          setEwayBillData(prevData => prevData.concat(res.data));
+        }
+
+      })
+      .catch((err) => {
+        console.log("rerrerer", err);
+      });
+  };
+
+  useEffect(() => {
+    let li = [];
+    EwayBillData?.forEach((e) => {
+      let obj = {
+        transMode: "1",
+        fromPlace: userDetail.branch_nm,
+        fromState: userDetail.branch_location_state_code,
+        transDocNo: e.trans_doc_no,
+        transDocDate: String(
+          e.docDate.split("-")[2] +
+          "/" +
+          e.docDate.split("-")[1] +
+          "/" +
+          e.docDate.split("-")[0]
+        ),
+        vehicleNo: vehicle_no,
+        reasonCode: "2",
+        reasonRem: "text",
+        userGstin: gstin_no,
+        ewbNo: e.ewb_no,
+      };
+      li.push(obj);
+    });
+    setlist_data(li)
+    console.log("li--------", li)
+    // Rest of your code...
+  }, [EwayBillData, vehicle_no]);
+
+  useEffect(() => {
+    if (vehicle_no !== "" || vehicle_no?.toString().length === 10) {
+      setvehicle_error(false)
+    }
+  }, [vehicle_no])
+
+  useEffect(() => {
+    setEwayBillData([])
+    if (docket_nos.length > 0 && show) {
+      for (let index = 0; index < docket_nos.length; index++) {
+        getEwayBills(docket_nos[index])
       }
-    }, [docket_nos, show])
+
+    }
+  }, [docket_nos, show])
 
   // Post Runsheet Data
   const send_runsheet_data = () => {
@@ -212,7 +212,7 @@ useEffect(() => {
       .then(function (response) {
         console.log("done", response.data);
         if (response.data.status === "success") {
-          if(list_data.length>0){
+          if (list_data.length > 0) {
             UpateEwaybillPartB({
               gstin_no: gstin_no,
               Data: list_data,
@@ -220,7 +220,7 @@ useEffect(() => {
               access_token: accessToken,
             });
             // EwayUpdate();
-          }       
+          }
 
           setShow(false);
           dispatch(setAlertType("success"));
@@ -380,10 +380,7 @@ useEffect(() => {
     if (driver_name != "") {
       setdriver_name_error(false);
     }
-    if (contract_based_vehicle_no != "") {
-      setcontract_base_vehicle_error(false);
-    }
-  }, [route, vehicle_no, driver_name, contract_based_vehicle_no]);
+  }, [route, vehicle_no, driver_name]);
 
   //For Eway Bill
 
@@ -403,7 +400,7 @@ useEffect(() => {
 
   const [AccessToken_Modifiedat, setAccessToken_Modifiedat] = useState("");
   const [time_diff, settime_diff] = useState("");
- 
+
   const getEwayAccessToken = () => {
     axios
       .get(
@@ -555,7 +552,7 @@ useEffect(() => {
         alert(`Error Happen while login  with eway bill ${error}`);
       });
   };
-  
+
   useLayoutEffect(() => {
     if (ass_token) {
       AddEwayAccessToken();
@@ -565,40 +562,40 @@ useEffect(() => {
     }
   }, [ass_token, time_diff]);
 
-    //  For Step 1 Eway bill
-    useLayoutEffect(() => {
-      if(org_name){
-        getEwayAccessToken();
-      }   
-    }, []);
-  
-    // For Step 2 Eway Bill
-    useLayoutEffect(() => {
-      if (e_access_token != "" && ass_token && orgId) {
-        GetBusiness_token();
-      }
-      if (time_diff >= 6 && orgId) {
-        GetBusiness_token();
-      }
-    }, [e_access_token, ass_token, time_diff]);
+  //  For Step 1 Eway bill
+  useLayoutEffect(() => {
+    if (org_name) {
+      getEwayAccessToken();
+    }
+  }, []);
 
-    useEffect(() => {
-      // Calculate the time difference when AccessToken_Modifiedat changes
-      if (AccessToken_Modifiedat) {
-        var dateTime1 = new Date(AccessToken_Modifiedat);
-        var dateTime2 = new Date(); // Current date-time
-        console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
-        console.log("date time1---- ", dateTime1)
-        console.log("date time2--- ", dateTime2)
-        var timeDiff = Math.abs(dateTime2 - dateTime1);
-        var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
-        settime_diff(diffHours);
-        console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
-      }
-  
-    }, [AccessToken_Modifiedat]);
+  // For Step 2 Eway Bill
+  useLayoutEffect(() => {
+    if (e_access_token != "" && ass_token && orgId) {
+      GetBusiness_token();
+    }
+    if (time_diff >= 6 && orgId) {
+      GetBusiness_token();
+    }
+  }, [e_access_token, ass_token, time_diff]);
 
-      
+  useEffect(() => {
+    // Calculate the time difference when AccessToken_Modifiedat changes
+    if (AccessToken_Modifiedat) {
+      var dateTime1 = new Date(AccessToken_Modifiedat);
+      var dateTime2 = new Date(); // Current date-time
+      console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
+      console.log("date time1---- ", dateTime1)
+      console.log("date time2--- ", dateTime2)
+      var timeDiff = Math.abs(dateTime2 - dateTime1);
+      var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
+      settime_diff(diffHours);
+      console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
+    }
+
+  }, [AccessToken_Modifiedat]);
+
+
   return (
     <>
       <Button
@@ -616,19 +613,12 @@ useEffect(() => {
         </Modal.Header>
         <form
           onSubmit={(e) => {
-            console.log("run");
             e.preventDefault();
             if (route == "") {
               setroute_error(true);
             }
-            if (vehicle_no == "") {
-              setvehicle_no_error(true);
-            }
             if (driver_name == "") {
               setdriver_name_error(true);
-            }
-            if (contract_based_vehicle_no == "" && is_contract_based) {
-              setcontract_base_vehicle_error(true);
             }
             validation.handleSubmit(e.values);
             return false;
@@ -715,6 +705,8 @@ useEffect(() => {
                       setpage={setroute_page}
                       search_item={search_route}
                       setsearch_item={setsearch_route}
+                      error_message={"Please Select Any State"}
+                      error_s={route_error}
                       loaded={route_loaded}
                       count={route_count}
                       bottom={route_bottom}
@@ -726,6 +718,15 @@ useEffect(() => {
                       onChange={(val) => {
                         setroute(val.target.value);
                       }}
+                      onBlur={() => {
+                        if (route === "") {
+                          setroute_error(true)
+                        }
+                      }
+                      }
+                      invalid={
+                        route_error
+                      }
                       type="text"
                       className="form-control-md"
                       id="input"
@@ -733,11 +734,11 @@ useEffect(() => {
                     />
                   )}
 
-                  {/* {route_error && (
-                    <div className="mt-1 error-text" color="danger">
-                      Please Select Route
-                    </div>
-                  )} */}
+                  {route_error && (
+                    <FormFeedback type="invalid">
+                    Please Select Route
+                  </FormFeedback>
+                  )}
                 </div>
                 <div style={{ marginTop: "10px" }}>
                   <Label> Contract Based Vehicle :
@@ -754,22 +755,22 @@ useEffect(() => {
                 {is_contract_based ? (
                   <div>
                     <SearchInput
-                        data_list={vehicle_list_s}
-                        setdata_list={setvehicle_list_s}
-                        data_item_s={vehicle_no}
-                        set_data_item_s={setvehicle_no}
-                        set_id={setvehicle_id}
-                        page={vehicle_page}
-                        setpage={setvehicle_page}
-                        error_message={"Please Select Any State"}
-                        error_s={vehicle_error}
-                        search_item={vehicle_search_item}
-                        setsearch_item={setvehicle_search_item}
-                        loaded={vehicle_loaded}
-                        count={vehicle_count}
-                        bottom={vehicle_bottom}
-                        setbottom={setvehicle_bottom}
-                      />
+                      data_list={vehicle_list_s}
+                      setdata_list={setvehicle_list_s}
+                      data_item_s={vehicle_no}
+                      set_data_item_s={setvehicle_no}
+                      set_id={setvehicle_id}
+                      page={vehicle_page}
+                      setpage={setvehicle_page}
+                      error_message={"Please Select Any Vehicle"}
+                      error_s={vehicle_error}
+                      search_item={vehicle_search_item}
+                      setsearch_item={setvehicle_search_item}
+                      loaded={vehicle_loaded}
+                      count={vehicle_count}
+                      bottom={vehicle_bottom}
+                      setbottom={setvehicle_bottom}
+                    />
                     {vehicle_no_error && (
                       <div className="mt-1 error-text" color="danger">
                         Please Select Vehicle
@@ -777,28 +778,30 @@ useEffect(() => {
                     )}
                   </div>
                 ) : (
-                  <div>
+                  <div className="mb-2">
                     <Input
-                      value={vehicle_no}
-                      onChange={(val) => {
-                        setvehicle_no(val.target.value);
-                      }}
+                      name="vehicle_no"
                       type="text"
-                      className="form-control-md"
                       id="input"
-                      placeholder="Enter Vehicle Number"
+                      maxLength={10}
+                      value={vehicle_no}
+                      onChange={(e) => {
+                        setvehicle_no(e.target.value);
+                      }}
+                      onBlur={() => {
+                        if (vehicle_no === "" || vehicle_no?.toString().length !== 10) {
+                          setvehicle_error(true)
+                        }
+                      }
+                      }
+                      invalid={
+                        vehicle_error
+                      }
                     />
-                    {/* <SearchInput
-                  data_list={veh_list}
-                  data_item_s={vehicle_no}
-                  set_data_item_s={setvehicle_no}
-                  set_id={setvehicle_id}
-                  setsearch_item={setsearch_vehicle_no}
-                /> */}
-                    {vehicle_no_error && (
-                      <div className="mt-1 error-text" color="danger">
-                        Please Select Vehicle
-                      </div>
+                    {vehicle_error && (
+                      <FormFeedback type="invalid">
+                        Vehicle Number Must Have 10 Character
+                      </FormFeedback>
                     )}
                   </div>
                 )}
@@ -813,6 +816,8 @@ useEffect(() => {
                     set_id={setdriver_id}
                     search_item={search_driver_name}
                     setsearch_item={setsearch_driver_name}
+                    error_message={"Please Select Any Driver"}
+                    error_s={driver_name_error}
                     page={driver_page}
                     setpage={setdriver_page}
                     loaded={driver_loaded}
@@ -820,27 +825,20 @@ useEffect(() => {
                     bottom={driver_bottom}
                     setbottom={setdriver_bottom}
                   />
-                  {driver_name_error && (
-                    <div className="mt-1 error-text" color="danger">
-                      Please Select Driver
-                    </div>
-                  )}
                 </div>
-                {vehicle_type === "TRUCK" &&
-                  <div style={{ marginTop: "10px" }}>
-                    <Label> Delivery Staff :</Label>
-                    <Input
-                      value={delivery_staff}
-                      onChange={(val) => {
-                        setdelivery_staff(val.target.value);
-                      }}
-                      type="text"
-                      className="form-control-md"
-                      id="input"
-                      placeholder="Enter Staff Name"
-                    />
-                  </div>
-                }
+                <div style={{ marginTop: "10px" }}>
+                  <Label> Delivery Staff :</Label>
+                  <Input
+                    value={delivery_staff}
+                    onChange={(val) => {
+                      setdelivery_staff(val.target.value);
+                    }}
+                    type="text"
+                    className="form-control-md"
+                    id="input"
+                    placeholder="Enter Staff Name"
+                  />
+                </div>
               </>
               :
               <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces is Damaged and "${issuenon_received_total}" is not Received So, Do you want to Create Runsheet ?`}</div>
