@@ -807,6 +807,7 @@ console.log("docket_nos-----", docket_nos)
                               Vehicle Number* :
                             </Label>
                             <Input
+                            maxLength={10}
                               onChange={validation.handleChange}
                               onBlur={validation.handleBlur}
                               value={validation.values.vehicle_no}

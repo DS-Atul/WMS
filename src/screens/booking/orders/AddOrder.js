@@ -4386,6 +4386,16 @@ const AddOrder = () => {
                           }
                         />
                       </div>
+                      {(coldchain_error && !user.view_coldchain) &&(
+                          <div
+                            className="error-text" color="danger"
+                            style={{
+                              marginTop: -14,
+                            }}
+                          >
+                            Select Any One Option
+                          </div>
+                        )}
                     </Col>
 
                     <Col lg={4} md={6} sm={6}>

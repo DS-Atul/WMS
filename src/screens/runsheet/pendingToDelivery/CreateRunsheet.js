@@ -374,16 +374,16 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
 
 
   useEffect(() => {
-    if (route != "") {
+    if (route !== "" && defined_route_name !=="") {
       setroute_error(false);
     }
-    if (vehicle_no != "") {
+    if (vehicle_no !== "") {
       setvehicle_no_error(false);
     }
     if (driver_name != "") {
       setdriver_name_error(false);
     }
-  }, [route, vehicle_no, driver_name]);
+  }, [route, vehicle_no, driver_name, defined_route_name]);
 
   return (
     <>
@@ -404,10 +404,10 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (route == "") {
+            if (route === "" && defined_route_name === "") {
               setroute_error(true);
             }
-            if (driver_name == "") {
+            if (driver_name === "") {
               setdriver_name_error(true);
             }
             validation.handleSubmit(e.values);

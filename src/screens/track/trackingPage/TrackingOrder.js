@@ -178,11 +178,11 @@ const TrackingOrder = () => {
                             </strong>{" "}
                             <br />
                             {
-                              toTitleCase(last_ele.current_locality)
+                              toTitleCase(last_ele.current_city)
                             }
                             {", "}
                             {
-                              toTitleCase(last_ele.current_city)
+                              toTitleCase(last_ele.current_locality)
                             }{", "} {
                               last_ele.current_pincode
                             }
@@ -933,11 +933,11 @@ const TrackingOrder = () => {
                                         <td>{d_update_date}</td>
                                         <td>{update_time}</td>
                                         <td>
-                                          {toTitleCase(item1.current_city)}
+                                          {toTitleCase(item1.status_current_city)}
                                           {", "}
-                                          {toTitleCase(item1.current_locality)}
+                                          {toTitleCase(item1.status_current_locality)}
                                           {", "}
-                                          {toTitleCase(item1.current_pincode)}
+                                          {toTitleCase(item1.status_current_pincode)}
                                         </td>
                                       </tr>
                                     );

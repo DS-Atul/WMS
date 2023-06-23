@@ -44,7 +44,8 @@ const RecieveManifest = ({ depart }) => {
   // console.log("Not Recived", notReceived);
   const [is_issuerec, setis_issuerec] = useState(false);
   const [receivedrec, setReceivedrec] = useState([]);
-  // const [notReceivedrec, setNotReceivedrec] = useState([]);
+  const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
+
   const accessToken = useSelector((state) => state.authentication.access_token);
   const success = useSelector((state) => state.alert.show_alert);
   const [remarks, setremarks] = useState("");

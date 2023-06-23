@@ -26,7 +26,6 @@ import {
   FormGroup
 } from "reactstrap";
 import Button from 'react-bootstrap/Button';
-import { Phone } from "@mui/icons-material";
 
 const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
   console.log("Issue data", data)
@@ -293,7 +292,7 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
 
           cm_current_status: "REJECTED",
           cm_remarks: toTitleCase(message).toUpperCase(),
-          change_fields: {'cm_current_status': 'REJECTED'},
+          change_fields: { 'cm_current_status': 'REJECTED' },
         },
         {
           headers: {
@@ -325,8 +324,34 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
     }
   }
 
+  // Image Modal
+  const [openModal, setopenModal] = useState(false);
+  const handleCloseMod = () => {
+    setopenModal(false);
+  }
+  const [img, setimg] = useState("");
+  const handle_img = (a) => {
+    setimg(a)
+  }
+
   return (
     <>
+      <Modal show={openModal} onHide={handleCloseMod}
+
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+
+          <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px" }} />
+
+        </Modal.Body>
+
+      </Modal>
+
       <Modal
         show={show}
         onHide={handleClose}
@@ -508,10 +533,20 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
               </td>
               <td className="selection-cell">{added_at}</td>
 
-              <td>
+              <td
+                onClick={() => {
+                  handle_img(order.pod_image);
+                  setopenModal(true)
+                }}
+              >
                 <img src={order.pod_image} style={{ width: 70, height: 50 }} />
               </td>
-              <td>
+              <td
+                onClick={() => {
+                  handle_img(order.image);
+                  setopenModal(true)
+                }}
+              >
                 <img src={order.image} style={{ width: 70, height: 50 }} />
               </td>
               <td>
