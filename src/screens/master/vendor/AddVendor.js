@@ -73,6 +73,9 @@ const AddVendor = () => {
     setcircle_btn4(!circle_btn4);
   };
 
+  const [gst_error, setgst_error] = useState(false)
+  const [gst_text, setgst_text] = useState("")
+
   // Used for Company Type list
   const [company_type, setcompany_type] = useState("");
   const [company_type_list, setcompany_type_list] = useState([
@@ -292,14 +295,18 @@ const AddVendor = () => {
       }
       else if (row[row.length - 1][0].length !== 15) {
         document.getElementById('vendor_servies').scrollIntoView();
-        alert("Gst Number Must Be 15 Digit")
+        setgst_error(true)
+        setgst_text("Gst Number Must Be 15 Digit")
       }
       else if (row[row.length - 1][0].substring(2, 12) !== pan_no) {
         document.getElementById('vendor_servies').scrollIntoView();
-        alert("PAN Number Is Not Mached with Gst Number")
+        setgst_error(true)
+        setgst_text("PAN Number Is Not Mached with Gst Number")
       }
       else if (data === false) {
         document.getElementById('vendor_servies').scrollIntoView();
+        setgst_error(true)
+        setgst_text("Please Checked, checkBox of Head Office")
       }
       else if (
         Select_forward_by_air === false &&
@@ -1623,7 +1630,6 @@ const AddVendor = () => {
         dispatch(setDataExist(`"${pan_no}" Already Exists`));
         dispatch(setAlertType("warning"));
         dispatch(setShowAlert(true));
-        setpan_no("")
       }
       setloaded_pan(false)
     } catch (error) {
@@ -1653,6 +1659,12 @@ const AddVendor = () => {
     }
   }, [pan_no]);
 
+  useEffect(() => {
+    let data = row.some((a) => a[5] == true)
+    if (row[row.length - 1].every((e) => e !== "" && data !== false && row[row.length - 1][0].substring(2, 12) === pan_no) && row[row.length - 1][0].length === 15) {
+      setgst_error(false)
+    }
+  }, [dimension_list])
 
   return (
     <>
@@ -1747,7 +1759,9 @@ const AddVendor = () => {
             }
             else if (row[row.length - 1].some((some) => some === "")) {
               document.getElementById('vendor_servies').scrollIntoView();
-              alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+              setgst_error(true)
+              setgst_text("Please Fill All GST Address")
+              // alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
             }
             // else if(row[row.length - 1][0].length !== 15){
             //   document.getElementById('gst_details').scrollIntoView();
@@ -1755,7 +1769,8 @@ const AddVendor = () => {
             // }
             else if (data === false) {
               document.getElementById('vendor_servies').scrollIntoView();
-              alert("Please Checked, checkBox of Head Office")
+              setgst_error(true)
+              setgst_text("Please Checked, checkBox of Head Office")
             }
             else if (others_services_offerd === true && row1[0] == "") {
               setother_err(true);
@@ -2490,6 +2505,11 @@ const AddVendor = () => {
                                 ))}
                               </div>
                             </Col>
+                            {gst_error ? (
+                                <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom:"12px"}}>
+                                 {gst_text}
+                                </div>
+                              ) : null}
                           </Row>
 
                           {service_region_selected === "Pan India" && (
@@ -2504,7 +2524,9 @@ const AddVendor = () => {
                                       setgstcity_bottom(103)
                                       const lastRow = row[row.length - 1];
                                       if (row[row.length - 1].some((data) => data === "")) {
-                                        alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+                                        setgst_error(true)
+                                        setgst_text("Please Fill All GST Address")
+                                        // alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
                                       } else {
                                         addGST();
                                       }

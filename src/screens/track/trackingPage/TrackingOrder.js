@@ -149,7 +149,7 @@ const TrackingOrder = () => {
                               Origin:
                             </strong>
                             <br />
-                            {toTitleCase(last_ele.orgin_locality)}{","} {toTitleCase(last_ele.orgin_city)}{","} {toTitleCase(last_ele.orgin_pincode)}
+                            {toTitleCase(last_ele.orgin_locality)}{", "} {toTitleCase(last_ele.orgin_city)}{", "} {toTitleCase(last_ele.orgin_pincode)}
                           </div>
 
                           <div className="col">
@@ -158,7 +158,7 @@ const TrackingOrder = () => {
                               Destination:
                             </strong>{" "}
                             <br />
-                            {toTitleCase(last_ele.destination_locality)}{" ,"} {toTitleCase(last_ele.destination_city)}{" , "} {toTitleCase(last_ele.destination_pincode)}
+                            {toTitleCase(last_ele.destination_locality)}{", "} {toTitleCase(last_ele.destination_city)}{", "} {toTitleCase(last_ele.destination_pincode)}
                             {/* {item[0].order_detail[0].consignee_city__city}{" "} */}
                           </div>
 
@@ -180,10 +180,10 @@ const TrackingOrder = () => {
                             {
                               toTitleCase(last_ele.current_locality)
                             }
-                            {","}
+                            {", "}
                             {
                               toTitleCase(last_ele.current_city)
-                            }{","} {
+                            }{", "} {
                               last_ele.current_pincode
                             }
                           </div>
@@ -929,7 +929,7 @@ const TrackingOrder = () => {
                                     const update_time = time.substring(0, 8);
                                     return (
                                       <tr key={index}>
-                                        <td>{toTitleCase(item1.status)}</td>
+                                        <td>{toTitleCase(item1.status)}<br/><span style={{color:"gray", fontSize:"12.5px"}}>{toTitleCase(item1.transit_status)}</span></td>
                                         <td>{d_update_date}</td>
                                         <td>{update_time}</td>
                                         <td>

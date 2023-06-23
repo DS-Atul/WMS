@@ -149,8 +149,6 @@ const ExtendDataFormat = ({ type, count }) => {
   };
 
   const ExtendEwb = () => {
-    console.log("vehicle_n1o-----", vehicle_no)
-    console.log("state_code-----1", state_code)
     axios
       .put(
         EServerAddress + `ezewb/v1/ewb/extendValidityByNo?gstin=${gstin_no}`,
@@ -412,7 +410,7 @@ const ExtendDataFormat = ({ type, count }) => {
             <div style={{ marginTop: "10px" }}>
               <Label>Vehicle Number *</Label>
               <Input
-                max={10}
+                maxLength={10}
                 value={vehicle_no}
                 placeholder="Enter Vehicle Number"
                 onChange={(e) => {

@@ -62,6 +62,7 @@ import {
 import { gstin_no } from "../../../constants/CompanyDetails";
 import OrderImgDataFormat from "../../../data/images/orderImage/OrderDataFormat";
 import InvoiceImgDataFormat from "../../../data/images/invoicesImage/InvoiceImageDataFormat";
+import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -69,30 +70,10 @@ const AddOrder = () => {
     (state) => state.authentication.userdetails.home_branch
   );
 
-  const org_name = useSelector(
-    (state) => state.authentication.userdetails.organization
-  );
 
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
-  console.log("business_access_token====", business_access_token)
-  const e_access_token = useSelector((state) => state.eway_bill.e_access_token);
 
-  // const [e_access_token, sete_access_token] = useState("")
-  // const [business_access_token, setbusiness_access_token] = useState("")
-
-  const orgId = useSelector((state) => state.eway_bill?.orgs[0]?.orgId);
-
-  const user_l_state = useSelector(
-    (state) => state.authentication.userdetails.branch_location_state
-  );
-  const user_l_statecode = useSelector(
-    (state) => state.authentication.userdetails.branch_location_state_code
-  );
-  const data_len = useSelector((state) => state.pagination.data_length);
-  // const page_num = useSelector((state) => state.pagination.page_number);
-  const [page_num, setpage_num] = useState(1);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const search = useSelector((state) => state.searchbar.search_item);
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -817,13 +798,13 @@ const AddOrder = () => {
         cal_type === "DIMENSION" &&
         (length === "" || breadth === "" || height === "" || pieces === "")
       ) {
-        alert("Please Add Pakage Details");
+        alert("Please Add Dimensions Details");
       } else if (
         (length !== "" || breadth !== "" || height !== "" || pieces !== "") &&
         (length === "" || breadth === "" || height === "" || pieces === "")
       ) {
         alert(
-          "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
+          "Dimensions All Details Is Required"
         );
       } else if (total_no_of_pieces !== parseInt(values.total_quantity)) {
         alert(
@@ -1159,7 +1140,7 @@ const AddOrder = () => {
               : String(transport_mode).toUpperCase(),
           // delivery_mode: delivery_type === "LOCAL" ? "LOCAL" : String(delivery_mode).toUpperCase(),
           delivery_mode: "DOOR TO DOOR",
-          order_channel: "WEB APP",
+          order_channel: "WEB",
           billto: billto_id,
           client: client_id,
           shipper: eway_confirm
@@ -1380,7 +1361,7 @@ const AddOrder = () => {
               : String(transport_mode).toUpperCase(),
           // delivery_mode: delivery_type === "LOCAL" ? "LOCAL" : String(delivery_mode).toUpperCase(),
           delivery_mode: "DOOR TO DOOR",
-          order_channel: "WEB APP",
+          order_channel: "WEB",
           billto: billto_id,
           client: client_id,
           // shipper: eway_confirm ? eway_list.fromTrdName : shipper_n,
@@ -1484,8 +1465,9 @@ const AddOrder = () => {
     }
   };
 
-  const [clientdata, setclientdata] = useState([]);
   const [data, setdata] = useState(false);
+  const [togclient, settogclient] = useState(false)
+  const [togcommodity, settogcommodity] = useState(false)
 
   const getBillto = () => {
     let b_temp2 = [];
@@ -1499,6 +1481,7 @@ const AddOrder = () => {
         }
       )
       .then((response) => {
+        settogclient(true);
         b_data = response.data.results;
         if (response.data.results.length > 0) {
           if (response.data.next === null) {
@@ -1583,6 +1566,7 @@ const AddOrder = () => {
         }
       )
       .then((response) => {
+        settogcommodity(true)
         if (response.data.next === null) {
           setcommodity_loaded(false);
         } else {
@@ -1928,10 +1912,62 @@ const AddOrder = () => {
   }, [billto_id]);
 
   useEffect(() => {
-    if (client_id !== 0 && client_id !== "") {
-      getCommidityData();
+    if (billto_id !== 0) {
+      if (togclient && returned_data.length === 0) {
+        setclient("");
+        setclient_id("");
+      }
     }
+  }, [billto_id]);
+
+  useEffect(() => {
+    if (isupdating) {
+      settogclient(false)
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    if (client_id !== 0) {
+      setpage(1);
+      setcommodity_count(1);
+      setcommodity_bottom(103);
+      setcommodity_loaded(true);
+    }
+  }, [client_id]);
+
+  useEffect(() => {
+    let timeoutId;
+    if (client_id !== 0 && client_id !== "") {
+      timeoutId = setTimeout(() => {
+        getCommidityData();
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [page, search_commodity, client_id, search_commodity]);
+
+  useEffect(() => {
+    if (client_id !== 0) {
+      if (!isupdating && returned_data.length === 0) {
+        setcommodity("");
+        setcommodity_id("");
+      }
+    }
+  }, [client_id]);
+
+  useEffect(() => {
+    if (client_id !== 0) {
+      if (togcommodity && returned_data.length === 0) {
+        setcommodity("");
+        setcommodity_id("");
+      }
+    }
+  }, [client_id]);
+
+  useEffect(() => {
+    if (isupdating) {
+      settogcommodity(false)
+    }
+  }, [])
 
   useEffect(() => {
     if (order_id !== "") {
@@ -2508,208 +2544,6 @@ const AddOrder = () => {
   const [locality_sel_count, setlocality_sel_count] = useState(1)
   const [locality_sel_bottom, setlocality_sel_bottom] = useState(103)
 
-  const [ass_token, setass_token] = useState(false);
-
-  const [euser_name, seteuser_name] = useState("");
-  const [epass, setepass] = useState("");
-  const [id_is, setid_is] = useState("");
-  const [AccessToken_Modifiedat, setAccessToken_Modifiedat] = useState("");
-  // console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
-  const [BusinessToken_Modifiedat, setBusinessToken_Modifiedat] = useState("");
-  // console.log("BusinessToken_Modifiedat-----", BusinessToken_Modifiedat)
-  const [time_diff, settime_diff] = useState("");
-
-  useEffect(() => {
-    // Calculate the time difference when AccessToken_Modifiedat changes
-    if (AccessToken_Modifiedat) {
-      var dateTime1 = new Date(AccessToken_Modifiedat);
-      var dateTime2 = new Date(); // Current date-time
-      console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
-      console.log("date time1---- ", dateTime1)
-      console.log("date time2--- ", dateTime2)
-      var timeDiff = Math.abs(dateTime2 - dateTime1);
-      var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
-      settime_diff(diffHours);
-      console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
-    }
-
-  }, [AccessToken_Modifiedat]);
-
-  const getEwayAccessToken = () => {
-    axios
-      .get(
-        ServerAddress +
-        `organization/get_eway_accesstoken/?org_name=${org_name}`,
-
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then(function (response) {
-        console.log("first get resp ===>>", response.data);
-        if (response.data.results.length !== 0) {
-          let res_data = response.data.results[0];
-          setid_is(res_data.id);
-          seteuser_name(res_data.username);
-          setepass(res_data.password);
-          setAccessToken_Modifiedat(res_data.AccessToken_Modifiedat);
-          setBusinessToken_Modifiedat(res_data.BusinessToken_Modifiedat);
-          if (e_access_token === "") {
-            dispatch(setEAccessToken(res_data.access_token));
-          }
-          if (business_access_token === "") {
-            dispatch(setBusinesssAccessToken(res_data.business_token));
-          }
-
-          if (response.data.results[0].access_token === null) {
-            setass_token(true);
-          } else {
-            setass_token(false);
-          }
-        }
-        else {
-          dispatch(setEAccessToken(""));
-          dispatch(setBusinesssAccessToken(""));
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while login  with eway bill ${error}`);
-      });
-  };
-
-  const AddEwayAccessToken = () => {
-    // alert("AddEwayAccessToken---")
-    axios
-      .post(
-        EServerAddress + "ezewb/v1/auth/initlogin",
-
-        {
-          // userid: "test.easywaybill@gmail.com",
-          // password: "Abcd@12345",
-          userid: euser_name,
-          password: epass,
-        },
-
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then(function (response) {
-        console.log("AddEwayAccessToken response----", response)
-        if (response.data.message !== "Please verify account (or sign up first).") {
-          // sete_access_token(response.data.response.token)
-          dispatch(setEAccessToken(response.data.response.token));
-          dispatch(setOrgs(response.data.response.orgs));
-          if (response.data.status === 1 && id_is !== "") {
-            postAssToken(response.data.response.token);
-          }
-        }
-        else {
-          dispatch(setShowAlert(true));
-          dispatch(setDataExist(`Invalid Username And Password Sign Up First`));
-          dispatch(setAlertType("warning"));
-        }
-      })
-      .catch((error) => {
-        alert(`Error Happen while login  with eway bill ${error}`);
-      });
-  };
-
-  const postAssToken = (access_token) => {
-    // alert("postAssToken access_token===", access_token)
-    axios
-      .put(
-        ServerAddress + "organization/update_token/" + id_is,
-
-        {
-          access_token: access_token,
-          // access_token: e_access_token,
-          // AccessToken_Modifiedat: AccessToken_Modifiedat,
-          // org_id : id_is,
-        },
-
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then(function (response) {
-        console.log("postAssToken Acc token Resp===>>", response);
-        // dispatch(setEAccessToken(response.data.response.token));
-        // dispatch(setOrgs(response.data.response.orgs));
-
-      })
-      .catch((error) => {
-        alert(`Error Happen while login  with eway bill ${error}`);
-      });
-  };
-
-
-  const GetBusiness_token = () => {
-    //  alert("GetBusiness_token==========")
-    axios
-      .post(
-        EServerAddress + "ezewb/v1/auth/completelogin",
-        {
-          token: `${e_access_token}`,
-          orgid: orgId,
-        },
-
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then(function (response) {
-        console.log("GetBusiness_token response-----", response.data)
-        // setbusiness_access_token(response.data.response.token)
-        dispatch(setBusinesssAccessToken(response.data.response.token));
-        if (response.data.status === 1 && id_is !== "") {
-          postBusinessToken(response.data.response.token);
-        }
-      })
-      .catch((error) => {
-        dispatch(setShowAlert(true));
-        dispatch(setDataExist(`Eway Bill Server Is Currently Down`));
-        dispatch(setAlertType("danger"));
-      });
-  };
-
-  const postBusinessToken = (business_token) => {
-    // alert("postBusinessToken=========")
-    axios
-      .put(
-        ServerAddress + "organization/update_token/" + id_is,
-
-        {
-          // BusinessToken_Modifiedat: BusinessToken_Modifiedat,
-          business_token: business_token,
-          // business_token: business_access_token,
-        },
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then(function (response) {
-        console.log("post busines token res ===>>", response.data);
-
-      })
-      .catch((error) => {
-        alert(`Error Happen while login  with eway bill ${error}`);
-      });
-  };
-
-  useLayoutEffect(() => {
-    if (ass_token) {
-      AddEwayAccessToken();
-    }
-    if (time_diff >= 6) {
-      AddEwayAccessToken();
-    }
-  }, [ass_token, time_diff]);
-
   const [eway_detail_l, seteway_detail_l] = useState([]);
 
   const [eway_value, seteway_value] = useState([])
@@ -2726,6 +2560,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
+       console.log("Eresponse====", response)
         if (response.data.response !== null && typeof (response.data) !== "string") {
           // if (response.data.length > 0) {
           if (is_eway === "yes") {
@@ -2764,13 +2599,19 @@ const AddOrder = () => {
 
           }
 
-        } else {
+        } else if(response.data?.status === 0){
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Entered EwayBill No Is Wrong`));
           dispatch(setAlertType("danger"));
           seteway_confirm(false);
           seteway_detail_l([]);
           seteway_list([]);
+        }
+        else{
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist("Invalid Authentication Token."));
+          dispatch(setAlertType("danger"));
+         
         }
       })
       .catch((error) => {
@@ -2885,22 +2726,6 @@ const AddOrder = () => {
         alert(`Error Occur in Get Data ${err}`);
       });
   };
-  //  For Step 1 Eway bill
-  useLayoutEffect(() => {
-    if (org_name) {
-      getEwayAccessToken();
-    }
-  }, []);
-
-  // For Step 2 Eway Bill
-  useLayoutEffect(() => {
-    if (e_access_token != "" && ass_token && orgId) {
-      GetBusiness_token();
-    }
-    if (time_diff >= 6 && orgId) {
-      GetBusiness_token();
-    }
-  }, [e_access_token, ass_token, time_diff]);
 
   // Location Info
   // Address Line 1 Shipper and consignee started
@@ -4013,6 +3838,7 @@ const AddOrder = () => {
 
   return (
     <div>
+      <LogInEwayBill />
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
@@ -4191,7 +4017,7 @@ const AddOrder = () => {
                         data_item_s={billto}
                         set_data_item_s={setbillto}
                         set_id={setbillto_id}
-                        disable_me={isupdating}
+                        // disable_me={isupdating}
                         page={billto_page}
                         setpage={setbillto_page}
                         setsearch_item={setsearch_billto}
@@ -4214,7 +4040,7 @@ const AddOrder = () => {
                           set_data_item_s={setclient}
                           // error_message="Select Client "
                           set_id={setclient_id}
-                          disable_me={isupdating}
+                          // disable_me={isupdating}
                           page={client_page}
                           setpage={setclient_page}
                           setsearch_item={setsearch_client}
@@ -5969,7 +5795,7 @@ const AddOrder = () => {
                               onClick={() => {
                                 if (
                                   order.current_status === "SHIPMENT PICKED UP"
-                                ) {                       
+                                ) {
                                   navigate("/manifest/pickeduporders");
                                 } else {
                                   navigate("/booking/orders/adddocketstatus", {
@@ -5977,7 +5803,7 @@ const AddOrder = () => {
                                   });
                                 }
                               }}
-                              disabled={order.current_status !==  "SHIPMENT PICKED UP" && order.current_status !== "SHIPMENT ORDER RECEIVED"}
+                              disabled={order.current_status !== "SHIPMENT PICKED UP" && order.current_status !== "SHIPMENT ORDER RECEIVED"}
                             >
                               Add Status
                             </Button>
@@ -6093,10 +5919,10 @@ const AddOrder = () => {
                           order_active_btn === "first" ? "#C4D7FE" : null,
                       }}
                       className="btn1 footer-text"
-                      // onClick={() => {
-                      //   setorder_active_btn("first");
-                      //   updateCurrentStep(1);
-                      // }}
+                    // onClick={() => {
+                    //   setorder_active_btn("first");
+                    //   updateCurrentStep(1);
+                    // }}
                     >
                       {/* Packages */}
                       Dimensions
@@ -6109,10 +5935,10 @@ const AddOrder = () => {
                           order_active_btn === "second" ? "#C4D7FE" : null,
                       }}
                       className="btn2 footer-text"
-                      // onClick={() => {
-                      //   setorder_active_btn("second");
-                      //   updateCurrentStep(2);
-                      // }}
+                    // onClick={() => {
+                    //   setorder_active_btn("second");
+                    //   updateCurrentStep(2);
+                    // }}
                     >
                       Order Images
                     </div>
@@ -6122,10 +5948,10 @@ const AddOrder = () => {
                           order_active_btn === "third" ? "#C4D7FE" : null,
                       }}
                       className="btn3 footer-text"
-                      // onClick={() => {
-                      //   setorder_active_btn("third");
-                      //   updateCurrentStep(3);
-                      // }}
+                    // onClick={() => {
+                    //   setorder_active_btn("third");
+                    //   updateCurrentStep(3);
+                    // }}
                     >
                       Invoices
                     </div>
@@ -7104,7 +6930,7 @@ const AddOrder = () => {
                       (length === "" || breadth === "" || height === "" || pieces === "")
                     ) {
                       alert(
-                        "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
+                        "Dimensions All Details Is Required"
                       );
                     }
                     else if (total_no_of_pieces !== parseInt(validation.values.total_quantity)) {

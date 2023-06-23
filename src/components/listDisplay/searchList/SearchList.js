@@ -44,7 +44,7 @@ const SearchList = () => {
             />
           </label>
           <button
-            type="submit"
+            type="button"
             style={{ background: "transparent", border: "white" }}
             onClick={() => {
               dispatch(setFilterToggle(true));

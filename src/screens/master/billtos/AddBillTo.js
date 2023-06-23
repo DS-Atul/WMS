@@ -83,6 +83,9 @@ const AddClient = () => {
 
   const [credit_limit, setcredit_limit] = useState(false);
 
+  const [gst_error, setgst_error] = useState(false)
+  const [gst_text, setgst_text] = useState("")
+
   // Location Info
   const [state_list_s, setstate_list_s] = useState([]);
   const [state, setstate] = useState("");
@@ -247,11 +250,23 @@ const AddClient = () => {
       }
       else if (row2[row2.length - 1].some((some) => some === "")) {
         document.getElementById('gst_details').scrollIntoView();
-        alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+        setgst_error(true)
+        setgst_text("Please Fill All GST Address")
       }
       else if (data === false) {
         document.getElementById('gst_details').scrollIntoView();
-        alert("Please Checked, checkBox of Head Office")
+        setgst_error(true)
+        setgst_text("Please Checked, checkBox of Head Office")
+      }
+      else if (row2[row2.length - 1][0].length !== 15) {
+        document.getElementById('gst_details').scrollIntoView();
+        setgst_error(true)
+        setgst_text("Gst Number Must Be 15 Digit")
+      }
+      else if (row2[row2.length - 1][0].substring(2, 12) !== pan_no) {
+        document.getElementById('gst_details').scrollIntoView();
+        setgst_error(true)
+        setgst_text("PAN Number Is Not Mached with Gst Number")
       }
       else if (field.includes(all_value)) {
         document.getElementById('location_info').scrollIntoView();
@@ -1505,8 +1520,6 @@ const AddClient = () => {
     }
   }, [isupdating]);
 
-
-
   useEffect(() => {
     if (gst_id_list !== "") {
       let id_list = gst_ids.filter((p) => gst_id_list.indexOf(p) === -1);
@@ -1518,6 +1531,13 @@ const AddClient = () => {
       setpan_no_error(false);
     }
   }, [pan_no]);
+
+  useEffect(() => {
+    let data = row2.some((a) => a[5] == true)
+    if (row2[row2.length - 1].every((e) => e !== "" && data !== false && row2[row2.length - 1][0].substring(2, 12) === pan_no) && row2[row2.length - 1][0].length === 15) {
+      setgst_error(false)
+    }
+  }, [dimension_list2])
 
   return (
     <div>
@@ -1579,11 +1599,8 @@ const AddClient = () => {
           }
           else if (row2[row2.length - 1].some((some) => some === "")) {
             document.getElementById('gst_details').scrollIntoView();
-            alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
-          }
-          else if (data === false) {
-            document.getElementById('gst_details').scrollIntoView();
-            alert("Please Checked, checkBox of Head Office")
+            setgst_error(true)
+            setgst_text("Please Fill All GST Address")
           }
           else if (field.includes(all_value)) {
             document.getElementById('location_info').scrollIntoView();
@@ -2135,6 +2152,11 @@ const AddClient = () => {
                           ))}
                         </div>
                       </Col>
+                      {gst_error ? (
+                                <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom:"12px"}}>
+                                 {gst_text}
+                                </div>
+                              ) : null}
                     </Row>
                     <>
                       {row2.length < 20 && (
@@ -2157,7 +2179,8 @@ const AddClient = () => {
                               setgstcity_bottom(103)
                               const lastRow = row[row.length - 1];
                               if (row2[row2.length - 1].some((data) => data === "")) {
-                                alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+                                setgst_error(true)
+                                setgst_text("Please Fill All GST Address")
                               } else {
                                 addGST();
                               }

@@ -390,6 +390,8 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                 <td>{order.order_type === "RETURN" ? toTitleCase(order.consignee) : toTitleCase(order.shipper)}</td>
                 <td>{order.order_type === "RETURN" ? toTitleCase(order.shipper) : toTitleCase(order.consignee)}</td>
                 <td><span style={{ color: order.current_status === "SHORT DELIVERED" && "red" }}>{toTitleCase(order.current_status)}</span></td>
+                <td>{toTitleCase(order.order_channel)}</td>
+                
                 <td>
                   <div>
                     <Link

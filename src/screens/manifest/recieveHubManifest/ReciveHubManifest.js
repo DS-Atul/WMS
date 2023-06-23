@@ -29,9 +29,9 @@ import { setLoaded } from "../../../store/manifest/RecieveManifest";
 import RecieveHubDataFormat from "../../../data/manifests/recieveHubManifest/RecieveHubManifestFormat";
 import BreakHubManifest from "../../../data/manifests/recieveHubManifest/BreakHubManifest";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
-import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
 import { gstin_no } from "../../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
+import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 const RecieveHubManifest = ({ depart }) => {
   const userDetail = useSelector((state) => state.authentication.userdetails);
   const [is_submit, setis_submit] = useState(false);
@@ -50,7 +50,7 @@ const RecieveHubManifest = ({ depart }) => {
   const location_data = useLocation();
   const navigate = useNavigate();
   const order_id = useSelector((state) => state.manifest.order_id);
-  console.log("location_data--location_data-Hub-",location_data)
+  console.log("location_data--location_data-Hub-", location_data)
   const issue_id = useSelector((state) => state.manifest.issueorder_id);
   const loaded = useSelector((state) => state.manifest.loaded);
 
@@ -122,7 +122,7 @@ const RecieveHubManifest = ({ depart }) => {
     axios
       .get(
         ServerAddress +
-          `manifest/get_manifest_order/?manifest_no=${hub_transfer_no}`,
+        `manifest/get_manifest_order/?manifest_no=${hub_transfer_no}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -139,15 +139,15 @@ const RecieveHubManifest = ({ depart }) => {
     hub_transfer_no && get_orderof_manifest();
   }, [hub_transfer_no, success]);
 
-const [mn_barcode, setmn_barcode] = useState([]);
+  const [mn_barcode, setmn_barcode] = useState([]);
   useEffect(() => {
-    
-  console.log("hello ji pass check",location_data.state.hub.mn_barcode);
-  if (location_data.state.hub.mn_barcode) {
-    setmn_barcode(location_data.state.hub.mn_barcode);
-  }
+
+    console.log("hello ji pass check", location_data.state.hub.mn_barcode);
+    if (location_data.state.hub.mn_barcode) {
+      setmn_barcode(location_data.state.hub.mn_barcode);
+    }
   }, [])
-  
+
   const RecieveHubManifest = (steps) => {
     axios
       .post(
@@ -158,7 +158,7 @@ const [mn_barcode, setmn_barcode] = useState([]);
           awb_no_list: order_id,
           issue_type: issue_id,
           is_issue: is_issue,
-          vehicle_no:vehicle_no,
+          vehicle_no: vehicle_no,
           is_disputed: false,
           disputed_by: "",
           dispute_username: "",
@@ -182,7 +182,7 @@ const [mn_barcode, setmn_barcode] = useState([]);
       )
       .then(function (response) {
         if (response.data.status === "success") {
-          if (list_data.length>0){
+          if (list_data.length > 0) {
             UpateEwaybillPartB({
               gstin_no: gstin_no,
               Data: list_data,
@@ -253,7 +253,7 @@ const [mn_barcode, setmn_barcode] = useState([]);
   useLayoutEffect(() => {
     get_vehcile_no();
   }, [vehicle_n_page, search_vehicle_name]);
- 
+
 
   // useEffect(() => {
   //   if (is_submit) {
@@ -263,18 +263,18 @@ const [mn_barcode, setmn_barcode] = useState([]);
 
   const [show, setShow] = useState(false);
 
-let docket_no_list = []
+  let docket_no_list = []
 
- for (let index = 0; index < data.length; index++) {
-  const element = data[index]?.docket_no;
-  docket_no_list.push(element)
-  console.log("docket_no_list hub-------", docket_no_list)
- }
+  for (let index = 0; index < data.length; index++) {
+    const element = data[index]?.docket_no;
+    docket_no_list.push(element)
+    console.log("docket_no_list hub-------", docket_no_list)
+  }
   const handleClose = () => {
     if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
       setvehicle_error(true);
     }
-    else{
+    else {
       RecieveHubManifest("STEP1");
       setis_break(false);
       setShow(false);
@@ -289,295 +289,83 @@ let docket_no_list = []
   useEffect(() => {
     setdata(location_data.state.hub.orders)
   }, [location_data])
-  
-   //For Update Part B
-   const [EwayBillData, setEwayBillData] = useState([])
-   const [list_data, setlist_data] = useState([])
- 
-   const getEwayBills = (hub_num) => {
-     axios
-       .get(
-         ServerAddress +
-           `booking/get_all_ewaybill/?type=${"hub"}&value=${hub_num}`,
-         {
-           headers: {
-             Authorization: `Bearer ${accessToken}`,
-           },
-         }
-       )
-       .then((res) => {
-         console.log("resres----", res);
-         if (res?.data?.length !== 0) {
-           setEwayBillData(res.data);
-         }
-       })
-       .catch((err) => {
-         console.log("rerrerer", err);
-       });
-   };
-   
- 
-   useEffect(() => {
-     if(EwayBillData?.length>0){
-     let li = [];
-     EwayBillData?.forEach((e) => {
-       let obj = {
-         transMode: "1",
-         fromPlace: userDetail.branch_nm,
-         fromState: userDetail.branch_location_state_code,
-         transDocNo: e.trans_doc_no,
-         transDocDate: String(
-           e.docDate.split("-")[2] +
-           "/" +
-           e.docDate.split("-")[1] +
-           "/" +
-           e.docDate.split("-")[0]
-         ),
-         vehicleNo: vehicle_no,
-         reasonCode: "2",
-         reasonRem: "text",
-         userGstin: gstin_no,
-         ewbNo: e.ewb_no,
-       };
-       li.push(obj);
-     });
-     setlist_data(li)
-   }
-     // Rest of your code...
-   }, [EwayBillData, vehicle_no]);
- console.log("EwayBillData-----", EwayBillData)
- 
-   useEffect(() => {
- 
-     if (hub_transfer_no !== "") {
-       getEwayBills(hub_transfer_no);
-     }
-   }, [hub_transfer_no])
- 
-    //For Eway Bill
- 
-    const orgId = useSelector((state) => state.eway_bill?.orgs[0]?.orgId);
- 
-    const org_name = useSelector(
-      (state) => state.authentication.userdetails.organization
-    );
-    const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
-  
-    const e_access_token = useSelector((state) => state.eway_bill.e_access_token);
-  
-    const [ass_token, setass_token] = useState(false);
-    const [euser_name, seteuser_name] = useState("");
-    const [epass, setepass] = useState("");
-    const [id_is, setid_is] = useState("");
-  
-    const [AccessToken_Modifiedat, setAccessToken_Modifiedat] = useState("");
-    const [time_diff, settime_diff] = useState("");
-   
-    const getEwayAccessToken = () => {
-      axios
-        .get(
-          ServerAddress +
-          `organization/get_eway_accesstoken/?org_name=${org_name}`,
-  
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        )
-        .then(function (response) {
-          console.log("first get ressssss ===>>", response.data);
-          if (response.data.results.length !== 0) {
-            let res_data = response.data.results[0];
-            setid_is(res_data.id);
-            seteuser_name(res_data.username);
-            setepass(res_data.password);
-            setAccessToken_Modifiedat(res_data.AccessToken_Modifiedat);
-            if (e_access_token === "") {
-              dispatch(setEAccessToken(res_data.access_token));
-            }
-            if (business_access_token === "") {
-              dispatch(setBusinesssAccessToken(res_data.business_token));
-            }
-  
-            if (response.data.results[0].access_token === null) {
-              setass_token(true);
-            } else {
-              setass_token(false);
-            }
-          }
-          else {
-            dispatch(setEAccessToken(""));
-            dispatch(setBusinesssAccessToken(""));
-          }
-        })
-        .catch((error) => {
-          alert(`Error Happen while login  with eway bill ${error}`);
-        });
-    };
-  
-    const AddEwayAccessToken = () => {
-      axios
-        .post(
-          EServerAddress + "ezewb/v1/auth/initlogin",
-  
-          {
-            // userid: "test.easywaybill@gmail.com",
-            // password: "Abcd@12345",
-            userid: euser_name,
-            password: epass,
+
+  //For Update Part B
+  const [EwayBillData, setEwayBillData] = useState([])
+  const [list_data, setlist_data] = useState([])
+
+  const getEwayBills = (hub_num) => {
+    axios
+      .get(
+        ServerAddress +
+        `booking/get_all_ewaybill/?type=${"hub"}&value=${hub_num}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
           },
-  
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then(function (response) {
-          console.log("AddEwayAccessToken response----", response)
-          if (response.data.message !== "Please verify account (or sign up first).") {
-            dispatch(setEAccessToken(response.data.response.token));
-            dispatch(setOrgs(response.data.response.orgs));
-            if (response.data.status === 1 && id_is !== "") {
-              postAssToken(response.data.response.token);
-            }
-          }
-          else {
-            dispatch(setShowAlert(true));
-            dispatch(setDataExist(`Invalid Username And Password Sign Up First`));
-            dispatch(setAlertType("warning"));
-          }
-        })
-        .catch((error) => {
-          alert(`Error Happen while login  with eway bill ${error}`);
-        });
-    };
-  
-    const postAssToken = (access_token) => {
-      axios
-        .put(
-          ServerAddress + "organization/update_token/" + id_is,
-  
-          {
-            type: "access_token",
-            access_token: access_token,
-          },
-  
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        )
-        .then(function (response) {
-  
-        })
-        .catch((error) => {
-          alert(`Error Happen while login  with eway bill ${error}`);
-        });
-    };
-  
-  
-    const GetBusiness_token = () => {
-      axios
-        .post(
-          EServerAddress + "ezewb/v1/auth/completelogin",
-          {
-            token: `${e_access_token}`,
-            orgid: orgId,
-          },
-  
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then(function (response) {
-          dispatch(setBusinesssAccessToken(response.data.response.token));
-          if (response.data.status === 1 && id_is !== "") {
-            postBusinessToken(response.data.response.token);
-          }
-        })
-        .catch((error) => {
-          dispatch(setShowAlert(true));
-          dispatch(setDataExist(`Eway Bill Server Is Currently Down`));
-          dispatch(setAlertType("danger"));
-        });
-    };
-  
-    const postBusinessToken = (business_token) => {
-      axios
-        .put(
-          ServerAddress + "organization/update_token/" + id_is,
-  
-          {
-            type: "business_token",
-            business_token: business_token,
-          },
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        )
-        .then(function (response) {
-          console.log("post busines token res ===>>", response.data);
-  
-        })
-        .catch((error) => {
-          alert(`Error Happen while login  with eway bill ${error}`);
-        });
-    };
-    
-    useLayoutEffect(() => {
-      if (ass_token) {
-        AddEwayAccessToken();
-      }
-      if (time_diff >= 6) {
-        AddEwayAccessToken();
-      }
-    }, [ass_token, time_diff]);
-  
-      //  For Step 1 Eway bill
-      useLayoutEffect(() => {
-        if(org_name){
-          getEwayAccessToken();
-        }   
-      }, []);
-    
-      // For Step 2 Eway Bill
-      useLayoutEffect(() => {
-        if (e_access_token != "" && ass_token && orgId) {
-          GetBusiness_token();
         }
-        if (time_diff >= 6 && orgId) {
-          GetBusiness_token();
+      )
+      .then((res) => {
+        console.log("resres----", res);
+        if (res?.data?.length !== 0) {
+          setEwayBillData(res.data);
         }
-      }, [e_access_token, ass_token, time_diff]);
-  
-      useEffect(() => {
-        // Calculate the time difference when AccessToken_Modifiedat changes
-        if (AccessToken_Modifiedat) {
-          var dateTime1 = new Date(AccessToken_Modifiedat);
-          var dateTime2 = new Date(); // Current date-time
-          console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
-          console.log("date time1---- ", dateTime1)
-          console.log("date time2--- ", dateTime2)
-          var timeDiff = Math.abs(dateTime2 - dateTime1);
-          var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
-          settime_diff(diffHours);
-          console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
-        }
-    
-      }, [AccessToken_Modifiedat]);
- 
-      useEffect(() => {
-       if (vehicle_no !== "" || vehicle_no?.toString().length === 10) {
-         setvehicle_error(false)
-       }
-     }, [vehicle_no])
+      })
+      .catch((err) => {
+        console.log("rerrerer", err);
+      });
+  };
+
+
+  useEffect(() => {
+    if (EwayBillData?.length > 0) {
+      let li = [];
+      EwayBillData?.forEach((e) => {
+        let obj = {
+          transMode: "1",
+          fromPlace: userDetail.branch_nm,
+          fromState: userDetail.branch_location_state_code,
+          transDocNo: e.trans_doc_no,
+          transDocDate: String(
+            e.docDate.split("-")[2] +
+            "/" +
+            e.docDate.split("-")[1] +
+            "/" +
+            e.docDate.split("-")[0]
+          ),
+          vehicleNo: vehicle_no,
+          reasonCode: "2",
+          reasonRem: "text",
+          userGstin: gstin_no,
+          ewbNo: e.ewb_no,
+        };
+        li.push(obj);
+      });
+      setlist_data(li)
+    }
+    // Rest of your code...
+  }, [EwayBillData, vehicle_no]);
+  console.log("EwayBillData-----", EwayBillData)
+
+  useEffect(() => {
+
+    if (hub_transfer_no !== "") {
+      getEwayBills(hub_transfer_no);
+    }
+  }, [hub_transfer_no])
+
+  useEffect(() => {
+    if (vehicle_no !== "" || vehicle_no?.toString().length === 10) {
+      setvehicle_error(false)
+    }
+  }, [vehicle_no])
 
   return (
     <>
+    <LogInEwayBill/>
       <Modal
         show={is_recv}
-        onHide={()=>{
+        onHide={() => {
           setShow(false);
           setis_break(false);
         }}
@@ -615,12 +403,12 @@ let docket_no_list = []
           </Button>
 
           <Button variant="success" onClick={() => {
-                if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
-                  setvehicle_error(true);
-                }
-                else{
-                  RecieveHubManifest("STEP1");
-                }          
+            if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
+              setvehicle_error(true);
+            }
+            else {
+              RecieveHubManifest("STEP1");
+            }
           }}>
             Update
           </Button>
@@ -644,8 +432,8 @@ let docket_no_list = []
               setis_issue={setis_issue}
               received={received}
               setReceived={setReceived}
-              // notReceived={notReceived}
-              // setNotReceived={setNotReceived}
+            // notReceived={notReceived}
+            // setNotReceived={setNotReceived}
             />
           </Modal.Body>
         ) : (
@@ -671,13 +459,13 @@ let docket_no_list = []
         <Modal.Footer>
           {
             is_break ?
-            <Button variant="danger" onClick={handleCloseAll}>Cancel</Button>
-            :
-          <Button variant="danger" onClick={handleClose}>
+              <Button variant="danger" onClick={handleCloseAll}>Cancel</Button>
+              :
+              <Button variant="danger" onClick={handleClose}>
                 No,Later
-          </Button>
+              </Button>
           }
-        
+
           {!is_break ? (
             <Button
               variant="success"
@@ -713,18 +501,18 @@ let docket_no_list = []
                   style={{ background: "white" }}
                 >
                   <div className="mb-2 row ">
-                    
-                     <div style={{color:"blue",fontSize:"15px",marginTop:"10px"}}> 
+
+                    <div style={{ color: "blue", fontSize: "15px", marginTop: "10px" }}>
                       Docket Present In This Manifest = [
-                        {
-                          docket_no_list.map((v)=>{
-                              return <a>{v}{docket_no_list[docket_no_list.length-1]===v?null:", "}</a>
-                            }
-                          )
+                      {
+                        docket_no_list.map((v) => {
+                          return <a>{v}{docket_no_list[docket_no_list.length - 1] === v ? null : ", "}</a>
                         }
+                        )
+                      }
                       ]
-                     </div>
-                    
+                    </div>
+
                   </div>
 
                   {/* DataTable */}
@@ -736,8 +524,8 @@ let docket_no_list = []
                     setis_issue={setis_issuerec}
                     received={receivedrec}
                     setReceived={setReceivedrec}
-                    // notReceived={notReceivedrec}
-                    // setNotReceived={setNotReceivedrec}
+                  // notReceived={notReceivedrec}
+                  // setNotReceived={setNotReceivedrec}
                   />
 
                 </div>
@@ -793,14 +581,14 @@ let docket_no_list = []
                       />
                     </div>
                   </Col>
-         
+
                   <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">
-                            Market Vehcile:
-                          </Label>
-                          <Row>
-                          <Col lg={12} md={12} sm={12}>
+                    <div className="mb-2">
+                      <Label className="header-child">
+                        Market Vehcile:
+                      </Label>
+                      <Row>
+                        <Col lg={12} md={12} sm={12}>
                           {rental ? (
                             <FiCheckSquare
                               size={20}
@@ -816,72 +604,72 @@ let docket_no_list = []
                               }}
                             />
                           )}
-                          </Col>
-                          </Row>
-                        </div>
-                      </Col>
-                      <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
-                          {rental ? (
-                            <Label className="header-child">
-                              {" "}
-                              Market Vehcile No* :
-                            </Label>
-                          ) : (
-                            <Label className="header-child">
-                              Vehcile No* :
-                            </Label>
-                          )}
-                          {rental ? null : (
-                            <SearchInput
-                              data_list={vehicle_list}
-                              setdata_list={setvehicle_list}
-                              data_item_s={vehicle_no}
-                              set_data_item_s={setvehicle_no}
-                              set_id={setvehicle_id}
-                              page={vehicle_n_page}
-                              setpage={setvehicle_n_page}
-                              search_item={search_vehicle_name}
-                              setsearch_item={setsearch_vehicle_name}
-                              error_message={"Please Select Any Vechile Number"}
-                              error_s={vehicle_error}
-                              loaded={vehicle_loaded}
-                              count={vehicle_count}
-                              bottom={vehicle_bottom}
-                              setbottom={setvehicle_bottom}
-                            />
-                          )}
+                        </Col>
+                      </Row>
+                    </div>
+                  </Col>
+                  <Col lg={4} md={6} sm={6}>
+                    <div className="mb-2">
+                      {rental ? (
+                        <Label className="header-child">
+                          {" "}
+                          Market Vehcile No* :
+                        </Label>
+                      ) : (
+                        <Label className="header-child">
+                          Vehcile No* :
+                        </Label>
+                      )}
+                      {rental ? null : (
+                        <SearchInput
+                          data_list={vehicle_list}
+                          setdata_list={setvehicle_list}
+                          data_item_s={vehicle_no}
+                          set_data_item_s={setvehicle_no}
+                          set_id={setvehicle_id}
+                          page={vehicle_n_page}
+                          setpage={setvehicle_n_page}
+                          search_item={search_vehicle_name}
+                          setsearch_item={setsearch_vehicle_name}
+                          error_message={"Please Select Any Vechile Number"}
+                          error_s={vehicle_error}
+                          loaded={vehicle_loaded}
+                          count={vehicle_count}
+                          bottom={vehicle_bottom}
+                          setbottom={setvehicle_bottom}
+                        />
+                      )}
 
-                          {rental &&
-                            <div className="mb-2">
-                              <Input
-                                name="vehicle_no"
-                                type="text"
-                                id="input"
-                                maxLength={10}
-                                value={vehicle_no}
-                                onChange={(e) => {
-                                  setvehicle_no(e.target.value);
-                                }}
-                                onBlur={() => {
-                                  if (vehicle_no === "" || vehicle_no?.toString().length !== 10) {
-                                    setvehicle_error(true)
-                                  }
-                                }
-                                }
-                                invalid={
-                                  vehicle_error
-                                }
-                              />
-                              {vehicle_error && (
-                                <FormFeedback type="invalid">
-                                  Vehicle Number Must Have 10 Character
-                                </FormFeedback>
-                              )}
-                            </div>
-                          }
+                      {rental &&
+                        <div className="mb-2">
+                          <Input
+                            name="vehicle_no"
+                            type="text"
+                            id="input"
+                            maxLength={10}
+                            value={vehicle_no}
+                            onChange={(e) => {
+                              setvehicle_no(e.target.value);
+                            }}
+                            onBlur={() => {
+                              if (vehicle_no === "" || vehicle_no?.toString().length !== 10) {
+                                setvehicle_error(true)
+                              }
+                            }
+                            }
+                            invalid={
+                              vehicle_error
+                            }
+                          />
+                          {vehicle_error && (
+                            <FormFeedback type="invalid">
+                              Vehicle Number Must Have 10 Character
+                            </FormFeedback>
+                          )}
                         </div>
-                      </Col>
+                      }
+                    </div>
+                  </Col>
                   <Col lg={12} md={12} sm={12}>
                     <div className="mb-2">
                       <Label className="header-child"> Remarks :</Label>
@@ -913,7 +701,7 @@ let docket_no_list = []
                   if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
                     setvehicle_error(true);
                   }
-                  else{
+                  else {
                     dispatch(setLoaded(true));
                     if (receivedrec.length > 0) {
                       handleShow();
@@ -921,7 +709,7 @@ let docket_no_list = []
                       setis_recv(true);
                     }
                   }
-                 
+
                 }}
               >
                 Recieve

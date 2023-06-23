@@ -65,6 +65,11 @@ const AddOrganization = () => {
     "LLP",
     "Others",
   ]);
+  const [gst_error, setgst_error] = useState(false)
+  const [gst_text, setgst_text] = useState("")
+
+  const [service_error, setservice_error] = useState(false)
+
   const [company_type_error, setcompany_type_error] = useState(false);
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
@@ -303,14 +308,18 @@ const AddOrganization = () => {
       }
       else if (data === false) {
         document.getElementById('gst_details').scrollIntoView();
+        setgst_error(true)
+        setgst_text("Please Checked, checkBox of Head Office")
       }
       else if (row[row.length - 1][0].length !== 15) {
         document.getElementById('gst_details').scrollIntoView();
-        alert("Gst Number Must Be 15 Digit")
+        setgst_error(true)
+        setgst_text("Gst Number Must Be 15 Digit")
       }
       else if (row[row.length - 1][0].substring(2, 12) !== pan_no) {
         document.getElementById('gst_details').scrollIntoView();
-        alert("PAN Number Is Not Mached with Gst Number")
+        setgst_error(true)
+        setgst_text("PAN Number Is Not Mached with Gst Number")
       }
       else if (row1[row1.length - 1][0] !== "" && row1[row1.length - 1].some((some) => some === "")) {
         document.getElementById('config_details').scrollIntoView();
@@ -1644,6 +1653,21 @@ const AddOrganization = () => {
     }
   }, [pan_no]);
 
+  useEffect(() => {
+    let data = row.some((a) => a[5] == true)
+    if (row[row.length - 1].every((e) => e !== "" && data !== false && row[row.length - 1][0].substring(2, 12) === pan_no) && row[row.length - 1][0].length === 15) {
+      setgst_error(false)
+    }
+  }, [dimension_list])
+
+  useEffect(() => {
+    let data = row.some((a) => a[5] == true)
+    if (row1[row1.length - 1].every((e) => e !== "")) {
+      setservice_error(false)
+    }
+  }, [dimension_list1])
+
+
   return (
     <>
       <div>
@@ -1691,7 +1715,9 @@ const AddOrganization = () => {
             }
             else if (row[row.length - 1].some((some) => some === "")) {
               document.getElementById('gst_details').scrollIntoView();
-              alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+              setgst_error(true)
+              setgst_text("Please Fill All GST Address")
+              // alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
             }
             // else if(row[row.length - 1][0].length !== 15){
             //   document.getElementById('gst_details').scrollIntoView();
@@ -1699,11 +1725,13 @@ const AddOrganization = () => {
             // }
             else if (data === false) {
               document.getElementById('gst_details').scrollIntoView();
-              alert("Please Checked, checkBox of Head Office")
+              setgst_error(true)
+              setgst_text("Please Checked, checkBox of Head Office")
+              // alert("Please Checked, checkBox of Head Office")
             }
             else if (row1[row1.length - 1][0] !== "" && row1[row1.length - 1].some((some) => some === "")) {
               document.getElementById('config_details').scrollIntoView();
-              alert("Please Fill Config Details")
+              setservice_error(true)
             }
             else if (office_add_line1 === "") {
               setoffice_add1_err(true);
@@ -2140,7 +2168,7 @@ const AddOrganization = () => {
                         <Row className="hide">
                           <Col lg={2} md={3} sm={3}>
                             <div className="mb-3">
-                              <Label className="header-child">GST No</Label>
+                              <Label className="header-child">GST No*</Label>
                               {row.map((item, index) => {
                                 return (
                                   <Input
@@ -2193,7 +2221,7 @@ const AddOrganization = () => {
 
                           <Col lg={2} md={3} sm={3}>
                             <div className="mb-3">
-                              <Label className="header-child"> City</Label>
+                              <Label className="header-child"> City*</Label>
                               {row.map((item, index) => (
                                 <div className="mb-3">
                                   <MultiRowSearchInput
@@ -2219,7 +2247,7 @@ const AddOrganization = () => {
 
                           <Col lg={2} md={3} sm={3}>
                             <div className="mb-3">
-                              <Label className="header-child">Pincode </Label>
+                              <Label className="header-child">Pincode* </Label>
                               {row.map((item, index) => (
                                 <div className="mb-3">
                                   <MultiRowSearchInput
@@ -2243,7 +2271,7 @@ const AddOrganization = () => {
                           </Col>
                           <Col lg={2} md={3} sm={3}>
                             <div className="mb-3">
-                              <Label className="header-child">Locality </Label>
+                              <Label className="header-child">Locality* </Label>
                               {row.map((item, index) => (
                                 <div className="mb-3">
                                   <MultiRowSearchInput
@@ -2269,7 +2297,7 @@ const AddOrganization = () => {
 
                           <Col lg={2} md={3} sm={3}>
                             <div className="mb-3">
-                              <Label className="header-child">Address</Label>
+                              <Label className="header-child">Address*</Label>
                               {row.map((item, index) => {
                                 return (
                                   <Input
@@ -2382,10 +2410,16 @@ const AddOrganization = () => {
                               ))}
                             </div>
                           </Col>
+                          {gst_error ? (
+                                <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom:"12px"}}>
+                                 {gst_text}
+                                </div>
+                              ) : null}
                         </Row>
                         <>
                           {row.length < 20 && (
                             <div style={{ margin: " 0 0 20px 0" }}>
+                                
                               <span
                                 className="link-text"
                                 onClick={() => {
@@ -2394,7 +2428,9 @@ const AddOrganization = () => {
                                   setgstcity_bottom(103)
                                   const lastRow = row[row.length - 1];
                                   if (row[row.length - 1].some((data) => data === "")) {
-                                    alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
+                                    setgst_error(true)
+                                    setgst_text("Please Fill All GST Address")
+                                    // alert("Please Fill GST No, Selcet City , Select Pincode,Select Locality,Enter Address")
                                   } else {
                                     addGST();
                                   }
@@ -2597,6 +2633,11 @@ const AddOrganization = () => {
                               ))}
                             </div>
                           </Col>
+                          {service_error ? (
+                                <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom:"12px"}}>
+                              Please Fill All Configuration Details
+                                </div>
+                              ) : null}
                         </Row>
                         <>
                           {row1.length < 20 && (
@@ -2606,7 +2647,8 @@ const AddOrganization = () => {
                                 onClick={() => {
                                   const lastRow = row1[row1.length - 1];
                                   if (row1[row1.length - 1].some((data) => data === "")) {
-                                    alert("Please Fill Organization Configuration Details");
+                                    document.getElementById('config_details').scrollIntoView();
+                                    setservice_error(true)
                                   } else {
                                     addConfig();
                                   }
