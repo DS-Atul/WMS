@@ -223,6 +223,7 @@ const AddOrganization = () => {
     enableReinitialize: true,
     initialValues: {
       organisation_name: toTitleCase(organization.name) || "",
+      alias_name: organization.alias_name || "",
       toll_free_number: organization.tollfree_no || "",
       registeration_number: organization.regd_no || "",
       // pan_no: organization.pan_no || "",
@@ -378,6 +379,7 @@ const AddOrganization = () => {
         ServerAddress + "organization/add_organization/",
         {
           name: toTitleCase(values.organisation_name).toUpperCase(),
+          alias_name: toTitleCase(values.alias_name).toUpperCase(),
           regd_no: values.registeration_number,
           type: (company_type).toUpperCase(),
           tollfree_no: values.toll_free_number,
@@ -527,6 +529,7 @@ const AddOrganization = () => {
         ServerAddress + "organization/update_organization/" + id,
         {
           name: toTitleCase(values.organisation_name).toUpperCase(),
+          alias_name: toTitleCase(values.alias_name).toUpperCase(),
           regd_no: values.registeration_number,
           tollfree_no: values.toll_free_number,
           mobile_nop: values.phone_numberp,
@@ -1901,6 +1904,34 @@ const AddOrganization = () => {
                             validation.errors.organisation_name ? (
                             <FormFeedback type="invalid">
                               {validation.errors.organisation_name}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2" id="section1">
+                          <Label className="header-child">Alias Name*</Label>
+                          <Input
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.alias_name || ""}
+                            invalid={
+                              validation.touched.alias_name &&
+                                validation.errors.alias_name
+                                ? true
+                                : false
+                            }
+                            type="text"
+                            className="form-control-md"
+                            id="input"
+                            name="alias_name"
+                            placeholder="Enter Alias Name"
+                          />
+                          {validation.touched.alias_name &&
+                            validation.errors.alias_name ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.alias_name}
                             </FormFeedback>
                           ) : null}
                         </div>

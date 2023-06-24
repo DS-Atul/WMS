@@ -225,8 +225,32 @@ const LocationDataFormat = ({ data, data1, can_delete }) => {
                 )}
               </td>
               <td>{toTitleCase(location.state_name)}</td>
-              <td>{toTitleCase(location.city_name)}</td>
-              <td>{toTitleCase(location.pincode_name)}</td>
+              <td>
+              {(can_update && location.cm_current_status !== "APPROVED") || user.is_superuser ? (
+
+                  <Link
+                    to="/master/city/AddCity"
+                    state={{ city: location}}
+                  >
+                    {toTitleCase(location.city_name)}
+                  </Link>
+                ) : (
+                  toTitleCase(location.city_name)
+                )}
+              </td>
+              {/* <td>{toTitleCase(location.city_name)}</td> */}
+              <td>
+              {(can_update && location.cm_current_status !== "APPROVED") || user.is_superuser ? (
+                  <Link
+                    to="/master/pincode/AddPincode"
+                    state={{ pincode: location, is_pincode:false }}
+                  >
+                    {toTitleCase(location.pincode_name)}
+                  </Link>
+                ) : (
+                  location.pincode_name
+                )}
+              </td>
               <td>
                 {
                   location.cm_current_status === "APPROVED" ?

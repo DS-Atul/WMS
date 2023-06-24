@@ -206,6 +206,22 @@ const CommoditiesDataFormat = ({ data, data1, can_delete }) => {
                 </td>
               )}
               <td>
+                {(can_update && commodity.cm_current_status !== "APPROVED") || user.is_superuser ? (
+
+                  <Link
+                    to={{
+                      pathname: `/master/commodities/updatecommoditytype`,
+                    }}
+                    state={{ commodity: commodity }}
+                  >
+                    {toTitleCase(commodity.type)}
+                  </Link>
+
+                ) : (
+                  toTitleCase(commodity.type)
+                )}
+              </td>
+              <td>
                 {/* {can_update || user.is_superuser  ? ( */}
                 {(can_update && commodity.cm_current_status !== "APPROVED") || user.is_superuser ? (
 
@@ -222,7 +238,6 @@ const CommoditiesDataFormat = ({ data, data1, can_delete }) => {
                   toTitleCase(commodity.commodity_name)
                 )}
               </td>
-              <td>{toTitleCase(commodity.type)}</td>
               <td>{commodity.organization_name ? toTitleCase(commodity.organization_name) : "-"}</td>
               <td>
                 {

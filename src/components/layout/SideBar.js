@@ -34,6 +34,7 @@ const SideBar = () => {
   }, [wind_Width]);
 
   useEffect(() => {
+    console.log("navigation_list_p----", navigation_list_p)
     setnavigation_lst(navigation_list_p);
   }, [navigation_list_o]);
 

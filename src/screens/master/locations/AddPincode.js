@@ -54,7 +54,7 @@ const AddPincode = () => {
     enableReinitialize: true,
 
     initialValues: {
-      pincode: pincode.pincode || "",
+      pincode: pincode.is_pincode ? pincode.pincode.pincode : pincode.pincode?.pincode_name || "",
     },
 
     validationSchema: Yup.object({
@@ -131,7 +131,7 @@ const AddPincode = () => {
 
 
   const updatepincode = async (values) => {
-    let id = pincode.id;
+    let id =  pincode.is_pincode ? pincode.pincode.id : pincode.pincode.pincode;
     let fields_names = Object.entries({
       city_name: city,
       pincode: values.pincode,
@@ -172,7 +172,7 @@ const AddPincode = () => {
           setDataExist(`"${values.pincode}" Updated sucessfully`)
         );
         dispatch(setAlertType("info"));
-        navigate(-1);
+        pincode.is_pincode ? navigate(-1) : navigate("/master/locations");
       } else if (response.data == "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(
@@ -192,11 +192,11 @@ const AddPincode = () => {
 
   useLayoutEffect(() => {
     try {
-      let pincode = location_data.state.pincode;
+      let pincode = location_data.state;
       console.log("pincode====", pincode)
       setpincode(pincode)
-      setcity_id(pincode.city)
-      setcity(toTitleCase(pincode.city_name))
+      setcity_id(pincode.pincode.city)
+      setcity(toTitleCase(pincode.pincode.city_name))
     } catch (error) { }
   }, []);
 

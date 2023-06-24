@@ -245,7 +245,19 @@ const VendorDataFormat = ({ data, data1, can_delete }) => {
             </td>
               <td>{vendor.emailp}</td>
               <td>{vendor.mobile_numberp}</td>
-              <td>{toTitleCase(vendor.company_type)}</td>
+              <td>
+              {(can_update && vendor.cm_current_status !== "APPROVED") || user.is_superuser ? (
+
+                  <Link
+                    to="/master/vendor/updatecompanytype"
+                    state={{ vendor: vendor }}
+                  >
+                    {toTitleCase(vendor.company_type)}
+                  </Link>
+                ) : (
+                  toTitleCase(vendor.company_type)
+                )}
+              </td>
               <td>{toTitleCase(vendor.service_region)}</td>
               <td>{toTitleCase(vendor.lob)}</td>
               <td>

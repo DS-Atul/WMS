@@ -195,7 +195,7 @@ const CityDataFormat = ({ data, data1, can_delete }) => {
                 {(can_update ||  user.is_superuser) ? (
                   <Link
                     to="/master/city/AddCity"
-                    state={{ city: city }}
+                    state={{ city: city}}
                   >
                     {toTitleCase(city.city)}
                   </Link>

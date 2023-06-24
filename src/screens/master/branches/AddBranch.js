@@ -855,7 +855,6 @@ console.log("operating_city_list---", operating_city_list)
   };
 
   const getOrganization = async () => {
-    alert()
     let orgs_list = [];
     try {
       const resp = await axios.get(
@@ -1648,6 +1647,7 @@ console.log("operating_city_list---", operating_city_list)
                           <Input
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
+                            // user.organization_alias +"-"+
                             value={validation.values.branch_name || ""}
                             invalid={
                               validation.touched.branch_name &&

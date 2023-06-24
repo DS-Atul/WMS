@@ -1181,7 +1181,6 @@ const AddClient = () => {
         dispatch(setDataExist(`"${pan_no}" Already Exists`));
         dispatch(setAlertType("warning"));
         dispatch(setShowAlert(true));
-        setpan_no("")
       }
       setloaded_pan(false)
     } catch (error) {

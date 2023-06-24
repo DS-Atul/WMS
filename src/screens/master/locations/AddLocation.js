@@ -81,8 +81,8 @@ const AddLocation = () => {
   const [zone, setzone] = useState("");
 
   const [country_list_s, setcountry_list_s] = useState([]);
-  const [country, setcountry] = useState("");
-  const [country_id, setcountry_id] = useState(0);
+  const [country, setcountry] = useState(location_data.state === null ? toTitleCase(user.branch_country) : "");
+  const [country_id, setcountry_id] = useState(location_data.state === null ? user.branch_country_id : 0);
   const [country_page, setcountry_page] = useState(1);
   const [country_search_item, setcountry_search_item] = useState("");
   const [country_error, setcountry_error] = useState(false);

@@ -367,12 +367,12 @@ const SignIn = () => {
         if (f.sub_model === "Bill To" && f.read === true) {
           master.push(["Bill To", "/master/billtos"]);
         }
-        let g = userpermission.find(
-          ({ sub_model }) => sub_model === "Shipper/Consignee"
-        );
-        if (g.sub_model === "Shipper/Consignee" && g.read === true) {
-          master.push(["Shipper/Consignee", "/master/orderorigins"]);
-        }
+        // let g = userpermission.find(
+        //   ({ sub_model }) => sub_model === "Shipper/Consignee"
+        // );
+        // if (g.sub_model === "Shipper/Consignee" && g.read === true) {
+        //   master.push(["Shipper/Consignee", "/master/orderorigins"]);
+        // }
         let h = userpermission.find(
           ({ sub_model }) => sub_model === "Locations"
         );
@@ -569,7 +569,7 @@ const SignIn = () => {
           dropdownMenu: [
             ["Commodities", "/master/commodities"],
             ["Charges", "/master/charges"],
-            ["Shipper/Consignee", "/master/orderorigins"],
+            // ["Shipper/Consignee", "/master/orderorigins"],
             ["Bill To", "/master/billtos"],
             ["Branches", "/master/branches"],
             ["Locations", "/master/locations"],

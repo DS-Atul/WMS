@@ -54,7 +54,7 @@ const AddPincode = () => {
     enableReinitialize: true,
 
     initialValues: {
-      city: toTitleCase(city.city) || "",
+      city: toTitleCase(city.city ? city.city : city.city_name) || "",
     },
 
     validationSchema: Yup.object({
@@ -123,7 +123,7 @@ const AddPincode = () => {
   }, [state_page, state_search_item]);
 
   const updateCity= async (values) => {
-    let id = city.id;
+    let id =  city?.city ? city.id : city.city_id;
     let fields_names = Object.entries({
       city: values.city,
       state_name: state,
@@ -162,7 +162,7 @@ const AddPincode = () => {
           setDataExist(`City "${values.city}" Updated sucessfully`)
         );
         dispatch(setAlertType("info"));
-        navigate(-1);
+        city?.city ? navigate(-1) : navigate("/master/locations");
       } else if (response.data == "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(

@@ -886,7 +886,6 @@ const UserInfo = () => {
     ["EMPLOYEE", "Employee"],
     ["BILL TO", "Bill To"],
     ["COLOADER", "Coloader"],
-    ["CUSTOMER", "Customer"],
     ["QU", "QIL User"],
     ["COM", "Company User"],
     ["CU", "Client User"],
@@ -2063,7 +2062,8 @@ const UserInfo = () => {
                         </div>
                       </div>
                     </Col>
-                    <Col lg={2} md={3} sm={3}>
+                    
+                    {/* <Col lg={2} md={3} sm={3}>
                       <div className="mb-3">
                         <Label className="header-child">Cold Chain</Label>
                         <div onClick={() => setis_coldchain(!is_coldchain)}>
@@ -2074,7 +2074,8 @@ const UserInfo = () => {
                           )}
                         </div>
                       </div>
-                    </Col>
+                    </Col> */}
+
                   {/* Need To Add */}
                     {/* <Col lg={2} md={3} sm={3}>
                       <div className="mb-3">

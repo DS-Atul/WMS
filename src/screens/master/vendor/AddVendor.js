@@ -38,6 +38,7 @@ import { MdAdd, MdDeleteForever } from "react-icons/md";
 import Tab from "../../../components/formComponent/clientComponent/tab/Tab";
 import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
+import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 
 const AddVendor = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -78,13 +79,23 @@ const AddVendor = () => {
 
   // Used for Company Type list
   const [company_type, setcompany_type] = useState("");
-  const [company_type_list, setcompany_type_list] = useState([
-    "Individual",
-    "Pvt Ltd / Ltd",
-    "Partnership",
-    "LLP",
-    "Others",
-  ]);
+  const [company_type_list, setcompany_type_list] = useState([]);
+  const [company_type_bottom, setcompany_type_bottom] = useState(103)
+  const [company_type_count, setcompany_type_count] = useState(1)
+  const [company_type_loaded, setcompany_type_loaded] = useState(false)
+  const [company_type_page, setcompany_type_page] = useState(1)
+  const [company_type_search_item, setcompany_type_search_item] = useState("")
+  const [company_type_id, setcompany_type_id] = useState(0)
+  // const [company_type_list, setcompany_type_list] = useState([
+  //   "Individual",
+  //   "Pvt Ltd / Ltd",
+  //   "Partnership",
+  //   "LLP",
+  //   "Others",
+  // ]);
+  const [add_company_err, setadd_company_err] = useState(false);
+  const [other_company_type, setother_company_type] = useState("");
+
   const [pan_no, setpan_no] = useState("")
   const [pan_no_error, setpan_no_error] = useState(false);
   const [business_selected, setbusiness_selected] = useState("");
@@ -281,6 +292,10 @@ const AddVendor = () => {
       else if (company_type === "") {
         document.getElementById("vendor_servies").scrollIntoView();
         setcompany_type_error(true);
+      } 
+      if (other_company_type == "" && company_type === "Add New") {
+        document.getElementById("vendor_servies").scrollIntoView();
+        setadd_company_err(true);
       }
       else if (business_selected === "") {
         document.getElementById("vendor_servies").scrollIntoView();
@@ -444,7 +459,7 @@ const AddVendor = () => {
         mobile_numbers:
           values.vendor_ph_no1 !== "" ? values.vendor_ph_no1 : null,
 
-        company_type: company_type.toUpperCase(),
+        company: company_type_id,
         lob: business_selected.toUpperCase(),
         service_region: service_region_selected.toUpperCase(),
         pan_no: toTitleCase(pan_no).toUpperCase(),
@@ -648,7 +663,7 @@ const AddVendor = () => {
           mobile_numbers:
             values.vendor_ph_no1 !== "" ? values.vendor_ph_no1 : null,
           msme_registration_no: msme_registerd ? msme_registerd_number : "",
-          company_type: company_type.toUpperCase(),
+          company: company_type_id,
           lob: business_selected.toUpperCase(),
           service_region: service_region_selected.toUpperCase(),
           pan_no: toTitleCase(pan_no).toUpperCase(),
@@ -711,6 +726,7 @@ const AddVendor = () => {
 
   useLayoutEffect(() => {
     try {
+      console.log("location_data----", location_data)
       setvendor_data(location_data.state.vendor);
       setisupdating(true);
       setmsme_registerd_number(location_data.state.vendor.msme_registration_no);
@@ -723,6 +739,8 @@ const AddVendor = () => {
       setpan_no(location_data.state.vendor.pan_no)
       setmsme_registerd(location_data.state.vendor.is_msme_regitered);
       setcompany_type(toTitleCase(location_data.state.vendor.company_type));
+      setcompany_type_id(toTitleCase(location_data.state.vendor.company));
+
     } catch (error) { }
   }, []);
 
@@ -1327,6 +1345,112 @@ const AddVendor = () => {
     }
   };
 
+    //Get Commodity Type
+    const getCompanyType = () => {
+      let company_list = [];
+      let data = [];
+      axios
+        .get(
+          ServerAddress +
+          `master/all_companytype/?search=${company_type_search_item}&p=${company_type_page}&records=${10}`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        )
+        .then((resp) => {
+          if (resp.data.results.length > 0) {
+            if (resp.data.next === null) {
+              setcompany_type_loaded(false);
+            } else {
+              setcompany_type_loaded(true);
+            }
+  
+            if (company_type_page == 1) {
+              company_list = resp.data.results.map((v) => [
+                v.id,
+                toTitleCase(v.company_type),
+              ]);
+            } else {
+              company_list = [
+                ...company_type_list,
+                ...resp.data.results.map((v) => [v.id, toTitleCase(v.company_type)]),
+              ];
+            }
+          }
+          let a_index = company_list.indexOf("Add New");
+          if (a_index != -1) {
+            company_list.splice(a_index, 1);
+          }
+          company_list = [...new Set(company_list.map((v) => `${v}`))].map(
+            (v) => v.split(",")
+          );
+          company_list.push("Add New");
+          setcompany_type_count(company_type_count + 2);
+          setcompany_type_list(company_list);
+  
+        })
+        .catch((err) => {
+          alert(`Error Occur in Get Commodity Type, ${err}`);
+        });
+    };
+  
+    const setCompanyType = () => {
+      axios
+        .post(
+          ServerAddress + "master/add_companytype/",
+          {
+            company_type: toTitleCase(other_company_type).toUpperCase(),
+            created_by: user.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then(function (response) {
+          if (response.data.status !== "duplicated") {
+            if (response.statusText === "Created") {
+              setcompany_type_id(response.data.companytype_id);
+              dispatch(setShowAlert(true));
+              dispatch(
+                setDataExist(
+                  `Company Type ${toTitleCase(
+                    other_company_type
+                  )} Added Sucessfully`
+                )
+              );
+              dispatch(setAlertType("success"));
+              setcompany_type(toTitleCase(other_company_type));
+              getCompanyType();
+              // getDistrict();
+            }
+          } else {
+            dispatch(setShowAlert(true));
+            dispatch(
+              setDataExist(
+                `Company Type ${toTitleCase(
+                  other_company_type
+                )} Already Exist`
+              )
+            );
+            dispatch(setAlertType("warning"));
+            if (isupdating) {
+              setcompany_type(toTitleCase(location_data.company_type));
+            } else {
+              setcompany_type("");
+            }
+          }
+        })
+        .catch((error) => {
+          alert(`Error Happen while posting Commodity Type Data ${error}`);
+        });
+    };
+
+      useEffect(() => {
+    getCompanyType();
+  }, [company_type_page, company_type_search_item]);
+
   useEffect(() => {
     if (gst_state_id !== "") {
       getGstCities(gst_state_id, "state");
@@ -1666,6 +1790,15 @@ const AddVendor = () => {
     }
   }, [dimension_list])
 
+  useEffect(() => {
+    if (company_type === "Add New") {
+      setother_company_type("");
+    }
+    if (other_company_type && company_type !== "Add New") {
+      setadd_company_err(false);
+    }
+  }, [company_type],[other_company_type]);
+
   return (
     <>
       <div>
@@ -1723,6 +1856,7 @@ const AddVendor = () => {
               setpan_no_error(true);
               document.getElementById("vendor_info").scrollIntoView();
             }
+
             else if (company_type === "") {
               setcompany_type_error(true);
               document.getElementById("vendor_info").scrollIntoView();
@@ -1885,17 +2019,63 @@ const AddVendor = () => {
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">Company Type *</Label>
-                          <NSearchInput
+                          <SearchInput
                             data_list={company_type_list}
+                            setdata_list={setcompany_type_list}
                             data_item_s={company_type}
                             set_data_item_s={setcompany_type}
-                            show_search={false}
+                            set_id={setcompany_type_id}
+                            page={company_type_page}
+                            setpage={setcompany_type_page}
+                            setsearch_item={setcompany_type_search_item}
                             error_message={"Please Select Company Type"}
                             error_s={company_type_error}
+                            loaded={company_type_loaded}
+                            count={company_type_count}
+                            bottom={company_type_bottom}
+                            setbottom={setcompany_type_bottom}
                           />
                         </div>
                       </Col>
-
+                      {company_type === "Add New" ? (
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">
+                              Add Company Type*
+                            </Label>
+                            <Input
+                              onChange={(val) =>
+                                setother_company_type(val.target.value)
+                              }
+                              onBlur={() => {
+                                if (other_company_type != "") {
+                                  if (
+                                    window.confirm(
+                                      `Are you want to add company type ${toTitleCase(
+                                        other_company_type
+                                      )}?`
+                                    )
+                                  ) {
+                                    setCompanyType();
+                                  } else {
+                                    setcompany_type("");
+                                  }
+                                }
+                              }}
+                              value={other_company_type}
+                              invalid={add_company_err}
+                              type="text"
+                              name="other_company_type"
+                              className="form-control-md"
+                              id="input"
+                              placeholder="Enter Company Type"
+                            />
+                            <FormFeedback type="invalid">
+                              Please Enter Company Type
+                            </FormFeedback>
+                          </div>
+                        </Col>
+                      ) : null}
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">

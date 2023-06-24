@@ -149,6 +149,10 @@ const AddCommodity = React.lazy(() =>
   import("./screens/master/commodities/AddCommodity.js")
 );
 
+const UpateCommodityType = React.lazy(() =>
+  import("./screens/master/commodities/UpadteCommodityType.js")
+);
+
 const CommodityHistoryPage = React.lazy(() => import("./screens/master/commodities/commodityHistory/CommodityHistoryPage.js"));
 
 const Charges = React.lazy(() => import("./screens/master/charges/Charges.js"));
@@ -205,6 +209,8 @@ const AddRoute = React.lazy(() => import("./screens/master/route/AddRoute.js"));
 const RouteHistoryPage = React.lazy(() => import("./screens/master/route/routeHistory/RouteHistoryPage.js"));
 
 const Vendor = React.lazy(() => import("./screens/master/vendor/Vendor.js"));
+const UpateCompanyType = React.lazy(() => import("./screens/master/vendor/UpadteCompanyType.js"));
+
 const AddVendor = React.lazy(() =>
   import("./screens/master/vendor/AddVendor.js")
 );
@@ -716,6 +722,10 @@ const routes = [
     element: <AddCommodity />,
   },
   {
+    path: "/master/commodities/updatecommoditytype",
+    element: <UpateCommodityType />,
+  },
+  {
     path: "/master/commodities/addcommodities/:id",
     element: <AddCommodity />,
   },
@@ -798,6 +808,10 @@ const routes = [
   {
     path: "/master/vendor/Vendor",
     element: <Vendor />,
+  },
+  {
+    path: "/master/vendor/updatecompanytype",
+    element: <UpateCompanyType />,
   },
   {
     path: "/master/vendor/AddVendor",

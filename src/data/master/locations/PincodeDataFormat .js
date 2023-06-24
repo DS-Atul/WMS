@@ -195,7 +195,7 @@ const PincodeDataFormat = ({ data, data1, can_delete }) => {
                 {(can_update ||  user.is_superuser) ? (
                   <Link
                     to="/master/pincode/AddPincode"
-                    state={{ pincode: pincode }}
+                    state={{ pincode: pincode, is_pincode:true }}
                   >
                     {pincode.pincode}
                   </Link>
