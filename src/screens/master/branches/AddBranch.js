@@ -1070,7 +1070,7 @@ console.log("operating_city_list---", operating_city_list)
       }
       setorg(toTitleCase(location_data.state.branch.organization_name))
       setorg_id(location_data.state.branch.organization)
-      setaddress_line(location_data.state.branch.address_line_1);
+      setaddress_line(toTitleCase(location_data.state.branch.address_line_1));
       setstate(toTitleCase(location_data.state.branch.state_name));
       setstate_id(location_data.state.branch.state_id);
       setcity_id(location_data.state.branch.city_id);

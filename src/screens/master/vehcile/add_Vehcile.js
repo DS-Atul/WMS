@@ -29,6 +29,7 @@ import { setToggle } from "../../../store/pagination/Pagination";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { useLocation, useNavigate } from "react-router-dom";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
+import TransferList from "../../../components/formComponent/transferList/TransferList";
 
 const Add_Vehcile = () => {
   const navigate = useNavigate();
@@ -67,12 +68,14 @@ const Add_Vehcile = () => {
 
   const [branch_id, setbranch_id] = useState("");
   const [branch_list, setbranch_list] = useState([]);
+  const [branch_list2, setbranch_list2] = useState([])
+  console.log("branch_list2----", branch_list2)
   const [branch, setbranch] = useState("");
   const [search_branch, setsearch_branch] = useState("");
   const [branch_count, setbranch_count] = useState(1)
   const [branch_loaded, setbranch_loaded] = useState(false)
   const [branch_bottom, setbranch_bottom] = useState(103)
-  const [branch_err, setbranch_err] = useState("");
+  const [branch_err, setbranch_err] = useState(false);
   const [page, setpage] = useState(1);
 
   useEffect(() => {
@@ -103,6 +106,11 @@ const Add_Vehcile = () => {
 
   //   Api For Posting Data
   const add_vehcile = () => {
+    let branch_id = branch_list2.map((v) => v[0]);
+
+    let branch_id_list = [...new Set(branch_id.map((v) => `${v}`))].map((v) =>
+      parseInt(v.split(","))
+    );
     axios
       .post(
         ServerAddress + "master/add_vehcile/",
@@ -112,7 +120,7 @@ const Add_Vehcile = () => {
           vehcile_status: active_selected === "Active" ? "True" : "False",
           vehcile_type: (vehcile_type_s).toUpperCase(),
           transporter_name: vendor_id,
-          branch: branch_id,
+          branch: branch_id_list,
         },
         {
           headers: {
@@ -148,8 +156,13 @@ const Add_Vehcile = () => {
 
   const upadte_vehcile = (values) => {
     let id = vehcile.id;
+    let branch_id_list = branch_list2.map((v) => v[0]).filter((v) => v !== null);
+
+    let branch_ids = [...new Set(branch_id_list.map((v) => `${v}`))].map((v) =>
+      parseInt(v.split(","))
+    );
     let fields_names = Object.entries({
-      branch_name: branch,
+      branch: branch_ids,
       transporter: vendor_name ? vendor_name : "",
       vehcile_model: vehcile_model,
       vehcile_no: vehcile_no,
@@ -162,8 +175,8 @@ const Add_Vehcile = () => {
         const ele = fields_names[j];
         let prev = location_data.state.vehcile[`${ele[0]}`];
         let new_v = ele[1];
-        if (prev !== new_v.toUpperCase()) {
-          change_fields[`${ele[0]}`] = new_v.toUpperCase();
+        if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+          change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
         }
         if (j === fields_names.length - 1) resolve();
       }
@@ -178,7 +191,7 @@ const Add_Vehcile = () => {
             vehcile_status: active_selected === "Active" ? "True" : "False",
             vehcile_type: (vehcile_type_s).toUpperCase(),
             transporter_name: vendor_id,
-            branch: branch_id,
+            branch: branch_ids,
             change_fields: change_fields,
           },
           {
@@ -218,6 +231,33 @@ const Add_Vehcile = () => {
         });
     });
   };
+
+  const get_VehicleBranchDetails = (id) => {
+
+    let branch_temp = [];
+    let data = [];
+    axios
+      .get(
+        ServerAddress +
+        `master/get_vehicle_branch/?vehicle_id=${id}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        console.log("V response====", response)
+        data = response.data.vehicle_branch;
+
+        if (data.length > 0) {
+          branch_temp = data.filter((v)=>v.branch !== null).map((v) => [v.branch, toTitleCase(v.branch__name)]);
+          setbranch_list2(branch_temp)
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get OpCity, ${err}`);
+      });
+  };
+
   const get_vendor = () => {
     let vendor_temp = [];
     let data = [];
@@ -253,15 +293,13 @@ const Add_Vehcile = () => {
       });
   };
 
-  const getBranches = () => {
+  const getBranches = (val) => {
     let temp3 = [];
 
     axios
       .get(
         ServerAddress +
-        `master/all-branches/?search=${""}&p=${page}&records=${10}&branch_name=${[
-          "",
-        ]}&branch_city=${[""]}&vendor=${[""]}&branch_search=${search_branch}&data=all`,
+        `master/all_vehicle_branch/?search=${search_branch}&p=${page}&records=${10}&data=${val}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -285,10 +323,10 @@ const Add_Vehcile = () => {
               ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
             ];
           }
-          setbranch_count(branch_count+2)
+          setbranch_count(branch_count + 2)
           setbranch_list(temp3);
         }
-        else{
+        else {
           setbranch_list([]);
         }
 
@@ -299,9 +337,17 @@ const Add_Vehcile = () => {
   };
 
   useLayoutEffect(() => {
-    getBranches();
+    if (location_data.state === null) {
+    getBranches("all");
+    }
   }, [page, search_branch]);
-  
+
+  useLayoutEffect(() => {
+    if (location_data.state !== null) {
+    getBranches(parseInt(location_data.state.vehcile.id));
+    }
+  }, [page, search_branch]);
+
   useLayoutEffect(() => {
     get_vendor();
   }, [vendor_n_page, search_vendor_name, refresh]);
@@ -311,8 +357,9 @@ const Add_Vehcile = () => {
   const [vehicle_number_error, setvehicle_number_error] = useState(false);
   const [vehicle_model_error, setvehicle_model_error] = useState(false);
   const [vehicle_len_error, setvehicle_len_error] = useState(false);
+
   useEffect(() => {
-    if (branch) {
+    if (branch_list2?.length>0) {
       setbranch_err(false);
     }
     if (vehcile_type_s !== "") {
@@ -327,7 +374,7 @@ const Add_Vehcile = () => {
     if (vehcile_model !== "") {
       setvehicle_model_error(false);
     }
-    if (vehcile_img !==""){
+    if (vehcile_img !== "") {
       setvehcile_img_error(false)
     }
     if (vehcile_no !== "" && vehcile_no.length !== 10) {
@@ -335,11 +382,18 @@ const Add_Vehcile = () => {
     } else {
       setvehicle_len_error(false);
     }
-  }, [vehcile_type_s, vehcile_no, vehcile_model,vehcile_img]);
+  }, [vehcile_type_s, vehcile_no, vehcile_model, vehcile_img, branch_list2]);
+
+  useEffect(() => {
+    
+    if (location_data.state !== null && vehcile.length !== 0) {
+      get_VehicleBranchDetails(vehcile.id)
+    }
+  }, [vehcile])
 
   return (
     <div>
-      <Form 
+      <Form
       // onSubmit={(e) => {
       //   e.preventDefault();
       //   ValidationError.handleSubmit(e.values);
@@ -429,36 +483,11 @@ const Add_Vehcile = () => {
                       />
                       {vehicle_number_error && (
                         <div style={{ fontSize: "10.5px", color: "#f46a6a" }}>
-                           Vehicle No is required
+                          Vehicle No is required
                         </div>
                       )}
                     </div>
                   </Col>
-
-                  <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">Branch *:</Label>
-                        <SearchInput
-                          data_list={branch_list}
-                          setdata_list={setbranch_list}
-                          data_item_s={branch}
-                          set_data_item_s={setbranch}
-                          page={page}
-                          setpage={setpage}
-                          set_id={setbranch_id}
-                          setsearch_item={setsearch_branch}
-                          error_message={"Please Select Any Branch"}
-                          error_s={branch_err}
-                          loaded={branch_loaded}
-                          count={branch_count}
-                          bottom={branch_bottom}
-                          setbottom={setbranch_bottom}
-                        />
-                      </div>
-                      {/* <div className="mt-1 error-text" color="danger">
-                        {branch_err ? "Please Select Any Branch" : null}
-                      </div> */}
-                    </Col>
 
                   <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
@@ -475,7 +504,7 @@ const Add_Vehcile = () => {
                       />
                       {vehicle_model_error && (
                         <div style={{ fontSize: "10.5px", color: "#f46a6a" }}>
-                           Vehicle Model Name is required
+                          Vehicle Model Name is required
                         </div>
                       )}
                     </div>
@@ -484,13 +513,13 @@ const Add_Vehcile = () => {
                   <Col lg={4} md={4} sm={4}>
                     <div className="mb-3" id="vehicle_img">
                       <Label className="header-child">Vehicle Image*</Label>
-                      <Input type="file" name="file" id="input" invalid={vehcile_img_error} 
-                       onChange={(val) => {
-                        setvehcile_img(val.target.value);
-                       }}
+                      <Input type="file" name="file" id="input" invalid={vehcile_img_error}
+                        onChange={(val) => {
+                          setvehcile_img(val.target.value);
+                        }}
                       />
                       <FormFeedback type="invalid">
-                       Vehcile Image is required
+                        Vehcile Image is required
                       </FormFeedback>
                     </div>
                   </Col>
@@ -505,6 +534,27 @@ const Add_Vehcile = () => {
                         show_search={false}
                       />
                     </div>
+                  </Col>
+                  <Col lg={12} md={12} sm={12}>
+                      <Label className="header-child">Branch *:</Label>
+                      <TransferList
+                        list_a={branch_list}
+                        setlist_a={setbranch_list}
+                        list_b={branch_list2}
+                        setlist_b={setbranch_list2}
+                        page={page}
+                        setpage={setpage}
+                        setsearch_item={setsearch_branch}
+                        loaded={branch_loaded}
+                        count={branch_count}
+                        bottom={branch_bottom}
+                        setbottom={setbranch_bottom}
+                      />
+                      {branch_err ? (
+                        <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
+                          Please Select At Least One Branch
+                        </div>
+                      ) : null}
                   </Col>
                 </Row>
               </CardBody>
@@ -529,12 +579,12 @@ const Add_Vehcile = () => {
                     setvendor_error(true);
                   } else if (vehcile_no === "" || vehcile_no.length !== 10) {
                     setvehicle_number_error(true);
-                  } else if (branch === "") {
-                    setbranch_err(true);
-                  } else if (vehcile_model === "") {
+                  }  else if (vehcile_model === "") {
                     setvehicle_model_error(true);
-                  } else if (vehcile_img ===""){
+                  } else if (vehcile_img === "") {
                     setvehcile_img_error(true);
+                  } else if (branch_list2?.length === 0) {
+                    setbranch_err(true);
                   }
                   else {
                     is_updating ? upadte_vehcile() :

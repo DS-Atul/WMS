@@ -21,6 +21,7 @@ const TransferList = ({
   loaded=false,
   count=1,
   bottom=56,
+  disabled=false,
   setbottom,
 }) => {
   //for multi select Groups
@@ -175,12 +176,13 @@ const TransferList = ({
             <BiChevronsRight
               name="right_btn1"
               style={{
-                background:
-                  btn == "right_btn1" ? "#D3D3D3" : "hsl(213, 100%, 95%)",
+                background: disabled ? "#D3D3D3" : "hsl(213, 100%, 95%)",
+                  // btn == "right_btn1" ? "#D3D3D3" : "hsl(213, 100%, 95%)",
                 fontSize: "22px",
-                padding: "",
               }}
               onClick={() => {
+                if(disabled === false)
+                {
                 if (filter_a.length > 0) {
                   setlist_b([...list_b, ...filter_a]);
 
@@ -200,6 +202,7 @@ const TransferList = ({
                   setlist_a([]);
                   setselected_a([]);
                 }
+              }
               }}
             />
           </IconContext.Provider>
@@ -213,11 +216,11 @@ const TransferList = ({
             <BiChevronRight
               name="right_btn2"
               style={{
-                background:
-                  btn == "right_btn2" ? "#D3D3D3" : "hsl(213, 100%, 95%)",
+                background: disabled ? "#D3D3D3" : "hsl(213, 100%, 95%)",
                 fontSize: "22px",
               }}
               onClick={() => {
+                if(disabled === false){
                 let temp_selected =
                   search_a != "" ? selected_filter_a : selected_a;
                 setlist_b([...list_b, ...temp_selected]);
@@ -234,6 +237,7 @@ const TransferList = ({
                 setfilter_a([]);
                 setselected_a([]);
                 setselected_filter_a([]);
+              }
               }}
             />
           </IconContext.Provider>
@@ -247,11 +251,11 @@ const TransferList = ({
             <BiChevronLeft
               name="left_btn1"
               style={{
-                background:
-                  btn == "left_btn1" ? "#D3D3D3" : "hsl(213, 100%, 95%)",
+                background: disabled ? "#D3D3D3" : "hsl(213, 100%, 95%)",
                 fontSize: "22px",
               }}
               onClick={() => {
+                if(disabled === false){
                 let temp_selected =
                   search_b != "" ? selected_filter_b : selected_b;
                 setlist_a([...list_a, ...temp_selected]);
@@ -268,6 +272,7 @@ const TransferList = ({
                 setfilter_b([]);
                 setselected_b([]);
                 setselected_filter_b([]);
+              }
               }}
             />
           </IconContext.Provider>
@@ -281,11 +286,11 @@ const TransferList = ({
             <BiChevronsLeft
               name="left_btn2"
               style={{
-                background:
-                  btn == "left_btn2" ? "#D3D3D3" : "hsl(213, 100%, 95%)",
+                background: disabled ? "#D3D3D3" : "hsl(213, 100%, 95%)",
                 fontSize: "22px",
               }}
               onClick={() => {
+                if(disabled === false){
                 if (filter_b.length > 0) {
                   setlist_a([...list_a, ...filter_b]);
 
@@ -304,6 +309,7 @@ const TransferList = ({
                   setlist_b([]);
                   setselected_b([]);
                 }
+              }
               }}
             />
           </IconContext.Provider>

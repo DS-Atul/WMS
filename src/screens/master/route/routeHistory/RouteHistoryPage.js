@@ -16,8 +16,8 @@ const RouteHistoryPage = () => {
         Page={RouteCreatedHistory}
         Table_Data_Title={RouteHistoryTableTitle}
         Table_Data_Formate={RouteHistoryTableFormate}
-        path1={`analytic/get_createdmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["Route"]}&app_name=${["master"]}&object_id=${[route_id]}`}
-        path={`analytic/get_updatedmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["Route"]}&app_name=${["master"]}&object_id=${[route_id]}`}
+        path1={`analytic/get_createdmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["Routes"]}&app_name=${["master"]}&object_id=${[route_id]}`}
+        path={`analytic/get_updatedmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["Routes"]}&app_name=${["master"]}&object_id=${[route_id]}`}
         
         />
     </>

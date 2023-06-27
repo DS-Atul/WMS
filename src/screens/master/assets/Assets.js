@@ -105,7 +105,7 @@ const Assets = () => {
   const handleShow = () => setShow(true);
 
   useEffect(() => {
-    if(data.length>0){
+    if (data.length > 0) {
       handleShow()
     }
   }, [data])
@@ -113,9 +113,9 @@ const Assets = () => {
 
   return (
     <>
-      <Modal size="lg" show={show} onHide={handleClose}> 
+      <Modal size="lg" show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title style={{fontSize:"14px", color:"red"}}>Please Update Calibration These Are Going To Be Expired ...</Modal.Title>
+          <Modal.Title style={{ fontSize: "14px", color: "red" }}>Please Update Calibration These Are Going To Be Expired Or Already Expired...</Modal.Title>
         </Modal.Header>
         <Modal.Body>
 
@@ -123,7 +123,21 @@ const Assets = () => {
             className="topheader table-light"
             style={{ borderCollapse: "collapse", width: "100%", borderWidth: 1 }}
           >
+            <thead
+              style={{
+                position: "sticky",
+                top: "0",
+              }}
+            >
+              <tr style={{ lineHeight: 2, borderWidth: 1 }}>
+                <th style={{ position: "relative", textAlign: "center" }}>Asset Id</th>
+                <th style={{ position: "relative", textAlign: "center" }}>Product Id</th>
+                <th style={{ position: "relative", textAlign: "center" }}>callibration From</th>
+                <th style={{ position: "relative", textAlign: "center" }}>Callibration To</th>
+              </tr>
+            </thead>
             <tbody style={{ fontSize: "12px", textAlign: "left" }}>
+
               {(
                 data.map((asset, index) => {
                   return (

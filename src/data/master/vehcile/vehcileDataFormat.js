@@ -138,9 +138,15 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
 
   useEffect(() => {
     if (index == 0) {
-      dispatch(setIndexValue("charge_name"));
+      dispatch(setIndexValue("vehcile_no"));
     } else if (index == 1) {
-      dispatch(setIndexValue("charge_category"));
+      dispatch(setIndexValue("organization_name"));
+    }else if (index == 1) {
+      dispatch(setIndexValue("vehcile_type"));
+    }else if (index == 1) {
+      dispatch(setIndexValue("vehcile_model"));
+    }else if (index == 1) {
+      dispatch(setIndexValue("vehcile_status"));
     }
   }, [index]);
 
@@ -212,7 +218,6 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
           
               </td>
               <td>{vehcile.organization_name ? toTitleCase(vehcile.organization_name) : "-"}</td>
-              <td>{toTitleCase(vehcile.branch_name)}</td>
                <td>{toTitleCase(vehcile.vehcile_type)}</td>
                <td>{toTitleCase(vehcile.vehcile_model)}</td>
                <td>{vehcile.vehcile_status  ?

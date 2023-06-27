@@ -81,7 +81,6 @@ const AddOrder = () => {
 
   //Get Updated Location Data
   const [order, setorder] = useState([]);
-  console.log("order====", order)
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
@@ -1694,8 +1693,9 @@ const AddOrder = () => {
             other_logger.push(logger[index]);
           }
         }
-        setbox_list_1(other_boxes);
-        setLogger_list(other_logger);
+        //Can Be used
+        // setbox_list_1(other_boxes);
+        // setLogger_list(other_logger);
       })
       .catch((err) => {
         alert(`Error Occur in Get , ${err}`);
@@ -3835,6 +3835,18 @@ const AddOrder = () => {
     }
   }, [e_waybill_inv])
 
+  const [coldchain_permission, setcoldchain_permission] = useState([])
+  console.log("coldchain_permission====",coldchain_permission)
+  const userpermission = useSelector(
+    (state) => state.authentication.userpermission
+  );
+  console.log("user_permissions-----", userpermission)
+  useEffect(() => {
+    if(userpermission?.length>0){
+      let coldchain_val =  userpermission?.filter((e) => e.sub_model === "Cold Chain")
+      setcoldchain_permission(coldchain_val)  
+    }
+  }, [userpermission]);
 
   return (
     <div>
@@ -4329,7 +4341,7 @@ const AddOrder = () => {
                         </div>
                       </Col>
                     ) : null}
-                    {(user.view_coldchain || user.is_superuser) && (
+                   
                       <Col lg={2} md={2} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">Cold Chain</Label>
@@ -4361,7 +4373,6 @@ const AddOrder = () => {
                           </div>
                         )}
                       </Col>
-                    )}
                     <Col
                       lg={user.view_coldchain || user.is_superuser ? 2 : 4}
                       md={2}
@@ -4386,16 +4397,6 @@ const AddOrder = () => {
                           }
                         />
                       </div>
-                      {(coldchain_error && !user.view_coldchain) &&(
-                          <div
-                            className="error-text" color="danger"
-                            style={{
-                              marginTop: -14,
-                            }}
-                          >
-                            Select Any One Option
-                          </div>
-                        )}
                     </Col>
 
                     <Col lg={4} md={6} sm={6}>
@@ -4508,7 +4509,7 @@ const AddOrder = () => {
         </div>
 
         {/*  Cold Chain Info Started  */}
-        {cold_chain && (
+        {cold_chain && (user.is_superuser || coldchain_permission[0]?.read) &&(
           <div className="m-3">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
@@ -4530,6 +4531,7 @@ const AddOrder = () => {
                     </IconContext.Provider>
                   </div>
                 </CardTitle>
+                {/* {(user.view_coldchain || user.is_superuser) && ( */}
                 {circle_btn3 ? (
                   <CardBody>
                     <Row>
@@ -4549,7 +4551,9 @@ const AddOrder = () => {
                             }}
                             readOnly={true}
                             checked={asset_prov}
-                            disabled={isupdating}
+                            disabled={isupdating || (!user.is_superuser && !coldchain_permission[0]?.write) }
+                            
+                        
                           />
                         </div>
                       </Col>
@@ -4583,6 +4587,7 @@ const AddOrder = () => {
                               count={box_count}
                               bottom={box_bottom}
                               setbottom={setbox_bottom}
+                              disabled={isupdating && !coldchain_permission[0]?.update && !user.is_superuser}
                             // setlist_id={}
                             />
                           </Col>
@@ -4605,6 +4610,7 @@ const AddOrder = () => {
                               count={logger_count}
                               bottom={logger_bottom}
                               setbottom={setlogger_bottom}
+                              disabled={isupdating && !coldchain_permission[0]?.update && !user.is_superuser}
                             // setlist_id={}
                             />
                           </Col>
@@ -4631,6 +4637,7 @@ const AddOrder = () => {
                                 count={logger_count}
                                 bottom={logger_bottom}
                                 setbottom={setlogger_bottom}
+                                disabled={isupdating && !coldchain_permission[0]?.update && !user.is_superuser}
                               // setlist_id={}
                               />
                             </div>
@@ -4651,6 +4658,7 @@ const AddOrder = () => {
                                 count={box_count}
                                 bottom={box_bottom}
                                 setbottom={setbox_bottom}
+                                disabled={isupdating && !coldchain_permission[0]?.update && !user.is_superuser}
                               // setlist_id={}
                               />
                             </div>
@@ -5797,7 +5805,7 @@ const AddOrder = () => {
                         // current_status !==
                         // "Shipment Arrived at Destination Hub" &&
                         // current_status !== "Shipment Delivered" &&
-                        user.is_superuser && (
+                        // user.is_superuser && (
                           <span>
                             <Button
                               type="button"
@@ -5818,7 +5826,7 @@ const AddOrder = () => {
                               Add Status
                             </Button>
                           </span>
-                        )
+                        // )
                       }
 
                       <IconContext.Provider
