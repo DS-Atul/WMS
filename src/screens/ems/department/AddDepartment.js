@@ -362,6 +362,7 @@ function AddDepartment() {
         const element = updated_permission[index];
         temp_p.push(Object.values(element));
       }
+
       setdata(temp_p);
     }
   }, [updated_permission, isupdating]);
@@ -370,14 +371,20 @@ function AddDepartment() {
     const order = ['Ems', 'Booking', 'Master', 'Billing', 'Manifest', 'Runsheet'];
 
     const sorted = [...data].sort((item1, item2) => {
+      // console.log("item1----", item1)
+      // console.log("item2----", item2)
       const index1 = order.indexOf(item1[0]);
       const index2 = order.indexOf(item2[0]);
+      // console.log("index1----", index1)
+      // console.log("index2----", index2)
 
       if (index1 !== index2) {
+        // console.log("index1 - index2====", index1 - index2)
         return index1 - index2;
       }
 
       const compareSecond = item1[1].localeCompare(item2[1]);
+      // console.log("compareSecond----", compareSecond)
       if (compareSecond !== 0) {
         return compareSecond;
       }
@@ -394,6 +401,8 @@ function AddDepartment() {
 
       return 0;
     });
+
+    console.log("sorted----", sorted)
 
     setSortedArray(sorted);
     setShouldSort(false); // Disable sorting until permission_title_list changes
@@ -895,7 +904,6 @@ function AddDepartment() {
 
                         <tbody>
                           {permission_title_list.map((item, idx) => {
-                            // console.log("ersssssssssssssssssssss",permission_title_list)
                             return (
                               <>
                                 {!showRow.includes(idx) ? <tr

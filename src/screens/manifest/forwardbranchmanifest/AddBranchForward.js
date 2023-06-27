@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, {useMemo, useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import { Button } from "reactstrap";
@@ -44,7 +44,6 @@ import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 
 const AddBranchForward = (manifest) => {
-  console.log("manifest bra===========", manifest)
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const user_branch = useSelector(
     (state) => state.authentication.userdetails.home_branch
@@ -611,9 +610,18 @@ console.log("docket_nos-----", docket_nos)
     setcoloader_selcted_m("")
     setShow(true)
   }
+  
+  const [eway_loaded, seteway_loaded] = useState(false)
+
+  useEffect(() => {
+    seteway_loaded(true)
+  }, []);
+
+  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+
   return (
     <>
-    <LogInEwayBill/>
+     {!eway_loaded && memoizedLogInEwayBill}
       <Button size="sm" outline color="primary" type="button" onClick={() =>  showFun()}>
         Forward
       </Button>

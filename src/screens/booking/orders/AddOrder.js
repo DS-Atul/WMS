@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, {useMemo, useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -3840,7 +3840,7 @@ const AddOrder = () => {
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
   );
-  console.log("user_permissions-----", userpermission)
+
   useEffect(() => {
     if(userpermission?.length>0){
       let coldchain_val =  userpermission?.filter((e) => e.sub_model === "Cold Chain")
@@ -3848,9 +3848,17 @@ const AddOrder = () => {
     }
   }, [userpermission]);
 
+  const [eway_loaded, seteway_loaded] = useState(false)
+
+  useEffect(() => {
+    seteway_loaded(true)
+  }, []);
+
+  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+
   return (
     <div>
-      <LogInEwayBill />
+       {!eway_loaded && memoizedLogInEwayBill}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>

@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, {useMemo, useState, useEffect, useLayoutEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Card, Col, Row, CardBody, CardTitle, Label, Input, FormFeedback } from "reactstrap";
 import Modal from "react-bootstrap/Modal";
@@ -359,10 +359,18 @@ const RecieveHubManifest = ({ depart }) => {
       setvehicle_error(false)
     }
   }, [vehicle_no])
+  
+  const [eway_loaded, seteway_loaded] = useState(false)
+
+  useEffect(() => {
+    seteway_loaded(true)
+  }, []);
+
+  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
 
   return (
     <>
-    <LogInEwayBill/>
+     {!eway_loaded && memoizedLogInEwayBill}
       <Modal
         show={is_recv}
         onHide={() => {

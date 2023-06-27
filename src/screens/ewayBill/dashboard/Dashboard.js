@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState, useEffect } from "react";
+import React, {useMemo, useLayoutEffect, useState, useEffect } from "react";
 import assign from "../../../assets/images/eway/assignment.png";
 import {
   setBAccessToken,
@@ -202,9 +202,17 @@ const EwayDashboard = () => {
     }
   }, [today_date && prev_date])
 
+  const [eway_loaded, seteway_loaded] = useState(false)
+
+  useEffect(() => {
+    seteway_loaded(true)
+  }, []);
+
+  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+
   return (
     <>
-    <LogInEwayBill/>
+     {!eway_loaded && memoizedLogInEwayBill}
       <div
         style={{
           background: "#F0F0F0",

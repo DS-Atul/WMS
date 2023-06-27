@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect} from "react";
+import React, { useMemo, useEffect, useState, useLayoutEffect} from "react";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
@@ -45,9 +45,17 @@ const DocketEway = () => {
     }
   }, [userpermission]);
 
+  const [eway_loaded, seteway_loaded] = useState(false)
+
+  useEffect(() => {
+    seteway_loaded(true)
+  }, []);
+
+  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+
   return (
     <>
-    <LogInEwayBill/>
+   {!eway_loaded && memoizedLogInEwayBill}
      <Navigate />
       <PageTitle page="Part A" />
       <Title title="Eway Bill Dockets's" parent_title="Eway Bill" />

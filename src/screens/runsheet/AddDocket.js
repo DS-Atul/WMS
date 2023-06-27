@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 // import Search_list from "../../../components/List_Display/Search_list";
@@ -242,10 +242,17 @@ function AddDocket({ runsheet }) {
     }
   }, [docket_nos, show])
 
+  const [eway_loaded, seteway_loaded] = useState(false)
+
+  useEffect(() => {
+    seteway_loaded(true)
+  }, []);
+
+  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
 
   return (
     <>
-<LogInEwayBill/>
+      {!eway_loaded && memoizedLogInEwayBill}
       <Button className="btn btn-info m-1 cu_btn" onClick={handleShow}>
         Add More
       </Button>

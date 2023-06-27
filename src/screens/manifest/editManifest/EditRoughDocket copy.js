@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -693,14 +693,22 @@ const EditRoughDocket = () => {
   }, [EwayBillData,vehicle_no]);
 
   useEffect(() => {
-    console.log("list_data----", list_data)
     if(manifest_no !== ""){
       getEwayBills(manifest_no)
     }
   }, [manifest_no])
+  
+  const [eway_loaded, seteway_loaded] = useState(false)
+
+  useEffect(() => {
+    seteway_loaded(true)
+  }, []);
+
+  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+
   return (
     <>
-    <LogInEwayBill/>
+   {!eway_loaded && memoizedLogInEwayBill}
       <div>
         <Form
           onSubmit={(e) => {

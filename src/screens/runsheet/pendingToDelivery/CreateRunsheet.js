@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useMemo, useEffect, useLayoutEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useFormik } from "formik";
@@ -28,10 +28,6 @@ import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 
 function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_received_total, total_pieces }) {
-  console.log("awb_numbers------", awb_numbers)
-  console.log("issuereceived_total--------", issuereceived_total)
-  console.log("issuenon_received_total--------", issuenon_received_total)
-  console.log("total_pieces-----", total_pieces)
   const dispatch = useDispatch();
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
 
@@ -385,9 +381,17 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
     }
   }, [route, vehicle_no, driver_name, defined_route_name]);
 
+  const [eway_loaded, seteway_loaded] = useState(false)
+
+  useEffect(() => {
+    seteway_loaded(true)
+  }, []);
+
+  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+
   return (
     <>
-    <LogInEwayBill/>
+    {!eway_loaded && memoizedLogInEwayBill}
       <Button
         variant="primary"
         onClick={handleShow}
