@@ -955,15 +955,14 @@ const AddBranch = () => {
     if (branch_type === "Own Branch" && !user.organization_name) {
       getOrganization()
     }
-    // !user.is_superuser || user.organization_name
   }, [org_page, org_search_item, branch_type])
 
   useEffect(() => {
-    setorg(toTitleCase(user.organization_name))
-    setorg_id(user.organization)
+    if(user.organization){
+      setorg(toTitleCase(user.organization_name))
+      setorg_id(user.organization)
+    }
   }, [user])
-
-
 
   useLayoutEffect(() => {
     if (city_id !== 0) {
@@ -1443,11 +1442,17 @@ const AddBranch = () => {
 
     // Ensure that the first three characters are always "QIL"
     let len = user.organization_alias?.length
-    if (value.substring(0, len) === user.organization_alias+"-") {
-      setBranchName(value);
-    } else {
-      setBranchName(user.organization_alias+"-" + value.substring(len+1));
+    if(user.organization_alias){
+      if (value.substring(0, len) === user.organization_alias+"-") {
+        setBranchName(value);
+      } else {
+        setBranchName(user.organization_alias+"-" + value.substring(len+1));
+      }
     }
+    else{
+      setBranchName(value)
+    }
+
   };
 
   const handleBlur = () => {
@@ -1711,11 +1716,16 @@ const AddBranch = () => {
                           <Input
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            value={
-                              branchName?.substring(0, user.organization_alias?.length) !== user.organization_alias
-                                ? user.organization_alias+"-" + branchName
+                            // value={
+                            //   branchName?.substring(0, user.organization_alias?.length) !== user.organization_alias
+                            //     ? user.organization_alias+"-" + branchName
+                            //     : branchName || ""
+                            // }
+                            value={ user.organization_alias
+                              ? branchName?.substring(0, user.organization_alias?.length) !== user.organization_alias
+                                ? user.organization_alias + "-" + branchName
                                 : branchName || ""
-                            }
+                              : branchName}
                             invalid={
                             branch_blur
                                 ? true
