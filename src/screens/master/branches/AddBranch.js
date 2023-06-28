@@ -60,6 +60,9 @@ const AddBranch = () => {
   const toggle_circle2 = () => {
     setcircle_btn2(!circle_btn2);
   };
+
+  const [branchName, setBranchName] = useState('');
+  console.log("branchName====", branchName)
   // Branch Type
   const [branch_type, setbranch_type] = useState("");
   const [branch_type_list, setbranch_type_list] = useState([
@@ -203,7 +206,7 @@ const AddBranch = () => {
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
-      branch_name: toTitleCase(branch.name) || "",
+      // branch_name: toTitleCase(branch.name) || "",
       branch_email: branch.email || "",
       branch_phone_number: branch.contact_number || "",
       address_line_1: toTitleCase(branch.address_line_1) || "",
@@ -213,7 +216,7 @@ const AddBranch = () => {
     },
 
     validationSchema: Yup.object({
-      branch_name: Yup.string().required("Branch name is required"),
+      // branch_name: Yup.string().required("Branch name is required"),
       branch_email: Yup.string()
         .email("Invalid email format")
         .required("Branch Email is required"),
@@ -239,7 +242,7 @@ const AddBranch = () => {
       let map_value = filter_value.map((m) => m[0]);
       let all_value = map_value[0];
 
-      let fields = ["branch_name", "branch_email", "branch_phone_number"];
+      let fields = ["branch_email", "branch_phone_number"];
 
       if (branch_type === "") {
         setbranch_type_error(true);
@@ -247,6 +250,10 @@ const AddBranch = () => {
       }
       else if (branch_type === "Vendor" && vendor_name === "") {
         setvendor_error(true);
+        document.getElementById("branch_info").scrollIntoView();
+      }
+      else if(branchName?.split("-")[1] === "" || !branchName){
+        setbranch_blur(true)
         document.getElementById("branch_info").scrollIntoView();
       }
       else if (branch_type === "Own Branch" && org === "") {
@@ -357,7 +364,7 @@ const AddBranch = () => {
       const response = await axios.post(
         ServerAddress + "master/add_branch/",
         {
-          name: toTitleCase(values.branch_name).toUpperCase(),
+          name: toTitleCase(branchName).toUpperCase(),
           type: branch_type_short,
           // organization: branch_type === "Own Branch" ? org_id : null,
           organization: org_id,
@@ -400,7 +407,7 @@ const AddBranch = () => {
       if (response.statusText === "Created") {
         dispatch(setToggle(true));
         dispatch(
-          setDataExist(`New Branch "${values.branch_name}" Added Sucessfully`)
+          setDataExist(`New Branch "${branchName}" Added Sucessfully`)
         );
         dispatch(setAlertType("success"));
         dispatch(setShowAlert(true));
@@ -410,9 +417,13 @@ const AddBranch = () => {
           setbranch_type("");
           // setoperating_city_list2([]);
           setstate("");
-          // setcity("");
+          setcity("");
           setpincode("");
-          validation.values.branch_name = "";
+          setsame_as_gst(false)
+          setoperating_city_list2([])
+          // validation.values.branch_name = "";
+          setBranchName("")
+          setaddress_line("")
           validation.values.branch_email = "";
           validation.values.branch_phone_number = "";
           validation.values.address_line_1 = "";
@@ -427,7 +438,7 @@ const AddBranch = () => {
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
-            `Branch Name "${toTitleCase(values.branch_name)}" already exists`
+            `Branch Name "${toTitleCase(branchName)}" already exists`
           )
         );
         dispatch(setAlertType("warning"));
@@ -457,7 +468,7 @@ const AddBranch = () => {
       head_email: values.branch_head_email,
       head_phone_number: values.branch_head_phone_number,
       locality_name: locality,
-      name: values.branch_name,
+      name: branchName,
       operating_city: opcity_ids,
       organization_name: org,
       pan_no:
@@ -485,7 +496,7 @@ const AddBranch = () => {
       const response = await axios.put(
         ServerAddress + "master/update_branch/" + id,
         {
-          name: toTitleCase(values.branch_name).toUpperCase(),
+          name: toTitleCase(branchName).toUpperCase(),
           type: branch_type_short,
           // organization: branch_type === "Own Branch" ? org_id : null,
           organization: org_id,
@@ -522,7 +533,7 @@ const AddBranch = () => {
       );
       if (response.data.status === "success") {
         dispatch(
-          setDataExist(`Branch "${values.branch_name}" Updated Sucessfully`)
+          setDataExist(`Branch "${branchName}" Updated Sucessfully`)
         );
         dispatch(setAlertType("info"));
         dispatch(setShowAlert(true));
@@ -531,7 +542,7 @@ const AddBranch = () => {
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
-            `Branch Name "${toTitleCase(values.branch_name)}" already exists`
+            `Branch Name "${toTitleCase(branchName)}" already exists`
           )
         );
         dispatch(setAlertType("warning"));
@@ -559,7 +570,7 @@ const AddBranch = () => {
       }
 
       if (resp.data.results.length > 0) {
-      
+
         if (state_page === 1) {
           state_list = resp.data.results.map((v) => [
             v.id,
@@ -583,12 +594,12 @@ const AddBranch = () => {
   };
 
   useLayoutEffect(() => {
-    if(get_state_wise_op && state){
+    if (get_state_wise_op && state) {
       setoperating_city_list([])
     }
-  }, [get_state_wise_op,state])
-  
-console.log("operating_city_list---", operating_city_list)
+  }, [get_state_wise_op, state])
+
+  console.log("operating_city_list---", operating_city_list)
 
   const getCities = async (place_id, filter_by) => {
     setby_pincode(false);
@@ -651,7 +662,7 @@ console.log("operating_city_list---", operating_city_list)
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
-      .then((response) => {        
+      .then((response) => {
         temp = response.data.results;
         console.log("temp-----", temp)
         if (temp.length > 0) {
@@ -1006,7 +1017,7 @@ console.log("operating_city_list---", operating_city_list)
 
 
   useEffect(() => {
-    
+
     if (location_data.state !== null && branch.length !== 0) {
       get_OpCitiesDetails(branch.id)
     }
@@ -1059,6 +1070,7 @@ console.log("operating_city_list---", operating_city_list)
       setisupdating(true);
       setbranch_type_short(location_data.state.branch.type);
       let bnch_type = location_data.state.branch.type;
+      setBranchName(location_data.state.branch.name)
       if (bnch_type === "OB") {
         setbranch_type("Own Branch");
         setown_pan_number(location_data.state.branch.pan_no);
@@ -1414,7 +1426,42 @@ console.log("operating_city_list---", operating_city_list)
     }
   }, [gst_number, select_gst])
 
+  // useEffect(() => {
+  //   console.log("validation.values.branch_name===", validation.values.branch_name)
+  //   console.log(" user.organization_alias===", user.organization_alias?.length)
+  //   let len = user.organization_alias?.length
+  //   console.log("len====", len)
+  //   let val = validation.values.branch_name.substring(0, len)
+  //   console.log("val=====", val)
+  //   setbranch_alias(val)
+  // }, [validation, user])
 
+  const [branch_blur, setbranch_blur] = useState(false)
+
+  const handleChange = (event) => {
+    const { value } = event.target;
+
+    // Ensure that the first three characters are always "QIL"
+    let len = user.organization_alias?.length
+    if (value.substring(0, len) === user.organization_alias+"-") {
+      setBranchName(value);
+    } else {
+      setBranchName(user.organization_alias+"-" + value.substring(len+1));
+    }
+  };
+
+  const handleBlur = () => {
+    if(branchName?.split("-")[1] === "" || !branchName){
+      setbranch_blur(true)
+    }
+  };
+
+  useEffect(() => {
+    if(branchName?.split("-")[1] !== "" && branchName){
+      setbranch_blur(false)
+    }
+  }, [branchName])
+  
   return (
     <>
       <div>
@@ -1450,14 +1497,14 @@ console.log("operating_city_list---", operating_city_list)
         </Modal>
 
         <Form
-          onSubmit={(e) => {
+          onSubmit={(e) => {          
             e.preventDefault();
             let shaw = Object.entries(validation.values);
             let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
             let map_value = filter_value.map((m) => m[0]);
             let all_value = map_value[0];
 
-            let fields = ["branch_name", "branch_email", "branch_phone_number"];
+            let fields = ["branch_email", "branch_phone_number"];
 
             if (branch_type === "") {
               setbranch_type_error(true);
@@ -1483,7 +1530,6 @@ console.log("operating_city_list---", operating_city_list)
               document.getElementById("branch_info").scrollIntoView();
             }
             else if (branch_type === "Own Branch" && gst_number === "") {
-              document.getElementById("branch_info").scrollIntoView();
               setown_gst_error(true);
               document.getElementById("branch_info").scrollIntoView();
             }
@@ -1644,11 +1690,12 @@ console.log("operating_city_list---", operating_city_list)
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2" id="branch_info">
                           <Label className="header-child">Branch Name*</Label>
-                          <Input
+                          {/* <Input
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
-                            // user.organization_alias +"-"+
-                            value={validation.values.branch_name || ""}
+                            value={ validation.values.branch_name.substring(0, 3) !== "QIL" ?  "QIL"+"-"+validation.values.branch_name : validation.values.branch_name || ""}
+                            // value={branch_alias !== user?.organization_alias ?  user?.organization_alias +"-"+validation.values.branch_name : validation.values.branch_name || ""}
+                            // value={validation.values.branch_name || ""}
                             invalid={
                               validation.touched.branch_name &&
                                 validation.errors.branch_name
@@ -1660,11 +1707,29 @@ console.log("operating_city_list---", operating_city_list)
                             id="input"
                             name="branch_name"
                             placeholder="Enter Branch Name"
+                          /> */}
+                          <Input
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            value={
+                              branchName?.substring(0, user.organization_alias?.length) !== user.organization_alias
+                                ? user.organization_alias+"-" + branchName
+                                : branchName || ""
+                            }
+                            invalid={
+                            branch_blur
+                                ? true
+                                : false
+                            }
+                            type="text"
+                            className="form-control-md"
+                            id="input"
+                            name="branch_name"
+                            placeholder="Enter Branch Name"
                           />
-                          {validation.touched.branch_name &&
-                            validation.errors.branch_name ? (
+                          { branch_blur ? (
                             <FormFeedback type="invalid">
-                              {validation.errors.branch_name}
+                             Branch Name Is Required
                             </FormFeedback>
                           ) : null}
                         </div>
@@ -1863,6 +1928,7 @@ console.log("operating_city_list---", operating_city_list)
                           onClick={() => {
                             setsame_as_gst(!same_as_gst);
                           }}
+                          checked={same_as_gst}
                         />
                       </div>
                     </Col>

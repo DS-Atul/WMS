@@ -643,6 +643,7 @@ const UserInfo = () => {
       )
       .then(function (resp) {
         if (resp.data.status === "success") {
+          getUserPermissions(validation.values.username)
           dispatch(setDataExist(`${user.username} Updated sucessfully`));
           dispatch(setAlertType("info"));
           dispatch(setShowAlert(true));
@@ -692,9 +693,9 @@ const UserInfo = () => {
         }
       )
       .then(function (resp) {
-        if (is_update && username === locations.state.user.username && resp.status == 202) {
-          getUserDetails(username)
-          getUserPermissions(username)
+        if (is_update && resp.status == 202) {
+          getUserDetails(validation.values.username)
+          // getUserPermissions(validation.values.username)
         }
     
         if (resp.status == 202 && is_superuser === false && permission_title_list[1][6] !== "") {

@@ -349,10 +349,6 @@ const SignIn = () => {
         // Master
         let master = [];
 
-        let c = userpermission.find(({ sub_model }) => sub_model === "Branch");
-        if (c.sub_model === "Branch" && c.read === true) {
-          master.push(["Branches", "/master/branches"]);
-        }
         let d = userpermission.find(
           ({ sub_model }) => sub_model === "Commodity"
         );
@@ -366,6 +362,11 @@ const SignIn = () => {
         let f = userpermission.find(({ sub_model }) => sub_model === "Bill To");
         if (f.sub_model === "Bill To" && f.read === true) {
           master.push(["Bill To", "/master/billtos"]);
+        }
+        
+        let c = userpermission.find(({ sub_model }) => sub_model === "Branch");
+        if (c.sub_model === "Branch" && c.read === true) {
+          master.push(["Branches", "/master/branches"]);
         }
         // let g = userpermission.find(
         //   ({ sub_model }) => sub_model === "Shipper/Consignee"

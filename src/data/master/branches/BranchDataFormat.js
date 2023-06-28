@@ -222,10 +222,10 @@ const BranchDataFormat = ({ data, data1, can_delete }) => {
                     to="/master/branches/addbranch"
                     state={{ branch: branch }}
                   >
-                    {toTitleCase(branch.name)}
+                    {branch.name}
                   </Link>
                 ) : (
-                  toTitleCase(branch.name)
+                  branch.name
                 )}
               </td>
 

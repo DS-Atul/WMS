@@ -239,6 +239,7 @@ const AddOrganization = () => {
     },
 
     validationSchema: Yup.object({
+      alias_name: Yup.string().required("Alias Name is required"),
       organisation_name: Yup.string().required("Organization Name is required"),
       registeration_number: Yup.string()
         .min(21, "Number must be 21 digit")

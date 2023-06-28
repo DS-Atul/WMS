@@ -2787,7 +2787,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_states/?search=${""}&place_id=all&filter_by=all&p=${state_page}&records=${10}&state_search=${state_search_item}`,
+        `master/all_shipper_states/?search=${state_search_item}&p=${state_page}&records=${10}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -2829,7 +2829,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_cities/?search=${""}&p=${val === "Shipper" ? city_page : city_page_c
+        `master/${val === "Shipper" ? "all_shipper_cities" : "all_cities"}/?search=${""}&p=${val === "Shipper" ? city_page : city_page_c
         }&records=${10}&city_search=${val === "Shipper" ? city_search_item : city_search_item_c
         }` +
         "&place_id=" +
@@ -2898,7 +2898,7 @@ const AddOrder = () => {
     axios
       .get(
         ServerAddress +
-        `master/all_pincode/?search=${""}&p=${val === "Shipper" ? pincode_page : pincode_page_c
+        `master/${val === "Shipper" ? "all_shipper_pincode" : "all_pincode"}/?search=${""}&p=${val === "Shipper" ? pincode_page : pincode_page_c
         }&records=${10}&pincode_search=${val === "Shipper" ? pincode_search_item : pincode_search_item_c
         }` +
         "&place_id=" +
@@ -4435,6 +4435,7 @@ const AddOrder = () => {
                             onChange={(val) => {
                               setbooking_date(val.target.value);
                             }}
+                            disabled={!user.is_superuser}
                           />
                         </div>
                       </div>

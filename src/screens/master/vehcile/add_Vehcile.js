@@ -536,7 +536,7 @@ const Add_Vehcile = () => {
                     </div>
                   </Col>
                   <Col lg={12} md={12} sm={12}>
-                      <Label className="header-child">Branch *:</Label>
+                      <Label className="header-child">Associated Branch *:</Label>
                       <TransferList
                         list_a={branch_list}
                         setlist_a={setbranch_list}

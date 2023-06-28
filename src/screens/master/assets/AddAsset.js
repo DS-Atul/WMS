@@ -469,9 +469,7 @@ const [product_id_error, setproduct_id_error] = useState(false)
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
-            `Commodity Name "${toTitleCase(
-              values.asset_name
-            )}" already exists`
+            `Asset ${asset_type == "Logger" ? "Logger Number" : "Product Id"} "${ asset_type == "Logger" ? logger_box_no : useproduct_id }" already exists`
           )
         );
         dispatch(setAlertType("warning"));
@@ -559,7 +557,7 @@ const [product_id_error, setproduct_id_error] = useState(false)
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
-            `Asset Id  "${response.data.data.asset_id}" Updated sucessfully`
+            `Asset Id "${response.data.data.asset_id}" Updated sucessfully`
           )
         );
         dispatch(setAlertType("info"));
@@ -568,9 +566,7 @@ const [product_id_error, setproduct_id_error] = useState(false)
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
-            `Commodity Name "${toTitleCase(
-              values.asset_name
-            )}" already exists`
+            `Asset ${asset_type == "Logger" ? "Logger Number" : "Product Id"} "${ asset_type == "Logger" ? logger_box_no : useproduct_id }" already exists`
           )
         );
         dispatch(setAlertType("warning"));
@@ -978,6 +974,7 @@ const [product_id_error, setproduct_id_error] = useState(false)
                             </Label>
                             <Input
                               className="form-control-md"
+                              maxLength={15}
                               id="input"
                               type="text"
                               value={logger_box_no}
@@ -1064,6 +1061,7 @@ const [product_id_error, setproduct_id_error] = useState(false)
                             <Label className="header-child">Product ID *</Label>
                             <Input
                               type="text"
+                              maxLength={15}
                               className="form-control-md"
                               id="input"
                               placeholder="Enter Product Id"
