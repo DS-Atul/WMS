@@ -288,25 +288,11 @@ const SignIn = () => {
 
 
   useLayoutEffect(() => {
-    if (userpermission) {
-      let navigation_list = [
-        // {
-        //   id: 1,
-        //   dropdown: "EMS",
-        //   dropdownMenu: [
-        //     ["Login Details", "/ems/logindetails"],
-        //     ["Users", "/ems/users"],
-        //   ],
-        //   trigger: false,
-        // },
-      ];
-
-      if (
-        userpermission.length > 0 &&
-        userData &&
-        userData.is_superuser === false
-      ) {
-
+    if (userpermission?.length > 0 &&
+      userData &&
+      userData.is_superuser === false) {
+      let navigation_list = [];
+      
         // Ems
         let ems = [];
 
@@ -505,7 +491,7 @@ const SignIn = () => {
         dispatch(setNavigationList(navigation_list));
         dispatch(setPermission(true));
       }
-    }
+    
   }, [userpermission]);
 
   useEffect(() => {

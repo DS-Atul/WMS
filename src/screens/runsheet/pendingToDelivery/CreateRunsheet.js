@@ -370,7 +370,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
 
 
   useEffect(() => {
-    if (route !== "" && defined_route_name !=="") {
+    if (route !== "" && defined_route_name !== "") {
       setroute_error(false);
     }
     if (vehicle_no !== "") {
@@ -389,21 +389,142 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
 
   const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
 
+  //
+  const [runsheet_type, setrunsheet_type] = useState("Create_Runsheet");
+  //  For Fetching Branch Data Started
+  const [branch_list, setbranch_list] = useState([]);
+  console.log("branch_list-------", branch_list)
+  const [branch_type_short, setbranch_type_short] = useState("");
+  const [branch_selected, setbranch_selected] = useState("");
+  const [manifest_type, setmanifest_type] = useState("Create_Manifest");
+  const [branch_dest, setbranch_dest] = useState("");
+  const [branch_dest_id, setbranch_dest_id] = useState("");
+  const [branch_search, setbranch_search] = useState("");
+  const [branch_page, setbranch_page] = useState(1);
+  const [branch_loaded, setbranch_loaded] = useState(false)
+  const [branch_count, setbranch_count] = useState(1)
+  const [branch_bottom, setbranch_bottom] = useState(103)
+  const [branch_error, setbranch_error] = useState(false)
+
+  const get_branch = () => {
+    let temp = [];
+    let temp2 = [];
+    axios
+      .get(
+        ServerAddress +
+        `master/all-branches/?search=${""}&p=${branch_page}&records=${10}&branch_name=${[
+          "",
+        ]}&branch_city=${[""]}&branch_search=${branch_search}&vendor=&data=all`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        if (response.data.next === null) {
+          setbranch_loaded(false);
+        } else {
+          setbranch_loaded(true);
+        }
+
+        if (response.data.results.length > 0) {
+          temp = response.data.results;
+          if (branch_page === 1) {
+            temp2 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+              toTitleCase(v.city_name),
+              v.location,
+            ]);
+          } else {
+            temp2 = [
+              ...branch_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.state), toTitleCase(v.city_name),
+              v.location,]),
+            ];
+          }
+
+          // console.log("response---temp-----", temp);
+          // for (let index = 0; index < temp.length; index++) {
+          //   temp2.push([
+          //     temp[index].id,
+          //     temp[index].name,
+          //     temp[index].city_name,
+          //     temp[index].location,
+          //     // temp[index].locality_name
+          //   ]);
+          // }
+          // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+          setbranch_count(branch_count + 2);
+          setbranch_list(temp2);
+        }
+        else {
+          setbranch_list([])
+        }
+      })
+      .catch((err) => {
+        alert(`Error While Loading Branches , ${err}`);
+      });
+  };
+
+  useLayoutEffect(() => {
+    get_branch();
+  }, [branch_search, branch_page]);
+
+
   return (
     <>
-    {!eway_loaded && memoizedLogInEwayBill}
-      <Button
-        variant="primary"
-        onClick={handleShow}
-        disabled={awb_no_list.length === 0}
-      >
-        Create Runsheet
-      </Button>
-
+      {!eway_loaded && memoizedLogInEwayBill}
+      <div style={{ display: "flex" }}>
+        <div
+          className="form-check mb-2"
+          style={{ marginTop: "25px", marginRight: "30px" }}
+        >
+          <Input
+            className="form-check-input"
+            type="radio"
+            name="delivery_type"
+            id="exampleRadios1"
+            value="Createrunsheet"
+            defaultChecked
+            onClick={() => {
+              setrunsheet_type("Create_Runsheet");
+            }}
+          />
+          <Label>Create Runsheet</Label>
+        </div>
+        <div
+          className="form-check mb-2"
+          style={{ marginTop: "25px", marginRight: "30px" }}
+        >
+          <Input
+            className="form-check-input"
+            type="radio"
+            name="delivery_type"
+            id="exampleRadios2"
+            value="Createrunsheet"
+            onClick={() => {
+              setrunsheet_type("Hub_Transfer");
+            }}
+          />
+          <Label>Hub Transfer</Label>
+        </div>
+        <div
+          className="form-check mb-2"
+          style={{ marginTop: "20px" }}
+        >
+          <Button
+            variant="primary"
+            onClick={handleShow}
+            disabled={awb_no_list.length === 0}
+          >
+            Create
+          </Button>
+        </div>
+      </div>
       <Modal show={show} onHide={handleClose}>
         {/* contentClassName="content-test" */}
         <Modal.Header closeButton>
-          <Modal.Title>Create Runsheet</Modal.Title>
+          <Modal.Title>{runsheet_type === "Create_Runsheet" ? "Create Runsheet" : "Hub Transfer"}</Modal.Title>
         </Modal.Header>
         <form
           onSubmit={(e) => {
@@ -422,217 +543,261 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
             {/* <Label>Is Defined Row</Label> */}
             {(issuereceived_total === 0 && issuenon_received_total === 0) || close ?
               <>
-                <div >
-                  <Label>
-                    Vehicle Type
-                  </Label>
-                  <Row>
-                    <Col md={4} sm={5}>
-                      <div className="form-check mb-2">
-                        <Input
-                          className="form-check-input"
-                          type="radio"
-                          name="vehicle_type"
-                          id="exampleRadios3"
-                          value="TRUCK"
-                          onClick={() => {
-                            setvehicle_type("TRUCK");
-                          }}
-                          checked={vehicle_type === "TRUCK"}
-                          readOnly={true}
-                        />
-                        <Label
-                          className="form-check-label input-box"
-                          htmlFor="exampleRadios2"
-                        >
-                          Truck
-                        </Label>
-                      </div>
-                    </Col>
-                    <Col md={6} sm={7}>
-                      <div className="form-check mb-2">
-                        <Input
-                          className="form-check-input"
-                          type="radio"
-                          name="vehicle_type"
-                          id="exampleRadios4"
-                          value="BIKE"
-                          onClick={() => {
-                            setvehicle_type("BIKE");
-                          }}
-                          checked={vehicle_type === "BIKE"}
-                          readOnly={true}
-                        />
+                {runsheet_type === "Create_Runsheet" ?
+                  <>
+                    <div>
+                      <Label>
+                        Vehicle Type
+                      </Label>
+                      <Row>
+                        <Col md={4} sm={5}>
+                          <div className="form-check mb-2">
+                            <Input
+                              className="form-check-input"
+                              type="radio"
+                              name="vehicle_type"
+                              id="exampleRadios3"
+                              value="TRUCK"
+                              onClick={() => {
+                                setvehicle_type("TRUCK");
+                              }}
+                              checked={vehicle_type === "TRUCK"}
+                              readOnly={true}
+                            />
+                            <Label
+                              className="form-check-label input-box"
+                              htmlFor="exampleRadios2"
+                            >
+                              Truck
+                            </Label>
+                          </div>
+                        </Col>
+                        <Col md={6} sm={7}>
+                          <div className="form-check mb-2">
+                            <Input
+                              className="form-check-input"
+                              type="radio"
+                              name="vehicle_type"
+                              id="exampleRadios4"
+                              value="BIKE"
+                              onClick={() => {
+                                setvehicle_type("BIKE");
+                              }}
+                              checked={vehicle_type === "BIKE"}
+                              readOnly={true}
+                            />
 
-                        <Label
-                          className="form-check-label input-box"
-                          htmlFor="exampleRadios1"
-                        >
-                          Bike
-                        </Label>
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-                <div style={{ marginTop: "10px" }}>
-                  <Label>
-                    {" "}
-                    Route (Is Defined Route{" "}
-                    <span onClick={() => setdefined_route(!defined_route)}>
+                            <Label
+                              className="form-check-label input-box"
+                              htmlFor="exampleRadios1"
+                            >
+                              Bike
+                            </Label>
+                          </div>
+                        </Col>
+                      </Row>
+                    </div>
+                    <div style={{ marginTop: "10px" }}>
+                      <Label>
+                        {" "}
+                        Route (Is Defined Route{" "}
+                        <span onClick={() => setdefined_route(!defined_route)}>
+                          {defined_route ? (
+                            <FiCheckSquare size={15} />
+                          ) : (
+                            <FiSquare size={15} />
+                          )}
+                        </span>
+                        )
+                      </Label>
+
                       {defined_route ? (
-                        <FiCheckSquare size={15} />
+                        <SearchInput
+                          data_list={route_list}
+                          setdata_list={setroute_list}
+                          data_item_s={defined_route_name}
+                          set_data_item_s={setdefined_route_name}
+                          set_id={setroute_id}
+                          page={route_page}
+                          setpage={setroute_page}
+                          search_item={search_route}
+                          setsearch_item={setsearch_route}
+                          error_message={"Please Select Any State"}
+                          error_s={route_error}
+                          loaded={route_loaded}
+                          count={route_count}
+                          bottom={route_bottom}
+                          setbottom={setroute_bottom}
+                        />
                       ) : (
-                        <FiSquare size={15} />
+                        <Input
+                          value={route}
+                          onChange={(val) => {
+                            setroute(val.target.value);
+                          }}
+                          onBlur={() => {
+                            if (route === "") {
+                              setroute_error(true)
+                            }
+                          }
+                          }
+                          invalid={
+                            route_error
+                          }
+                          type="text"
+                          className="form-control-md"
+                          id="input"
+                          placeholder="Enter route"
+                        />
                       )}
-                    </span>
-                    )
-                  </Label>
 
-                  {defined_route ? (
-                    <SearchInput
-                      data_list={route_list}
-                      setdata_list={setroute_list}
-                      data_item_s={defined_route_name}
-                      set_data_item_s={setdefined_route_name}
-                      set_id={setroute_id}
-                      page={route_page}
-                      setpage={setroute_page}
-                      search_item={search_route}
-                      setsearch_item={setsearch_route}
-                      error_message={"Please Select Any State"}
-                      error_s={route_error}
-                      loaded={route_loaded}
-                      count={route_count}
-                      bottom={route_bottom}
-                      setbottom={setroute_bottom}
-                    />
-                  ) : (
-                    <Input
-                      value={route}
-                      onChange={(val) => {
-                        setroute(val.target.value);
-                      }}
-                      onBlur={() => {
-                        if (route === "") {
-                          setroute_error(true)
-                        }
-                      }
-                      }
-                      invalid={
-                        route_error
-                      }
-                      type="text"
-                      className="form-control-md"
-                      id="input"
-                      placeholder="Enter route"
-                    />
-                  )}
-
-                  {route_error && (
-                    <FormFeedback type="invalid">
-                    Please Select Route
-                  </FormFeedback>
-                  )}
-                </div>
-                <div style={{ marginTop: "10px" }}>
-                  <Label> Contract Based Vehicle :
-                    <span onClick={() => setis_contract_based(!is_contract_based)}>
-                      {is_contract_based ? (
-                        <FiCheckSquare size={15} />
-                      ) : (
-                        <FiSquare size={15} />
+                      {route_error && (
+                        <FormFeedback type="invalid">
+                          Please Select Route
+                        </FormFeedback>
                       )}
-                    </span>
-                  </Label>
-                </div>
+                    </div>
+                    <div style={{ marginTop: "10px" }}>
+                      <Label> Contract Based Vehicle :
+                        <span onClick={() => setis_contract_based(!is_contract_based)}>
+                          {is_contract_based ? (
+                            <FiCheckSquare size={15} />
+                          ) : (
+                            <FiSquare size={15} />
+                          )}
+                        </span>
+                      </Label>
+                    </div>
 
-                {is_contract_based ? (
-                  <div>
-                    <SearchInput
-                      data_list={vehicle_list_s}
-                      setdata_list={setvehicle_list_s}
-                      data_item_s={vehicle_no}
-                      set_data_item_s={setvehicle_no}
-                      set_id={setvehicle_id}
-                      page={vehicle_page}
-                      setpage={setvehicle_page}
-                      error_message={"Please Select Any Vehicle"}
-                      error_s={vehicle_error}
-                      search_item={vehicle_search_item}
-                      setsearch_item={setvehicle_search_item}
-                      loaded={vehicle_loaded}
-                      count={vehicle_count}
-                      bottom={vehicle_bottom}
-                      setbottom={setvehicle_bottom}
-                    />
-                    {vehicle_no_error && (
-                      <div className="mt-1 error-text" color="danger">
-                        Please Select Vehicle
+                    {is_contract_based ? (
+                      <div>
+                        <SearchInput
+                          data_list={vehicle_list_s}
+                          setdata_list={setvehicle_list_s}
+                          data_item_s={vehicle_no}
+                          set_data_item_s={setvehicle_no}
+                          set_id={setvehicle_id}
+                          page={vehicle_page}
+                          setpage={setvehicle_page}
+                          error_message={"Please Select Any Vehicle"}
+                          error_s={vehicle_error}
+                          search_item={vehicle_search_item}
+                          setsearch_item={setvehicle_search_item}
+                          loaded={vehicle_loaded}
+                          count={vehicle_count}
+                          bottom={vehicle_bottom}
+                          setbottom={setvehicle_bottom}
+                        />
+                        {vehicle_no_error && (
+                          <div className="mt-1 error-text" color="danger">
+                            Please Select Vehicle
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mb-2">
+                        <Input
+                          name="vehicle_no"
+                          type="text"
+                          id="input"
+                          maxLength={10}
+                          value={vehicle_no}
+                          onChange={(e) => {
+                            setvehicle_no(e.target.value);
+                          }}
+                          onBlur={() => {
+                            if (vehicle_no === "" || vehicle_no?.toString().length !== 10) {
+                              setvehicle_error(true)
+                            }
+                          }
+                          }
+                          invalid={
+                            vehicle_error
+                          }
+                        />
+                        {vehicle_error && (
+                          <FormFeedback type="invalid">
+                            Vehicle Number Must Have 10 Character
+                          </FormFeedback>
+                        )}
                       </div>
                     )}
-                  </div>
-                ) : (
-                  <div className="mb-2">
-                    <Input
-                      name="vehicle_no"
-                      type="text"
-                      id="input"
-                      maxLength={10}
-                      value={vehicle_no}
-                      onChange={(e) => {
-                        setvehicle_no(e.target.value);
-                      }}
-                      onBlur={() => {
-                        if (vehicle_no === "" || vehicle_no?.toString().length !== 10) {
-                          setvehicle_error(true)
-                        }
-                      }
-                      }
-                      invalid={
-                        vehicle_error
-                      }
-                    />
-                    {vehicle_error && (
-                      <FormFeedback type="invalid">
-                        Vehicle Number Must Have 10 Character
-                      </FormFeedback>
-                    )}
-                  </div>
-                )}
 
-                <div style={{ marginTop: "10px" }}>
-                  <Label> Driver *:</Label>
-                  <SearchInput
-                    data_list={driver_list}
-                    setdata_list={setdriver_list}
-                    data_item_s={driver_name}
-                    set_data_item_s={setdriver_name}
-                    set_id={setdriver_id}
-                    search_item={search_driver_name}
-                    setsearch_item={setsearch_driver_name}
-                    error_message={"Please Select Any Driver"}
-                    error_s={driver_name_error}
-                    page={driver_page}
-                    setpage={setdriver_page}
-                    loaded={driver_loaded}
-                    count={driver_count}
-                    bottom={driver_bottom}
-                    setbottom={setdriver_bottom}
-                  />
-                </div>
-                <div style={{ marginTop: "10px" }}>
-                  <Label> Delivery Staff :</Label>
-                  <Input
-                    value={delivery_staff}
-                    onChange={(val) => {
-                      setdelivery_staff(val.target.value);
-                    }}
-                    type="text"
-                    className="form-control-md"
-                    id="input"
-                    placeholder="Enter Staff Name"
-                  />
-                </div>
+                    <div style={{ marginTop: "10px" }}>
+                      <Label> Driver *:</Label>
+                      <SearchInput
+                        data_list={driver_list}
+                        setdata_list={setdriver_list}
+                        data_item_s={driver_name}
+                        set_data_item_s={setdriver_name}
+                        set_id={setdriver_id}
+                        search_item={search_driver_name}
+                        setsearch_item={setsearch_driver_name}
+                        error_message={"Please Select Any Driver"}
+                        error_s={driver_name_error}
+                        page={driver_page}
+                        setpage={setdriver_page}
+                        loaded={driver_loaded}
+                        count={driver_count}
+                        bottom={driver_bottom}
+                        setbottom={setdriver_bottom}
+                      />
+                    </div>
+                    <div style={{ marginTop: "10px" }}>
+                      <Label> Delivery Staff :</Label>
+                      <Input
+                        value={delivery_staff}
+                        onChange={(val) => {
+                          setdelivery_staff(val.target.value);
+                        }}
+                        type="text"
+                        className="form-control-md"
+                        id="input"
+                        placeholder="Enter Staff Name"
+                      />
+                    </div>
+                  </>
+                  :
+                  <>
+                    <div style={{ marginTop: "10px" }}>
+                      <Label>
+                        Select Branch to Forward *
+                      </Label>
+                      <SearchInput
+                        data_list={branch_list}
+                        setdata_list={setbranch_list}
+                        data_item_s={branch_selected}
+                        set_data_item_s={(value) => {
+                          let cv = branch_list.forEach((e) => {
+                            if (e[1] === value) {
+                              setbranch_dest(e[2]);
+                              setbranch_dest_id(e[3]);
+                            }
+                          });
+
+                          setbranch_selected(value);
+                        }}
+                        set_id={setbranch_type_short}
+                        setsearch_item={setbranch_search}
+                        error_message={"Please select Branch To Forward"}
+                        error_s={branch_error}
+                        page={branch_page}
+                        setpage={setbranch_page}
+                        loaded={branch_loaded}
+                        count={branch_count}
+                        bottom={branch_bottom}
+                        setbottom={setbranch_bottom}
+                      />
+                    </div>
+
+                    <div style={{ marginTop: "10px" }}>
+                      <Label>
+                        Destination City
+                      </Label>
+                      <Input id="input" disabled value={branch_dest} />
+                    </div>
+                  </>
+                }
               </>
               :
               <div>{`You have total "${total_pieces}" Quantity With in this "${issuereceived_total}" Pieces is Damaged and "${issuenon_received_total}" is not Received So, Do you want to Create Runsheet ?`}</div>
