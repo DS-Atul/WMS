@@ -273,6 +273,12 @@ const OrderCheckingPage = React.lazy(() =>
 );
 
 // Runsheet
+const IncomingRunsheetHub = React.lazy(() =>
+  import("./screens/runsheet/incomingRunsheet/IncomingRunsheetHub.js")
+);
+const HubRunsheet = React.lazy(() =>
+  import("./screens/runsheet/HubRunsheet.js")
+);
 const AllRunsheet = React.lazy(() =>
   import("./screens/runsheet/AllRunsheet.js")
 );
@@ -881,6 +887,14 @@ const routes = [
   },
 
   //Runsheet
+  {
+    path: "/runsheet/incomingrunsheet",
+    element: <IncomingRunsheetHub />,
+  },
+  {
+    path: "/runsheet/hubrunsheet",
+    element: <HubRunsheet />,
+  },
   {
     path: "/runsheet/allrunsheet",
     element: <AllRunsheet />,

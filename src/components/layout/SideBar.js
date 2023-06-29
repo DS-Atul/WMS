@@ -74,7 +74,7 @@ const SideBar = () => {
       dispatch(setRunsheetTab(1));
     }
     else if(e[0] === "All Runsheet"){
-      dispatch(setRunsheetTab(2));
+      dispatch(setRunsheetTab(4));
     }
     else if(e[0] === "DocketWithEwayBill"){
       dispatch(setEwayBilltTab(1));

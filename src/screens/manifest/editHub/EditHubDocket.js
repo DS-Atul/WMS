@@ -681,17 +681,18 @@ const EditHubDocket = () => {
     }
   }, [hub_no])
 
-  const [eway_loaded, seteway_loaded] = useState(false)
+  // const [eway_loaded, seteway_loaded] = useState(false)
 
-  useEffect(() => {
-    seteway_loaded(true)
-  }, []);
+  // useEffect(() => {
+  //   seteway_loaded(true)
+  // }, []);
 
-  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+  // const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
 
   return (
     <>
-     {!eway_loaded && memoizedLogInEwayBill}
+     {/* {!eway_loaded && memoizedLogInEwayBill} */}
+     <LogInEwayBill />
       <div>
         <Form
           onSubmit={(e) => {
@@ -701,8 +702,8 @@ const EditHubDocket = () => {
           }}
         >
           <div className="mt-3">
-            <PageTitle page={"Edit Hub Manifest"} />
-            <Title title={"Edit Hub Manifest"} parent_title="Manifests" />
+            <PageTitle page={location_data?.state?.type ? "Edit Hub Runsheet" : "Edit Hub Manifest"} />
+            <Title title={location_data?.state?.type ? "Edit Hub Runsheet" : "Edit Hub Manifest"} parent_title={location_data?.state?.type ? "Runsheet" : "Manifests"} />
           </div>
 
           {/* Company Info */}
@@ -711,7 +712,7 @@ const EditHubDocket = () => {
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
                   <div className="header-text-icon header-text">
-                    Hub Manifest Info :
+                    {location_data?.state?.type ? "Hub Runsheet Info" : "Hub Manifest Info"} :
                     <IconContext.Provider
                       value={{
                         className: "header-add-icon",
@@ -732,7 +733,7 @@ const EditHubDocket = () => {
                     <Row>
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
-                          <Label className="header-child">Manifest No* :</Label>
+                          <Label className="header-child">  {location_data?.state?.type ? "Hub Runsheet No*" : "Hub Manifest No*"} :</Label>
 
                           <Input id="input" disabled value={hub_no} />
                         </div>
@@ -994,6 +995,7 @@ const EditHubDocket = () => {
                         id_m={hub_no}
                         refresh2={refresh}
                         setrefresh2={setrefresh}
+                        type={location_data?.state?.type ? location_data?.state?.type : ""}
                       />
                       <IconContext.Provider
                         value={{

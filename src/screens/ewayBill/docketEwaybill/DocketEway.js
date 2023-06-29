@@ -45,17 +45,18 @@ const DocketEway = () => {
     }
   }, [userpermission]);
 
-  const [eway_loaded, seteway_loaded] = useState(false)
+  // const [eway_loaded, seteway_loaded] = useState(false)
 
-  useEffect(() => {
-    seteway_loaded(true)
-  }, []);
+  // useEffect(() => {
+  //   seteway_loaded(true)
+  // }, []);
 
-  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+  // const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
 
   return (
     <>
-   {!eway_loaded && memoizedLogInEwayBill}
+   {/* {!eway_loaded && memoizedLogInEwayBill} */}
+   <LogInEwayBill />
      <Navigate />
       <PageTitle page="Part A" />
       <Title title="Eway Bill Dockets's" parent_title="Eway Bill" />

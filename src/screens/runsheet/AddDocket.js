@@ -242,17 +242,18 @@ function AddDocket({ runsheet }) {
     }
   }, [docket_nos, show])
 
-  const [eway_loaded, seteway_loaded] = useState(false)
+  // const [eway_loaded, seteway_loaded] = useState(false)
 
-  useEffect(() => {
-    seteway_loaded(true)
-  }, []);
+  // useEffect(() => {
+  //   seteway_loaded(true)
+  // }, []);
 
-  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+  // const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
 
   return (
     <>
-      {!eway_loaded && memoizedLogInEwayBill}
+      {/* {!eway_loaded && memoizedLogInEwayBill} */}
+      <LogInEwayBill />
       <Button className="btn btn-info m-1 cu_btn" onClick={handleShow}>
         Add More
       </Button>

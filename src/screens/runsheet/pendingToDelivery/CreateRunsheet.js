@@ -26,6 +26,7 @@ import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../stor
 import { gstin_no } from "../../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
+import { setRunsheetTab } from "../../../store/parentFilter/ParentFilter";
 
 function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_received_total, total_pieces }) {
   const dispatch = useDispatch();
@@ -100,10 +101,21 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
     initialValues: {},
 
     onSubmit: (values) => {
-      if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
-        setvehicle_error(true);
+      if(runsheet_type === "Create_Runsheet"){
+        if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
+          setvehicle_error(true);
+        }
+        else{
+          send_runsheet_data(values);
+        }
       }
-      send_runsheet_data(values);
+      else{
+        if(branch_selected === ""){
+          setbranch_error(true)
+        }
+        send_hub_data();
+      }
+
     },
   });
 
@@ -220,12 +232,58 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
             });
             // EwayUpdate();
           }
-
+          dispatch(setRunsheetTab(4));
           setShow(false);
           dispatch(setAlertType("success"));
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Runsheet Created sucessfully`));
           navigate("/runsheet/allrunsheet");
+        }
+      })
+      .catch((error) => {
+        alert(`Error While Creating Manifest ${error}`);
+      });
+  };
+
+  const send_hub_data = () => {
+    // let data1 = createRunsheet_list;
+    // let id = [];
+    // for (let index = 0; index < data1.length; index++) {
+    //   const element = data1[index];
+    //   id.push(element.id);
+    // }
+    axios
+      .post(
+        ServerAddress + "manifest/add_hub_manifest/",
+        {
+          type:"RUNSHEET",
+          origin_branch: user.home_branch,
+          destination_branch: branch_type_short,
+          origin_location: user.branch_location_id,
+          destination_location: branch_dest_id,
+          awb_no_list: awb_no_list,
+          created_by: user.id,
+          destination_branch_name: branch_selected.toUpperCase(),
+          origin_location_name: user.branch_orgin_city,
+          destination_location_name: branch_dest,
+          // organization: user.userdetails.organization,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          dispatch(setRunsheetTab(2));
+          setShow(false)
+          dispatch(setAlertType("success"));
+          dispatch(setShowAlert(true));
+          // getPendindOrders();
+          navigate("/runsheet/hubrunsheet");
+          // setcreateRunsheet_list([]);
+          dispatch(setDataExist(`Hub Runsheet Created sucessfully`));
         }
       })
       .catch((error) => {
@@ -370,7 +428,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
 
 
   useEffect(() => {
-    if (route !== "" && defined_route_name !== "") {
+    if (route !== "" || defined_route_name !== "") {
       setroute_error(false);
     }
     if (vehicle_no !== "") {
@@ -381,13 +439,13 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
     }
   }, [route, vehicle_no, driver_name, defined_route_name]);
 
-  const [eway_loaded, seteway_loaded] = useState(false)
+  // const [eway_loaded, seteway_loaded] = useState(false)
 
-  useEffect(() => {
-    seteway_loaded(true)
-  }, []);
+  // useEffect(() => {
+  //   seteway_loaded(true)
+  // }, []);
 
-  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+  // const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
 
   //
   const [runsheet_type, setrunsheet_type] = useState("Create_Runsheet");
@@ -473,7 +531,8 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
 
   return (
     <>
-      {!eway_loaded && memoizedLogInEwayBill}
+      {/* {!eway_loaded && memoizedLogInEwayBill} */}
+      <LogInEwayBill />
       <div style={{ display: "flex" }}>
         <div
           className="form-check mb-2"
@@ -529,10 +588,10 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (route === "" && defined_route_name === "") {
+            if (route === "" && defined_route_name === "" && runsheet_type === "Create_Runsheet" ) {
               setroute_error(true);
             }
-            if (driver_name === "") {
+            if (driver_name === "" && runsheet_type === "Create_Runsheet" ) {
               setdriver_name_error(true);
             }
             validation.handleSubmit(e.values);
@@ -622,7 +681,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
                           setpage={setroute_page}
                           search_item={search_route}
                           setsearch_item={setsearch_route}
-                          error_message={"Please Select Any State"}
+                          error_message={"Please Select Any Route"}
                           error_s={route_error}
                           loaded={route_loaded}
                           count={route_count}

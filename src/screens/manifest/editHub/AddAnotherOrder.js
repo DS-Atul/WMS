@@ -24,7 +24,7 @@ import EditUnmanifestDataFormat from "./addAnother/unmanifests/UnrunsheetsDataFo
 import EditDeliveryDataFormat from "./addAnother/manifests/PendingDeliveryDataFormat";
 import "./addanother.css";
 
-const AddAnotherOrder = ({id_m, data2, setrefresh2}) => {
+const AddAnotherOrder = ({id_m, data2, setrefresh2, type}) => {
   console.log("id_mdata2-------", data2)
   const [success, setsuccess] = useState(false);
   const [refresh, setrefresh] = useState(false);
@@ -110,9 +110,9 @@ const AddAnotherOrder = ({id_m, data2, setrefresh2}) => {
     setunmanifest_list(domestic_order);
   }, [domestic_order]);
 
-  const getPendindOrders = () => {
+  const getPendindOrders = (val) => {
     axios
-      .get(ServerAddress + `manifest/get_domesticorder/`, {
+      .get(ServerAddress + `${val ? "runsheet/get_localorder" : "manifest/get_domesticorder"}/`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
@@ -124,7 +124,7 @@ const AddAnotherOrder = ({id_m, data2, setrefresh2}) => {
   };
   useEffect(() => {
     if (success) {
-      getPendindOrders();
+      getPendindOrders(type);
     }
   }, [success]);
   useEffect(() => {
@@ -226,7 +226,7 @@ const AddAnotherOrder = ({id_m, data2, setrefresh2}) => {
           <form>
             <div className="mt-0 m-3">
               <Col lg={12}>
-                <div className="cust-header">Unmanifest Orders</div>
+                <div className="cust-header">{type ? "UnRunsheet Orders" : "Unmanifest Orders"}</div>
                 <CardBody style={{ paddingTop: "0px" }}>
                   <Row>
                     <div
@@ -249,7 +249,7 @@ const AddAnotherOrder = ({id_m, data2, setrefresh2}) => {
             </div>
             <div className="">
               <Col lg={12}>
-                <div className="cust-header">Manifest Orders</div>
+                <div className="cust-header">{type ? "Hub Runsheet Orders" : "Manifest Orders"}</div>
                 <Row>
                   <div
                     className="container-fluid "

@@ -83,7 +83,7 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
                       <td>
                       {
                         local.eway_bill_no ?
-                        toTitleCase(local.eway_bill_no)
+                        local.eway_bill_no
 
                         :
                         <div style={{color:"red"}}>No EwayBill</div>

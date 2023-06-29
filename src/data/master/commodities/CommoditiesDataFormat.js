@@ -224,7 +224,6 @@ const CommoditiesDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {/* {can_update || user.is_superuser  ? ( */}
                 {(can_update && commodity.cm_current_status !== "APPROVED") || user.is_superuser ? (
-
                   <Link
                     to={{
                       pathname: `/master/commodities/addcommodities/${commodity.id}`,

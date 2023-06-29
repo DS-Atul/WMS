@@ -611,17 +611,18 @@ console.log("docket_nos-----", docket_nos)
     setShow(true)
   }
   
-  const [eway_loaded, seteway_loaded] = useState(false)
+  // const [eway_loaded, seteway_loaded] = useState(false)
 
-  useEffect(() => {
-    seteway_loaded(true)
-  }, []);
+  // useEffect(() => {
+  //   seteway_loaded(true)
+  // }, []);
 
-  const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+  // const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
 
   return (
     <>
-     {!eway_loaded && memoizedLogInEwayBill}
+     {/* {!eway_loaded && memoizedLogInEwayBill} */}
+     <LogInEwayBill />
       <Button size="sm" outline color="primary" type="button" onClick={() =>  showFun()}>
         Forward
       </Button>

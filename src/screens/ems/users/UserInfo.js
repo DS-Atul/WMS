@@ -643,7 +643,9 @@ const UserInfo = () => {
       )
       .then(function (resp) {
         if (resp.data.status === "success") {
-          getUserPermissions(validation.values.username)
+          if(validation.values.username===username){
+            getUserPermissions(validation.values.username)
+          }
           dispatch(setDataExist(`${user.username} Updated sucessfully`));
           dispatch(setAlertType("info"));
           dispatch(setShowAlert(true));
@@ -693,7 +695,7 @@ const UserInfo = () => {
         }
       )
       .then(function (resp) {
-        if (is_update && resp.status == 202) {
+        if (is_update && resp.status === 202 && validation.values.username===username) {
           getUserDetails(validation.values.username)
           // getUserPermissions(validation.values.username)
         }
@@ -1591,6 +1593,7 @@ const UserInfo = () => {
   };
 
   const getUserPermissions = (usern) => {
+    alert(usern)
     axios
       .get(ServerAddress + "ems/get_userpermission/?username=" + usern, {
         headers: { Authorization: `Bearer ${accessToken}` },

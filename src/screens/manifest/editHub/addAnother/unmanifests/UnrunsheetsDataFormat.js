@@ -5,6 +5,7 @@ import Unrunsheets_Data_title from "./UnrunsheetsDataTitle";
 import "./unmanifest.css";
 import remove from "../../../../../assets/images/Pdf/trash.png";
 import { Button } from "reactstrap";
+import toTitleCase from "../../../../../lib/titleCase/TitleCase";
 
 const EditUnmanifestDataFormat = ({ Manifest_list, remove_list }) => {
   const [data_title, setdata_title] = useState(Unrunsheets_Data_title);
@@ -50,13 +51,21 @@ const EditUnmanifestDataFormat = ({ Manifest_list, remove_list }) => {
                     <td>{Manifest.docket_no}</td>
 
                     <td>{booking_date_n}</td>
-                    <td>{Manifest.shipper_city}</td>
-                    <td>{Manifest.consignee_city}</td>
+                    <td>
+                        {toTitleCase(Manifest.shipper_city) +
+                          ", " +
+                          toTitleCase(Manifest.shipper_locality)}
+                      </td>
+                      <td>
+                        {toTitleCase(Manifest.consignee_city) +
+                          ", " +
+                          toTitleCase(Manifest.consignee_locality)}
+                      </td>
                     <td>{Manifest.actual_weight}</td>
                     <td>{Manifest.total_quantity}</td>
                     <td>{(Manifest.issue).length}</td>
                     <td>{(Manifest.issue_notreceived).length}</td>
-                    <td>{Manifest.delivery_type}</td>
+                    <td>{toTitleCase(Manifest.delivery_type)}</td>
                     {/* <td>
                       <div>
                         <img src={detail} width="20" height="20" />

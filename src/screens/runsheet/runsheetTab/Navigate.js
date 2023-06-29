@@ -63,6 +63,34 @@ const Navigate = () => {
           }}
           onClick={() => {
             dispatch(setRunsheetTab(2));
+            navigate("/runsheet/hubrunsheet");
+          }}
+        >
+          Hub Dispatch
+        </div>
+      )}
+      {(all_runsheet || user.is_superuser) && (
+        <div
+          className="header_tab"
+          style={{
+            background: runsheet_tab === 3 ? "#d6e8ff" : "#F8F8FB",
+          }}
+          onClick={() => {
+            dispatch(setRunsheetTab(3));
+            navigate("/runsheet/incomingrunsheet");
+          }}
+        >
+          Incoming Runsheet
+        </div>
+      )}
+      {(all_runsheet || user.is_superuser) && (
+        <div
+          className="header_tab"
+          style={{
+            background: runsheet_tab === 4 ? "#d6e8ff" : "#F8F8FB",
+          }}
+          onClick={() => {
+            dispatch(setRunsheetTab(4));
             navigate("/runsheet/allrunsheet");
           }}
         >

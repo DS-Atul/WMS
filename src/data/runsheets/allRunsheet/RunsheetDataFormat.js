@@ -232,6 +232,7 @@ const RunsheetDataFormat = ({ can_delete, data, data1 }) => {
                   <span>{runsheet.runsheet_no}</span>
                 </td>
                 <td>{runsheet.organization_name ? toTitleCase(runsheet.organization_name) : "-"}</td>
+                <td>{toTitleCase(runsheet.branch_name)}</td>
                 <td>{runsheet.orders.length}</td>
                 <td>
                   {

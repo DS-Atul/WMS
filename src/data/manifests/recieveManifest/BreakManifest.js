@@ -265,7 +265,7 @@ const BreakManifest = ({
                       }}
                     >
                       <td>{order.docket_no}</td>
-                      <td>{toTitleCase(order.barcode_no)}</td>
+                      <td>{order.barcode_no}</td>
                       {/* <td>{toTitleCase(order.consignee_city)}</td>
 
                       <td>{toTitleCase(order.consignee_name)}</td>

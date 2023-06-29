@@ -495,6 +495,7 @@ const SignIn = () => {
   }, [userpermission]);
 
   useEffect(() => {
+    console.log("userData----", userData)
     if (userData && userData.is_superuser === true) {
       let navigation_list = [];
       navigation_list.push(
