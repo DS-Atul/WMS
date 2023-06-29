@@ -113,7 +113,10 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
         if(branch_selected === ""){
           setbranch_error(true)
         }
-        send_hub_data();
+        else{
+          send_hub_data();
+        }
+
       }
 
     },
