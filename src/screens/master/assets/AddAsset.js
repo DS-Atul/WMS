@@ -38,6 +38,7 @@ import { setToggle } from "../../../store/pagination/Pagination";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import { MdAdd, MdDeleteForever } from "react-icons/md";
 // import { IconContext } from "react-icons";
+import ImgModal from "../../../components/crop/ImgModal";
 
 const AddAsset = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -194,7 +195,15 @@ const [product_id_error, setproduct_id_error] = useState(false)
     setrow(temp);
     setcalibration_id_list(temp_2)
   };
-
+//used for image 
+const [show_modal_certificate, setshow_modal_certificate] = useState({
+  value: false,
+  ind: "",
+});
+console.log("show certificate==",show_modal_certificate)
+const [img_index, setimg_index] = useState("")
+const [certificate_img, setcertificate_img] = useState("");
+console.log(" asset certificate iamge ",setcertificate_img);
   //Used for error
   const [asset_type_error, setasset_type_error] = useState(false);
   const [box_type_error, setbox_type_error] = useState(false);
@@ -409,6 +418,7 @@ const [product_id_error, setproduct_id_error] = useState(false)
       setbranch_selected(toTitleCase(asset_u.assigned_branch_n));
       setisChecked(asset_u.is_checked);
       setis_defective(asset_u.is_damaged)
+      setrow([["", val, "", "", ""]])
 
     } catch (error) { }
   }, []);
@@ -1274,7 +1284,40 @@ const [product_id_error, setproduct_id_error] = useState(false)
                 {circle_btn2 ? (
                   <CardBody>
                     <Row>
-                      <Col lg={2} md={6} sm={6}>
+                    {show_modal_certificate.value ? (
+                          <ImgModal
+                            modal={show_modal_certificate.value}
+                            modal_set={() => {
+                              setshow_modal_certificate({
+                                ...show_modal_certificate,
+                                value: false,
+                              });
+                            }}
+                            upload_image={(val) => {
+                              console.log("assetImg000000",val)
+                              if (show_modal_certificate.ind !== "") {
+                                row[show_modal_certificate.ind][4] = val;
+                                setshow_modal_certificate({
+                                  ...show_modal_certificate,
+                                  value: false,
+                                  ind: "",
+                                });
+                              } else {
+                                row[img_index][4] = val;
+                              }
+                            }}  
+                            result_image={(val) => {
+                              setcertificate_img(val);
+                              console.log("assetImg11111111",val)
+                              if (show_modal_certificate.ind !== "") {
+                                row[show_modal_certificate.ind][4] = val;
+                              } else {
+                                row[img_index][4] = val;
+                              }
+                            }}
+                          />
+                        ) : null}
+                     <Col lg={2} md={6} sm={6}> 
                         <div className="mb-3">
                           <Label className="header-child">
                             Callibration From *{/* Effective */}
@@ -1328,7 +1371,7 @@ const [product_id_error, setproduct_id_error] = useState(false)
                         </div>
                       </Col>
 
-                      <Col lg={3} md={6} sm={6}>
+                      <Col lg={2} md={6} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">
                             {/* Callibration */}
@@ -1381,10 +1424,9 @@ const [product_id_error, setproduct_id_error] = useState(false)
                         </div>
                       </Col>
 
-                      <Col lg={2} md={6} sm={6}>
+                      {/* <Col lg={2} md={6} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">
-                            {/* Callibration */}
                             Certificate *
                           </Label>
                           {row.map((item, index) => {
@@ -1406,8 +1448,91 @@ const [product_id_error, setproduct_id_error] = useState(false)
                             );
                           })}
                         </div>
-                      </Col>
+                      </Col> */}
 
+                      <Col lg={3} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">
+                            Certificate 
+                          </Label>
+                          {row.map((item, index) => {
+                            return (
+                              <div style={{ width: "100%" }} key={index}>
+                                  { item[4]   ? (
+                                    <img
+                                      src={item[4]}
+                                      style={{
+                                        height: "110px",
+                                        width: "110px",
+                                        borderRadius: "10px",
+                                        paddingBottom: "5px",
+                                      }}
+                                      onClick={() => {
+                                        setshow_modal_certificate({
+                                          // ...show_modal_certificate,
+                                          value: true,
+                                          ind: index,
+                                        });
+                                      }}
+                                    />
+                                  ) : (
+                                    <div
+                                      style={{
+                                        height: "110px",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          flexDirection: "row",
+                                          border: "0.5px solid #dad7d7",
+                                          alignItems: "center",
+                                          height: "38px",
+                                          borderRadius: 5,
+                                          height: 31,
+                                        }}
+                                        onClick={() => {
+                                          setimg_index(index)
+                                          setshow_modal_certificate({
+                                            ...show_modal_certificate,
+                                            value: true,
+                                          });
+                                        }}
+                                      >
+                                        <a
+                                          style={{
+                                            marginLeft: "3px",
+                                            fontSize: 11,
+                                          }}
+                                        >
+                                          Chooose File
+                                        </a>
+                                        <div
+                                          style={{
+                                            fontSize: "25px",
+                                            color: "#dad7d7",
+                                            marginLeft: "5px",
+                                          }}
+                                        >
+                                          |
+                                        </div>
+                                        {certificate_img === "" ? (
+                                          <a style={{ fontSize: 11 }}>
+                                            Image Not Uploaded
+                                          </a>
+                                        ) : (
+                                          <a style={{ fontSize: 11 }}>
+                                            Image Uploaded
+                                          </a>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                            );
+                          })}
+                        </div>
+                      </Col>
                       <Col lg={1}>
                         <div className="mb-3" style={{ textAlign: "center" }}>
                           {row.length > 1 ? (
@@ -1427,6 +1552,23 @@ const [product_id_error, setproduct_id_error] = useState(false)
                                     onClick={() => {
                                       delete_callibration(item);
                                     }}
+                                    // onClick={() => {
+                                    //   if (item[4] && isupdating) {
+                                    //     delete_callibration(item);
+                                    //   } else {
+                                    //     deleteinvoice(item);
+                                    //     setinvoice_img(
+                                    //       row[row.length - 1][0]
+                                    //     );
+                                    //     settoday(row[row.length - 1][1]);
+                                    //     setinvoice_no(
+                                    //       row[row.length - 1][2]
+                                    //     );
+                                    //     setinvoice_value(
+                                    //       row[row.length - 1][3]
+                                    //     );
+                                    //   }
+                                    // }}
                                   >
                                     <MdDeleteForever
                                       style={{
@@ -1446,12 +1588,29 @@ const [product_id_error, setproduct_id_error] = useState(false)
                       <div style={{ margin: " 0 0 20px 0" }}>
                         <span
                           className="link-text"
+                          // onClick={() => {
+                          //   const lastRow = row[row.length - 1];
+                          //   if (row[row.length - 1].some((data) => data === "")) {
+                          //     alert("Please Fill Asset Callibration info")
+                          //   } else {
+                          //     add_callibration();
+                          //   }
+                          // }}
                           onClick={() => {
-                            const lastRow = row[row.length - 1];
-                            if (row[row.length - 1].some((data) => data === "")) {
-                              alert("Please Fill Asset Callibration info")
-                            } else {
+                            if (
+                              row[row.length - 1][0] &&
+                              row[row.length - 1][1] &&
+                              row[row.length - 1][2] &&
+                              row[row.length - 1][3]
+                            ) {
+                              setshow_modal_certificate({
+                                ...show_modal_certificate,
+                                value: false,
+                                ind: "",
+                              });
                               add_callibration();
+                            } else {
+                              alert(" Asset Callibration info All Details Is Required");
                             }
                           }}
                         >

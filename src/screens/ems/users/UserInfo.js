@@ -36,6 +36,7 @@ import NSearchInput from "../../../components/formComponent/nsearchInput/NSearch
 import TransferList from "../../../components/formComponent/transferList/TransferList";
 import Main_c from "../../../components/crop/main";
 import { setUserDetails, setUserPermission } from "../../../store/authentication/Authentication";
+import ImgModal from "../../../components/crop/ImgModal";
 const UserInfo = () => {
   const locations = useLocation();
 
@@ -154,6 +155,8 @@ const UserInfo = () => {
 
   // Images state
   const [modal, setmodal] = useState(false);
+  const [uploaded_img, setuploaded_img] = useState("");
+  const [result_img, setresult_img] = useState("");
   const [document, setdocument] = useState("");
   const [doc_result_image, setdoc_result_image] = useState("");
 
@@ -2081,7 +2084,7 @@ const UserInfo = () => {
                     </Col> */}
 
                   {/* Need To Add */}
-                    {/* <Col lg={2} md={3} sm={3}>
+                    {/* <Col lg={is_docket ? 2 : 4} md={3} sm={3}>
                       <div className="mb-3">
                         <Label className="header-child">Docket Start From</Label>
                         <div onClick={() => setis_docket(!is_docket)}>
@@ -2124,7 +2127,7 @@ const UserInfo = () => {
                         </div>
                       </Col>
                     }
-                    {modal ? <Main_c modal={modal}
+                    {/* {modal ? <Main_c modal={modal}
                       modal_set={setmodal}
                       upload_image={setdocument}
                       result_image={setdoc_result_image}
@@ -2159,7 +2162,74 @@ const UserInfo = () => {
                           }
                         </div>
                       </div>
-                    </Col>
+                    </Col> */}
+                    <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2" style={{ position: "relative" }}>
+                          <Label>Profile Pic</Label>
+                          <Input
+                          style={{background:"white"}}
+                            className="form-control-md"
+                            name="logo"
+                            type=""
+                            id="input"
+                            disabled
+                            value={result_img}
+                            onChange={(val) => {
+                              setresult_img(val.target.value)
+                            }}
+                            accept="image/png,image/jpeg, image/jpg"
+                          />
+                          <button
+                            style={{
+                              border:"none",
+                              position: "absolute",
+                              borderRadius:"2px",
+                              height: "29px",
+                              top: "28.5px",
+                              padding: "0.375rem 0.75rem",
+                              marginLeft: "1px",
+                              background:"#e9ecef",
+                            }}
+                            className="form-control-md"
+                            id="input"
+                            type="button"
+                            onClick={() => setmodal(true)}
+                          >
+                            Choose Image 
+                          </button>
+                          <ImgModal
+                            modal={modal}
+                            modal_set={() => {
+                              setmodal(false);
+                            }}
+                            upload_image={(val) => {
+                              setuploaded_img(val);
+                            }}
+                            result_image={(val) => {
+                              setresult_img(val);
+                            }}
+                          />
+                          <FormFeedback type="invalid">
+                           Profile Pic is required
+                          </FormFeedback>
+                        </div>
+                      </Col>
+                      {result_img !== "" && (
+                        <Col lg={1} md={4} sm={6}>
+                          <div className="mb-3 parent_div">
+                            <img
+                              onClick={() => setmodal(true)}
+                              src={result_img}
+                              style={{
+                                width: "70px",
+                                height: "70px",
+                                borderRadius: "8px",
+                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                              }}
+                            />
+                          </div>
+                        </Col>
+                      )}
                     <Col lg={12} md={6} sm={12}>
                       <div style={{ width: "" }}>
                         <Label className="header-child">

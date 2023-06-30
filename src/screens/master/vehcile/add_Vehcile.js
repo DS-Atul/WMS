@@ -30,6 +30,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { useLocation, useNavigate } from "react-router-dom";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
+import ImgModal from "../../../components/crop/ImgModal";
 
 const Add_Vehcile = () => {
   const navigate = useNavigate();
@@ -60,8 +61,13 @@ const Add_Vehcile = () => {
   const [vehcile_type_s, setvehcile_type_s] = useState("");
   const [trans_name, settrans_name] = useState("");
   const [vehcile_no, setvehcile_no] = useState("");
-  const [vehcile_img, setvehcile_img] = useState("");
+  // vehcile image 
+  const [modal, setmodal] = useState(false);
+  const [uploaded_img, setuploaded_img] = useState("");
+  const [result_img, setresult_img] = useState("")
+  console.log("result image =====",result_img);
   const [vehcile_img_error, setvehcile_img_error] = useState(false);
+
   const [vehcile_model, setvehcile_model] = useState("");
   const [vendor_data, setvendor_data] = useState([]);
   const [vehcile, setvehicle] = useState([]);
@@ -92,6 +98,7 @@ const Add_Vehcile = () => {
         setvehcile_model(toTitleCase(vehicle_data.vehcile_model));
         setactive_selected(vehicle_data.active_selected);
         setvendor_name(toTitleCase(vehicle_data.transporter));
+        setresult_img(vehicle_data.image);
         if (vehicle_data.vehcile_status === true) {
           setactive_selected("Active")
         }
@@ -121,6 +128,7 @@ const Add_Vehcile = () => {
           vehcile_type: (vehcile_type_s).toUpperCase(),
           transporter_name: vendor_id,
           branch: branch_id_list,
+          vehcile_image: result_img,
         },
         {
           headers: {
@@ -193,6 +201,7 @@ const Add_Vehcile = () => {
             transporter_name: vendor_id,
             branch: branch_ids,
             change_fields: change_fields,
+            vehcile_image: result_img,
           },
           {
             headers: {
@@ -374,7 +383,7 @@ const Add_Vehcile = () => {
     if (vehcile_model !== "") {
       setvehicle_model_error(false);
     }
-    if (vehcile_img !== "") {
+    if (result_img !==""){
       setvehcile_img_error(false)
     }
     if (vehcile_no !== "" && vehcile_no.length !== 10) {
@@ -382,7 +391,7 @@ const Add_Vehcile = () => {
     } else {
       setvehicle_len_error(false);
     }
-  }, [vehcile_type_s, vehcile_no, vehcile_model, vehcile_img, branch_list2]);
+  }, [vehcile_type_s, vehcile_no, vehcile_model, result_img, branch_list2]);
 
   useEffect(() => {
     
@@ -510,7 +519,7 @@ const Add_Vehcile = () => {
                     </div>
                   </Col>
 
-                  <Col lg={4} md={4} sm={4}>
+                  {/* <Col lg={4} md={4} sm={4}>
                     <div className="mb-3" id="vehicle_img">
                       <Label className="header-child">Vehicle Image*</Label>
                       <Input type="file" name="file" id="input" invalid={vehcile_img_error}
@@ -522,8 +531,78 @@ const Add_Vehcile = () => {
                         Vehcile Image is required
                       </FormFeedback>
                     </div>
-                  </Col>
+                  </Col> */}
 
+
+                        <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2" style={{ position: "relative" }}>
+                          <Label>Vehicle Image*</Label>
+                          <Input
+                          style={{background:"white"}}
+                            className="form-control-md"
+                            name="logo"
+                            // type=""
+                            id="input"
+                            disabled
+                            value={result_img}
+                            invalid={vehcile_img_error}
+                            onChange={(val) => {
+                              setresult_img(val.target.value)
+                            }}
+                            // accept="image/png,image/jpeg, image/jpg"
+                          />
+                          <button
+                            style={{
+                              border:"none",
+                              position: "absolute",
+                              borderRadius:"2px",
+                              height: "29px",
+                              top: "28.5px",
+                              // padding: "0.375rem 0.75rem",
+                              marginLeft: ".9px",
+                              background:"#e9ecef",
+                            }}
+                            className="form-control-md"
+                            id="input"
+                            type="button"
+                            onClick={() => setmodal(true)}
+                          >
+                            Choose Image 
+                          </button>
+                          <ImgModal
+                            modal={modal}
+                            modal_set={() => {
+                              setmodal(false);
+                            }}
+                            upload_image={(val) => {
+                              setuploaded_img(val);
+                            }}
+                            result_image={(val) => {
+                              setresult_img(val);
+                            }}
+                          />
+                          <FormFeedback type="invalid">
+                           Vehcile Image is required
+                          </FormFeedback>
+                        </div>
+                      </Col>
+
+                      {result_img && (
+                        <Col lg={1} md={4} sm={6}>
+                          <div className="mb-3 parent_div">
+                            <img
+                              onClick={() => setmodal(true)}
+                              src={result_img}
+                              style={{
+                                width: "70px",
+                                height: "70px",
+                                borderRadius: "8px",
+                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                              }}
+                            />
+                          </div>
+                         </Col>
+                      )}
                   <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">Active Status</Label>
@@ -572,7 +651,7 @@ const Add_Vehcile = () => {
                 onClick={() => {
                   if (vehcile_type_s === "") {
                     setvehicle_type_error(true);
-                  } else if (
+                  } else if ( 
                     vehcile_type_s === "Partner Vehicle" &&
                     vendor_name === ""
                   ) {
@@ -581,7 +660,7 @@ const Add_Vehcile = () => {
                     setvehicle_number_error(true);
                   }  else if (vehcile_model === "") {
                     setvehicle_model_error(true);
-                  } else if (vehcile_img === "") {
+                  } else if (result_img ===""){
                     setvehcile_img_error(true);
                   } else if (branch_list2?.length === 0) {
                     setbranch_err(true);

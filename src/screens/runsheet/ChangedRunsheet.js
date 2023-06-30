@@ -44,6 +44,7 @@ import {
 } from "../../store/alert/Alert";
 import { gstin_no } from "../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../authentication/signin/UpateEwaybillPartB";
+import ImgModal from "../../components/crop/ImgModal";
 
 const ChangedRusheet = () => {
   const dispatch = useDispatch();
@@ -118,6 +119,11 @@ const ChangedRusheet = () => {
   const toggle_circle1 = () => {
     setcircle_btn1(!circle_btn1);
   };
+  //For Pod Image
+  const [modal, setmodal] = useState(false);
+  const [uploaded_img, setuploaded_img] = useState("");
+  const [result_img, setresult_img] = useState("")
+  console.log("result image =====",result_img);
 
   //Get Driver Name
   const getDrivers = () => {
@@ -249,6 +255,7 @@ const ChangedRusheet = () => {
       route_name: route.toUpperCase(),
       vehicle_name: vehicle_no,
       vehicle_type: vehicle_type.toUpperCase(),
+      pod_image:result_img,
     });
 
     let change_fields = {};
@@ -284,6 +291,7 @@ const ChangedRusheet = () => {
           cm_transit_status: status_toggle === true ? cm_current_status : "",
           cm_current_status: cm_current_status.toUpperCase(),
           cm_remarks: toTitleCase(message).toUpperCase(),
+          pod_image:result_img,
         },
         {
           headers: {
@@ -395,6 +403,7 @@ const ChangedRusheet = () => {
           cm_current_status: "REJECTED",
           cm_remarks: toTitleCase(message).toUpperCase(),
           change_fields: {},
+          pod_image:result_img,
         },
         {
           headers: {
@@ -784,12 +793,72 @@ const ChangedRusheet = () => {
                         </div>
                       </Col>
                     }
-                    <Col md={4} sm={6}>
+                    {/* <Col md={4} sm={6}>
                       <div className="mb-3">
                         <Label className="header-child">Pod Image </Label>
                         <Input id="input" type="file" />
                       </div>
-                    </Col>
+                    </Col> */}
+                    <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2" style={{ position: "relative" }}>
+                          <Label>Pod Image</Label>
+                          <Input
+                          style={{background:"white"}}
+                            className="form-control-md"
+                            name="logo"
+                            // type=""
+                            id="input"
+                            disabled
+                            // accept="image/png,image/jpeg, image/jpg"
+                          />
+                          <button
+                            style={{
+                              border:"none",
+                              position: "absolute",
+                              borderRadius:"2px",
+                              height: "29px",
+                              top: "28.5px",
+                              marginLeft: ".9px",
+                              background:"#e9ecef",
+                            }}
+                            className="form-control-md"
+                            id="input"
+                            type="button"
+                            onClick={() => setmodal(true)}
+                          >
+                            Choose Image 
+                          </button>
+                          <ImgModal
+                            modal={modal}
+                            modal_set={() => {
+                              setmodal(false);
+                            }}
+                            upload_image={(val) => {
+                              setuploaded_img(val);
+                            }}
+                            result_image={(val) => {
+                              setresult_img(val);
+                            }}
+                          />
+                        </div>
+                      </Col>
+
+                      {result_img && (
+                        <Col lg={1} md={2} sm={6}>
+                          <div className="mb-3 parent_div">
+                            <img
+                              onClick={() => setmodal(true)}
+                              src={result_img}
+                              style={{
+                                width: "70px",
+                                height: "70px",
+                                borderRadius: "8px",
+                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                              }}
+                            />
+                          </div>
+                         </Col>
+                      )}
                   </Row>
                   {/* </Form> */}
                 </CardBody>

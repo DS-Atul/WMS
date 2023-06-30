@@ -39,6 +39,7 @@ import Tab from "../../../components/formComponent/clientComponent/tab/Tab";
 import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
+import ImgModal from "../../../components/crop/ImgModal";
 
 const AddVendor = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -119,8 +120,12 @@ const AddVendor = () => {
   const [msme_registerd_number_error, setmsme_registerd_number_error] =
     useState(false);
   const [msme_No_length, setmsme_No_length] = useState(false);
-  const [msme_certificate, setmsme_certificate] = useState("");
+  //for MSME Certificate
+  const [modal, setmodal] = useState(false);
+  const [uploaded_img, setuploaded_img] = useState("");
+  const [result_img, setresult_img] = useState("");
   const [msme_certificate_error, setmsme_certificate_error] = useState(false);
+  const [msme_certificate, setmsme_certificate] = useState("");
 
 
   const [registration_date, setregistration_date] = useState(null)
@@ -232,7 +237,7 @@ const AddVendor = () => {
   const [is_cargo, setis_cargo] = useState(true);
   const [is_courier, setis_courier] = useState(true);
   const [is_warehouse, setis_warehouse] = useState(true);
-
+  
   // Validation
   const validation = useFormik({
     enableReinitialize: true,
@@ -285,7 +290,7 @@ const AddVendor = () => {
         document.getElementById("vendor_info").scrollIntoView();
         setreg_date_error(true);
       }
-      else if (msme_registerd_number !== "" && msme_certificate === "") {
+      else if (msme_registerd_number !== "" && result_img === "") {
         document.getElementById("vendor_info").scrollIntoView();
         setmsme_certificate_error(true);
       }
@@ -478,6 +483,7 @@ const AddVendor = () => {
         ],
         others: others_services_offerd && vendor_other_data,
         gst_address: row,
+        msme_image: result_img,
         //For C&M
         cm_current_department: user.user_department,
         cm_current_status:
@@ -688,6 +694,7 @@ const AddVendor = () => {
           cm_transit_status: status_toggle === true ? current_status : "",
           cm_current_status: current_status.toUpperCase(),
           cm_remarks: "",
+          msme_image: result_img,
         },
         {
           headers: {
@@ -741,6 +748,7 @@ const AddVendor = () => {
       setcompany_type(toTitleCase(location_data.state.vendor.company_type));
       setcompany_type_id(toTitleCase(location_data.state.vendor.company));
 
+      setresult_img(location_data.state.vendor.msme_certificate);
     } catch (error) { }
   }, []);
 
@@ -934,10 +942,10 @@ const AddVendor = () => {
     if (msme_registerd === true && registration_date !== "") {
       setreg_date_error(false);
     }
-    if (msme_registerd === true && msme_certificate !== "") {
+    if (msme_registerd === true && result_img !== "") {
       setmsme_certificate_error(false);
     }
-  }, [msme_registerd, msme_registerd_number, registration_date, msme_certificate]);
+  }, [msme_registerd, msme_registerd_number, registration_date, result_img]);
 
   useEffect(() => {
     if (other_list_id !== "") {
@@ -1872,7 +1880,7 @@ const AddVendor = () => {
               document.getElementById("vendor_info").scrollIntoView();
               setmsme_No_length(true);
             }
-            else if (msme_registerd_number !== "" && msme_certificate === "") {
+            else if (msme_registerd_number !== "" && result_img === "") {
               document.getElementById("vendor_info").scrollIntoView();
               setmsme_certificate_error(true);
             }
@@ -2184,30 +2192,6 @@ const AddVendor = () => {
                             <div className="mb-3">
                               <Label className="header-child">
                                 {/* Callibration */}
-                                MSME Certificate *
-                              </Label>
-                              <Input
-                                style={{ marginBottom: "10px" }}
-                                value={msme_certificate}
-                                className="form-control-md"
-                                id="input"
-                                name="logo"
-                                type="file"
-                                invalid={msme_certificate_error}
-                                onChange={(val) => {
-                                  setmsme_certificate(val.target.value);
-                                }}
-                              />
-                              <FormFeedback type="invalid">
-                                MSME Certificate Required
-                              </FormFeedback>
-                            </div>
-                          </Col>
-
-                          <Col lg={4} md={6} sm={6}>
-                            <div className="mb-3">
-                              <Label className="header-child">
-                                {/* Callibration */}
                                 MSME Registration Date* :
                               </Label>
                               <Input
@@ -2227,9 +2211,101 @@ const AddVendor = () => {
                               </FormFeedback>
                             </div>
                           </Col>
+
+                          {/* <Col lg={4} md={6} sm={6}>
+                            <div className="mb-3">
+                              <Label className="header-child">
+                                MSME Certificate *
+                              </Label>
+                              <Input
+                                style={{ marginBottom: "10px" }}
+                                value={msme_certificate}
+                                className="form-control-md"
+                                id="input"
+                                name="logo"
+                                type="file"
+                                invalid={msme_certificate_error}
+                                onChange={(val) => {
+                                  setmsme_certificate(val.target.value);
+                                }}
+                              />
+                              <FormFeedback type="invalid">
+                                MSME Certificate Required
+                              </FormFeedback>
+                            </div>
+                          </Col> */}
+
+                          <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2" style={{ position: "relative" }}>
+                          <Label>MSME Certificate *</Label>
+                          <Input
+                          style={{background:"white"}}
+                            className="form-control-md"
+                            name="logo"
+                            type=""
+                            id="input"
+                            disabled
+                            value={result_img}
+                            invalid={msme_certificate_error}
+                            onChange={(val) => {
+                              setresult_img(val.target.value)
+                            }}
+                            accept="image/png,image/jpeg, image/jpg"
+                          />
+                          <button
+                            style={{
+                              border:"none",
+                              position: "absolute",
+                              borderRadius:"2px",
+                              height: "29px",
+                              top: "28.5px",
+                              padding: "0.375rem 0.75rem",
+                              marginLeft: "1px",
+                              background:"#e9ecef",
+                            }}
+                            className="form-control-md"
+                            id="input"
+                            type="button"
+                            onClick={() => setmodal(true)}
+                          >
+                            Choose Image 
+                          </button>
+                          <ImgModal
+                            modal={modal}
+                            modal_set={() => {
+                              setmodal(false);
+                            }}
+                            upload_image={(val) => {
+                              setuploaded_img(val);
+                            }}
+                            result_image={(val) => {
+                              setresult_img(val);
+                            }}
+                          />
+                          <FormFeedback type="invalid">
+                          MSME Certificate is required
+                          </FormFeedback>
+                        </div>
+                      </Col>
+
+                      {result_img !== "" && (
+                        <Col lg={1} md={4} sm={6}>
+                          <div className="mb-3 parent_div">
+                            <img
+                              onClick={() => setmodal(true)}
+                              src={result_img}
+                              style={{
+                                width: "70px",
+                                height: "70px",
+                                borderRadius: "8px",
+                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                              }}
+                            />
+                          </div>
+                        </Col>
+                      )}
                         </>
                       )}
-
                     </Row>
                   </CardBody>
                 ) : null}

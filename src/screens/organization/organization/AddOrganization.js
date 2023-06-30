@@ -37,6 +37,7 @@ import { MdAdd, MdDeleteForever } from "react-icons/md";
 import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
+import ImgModal from "../../../components/crop/ImgModal";
 
 function handleLogoUpload(event) {
   const file = event.target.files[0];
@@ -218,6 +219,14 @@ const AddOrganization = () => {
   const [updated_gstaddress, setupdated_gstaddress] = useState([]);
   // console.log("updated_gstaddress----", updated_gstaddress);
 
+  //for upload logo 
+  const [modal, setmodal] = useState(false);
+  const [uploaded_img, setuploaded_img] = useState("");
+  const [result_img, setresult_img] = useState("");
+  const [upload_logo_error, setupload_logo_error] = useState(false);
+  console.log("resu image ", result_img);
+  console.log("uploaded image ", uploaded_img);
+
   // Validation
   const validation = useFormik({
     enableReinitialize: true,
@@ -303,6 +312,10 @@ const AddOrganization = () => {
         document.getElementById("org_id").scrollIntoView();
       }
       else if (fields1.includes(all_value)) {
+        document.getElementById("org_id").scrollIntoView();
+      }
+      else if (result_img === "") {
+        setupload_logo_error(true);
         document.getElementById("org_id").scrollIntoView();
       }
       else if (row[row.length - 1].some((some) => some === "")) {
@@ -395,6 +408,7 @@ const AddOrganization = () => {
           contact_person_email: values.contact_person_email,
           contact_person_mobile: values.contact_person_ph_no,
           logo_uploaded_by: user.id,
+          logo_image: result_img,
           created_by: user.id,
           org_config: row1,
           organization_name: [],
@@ -512,6 +526,7 @@ const AddOrganization = () => {
       website: values.web_url,
       tan_no: values.tan_no,
       type: company_type,
+      logo_image: result_img,
     });
 
     let change_fields = {};
@@ -546,6 +561,7 @@ const AddOrganization = () => {
           contact_person_email: values.contact_person_email,
           contact_person_mobile: values.contact_person_ph_no,
           logo_uploaded_by: user.id,
+          logo_image: result_img,
           is_same: same_as_billing_add,
           address: [
             [
@@ -935,6 +951,7 @@ const AddOrganization = () => {
       setbilling_id(
         location_data.state.organization.organization_address[1].id
       );
+      setresult_img(location_data.state.organization.logo);
     } catch (error) { }
   }, []);
 
@@ -1656,6 +1673,11 @@ const AddOrganization = () => {
       setpan_no_error(false);
     }
   }, [pan_no]);
+  useEffect(() => {
+    if (result_img !== "") {
+      setupload_logo_error(false);
+    }
+  }, [result_img]);
 
   useEffect(() => {
     let data = row.some((a) => a[5] == true)
@@ -1715,6 +1737,10 @@ const AddOrganization = () => {
               document.getElementById("org_id").scrollIntoView();
             }
             else if (fields1.includes(all_value)) {
+              document.getElementById("org_id").scrollIntoView();
+            }
+            else if (result_img === "") {
+              setupload_logo_error(true);
               document.getElementById("org_id").scrollIntoView();
             }
             else if (row[row.length - 1].some((some) => some === "")) {
@@ -2122,7 +2148,7 @@ const AddOrganization = () => {
                         </div>
                       </Col>
 
-                      <Col lg={4} md={6} sm={6}>
+                      {/* <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">Upload logos</Label>
                           <Input
@@ -2132,7 +2158,7 @@ const AddOrganization = () => {
                             type="file"
                           />
                         </div>
-                      </Col>
+                      </Col> */}
 
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
@@ -2163,6 +2189,75 @@ const AddOrganization = () => {
                           ) : null}
                         </div>
                       </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2" style={{ position: "relative" }}>
+                          <Label>Upload Logos</Label>
+                          <Input
+                          style={{background:"white"}}
+                            className="form-control-md"
+                            name="logo"
+                            // type=""
+                            id="input"
+                            disabled
+                            value={result_img}
+                            invalid={upload_logo_error}
+                            onChange={(val) => {
+                              setresult_img(val.target.value)
+                            }}
+                            // accept="image/png,image/jpeg, image/jpg"
+                          />
+                          <button
+                            style={{
+                              border:"none",
+                              position: "absolute",
+                              borderRadius:"2px",
+                              height: "29px",
+                              top: "28.5px",
+                              marginLeft: "1px",
+                              background:"#e9ecef",
+                            }}
+                            className="form-control-md"
+                            id="input"
+                            type="button"
+                            onClick={() => setmodal(true)}
+                          >
+                            Choose Image 
+                          </button>
+                          <ImgModal
+                            modal={modal}
+                            modal_set={() => {
+                              setmodal(false);
+                            }}
+                            upload_image={(val) => {
+                              setuploaded_img(val);
+                            }}
+                            result_image={(val) => {
+                              setresult_img(val);
+                            }}
+                          />
+                          <FormFeedback type="invalid">
+                           Logo is required
+                          </FormFeedback>
+                        </div>
+                      </Col>
+
+                      {result_img  && (
+                        <Col lg={1} md={4} sm={6}>
+                          <div className="mb-3 parent_div">
+                            <img
+                              onClick={() => setmodal(true)}
+                              src={result_img}
+                              style={{
+                                width: "70px",
+                                height: "70px",
+                                borderRadius: "8px",
+                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                              }}
+                            />
+                          </div>
+                        </Col>
+                      )}
 
                     </Row>
                   </CardBody>
