@@ -75,6 +75,16 @@ const AddForward = (manifest) => {
   const toggle_circle4 = () => {
     setcircle_btn4(!circle_btn4);
   };
+  //used for tax slab 
+  const [tax_slab_list, settax_slab_list] = useState([
+    "0%",
+    "9%",
+    "18%",
+    "27%",
+  ]);
+  const [tax_slab, settax_slab] = useState("0%");
+  const [isTaxSlabDisabled, setIsTaxSlabDisabled] = useState(false);
+
   //  Coloader Mode
   const [coloader_mode_list, setcoloader_mode_list] = useState([
     // "Direct Awb",
@@ -192,7 +202,8 @@ useEffect(() => {
     enableReinitialize: true,
     initialValues: {
       coloader_no: "",
-      flight_no: "",
+      flight_name: "",
+      flight_num:"",
       no_of_bags: manifest_data.bag_count || "",
       actual_weight: "",
       chargeable_weight: "",
@@ -201,12 +212,16 @@ useEffect(() => {
       tsp: "",
       rate: "",
       carrier_charges: "",
-      tax_slab: "",
+      
     },
 
     validationSchema: Yup.object({
       coloader_no: Yup.string().required("Coloader No is required"),
-      flight_no: Yup.string().required("Flight Name is required"),
+      flight_name: Yup.string().required("Flight Name is required"),
+      flight_num:Yup.string()
+      .min(7,"Flight Number must be 7 Digit")
+      .max(7,"Flight Number must be 7 Digit")
+      .required("Flight Number is required"),
       // no_of_bags: Yup.string().required("Bags is required"),
       // no_of_box: Yup.string().required("Box is required"),
       chargeable_weight: Yup.string().required("Enter Chargable Weight"),
@@ -214,6 +229,7 @@ useEffect(() => {
     }),
 
     onSubmit: (values) => {
+      console.log("tax slab values",tax_slab)
       if (docket_weight + 5 >= values.actual_weight) {
         updateManifest(values);
         // update_eway_b(values);
@@ -285,7 +301,8 @@ useEffect(() => {
           manifest_no: manifest_no,
           chargeable_weight: values.chargeable_weight,
           coloader_name: (coloader_selected).toUpperCase(),
-          carrier_name: toTitleCase(values.flight_no).toUpperCase(),
+          carrier_name: toTitleCase(values.flight_name).toUpperCase(),
+          carrier_no: toTitleCase(values.flight_num).toUpperCase(),
           is_forwarded: "True",
           forwarded_by: user_id,
           // open_box:open_box ? "True" :"False",
@@ -298,7 +315,7 @@ useEffect(() => {
           tsp: values.tsp ? values.tsp : 0,
           rate:  values.rate ? values.rate : 0,
           carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
-          tax_slab: values.tax_slab,
+          tax_slab: tax_slab,
         },
 
         {
@@ -380,6 +397,14 @@ useEffect(() => {
       setdocket_weight(sum)
     }
   }, [orders])
+  useEffect(() => {
+    if (coloader_selcted_m === "Direct AWB") {
+      settax_slab("18%");
+      setIsTaxSlabDisabled(true);
+    } else{
+      setIsTaxSlabDisabled(false);
+    }
+  }, [coloader_selcted_m]);
 
   const get_coloader = () => {
     let coloader_lst = [];
@@ -751,7 +776,7 @@ const showFun = () =>{
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">
-                              Co-loader/Airway bill no* :
+                              Co-loader/Airway bill no:
                             </Label>
                             <Input
                               onChange={validation.handleChange}
@@ -778,35 +803,68 @@ const showFun = () =>{
                           </div>
                         </Col>
                         {(coloader_selcted_m === "Direct AWB" || coloader_selcted_m === "Air Console") &&
+                        <>
                           <Col lg={3} md={3} sm={6}>
                             <div className="mb-2">
                               <Label className="header-child">
-                                Flight Name & Number :
+                                Flight Name:
                               </Label>
                               <Input
                                 onChange={validation.handleChange}
                                 onBlur={validation.handleBlur}
-                                value={validation.values.flight_no}
+                                value={validation.values.flight_name}
                                 invalid={
-                                  validation.touched.flight_no &&
-                                    validation.errors.flight_no
+                                  validation.touched.flight_name &&
+                                    validation.errors.flight_name
                                     ? true
                                     : false
                                 }
                                 type="text"
                                 className="form-control-md"
                                 id="input"
-                                name="flight_no"
+                                name="flight_name"
                                 placeholder="Enter Flight Name"
                               />
-                              {validation.touched.flight_no &&
-                                validation.errors.flight_no ? (
+                              {validation.touched.flight_name &&
+                                validation.errors.flight_name ? (
                                 <FormFeedback type="invalid">
-                                  {validation.errors.flight_no}
+                                  {validation.errors.flight_name}
                                 </FormFeedback>
                               ) : null}
                             </div>
                           </Col>
+
+                          <Col lg={3} md={3} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Flight Number:
+                              </Label>
+                              <Input
+                                onChange={validation.handleChange}
+                                onBlur={validation.handleBlur}
+                                value={validation.values.flight_num}
+                                invalid={
+                                  validation.touched.flight_num &&
+                                    validation.errors.flight_num
+                                    ? true
+                                    : false
+                                }
+                                type="text"
+                                maxLength={7}
+                                className="form-control-md"
+                                id="input"
+                                name="flight_num"
+                                placeholder="Enter Flight Number"
+                              />
+                              {validation.touched.flight_num &&
+                                validation.errors.flight_num ? (
+                                <FormFeedback type="invalid">
+                                  {validation.errors.flight_num}
+                                </FormFeedback>
+                              ) : null}
+                            </div>
+                          </Col>
+                          </>
                         }
                         <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
@@ -1061,21 +1119,19 @@ const showFun = () =>{
                             />
                           </div>
                         </Col>
+                       
                         <Col lg={3} md={3} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">Tax Slab</Label>
-                            <Input
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.tax_slab || ""}
-                              type="text"
-                              className="form-control-md"
-                              id="input"
-                              name="tax_slab"
-                              placeholder="Enter Tax Slab"
-                            />
-                          </div>
-                        </Col>
+                        <div className="mb-2">
+                          <Label className="header-child">Tax Slab</Label>
+                          <NSearchInput
+                            data_list={tax_slab_list}
+                            data_item_s={tax_slab}
+                            set_data_item_s={settax_slab}
+                            show_search={false} 
+                            disable_me={isTaxSlabDisabled}
+                          />
+                        </div>
+                      </Col>
                         {/* <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">Open Box</Label>

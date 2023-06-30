@@ -79,6 +79,14 @@ const AddBranchForward = (manifest) => {
   const toggle_circle4 = () => {
     setcircle_btn4(!circle_btn4);
   };
+  //used for tax slab 
+  const [tax_slab_list, settax_slab_list] = useState([
+    "0%",
+    "9%",
+    "18%",
+    "27%",
+  ]);
+  const [tax_slab, settax_slab] = useState("0%");
   //  Coloader Mode
   const [coloader_mode_list, setcoloader_mode_list] = useState([
     // "Direct Awb",
@@ -1152,20 +1160,16 @@ console.log("docket_nos-----", docket_nos)
                           </div>
                         </Col>
                         <Col lg={3} md={3} sm={6}>
-                          <div className="mb-2">
-                            <Label className="header-child">Tax Slab</Label>
-                            <Input
-                              onChange={validation.handleChange}
-                              onBlur={validation.handleBlur}
-                              value={validation.values.tax_slab || ""}
-                              type="text"
-                              className="form-control-md"
-                              id="input"
-                              name="tax_slab"
-                              placeholder="Enter Tax Slab"
-                            />
-                          </div>
-                        </Col>
+                        <div className="mb-2">
+                          <Label className="header-child">Tax Slab</Label>
+                          <NSearchInput
+                            data_list={tax_slab_list}
+                            data_item_s={tax_slab}
+                            set_data_item_s={settax_slab}
+                            show_search={false} 
+                          />
+                        </div>
+                      </Col>
                       </Row>
                     </CardBody>
                   ) : null}

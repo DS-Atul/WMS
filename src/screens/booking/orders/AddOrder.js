@@ -3900,9 +3900,9 @@ const AddOrder = () => {
       >
         <Modal show={showOrder} onHide={handleCloseOrder}>
           <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>Confirmation </Modal.Title>
           </Modal.Header>
-          <Modal.Body>If Client is same as previous Client</Modal.Body>
+          <Modal.Body>Do you want add another docket with same shipper</Modal.Body>
           <Modal.Footer>
             <Button type="button" variant="secondary" onClick={() => send_order_data(validation.values, "yes")}>
               Yes
@@ -3910,6 +3910,11 @@ const AddOrder = () => {
             <Button type="button" variant="primary" onClick={() => send_order_data(validation.values, "no")}>
               {/* <Button type="button" variant="primary" onClick={handleSubmitOrder}> */}
               No
+            </Button>
+            <Button 
+            variant="primary" onClick={() =>  setShowOrder(false)}
+            style={{marginLeft:"-420px",marginRight:"380px"}}>
+             Cancel
             </Button>
           </Modal.Footer>
         </Modal>
@@ -6566,6 +6571,7 @@ const AddOrder = () => {
                                 >
                                   <Input
                                     min={0}
+                                   maxLength={20}
                                     key={index2}
                                     value={item2[2]}
                                     type="text"

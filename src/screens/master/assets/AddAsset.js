@@ -60,8 +60,10 @@ const AddAsset = () => {
     "Multi Use",
     "Dry Ice Single Use",
     "Dry Ice Multi Use",
+    "Liquid Nitrogen",
   ]);
   const [logger_box_type, setlogger_box_type] = useState("");
+  console.log("logger Box Type",logger_box_type)
   const [manufacture_name_list, setmanufacture_name_list] = useState([]);
   // "Escort",
   // "Sensitech",
@@ -77,6 +79,8 @@ const AddAsset = () => {
     "15-25 C",
     "-25 TO -15 C",
     "Dry Ice",
+    "-90 TO -20",
+    "-250 TO -150",
     "All In One",
   ]);
   const [temperature_log_type, settemperature_log_type] = useState("");
@@ -774,7 +778,20 @@ console.log(" asset certificate iamge ",setcertificate_img);
       state: { asset: asset },
     });
   };
-
+  // use for logger temperature type
+  useEffect(() => {
+    if (logger_box_type === "Single Use") {
+      settemperature_log_list(["2-8 C","15-25 C","-25 TO -15 C","Dry Ice",])
+    }  if (logger_box_type === "Multi Use") {
+      settemperature_log_list(["2-8 C","15-25 C","-25 TO -15 C"])
+    }  if (logger_box_type === "Dry Ice Single Use") {
+      settemperature_log_list(["-90 TO -20"])
+    }  if (logger_box_type === "Dry Ice Multi Use") {
+      settemperature_log_list(["-90 TO -20"])
+    } if (logger_box_type === "Liquid Nitrogen"){ 
+      settemperature_log_list(["-250 TO -150"])
+    }
+  }, [logger_box_type]);
   return (
     <div>
 
@@ -1068,13 +1085,13 @@ console.log(" asset certificate iamge ",setcertificate_img);
 
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
-                            <Label className="header-child">Product ID *</Label>
+                            <Label className="header-child">Manufacture Product ID</Label>
                             <Input
                               type="text"
                               maxLength={15}
                               className="form-control-md"
                               id="input"
-                              placeholder="Enter Product Id"
+                              placeholder="Enter Manufacture Product Id"
                               value={useproduct_id}
                               onChange={(e) => {
                                 setuseproduct_id(e.target.value);
@@ -1092,9 +1109,21 @@ console.log(" asset certificate iamge ",setcertificate_img);
                             />
                                  {product_id_error ? (
                               <FormFeedback type="invalid">
-                               Product ID is required
+                               Manufacture Product ID is required
                               </FormFeedback>
                             ) : null}
+                          </div>
+                        </Col>
+                        
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">Old Box Number</Label>
+                            <Input
+                              type="text"
+                              className="form-control-md"
+                              id="input"
+                              placeholder="Enter Old Box Number"
+                            />
                           </div>
                         </Col>
                       </>
@@ -1685,7 +1714,6 @@ console.log(" asset certificate iamge ",setcertificate_img);
                     setproduct_id_error(true);
                     document.getElementById("box").scrollIntoView();
                   }
-                  
                   else if (branch_selected === "") {
                     setbranch_error(true);
                     document.getElementById("asset_details").scrollIntoView();
