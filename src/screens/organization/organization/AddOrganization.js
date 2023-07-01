@@ -526,11 +526,10 @@ const AddOrganization = () => {
       website: values.web_url,
       tan_no: values.tan_no,
       type: company_type,
-      logo_image: result_img,
+      // logo_image: result_img,
     });
 
     let change_fields = {};
-
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.organization[`${ele[0]}`];
@@ -561,7 +560,7 @@ const AddOrganization = () => {
           contact_person_email: values.contact_person_email,
           contact_person_mobile: values.contact_person_ph_no,
           logo_uploaded_by: user.id,
-          logo_image: result_img,
+          logo_image: result_img?.substring(0,4) !== "http" ? result_img : null,
           is_same: same_as_billing_add,
           address: [
             [
@@ -1893,9 +1892,9 @@ const AddOrganization = () => {
                               if (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no)) {
                                 setpan_no_error(true)
                               }
-                              else {
-                                setpan_no_error(false)
-                              }
+                              // else {
+                              //   setpan_no_error(false)
+                              // }
                             }}
                             id="input"
                             type="text"

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import axios from "axios";
+import Modal from 'react-bootstrap/Modal';
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setIsDeleted,
@@ -23,8 +24,6 @@ import {
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import correct from "../../../assets/images/bookings/check-mark.png";
 import cross from "../../../assets/images/bookings/remove.png";
-import { HiQuestionMarkCircle } from "react-icons/hi";
-import Modal from 'react-bootstrap/Modal';
 
 const VehcileDataFormat = ({ data, data1, can_delete }) => {
   // Permissions
@@ -141,11 +140,11 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
       dispatch(setIndexValue("vehcile_no"));
     } else if (index == 1) {
       dispatch(setIndexValue("organization_name"));
-    }else if (index == 1) {
+    } else if (index == 1) {
       dispatch(setIndexValue("vehcile_type"));
-    }else if (index == 1) {
+    } else if (index == 1) {
       dispatch(setIndexValue("vehcile_model"));
-    }else if (index == 1) {
+    } else if (index == 1) {
       dispatch(setIndexValue("vehcile_status"));
     }
   }, [index]);
@@ -166,17 +165,31 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
     }
   }, [userpermission]);
 
-  //For C&M
-  const [showM, setShowM] = useState(false);
-
-  const handleCloseM = () => setShowM(false);
-  const handleShowM = () => setShowM(true);
-  const [reject_resion, setreject_resion] = useState("")
-
- 
+  // Image Modal
+  const [openModal, setopenModal] = useState(false);
+  const handleCloseMod = () => {
+    setopenModal(false);
+  }
+  const [img, setimg] = useState("");
+  const handle_img = (a) => {
+    setimg(a)
+  }
 
   return (
     <>
+      <Modal show={openModal} onHide={handleCloseMod}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+
+          <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px" }} />
+
+        </Modal.Body>
+
+      </Modal>
       {(list_toggle === true ? data1 : data).length === 0 ? (
         <tr>
           <td>No Data Found</td>
@@ -190,45 +203,55 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
                 borderWidth: 1,
               }}
             >
-              
-                <td
-                  className="selection-cell"
-                  onClick={() => {
-                    handlefunn(vehcile.id);
-                    dispatch(setSelect(true));
-                    dispatch(setDeleteId(false));
-                    dispatch(setClose(false));
-                  }}
-                >
-                  {selected.includes(vehcile.id) ? (
-                    <FiCheckSquare size={14} />
-                  ) : (
-                    <FiSquare size={14} />
-                  )}
-                </td>
+
+              <td
+                className="selection-cell"
+                onClick={() => {
+                  handlefunn(vehcile.id);
+                  dispatch(setSelect(true));
+                  dispatch(setDeleteId(false));
+                  dispatch(setClose(false));
+                }}
+              >
+                {selected.includes(vehcile.id) ? (
+                  <FiCheckSquare size={14} />
+                ) : (
+                  <FiSquare size={14} />
+                )}
+              </td>
               <td>
-              
-                  <Link
-                    to="/master/Add_Vehcile"
-                    state={{vehcile:vehcile  }}
-                  >
-                    {vehcile.vehcile_no}
-                  </Link>
-                
-          
+
+                <Link
+                  to="/master/Add_Vehcile"
+                  state={{ vehcile: vehcile }}
+                >
+                  {vehcile.vehcile_no}
+                </Link>
+
+
               </td>
               <td>{vehcile.organization_name ? toTitleCase(vehcile.organization_name) : "-"}</td>
-               <td>{toTitleCase(vehcile.vehcile_type)}</td>
-               <td>{toTitleCase(vehcile.vehcile_model)}</td>
-               <td>{vehcile.vehcile_status  ?
-            <div>
-                <img src={correct}  height="18px"  width="18px" /> 
-            </div> :
-            <div>
-                <img src={cross} height="18px"  width="18px"/>
-            </div>  
-            }</td>
-              
+              <td>{toTitleCase(vehcile.vehcile_type)}</td>
+              <td>{toTitleCase(vehcile.vehcile_model)}</td>
+              <td>{vehcile.vehcile_status ?
+                <div>
+                  <img src={correct} height="18px" width="18px" />
+                </div> :
+                <div>
+                  <img src={cross} height="18px" width="18px" />
+                </div>
+              }</td>
+
+              <td>
+                <div onClick={() => {
+                  handle_img(vehcile.image);
+                  setopenModal(true)
+                }}>
+                  <img src={vehcile.image} height="70px" width="70px"
+
+                  />
+                </div>
+              </td>
             </tr>
           );
         })

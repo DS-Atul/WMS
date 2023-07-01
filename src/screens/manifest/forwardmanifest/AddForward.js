@@ -610,6 +610,7 @@ useEffect(() => {
 const showFun = () =>{
   setcoloader_selected("")
   setcoloader_selcted_m("")
+  setcoloader_mode_list([])
   setShow(true)
 }
 
@@ -837,7 +838,7 @@ const showFun = () =>{
                           <Col lg={3} md={3} sm={6}>
                             <div className="mb-2">
                               <Label className="header-child">
-                                Flight Number:
+                                Flight Number *:
                               </Label>
                               <Input
                                 onChange={validation.handleChange}

@@ -1181,6 +1181,7 @@ const AddClient = () => {
         dispatch(setDataExist(`"${pan_no}" Already Exists`));
         dispatch(setAlertType("warning"));
         dispatch(setShowAlert(true));
+        setpan_no_error(true)
       }
       setloaded_pan(false)
     } catch (error) {
@@ -1692,9 +1693,9 @@ const AddClient = () => {
                           if (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no)) {
                             setpan_no_error(true)
                           }
-                          else {
-                            setpan_no_error(false)
-                          }
+                          // else {
+                          //   setpan_no_error(false)
+                          // }
                         }}
                         id="input"
                         type="text"

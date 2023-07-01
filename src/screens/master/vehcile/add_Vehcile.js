@@ -65,7 +65,6 @@ const Add_Vehcile = () => {
   const [modal, setmodal] = useState(false);
   const [uploaded_img, setuploaded_img] = useState("");
   const [result_img, setresult_img] = useState("")
-  console.log("result image =====",result_img);
   const [vehcile_img_error, setvehcile_img_error] = useState(false);
 
   const [vehcile_model, setvehcile_model] = useState("");
@@ -90,6 +89,7 @@ const Add_Vehcile = () => {
 
         setis_updating(true);
         let vehicle_data = location_data.state.vehcile;
+        console.log("vehicle_data===", vehicle_data)
         setvehicle(vehicle_data);
         setbranch(toTitleCase(vehicle_data.branch_name));
         setbranch_id(vehicle_data.branch);
@@ -201,7 +201,7 @@ const Add_Vehcile = () => {
             transporter_name: vendor_id,
             branch: branch_ids,
             change_fields: change_fields,
-            vehcile_image: result_img,
+            vehcile_image: result_img?.substring(0,4) !== "http" ? result_img : null,
           },
           {
             headers: {

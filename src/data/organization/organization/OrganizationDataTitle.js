@@ -7,6 +7,7 @@ const OrganizationDataTitle = [
   "Website Address",
   "Email",
   "Mobile No",
+  "Image"
 ];
 
 export default OrganizationDataTitle;

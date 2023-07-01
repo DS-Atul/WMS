@@ -125,8 +125,6 @@ const AddVendor = () => {
   const [uploaded_img, setuploaded_img] = useState("");
   const [result_img, setresult_img] = useState("");
   const [msme_certificate_error, setmsme_certificate_error] = useState(false);
-  const [msme_certificate, setmsme_certificate] = useState("");
-
 
   const [registration_date, setregistration_date] = useState(null)
   const [reg_date_error, setreg_date_error] = useState(false);
@@ -290,7 +288,7 @@ const AddVendor = () => {
         document.getElementById("vendor_info").scrollIntoView();
         setreg_date_error(true);
       }
-      else if (msme_registerd_number !== "" && result_img === "") {
+      else if (msme_registerd === true && (result_img === "" || !result_img)) {
         document.getElementById("vendor_info").scrollIntoView();
         setmsme_certificate_error(true);
       }
@@ -298,7 +296,7 @@ const AddVendor = () => {
         document.getElementById("vendor_servies").scrollIntoView();
         setcompany_type_error(true);
       } 
-      if (other_company_type == "" && company_type === "Add New") {
+      else if (other_company_type == "" && company_type === "Add New") {
         document.getElementById("vendor_servies").scrollIntoView();
         setadd_company_err(true);
       }
@@ -694,7 +692,8 @@ const AddVendor = () => {
           cm_transit_status: status_toggle === true ? current_status : "",
           cm_current_status: current_status.toUpperCase(),
           cm_remarks: "",
-          msme_image: result_img,
+          // msme_image: result_img?.substring(0,4) !== "http" ? result_img : null,
+          msme_image: msme_registerd ? (result_img && !result_img.startsWith("http") ? result_img : null) : null,
         },
         {
           headers: {
@@ -733,7 +732,7 @@ const AddVendor = () => {
 
   useLayoutEffect(() => {
     try {
-      console.log("location_data----", location_data)
+      console.log("location_data.state.vendor===", location_data.state.vendor)
       setvendor_data(location_data.state.vendor);
       setisupdating(true);
       setmsme_registerd_number(location_data.state.vendor.msme_registration_no);
@@ -742,13 +741,13 @@ const AddVendor = () => {
       setservice_region_selected(
         toTitleCase(location_data.state.vendor.service_region)
       );
+      setresult_img(location_data.state.vendor.msme_certificate);
       setregistration_date(location_data.state.vendor.registration_date)
       setpan_no(location_data.state.vendor.pan_no)
       setmsme_registerd(location_data.state.vendor.is_msme_regitered);
       setcompany_type(toTitleCase(location_data.state.vendor.company_type));
-      setcompany_type_id(toTitleCase(location_data.state.vendor.company));
+      setcompany_type_id(location_data.state.vendor.company);
 
-      setresult_img(location_data.state.vendor.msme_certificate);
     } catch (error) { }
   }, []);
 
@@ -942,7 +941,7 @@ const AddVendor = () => {
     if (msme_registerd === true && registration_date !== "") {
       setreg_date_error(false);
     }
-    if (msme_registerd === true && result_img !== "") {
+    if (msme_registerd === true && (result_img !== "" || result_img)) {
       setmsme_certificate_error(false);
     }
   }, [msme_registerd, msme_registerd_number, registration_date, result_img]);
@@ -1762,6 +1761,7 @@ const AddVendor = () => {
         dispatch(setDataExist(`"${pan_no}" Already Exists`));
         dispatch(setAlertType("warning"));
         dispatch(setShowAlert(true));
+        setpan_no_error(true)
       }
       setloaded_pan(false)
     } catch (error) {
@@ -1880,10 +1880,10 @@ const AddVendor = () => {
               document.getElementById("vendor_info").scrollIntoView();
               setmsme_No_length(true);
             }
-            else if (msme_registerd_number !== "" && result_img === "") {
-              document.getElementById("vendor_info").scrollIntoView();
-              setmsme_certificate_error(true);
-            }
+            // else if (msme_registerd === true && result_img === "" && result_img) {
+            //   document.getElementById("vendor_info").scrollIntoView();
+            //   setmsme_certificate_error(true);
+            // }
             // else if (msme_registerd === true && registration_date === "") {
             //   document.getElementById("vendor_info").scrollIntoView();
             //   setreg_date_error(true);
@@ -1977,9 +1977,9 @@ const AddVendor = () => {
                               if (pan_no.length !== 10 || !/^([A-Z]{5}[0-9]{4}[A-Z]{1})$/.test(pan_no)) {
                                 setpan_no_error(true)
                               }
-                              else {
-                                setpan_no_error(false)
-                              }
+                              // else {
+                              //   setpan_no_error(false)
+                              // }
                             }}
                             value={pan_no}
                             onChange={(e) =>
@@ -2158,6 +2158,7 @@ const AddVendor = () => {
                                 //     ? true
                                 //     : false
                                 // }
+                                maxLength={12}
                                 type="text"
                                 className="form-control-md"
                                 id="input"
@@ -2166,6 +2167,14 @@ const AddVendor = () => {
                                 value={msme_registerd_number}
                                 onChange={(val) => {
                                   setmsme_registerd_number(val.target.value);
+                                }}
+                                onBlur={() => {
+                                  if (msme_registerd_number.length !== 12) {
+                                    setmsme_No_length(true)
+                                  }
+                                  // else {
+                                  //   setpan_no_error(false)
+                                  // }
                                 }}
                                 invalid={msme_registerd_number_error || msme_No_length}
                               />
@@ -2250,7 +2259,7 @@ const AddVendor = () => {
                             onChange={(val) => {
                               setresult_img(val.target.value)
                             }}
-                            accept="image/png,image/jpeg, image/jpg"
+                            // accept="image/png,image/jpeg, image/jpg"
                           />
                           <button
                             style={{
@@ -2288,7 +2297,7 @@ const AddVendor = () => {
                         </div>
                       </Col>
 
-                      {result_img !== "" && (
+                      {result_img && (
                         <Col lg={1} md={4} sm={6}>
                           <div className="mb-3 parent_div">
                             <img

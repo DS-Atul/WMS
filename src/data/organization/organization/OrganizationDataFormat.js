@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Modal from 'react-bootstrap/Modal';
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import {
   setDeleteId,
@@ -129,9 +130,31 @@ const OrganizationDataFormat = ({ data, data1 }) => {
     }
   }, [delete_id]);
 
+  // Image Modal
+  const [openModal, setopenModal] = useState(false);
+  const handleCloseMod = () => {
+    setopenModal(false);
+  }
+  const [img, setimg] = useState("");
+  const handle_img = (a) => {
+    setimg(a)
+  }
 
   return (
     <>
+      <Modal show={openModal} onHide={handleCloseMod}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+
+          <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px" }} />
+
+        </Modal.Body>
+
+      </Modal>
       {(list_toggle === true ? data1 : data) === 0 ? (
         <tr>
           <td>No Data Found</td>
@@ -190,6 +213,16 @@ const OrganizationDataFormat = ({ data, data1 }) => {
               <td>{organization.website}</td>
               <td>{organization.email}</td>
               <td>{organization.mobile_nop}</td>
+              <td>
+                <div onClick={() => {
+                  handle_img(organization.logo);
+                  setopenModal(true)
+                }}>
+                  <img src={organization.logo} height="70px" width="70px"
+
+                  />
+                </div>
+              </td>
             </tr>
           );
         })

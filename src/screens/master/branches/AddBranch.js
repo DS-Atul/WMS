@@ -483,6 +483,7 @@ const AddBranch = () => {
 
     let change_fields = {};
 
+
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.branch[`${ele[0]}`];

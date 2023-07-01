@@ -275,7 +275,7 @@ const ImgModal = ({
 
   const [adjust_brightness, setadjust_brightness] = useState(false);
 
-  console.log("image i ", state.image);
+  // console.log("image i ", state.image);
   return (
     <>
       {loader ? <Loading /> : null}

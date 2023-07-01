@@ -1,4 +1,4 @@
-import React, {useMemo, useState, useEffect, useLayoutEffect } from "react";
+import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -517,7 +517,7 @@ const AddOrder = () => {
 
   // Packages
   let p = row.length - 1;
-  const a = parseInt(row[p][3]) + parseInt(row[p][3]);
+  // const a = parseInt(row[p][3]) + parseInt(row[p][3]);
   const addPackage = () => {
     setlength("");
     setbreadth("");
@@ -1263,6 +1263,17 @@ const AddOrder = () => {
           setrow4([["", val, "", "", ""]])
           settoggle_order(true);
           setShowOrder(false);
+          setrow([["","","",""]])
+          setconsignee_n("")
+          setconsginee_st("")
+          setconsginee_c("")
+          setconsignee_pincode("")
+          setlocality_c("")
+          setcommodity("")
+          setlocal_delivery_type("")
+          setrow1([["",""]])
+          seteway_confirm(false)
+          setbooking_through(false)
         }
         else {
           setShowOrder(false);
@@ -2560,7 +2571,6 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-       console.log("Eresponse====", response)
         if (response.data.response !== null && typeof (response.data) !== "string") {
           // if (response.data.length > 0) {
           if (is_eway === "yes") {
@@ -2599,7 +2609,7 @@ const AddOrder = () => {
 
           }
 
-        } else if(response.data?.status === 0){
+        } else if (response.data?.status === 0) {
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Entered EwayBill No Is Wrong`));
           dispatch(setAlertType("danger"));
@@ -2607,11 +2617,11 @@ const AddOrder = () => {
           seteway_detail_l([]);
           seteway_list([]);
         }
-        else{
+        else {
           dispatch(setShowAlert(true));
           dispatch(setDataExist("Invalid Authentication Token."));
           dispatch(setAlertType("danger"));
-         
+
         }
       })
       .catch((error) => {
@@ -3836,15 +3846,15 @@ const AddOrder = () => {
   }, [e_waybill_inv])
 
   const [coldchain_permission, setcoldchain_permission] = useState([])
-  console.log("coldchain_permission====",coldchain_permission)
+  console.log("coldchain_permission====", coldchain_permission)
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
   );
 
   useEffect(() => {
-    if(userpermission?.length>0){
-      let coldchain_val =  userpermission?.filter((e) => e.sub_model === "Cold Chain")
-      setcoldchain_permission(coldchain_val)  
+    if (userpermission?.length > 0) {
+      let coldchain_val = userpermission?.filter((e) => e.sub_model === "Cold Chain")
+      setcoldchain_permission(coldchain_val)
     }
   }, [userpermission]);
 
@@ -3858,8 +3868,8 @@ const AddOrder = () => {
 
   return (
     <div>
-       {/* {!eway_loaded && memoizedLogInEwayBill} */}
-       <LogInEwayBill />
+      {/* {!eway_loaded && memoizedLogInEwayBill} */}
+      <LogInEwayBill />
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
@@ -3912,7 +3922,7 @@ const AddOrder = () => {
               No
             </Button>
             <Button 
-            variant="primary" onClick={() =>  setShowOrder(false)}
+            variant="danger" onClick={() =>  setShowOrder(false)}
             style={{marginLeft:"-420px",marginRight:"380px"}}>
              Cancel
             </Button>
@@ -4355,38 +4365,38 @@ const AddOrder = () => {
                         </div>
                       </Col>
                     ) : null}
-                   
-                      <Col lg={2} md={2} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child">Cold Chain</Label>
-                          <br />
-                          <Input
-                            className="form-check-input-sm"
-                            type="checkbox"
-                            // value="false"
-                            id="defaultCheck1"
-                            onClick={() => {
-                              setcold_chain(!cold_chain);
-                            }}
-                            readOnly={true}
-                            checked={cold_chain}
-                            disabled={isupdating}
-                            invalid={
-                              coldchain_error
-                            }
-                          />
+
+                    <Col lg={2} md={2} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child">Cold Chain</Label>
+                        <br />
+                        <Input
+                          className="form-check-input-sm"
+                          type="checkbox"
+                          // value="false"
+                          id="defaultCheck1"
+                          onClick={() => {
+                            setcold_chain(!cold_chain);
+                          }}
+                          readOnly={true}
+                          checked={cold_chain}
+                          disabled={isupdating}
+                          invalid={
+                            coldchain_error
+                          }
+                        />
+                      </div>
+                      {coldchain_error && (
+                        <div
+                          className="error-text" color="danger"
+                          style={{
+                            marginTop: -14,
+                          }}
+                        >
+                          Select Any One Option
                         </div>
-                        {coldchain_error && (
-                          <div
-                            className="error-text" color="danger"
-                            style={{
-                              marginTop: -14,
-                            }}
-                          >
-                            Select Any One Option
-                          </div>
-                        )}
-                      </Col>
+                      )}
+                    </Col>
                     <Col
                       lg={user.view_coldchain || user.is_superuser ? 2 : 4}
                       md={2}
@@ -4524,7 +4534,7 @@ const AddOrder = () => {
         </div>
 
         {/*  Cold Chain Info Started  */}
-        {cold_chain && (user.is_superuser || coldchain_permission[0]?.read) &&(
+        {cold_chain && (user.is_superuser || coldchain_permission[0]?.read) && (
           <div className="m-3">
             <Col lg={12}>
               <Card className="shadow bg-white rounded">
@@ -4566,9 +4576,9 @@ const AddOrder = () => {
                             }}
                             readOnly={true}
                             checked={asset_prov}
-                            disabled={isupdating || (!user.is_superuser && !coldchain_permission[0]?.write) }
-                            
-                        
+                            disabled={isupdating || (!user.is_superuser && !coldchain_permission[0]?.write)}
+
+
                           />
                         </div>
                       </Col>
@@ -5821,26 +5831,26 @@ const AddOrder = () => {
                         // "Shipment Arrived at Destination Hub" &&
                         // current_status !== "Shipment Delivered" &&
                         // user.is_superuser && (
-                          <span>
-                            <Button
-                              type="button"
-                              className="btn btn-info mx-1 cu_btn "
-                              onClick={() => {
-                                if (
-                                  order.current_status === "SHIPMENT PICKED UP"
-                                ) {
-                                  navigate("/manifest/pickeduporders");
-                                } else {
-                                  navigate("/booking/orders/adddocketstatus", {
-                                    state: { order: order, type: "add" },
-                                  });
-                                }
-                              }}
-                              disabled={order.current_status !== "SHIPMENT PICKED UP" && order.current_status !== "SHIPMENT ORDER RECEIVED"}
-                            >
-                              Add Status
-                            </Button>
-                          </span>
+                        <span>
+                          <Button
+                            type="button"
+                            className="btn btn-info mx-1 cu_btn "
+                            onClick={() => {
+                              if (
+                                order.current_status === "SHIPMENT PICKED UP"
+                              ) {
+                                navigate("/manifest/pickeduporders");
+                              } else {
+                                navigate("/booking/orders/adddocketstatus", {
+                                  state: { order: order, type: "add" },
+                                });
+                              }
+                            }}
+                            disabled={order.current_status !== "SHIPMENT PICKED UP" && order.current_status !== "SHIPMENT ORDER RECEIVED"}
+                          >
+                            Add Status
+                          </Button>
+                        </span>
                         // )
                       }
 
@@ -6484,7 +6494,8 @@ const AddOrder = () => {
                                 key={index2}
                               >
                                 <Input
-                                  min={0}
+                                  maxLength={12}
+                                  // min={0}
                                   key={index2}
                                   value={item2[0]}
                                   type="number"
@@ -6529,6 +6540,38 @@ const AddOrder = () => {
                                 />
                               </div>
                             ))}
+                            {/* {row2.map((item2, index2) => (
+                              <div style={{ height: "110px", paddingTop: 35 }} key={index2}>
+                                <Input
+                                  maxLength={12}
+                                  value={item2[0]}
+                                  key={index2}
+                                  type="number"
+                                  className="form-control-md"
+                                  id="input"
+                                  style={{ marginBottom: "15px" }}
+                                  placeholder="Enter EwayBill No"
+                                  onChange={(e) => {
+                                    const value = e.target.value.slice(0, 12); // Enforce maximum length of 12 characters
+                                    item2[0] = value;
+                                    row4[index2][0] = value;
+                                    setrow2([...row2]); // Update the state with modified row2
+
+                                    if (value.length === 12 && booking_through) {
+                                      check_ewb_attached(value);
+                                    }
+                                  }}
+                                  onBlur={() => {
+                                    if (item2[0].length !== 12) {
+                                      dispatch(setShowAlert(true));
+                                      dispatch(setDataExist("Number should be 12 digits"));
+                                      dispatch(setAlertType("warning"));
+                                    }
+                                  }}
+                                />
+                              </div>
+                            ))} */}
+
                           </div>
                         </Col>
                         <Col md={2} sm={2}>

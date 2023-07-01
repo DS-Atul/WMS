@@ -1,3 +1,3 @@
-const CommoditiesDataTitle = ["Commodity Type ", "Commodity Name ","Organization Name", "Current Status",];
+const CommoditiesDataTitle = ["Commodity Name ","Commodity Type ","Organization Name", "Current Status",];
 
 export default CommoditiesDataTitle;
