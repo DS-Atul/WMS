@@ -66,7 +66,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                                 <img src={Logo003} width="250vw" height="60vh" />
                             </div>
 
-                            <div style={{ float: "right", marginRight: 20 }}><b>Web:</b> www.ssciogistics.in<br></br><b>E-Mail: </b>info@ssciogistics.in</div></td>
+                            <div style={{ float: "right", marginRight: 20 }}><b>Web:</b> www.ssclogistics.in<br></br><b>E-Mail: </b>info@ssclogistics.in</div></td>
 
                     </tr>
 
