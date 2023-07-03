@@ -18,7 +18,7 @@ setcommodity_data(n_data);
     }
   }, [page_data])
 
-  console.log("COmmodity data",commodity_data);
+  console.log("COmmodity  History data",commodity_data);
   // console.log("COmmodity data",user_name);
   let time = new Date(commodity_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
   

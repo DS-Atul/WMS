@@ -3,7 +3,7 @@ import {Col,Card,CardTitle,CardBody} from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
 const AssetCreatedHistory = ({page_data}) => {
-  console.log("page",page_data)
+  console.log(" asset created history page data",page_data)
   const [asset_data, setasset_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -18,7 +18,7 @@ setasset_data(n_data);
     }
   }, [page_data])
 
-  console.log("Asset  data >>>>>",asset_data);
+  console.log("Asset history  data >>>>>",asset_data);
   
 
   let time = new Date(asset_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
@@ -46,29 +46,50 @@ setasset_data(n_data);
               </div>
             </CardTitle>
             <CardBody>
+             
               <div className="body_container">
+               {asset_data.asset_type === "LOGGER"  && (
+                 <>
                 <div className="container_element">
-                  <span>Asset Type </span> <span> Logger</span>
+                  <span>Asset Type </span> <span> {asset_data.asset_type}</span>
                 </div>
                 <div className="container_element">
-                  <span>Manufacture Name</span> <span>ABC Private Limited </span>
+                  <span> Logger Type </span> <span>{asset_data.box_type}</span>
                 </div>
                 <div className="container_element">
-                  <span>Teamperature Type</span> <span>20 to 25 </span>
+                  <span>Manufacture Name</span> <span>{asset_data.manufacturer_name}</span>
                 </div>
                 <div className="container_element">
-                  <span>Logger Number</span> <span> 12345</span>
+                  <span>Teamperature Type</span> <span> {asset_data.temperature_type} </span>
                 </div>
                 <div className="container_element">
-                  <span>Box Type</span> <span> ABCDES</span>
+                  <span>Logger Number</span> <span> {asset_data.product_id}</span>
+                </div>
+                </>
+                )}
+                {asset_data.asset_type ===  "TEMPERATURE CONTROL BOX"  && (
+                 <>
+                 <div className="container_element">
+                  <span>Asset Type </span> <span>{asset_data.asset_type} </span>
                 </div>
                 <div className="container_element">
-                  <span>Box Capacities </span> <span> 20 L</span>
+                  <span>Box Type</span> <span> {asset_data.box_type}</span>
                 </div>
                 <div className="container_element">
-                  <span>Product ID </span> <span> 207620456 L</span>
+                  <span>Teamperature Type</span> <span> {asset_data.temperature_type} </span>
                 </div>
-              </div>
+                <div className="container_element">
+                  <span>Box Capacities </span> <span>{asset_data.box_capacities}</span>
+                </div>
+                <div className="container_element">
+                  <span>Manufacture Product ID </span> <span> {asset_data.product_id}</span>
+                </div>
+                <div className="container_element">
+                  <span>Old Box No </span> <span>{asset_data.old_box_no}</span>
+                </div>
+                </>
+                )}
+              </div> 
             </CardBody>
           </Card>
         </div>
@@ -96,7 +117,7 @@ setasset_data(n_data);
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Initial Assign Branch </span> <span> Jamshedpur </span>
+                  <span>Initial Assign Branch </span> <span> {asset_data.assigned_branch_n} </span>
                 </div>
                 <div className="container_element">
                   <span>Created By</span> <span>{user_name}</span>
@@ -109,6 +130,9 @@ setasset_data(n_data);
           </Card>
         </div>
       </Col>
+
+      {asset_data.asset_type === "LOGGER"  && (
+      <>
       <Col lg={12} md={12} sm={12}>
         <div>
           <Card
@@ -132,25 +156,27 @@ setasset_data(n_data);
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Callibration From </span> <span> 12/03/2023</span>
+                  <span>Callibration From </span> <span>{asset_data.callibration_from}</span>
                 </div>
                 <div className="container_element">
-                  <span>Callibration To</span> <span>22/03/2023 </span>
+                  <span>Callibration To</span> <span>{asset_data.callibration_to}</span>
                 </div>
                 <div className="container_element">
-                  <span>Certificate Issued By</span> <span>Admin</span>
+                  <span>Certificate Issued By</span> <span>Data Not Found </span>
                 </div>
                 <div className="container_element">
-                  <span>Issued Date</span> <span> 8/03/2023</span>
+                  <span>Issued Date</span> <span> Data Not Found</span>
                 </div>
                 <div className="container_element">
-                  <span>Certificate</span> <span> Yes</span>
+                  <span>Certificate</span> <span> Data Not Found</span>
                 </div>
               </div>
             </CardBody>
           </Card>
         </div>
       </Col>
+      </>
+      )}
     </>
    )
 }

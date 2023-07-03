@@ -634,6 +634,8 @@ const AddVendor = () => {
       lob: business_selected,
       mobile_numberp: values.vendor_ph_no,
       mobile_numbers: values.vendor_ph_no1,
+      // msme_certificate:result_img ,
+      msme_registration_no: msme_registerd ? msme_registerd_number : "",
       name: values.vendor_name,
       pan_no: pan_no,
       registration_date: registration_date,

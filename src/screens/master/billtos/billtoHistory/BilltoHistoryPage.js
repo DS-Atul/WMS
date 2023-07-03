@@ -42,7 +42,6 @@ const BilltoHistoryPage = () => {
        Table_Data_Formate={BilltoHistoryTableFormate}
        path1={`analytic/get_createdmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["BillTo"]}&app_name=${["master"]}&object_id=${[billto_id]}`}
        path={`analytic/get_updatedmasterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["BillTo"]}&app_name=${["master"]}&object_id=${[billto_id]}`}
-      //  path={`analytic/get_masterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["BillTo"]}&app_name=${["master"]}&object_id=${[billto_id]}`}
        />
     </>
   )

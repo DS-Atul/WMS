@@ -18,7 +18,7 @@ setbillto_data(n_data);
     }
   }, [page_data])
 
-  console.log("BillTo  data >>>>>",billto_data);
+  console.log("BillTo  data ====",billto_data);
   
 
   let time = new Date(billto_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
@@ -50,6 +50,9 @@ setbillto_data(n_data);
               {/* <div className="container_element">
                 <span>Branch Type</span> <span>Own</span>
               </div> */}
+              <div className="container_element">
+                <span>PAN Number</span> <span>{billto_data.pan_no}</span>
+              </div>
               <div className="container_element">
                 <span>Branch Name</span> <span>{billto_data.name}</span>
               </div>
@@ -93,16 +96,19 @@ setbillto_data(n_data);
           <CardBody>
             <div className="body_container">
               <div className="container_element">
-                <span>PAN Number</span> <span> {billto_data.pan_no}</span>
-              </div>
-              <div className="container_element">
                 <span>GST Number</span> <span>Data Not Saved In Form</span>
               </div>
               <div className="container_element">
-                <span>State Code </span> <span>Data Not Saved In Form</span>
+                <span>City </span> <span>Data Not Saved In Form</span>
               </div>
               <div className="container_element">
-                <span>State Name</span> <span>Data Not Saved In Form</span>
+                <span>Pincode</span> <span>Data Not Saved In Form</span>
+              </div>
+              <div className="container_element">
+                <span>Locality</span> <span>Data Not Saved In Form</span>
+              </div>
+              <div className="container_element">
+                <span>Address</span> <span>Data Not Saved In Form</span>
               </div>
             </div>
           </CardBody>

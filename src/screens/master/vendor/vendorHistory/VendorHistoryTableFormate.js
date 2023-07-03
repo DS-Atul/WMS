@@ -20,16 +20,20 @@ const VendorHistoryTableFormate  = ({ table_data}) => {
           }}>
             <td>{idx +1}</td>
             <td>{(item.action_flag === 1 ? "Created" : "Updated")}</td>
+          <td>{(new_data.pan_no? new_data.pan_no : "-")}</td>
           <td>{(new_data.name ? new_data.name : "-")}</td>
-          <td>{(new_data.emailp ? new_data.emailp : "-")}</td>
-          <td>{(new_data.mobile_numberp ? new_data.mobile_numberp : "-")}</td>
+          <td>{(new_data.company_type ? new_data.company_type : "-")}</td>
           <td>{(new_data.is_msme_regitered ? new_data.is_msme_regitered : "-")}</td>
           <td>{(new_data.msme_registration_no ? new_data.msme_registration_no : "-")}</td>
-          <td>{(new_data.company_type ? new_data.company_type : "-")}</td>
+          <td>{(new_data.registration_date ? new_data.registration_date : "-")}</td>
+          {/* <td>{(new_data.msme_certificate ? new_data.msme_certificate : "-")}</td> */}
+          <td>{(new_data.emailp ? new_data.emailp : "-")}</td>
+          <td>{(new_data.mobile_numberp ? new_data.mobile_numberp : "-")}</td>
+          <td>{(new_data.emails ? new_data.emails : "-")}</td>
+          <td>{(new_data.mobile_numbers ? new_data.mobile_numbers : "-")}</td>
           <td>{(new_data.lob ? new_data.lob : "-")}</td>
           <td>{(new_data.service_region ? new_data.service_region : "-")}</td>
-          <td>{(new_data.pan_no ? new_data.pan_no :"-")}</td>
-          <td>{("-")}</td>
+          <td></td>
           <td></td>
           <td></td>
           <td></td>
