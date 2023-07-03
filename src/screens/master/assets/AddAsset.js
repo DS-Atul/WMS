@@ -63,7 +63,6 @@ const AddAsset = () => {
     "Liquid Nitrogen",
   ]);
   const [logger_box_type, setlogger_box_type] = useState("");
-  console.log("logger Box Type",logger_box_type)
   const [manufacture_name_list, setmanufacture_name_list] = useState([]);
   // "Escort",
   // "Sensitech",
@@ -138,6 +137,24 @@ const AddAsset = () => {
   const [expiry_date, setexpiry_date] = useState("");
   const [logger_box_no, setlogger_box_no] = useState("");
   const [old_box_no, setold_box_no] = useState("");
+  console.log("purchase_date====", purchase_date)
+  console.log("expiry_date====", expiry_date)
+
+
+  const [expired, setexpired] = useState(false);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const registrationDate = new Date(expiry_date);
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(currentDate.getDate() + 30);
+
+    if (registrationDate < thirtyDaysFromNow) {
+      setexpired(true);
+    } else {
+      setexpired(false);
+    }
+  }, [expiry_date]);
 
   //Callibaration Info
 
@@ -199,15 +216,13 @@ const AddAsset = () => {
     setrow(temp);
     setcalibration_id_list(temp_2)
   };
-//used for image 
-const [show_modal_certificate, setshow_modal_certificate] = useState({
-  value: false,
-  ind: "",
-});
-console.log("show certificate==",show_modal_certificate)
-const [img_index, setimg_index] = useState("")
-const [certificate_img, setcertificate_img] = useState("");
-console.log(" asset certificate iamge ",setcertificate_img);
+  //used for image 
+  const [show_modal_certificate, setshow_modal_certificate] = useState({
+    value: false,
+    ind: "",
+  });
+  const [img_index, setimg_index] = useState("")
+  const [certificate_img, setcertificate_img] = useState("");
   //Used for error
   const [asset_type_error, setasset_type_error] = useState(false);
   const [box_type_error, setbox_type_error] = useState(false);
@@ -338,7 +353,6 @@ console.log(" asset certificate iamge ",setcertificate_img);
         }
       );
 
-      console.log("State is ===>", response.data);
       if (response.data.next === null) {
         setbranch_loaded(false);
       } else {
@@ -448,7 +462,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
           product_id:
             asset_type == "Logger"
               ? logger_box_no.toUpperCase()
-              : useproduct_id.toUpperCase(),
+              : useproduct_id ? useproduct_id.toUpperCase() : null,
           assigned_branch: branch_short_id,
           created_branch: user.home_branch, // It will not updated
           checked_by: isChecked ? user_id : null,
@@ -471,7 +485,6 @@ console.log(" asset certificate iamge ",setcertificate_img);
           },
         }
       );
-      console.log("response", response.data);
       if (response.data.status === "success") {
         dispatch(setToggle(true));
         dispatch(setShowAlert(true));
@@ -486,7 +499,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
-            `Asset ${asset_type == "Logger" ? "Logger Number" : "Product Id"} "${ asset_type == "Logger" ? logger_box_no : useproduct_id }" already exists`
+            `Asset ${asset_type == "Logger" ? "Logger Number" : "Product Id"} "${asset_type == "Logger" ? logger_box_no : useproduct_id}" already exists`
           )
         );
         dispatch(setAlertType("warning"));
@@ -544,7 +557,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
           product_id:
             asset_type == "Logger"
               ? logger_box_no.toUpperCase()
-              : useproduct_id.toUpperCase(),
+              : useproduct_id ? useproduct_id.toUpperCase() : null,
           old_box_no: asset_type === "Logger" ? null : old_box_no,
           assigned_branch: branch_short_id,
           created_branch: user.home_branch, // It will not updated
@@ -584,7 +597,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
-            `Asset ${asset_type == "Logger" ? "Logger Number" : "Product Id"} "${ asset_type == "Logger" ? logger_box_no : useproduct_id }" already exists`
+            `Asset ${asset_type == "Logger" ? "Logger Number" : "Product Id"} "${asset_type == "Logger" ? logger_box_no : useproduct_id}" already exists`
           )
         );
         dispatch(setAlertType("warning"));
@@ -686,10 +699,13 @@ console.log(" asset certificate iamge ",setcertificate_img);
   }, [logger_box_no]);
 
   useEffect(() => {
+    if (box_type !== "Credo") {
+      setproduct_id_error(false);
+    }
     if (useproduct_id) {
       setproduct_id_error(false);
     }
-  }, [useproduct_id]);
+  }, [useproduct_id, box_type]);
 
 
   useEffect(() => {
@@ -785,17 +801,18 @@ console.log(" asset certificate iamge ",setcertificate_img);
   // use for logger temperature type
   useEffect(() => {
     if (logger_box_type === "Single Use") {
-      settemperature_log_list(["2-8 C","15-25 C","-25 TO -15 C","Dry Ice",])
-    }  if (logger_box_type === "Multi Use") {
-      settemperature_log_list(["2-8 C","15-25 C","-25 TO -15 C"])
-    }  if (logger_box_type === "Dry Ice Single Use") {
+      settemperature_log_list(["2-8 C", "15-25 C", "-25 TO -15 C", "Dry Ice",])
+    } if (logger_box_type === "Multi Use") {
+      settemperature_log_list(["2-8 C", "15-25 C", "-25 TO -15 C"])
+    } if (logger_box_type === "Dry Ice Single Use") {
       settemperature_log_list(["-90 TO -20 C"])
-    }  if (logger_box_type === "Dry Ice Multi Use") {
+    } if (logger_box_type === "Dry Ice Multi Use") {
       settemperature_log_list(["-90 TO -20 C"])
-    } if (logger_box_type === "Liquid Nitrogen"){ 
+    } if (logger_box_type === "Liquid Nitrogen") {
       settemperature_log_list(["-250 TO -150 C"])
     }
   }, [logger_box_type]);
+
   return (
     <div>
 
@@ -908,6 +925,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
                               show_search={false}
                               error_message={"Please select Logger Box type"}
                               error_s={logger_box_type_error}
+                              disable_me={isupdating && true}
                             />
                           </div>
                         </Col>
@@ -1016,7 +1034,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
                                 if (logger_box_no) {
                                   setlogger_number_error(false);
                                 }
-                                else{
+                                else {
                                   setlogger_number_error(true);
                                 }
                               }}
@@ -1048,6 +1066,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
                             show_search={false}
                             error_message={"Please select Box  Type"}
                             error_s={box_type_error}
+                            disable_me={isupdating && true}
                           />
                         </div>
                       </Col>
@@ -1101,24 +1120,23 @@ console.log(" asset certificate iamge ",setcertificate_img);
                                 setuseproduct_id(e.target.value);
                               }}
                               onBlur={() => {
-
-                                if (useproduct_id) {
-                                  setproduct_id_error(false);
-                                }
-                                else{
+                                if (box_type === "Credo" && !useproduct_id) {
                                   setproduct_id_error(true);
+                                }
+                                else {
+                                  setproduct_id_error(false);
                                 }
                               }}
                               invalid={product_id_error}
                             />
-                                 {product_id_error ? (
+                            {product_id_error ? (
                               <FormFeedback type="invalid">
-                               Manufacture Product ID is required
+                                Manufacture Product ID is required
                               </FormFeedback>
                             ) : null}
                           </div>
                         </Col>
-                        
+
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">Old Box Number</Label>
@@ -1321,40 +1339,38 @@ console.log(" asset certificate iamge ",setcertificate_img);
                 {circle_btn2 ? (
                   <CardBody>
                     <Row>
-                    {show_modal_certificate.value ? (
-                          <ImgModal
-                            modal={show_modal_certificate.value}
-                            modal_set={() => {
+                      {show_modal_certificate.value ? (
+                        <ImgModal
+                          modal={show_modal_certificate.value}
+                          modal_set={() => {
+                            setshow_modal_certificate({
+                              ...show_modal_certificate,
+                              value: false,
+                            });
+                          }}
+                          upload_image={(val) => {
+                            if (show_modal_certificate.ind !== "") {
+                              row[show_modal_certificate.ind][4] = val;
                               setshow_modal_certificate({
                                 ...show_modal_certificate,
                                 value: false,
+                                ind: "",
                               });
-                            }}
-                            upload_image={(val) => {
-                              console.log("assetImg000000",val)
-                              if (show_modal_certificate.ind !== "") {
-                                row[show_modal_certificate.ind][4] = val;
-                                setshow_modal_certificate({
-                                  ...show_modal_certificate,
-                                  value: false,
-                                  ind: "",
-                                });
-                              } else {
-                                row[img_index][4] = val;
-                              }
-                            }}  
-                            result_image={(val) => {
-                              setcertificate_img(val);
-                              console.log("assetImg11111111",val)
-                              if (show_modal_certificate.ind !== "") {
-                                row[show_modal_certificate.ind][4] = val;
-                              } else {
-                                row[img_index][4] = val;
-                              }
-                            }}
-                          />
-                        ) : null}
-                     <Col lg={2} md={6} sm={6}> 
+                            } else {
+                              row[img_index][4] = val;
+                            }
+                          }}
+                          result_image={(val) => {
+                            setcertificate_img(val);
+                            if (show_modal_certificate.ind !== "") {
+                              row[show_modal_certificate.ind][4] = val;
+                            } else {
+                              row[img_index][4] = val;
+                            }
+                          }}
+                        />
+                      ) : null}
+                      <Col lg={2} md={6} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">
                             Callibration From *{/* Effective */}
@@ -1490,82 +1506,82 @@ console.log(" asset certificate iamge ",setcertificate_img);
                       <Col lg={3} md={6} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">
-                            Certificate 
+                            Certificate
                           </Label>
                           {row.map((item, index) => {
                             return (
                               <div style={{ width: "100%" }} key={index}>
-                                  { item[4]   ? (
-                                    <img
-                                      src={item[4]}
-                                      style={{
-                                        height: "110px",
-                                        width: "110px",
-                                        borderRadius: "10px",
-                                        paddingBottom: "5px",
-                                      }}
-                                      onClick={() => {
-                                        setshow_modal_certificate({
-                                          // ...show_modal_certificate,
-                                          value: true,
-                                          ind: index,
-                                        });
-                                      }}
-                                    />
-                                  ) : (
+                                {item[4] ? (
+                                  <img
+                                    src={item[4]}
+                                    style={{
+                                      height: "110px",
+                                      width: "110px",
+                                      borderRadius: "10px",
+                                      paddingBottom: "5px",
+                                    }}
+                                    onClick={() => {
+                                      setshow_modal_certificate({
+                                        // ...show_modal_certificate,
+                                        value: true,
+                                        ind: index,
+                                      });
+                                    }}
+                                  />
+                                ) : (
+                                  <div
+                                    style={{
+                                      height: "40px",
+                                    }}
+                                  >
                                     <div
                                       style={{
-                                        height: "110px",
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        border: "0.5px solid #dad7d7",
+                                        alignItems: "center",
+                                        height: "38px",
+                                        borderRadius: 5,
+                                        height: 31,
+                                      }}
+                                      onClick={() => {
+                                        setimg_index(index)
+                                        setshow_modal_certificate({
+                                          ...show_modal_certificate,
+                                          value: true,
+                                        });
                                       }}
                                     >
-                                      <div
+                                      <a
                                         style={{
-                                          display: "flex",
-                                          flexDirection: "row",
-                                          border: "0.5px solid #dad7d7",
-                                          alignItems: "center",
-                                          height: "38px",
-                                          borderRadius: 5,
-                                          height: 31,
-                                        }}
-                                        onClick={() => {
-                                          setimg_index(index)
-                                          setshow_modal_certificate({
-                                            ...show_modal_certificate,
-                                            value: true,
-                                          });
+                                          marginLeft: "3px",
+                                          fontSize: 11,
                                         }}
                                       >
-                                        <a
-                                          style={{
-                                            marginLeft: "3px",
-                                            fontSize: 11,
-                                          }}
-                                        >
-                                          Chooose File
-                                        </a>
-                                        <div
-                                          style={{
-                                            fontSize: "25px",
-                                            color: "#dad7d7",
-                                            marginLeft: "5px",
-                                          }}
-                                        >
-                                          |
-                                        </div>
-                                        {certificate_img === "" ? (
-                                          <a style={{ fontSize: 11 }}>
-                                            Image Not Uploaded
-                                          </a>
-                                        ) : (
-                                          <a style={{ fontSize: 11 }}>
-                                            Image Uploaded
-                                          </a>
-                                        )}
+                                        Chooose File
+                                      </a>
+                                      <div
+                                        style={{
+                                          fontSize: "25px",
+                                          color: "#dad7d7",
+                                          marginLeft: "5px",
+                                        }}
+                                      >
+                                        |
                                       </div>
+                                      {certificate_img === "" ? (
+                                        <a style={{ fontSize: 11 }}>
+                                          Image Not Uploaded
+                                        </a>
+                                      ) : (
+                                        <a style={{ fontSize: 11 }}>
+                                          Image Uploaded
+                                        </a>
+                                      )}
                                     </div>
-                                  )}
-                                </div>
+                                  </div>
+                                )}
+                              </div>
                             );
                           })}
                         </div>
@@ -1589,23 +1605,23 @@ console.log(" asset certificate iamge ",setcertificate_img);
                                     onClick={() => {
                                       delete_callibration(item);
                                     }}
-                                    // onClick={() => {
-                                    //   if (item[4] && isupdating) {
-                                    //     delete_callibration(item);
-                                    //   } else {
-                                    //     deleteinvoice(item);
-                                    //     setinvoice_img(
-                                    //       row[row.length - 1][0]
-                                    //     );
-                                    //     settoday(row[row.length - 1][1]);
-                                    //     setinvoice_no(
-                                    //       row[row.length - 1][2]
-                                    //     );
-                                    //     setinvoice_value(
-                                    //       row[row.length - 1][3]
-                                    //     );
-                                    //   }
-                                    // }}
+                                  // onClick={() => {
+                                  //   if (item[4] && isupdating) {
+                                  //     delete_callibration(item);
+                                  //   } else {
+                                  //     deleteinvoice(item);
+                                  //     setinvoice_img(
+                                  //       row[row.length - 1][0]
+                                  //     );
+                                  //     settoday(row[row.length - 1][1]);
+                                  //     setinvoice_no(
+                                  //       row[row.length - 1][2]
+                                  //     );
+                                  //     setinvoice_value(
+                                  //       row[row.length - 1][3]
+                                  //     );
+                                  //   }
+                                  // }}
                                   >
                                     <MdDeleteForever
                                       style={{
@@ -1621,47 +1637,49 @@ console.log(" asset certificate iamge ",setcertificate_img);
                         </div>
                       </Col>
                     </Row>
-                    <>
-                      <div style={{ margin: " 0 0 20px 0" }}>
-                        <span
-                          className="link-text"
-                          // onClick={() => {
-                          //   const lastRow = row[row.length - 1];
-                          //   if (row[row.length - 1].some((data) => data === "")) {
-                          //     alert("Please Fill Asset Callibration info")
-                          //   } else {
-                          //     add_callibration();
-                          //   }
-                          // }}
-                          onClick={() => {
-                            if (
-                              row[row.length - 1][0] &&
-                              row[row.length - 1][1] &&
-                              row[row.length - 1][2] &&
-                              row[row.length - 1][3]
-                            ) {
-                              setshow_modal_certificate({
-                                ...show_modal_certificate,
-                                value: false,
-                                ind: "",
-                              });
-                              add_callibration();
-                            } else {
-                              alert(" Asset Callibration info All Details Is Required");
-                            }
-                          }}
-                        >
-                          <IconContext.Provider
-                            value={{
-                              className: "link-text",
+                    {(isupdating && expired) &&
+                      <>
+                        <div style={{ margin: " 0 0 20px 0" }}>
+                          <span
+                            className="link-text"
+                            // onClick={() => {
+                            //   const lastRow = row[row.length - 1];
+                            //   if (row[row.length - 1].some((data) => data === "")) {
+                            //     alert("Please Fill Asset Callibration info")
+                            //   } else {
+                            //     add_callibration();
+                            //   }
+                            // }}
+                            onClick={() => {
+                              if (
+                                row[row.length - 1][0] &&
+                                row[row.length - 1][1] &&
+                                row[row.length - 1][2] &&
+                                row[row.length - 1][3]
+                              ) {
+                                setshow_modal_certificate({
+                                  ...show_modal_certificate,
+                                  value: false,
+                                  ind: "",
+                                });
+                                add_callibration();
+                              } else {
+                                alert(" Asset Callibration info All Details Is Required");
+                              }
                             }}
                           >
-                            <MdAdd />
-                          </IconContext.Provider>
-                          Add Another
-                        </span>
-                      </div>
-                    </>
+                            <IconContext.Provider
+                              value={{
+                                className: "link-text",
+                              }}
+                            >
+                              <MdAdd />
+                            </IconContext.Provider>
+                            Add Another
+                          </span>
+                        </div>
+                      </>
+                    }
                   </CardBody>
                 ) : null}
               </Card>
@@ -1718,7 +1736,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
                     setbox_capacity_error(true);
                     document.getElementById("box").scrollIntoView();
                   }
-                  else if (useproduct_id == "" && asset_type === "Temperature Control Box") {
+                  else if (!useproduct_id && asset_type === "Temperature Control Box" && box_type === "Credo") {
                     setproduct_id_error(true);
                     document.getElementById("box").scrollIntoView();
                   }

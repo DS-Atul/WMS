@@ -151,7 +151,7 @@ const PendingForDispatch = () => {
           temp2 = [
             ...branch_list,
             ...response.data.results.map((v) => [v.id, toTitleCase(v.state), toTitleCase(v.city_name),
-              v.location,]),
+              v.location]),
           ];
         }
 

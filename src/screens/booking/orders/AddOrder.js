@@ -6894,7 +6894,7 @@ const AddOrder = () => {
                               >
                                 {row5.length > 1 ? (
                                   <>
-                                    <div style={{ height: "14px" }}></div>
+                                    <div style={{ height: "5px" }}></div>
                                     <div
                                       onClick={() => {
                                         deleteLogger(item);
@@ -6957,7 +6957,7 @@ const AddOrder = () => {
                                   className="form-control-md"
                                   id="input"
                                   style={{ marginBottom: "15px" }}
-                                  placeholder="Enter Value"
+                                  placeholder="Barcode Not Added Yet"
                                   onChange={(val) => {
                                     setbox_bq(val.target.value);
                                     item[0] = val.target.value;

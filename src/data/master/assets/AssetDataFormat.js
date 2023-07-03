@@ -326,7 +326,7 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
               <td>{toTitleCase(asset.asset_type)}</td>
               <td>{toTitleCase(asset.box_type)}</td>
               <td>
-                {asset.product_id != "" ? (
+                {asset.product_id ? (
                   asset.product_id
                 ) : (
                   <div style={{ color: "red" }}>Product Id Not Added</div>

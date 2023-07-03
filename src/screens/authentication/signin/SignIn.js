@@ -267,7 +267,7 @@ const SignIn = () => {
 
           if (response.data.first_login === "True") {
             navigate("/resetpassword");
-          } else {
+          } else {            
             getUserDetails(username, password, response.data.access);
             getUserPermission(username, response.data.access);
           }

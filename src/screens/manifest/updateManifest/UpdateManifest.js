@@ -100,6 +100,17 @@ const UpdateManifest = () => {
   const [docket_weight, setdocket_weight] = useState("")
   const [manifest_id, setmanifest_id] = useState();
   const [coloader_list, setcoloader_list] = useState([]);
+
+    //used for tax slab 
+    const [tax_slab_list, settax_slab_list] = useState([
+      "0%",
+      "9%",
+      "18%",
+      "27%",
+    ]);
+    const [tax_slab, settax_slab] = useState("0%");
+    const [isTaxSlabDisabled, setIsTaxSlabDisabled] = useState(false);
+  
   // Manifest
   const [commodity_type_id, setcommodity_type_id] = useState(0);
   const [commodity_type_list, setcommodity_type_list] = useState([]);
@@ -122,7 +133,7 @@ const UpdateManifest = () => {
   const [package_id_list, setpackage_id_list] = useState("");
   const [packages_id, setpackages_id] = useState([]);
   const [deleted_packages_id, setdeleted_packages_id] = useState([]);
-console.log("deleted_packages_id----",deleted_packages_id)
+  console.log("deleted_packages_id----", deleted_packages_id)
   let dimension_list = [length, breadth, height, pieces];
   const [row, setrow] = useState([dimension_list]);
   console.log("row-----------", row)
@@ -175,18 +186,21 @@ console.log("deleted_packages_id----",deleted_packages_id)
     enableReinitialize: true,
     initialValues: {
       coloader_no: manifest_data.airwaybill_no || "",
-      flight_no: toTitleCase(manifest_data.carrier_name) || "",
+      flight_num: toTitleCase(manifest_data.carrier_no) || "",
+      flight_name: toTitleCase(manifest_data.carrier_name) || "",
       no_of_bags: manifest_data.bag_count || "",
       actual_weight: manifest_data.total_weight || "",
       chargeable_weight: manifest_data.chargeable_weight || "",
-      no_of_box: manifest_data.box_count || ""
+      no_of_box: manifest_data.box_count || "",
+      other_charges: manifest_data.other_charges || "",
+      tsp: manifest_data.tsp || "",
+      rate: manifest_data.rate || "",
+      carrier_charges: manifest_data.carrier_charges || "",
     },
 
     validationSchema: Yup.object({
       coloader_no: Yup.string().required("Coloader No is required"),
-      flight_no: Yup.string().required("Flight Name is required"),
-      no_of_bags: Yup.string().required("Bags is required"),
-      no_of_box: Yup.string().required("Box is required"),
+      flight_num: Yup.string().required("Flight Name is required"),
       actual_weight: Yup.string().required("Enter Manifest Weight"),
       chargeable_weight: Yup.string().required("Enter Chargable Weight"),
       actual_weight: Yup.string().required("Enter Actual Weight"),
@@ -293,9 +307,7 @@ console.log("deleted_packages_id----",deleted_packages_id)
 
       // let a=  2023-04-11T11:26:47.268447+05:30
       let a = data.forwarded_at
-      console.log("data========", a)
       let b = a.split("+")[0]
-      console.log("11111111111", b)
       settoday(b)
     } catch (error) { }
   }, []);
@@ -303,9 +315,14 @@ console.log("deleted_packages_id----",deleted_packages_id)
   const updateManifest = (values) => {
     let fields_name = Object.entries({
       airwaybill_no: values.coloader_no,
-      bag_count: values.no_of_bags,
-      box_count: values.no_of_box,
-      chargeable_weight: values.chargeable_weight,
+      bag_count: values.no_of_bags ? values.no_of_bags : 0,
+      box_count: values.no_of_box ? values.no_of_box : 0,
+      carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
+      carrier_name: values.flight_name ? toTitleCase(values.flight_name).toUpperCase() : '',
+      carrier_no:values.flight_num ? toTitleCase(values.flight_num).toUpperCase() : '',
+      chargeable_weight:values.chargeable_weight ? values.chargeable_weight : "",
+      coloader_mode:coloader_selcted_m,
+      coloader_name:coloader_selected,
       coloader: coloader_id,
       total_weight: values.actual_weight,
     });
@@ -332,20 +349,26 @@ console.log("deleted_packages_id----",deleted_packages_id)
           coloader: coloader_id,
           airwaybill_no: toTitleCase(values.coloader_no).toUpperCase(),
           forwarded_at: today,
-          bag_count: values.no_of_bags,
-          box_count: values.no_of_box,
+          bag_count: values.no_of_bags ? values.no_of_bags : 0,
+          box_count: values.no_of_box ? values.no_of_box : 0,
           total_weight: values.actual_weight,
           manifest_no: manifest_no,
-          chargeable_weight: values.chargeable_weight,
+          chargeable_weight: values.chargeable_weight ? values.chargeable_weight : null,
           coloader_name: (coloader_selected).toUpperCase(),
-          carrier_name: toTitleCase(values.flight_no).toUpperCase(),
-          departed:"False",
+          carrier_name: values.flight_name ? toTitleCase(values.flight_name).toUpperCase() : null,
+          carrier_no: values.flight_num ? toTitleCase(values.flight_num).toUpperCase() : null,
+          carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
+          tsp: values.tsp ? values.tsp : 0,
+          rate:  values.rate ? values.rate : 0,
+          tax_slab: tax_slab,
+          other_charges: values.other_charges ? values.other_charges : null,
+          departed: "False",
           forwarded: "False",
           update: "True",
           forwarded_by: user_id,
           // open_box:open_box ? "True" :"False",
           // box_count:box_quantity,
-          is_scanned:true,
+          is_scanned: true,
           is_update: "True",
           forwarded_branch: user_branch,
           modified_by: user_id,
@@ -533,44 +556,52 @@ console.log("deleted_packages_id----",deleted_packages_id)
     manifest_no && get_orderof_manifest();
   }, [manifest_no, success, refresh]);
 
-useEffect(() => {
-  if (location.state.manifest.packages.length !== 0) {
-    let data = location.state.manifest.packages
-    console.log("daat88888888", data)
-    let temp_list = [];
-    let temp_list2 = [];
-    for (let index = 0; index < data.length; index++) {
-      temp_list.push([
-        data[index].manifest_length,
-        data[index].manifest_breadth,
-        data[index].manifest_height,
-        data[index].manifest_pieces,
-        data[index].id,
-      ]);
-      temp_list2.push(data[index].id);
+  useEffect(() => {
+    if (location.state.manifest.packages.length !== 0) {
+      let data = location.state.manifest.packages
+      console.log("daat88888888", data)
+      let temp_list = [];
+      let temp_list2 = [];
+      for (let index = 0; index < data.length; index++) {
+        temp_list.push([
+          data[index].manifest_length,
+          data[index].manifest_breadth,
+          data[index].manifest_height,
+          data[index].manifest_pieces,
+          data[index].id,
+        ]);
+        temp_list2.push(data[index].id);
+      }
+
+      setrow(temp_list);
+      setlength(temp_list[0][0]);
+      setbreadth(temp_list[0][1]);
+      setheight(temp_list[0][2]);
+      setpieces(temp_list[0][3]);
+      setpackage_id_list(temp_list2);
+      setpackages_id(temp_list2);
+    } else {
+      setrow([["", "", "", ""]]);
     }
+  }, [location])
 
-    setrow(temp_list);
-    setlength(temp_list[0][0]);
-    setbreadth(temp_list[0][1]);
-    setheight(temp_list[0][2]);
-    setpieces(temp_list[0][3]);
-    setpackage_id_list(temp_list2);
-    setpackages_id(temp_list2);
-  } else {
-    setrow([["", "", "", ""]]);
-  }
-}, [location])
+  useEffect(() => {
+    if (package_id_list !== "") {
+      let id_list = packages_id.filter(
+        (p) => package_id_list.indexOf(p) === -1
+      );
+      setdeleted_packages_id(id_list);
+    }
+  }, [package_id_list, packages_id]);
 
-useEffect(() => {
-  if (package_id_list !== "") {
-    let id_list = packages_id.filter(
-      (p) => package_id_list.indexOf(p) === -1
-    );
-    setdeleted_packages_id(id_list);
-  }
-}, [package_id_list, packages_id]);
-
+  useEffect(() => {
+    if (coloader_selcted_m === "Direct AWB") {
+      settax_slab("18%");
+      setIsTaxSlabDisabled(true);
+    } else{
+      setIsTaxSlabDisabled(false);
+    }
+  }, [coloader_selcted_m]);
   return (
     <div>
       <Modal show={show} onHide={handleClose}>
@@ -792,35 +823,61 @@ useEffect(() => {
                       </div>
                     </Col>
                     {(coloader_selcted_m === "Direct AWB" || coloader_selcted_m === "Air Console") &&
-                      <Col lg={3} md={3} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">
-                            Flight Name & Number :
-                          </Label>
-                          <Input
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.flight_no}
-                            invalid={
-                              validation.touched.flight_no &&
-                                validation.errors.flight_no
-                                ? true
-                                : false
-                            }
-                            type="text"
-                            className="form-control-md"
-                            id="input"
-                            name="flight_no"
-                            placeholder="Enter Flight Name"
-                          />
-                          {validation.touched.flight_no &&
-                            validation.errors.flight_no ? (
-                            <FormFeedback type="invalid">
-                              {validation.errors.flight_no}
-                            </FormFeedback>
-                          ) : null}
-                        </div>
-                      </Col>
+                      <>
+                        <Col lg={3} md={3} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">
+                              Flight Name :
+                            </Label>
+                            <Input
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={validation.values.flight_name}
+                              invalid={
+                                validation.touched.flight_name &&
+                                  validation.errors.flight_name
+                                  ? true
+                                  : false
+                              }
+                              type="text"
+                              className="form-control-md"
+                              id="input"
+                              name="flight_num"
+                              placeholder="Enter Flight Name"
+                            />
+                          </div>
+                        </Col>
+                        <Col lg={3} md={3} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">
+                              Flight Number *:
+                            </Label>
+                            <Input
+                              onChange={validation.handleChange}
+                              onBlur={validation.handleBlur}
+                              value={validation.values.flight_num}
+                              invalid={
+                                validation.touched.flight_num &&
+                                  validation.errors.flight_num
+                                  ? true
+                                  : false
+                              }
+                              type="text"
+                              maxLength={7}
+                              className="form-control-md"
+                              id="input"
+                              name="flight_num"
+                              placeholder="Enter Flight Number"
+                            />
+                            {validation.touched.flight_num &&
+                              validation.errors.flight_num ? (
+                              <FormFeedback type="invalid">
+                                {validation.errors.flight_num}
+                              </FormFeedback>
+                            ) : null}
+                          </div>
+                        </Col>
+                      </>
                     }
                     <Col lg={3} md={3} sm={6}>
                       <div className="mb-2">
@@ -881,7 +938,7 @@ useEffect(() => {
                   <Row>
                     <Col lg={3} md={3} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">No of Bags* :</Label>
+                        <Label className="header-child">No of Bags :</Label>
                         <Input
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
@@ -899,17 +956,11 @@ useEffect(() => {
                           name="no_of_bags"
                           placeholder="Enter Total  Bags"
                         />
-                        {validation.touched.no_of_bags &&
-                          validation.errors.no_of_bags ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.no_of_bags}
-                          </FormFeedback>
-                        ) : null}
                       </div>
                     </Col>
                     <Col lg={3} md={3} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">No of Box* :</Label>
+                        <Label className="header-child">No of Box :</Label>
                         <Input
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
@@ -927,12 +978,6 @@ useEffect(() => {
                           name="no_of_box"
                           placeholder="Enter Total Box"
                         />
-                        {validation.touched.no_of_box &&
-                          validation.errors.no_of_box ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.no_of_box}
-                          </FormFeedback>
-                        ) : null}
                       </div>
                     </Col>
                     <Col lg={3} md={3} sm={6}>
@@ -950,8 +995,18 @@ useEffect(() => {
                     </Col>
                     <Col lg={3} md={3} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">TSP* :</Label>
-                        <Input id="input" disabled placeholder="TSP Value" />
+                        <Label className="header-child">TSP :</Label>
+                        <Input
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.tsp || ""}
+                          type="number"
+                          min={0}
+                          className="form-control-md"
+                          id="input"
+                          name="tsp"
+                          placeholder="Enter TSP"
+                        />
                       </div>
                     </Col>
 
@@ -1007,19 +1062,35 @@ useEffect(() => {
 
                     <Col lg={3} md={3} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">Rate* :</Label>
-                        <Input id="input" disabled placeholder="Enter Rate" />
+                        <Label className="header-child">Rate :</Label>
+                        <Input
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.rate || ""}
+                          type="number"
+                          min={0}
+                          className="form-control-md"
+                          id="input"
+                          name="rate"
+                          placeholder="Enter Rate"
+                        />
                       </div>
                     </Col>
                     <Col lg={3} md={3} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">
-                          Other Charges* :
+                          Other Charges :
                         </Label>
                         <Input
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.other_charges || ""}
+                          type="number"
+                          min={0}
+                          className="form-control-md"
                           id="input"
-                          disabled
-                          placeholder="Enter Charges"
+                          name="other_charges"
+                          placeholder="Enter Other Charges"
                         />
                       </div>
                     </Col>
@@ -1029,19 +1100,27 @@ useEffect(() => {
                           Carrier Charges
                         </Label>
                         <Input
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.carrier_charges || ""}
+                          type="number"
+                          min={0}
+                          className="form-control-md"
                           id="input"
-                          disabled
-                          placeholder="Enter Charges"
+                          name="carrier_charges"
+                          placeholder="Enter Carrier Charges"
                         />
                       </div>
                     </Col>
                     <Col lg={3} md={3} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">Tax Slab</Label>
-                        <Input
-                          id="input"
-                          disabled
-                          placeholder="Enter Tax Slab"
+                        <NSearchInput
+                          data_list={tax_slab_list}
+                          data_item_s={tax_slab}
+                          set_data_item_s={settax_slab}
+                          show_search={false}
+                          disable_me={isTaxSlabDisabled}
                         />
                       </div>
                     </Col>
@@ -1206,9 +1285,9 @@ useEffect(() => {
                                     setlength(val.target.value);
                                     item[0] = val.target.value;
                                   }}
-                                  // onFocus={() => {
-                                  //   setclicked(true);
-                                  // }}
+                                // onFocus={() => {
+                                //   setclicked(true);
+                                // }}
                                 />
                               );
                             })}
@@ -1482,9 +1561,9 @@ useEffect(() => {
                                 <>
                                   <div style={{ height: "14.5px" }}></div>
                                   <div
-                                    // onClick={() => {
-                                    //   deleteimage(item1);
-                                    // }}
+                                  // onClick={() => {
+                                  //   deleteimage(item1);
+                                  // }}
                                   >
                                     <MdDeleteForever
                                       style={{

@@ -74,9 +74,9 @@ const ChangedRusheet = () => {
   const [vehicle_bottom, setvehicle_bottom] = useState(103)
   const [vehicle_page, setvehicle_page] = useState(1)
 
-  const [vehicle_type_list, setvehicle_type_list] = useState([]);
-  const [vehicle_type, setvehicle_type] = useState(vehicle_type_list[0]);
-  const [search_vehicle_type, setsearch_vehicle_type] = useState("");
+  // const [vehicle_type_list, setvehicle_type_list] = useState([]);
+  // const [vehicle_type, setvehicle_type] = useState(vehicle_type_list[0]);
+  // const [search_vehicle_type, setsearch_vehicle_type] = useState("");
 
   // Runsheet No
   const [runsheet_no, setrunsheet_no] = useState("");
@@ -123,7 +123,7 @@ const ChangedRusheet = () => {
   const [modal, setmodal] = useState(false);
   const [uploaded_img, setuploaded_img] = useState("");
   const [result_img, setresult_img] = useState("")
-  console.log("result image =====",result_img);
+  console.log("result image =====", result_img);
 
   //Get Driver Name
   const getDrivers = () => {
@@ -254,8 +254,8 @@ const ChangedRusheet = () => {
       driver_name: driver_name.toUpperCase(),
       route_name: route.toUpperCase(),
       vehicle_name: vehicle_no,
-      vehicle_type: vehicle_type.toUpperCase(),
-      pod_image:result_img,
+      // vehicle_type: vehicle_type.toUpperCase(),
+      pod_image: result_img,
     });
 
     let change_fields = {};
@@ -273,14 +273,15 @@ const ChangedRusheet = () => {
         ServerAddress + "runsheet/update_runsheet/" + id,
         {
           change_fields: change_fields,
+          image:  result_img?.substring(0,4) !== "http" ? result_img : null,
           is_defined_route: runsheet.is_defined_route,
           defined_route_name: (defined_route_name).toUpperCase(),
           branch: user.home_branch,
           branch_name: user.branch_nm,
           route: runsheet.is_defined_route ? route_id : null,
           route_name: !runsheet.is_defined_route ? (route).toUpperCase() : "",
-          vehicle_type: (vehicle_type).toUpperCase(),
-          delivery_staff: vehicle_type === "Truck" ? (delivery_staff).toUpperCase() : "",
+          // vehicle_type: (vehicle_type).toUpperCase(),
+          delivery_staff: delivery_staff ? toTitleCase(delivery_staff).toUpperCase() : "",
           driver_name: (driver_name).toUpperCase(),
           branch_name: user.branch_nm,
           driver: driver_id,
@@ -291,7 +292,6 @@ const ChangedRusheet = () => {
           cm_transit_status: status_toggle === true ? cm_current_status : "",
           cm_current_status: cm_current_status.toUpperCase(),
           cm_remarks: toTitleCase(message).toUpperCase(),
-          pod_image:result_img,
         },
         {
           headers: {
@@ -372,7 +372,8 @@ const ChangedRusheet = () => {
       setisupdating(true);
       setdriver_name(toTitleCase(runsheets.driver_name));
       setdriver_id(runsheets.driver);
-      setvehicle_type(toTitleCase(runsheets.vehicle_type));
+      setresult_img(runsheets.pod_image);
+      // setvehicle_type(toTitleCase(runsheets.vehicle_type));
       setrunsheet_no(runsheets.runsheet_no);
       setdelivery_staff(toTitleCase(runsheets.delivery_staff))
       if (runsheets.is_defined_route) {
@@ -403,7 +404,7 @@ const ChangedRusheet = () => {
           cm_current_status: "REJECTED",
           cm_remarks: toTitleCase(message).toUpperCase(),
           change_fields: {},
-          pod_image:result_img,
+          pod_image: result_img,
         },
         {
           headers: {
@@ -651,7 +652,7 @@ const ChangedRusheet = () => {
                         />
                       </div>
                     </Col>
-                    <Col lg={4} md={6} sm={6}>
+                    {/* <Col lg={4} md={6} sm={6}>
                       <div className="mb-3">
                         <Label className="header-child"> Vehicle Type </Label>
                         <SearchInput
@@ -663,7 +664,7 @@ const ChangedRusheet = () => {
                           disable_me={true}
                         />
                       </div>
-                    </Col>
+                    </Col> */}
                     {runsheet.is_defined_route ?
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
@@ -771,28 +772,28 @@ const ChangedRusheet = () => {
                         />
                       </div>
                     </Col>
-                    {vehicle_type === "Truck" &&
-                      <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">
-                            Delivery Staff
-                          </Label>
-                          <Input
-                            value={delivery_staff}
-                            onChange={(event) => {
-                              setdelivery_staff(
-                                event.target.value
-                              );
-                            }}
-                            type="text"
-                            name="delivery_staff"
-                            className="form-control-md"
-                            id="input"
-                            placeholder="Enter Staff Name"
-                          />
-                        </div>
-                      </Col>
-                    }
+                    {/* {vehicle_type === "Truck" && */}
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header-child">
+                          Delivery Staff
+                        </Label>
+                        <Input
+                          value={delivery_staff}
+                          onChange={(event) => {
+                            setdelivery_staff(
+                              event.target.value
+                            );
+                          }}
+                          type="text"
+                          name="delivery_staff"
+                          className="form-control-md"
+                          id="input"
+                          placeholder="Enter Staff Name"
+                        />
+                      </div>
+                    </Col>
+                    {/* } */}
                     {/* <Col md={4} sm={6}>
                       <div className="mb-3">
                         <Label className="header-child">Pod Image </Label>
@@ -800,65 +801,69 @@ const ChangedRusheet = () => {
                       </div>
                     </Col> */}
                     <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2" style={{ position: "relative" }}>
-                          <Label>Pod Image</Label>
-                          <Input
-                          style={{background:"white"}}
-                            className="form-control-md"
-                            name="logo"
-                            // type=""
-                            id="input"
-                            disabled
-                            // accept="image/png,image/jpeg, image/jpg"
-                          />
-                          <button
-                            style={{
-                              border:"none",
-                              position: "absolute",
-                              borderRadius:"2px",
-                              height: "29px",
-                              top: "28.5px",
-                              marginLeft: ".9px",
-                              background:"#e9ecef",
-                            }}
-                            className="form-control-md"
-                            id="input"
-                            type="button"
+                      <div className="mb-2" style={{ position: "relative" }}>
+                        <Label>Pod Image</Label>
+                        <Input
+                          style={{ background: "white" }}
+                          className="form-control-md"
+                          name="logo"
+                          value={result_img}
+                          onChange={(val) => {
+                            setresult_img(val.target.value)
+                          }}
+                          // type=""
+                          id="input"
+                          disabled
+                        // accept="image/png,image/jpeg, image/jpg"
+                        />
+                        <button
+                          style={{
+                            border: "none",
+                            position: "absolute",
+                            borderRadius: "2px",
+                            height: "29px",
+                            top: "28.5px",
+                            marginLeft: ".9px",
+                            background: "#e9ecef",
+                          }}
+                          className="form-control-md"
+                          id="input"
+                          type="button"
+                          onClick={() => setmodal(true)}
+                        >
+                          Choose Image
+                        </button>
+                        <ImgModal
+                          modal={modal}
+                          modal_set={() => {
+                            setmodal(false);
+                          }}
+                          upload_image={(val) => {
+                            setuploaded_img(val);
+                          }}
+                          result_image={(val) => {
+                            setresult_img(val);
+                          }}
+                        />
+                      </div>
+                    </Col>
+
+                    {result_img && (
+                      <Col lg={1} md={2} sm={6}>
+                        <div className="mb-3 parent_div">
+                          <img
                             onClick={() => setmodal(true)}
-                          >
-                            Choose Image 
-                          </button>
-                          <ImgModal
-                            modal={modal}
-                            modal_set={() => {
-                              setmodal(false);
-                            }}
-                            upload_image={(val) => {
-                              setuploaded_img(val);
-                            }}
-                            result_image={(val) => {
-                              setresult_img(val);
+                            src={result_img}
+                            style={{
+                              width: "70px",
+                              height: "70px",
+                              borderRadius: "8px",
+                              boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
                             }}
                           />
                         </div>
                       </Col>
-
-                      {result_img && (
-                        <Col lg={1} md={2} sm={6}>
-                          <div className="mb-3 parent_div">
-                            <img
-                              onClick={() => setmodal(true)}
-                              src={result_img}
-                              style={{
-                                width: "70px",
-                                height: "70px",
-                                borderRadius: "8px",
-                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                              }}
-                            />
-                          </div>
-                         </Col>
-                      )}
+                    )}
                   </Row>
                   {/* </Form> */}
                 </CardBody>

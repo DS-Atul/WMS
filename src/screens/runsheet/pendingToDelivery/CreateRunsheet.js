@@ -40,7 +40,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
   const navigate = useNavigate();
 
   //Vehicle Type
-  const [vehicle_type, setvehicle_type] = useState("TRUCK")
+  // const [vehicle_type, setvehicle_type] = useState("TRUCK")
   const [delivery_staff, setdelivery_staff] = useState("")
 
   //Route
@@ -67,6 +67,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
   const [vehicle_bottom, setvehicle_bottom] = useState(103)
   const [close, setclose] = useState(false)
   //Driver
+  const [driver_phone_no, setdriver_phone_no] = useState("")
   const [driver_list, setdriver_list] = useState([]);
   const [driver_name, setdriver_name] = useState("");
   const [driver_id, setdriver_id] = useState(0);
@@ -205,7 +206,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
           route_name: !defined_route ? (route).toUpperCase() : "",
           defined_route_name: (defined_route_name).toUpperCase(),
           is_defined_route: defined_route,
-          vehicle_type: "FIXED VEHICLE",
+          // vehicle_type: "FIXED VEHICLE",
           driver_name: (driver_name).toUpperCase(),
           branch_name: user.branch_nm,
           driver: driver_id,
@@ -214,7 +215,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
           is_contract_vehicle: is_contract_based,
           // contracted_vehicle_no: (contract_based_vehicle_no).toUpperCase(),
           awb_no_list: awb_no_list,
-          vehicle_type: vehicle_type,
+          // vehicle_type: vehicle_type,
           delivery_staff: (delivery_staff).toUpperCase(),
         },
         {
@@ -386,6 +387,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
         }
       )
       .then((response) => {
+        console.log("U Rresponse===", response)
         if (response.data.next === null) {
           setdriver_loaded(false);
         } else {
@@ -395,12 +397,12 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
           if (driver_page == 1) {
             driver_lists = response.data.results.map((v) => [
               v.id,
-              toTitleCase(v.username),
+              toTitleCase(v.username),v.mobilenumber
             ]);
           } else {
             driver_lists = [
               ...driver_list,
-              ...response.data.results.map((v) => [v.id, toTitleCase(v.username)]),
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.username),v.mobilenumber]),
             ];
           }
           setdriver_count(driver_count + 2);
@@ -607,7 +609,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
               <>
                 {runsheet_type === "Create_Runsheet" ?
                   <>
-                    <div>
+                    {/* <div>
                       <Label>
                         Vehicle Type
                       </Label>
@@ -658,7 +660,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
                           </div>
                         </Col>
                       </Row>
-                    </div>
+                    </div> */}
                     <div style={{ marginTop: "10px" }}>
                       <Label>
                         {" "}
@@ -791,7 +793,16 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
                         data_list={driver_list}
                         setdata_list={setdriver_list}
                         data_item_s={driver_name}
-                        set_data_item_s={setdriver_name}
+                        // set_data_item_s={setdriver_name}
+                        set_data_item_s={(value) => {
+                          let cv = driver_list.forEach((e) => {
+                            if (e[1] === value) {
+                              setdriver_phone_no(e[2]);
+                            }
+                          });
+  
+                          setdriver_name(value);
+                        }}
                         set_id={setdriver_id}
                         search_item={search_driver_name}
                         setsearch_item={setsearch_driver_name}
@@ -803,6 +814,16 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
                         count={driver_count}
                         bottom={driver_bottom}
                         setbottom={setdriver_bottom}
+                      />
+                    </div>
+                    <div style={{ marginTop: "10px" }}>
+                      <Label>Driver Phone No:</Label>
+                      <Input
+                        value={driver_phone_no}
+                        type="text"
+                        className="form-control-md"
+                        id="input"
+                        disabled
                       />
                     </div>
                     <div style={{ marginTop: "10px" }}>

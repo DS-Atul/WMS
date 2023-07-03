@@ -1739,7 +1739,7 @@ const AddClient = () => {
 
                   <Col lg={4} md={6} sm={6}>
                     <div className="mb-3">
-                      <Label className="header-child">Email*</Label>
+                      <Label className="header-child">Branch / Organization Email*</Label>
                       <Input
                         onChange={validation.handleChange}
                         onBlur={validation.handleBlur}

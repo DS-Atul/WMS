@@ -36,7 +36,7 @@ const Add_Vehcile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("location_data =====================", location_data)
+
   // vendor State
   const [vendor_list, setvendor_list] = useState([]);
   const [vendor_name, setvendor_name] = useState("");
@@ -52,15 +52,23 @@ const Add_Vehcile = () => {
   };
   const [circle_btn, setcircle_btn] = useState(true);
   //   State For Saving For Data
+const [vehcile_owner, setvehcile_owner] = useState([   
+"Owned Vehicle",
+"Partner Vehicle",])
+const [vehcile_owner_s, setvehcile_owner_s] = useState("")
+const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
+
   const [vehcile_type, setvehcile_type] = useState([
-    "Owned Vehicle",
-    "Partner Vehicle",
+    "Truck",
+    "Van",
+    "Bike",
   ]);
   const [active_list, setactive_list] = useState(["Active", "Unactive"]);
   const [active_selected, setactive_selected] = useState("Active");
   const [vehcile_type_s, setvehcile_type_s] = useState("");
   const [trans_name, settrans_name] = useState("");
   const [vehcile_no, setvehcile_no] = useState("");
+  const [vehcile_capacity, setvehcile_capacity] = useState("")
   // vehcile image 
   const [modal, setmodal] = useState(false);
   const [uploaded_img, setuploaded_img] = useState("");
@@ -94,6 +102,8 @@ const Add_Vehcile = () => {
         setbranch(toTitleCase(vehicle_data.branch_name));
         setbranch_id(vehicle_data.branch);
         setvehcile_type_s(toTitleCase(vehicle_data.vehcile_type));
+        setvehcile_capacity(vehicle_data.vehcile_capacity);
+        setvehcile_owner_s(toTitleCase(vehicle_data.vehcile_owner));
         setvehcile_no(vehicle_data.vehcile_no);
         setvehcile_model(toTitleCase(vehicle_data.vehcile_model));
         setactive_selected(vehicle_data.active_selected);
@@ -129,6 +139,8 @@ const Add_Vehcile = () => {
           transporter_name: vendor_id,
           branch: branch_id_list,
           vehcile_image: result_img,
+          vehcile_capacity: toTitleCase(vehcile_capacity).toUpperCase(),
+          vehcile_owner: toTitleCase(vehcile_owner_s).toUpperCase(),
         },
         {
           headers: {
@@ -172,8 +184,10 @@ const Add_Vehcile = () => {
     let fields_names = Object.entries({
       branch: branch_ids,
       transporter: vendor_name ? vendor_name : "",
+      vehcile_capacity: vehcile_capacity ? vehcile_capacity : "",
       vehcile_model: vehcile_model,
       vehcile_no: vehcile_no,
+      vehcile_owner: vehcile_owner_s,
       vehcile_type: vehcile_type_s,
     });
     let change_fields = {};
@@ -202,6 +216,8 @@ const Add_Vehcile = () => {
             branch: branch_ids,
             change_fields: change_fields,
             vehcile_image: result_img?.substring(0,4) !== "http" ? result_img : null,
+            vehcile_capacity: vehcile_capacity ? toTitleCase(vehcile_capacity).toUpperCase() : null,
+          vehcile_owner: toTitleCase(vehcile_owner_s).toUpperCase(),
           },
           {
             headers: {
@@ -374,7 +390,10 @@ const Add_Vehcile = () => {
     if (vehcile_type_s !== "") {
       setvehicle_type_error(false);
     }
-    if (vehcile_type_s === "PARTNER VEHCILE" && vendor_name !== "") {
+    if (vehcile_owner_s !== "") {
+      setvehicle_owner_error(false);
+    }
+    if (vehcile_owner_s === "PARTNER VEHCILE" && vendor_name !== "") {
       setvendor_error(false);
     }
     if (vehcile_no !== "") {
@@ -391,7 +410,7 @@ const Add_Vehcile = () => {
     } else {
       setvehicle_len_error(false);
     }
-  }, [vehcile_type_s, vehcile_no, vehcile_model, result_img, branch_list2]);
+  }, [vehcile_type_s, vehcile_no, vehcile_model, result_img, branch_list2, vehcile_owner_s]);
 
   useEffect(() => {
     
@@ -442,6 +461,19 @@ const Add_Vehcile = () => {
                 <Row>
                   <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
+                      <Label className="header-child">Vehicle Owner Info*</Label>
+                      <NSearchInput
+                        data_list={vehcile_owner}
+                        data_item_s={vehcile_owner_s}
+                        set_data_item_s={setvehcile_owner_s}
+                        show_search={false}
+                        error_message={"Please Select Vehicle Type"}
+                        error_s={vehicle_owner_error}
+                      />
+                    </div>
+                  </Col>
+                  <Col lg={4} md={4} sm={4}>
+                    <div className="mb-3">
                       <Label className="header-child">Vehicle Type*</Label>
                       <NSearchInput
                         data_list={vehcile_type}
@@ -453,7 +485,7 @@ const Add_Vehcile = () => {
                       />
                     </div>
                   </Col>
-                  {vehcile_type_s === "Partner Vehicle" && (
+                  {vehcile_owner_s === "Partner Vehicle" && (
                     <Col lg={4} md={4} sm={4}>
                       <div className="mb-3">
                         <Label className="header-child">
@@ -603,6 +635,21 @@ const Add_Vehcile = () => {
                           </div>
                          </Col>
                       )}
+                      
+                  <Col lg={4} md={4} sm={4}>
+                    <div className="mb-3">
+                      <Label className="header-child">container capacity</Label>
+                      <Input
+                        name="vehicle_capacity"
+                        type="text"
+                        id="input"
+                        value={vehcile_capacity}
+                        onChange={(e) => {
+                          setvehcile_capacity(e.target.value);
+                        }}
+                      />
+                    </div>
+                  </Col>
                   <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">Active Status</Label>
@@ -649,10 +696,13 @@ const Add_Vehcile = () => {
                 className="btn btn-info m-1 cu_btn"
                 type="button"
                 onClick={() => {
-                  if (vehcile_type_s === "") {
+                  if (vehcile_owner_s === "") {
+                    setvehicle_owner_error(true);
+                  } else if (vehcile_type_s === "") {
                     setvehicle_type_error(true);
-                  } else if ( 
-                    vehcile_type_s === "Partner Vehicle" &&
+                  }
+                  else if ( 
+                    vehcile_owner_s === "Partner Vehicle" &&
                     vendor_name === ""
                   ) {
                     setvendor_error(true);

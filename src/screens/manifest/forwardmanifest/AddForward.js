@@ -217,7 +217,7 @@ useEffect(() => {
 
     validationSchema: Yup.object({
       coloader_no: Yup.string().required("Coloader No is required"),
-      flight_name: Yup.string().required("Flight Name is required"),
+      // flight_name: Yup.string().required("Flight Name is required"),
       flight_num:Yup.string()
       .min(7,"Flight Number must be 7 Digit")
       .max(7,"Flight Number must be 7 Digit")
@@ -267,9 +267,15 @@ useEffect(() => {
   const updateManifest = (values) => {
     let fields_name = Object.entries({
       airwaybill_no: values.coloader_no,
-      bag_count: values.no_of_bags,
-      chargeable_weight: values.chargeable_weight,
+      bag_count: values.no_of_bags ? values.no_of_bags : 0,
+      box_count: values.no_of_box ? values.no_of_box : 0,
+      carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
+      carrier_name: values.flight_name ? toTitleCase(values.flight_name).toUpperCase() : '',
+      carrier_no:values.flight_num ? toTitleCase(values.flight_num).toUpperCase() : '',
+      chargeable_weight:values.chargeable_weight ? values.chargeable_weight : "",
+      coloader_mode:coloader_selcted_m,
       coloader: coloader_id,
+      coloader_name:coloader_selected,
       total_weight: values.actual_weight,
     });
     console.log("fields_name-------", fields_name)
@@ -301,7 +307,7 @@ useEffect(() => {
           manifest_no: manifest_no,
           chargeable_weight: values.chargeable_weight,
           coloader_name: (coloader_selected).toUpperCase(),
-          carrier_name: toTitleCase(values.flight_name).toUpperCase(),
+          carrier_name: values.flight_name ? toTitleCase(values.flight_name).toUpperCase() : null,
           carrier_no: toTitleCase(values.flight_num).toUpperCase(),
           is_forwarded: "True",
           forwarded_by: user_id,
@@ -316,6 +322,7 @@ useEffect(() => {
           rate:  values.rate ? values.rate : 0,
           carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
           tax_slab: tax_slab,
+          other_charges: values.other_charges ? values.other_charges : null,
         },
 
         {
@@ -826,12 +833,6 @@ const showFun = () =>{
                                 name="flight_name"
                                 placeholder="Enter Flight Name"
                               />
-                              {validation.touched.flight_name &&
-                                validation.errors.flight_name ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.flight_name}
-                                </FormFeedback>
-                              ) : null}
                             </div>
                           </Col>
 
