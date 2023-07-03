@@ -79,9 +79,8 @@ const AddAsset = () => {
     "15-25 C",
     "-25 TO -15 C",
     "Dry Ice",
-    "-90 TO -20",
-    "-250 TO -150",
-    "All In One",
+    "-90 TO -20 C",
+    "-250 TO -150 C",
   ]);
   const [temperature_log_type, settemperature_log_type] = useState("");
   const [box_type_list, setbox_type_list] = useState([
@@ -132,12 +131,13 @@ const AddAsset = () => {
   const [branch_bottom, setbranch_bottom] = useState(103)
 
   const [useproduct_id, setuseproduct_id] = useState("");
-const [product_id_error, setproduct_id_error] = useState(false)
+  const [product_id_error, setproduct_id_error] = useState(false)
   const [isChecked, setisChecked] = useState(true);
   const [is_defective, setis_defective] = useState(false)
   const [purchase_date, setpurchase_date] = useState("");
   const [expiry_date, setexpiry_date] = useState("");
   const [logger_box_no, setlogger_box_no] = useState("");
+  const [old_box_no, setold_box_no] = useState("");
 
   //Callibaration Info
 
@@ -413,6 +413,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
       // setfrom_date(asset_u.purchase_date);
       // if (asset_type === "Temperature Control Box") {
       setuseproduct_id(asset_u.product_id);
+      setold_box_no(asset_u.old_box_no)
       setbox_type(toTitleCase(asset_u.box_type));
       // }
       // else {
@@ -461,6 +462,8 @@ console.log(" asset certificate iamge ",setcertificate_img);
           cm_current_department: user.user_department,
           cm_current_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
           cm_transit_status: (user.user_department_name === "ADMIN") ? 'NOT APPROVED' : (current_status).toUpperCase(),
+          //For old box no 
+          old_box_no: asset_type === "Logger" ? null : old_box_no,
         },
         {
           headers: {
@@ -505,6 +508,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
       is_checked: isChecked,
       is_damaged: is_defective,
       manufacturer_name: manufacture_type,
+      old_box_no: asset_type === "Logger" ? null : old_box_no,
       product_id: asset_type == "Logger" ? logger_box_no : useproduct_id,
       purchase_date: purchase_date,
       temperature_type:
@@ -541,7 +545,7 @@ console.log(" asset certificate iamge ",setcertificate_img);
             asset_type == "Logger"
               ? logger_box_no.toUpperCase()
               : useproduct_id.toUpperCase(),
-
+          old_box_no: asset_type === "Logger" ? null : old_box_no,
           assigned_branch: branch_short_id,
           created_branch: user.home_branch, // It will not updated
           checked_by: isChecked ? user_id : null,
@@ -785,11 +789,11 @@ console.log(" asset certificate iamge ",setcertificate_img);
     }  if (logger_box_type === "Multi Use") {
       settemperature_log_list(["2-8 C","15-25 C","-25 TO -15 C"])
     }  if (logger_box_type === "Dry Ice Single Use") {
-      settemperature_log_list(["-90 TO -20"])
+      settemperature_log_list(["-90 TO -20 C"])
     }  if (logger_box_type === "Dry Ice Multi Use") {
-      settemperature_log_list(["-90 TO -20"])
+      settemperature_log_list(["-90 TO -20 C"])
     } if (logger_box_type === "Liquid Nitrogen"){ 
-      settemperature_log_list(["-250 TO -150"])
+      settemperature_log_list(["-250 TO -150 C"])
     }
   }, [logger_box_type]);
   return (
@@ -1123,6 +1127,10 @@ console.log(" asset certificate iamge ",setcertificate_img);
                               className="form-control-md"
                               id="input"
                               placeholder="Enter Old Box Number"
+                              value={old_box_no}
+                              onChange={(e) => {
+                                setold_box_no(e.target.value);
+                              }}
                             />
                           </div>
                         </Col>
@@ -1719,7 +1727,6 @@ console.log(" asset certificate iamge ",setcertificate_img);
                     document.getElementById("asset_details").scrollIntoView();
 
                   }
-
                   else {
                     isupdating ? updateAsset() : add_asset();
                   }
