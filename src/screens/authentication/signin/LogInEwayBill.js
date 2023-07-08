@@ -90,7 +90,7 @@ function LogInEwayBill() {
         }
       )
       .then(function (response) {
-        console.log("AddEwayAccessToken response----", response)
+        console.log("resp----", response)
         if (response.data.message !== "Please verify account (or sign up first).") {
           dispatch(setEAccessToken(response.data.response.token));
           dispatch(setOrgs(response.data.response.orgs));
@@ -182,13 +182,12 @@ function LogInEwayBill() {
   };
 
   useLayoutEffect(() => {
-    AddEwayAccessToken()
-    // if (ass_token) {
-    //   AddEwayAccessToken();
-    // }
-    // if (time_diff >= 6) {
-    //   AddEwayAccessToken();
-    // }
+    if (ass_token) {
+      AddEwayAccessToken();
+    }
+    if (time_diff >= 6) {
+      AddEwayAccessToken();
+    }
   }, [ass_token, time_diff]);
 
   //  For Step 1 Eway bill

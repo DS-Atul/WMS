@@ -4508,7 +4508,8 @@ const AddOrder = () => {
                       )}
                     </Col>
                     <Col
-                      lg={user.view_coldchain || user.is_superuser ? 2 : 4}
+                      // lg={user.view_coldchain || user.is_superuser ? 2 : 4}
+                      lg={2}
                       md={2}
                       sm={6}
                     >

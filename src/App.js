@@ -42,9 +42,6 @@ const App = () => {
     }
   }, [setpermission]);
 
-
-  
-
   return (
     <>
       <Routes>
