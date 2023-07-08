@@ -192,7 +192,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
 
                     <tr>
                         <th colSpan={2}>&nbsp;Content:: Pharmacutical sample.<br></br>&emsp;</th>
-                        <th colSpan={4}>&nbsp;Special Instruction :<br></br>&nbsp;Dry ice with data logger.<br></br>&nbsp;<br></br>&emsp;</th>
+                        <th colSpan={4}>&nbsp;Special Instruction :<br></br>&nbsp;Dry ice with data logger.<br></br>&nbsp;<br></br><span style={{paddingLeft:"3px"}}>Remarks : </span><span style={{fontWeight:"normal"}}>{order.assettype_remarks ? toTitleCase(order.assettype_remarks) : "-"}</span></th>
                     </tr>
 
                     <tr>
@@ -201,7 +201,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                             Chain Logistics LTD liability for any loss or damage of the shipment will not exceed more<br></br> than $50 or declared value for insurance where shown . This is the non negotiable airway bill. </td>
                     </tr>
                     <tr colSpan={4}>
-                        <td><input type="checkbox"></input><br></br>Ambient</td><td><input type="checkbox"></input><br></br>Frozen</td><td><input type="checkbox"></input><br></br>Refrigerated</td><td><input type="checkbox"></input><br></br>Controlled Ambient&emsp;</td> 
+                        <td> {order.type === "AMBIENT" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Ambient</td><td> {order.type === "FROZEN" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Frozen</td><td> {order.type === "REFRIGERATED" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Refrigerated</td><td> {order.type === "CONTROLLED AMBIENT" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Controlled Ambient&emsp;</td> 
                         {/* Other */}
                     </tr>
                     <tr>

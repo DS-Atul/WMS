@@ -36,6 +36,7 @@ import {
   setFilterE,
   setFilterF,
   setFilterG,
+  setFilterH,
 } from "../../../store/filterValue/FilterValue";
 
 const DataList = ({
@@ -237,6 +238,7 @@ const DataList = ({
     dispatch(setFilterE([]));
     dispatch(setFilterF([]));
     dispatch(setFilterG([]));
+    dispatch(setFilterH([]));
   }, []);
 
   return (

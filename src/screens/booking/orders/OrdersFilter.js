@@ -77,6 +77,10 @@ function OrdersFilter() {
   const [current_status, setcurrent_status] = useState([]);
   const [current_status_id, setcurrent_status_id] = useState([]);
 
+  const [order_channel_filter, setorder_channel_filter] = useState([["WEB","Web"],["MOBILE","Mobile"]])
+  const [order_channel, setorder_channel] = useState([])
+  const [order_channel_id, setorder_channel_id] = useState([])
+
   const [created_by_filter, setcreated_by_filter] = useState([]);
   const [created_by, setcreated_by] = useState([]);
   const [created_by_id, setcreated_by_id] = useState([]);
@@ -87,9 +91,9 @@ function OrdersFilter() {
   const [iscompleted, setiscompleted] = useState(["True", "False"]);
 
   const [order_type_filter, setorder_type_filter] = useState([
-    ["1","New"],
-    ["2","Return"],
-    ["3","Issue"],
+    ["1", "New"],
+    ["2", "Return"],
+    ["3", "Issue"],
   ]);
   const [order_type, setorder_type] = useState([]);
   const [order_type_id, setorder_type_id] = useState([]);
@@ -100,15 +104,15 @@ function OrdersFilter() {
     axios
       .get(
         ServerAddress +
-          `ems/all-users/?search=${search_txt}&p=${page}&records=${data_len}&home_branch=${[
-            "",
-          ]}&username=${[""]}`,
+        `ems/all-users/?search=${search_txt}&p=${page}&records=${data_len}&home_branch=${[
+          "",
+        ]}&username=${[""]}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
-        console.log("response========", )
+        console.log("response========",)
         if (response.data.next === null) {
           setcreated_loaded(false);
         } else {
@@ -127,24 +131,24 @@ function OrdersFilter() {
               ...response.data.results.map((v) => [v.id, toTitleCase(v.username)]),
             ];
           }
-          setcreated_count( created_count + 2);
-          setcreated_by_filter( temp_list);
+          setcreated_count(created_count + 2);
+          setcreated_by_filter(temp_list);
         }
         else {
           setcreated_by_filter([])
         }
-          })
+      })
       .catch((err) => {
         alert(`Error Occur in Get ${err}`);
       });
-      //   for (let index = 0; index < temp.length; index++) {
-      //     temp_list.push([temp[index].id, toTitleCase(temp[index].username)]);
-      //   }
-      //   setcreated_by_filter(temp_list);
-      // })
-      // .catch((err) => {
-      //   alert(`Error Occur in Get`);
-      // });
+    //   for (let index = 0; index < temp.length; index++) {
+    //     temp_list.push([temp[index].id, toTitleCase(temp[index].username)]);
+    //   }
+    //   setcreated_by_filter(temp_list);
+    // })
+    // .catch((err) => {
+    //   alert(`Error Occur in Get`);
+    // });
   };
 
   // const getlocationdata = () => {
@@ -177,9 +181,9 @@ function OrdersFilter() {
     axios
       .get(
         ServerAddress +
-          `master/all-branches/?search=${branch_page_search}&p=${branch_page}&records=${10}&branch_name=${[
-            "",
-          ]}&branch_city=${[""]}&branch_search=${search_txt}&vendor=&data=all`,
+        `master/all-branches/?search=${branch_page_search}&p=${branch_page}&records=${10}&branch_name=${[
+          "",
+        ]}&branch_city=${[""]}&branch_search=${search_txt}&vendor=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -190,7 +194,7 @@ function OrdersFilter() {
         } else {
           setcurrent_branch_loaded(true);
         }
-        temp= response.data.results;
+        temp = response.data.results;
         if (temp.length > 0) {
           if (branch_page === 1) {
             temp_list = response.data.results.map((v) => [
@@ -204,12 +208,12 @@ function OrdersFilter() {
             ];
           }
           setcurrent_branch_count(current_branch_count + 2);
-          setcurrent_branch_filter( temp_list);
+          setcurrent_branch_filter(temp_list);
         }
         else {
           setcurrent_branch_filter([])
         }
-          })
+      })
       .catch((err) => {
         alert(`Error Occur in Get ${err}`);
       });
@@ -229,7 +233,7 @@ function OrdersFilter() {
 
   useEffect(() => {
     getuserdata();
-  }, [page,search_txt ]);
+  }, [page, search_txt]);
 
   useEffect(() => {
     settoggle(false);
@@ -247,13 +251,14 @@ function OrdersFilter() {
     dispatch(setFilterE([created_by_id]));
     dispatch(setFilterF([current_branch_id]));
     // dispatch(setFilterG([order_origin_id]));
-    // dispatch(setFilterH([order_destination_id]));
+    dispatch(setFilterH([order_channel_id]));
     dispatch(setFilterI([iscompleted]));
     dispatch(setFilterG([String(order_type).toUpperCase()]));
   }, [
     delivery_type,
     cold_chain_btn,
     order_origin_id,
+    order_channel_id,
     order_destination_id,
     transportation_mode,
     current_status,
@@ -357,6 +362,20 @@ function OrdersFilter() {
             setlist_b={setcurrent_status}
             show_search={false}
             setlist_id={setcurrent_status_id}
+            page={page}
+            setpage={setpage}
+            setsearch_txt={setsearch_txt}
+          />
+        </div>
+
+        <div>
+          <Label className="filter-label">By Order Channel</Label>
+          <MultiSelect
+            list_a={order_channel_filter}
+            list_b={order_channel}
+            setlist_b={setorder_channel}
+            show_search={false}
+            setlist_id={setorder_channel_id}
             page={page}
             setpage={setpage}
             setsearch_txt={setsearch_txt}

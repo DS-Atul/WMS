@@ -3760,7 +3760,7 @@ const OrderCheckingPage = () => {
   const iscompleted = useSelector((state) => state.filtervalue.data_i);
   const current_branch = useSelector((state) => state.filtervalue.data_f);
   const created_by_id = useSelector((state) => state.filtervalue.data_e);
-
+  const order_channel = useSelector((state) => state.filtervalue.data_h);
   //   const data_len = useSelector((state) => state.pagination.data_length);
   //   const page_num = useSelector((state) => state.pagination.page_number);
   //   const search = useSelector((state) => state.searchbar.search_item);
@@ -3772,7 +3772,7 @@ const OrderCheckingPage = () => {
     axios
       .get(
         ServerAddress +
-        `booking/all_orders/?search=${search}&p=${page_num}&records=${data_len}&delivery_type=${delivery_type}&cold_chain_order=${cold_chain_btn}&transportation_mode=${transportation_mode}&created_by=${created_by_id}&current_branch=${current_branch}&current_status=${current_status}&iscompleted=${iscompleted}`,
+        `booking/all_orders/?search=${search}&p=${page_num}&records=${data_len}&delivery_type=${delivery_type}&cold_chain_order=${cold_chain_btn}&transportation_mode=${transportation_mode}&created_by=${created_by_id}&current_branch=${current_branch}&current_status=${current_status}&iscompleted=${iscompleted}&order_channel=${order_channel}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }

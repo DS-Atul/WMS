@@ -110,6 +110,13 @@ const AddOrder = () => {
   const [docket_no_value, setdocket_no_value] = useState("");
   const [docket_error, setdocket_error] = useState(false);
 
+  // Logger Remarks
+  const [is_credo_box_return, setis_credo_box_return] = useState(false)
+  const [is_credo_return, setis_credo_return] = useState(false)
+  const [is_logger_return, setis_logger_return] = useState(false)
+
+  const [assettype_remarks, setassettype_remarks] = useState("")
+
   //Cold chain
   const [cold_chain, setcold_chain] = useState(false);
   const [nonecold_chain, setnonecold_chain] = useState(false);
@@ -117,6 +124,9 @@ const AddOrder = () => {
   const [cod_list, setcod_list] = useState(["Yes", "No"]);
   const [asset_prov, setasset_prov] = useState(false);
   const [d_cod, setd_cod] = useState("No");
+
+  const [type_list, settype_list] = useState(["Ambient", "Frozen", "Refrigerated", "Controlled Ambient"])
+  const [type, settype] = useState("Ambient")
 
   const [state_list_c, setstate_list_c] = useState([]);
   const [state_s_c, setstate_s_c] = useState("");
@@ -317,6 +327,7 @@ const AddOrder = () => {
   const [commodity_data_list, setcommodity_data_list] = useState([]);
   const [commodity, setcommodity] = useState("");
   const [commodity_id, setcommodity_id] = useState(0);
+  console.log("commodity_id====", commodity_id)
   const [commodity_loaded, setcommodity_loaded] = useState(false);
   const [commodity_count, setcommodity_count] = useState(1);
   const [commodity_bottom, setcommodity_bottom] = useState(103);
@@ -1145,6 +1156,8 @@ const AddOrder = () => {
         ServerAddress + "booking/add_order/",
         {
           // organization: user.organization,
+          type: type ? type.toUpperCase() : null,
+          assettype_remarks: assettype_remarks,
           docket_no: entry_type_btn === "AUTO GENERATE" ? "" : docket_no_value,
           entry_type: entry_type_btn,
           delivery_type: String(delivery_type).toUpperCase(),
@@ -1237,8 +1250,8 @@ const AddOrder = () => {
           starting_docket_no: user.starting_docket_no
             ? user.starting_docket_no
             : "",
-            shipper_contact_no: shipper_contact_no ? shipper_contact_no : null,
-            consignee_contact_no: consignee_contact_no ? consignee_contact_no : null,
+          shipper_contact_no: shipper_contact_no ? shipper_contact_no : null,
+          consignee_contact_no: consignee_contact_no ? consignee_contact_no : null,
           // barcode_no: row6,
           barcode_no: [],
           linked_order: order_type === "New" ? null : linked_order,
@@ -1380,15 +1393,17 @@ const AddOrder = () => {
         ServerAddress + "booking/update_order/" + id,
         {
           change_fields: change_fields,
+          assettype_remarks: assettype_remarks,
+          type: type?.toUpperCase(),
           // organization: user.organization,
           docket_no: docket_no_value,
           entry_type: entry_type_btn,
-          delivery_type: String(delivery_type).toUpperCase(),
+          delivery_type: String(delivery_type)?.toUpperCase(),
           order_created_branch: user.home_branch,
           transportation_mode:
             delivery_type === "LOCAL"
               ? "LOCAL"
-              : String(transport_mode).toUpperCase(),
+              : String(transport_mode)?.toUpperCase(),
           // delivery_mode: delivery_type === "LOCAL" ? "LOCAL" : String(delivery_mode).toUpperCase(),
           delivery_mode: "DOOR TO DOOR",
           order_channel: "WEB",
@@ -1397,15 +1412,15 @@ const AddOrder = () => {
           // shipper: eway_confirm ? eway_list.fromTrdName : shipper_n,
           // consignee: eway_confirm ?eway_list.,
           booking_at: booking_date,
-          local_delivery_type: String(local_delivery_type).toUpperCase(),
+          local_delivery_type: String(local_delivery_type)?.toUpperCase(),
           cold_chain: cold_chain,
           actual_weight: actual_weigth,
           total_quantity: values.total_quantity,
-          cod: String(d_cod).toUpperCase(),
+          cod: String(d_cod)?.toUpperCase(),
           transportation_cost: d_cod === "Yes" ? transportation_cost : null,
           remarks: values.remarks,
           modified_by: user.id,
-          booking_type: String(type_of_booking).toUpperCase(),
+          booking_type: String(type_of_booking)?.toUpperCase(),
           commodity: commodity_id,
           packageList: row,
           deleted_packages: deleted_packages_id,
@@ -1415,7 +1430,7 @@ const AddOrder = () => {
           notification: true,
           asset_type:
             cold_chain === true && asset_prov
-              ? String(asset_info_selected).toUpperCase()
+              ? String(asset_info_selected)?.toUpperCase()
               : "NONE",
           asset:
             asset_info_selected === "With Box" &&
@@ -1432,24 +1447,24 @@ const AddOrder = () => {
                   ? both
                   : [],
 
-          client_name: client.toUpperCase(),
+          client_name: client?.toUpperCase(),
           branch_name: user.branch_nm ? user.branch_nm : "BRANCH NOT SET",
-          shipper_name: shipper_n.toUpperCase(),
-          consignee_name: consignee_n.toUpperCase(),
-          commodity_name: commodity.toUpperCase(),
-          shipper_address: shipper_address.toUpperCase(),
-          consignee_address: consignee_address.toUpperCase(),
-          order_origin: all_shipper_details.toUpperCase(),
-          order_destination: all_consignee_details.toUpperCase(),
-          origin_city: city.toUpperCase(),
-          origin_state: state.toUpperCase(),
+          shipper_name: shipper_n?.toUpperCase(),
+          consignee_name: consignee_n?.toUpperCase(),
+          commodity_name: commodity?.toUpperCase(),
+          shipper_address: shipper_address?.toUpperCase(),
+          consignee_address: consignee_address?.toUpperCase(),
+          order_origin: all_shipper_details?.toUpperCase(),
+          order_destination: all_consignee_details?.toUpperCase(),
+          origin_city: city?.toUpperCase(),
+          origin_state: state?.toUpperCase(),
           origin_pincode: pincode,
-          origin_locality: locality.toUpperCase(),
-          destination_city: consginee_c.toUpperCase(),
-          destination_state: consginee_st.toUpperCase(),
+          origin_locality: locality?.toUpperCase(),
+          destination_city: consginee_c?.toUpperCase(),
+          destination_state: consginee_st?.toUpperCase(),
           destination_pincode: consignee_pincode,
-          destination_locality: locality_c.toUpperCase(),
-          billto_name: billto.toUpperCase(),
+          destination_locality: locality_c?.toUpperCase(),
+          billto_name: billto?.toUpperCase(),
           shipper_location: shipper_locality_id,
           consignee_location: consignee_locality_id,
           assetdeleted_ids: assetdeleted_ids,
@@ -1459,18 +1474,18 @@ const AddOrder = () => {
           order_type: order_type?.toUpperCase(),
           eway_detail: eway_confirm ? eway_value : [],
           cm_transit_status: status_toggle === true ? cm_current_status : "",
-          cm_current_status: cm_current_status.toUpperCase(),
-          cm_remarks: toTitleCase(message).toUpperCase(),
-          shipper: shipper_n.toUpperCase(),
-          consignee: consignee_n.toUpperCase(),
+          cm_current_status: cm_current_status?.toUpperCase(),
+          cm_remarks: toTitleCase(message)?.toUpperCase(),
+          shipper: shipper_n?.toUpperCase(),
+          consignee: consignee_n?.toUpperCase(),
           // shipper: eway_confirm ? eway_list.fromTrdName : (shipper_n).toUpperCase(),
           // consignee: eway_confirm ? eway_list.toTrdName : (consignee_n).toUpperCase(),
           shipper_location: eway_confirm ? locality_id : locality_id_f,
           consignee_location: eway_confirm ? locality_id_to : locality_id_f_c,
           with_ewayBill: eway_confirm ? "True" : "False",
           eway_bill_no: ewaybill_no,
-          consignee_address1: consignee_address.toUpperCase(),
-          shipper_address1: shipper_address.toUpperCase(),
+          consignee_address1: consignee_address?.toUpperCase(),
+          shipper_address1: shipper_address?.toUpperCase(),
         },
         {
           headers: {
@@ -2130,7 +2145,16 @@ const AddOrder = () => {
           ? order_data.linked_order_value
           : ""
       );
-
+      if (order_data.assettype_remarks === "CREDO BOX AND LOGGER RETURN") {
+        setis_credo_box_return(true)
+      }
+      else if (order_data.assettype_remarks === "CREDO BOX RETURN ONLY") {
+        setis_credo_return(true)
+      }
+      else if (order_data.assettype_remarks === "LOGGER RETURN ONLY") {
+        setis_logger_return(true)
+      }
+      settype(toTitleCase(order_data.type))
       setstate(toTitleCase(order_data.shipper_state));
       setlocality_id_f(order_data.shipper_location);
       setcity(toTitleCase(order_data.shipper_city));
@@ -2174,7 +2198,7 @@ const AddOrder = () => {
       settransportation_cost(order_data.transportation_cost);
 
       setcommodity(order_data.commodity_name);
-      setcommodity_id(order.commodity);
+      setcommodity_id(order_data.commodity);
       setd_cod(toTitleCase(order_data.cod));
       if (order_data.cod === "Yes") {
         settransportation_cost(order_data.transportation_cost);
@@ -3945,6 +3969,7 @@ const AddOrder = () => {
 
   const handleDateChange = (event) => {
     const selectedDate = event.target.value;
+    console.log("event.target.value===", event.target.value)
     const currentDate = new Date().toISOString().slice(0, 10);
 
     // Calculate the minimum and maximum dates allowed
@@ -3965,13 +3990,47 @@ const AddOrder = () => {
   };
 
   useEffect(() => {
-    if (ewaybill_no?.length === 12 && booking_through) {
-      check_ewb_attached(ewaybill_no);
-    }
-    else if (ewaybill_no?.length !== 12 && booking_through) {
-      setewaybill_no_error(true);
+    if (location.state === null) {
+      if (ewaybill_no?.length === 12 && booking_through) {
+        check_ewb_attached(ewaybill_no);
+      }
+      else if (ewaybill_no?.length !== 12 && booking_through) {
+        setewaybill_no_error(true);
+      }
     }
   }, [ewaybill_no])
+
+  useEffect(() => {
+    if (is_credo_box_return) {
+      setassettype_remarks("CREDO BOX AND LOGGER RETURN")
+      setis_credo_return(false)
+      setis_logger_return(false)
+    }
+  }, [is_credo_box_return])
+
+  useEffect(() => {
+    if (is_credo_return) {
+      setassettype_remarks("CREDO BOX RETURN ONLY")
+      setis_credo_box_return(false)
+      setis_logger_return(false)
+    }
+  }, [is_credo_return])
+
+  useEffect(() => {
+    if (is_logger_return) {
+      setassettype_remarks("LOGGER RETURN ONLY")
+      setis_credo_return(false)
+      setis_credo_box_return(false)
+    }
+
+  }, [is_logger_return])
+
+  useEffect(() => {
+    if (!booking_through && location.state === null) {
+      seteway_confirm(false);
+    }
+  }, [booking_through])
+
 
   return (
     <div>
@@ -4564,7 +4623,7 @@ const AddOrder = () => {
                             }}
                             disabled={!user.is_superuser}
                           /> */}
-                          <input
+                          <Input
                             type="datetime-local"
                             className="form-control d-block form-control-md"
                             id="input"
@@ -4812,6 +4871,71 @@ const AddOrder = () => {
                           </Col>
                         </>
                       ) : null}
+
+                      {asset_info_selected && <>
+                        <Col
+                          lg={4}
+                          md={4}
+                          sm={6}
+                        >
+                          <div className="mb-3">
+                            <Label className="header-child">Credo box and Logger return</Label>
+                            <br />
+                            <Input
+                              className="form-check-input-sm"
+                              type="checkbox"
+                              id="box"
+                              onClick={() => {
+                                setis_credo_box_return(!is_credo_box_return);
+                              }}
+                              readOnly={true}
+                              checked={is_credo_box_return}
+                            />
+                          </div>
+                        </Col>
+
+                        <Col
+                          lg={4}
+                          md={4}
+                          sm={6}
+                        >
+                          <div className="mb-3">
+                            <Label className="header-child">Logger return only</Label>
+                            <br />
+                            <Input
+                              className="form-check-input-sm"
+                              type="checkbox"
+                              id="box"
+                              onClick={() => {
+                                setis_logger_return(!is_logger_return);
+                              }}
+                              readOnly={true}
+                              checked={is_logger_return}
+                            />
+                          </div>
+                        </Col>
+
+                        <Col
+                          lg={4}
+                          md={4}
+                          sm={6}
+                        >
+                          <div className="mb-3">
+                            <Label className="header-child">Credo box return only</Label>
+                            <br />
+                            <Input
+                              className="form-check-input-sm"
+                              type="checkbox"
+                              id="box"
+                              onClick={() => {
+                                setis_credo_return(!is_credo_return);
+                              }}
+                              readOnly={true}
+                              checked={is_credo_return}
+                            />
+                          </div>
+                        </Col>
+                      </>}
                     </Row>
                   </CardBody>
                 ) : null}
@@ -5995,8 +6119,21 @@ const AddOrder = () => {
                         />
                       </div>
                     </Col>
-
-                    <Col lg={12}>
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child">Type</Label>
+                        <NSearchInput
+                          data_list={type_list}
+                          data_item_s={type}
+                          set_data_item_s={settype}
+                          show_search={false}
+                        />
+                        {/* <div className="mt-1 error-text" color="danger">
+                          {d_cod_error ? "Select COD Type" : null}
+                        </div> */}
+                      </div>
+                    </Col>
+                    <Col lg={8}>
                       <div className="mb-2">
                         <Label className="header-child">Remarks</Label>
                         <Input
