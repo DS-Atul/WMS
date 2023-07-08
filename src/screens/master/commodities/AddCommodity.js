@@ -559,108 +559,108 @@ const Add_Commodity = () => {
 
   // 341003179578, 311003179579, 371003179580, 341003179581, 311003179582, 381003179583, 321003179585, 391003179586, 361003179587, 361003179590, 301003179589, 331003179591
   // 371003179593, 341003179594, 301003179592, ['321003179598', '391003179599', '321003179600']
- const [a, seta] = useState([])
- const post_awb = (index) => {
-  axios
-    .post(
-      `https://dev.api.easywaybill.in/ezewb/v1/ewb/generate?gstin=05AAAAT2562R1Z3`,
-      {
-        "supplyType": "O",
-        "transactionType": "1",
-        "subSupplyType": "1",
-        "docType": "INV",
-        "docNo": `DHLMH49009${index}`,
-        "docDate": "30/06/2023",
-        "invTyp": "B2B",
-        "fromGstin": "05AAAAT2562R1Z3",
-        "fromTrdName": "K R AGENCIES",
-        "dispatchFromGstin": "05AAAAT2562R1Z3",
-        "dispatchFromTradeNam": "Nandss entity-1",
-        "fromAddr1": "f 174 ground floor saraswati loke, ; sardhana road Roorkee road uttaranchal",
-        "fromAddr2": "shyam vihar phase 3 complex;HO 1272 indira nagar sastri nagar; GDN: 25 5/2, OPP.MANDI, DELHI ROAD,MEERUT",
-        "fromPlace": "INDRAA NAGAR",
-        "fromStateCode": "27",
-        "fromPincode": "415124",
-        "toGstin": "05AAAAU1183B2ZZ",
-        "toTrdName": "UTTARANCHALL KRISHI K R UTPADAN",
-        "shipToGstin": "05AAAAU1183B2ZZ",
-        "shipToTradeName": "Nina entity-2",
-        "toAddr1": "LASUDIA MORI DEWAS NAKA",
-        "toAddr2": "LASUDIA MORI DEWAS NAKA",
-        "toPlace": "Ichalkaranji",
-        "toPincode": "416115",
-        "toStateCode": "27",
-        "totInvValue": "100032",
-        "totalValue": "1000",
-        "cgstValue": "16",
-        "sgstValue": "16",
-        "igstValue": "0",
-        "cessValue": "0",
-        "cessNonAdvolValu": "0.00",
-        "otherValue": "0",
-        "transMode": "2",
-        "transDistance": "196",
-        "transDocDate": "30/06/2023",
-        "transDocNo": "124423",
-        "transId": "05AAAAR1685F1ZO",
-        "transName": "Ashwin Guj Trans",
-        "vehicleNo": null,
-        "actFromStateCode": "27",
-        "actToStateCode": "27",
-        "vehicleType": null,
-        "itemList": [
-          {
-            "itemNo": "1",
-            "productName": "Mango-1",
-            "productDesc": "Fruit",
-            "hsnCode": "71",
-            "quantity": "10.00",
-            "qtyUnit": "KGS",
-            "taxableAmount": "700",
-            "sgstRate": 2.50,
-            "cgstRate": 2.50,
-            "igstRate": 0,
-            "cessRate": "0.00",
-            "cessNonAdvol": "0.00",
-            "txp": "T"
-          },
-          {
-            "itemNo": "2",
-            "productName": "Mango-2",
-            "productDesc": "Fruit",
-            "hsnCode": "71",
-            "quantity": "10.00",
-            "qtyUnit": "KGS",
-            "taxableAmount": "400",
-            "sgstRate": 0.125,
-            "cgstRate": 0.125,
-            "igstRate": 0,
-            "cessRate": "0.00",
-            "cessNonAdvol": "0.00",
-            "txp": "T"
-          }
-        ],
-        "userGstin": "05AAAAT2562R1Z3"
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${b_acess_token}`,
+  const [a, seta] = useState([])
+  const post_awb = (index) => {
+    axios
+      .post(
+        `https://dev.api.easywaybill.in/ezewb/v1/ewb/generate?gstin=05AAAAT2562R1Z3`,
+        {
+          "supplyType": "O",
+          "transactionType": "1",
+          "subSupplyType": "1",
+          "docType": "INV",
+          "docNo": `DHLMH49009${index}`,
+          "docDate": "30/06/2023",
+          "invTyp": "B2B",
+          "fromGstin": "05AAAAT2562R1Z3",
+          "fromTrdName": "K R AGENCIES",
+          "dispatchFromGstin": "05AAAAT2562R1Z3",
+          "dispatchFromTradeNam": "Nandss entity-1",
+          "fromAddr1": "f 174 ground floor saraswati loke, ; sardhana road Roorkee road uttaranchal",
+          "fromAddr2": "shyam vihar phase 3 complex;HO 1272 indira nagar sastri nagar; GDN: 25 5/2, OPP.MANDI, DELHI ROAD,MEERUT",
+          "fromPlace": "INDRAA NAGAR",
+          "fromStateCode": "27",
+          "fromPincode": "415124",
+          "toGstin": "05AAAAU1183B2ZZ",
+          "toTrdName": "UTTARANCHALL KRISHI K R UTPADAN",
+          "shipToGstin": "05AAAAU1183B2ZZ",
+          "shipToTradeName": "Nina entity-2",
+          "toAddr1": "LASUDIA MORI DEWAS NAKA",
+          "toAddr2": "LASUDIA MORI DEWAS NAKA",
+          "toPlace": "Ichalkaranji",
+          "toPincode": "416115",
+          "toStateCode": "27",
+          "totInvValue": "100032",
+          "totalValue": "1000",
+          "cgstValue": "16",
+          "sgstValue": "16",
+          "igstValue": "0",
+          "cessValue": "0",
+          "cessNonAdvolValu": "0.00",
+          "otherValue": "0",
+          "transMode": "2",
+          "transDistance": "196",
+          "transDocDate": "30/06/2023",
+          "transDocNo": "124423",
+          "transId": "05AAAAR1685F1ZO",
+          "transName": "Ashwin Guj Trans",
+          "vehicleNo": null,
+          "actFromStateCode": "27",
+          "actToStateCode": "27",
+          "vehicleType": null,
+          "itemList": [
+            {
+              "itemNo": "1",
+              "productName": "Mango-1",
+              "productDesc": "Fruit",
+              "hsnCode": "71",
+              "quantity": "10.00",
+              "qtyUnit": "KGS",
+              "taxableAmount": "700",
+              "sgstRate": 2.50,
+              "cgstRate": 2.50,
+              "igstRate": 0,
+              "cessRate": "0.00",
+              "cessNonAdvol": "0.00",
+              "txp": "T"
+            },
+            {
+              "itemNo": "2",
+              "productName": "Mango-2",
+              "productDesc": "Fruit",
+              "hsnCode": "71",
+              "quantity": "10.00",
+              "qtyUnit": "KGS",
+              "taxableAmount": "400",
+              "sgstRate": 0.125,
+              "cgstRate": 0.125,
+              "igstRate": 0,
+              "cessRate": "0.00",
+              "cessNonAdvol": "0.00",
+              "txp": "T"
+            }
+          ],
+          "userGstin": "05AAAAT2562R1Z3"
         },
-      }
-    )
-    .then(function (response) {
-      console.log("response=======eway bill detail", response);
-      if(response.data?.response){
-        seta(prevData => prevData.concat(response.data.response.ewbNo))
-      }
-     
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${b_acess_token}`,
+          },
+        }
+      )
+      .then(function (response) {
+        console.log("response=======eway bill detail", response);
+        if (response.data?.response) {
+          seta(prevData => prevData.concat(response.data.response.ewbNo))
+        }
 
-    })
-    .catch((error) => {
-      console.log("eroorrrrrrrr", error)
-    })
-};
+
+      })
+      .catch((error) => {
+        console.log("eroorrrrrrrr", error)
+      })
+  };
 
   useEffect(() => {
     for (let index = 0; index < 10; index++) {
@@ -669,17 +669,14 @@ const Add_Commodity = () => {
     }
   }, [])
 
-useEffect(() => {
-  console.log("a---------", a)
+  useEffect(() => {
+    console.log("a---------", a)
 
-}, [a])
+  }, [a])
 
- 
-
-return (
+  return (
     <div style={{ display: data_type && "flex" }}>
-
-      <Modal show={show} onHide={handleClose}>
+     <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
         </Modal.Header>

@@ -104,7 +104,8 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                             toTitleCase(order.shipper_pincode)}
                     </td></tr>
                     <tr>
-                        <th rowSpan={2}>&nbsp;Contact No.</th><td rowSpan={2}><b>Phone:</b>--<br></br>&nbsp;</td>
+                        {/* <th rowSpan={2}>&nbsp;Contact No.</th><td rowSpan={2}><b>Phone: </b>{order.shipper_contact_no ? order.shipper_contact_no : "-"}<br></br>&nbsp;</td> */}
+                        <th rowSpan={2}>&nbsp;Contact No.</th><td rowSpan={2}>{order.shipper_contact_no ? order.shipper_contact_no : "-"}<br></br>&nbsp;</td>
                     </tr>
                     <tr>
                         <th colSpan={1}>&nbsp;Destination</th><td colSpan={3}>
@@ -183,7 +184,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                     </td></tr>
 
                     <tr>
-                        <th rowSpan={2}>&nbsp;Contact No.</th><td rowSpan={2}><b>Phone:</b>--<br></br>&nbsp;</td>
+                        <th rowSpan={2}>&nbsp;Contact No.</th><td rowSpan={2}>{order.consignee_contact_no ? order.consignee_contact_no : "-"}<br></br>&nbsp;</td>
                     </tr>
                     <tr>
                         <th colSpan={1}>&nbsp;Dimensions</th><td colSpan={3}>-</td>
@@ -200,7 +201,8 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                             Chain Logistics LTD liability for any loss or damage of the shipment will not exceed more<br></br> than $50 or declared value for insurance where shown . This is the non negotiable airway bill. </td>
                     </tr>
                     <tr colSpan={4}>
-                        <td><input type="checkbox"></input><br></br>Ambient</td><td><input type="checkbox"></input><br></br>Frozen</td><td><input type="checkbox"></input><br></br>Refrigerated</td><td><input type="checkbox"></input><br></br>Other&emsp;</td>
+                        <td><input type="checkbox"></input><br></br>Ambient</td><td><input type="checkbox"></input><br></br>Frozen</td><td><input type="checkbox"></input><br></br>Refrigerated</td><td><input type="checkbox"></input><br></br>Controlled Ambient&emsp;</td> 
+                        {/* Other */}
                     </tr>
                     <tr>
                         <td colSpan={4} style={{ textAlign: "left", paddingLeft: "4px" }}>

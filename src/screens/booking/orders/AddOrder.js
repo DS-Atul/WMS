@@ -76,6 +76,7 @@ const AddOrder = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
   const dispatch = useDispatch();
   const location = useLocation();
+  console.log("location====", location)
   const navigate = useNavigate();
   const [page, setpage] = useState(1);
 
@@ -174,6 +175,7 @@ const AddOrder = () => {
 
   //For Booking Date
   const [booking_date, setbooking_date] = useState("");
+  const [booking_date_error, setbooking_date_error] = useState(false)
 
   //Delivery Mode
   const [delivery_mode_list, setdelivery_mode_list] = useState([]);
@@ -386,9 +388,7 @@ const AddOrder = () => {
   ];
 
   const [row2, setrow2] = useState([dimension_list2]);
-  console.log("row2---", row2)
   const [row4, setrow4] = useState([["", val, "", "", ""]]);
-  console.log("row4====", row4[row4.length - 1])
 
   //For Calculation Info
   const [cal_type, setcal_type] = useState("");
@@ -745,7 +745,12 @@ const AddOrder = () => {
       else if (type_of_booking === "") {
         setbooking_type_error(true);
         doc_no_scroll.scrollIntoView();
-      } else if (shipper_n === "" && !booking_through) {
+      }
+      else if (booking_date === "") {
+        setbooking_date_error(true);
+        doc_no_scroll.scrollIntoView();
+      }
+      else if (shipper_n === "" && !booking_through) {
         setshipper_error(true);
         doc_no_scroll.scrollIntoView();
       } else if (state === "" && !booking_through) {
@@ -823,10 +828,21 @@ const AddOrder = () => {
       else if (row2[row2.length - 1][0].length !== 12 && row2[row2.length - 1][0].length !== 0) {
         alert("Eway Bill Number Must Be 12 Digit");
       }
-
       else {
-        // aa(values)
-        // isupdating ? update_order(values) : send_order_data(values);
+        let total = 0;
+        let hasInvalidData = false;
+        for (let i = 0; i < row2.length; i++) {
+          total += parseInt(row2[i][3]);
+          const data = row2[i][0].trim();
+
+          if (data.length === 12 && !/^.{1,11}$/.test(data)) {
+            hasInvalidData = true;
+            break;
+          }
+        }
+        if (total >= 50000 && !hasInvalidData) {
+          alert(`Your invoice amount is "${total}" and you don't have a valid EwayBill number.`);
+        }
         isupdating ? update_order(values) : setShowOrder(true);
       }
     },
@@ -1221,6 +1237,8 @@ const AddOrder = () => {
           starting_docket_no: user.starting_docket_no
             ? user.starting_docket_no
             : "",
+            shipper_contact_no: shipper_contact_no ? shipper_contact_no : null,
+            consignee_contact_no: consignee_contact_no ? consignee_contact_no : null,
           // barcode_no: row6,
           barcode_no: [],
           linked_order: order_type === "New" ? null : linked_order,
@@ -1263,7 +1281,7 @@ const AddOrder = () => {
           setrow4([["", val, "", "", ""]])
           settoggle_order(true);
           setShowOrder(false);
-          setrow([["","","",""]])
+          setrow([["", "", "", ""]])
           setconsignee_n("")
           setconsginee_st("")
           setconsginee_c("")
@@ -1271,7 +1289,7 @@ const AddOrder = () => {
           setlocality_c("")
           setcommodity("")
           setlocal_delivery_type("")
-          setrow1([["",""]])
+          setrow1([["", ""]])
           seteway_confirm(false)
           setbooking_through(false)
         }
@@ -1324,6 +1342,7 @@ const AddOrder = () => {
       commodity_name: commodity,
       consignee_address_line: consignee_address, //
       consignee_city: destinationcity,
+      consignee_contact_no: consignee_contact_no ? consignee_contact_no : "",
       consignee_locality: locality_c,
       consignee_name: consignee_n,
       consignee_pincode: consignee_pincode,
@@ -1336,6 +1355,7 @@ const AddOrder = () => {
 
       shipper_address_line: shipper_address,
       shipper_city: origincity,
+      shipper_contact_no: shipper_contact_no ? shipper_contact_no : "",
       shipper_locality: shipper_locality,
       shipper_name: shipper_n,
       shipper_pincode: shipper_pincode,
@@ -1389,6 +1409,8 @@ const AddOrder = () => {
           commodity: commodity_id,
           packageList: row,
           deleted_packages: deleted_packages_id,
+          shipper_contact_no: shipper_contact_no ? shipper_contact_no : null,
+          consignee_contact_no: consignee_contact_no ? consignee_contact_no : null,
           InvoiceList: [],
           notification: true,
           asset_type:
@@ -1851,28 +1873,30 @@ const AddOrder = () => {
     }
   };
 
-  useEffect(() => {
-    let date = new Date();
-    let added_date_time =
-      String(date.getDate()).length === 1
-        ? "0" + String(date.getDate())
-        : String(date.getDate());
-    let month =
-      String(date.getMonth() + 1).length === 1
-        ? "0" + String(date.getMonth() + 1)
-        : String(date.getMonth() + 1);
-    let year = String(date.getFullYear());
+  // useEffect(() => {
+  //   if (location.state === null) {
+  //     let date = new Date();
+  //     let added_date_time =
+  //       String(date.getDate()).length === 1
+  //         ? "0" + String(date.getDate())
+  //         : String(date.getDate());
+  //     let month =
+  //       String(date.getMonth() + 1).length === 1
+  //         ? "0" + String(date.getMonth() + 1)
+  //         : String(date.getMonth() + 1);
+  //     let year = String(date.getFullYear());
 
-    let hour =
-      String(date.getHours()).length === 1
-        ? "0" + String(date.getHours())
-        : String(date.getHours());
-    let minutes =
-      String(date.getMinutes()).length === 1
-        ? "0" + String(date.getMinutes())
-        : date.getMinutes();
-    setbooking_date(`${year}-${month}-${added_date_time}T${hour}:${minutes}`);
-  }, []);
+  //     let hour =
+  //       String(date.getHours()).length === 1
+  //         ? "0" + String(date.getHours())
+  //         : String(date.getHours());
+  //     let minutes =
+  //       String(date.getMinutes()).length === 1
+  //         ? "0" + String(date.getMinutes())
+  //         : date.getMinutes();
+  //     setbooking_date(`${year}-${month}-${added_date_time}T${hour}:${minutes}`);
+  //   }
+  // }, []);
 
   useEffect(() => {
     booking_type();
@@ -2174,6 +2198,8 @@ const AddOrder = () => {
       setorigincity(toTitleCase(order_data.shipper_city));
       setorigincity_id(toTitleCase(order_data.shipper_city_id));
       setshipper_locality(toTitleCase(order_data.shipper_locality));
+      setshipper_contact_no(order_data.shipper_contact_no);
+      setconsignee_contact_no(order_data.consignee_contact_no);
 
       setconsignee(toTitleCase(order_data.consignee_name));
       setconsignee_id(order_data.consignee);
@@ -2195,6 +2221,18 @@ const AddOrder = () => {
       setshipper_add_1(toTitleCase(order_data.shipper_address_line));
       setdestinationcity(toTitleCase(order_data.consignee_city));
       setdestinationcity_id(toTitleCase(order_data.consignee_city_id));
+
+      let data = order_data.booking_at
+      const dateTime = new Date(data);
+
+      // Get the hours and minutes in the desired format
+      const hours = String(dateTime.getUTCHours()).padStart(2, '0');
+      const minutes = String(dateTime.getUTCMinutes()).padStart(2, '0');
+
+      // Create the converted date and time string
+      const convertedDateTime = `${dateTime.toISOString().slice(0, 10)}T${hours}:${minutes}`;
+      setbooking_date(convertedDateTime)
+
     } catch (error) { }
   }, []);
 
@@ -2571,6 +2609,7 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
+
         if (response.data.response !== null && typeof (response.data) !== "string") {
           // if (response.data.length > 0) {
           if (is_eway === "yes") {
@@ -2742,7 +2781,9 @@ const AddOrder = () => {
   const [shipper_n, setshipper_n] = useState("");
   const [consignee_n, setconsignee_n] = useState("");
   const [consignee_address, setconsignee_address] = useState("");
+  const [consignee_contact_no, setconsignee_contact_no] = useState(null)
   const [shipper_address, setshipper_address] = useState("");
+  const [shipper_contact_no, setshipper_contact_no] = useState(null)
   // Address Line 1 Shipper and consignee Ended
   const [state_error, setstate_error] = useState(false);
   const [state_page, setstate_page] = useState(1);
@@ -3607,6 +3648,9 @@ const AddOrder = () => {
     if (cold_chain || nonecold_chain) {
       setcoldchain_error(false);
     }
+    if (booking_date) {
+      setbooking_date_error(false);
+    }
   }, [
     cold_chain,
     nonecold_chain,
@@ -3614,6 +3658,7 @@ const AddOrder = () => {
     client,
     transport_mode,
     shipper,
+    booking_date,
     consignee,
     shipper_n,
     consignee_n,
@@ -3866,6 +3911,68 @@ const AddOrder = () => {
 
   // const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
 
+  useEffect(() => {
+    if (!user.is_superuser && location.state === null) {
+      const currentDate = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(currentDate.getDate() - 1);
+      const tomorrow = new Date();
+      tomorrow.setDate(currentDate.getDate() + 1); // Add 2 instead of 1 to include tomorrow
+
+      const formattedYesterday = formatDateTime(yesterday);
+      const formattedToday = formatDateTime(currentDate);
+      const formattedTomorrow = formatDateTime(tomorrow);
+
+      setbooking_date(formattedToday);
+      document.getElementById("input").setAttribute("min", formattedYesterday);
+      document.getElementById("input").setAttribute("max", formattedTomorrow);
+    }
+    else if (user.is_superuser && location.state === null) {
+      const currentDate = new Date();
+      const formattedToday = formatDateTime(currentDate);
+      setbooking_date(formattedToday);
+    }
+  }, [user.is_superuser]);
+
+  const formatDateTime = (dateTime) => {
+    const year = dateTime.getFullYear();
+    const month = String(dateTime.getMonth() + 1).padStart(2, "0");
+    const day = String(dateTime.getDate()).padStart(2, "0");
+    const hours = String(dateTime.getHours()).padStart(2, "0");
+    const minutes = String(dateTime.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const handleDateChange = (event) => {
+    const selectedDate = event.target.value;
+    const currentDate = new Date().toISOString().slice(0, 10);
+
+    // Calculate the minimum and maximum dates allowed
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() - 1);
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 2); // Add 2 instead of 1 to include tomorrow
+
+    if (
+      (!user.is_superuser && selectedDate >= minDate.toISOString().slice(0, 10) && selectedDate <= maxDate.toISOString().slice(0, 10)) ||
+      user.is_superuser
+    ) {
+      setbooking_date(selectedDate);
+    } else {
+      // Reset the booking date if it's outside the allowed range
+      setbooking_date("");
+    }
+  };
+
+  useEffect(() => {
+    if (ewaybill_no?.length === 12 && booking_through) {
+      check_ewb_attached(ewaybill_no);
+    }
+    else if (ewaybill_no?.length !== 12 && booking_through) {
+      setewaybill_no_error(true);
+    }
+  }, [ewaybill_no])
+
   return (
     <div>
       {/* {!eway_loaded && memoizedLogInEwayBill} */}
@@ -3921,10 +4028,10 @@ const AddOrder = () => {
               {/* <Button type="button" variant="primary" onClick={handleSubmitOrder}> */}
               No
             </Button>
-            <Button 
-            variant="danger" onClick={() =>  setShowOrder(false)}
-            style={{marginLeft:"-420px",marginRight:"380px"}}>
-             Cancel
+            <Button
+              variant="danger" onClick={() => setShowOrder(false)}
+              style={{ marginLeft: "-420px", marginRight: "380px" }}>
+              Cancel
             </Button>
           </Modal.Footer>
         </Modal>
@@ -4130,19 +4237,22 @@ const AddOrder = () => {
                                   id="input"
                                   value={ewaybill_no}
                                   onChange={(e) => {
-                                    setewaybill_no(e.target.value);
-                                    if (e.target.value.length === 12) {
-                                      check_ewb_attached(e.target.value);
+                                    const { value } = e.target;
+                                    if (value.length <= 12) {
+                                      setewaybill_no(e.target.value);
                                     }
-                                    else {
-                                      setewaybill_no_error(true);
-                                    }
+                                    // if (e.target.value.length <= 12) {
+                                    //   // check_ewb_attached(e.target.value);
+                                    // }
+                                    // else {
+                                    //   setewaybill_no_error(true);
+                                    // }
                                   }}
-                                  onBlur={() => {
-                                    if (ewaybill_no.length !== 12 && booking_through) {
-                                      setewaybill_no_error(true);
-                                    }
-                                  }}
+                                  // onBlur={() => {
+                                  //   if (ewaybill_no.length !== 12 && booking_through) {
+                                  //     setewaybill_no_error(true);
+                                  //   }
+                                  // }}
                                   placeholder="Enter Eway Bill Number"
                                   disabled={isupdating}
                                   invalid={
@@ -4443,7 +4553,7 @@ const AddOrder = () => {
                           Booking Date & Time
                         </Label>
                         <div>
-                          <input
+                          {/* <input
                             type="datetime-local"
                             className="form-control d-block form-control-md "
                             id="input"
@@ -4452,7 +4562,18 @@ const AddOrder = () => {
                               setbooking_date(val.target.value);
                             }}
                             disabled={!user.is_superuser}
+                          /> */}
+                          <input
+                            type="datetime-local"
+                            className="form-control d-block form-control-md"
+                            id="input"
+                            value={booking_date}
+                            onChange={handleDateChange}
+                            invalid={booking_date_error}
                           />
+                          <FormFeedback type="invalid">
+                            Booking Date Date Required
+                          </FormFeedback>
                         </div>
                       </div>
                     </Col>
@@ -4931,6 +5052,28 @@ const AddOrder = () => {
                             </div>
                           </Col>
 
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Contact Number
+                              </Label>
+                              <Input
+                                maxLength={10}
+                                value={shipper_contact_no}
+                                type="number"
+                                className="form-control-md"
+                                id="input"
+                                onChange={(e) => {
+                                  const { value } = e.target;
+                                  if (value.length <= 10) {
+                                    setshipper_contact_no(e.target.value);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </Col>
+
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
                               <Label className="header-child">
@@ -4947,6 +5090,7 @@ const AddOrder = () => {
                               />
                             </div>
                           </Col>
+
                         </>
                       </>
                     </Row>
@@ -5190,6 +5334,28 @@ const AddOrder = () => {
                             </div>
                           </Col>
 
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Contact Number
+                              </Label>
+                              <Input
+                                maxLength={10}
+                                value={consignee_contact_no}
+                                type="number"
+                                className="form-control-md"
+                                id="input"
+                                onChange={(e) => {
+                                  const { value } = e.target;
+                                  if (value.length <= 10) {
+                                    setconsignee_contact_no(e.target.value);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </Col>
+
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
                               <Label className="header-child">
@@ -5320,6 +5486,27 @@ const AddOrder = () => {
                                 count={locality_sel_count}
                                 bottom={locality_sel_bottom}
                                 setbottom={setlocality_sel_bottom}
+                              />
+                            </div>
+                          </Col>
+
+                          <Col lg={4} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child">
+                                Contact Number
+                              </Label>
+                              <Input
+                                maxLength={10}
+                                value={shipper_contact_no}
+                                type="number"
+                                className="form-control-md"
+                                id="input"
+                                onChange={(e) => {
+                                  const { value } = e.target;
+                                  if (value.length <= 10) {
+                                    setshipper_contact_no(e.target.value);
+                                  }
+                                }}
                               />
                             </div>
                           </Col>
@@ -5476,6 +5663,27 @@ const AddOrder = () => {
                                   count={locality_sel_to_count}
                                   bottom={locality_sel_to_bottom}
                                   setbottom={setlocality_sel_to_bottom}
+                                />
+                              </div>
+                            </Col>
+
+                            <Col lg={4} md={6} sm={6}>
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Contact Number
+                                </Label>
+                                <Input
+                                  maxLength={10}
+                                  value={consignee_contact_no}
+                                  type="number"
+                                  className="form-control-md"
+                                  id="input"
+                                  onChange={(e) => {
+                                    const { value } = e.target;
+                                    if (value.length <= 10) {
+                                      setconsignee_contact_no(e.target.value);
+                                    }
+                                  }}
                                 />
                               </div>
                             </Col>
@@ -6511,9 +6719,12 @@ const AddOrder = () => {
                                     // else if (e.target.value.length < 12) {
                                     //   setewaybill_no(e.target.value);
                                     // }
-                                    sete_waybill_inv(val.target.value);
-                                    item2[0] = val.target.value;
-                                    row4[index2][0] = val.target.value;
+                                    const { value } = val.target;
+                                    if (value.length <= 12) {
+                                      sete_waybill_inv(val.target.value);
+                                      item2[0] = val.target.value;
+                                      row4[index2][0] = val.target.value;
+                                    }
 
                                     // if (val.target.value.length === 12) {
                                     //   // sete_waybill_inv(val.target.value);
@@ -6527,15 +6738,15 @@ const AddOrder = () => {
                                     //   // row4[index2][0] = val.target.value;
                                     // }
                                   }}
-                                  onBlur={() => {
-                                    if (e_waybill_inv.length !== 12) {
-                                      dispatch(setShowAlert(true));
-                                      dispatch(
-                                        setDataExist(`Number Should be 12 digit`)
-                                      );
-                                      dispatch(setAlertType("warning"));
-                                    }
-                                  }}
+                                // onBlur={() => {
+                                //   if (e_waybill_inv.length !== 12) {
+                                //     dispatch(setShowAlert(true));
+                                //     dispatch(
+                                //       setDataExist(`Number Should be 12 digit`)
+                                //     );
+                                //     dispatch(setAlertType("warning"));
+                                //   }
+                                // }}
                                 // disabled={eway_confirm && index2 == 0}
                                 />
                               </div>
@@ -6614,7 +6825,7 @@ const AddOrder = () => {
                                 >
                                   <Input
                                     min={0}
-                                   maxLength={20}
+                                    maxLength={20}
                                     key={index2}
                                     value={item2[2]}
                                     type="text"
@@ -6623,9 +6834,12 @@ const AddOrder = () => {
                                     style={{ marginBottom: "15px" }}
                                     placeholder="Enter Invoice No"
                                     onChange={(val) => {
-                                      setinvoice_no(val.target.value);
-                                      item2[2] = val.target.value;
-                                      row4[index2][2] = val.target.value;
+                                      const { value } = val.target;
+                                      if (value.length <= 20) {
+                                        setinvoice_no(val.target.value);
+                                        item2[2] = val.target.value;
+                                        row4[index2][2] = val.target.value;
+                                      }
                                     }}
                                   />
                                 </div>
@@ -6666,7 +6880,7 @@ const AddOrder = () => {
                         <Col md={3} sm={2}>
                           <div className="mb-3">
                             <Label className="header-child">
-                              Invoice Images *
+                              Invoice Images
                             </Label>
                             {row2.map((item1, index1) => {
                               return (
@@ -6805,7 +7019,7 @@ const AddOrder = () => {
                             className="link-text"
                             onClick={() => {
                               if (
-                                row2[row2.length - 1][0].length === 12 &&
+                                (row2[row2.length - 1][0].length === 12 || row2[row2.length - 1][0].length === 0) &&
                                 row2[row2.length - 1][1] &&
                                 row2[row2.length - 1][2] &&
                                 row2[row2.length - 1][3]
@@ -6817,7 +7031,11 @@ const AddOrder = () => {
                                   ind: "",
                                 });
                                 addinvoice();
-                              } else {
+                              }
+                              else if (row2[row2.length - 1][0].length !== 12 && row2[row2.length - 1][0].length !== 0) {
+                                alert("Eway Bill Number Must Be 12 Digit");
+                              }
+                              else {
                                 alert("Invoice All Details Is Required");
                               }
                             }}

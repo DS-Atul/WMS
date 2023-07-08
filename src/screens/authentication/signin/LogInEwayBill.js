@@ -182,12 +182,13 @@ function LogInEwayBill() {
   };
 
   useLayoutEffect(() => {
-    if (ass_token) {
-      AddEwayAccessToken();
-    }
-    if (time_diff >= 6) {
-      AddEwayAccessToken();
-    }
+    AddEwayAccessToken()
+    // if (ass_token) {
+    //   AddEwayAccessToken();
+    // }
+    // if (time_diff >= 6) {
+    //   AddEwayAccessToken();
+    // }
   }, [ass_token, time_diff]);
 
   //  For Step 1 Eway bill

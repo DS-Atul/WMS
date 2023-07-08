@@ -86,7 +86,7 @@ const AddBranchForward = (manifest) => {
     "18%",
     "27%",
   ]);
-  const [tax_slab, settax_slab] = useState("0%");
+  const [tax_slab, settax_slab] = useState("18%");
   //  Coloader Mode
   const [coloader_mode_list, setcoloader_mode_list] = useState([
     // "Direct Awb",

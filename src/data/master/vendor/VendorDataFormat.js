@@ -234,14 +234,18 @@ const VendorDataFormat = ({ data, data1, can_delete }) => {
               <td>{vendor.pan_no}</td>
               <td>
               
-              {vendor.vendor_gst.length !== 0 &&
+              {vendor.vendor_gst.length !== 0 ?
                vendor.vendor_gst.map((vendor, index) => {
                  return (
                 <span>{vendor.gst_no +",  "}</span>
                  )
               }
               
-              )}
+              )
+              : "-"
+              
+              }
+
             </td>
               <td>{vendor.emailp}</td>
               <td>{vendor.mobile_numberp}</td>

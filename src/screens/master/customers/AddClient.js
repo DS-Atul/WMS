@@ -899,7 +899,7 @@ const AddClient = (props) => {
         }
       )
       .then(function (resp) {
-        // console.log("add client resp", resp);
+        console.log("add client resp", resp);
         if (resp.status === 201) {
           if (documentFiles != "") {
             addClientDoc(resp.data.data.id);
@@ -959,12 +959,9 @@ const AddClient = (props) => {
     let commidity_lst_tmp = up_params.customer.commodities
 
     let commidity_id_list = commodities_list2.map((v) => v[0]).filter((v) => v !== null);
-    console.log("commidity_id_list========", commidity_id_list)
     let commidity_lst = [...new Set(commidity_id_list.map((v) => `${v}`))].map((v) =>
       parseInt(v.split(","))
     );
-    console.log("commidity_lst=========", commidity_lst)
-
     let com_change = commidity_lst.every((v, idx) => commidity_lst_tmp.includes(v))
 
     if ((commidity_lst_tmp.length !== commidity_lst.length) || com_change == false) {

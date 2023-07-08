@@ -49,6 +49,7 @@ const AddVendor = () => {
 
   const dispatch = useDispatch();
   const location_data = useLocation();
+  console.log("location_data======", location_data)
   const navigate = useNavigate();
 
   //Circle Toogle Btn
@@ -130,6 +131,10 @@ const AddVendor = () => {
   const [reg_date_error, setreg_date_error] = useState(false);
 
   //Service Offered
+  const [by_rentred, setby_rentred] = useState([])
+  console.log("setby_rentred===", by_rentred)
+  const [by_rentred2, setby_rentred2] = useState([])
+  const [by_rentred3, setby_rentred3] = useState([])
   const [by_air, setby_air] = useState([]);
   const [by_air2, setby_air2] = useState([]);
   const [by_road, setby_road] = useState([]);
@@ -141,6 +146,9 @@ const AddVendor = () => {
   const [by_patner, setby_patner] = useState([]);
 
   //For Service Offered ids
+  const [daily_vehicle_wise_id, setdaily_vehicle_wise_id] = useState();
+  const [month_wise_id, setmonth_wise_id] = useState();
+  const [trip_wise_id, settrip_wise_id] = useState();
   const [air_id, setair_id] = useState();
   const [console_conection_id, setconsole_conection_id] = useState();
   const [by_road_id, setby_road_id] = useState();
@@ -159,6 +167,7 @@ const AddVendor = () => {
 
   //used for Logistic Partner type
   const [forward_by_air, setforward_by_air] = useState(false);
+  const [rented_vehicle, setrented_vehicle] = useState(false);
   const [forward_by_road, setforward_by_road] = useState(false);
   const [forward_by_train, setforward_by_train] = useState(false);
   const [channel_partner, setchannel_partner] = useState(false);
@@ -167,6 +176,10 @@ const AddVendor = () => {
 
   const [airway_bill, setairway_bill] = useState(false);
   const [console_connect, setconsole_connect] = useState(false);
+
+  const [daily_vehicle_wise, setdaily_vehicle_wise] = useState(false)
+  const [month_wise, setmonth_wise] = useState(false)
+  const [trip_wise, settrip_wise] = useState(false)
 
   const [emptyregisterd_number_errr, setemptyregisterd_number_errr] =
     useState(false);
@@ -235,7 +248,7 @@ const AddVendor = () => {
   const [is_cargo, setis_cargo] = useState(true);
   const [is_courier, setis_courier] = useState(true);
   const [is_warehouse, setis_warehouse] = useState(true);
-  
+
   // Validation
   const validation = useFormik({
     enableReinitialize: true,
@@ -295,7 +308,7 @@ const AddVendor = () => {
       else if (company_type === "") {
         document.getElementById("vendor_servies").scrollIntoView();
         setcompany_type_error(true);
-      } 
+      }
       else if (other_company_type == "" && company_type === "Add New") {
         document.getElementById("vendor_servies").scrollIntoView();
         setadd_company_err(true);
@@ -308,20 +321,20 @@ const AddVendor = () => {
         document.getElementById("vendor_servies").scrollIntoView();
         setservice_region_selected_error(true);
       }
-      else if (row[row.length - 1].some((some) => some === "")) {
+      else if (row[row.length - 1].some((some) => some === "") && row[row.length - 1][0] !== "") {
         document.getElementById('vendor_servies').scrollIntoView();
       }
-      else if (row[row.length - 1][0].length !== 15) {
+      else if (row[row.length - 1][0].length !== 15 && row[row.length - 1][0] !== "") {
         document.getElementById('vendor_servies').scrollIntoView();
         setgst_error(true)
         setgst_text("Gst Number Must Be 15 Digit")
       }
-      else if (row[row.length - 1][0].substring(2, 12) !== pan_no) {
+      else if (row[row.length - 1][0].substring(2, 12) !== pan_no && row[row.length - 1][0] !== "") {
         document.getElementById('vendor_servies').scrollIntoView();
         setgst_error(true)
         setgst_text("PAN Number Is Not Mached with Gst Number")
       }
-      else if (data === false) {
+      else if (data === false && row[row.length - 1][0] !== "") {
         document.getElementById('vendor_servies').scrollIntoView();
         setgst_error(true)
         setgst_text("Please Checked, checkBox of Head Office")
@@ -469,6 +482,9 @@ const AddVendor = () => {
         created_by: user_id,
         msme_registration_no: msme_registerd ? msme_registerd_number : "",
         service_offered: [
+          by_rentred.length !== 0 && by_rentred,
+          by_rentred2.length !== 0 && by_rentred2,
+          by_rentred3.length !== 0 && by_rentred3,
           by_air.length !== 0 && by_air,
           by_air2.length !== 0 && by_air2,
           by_road.length !== 0 && by_road,
@@ -675,6 +691,9 @@ const AddVendor = () => {
           pan_no: toTitleCase(pan_no).toUpperCase(),
           modified_by: user_id,
           service_offered: [
+            by_rentred.length !== 0 && by_rentred,
+            by_rentred2.length !== 0 && by_rentred2,
+            by_rentred3.length !== 0 && by_rentred3,
             by_air.length !== 0 && by_air,
             by_air2.length !== 0 && by_air2,
             by_road.length !== 0 && by_road,
@@ -752,6 +771,44 @@ const AddVendor = () => {
 
     } catch (error) { }
   }, []);
+
+  useLayoutEffect(() => {
+    if (rented_vehicle && daily_vehicle_wise) {
+      setby_rentred(["RENTED VEHICLE", "DAILY VEHICLE WISE", "", daily_vehicle_wise_id]);
+    } else {
+      setby_rentred([]);
+      setdaily_vehicle_wise(false);
+    }
+  }, [rented_vehicle, daily_vehicle_wise, daily_vehicle_wise_id]);
+
+  useLayoutEffect(() => {
+    if (rented_vehicle && month_wise) {
+      setby_rentred2([
+        "RENTED VEHICLE",
+        "MONTH WISE",
+        "",
+        month_wise_id,
+      ]);
+    } else {
+      setby_rentred2([]);
+      setmonth_wise(false);
+    }
+  }, [rented_vehicle, month_wise, month_wise_id]);
+
+  useLayoutEffect(() => {
+    if (rented_vehicle && trip_wise) {
+      setby_rentred3([
+        "RENTED VEHICLE",
+        "TRIP WISE",
+        "",
+        trip_wise_id,
+      ]);
+    } else {
+      setby_rentred3([]);
+      settrip_wise(false);
+    }
+  }, [rented_vehicle, trip_wise, trip_wise_id]);
+
 
   useLayoutEffect(() => {
     if (forward_by_air && airway_bill) {
@@ -859,8 +916,25 @@ const AddVendor = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((resp) => {
+        console.log("resp=====", resp)
         for (let index = 0; index < resp.data.vendor_service.length; index++) {
           const data = resp.data.vendor_service[index];
+          if (data.service_mode === "RENTED VEHICLE") {
+            setrented_vehicle(true);
+          }
+          if (data.service_type === "DAILY VEHICLE WISE") {
+            setdaily_vehicle_wise_id(data.id);
+            setdaily_vehicle_wise(true);
+          }
+          if (data.service_type === "MONTH WISE") {
+            setmonth_wise_id(data.id);
+            setmonth_wise(true);
+          }
+          if (data.service_type === "TRIP WISE") {
+            settrip_wise_id(data.id);
+            settrip_wise(true);
+          }
+         
 
           if (data.service_mode === "FORWARDING BY AIR") {
             setforward_by_air(true);
@@ -959,6 +1033,9 @@ const AddVendor = () => {
     if (isupdating) {
       let temp_a = [];
       temp_a.push(
+        by_rentred[3],
+        by_rentred2[3],
+        by_rentred3[3],
         by_air[3],
         by_air2[3],
         by_road[3],
@@ -973,6 +1050,9 @@ const AddVendor = () => {
       setdel_id(temp_b);
     }
   }, [
+    by_rentred,
+    by_rentred2,
+    by_rentred3,
     by_air,
     by_air2,
     by_road,
@@ -1354,109 +1434,109 @@ const AddVendor = () => {
     }
   };
 
-    //Get Commodity Type
-    const getCompanyType = () => {
-      let company_list = [];
-      let data = [];
-      axios
-        .get(
-          ServerAddress +
-          `master/all_companytype/?search=${company_type_search_item}&p=${company_type_page}&records=${10}`,
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        )
-        .then((resp) => {
-          if (resp.data.results.length > 0) {
-            if (resp.data.next === null) {
-              setcompany_type_loaded(false);
-            } else {
-              setcompany_type_loaded(true);
-            }
-  
-            if (company_type_page == 1) {
-              company_list = resp.data.results.map((v) => [
-                v.id,
-                toTitleCase(v.company_type),
-              ]);
-            } else {
-              company_list = [
-                ...company_type_list,
-                ...resp.data.results.map((v) => [v.id, toTitleCase(v.company_type)]),
-              ];
-            }
-          }
-          let a_index = company_list.indexOf("Add New");
-          if (a_index != -1) {
-            company_list.splice(a_index, 1);
-          }
-          company_list = [...new Set(company_list.map((v) => `${v}`))].map(
-            (v) => v.split(",")
-          );
-          company_list.push("Add New");
-          setcompany_type_count(company_type_count + 2);
-          setcompany_type_list(company_list);
-  
-        })
-        .catch((err) => {
-          alert(`Error Occur in Get Commodity Type, ${err}`);
-        });
-    };
-  
-    const setCompanyType = () => {
-      axios
-        .post(
-          ServerAddress + "master/add_companytype/",
-          {
-            company_type: toTitleCase(other_company_type).toUpperCase(),
-            created_by: user.id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        )
-        .then(function (response) {
-          if (response.data.status !== "duplicated") {
-            if (response.statusText === "Created") {
-              setcompany_type_id(response.data.companytype_id);
-              dispatch(setShowAlert(true));
-              dispatch(
-                setDataExist(
-                  `Company Type ${toTitleCase(
-                    other_company_type
-                  )} Added Sucessfully`
-                )
-              );
-              dispatch(setAlertType("success"));
-              setcompany_type(toTitleCase(other_company_type));
-              getCompanyType();
-              // getDistrict();
-            }
+  //Get Commodity Type
+  const getCompanyType = () => {
+    let company_list = [];
+    let data = [];
+    axios
+      .get(
+        ServerAddress +
+        `master/all_companytype/?search=${company_type_search_item}&p=${company_type_page}&records=${10}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        if (resp.data.results.length > 0) {
+          if (resp.data.next === null) {
+            setcompany_type_loaded(false);
           } else {
+            setcompany_type_loaded(true);
+          }
+
+          if (company_type_page == 1) {
+            company_list = resp.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.company_type),
+            ]);
+          } else {
+            company_list = [
+              ...company_type_list,
+              ...resp.data.results.map((v) => [v.id, toTitleCase(v.company_type)]),
+            ];
+          }
+        }
+        let a_index = company_list.indexOf("Add New");
+        if (a_index != -1) {
+          company_list.splice(a_index, 1);
+        }
+        company_list = [...new Set(company_list.map((v) => `${v}`))].map(
+          (v) => v.split(",")
+        );
+        company_list.push("Add New");
+        setcompany_type_count(company_type_count + 2);
+        setcompany_type_list(company_list);
+
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Commodity Type, ${err}`);
+      });
+  };
+
+  const setCompanyType = () => {
+    axios
+      .post(
+        ServerAddress + "master/add_companytype/",
+        {
+          company_type: toTitleCase(other_company_type).toUpperCase(),
+          created_by: user.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status !== "duplicated") {
+          if (response.statusText === "Created") {
+            setcompany_type_id(response.data.companytype_id);
             dispatch(setShowAlert(true));
             dispatch(
               setDataExist(
                 `Company Type ${toTitleCase(
                   other_company_type
-                )} Already Exist`
+                )} Added Sucessfully`
               )
             );
-            dispatch(setAlertType("warning"));
-            if (isupdating) {
-              setcompany_type(toTitleCase(location_data.company_type));
-            } else {
-              setcompany_type("");
-            }
+            dispatch(setAlertType("success"));
+            setcompany_type(toTitleCase(other_company_type));
+            getCompanyType();
+            // getDistrict();
           }
-        })
-        .catch((error) => {
-          alert(`Error Happen while posting Commodity Type Data ${error}`);
-        });
-    };
+        } else {
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(
+              `Company Type ${toTitleCase(
+                other_company_type
+              )} Already Exist`
+            )
+          );
+          dispatch(setAlertType("warning"));
+          if (isupdating) {
+            setcompany_type(toTitleCase(location_data.company_type));
+          } else {
+            setcompany_type("");
+          }
+        }
+      })
+      .catch((error) => {
+        alert(`Error Happen while posting Commodity Type Data ${error}`);
+      });
+  };
 
-      useEffect(() => {
+  useEffect(() => {
     getCompanyType();
   }, [company_type_page, company_type_search_item]);
 
@@ -1795,7 +1875,7 @@ const AddVendor = () => {
 
   useEffect(() => {
     let data = row.some((a) => a[5] == true)
-    if (row[row.length - 1].every((e) => e !== "" && data !== false && row[row.length - 1][0].substring(2, 12) === pan_no) && row[row.length - 1][0].length === 15) {
+    if (row[row.length - 1].every((e) => e !== "" && data !== false && row[row.length - 1][0].substring(2, 12) === pan_no) && row[row.length - 1][0].length === 15 && row[row.length - 1][0] !== "") {
       setgst_error(false)
     }
   }, [dimension_list])
@@ -1807,7 +1887,7 @@ const AddVendor = () => {
     if (other_company_type && company_type !== "Add New") {
       setadd_company_err(false);
     }
-  }, [company_type],[other_company_type]);
+  }, [company_type], [other_company_type]);
 
   return (
     <>
@@ -1901,7 +1981,7 @@ const AddVendor = () => {
               document.getElementById("vendor_servies").scrollIntoView();
               setservice_region_selected_error(true);
             }
-            else if (row[row.length - 1].some((some) => some === "")) {
+            else if (row[row.length - 1].some((some) => some === "") && row[row.length - 1][0] !== "") {
               document.getElementById('vendor_servies').scrollIntoView();
               setgst_error(true)
               setgst_text("Please Fill All GST Address")
@@ -1911,7 +1991,7 @@ const AddVendor = () => {
             //   document.getElementById('gst_details').scrollIntoView();
             //   alert("Gst Number Must Be 15 Digit")
             // }
-            else if (data === false) {
+            else if (data === false && row[row.length - 1][0] !== "") {
               document.getElementById('vendor_servies').scrollIntoView();
               setgst_error(true)
               setgst_text("Please Checked, checkBox of Head Office")
@@ -2247,74 +2327,74 @@ const AddVendor = () => {
                           </Col> */}
 
                           <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2" style={{ position: "relative" }}>
-                          <Label>MSME Certificate *</Label>
-                          <Input
-                          style={{background:"white"}}
-                            className="form-control-md"
-                            name="logo"
-                            type=""
-                            id="input"
-                            disabled
-                            value={result_img}
-                            invalid={msme_certificate_error}
-                            onChange={(val) => {
-                              setresult_img(val.target.value)
-                            }}
-                            // accept="image/png,image/jpeg, image/jpg"
-                          />
-                          <button
-                            style={{
-                              border:"none",
-                              position: "absolute",
-                              borderRadius:"2px",
-                              height: "29px",
-                              top: "28.5px",
-                              padding: "0.375rem 0.75rem",
-                              marginLeft: "1px",
-                              background:"#e9ecef",
-                            }}
-                            className="form-control-md"
-                            id="input"
-                            type="button"
-                            onClick={() => setmodal(true)}
-                          >
-                            Choose Image 
-                          </button>
-                          <ImgModal
-                            modal={modal}
-                            modal_set={() => {
-                              setmodal(false);
-                            }}
-                            upload_image={(val) => {
-                              setuploaded_img(val);
-                            }}
-                            result_image={(val) => {
-                              setresult_img(val);
-                            }}
-                          />
-                          <FormFeedback type="invalid">
-                          MSME Certificate is required
-                          </FormFeedback>
-                        </div>
-                      </Col>
+                            <div className="mb-2" style={{ position: "relative" }}>
+                              <Label>MSME Certificate *</Label>
+                              <Input
+                                style={{ background: "white" }}
+                                className="form-control-md"
+                                name="logo"
+                                type=""
+                                id="input"
+                                disabled
+                                value={result_img}
+                                invalid={msme_certificate_error}
+                                onChange={(val) => {
+                                  setresult_img(val.target.value)
+                                }}
+                              // accept="image/png,image/jpeg, image/jpg"
+                              />
+                              <button
+                                style={{
+                                  border: "none",
+                                  position: "absolute",
+                                  borderRadius: "2px",
+                                  height: "29px",
+                                  top: "28.5px",
+                                  padding: "0.375rem 0.75rem",
+                                  marginLeft: "1px",
+                                  background: "#e9ecef",
+                                }}
+                                className="form-control-md"
+                                id="input"
+                                type="button"
+                                onClick={() => setmodal(true)}
+                              >
+                                Choose Image
+                              </button>
+                              <ImgModal
+                                modal={modal}
+                                modal_set={() => {
+                                  setmodal(false);
+                                }}
+                                upload_image={(val) => {
+                                  setuploaded_img(val);
+                                }}
+                                result_image={(val) => {
+                                  setresult_img(val);
+                                }}
+                              />
+                              <FormFeedback type="invalid">
+                                MSME Certificate is required
+                              </FormFeedback>
+                            </div>
+                          </Col>
 
-                      {result_img && (
-                        <Col lg={1} md={4} sm={6}>
-                          <div className="mb-3 parent_div">
-                            <img
-                              onClick={() => setmodal(true)}
-                              src={result_img}
-                              style={{
-                                width: "70px",
-                                height: "70px",
-                                borderRadius: "8px",
-                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                              }}
-                            />
-                          </div>
-                        </Col>
-                      )}
+                          {result_img && (
+                            <Col lg={1} md={4} sm={6}>
+                              <div className="mb-3 parent_div">
+                                <img
+                                  onClick={() => setmodal(true)}
+                                  src={result_img}
+                                  style={{
+                                    width: "70px",
+                                    height: "70px",
+                                    borderRadius: "8px",
+                                    boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                                  }}
+                                />
+                              </div>
+                            </Col>
+                          )}
                         </>
                       )}
                     </Row>
@@ -2773,10 +2853,10 @@ const AddVendor = () => {
                               </div>
                             </Col>
                             {gst_error ? (
-                                <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom:"12px"}}>
-                                 {gst_text}
-                                </div>
-                              ) : null}
+                              <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom: "12px" }}>
+                                {gst_text}
+                              </div>
+                            ) : null}
                           </Row>
 
                           {service_region_selected === "Pan India" && (
@@ -2896,6 +2976,92 @@ const AddVendor = () => {
                                 </>
                               )}
 
+<Col lg={4} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Input
+                                    style={{ margin: "0 6.5px 0 6.5px" }}
+                                    className="form-control-md"
+                                    id="input"
+                                    type="checkbox"
+                                    onClick={() => {
+                                      setrented_vehicle(!rented_vehicle);
+                                    }}
+                                    checked={rented_vehicle}
+                                  />
+                                  <Label className="header-child">
+                                    Rented Vehicle
+                                  </Label>
+                                </div>
+                              </Col>
+                              {rented_vehicle && (
+                                <>
+                                  <Col>
+                                    <Col lg={5} md={6} sm={6}>
+                                      <div
+                                        className="mb-1"
+                                        style={{ marginLeft: "30.5px" }}
+                                      >
+                                        <Input
+                                          style={{ marginRight: "6.5px" }}
+                                          className="form-control-md"
+                                          id="input"
+                                          type="checkbox"
+                                          onClick={() => {
+                                            setdaily_vehicle_wise(!daily_vehicle_wise);
+                                          }}
+                                          checked={daily_vehicle_wise}
+                                        />
+                                        <Label className="header-child">
+                                          Daily vehicle wise
+                                        </Label>
+                                      </div>
+                                    </Col>
+
+                                    <Col lg={5} md={6} sm={6}>
+                                      <div
+                                        className="mb-1"
+                                        style={{ marginLeft: "30.5px" }}
+                                      >
+                                        <Input
+                                          style={{ marginRight: "6.5px" }}
+                                          className="form-control-md"
+                                          id="input"
+                                          type="checkbox"
+                                          onClick={() => {
+                                            setmonth_wise(!month_wise);
+                                          }}
+                                          checked={month_wise}
+                                        />
+                                        <Label className="header-child">
+                                          Month wise
+                                        </Label>
+                                      </div>
+                                    </Col>
+
+                                    <Col lg={5} md={6} sm={6}>
+                                      <div
+                                        className="mb-1"
+                                        style={{ marginLeft: "30.5px" }}
+                                      >
+                                        <Input
+                                          style={{ marginRight: "6.5px" }}
+                                          className="form-control-md"
+                                          id="input"
+                                          type="checkbox"
+                                          onClick={() => {
+                                            settrip_wise(!trip_wise);
+                                          }}
+                                          checked={trip_wise}
+                                        />
+                                        <Label className="header-child">
+                                          Trip wise
+                                        </Label>
+                                      </div>
+                                    </Col>
+                                  </Col>
+                                </>
+                              )}
+                              
                               <Col lg={4} md={6} sm={6}>
                                 <div className="mb-2">
                                   <Input

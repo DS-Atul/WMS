@@ -252,7 +252,7 @@ const AddBranch = () => {
         setvendor_error(true);
         document.getElementById("branch_info").scrollIntoView();
       }
-      else if(branchName?.split("-")[1] === "" || !branchName){
+      else if (branchName?.split("-")[1] === "" || !branchName) {
         setbranch_blur(true)
         document.getElementById("branch_info").scrollIntoView();
       }
@@ -263,7 +263,7 @@ const AddBranch = () => {
       else if (fields.includes(all_value)) {
         document.getElementById("branch_info").scrollIntoView();
       }
-      else if (branch_type === "Vendor" && select_gst === "") {
+      else if (branch_type === "Vendor" && select_gst === "" && vendor_pan_no) {
         setselect_gst_error(true);
         document.getElementById("branch_info").scrollIntoView();
       }
@@ -959,7 +959,7 @@ const AddBranch = () => {
   }, [org_page, org_search_item, branch_type])
 
   useEffect(() => {
-    if(user.organization){
+    if (user.organization) {
       setorg(toTitleCase(user.organization_name))
       setorg_id(user.organization)
     }
@@ -1251,6 +1251,9 @@ const AddBranch = () => {
           ];
         }
       }
+      else{
+        setvendor_pan_no("");
+      }
       setvendor_gst_count(vendor_gst_count + 2);
       setgst_list(vgst_temp);
     } catch (err) {
@@ -1443,31 +1446,31 @@ const AddBranch = () => {
 
     // Ensure that the first three characters are always "QIL"
     let len = user.organization_alias?.length
-    if(user.organization_alias){
-      if (value.substring(0, len) === user.organization_alias+"-") {
+    if (user.organization_alias) {
+      if (value.substring(0, len) === user.organization_alias + "-") {
         setBranchName(value);
       } else {
-        setBranchName(user.organization_alias+"-" + value.substring(len+1));
+        setBranchName(user.organization_alias + "-" + value.substring(len + 1));
       }
     }
-    else{
+    else {
       setBranchName(value)
     }
 
   };
 
   const handleBlur = () => {
-    if(branchName?.split("-")[1] === "" || !branchName){
+    if (branchName?.split("-")[1] === "" || !branchName) {
       setbranch_blur(true)
     }
   };
 
   useEffect(() => {
-    if(branchName?.split("-")[1] !== "" && branchName){
+    if (branchName?.split("-")[1] !== "" && branchName) {
       setbranch_blur(false)
     }
   }, [branchName])
-  
+
   return (
     <>
       <div>
@@ -1503,7 +1506,7 @@ const AddBranch = () => {
         </Modal>
 
         <Form
-          onSubmit={(e) => {          
+          onSubmit={(e) => {
             e.preventDefault();
             let shaw = Object.entries(validation.values);
             let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
@@ -1527,10 +1530,10 @@ const AddBranch = () => {
             else if (fields.includes(all_value)) {
               document.getElementById("branch_info").scrollIntoView();
             }
-            else if (branch_type === "Vendor" && select_gst === "") {
-              setselect_gst_error(true);
-              document.getElementById("branch_info").scrollIntoView();
-            }
+            // else if (branch_type === "Vendor" && select_gst === "") {
+            //   setselect_gst_error(true);
+            //   document.getElementById("branch_info").scrollIntoView();
+            // }
             else if (branch_type === "Own Branch" && own_pan_number == "") {
               setown_pan_error(true);
               document.getElementById("branch_info").scrollIntoView();
@@ -1722,13 +1725,13 @@ const AddBranch = () => {
                             //     ? user.organization_alias+"-" + branchName
                             //     : branchName || ""
                             // }
-                            value={ user.organization_alias
+                            value={user.organization_alias
                               ? branchName?.substring(0, user.organization_alias?.length) !== user.organization_alias
                                 ? user.organization_alias + "-" + branchName
                                 : branchName || ""
                               : branchName}
                             invalid={
-                            branch_blur
+                              branch_blur
                                 ? true
                                 : false
                             }
@@ -1738,9 +1741,9 @@ const AddBranch = () => {
                             name="branch_name"
                             placeholder="Enter Branch Name"
                           />
-                          { branch_blur ? (
+                          {branch_blur ? (
                             <FormFeedback type="invalid">
-                             Branch Name Is Required
+                              Branch Name Is Required
                             </FormFeedback>
                           ) : null}
                         </div>
@@ -1805,7 +1808,7 @@ const AddBranch = () => {
                         </div>
                       </Col>
 
-                      {branch_type === "Vendor" && vendor_name !== "" ? (
+                      {branch_type === "Vendor" && vendor_name !== "" && vendor_pan_no ? (
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2" id="branch_info">
@@ -1820,30 +1823,31 @@ const AddBranch = () => {
                               />
                             </div>
                           </Col>
-
-                          <Col lg={4} md={6} sm={6}>
-                            <div className="mb-2" id="branch_info">
-                              <Label className="header-child">
-                                Vendor GST Number *
-                              </Label>
-                              <SearchInput
-                                data_list={gst_list}
-                                setdata_list={setgst_list}
-                                data_item_s={select_gst}
-                                set_data_item_s={setselect_gst}
-                                set_id={setselectgst_id}
-                                setsearch_item={setselectgst_search}
-                                error_message={"Please Select Vendor GST No"}
-                                error_s={select_gst_error}
-                                page={vendor_gst_page}
-                                setpage={setvendor_gst_page}
-                                loaded={vendor_gst_loaded}
-                                count={vendor_gst_count}
-                                bottom={vendor_gst_bottom}
-                                setbottom={setvendor_gst_bottom}
-                              />
-                            </div>
-                          </Col>
+                          {vendor_pan_no &&
+                            <Col lg={4} md={6} sm={6}>
+                              <div className="mb-2" id="branch_info">
+                                <Label className="header-child">
+                                  Vendor GST Number *
+                                </Label>
+                                <SearchInput
+                                  data_list={gst_list}
+                                  setdata_list={setgst_list}
+                                  data_item_s={select_gst}
+                                  set_data_item_s={setselect_gst}
+                                  set_id={setselectgst_id}
+                                  setsearch_item={setselectgst_search}
+                                  error_message={"Please Select Vendor GST No"}
+                                  error_s={select_gst_error}
+                                  page={vendor_gst_page}
+                                  setpage={setvendor_gst_page}
+                                  loaded={vendor_gst_loaded}
+                                  count={vendor_gst_count}
+                                  bottom={vendor_gst_bottom}
+                                  setbottom={setvendor_gst_bottom}
+                                />
+                              </div>
+                            </Col>
+                          }
                         </>
                       ) : null}
 
@@ -1926,24 +1930,44 @@ const AddBranch = () => {
                 </CardTitle>
                 {circle_btn1 ? (
                   <CardBody>
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">
-                          Same As Above Registered GST Address{" "}
-                        </Label>
-                        <Input
-                          style={{ marginLeft: "12px" }}
-                          type="checkbox"
-                          className="form-control-md"
-                          id="input"
-                          onClick={() => {
-                            setsame_as_gst(!same_as_gst);
-                          }}
-                          checked={same_as_gst}
-                        />
-                      </div>
-                    </Col>
-
+                    {(vendor_pan_no && branch_type !== "Own Branch") &&
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">
+                            Same As Above Registered GST Address{" "}
+                          </Label>
+                          <Input
+                            style={{ marginLeft: "12px" }}
+                            type="checkbox"
+                            className="form-control-md"
+                            id="input"
+                            onClick={() => {
+                              setsame_as_gst(!same_as_gst);
+                            }}
+                            checked={same_as_gst}
+                          />
+                        </div>
+                      </Col>
+                    }
+                    {(own_pan_number && branch_type === "Own Branch") &&
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">
+                            Same As Above Registered GST Address{" "}
+                          </Label>
+                          <Input
+                            style={{ marginLeft: "12px" }}
+                            type="checkbox"
+                            className="form-control-md"
+                            id="input"
+                            onClick={() => {
+                              setsame_as_gst(!same_as_gst);
+                            }}
+                            checked={same_as_gst}
+                          />
+                        </div>
+                      </Col>
+                    }
                     <Row>
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">

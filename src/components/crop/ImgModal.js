@@ -358,14 +358,15 @@ const ImgModal = ({
                     </label>
                     <input onChange={imageHandle} type="file" id="choose" />
                     <button
-                      style={{ background: "#6ECCAF", marginLeft: "3.5px",position: "absolute", }}
+                      style={{ background: "#6ECCAF", marginLeft: "3.5px",position: "absolute"}}
                       onClick={() => {
                         saveImage();
                         modal_set(false);
                       }}
                       // className="save"
                     >
-                      <BiSave />
+                     <span style={{fontSize:"14px", fontWeight:"500"}}>Save</span> 
+                      {/* <BiSave /> */}
                     </button>
                   </div>
                 </div>

@@ -63,7 +63,7 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
     "Van",
     "Bike",
   ]);
-  const [active_list, setactive_list] = useState(["Active", "Unactive"]);
+  const [active_list, setactive_list] = useState(["Active", "Inactive"]);
   const [active_selected, setactive_selected] = useState("Active");
   const [vehcile_type_s, setvehcile_type_s] = useState("");
   const [trans_name, settrans_name] = useState("");
@@ -113,7 +113,7 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
           setactive_selected("Active")
         }
         else {
-          setactive_selected("Unactive")
+          setactive_selected("Inactive")
 
         }
       }
@@ -217,7 +217,7 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
             change_fields: change_fields,
             vehcile_image: result_img?.substring(0,4) !== "http" ? result_img : null,
             vehcile_capacity: vehcile_capacity ? toTitleCase(vehcile_capacity).toUpperCase() : null,
-          vehcile_owner: toTitleCase(vehcile_owner_s).toUpperCase(),
+            vehcile_owner: toTitleCase(vehcile_owner_s).toUpperCase(),
           },
           {
             headers: {

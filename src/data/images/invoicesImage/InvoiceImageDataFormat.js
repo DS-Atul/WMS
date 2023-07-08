@@ -65,7 +65,7 @@ const InvoiceImgDataFormat = ({ id }) => {
         if (res.data.message === "Image deleted successfully.") {
           dispatch(setShowAlert(true));
           dispatch(
-            setDataExist(`Image Deleted Successfully !`)
+            setDataExist(`Invoice Deleted Successfully !`)
           );
           dispatch(setAlertType("danger"));
           getInvoiceImages();
