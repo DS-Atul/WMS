@@ -517,9 +517,9 @@ const ChangedRusheet = () => {
         fromState: userDetail.branch_location_state_code,
         transDocNo: e.trans_doc_no,
         transDocDate: String(
-          e.docDate.split("-")[2] +
-          "/" +
           e.docDate.split("-")[1] +
+          "/" +
+          e.docDate.split("-")[2] +
           "/" +
           e.docDate.split("-")[0]
         ),

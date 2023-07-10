@@ -80,6 +80,16 @@ const AddOrder = () => {
   const navigate = useNavigate();
   const [page, setpage] = useState(1);
 
+
+  const [show_pincode, setshow_pincode] = useState(false);
+
+  const handleClose_Pincode = () => setshow_pincode(false);
+  // const handleShow_Pincode = () => setshow_pincode(true);
+  const [from_pin, setfrom_pin] = useState(false)
+  const [to_pin, setto_pin] = useState(false)
+  const [from_locality_eway, setfrom_locality_eway] = useState("")
+  const [to_locality_eway, setto_locality_eway] = useState("")
+
   //Get Updated Location Data
   const [order, setorder] = useState([]);
   const [order_id, setorder_id] = useState("");
@@ -324,10 +334,8 @@ const AddOrder = () => {
   const [temp_selected, settemp_selected] = useState("");
 
   //Commodity
-  const [commodity_data_list, setcommodity_data_list] = useState([]);
   const [commodity, setcommodity] = useState("");
   const [commodity_id, setcommodity_id] = useState(0);
-  console.log("commodity_id====", commodity_id)
   const [commodity_loaded, setcommodity_loaded] = useState(false);
   const [commodity_count, setcommodity_count] = useState(1);
   const [commodity_bottom, setcommodity_bottom] = useState(103);
@@ -368,9 +376,6 @@ const AddOrder = () => {
   let dimension_list3 = [documentOrder, caption1];
   const [row3, setrow3] = useState([["", ""]]);
 
-  // useEffect(() => {
-  //   console.log("SelectedFile-----------------", selectedFile);
-  // }, [selectedFile]);
   // adding extra input fields in Invoice
   const [invoice_img, setinvoice_img] = useState("");
   let date = new Date();
@@ -385,7 +390,7 @@ const AddOrder = () => {
   let year = String(date.getFullYear());
   let val = (`${year}-${month}-${added_date_time}`)
   const [today, settoday] = useState(val);
-  console.log("today=====", today)
+
   const [invoice_no, setinvoice_no] = useState("");
   const [invoice_value, setinvoice_value] = useState("");
   const [e_waybill_inv, sete_waybill_inv] = useState("");
@@ -405,19 +410,14 @@ const AddOrder = () => {
   const [cal_type, setcal_type] = useState("");
 
   //origincity
-  const [origincity_list, setorigincity_list] = useState([]);
   const [origincity, setorigincity] = useState("");
-  // console.log("origincity----", origincity)
+
   const [origincity_id, setorigincity_id] = useState(0);
-  const [origincity_error, setorigincity_error] = useState(false);
-  const [origincity_page, setorigincity_page] = useState(1);
-  const [origincity_search_item, setorigincity_search_item] = useState("");
 
   //destinationcity
   const [destinationcity_list, setdestinationcity_list] = useState([]);
   const [destinationcity, setdestinationcity] = useState("");
   const [destinationcity_id, setdestinationcity_id] = useState(0);
-  const [destinationcity_error, setdestinationcity_error] = useState(false);
   const [destinationcity_page, setdestinationcity_page] = useState(1);
   const [destinationcity_search_item, setdestinationcity_search_item] =
     useState("");
@@ -572,10 +572,11 @@ const AddOrder = () => {
         }
       })
       .catch((err) => {
-        console.warn(console.log("err while delete Order image", err));
+        console.warn("err while delete Order image", err);
       });
   };
   const deleteInvoiceImg = (item2) => {
+    // alert()
     axios
       .delete(ServerAddress + `booking/delete-invoice-images/${item2[4]}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -584,7 +585,7 @@ const AddOrder = () => {
         deleteinvoice(item2);
       })
       .catch((err) => {
-        // console.log(console.log("err----delete---invoice--", err))
+        console.warn("err----delete---invoice--", err)
       });
   };
 
@@ -621,6 +622,8 @@ const AddOrder = () => {
     setrow4([...row4, ["", val, "", "", ""]]);
   };
   const deleteinvoice = (item2) => {
+    const updatedEwayValue = eway_value.filter(item => item.ewbNo !== item2[0]);
+    seteway_value(updatedEwayValue)
     let temp2 = [...row2];
     let temp4 = [...row4];
     const index2 = temp2.indexOf(item2);
@@ -678,7 +681,7 @@ const AddOrder = () => {
 
   const [same_as, setsame_as] = useState(false);
   const [showOrder, setShowOrder] = useState(false);
-  console.log("showOrder=====", showOrder)
+
   const [toggle_order, settoggle_order] = useState(false);
 
   const [linked_order, setlinked_order] = useState("");
@@ -764,7 +767,7 @@ const AddOrder = () => {
       else if (shipper_n === "" && !booking_through) {
         setshipper_error(true);
         doc_no_scroll.scrollIntoView();
-      } else if (state === "" && !booking_through) {
+      } else if ((state === "" || !state) && !booking_through) {
         setstate_error(true);
         shipper.scrollIntoView();
       } else if (city === "" && !booking_through) {
@@ -776,7 +779,8 @@ const AddOrder = () => {
       } else if (locality === "" && !booking_through) {
         setlocality_error(true);
         shipper.scrollIntoView();
-      } else if (locality_sel === "" && booking_through) {
+      }
+      else if ((locality_sel === "" || !locality_sel) && booking_through) {
         setlocality_sel_error(true);
         shipper.scrollIntoView();
       }
@@ -784,7 +788,7 @@ const AddOrder = () => {
         setconsignee_error(true);
         doc_no_scroll.scrollIntoView();
       }
-      else if (consginee_st === "" && !booking_through) {
+      else if ((consginee_st === "" || !consginee_st) && !booking_through) {
         setstate_error_c(true);
         consignee.scrollIntoView();
       } else if (consginee_c === "" && !booking_through) {
@@ -793,14 +797,14 @@ const AddOrder = () => {
       } else if (consignee_pincode === "" && !booking_through) {
         setpincode_list_error_c(true);
         consignee.scrollIntoView();
-      } else if (locality_sel_to === "" && booking_through) {
+      } else if ((locality_sel_to === "" || !locality_sel_to) && booking_through) {
         setlocality_sel_to_error(true);
         consignee.scrollIntoView();
       }
       else if (locality_c === "" && !booking_through) {
         setlocality_error_c(true);
         consignee.scrollIntoView();
-      } else if (commodity === "") {
+      } else if (commodity === "" || !commodity) {
         setcommodity_error(true);
         tariff_info.scrollIntoView();
       } else if (delivery_type === "LOCAL" && local_delivery_type === "") {
@@ -888,7 +892,6 @@ const AddOrder = () => {
       })
       .then(function (response) {
         temp = response.data;
-        // console.log("temp---------", temp);
 
         if (response.data.length !== 0) {
           for (let index = 0; index < response.data.length; index++) {
@@ -999,7 +1002,6 @@ const AddOrder = () => {
             setDataExist(`${ewb_no} Is Already Attached To Some Docket`)
           );
           dispatch(setAlertType("danger"));
-          setewaybill_no("")
         } else {
           if (e_waybill_inv.length === 12 && booking_through && business_access_token && booking_through) {
             get_eway_detail(e_waybill_inv, "no")
@@ -1144,7 +1146,7 @@ const AddOrder = () => {
           }
         })
         .catch((err) => {
-          alert("Error While Post Image", err);
+          console.warn("Error While Post Image", err);
         });
     }
   };
@@ -1156,6 +1158,12 @@ const AddOrder = () => {
         ServerAddress + "booking/add_order/",
         {
           // organization: user.organization,
+          shipper_na_state: (!locality_id && eway_confirm) ? toTitleCase(from_state_eway).toUpperCase() : "",
+          shipper_na_pincode: (!locality_id && eway_confirm) ? eway_list?.fromPincode : "",
+          shipper_na_locality: (!locality_id && eway_confirm) ? toTitleCase(locality_sel).toUpperCase() : "",
+          consignee_na_state: (!locality_id_to && eway_confirm) ? toTitleCase(to_state_eway).toUpperCase() : "",
+          consignee_na_pincode: (!locality_id_to && eway_confirm) ? eway_list?.toPincode : "",
+          consignee_na_locality: (!locality_id_to && eway_confirm) ? toTitleCase(locality_sel_to).toUpperCase() : "",
           type: type ? type.toUpperCase() : null,
           assettype_remarks: assettype_remarks,
           docket_no: entry_type_btn === "AUTO GENERATE" ? "" : docket_no_value,
@@ -1215,7 +1223,6 @@ const AddOrder = () => {
           shipper_name: shipper.toUpperCase(),
           consignee_name: consignee.toUpperCase(),
           commodity_name: commodity.toUpperCase(),
-          shipper_address: shipper_add_1.toUpperCase(),
           shipper_location: eway_confirm ? locality_id : locality_id_f,
           consignee_location: eway_confirm ? locality_id_to : locality_id_f_c,
           with_ewayBill: eway_confirm ? "True" : "False",
@@ -1232,17 +1239,18 @@ const AddOrder = () => {
             : shipper_address.toUpperCase(),
 
           billto_name: billto.toUpperCase(),
+          shipper_address: shipper_add_1.toUpperCase(),
           consignee_address: consignee_add_1.toUpperCase(),
-          order_origin: all_shipper_details.toUpperCase(),
-          order_destination: all_consignee_details.toUpperCase(),
-          origin_city: city.toUpperCase(),
-          origin_state: state.toUpperCase(),
-          origin_pincode: pincode,
-          origin_locality: locality.toUpperCase(),
-          destination_city: consginee_c.toUpperCase(),
-          destination_state: consginee_st.toUpperCase(),
-          destination_pincode: consignee_pincode,
-          destination_locality: locality_c.toUpperCase(),
+          order_origin: all_shipper_details ? all_shipper_details?.toUpperCase() : "",
+          order_destination: all_consignee_details ? all_consignee_details?.toUpperCase() : "",
+          origin_city: city ? city?.toUpperCase() : "",
+          origin_state: state ? state?.toUpperCase() : "",
+          origin_pincode: pincode ? pincode : "",
+          origin_locality: locality ? locality?.toUpperCase() : "",
+          destination_city: consginee_c ? consginee_c?.toUpperCase() : "",
+          destination_state: consginee_st ? consginee_st?.toUpperCase() : "",
+          destination_pincode: consignee_pincode ? consignee_pincode : "",
+          destination_locality: locality_c ? locality_c?.toUpperCase() : "",
           billto_name: billto.toUpperCase(),
           // eway_detail: eway_confirm ? eway_detail_l : null,
           eway_detail: eway_confirm ? eway_value : [],
@@ -1280,7 +1288,6 @@ const AddOrder = () => {
         }
       );
       // .then(function (response) {
-      console.log("response--", response)
       if (response.data.status === "success") {
         if (type === "yes") {
           setewaybill_no("")
@@ -1305,6 +1312,11 @@ const AddOrder = () => {
           setrow1([["", ""]])
           seteway_confirm(false)
           setbooking_through(false)
+          setfrom_address([])
+          setto_address([])
+          seteway_pincode_c("")
+          seteway_pincode_s("")
+          setshow_pincode(false)
         }
         else {
           setShowOrder(false);
@@ -1393,6 +1405,12 @@ const AddOrder = () => {
         ServerAddress + "booking/update_order/" + id,
         {
           change_fields: change_fields,
+          shipper_na_state: (!locality_id && eway_confirm) ? toTitleCase(from_state_eway).toUpperCase() : "",
+          shipper_na_pincode: (!locality_id && eway_confirm) ? eway_list?.fromPincode : "",
+          shipper_na_locality: (!locality_id && eway_confirm) ? toTitleCase(locality_sel).toUpperCase() : "",
+          consignee_na_state: (!locality_id_to && eway_confirm) ? toTitleCase(to_state_eway).toUpperCase() : "",
+          consignee_na_pincode: (!locality_id_to && eway_confirm) ? eway_list?.toPincode : "",
+          consignee_na_locality: (!locality_id_to && eway_confirm) ? toTitleCase(locality_sel_to).toUpperCase() : "",
           assettype_remarks: assettype_remarks,
           type: type?.toUpperCase(),
           // organization: user.organization,
@@ -1452,18 +1470,18 @@ const AddOrder = () => {
           shipper_name: shipper_n?.toUpperCase(),
           consignee_name: consignee_n?.toUpperCase(),
           commodity_name: commodity?.toUpperCase(),
-          shipper_address: shipper_address?.toUpperCase(),
-          consignee_address: consignee_address?.toUpperCase(),
-          order_origin: all_shipper_details?.toUpperCase(),
-          order_destination: all_consignee_details?.toUpperCase(),
-          origin_city: city?.toUpperCase(),
-          origin_state: state?.toUpperCase(),
-          origin_pincode: pincode,
-          origin_locality: locality?.toUpperCase(),
-          destination_city: consginee_c?.toUpperCase(),
-          destination_state: consginee_st?.toUpperCase(),
-          destination_pincode: consignee_pincode,
-          destination_locality: locality_c?.toUpperCase(),
+          shipper_address: shipper_address ? shipper_address?.toUpperCase() : "",
+          consignee_address: consignee_address ? consignee_address?.toUpperCase() : "",
+          order_origin: all_shipper_details ? all_shipper_details?.toUpperCase() : "",
+          order_destination: all_consignee_details ? all_consignee_details?.toUpperCase() : "",
+          origin_city: city ? city?.toUpperCase() : "",
+          origin_state: state ? state?.toUpperCase() : "",
+          origin_pincode: pincode ? pincode : "",
+          origin_locality: locality ? locality?.toUpperCase() : "",
+          destination_city: consginee_c ? consginee_c?.toUpperCase() : "",
+          destination_state: consginee_st ? consginee_st?.toUpperCase() : "",
+          destination_pincode: consignee_pincode ? consignee_pincode : "",
+          destination_locality: locality_c ? locality_c?.toUpperCase() : "",
           billto_name: billto?.toUpperCase(),
           shipper_location: shipper_locality_id,
           consignee_location: consignee_locality_id,
@@ -2154,6 +2172,11 @@ const AddOrder = () => {
       else if (order_data.assettype_remarks === "LOGGER RETURN ONLY") {
         setis_logger_return(true)
       }
+      seteway_pincode_s(order_data.shipper_pincode ? order_data.shipper_pincode : order_data.shipper_na_pincode)
+      seteway_pincode_c(order_data.consignee_pincode ? order_data.consignee_pincode : order_data.consignee_na_pincode)
+
+      setto_state_eway(toTitleCase(order_data.consignee_na_state))
+      setfrom_state_eway(toTitleCase(order_data.shipper_na_state))
       settype(toTitleCase(order_data.type))
       setstate(toTitleCase(order_data.shipper_state));
       setlocality_id_f(order_data.shipper_location);
@@ -2161,9 +2184,9 @@ const AddOrder = () => {
       setconsignee_n(toTitleCase(order_data.consignee));
       setpincode(order_data.shipper_pincode);
       setconsginee_st(toTitleCase(order_data.consignee_state));
-      setlocality_sel_to(toTitleCase(order_data.consignee_locality));
+      // setlocality_sel_to(toTitleCase(order_data.consignee_locality ? order_data.consignee_locality : locslity_to_list?.length === 0 ? order_data.consignee_na_locality : ""));
       setlocality_id_to(order_data.consignee_location);
-      setlocality_sel(toTitleCase(order_data.shipper_locality));
+      // setlocality_sel(toTitleCase(order_data.shipper_locality ? order_data.shipper_locality : locality_list?.length === 0 ? order_data.shipper_na_locality : ""));
       setlocality_id(order_data.shipper_location);
       setconsignee_address(toTitleCase(order_data.consignee_address1));
       setconsginee_c(toTitleCase(order_data.consignee_city));
@@ -2604,6 +2627,7 @@ const AddOrder = () => {
   const [eway_confirm, seteway_confirm] = useState(false);
   const [eway_list, seteway_list] = useState([]);
   const [eway_pincode_s, seteway_pincode_s] = useState("")
+
   const [eway_pincode_c, seteway_pincode_c] = useState("")
   const [from_address, setfrom_address] = useState([]);
   const [to_address, setto_address] = useState([]);
@@ -2644,6 +2668,7 @@ const AddOrder = () => {
               const uniqueEwayValue = Array.from(new Set(newEwayValue.map(item => item.ewbNo)))
                 .map(ewbNo => newEwayValue.find(item => item.ewbNo === ewbNo));
               return uniqueEwayValue;
+
             });
             seteway_confirm(true);
             dispatch(setShowAlert(true));
@@ -2661,6 +2686,7 @@ const AddOrder = () => {
                 const uniqueEwayValue = Array.from(new Set(newEwayValue.map(item => item.ewbNo)))
                   .map(ewbNo => newEwayValue.find(item => item.ewbNo === ewbNo));
                 return uniqueEwayValue;
+             
               });
 
             }
@@ -2726,9 +2752,12 @@ const AddOrder = () => {
           }
           setlocality_sel_count(locality_sel_count + 2);
           setlocality_list(locality_from);
-
+          setfrom_pin(false)
         }
         else {
+          getStatesCode(eway_list.fromStateCode, "gst_code", "from")
+          setfrom_pin(true)
+          setshow_pincode(true)
           setlocality_list([])
         }
 
@@ -2790,8 +2819,12 @@ const AddOrder = () => {
           }
           setlocality_sel_to_count(locality_sel_to_count + 2);
           setlocslity_to_list(localityto);
+          setto_pin(false)
         }
         else {
+          getStatesCode(eway_list.toStateCode, "gst_code", "to")
+          setto_pin(true)
+          setshow_pincode(true)
           setlocslity_to_list([])
         }
       })
@@ -3141,13 +3174,13 @@ const AddOrder = () => {
 
 
   useEffect(() => {
-    if (eway_pincode_s !== "") {
+    if (eway_pincode_s?.length === 6 && eway_pincode_s) {
       gefilterlocalityfrom(eway_pincode_s);
     }
   }, [eway_pincode_s, locality_sel_page, locality_sel_search_item])
 
   useEffect(() => {
-    if (eway_pincode_c !== "") {
+    if (eway_pincode_c?.length === 6 && eway_pincode_c) {
       gefilterlocalityto(eway_pincode_c);
     }
   }, [eway_pincode_c, locality_sel_to_page, locality_sel_to_search_item])
@@ -3613,13 +3646,13 @@ const AddOrder = () => {
     if (billto !== "") {
       setbillto_error(false);
     }
-    if (state !== "") {
+    if (state !== "" && state) {
       setstate_error(false);
     }
-    if (locality_sel !== "") {
+    if (locality_sel !== "" && locality_sel) {
       setlocality_sel_error(false);
     }
-    if (locality_sel_to !== "") {
+    if (locality_sel_to !== "" && locality_sel_to) {
       setlocality_sel_to_error(false);
     }
     if (city !== "") {
@@ -3641,7 +3674,7 @@ const AddOrder = () => {
     if (locality !== "") {
       setlocality_error(false);
     }
-    if (consginee_st !== "") {
+    if (consginee_st !== "" && consginee_st) {
       setstate_error_c(false);
     }
     if (consginee_c !== "") {
@@ -3657,7 +3690,7 @@ const AddOrder = () => {
       settransport_mode_error(false);
     }
 
-    if (commodity !== "") {
+    if (commodity !== "" && commodity) {
       setcommodity_error(false);
     }
     if (local_delivery_type !== "") {
@@ -3897,14 +3930,7 @@ const AddOrder = () => {
       settogpincode_c(false);
     }
   }, []);
-
-  // console.log("e_waybill_inv====", e_waybill_inv)
-  // console.log("booking_through====", booking_through)
   useEffect(() => {
-    // if (e_waybill_inv.length === 12 && booking_through && business_access_token && !is_used_eway) {
-    //   get_eway_detail(e_waybill_inv, "no")
-    // }
-    // else
     if (e_waybill_inv.length > 12) {
       dispatch(setShowAlert(true));
       dispatch(
@@ -3915,7 +3941,7 @@ const AddOrder = () => {
   }, [e_waybill_inv])
 
   const [coldchain_permission, setcoldchain_permission] = useState([])
-  console.log("coldchain_permission====", coldchain_permission)
+
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
   );
@@ -3969,7 +3995,6 @@ const AddOrder = () => {
 
   const handleDateChange = (event) => {
     const selectedDate = event.target.value;
-    console.log("event.target.value===", event.target.value)
     const currentDate = new Date().toISOString().slice(0, 10);
 
     // Calculate the minimum and maximum dates allowed
@@ -4028,14 +4053,106 @@ const AddOrder = () => {
   useEffect(() => {
     if (!booking_through && location.state === null) {
       seteway_confirm(false);
+      setewaybill_no("")
+      seteway_value([])
+      setrow2([["", val, "", "", ""]])
+      seteway_list([])
+      seteway_value([])
+      seteway_detail_l([])
+      setfrom_address([])
+      setto_address([])
+      setshow_pincode(false)
+      seteway_pincode_c("")
+      seteway_pincode_s("")
     }
   }, [booking_through])
 
+  const [from_state_eway, setfrom_state_eway] = useState("")
+  const [to_state_eway, setto_state_eway] = useState("")
+  const getStatesCode = async (place_id, filter_by, type) => {
+    try {
+      const resp = await axios.get(
+        ServerAddress +
+        `master/all_states/?search=${""}&place_id=${place_id}&filter_by=${filter_by}&p=${1}&records=${10}&state_search=${""}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+      if (resp.data.results.length > 0) {
+        if (type === "from") {
+          setfrom_state_eway(resp.data?.results[0]?.state)
+        }
+        else {
+          setto_state_eway(resp.data?.results[0]?.state)
+        }
+      }
+      else if(resp.data.results.length === 0 && location.state === null) {
+        if (type === "from") {
+          setfrom_state_eway("")
+        }
+        else {
+          setto_state_eway("")
+        }
+      }
+    } catch (err) {
+      alert(`Error Occur in Get States, ${err}`);
+    }
+  };
 
+  useEffect(() => {
+    setlocality_sel_to(toTitleCase(eway_detail_l?.consignee_locality ? eway_detail_l?.consignee_locality : locslity_to_list?.length === 0 ? eway_detail_l.consignee_na_locality : ""));
+    setlocality_sel(toTitleCase(eway_detail_l?.shipper_locality ? eway_detail_l?.shipper_locality : locality_list?.length === 0 ? eway_detail_l.shipper_na_locality : ""));
+  }, [eway_detail_l,locslity_to_list])
+  
+  const divStyle = {
+    backgroundColor: '#f2f2f2',
+    padding: '8px',
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+    borderRadius: '5px',
+    marginBottom: '10px',
+  };
+
+  const spanStyle = {
+    marginRight: '10px',
+  };
+  
   return (
     <div>
       {/* {!eway_loaded && memoizedLogInEwayBill} */}
       <LogInEwayBill />
+
+      {/* For Not Matching Pincode */}
+      <Modal
+        show={show_pincode}
+        onHide={handleClose_Pincode}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {(from_pin && !to_pin) && (
+            <span>
+              Shipper With This Pincode And Locality Is Not Present In Your Data Base To Proceed Further Enter Locality.
+            </span>
+          )}
+          {(to_pin && !from_pin) &&
+            <span>
+              Consignee With This Pincode And Locality Is Not Present In Your Data Base To Proceed Further Enter Locality.
+            </span>}
+          {(to_pin && from_pin) &&
+            <span>
+              Shipper And Consignee With This Pincode And Locality Is Not Present In Your Data Base To Proceed Further Enter Locality.
+            </span>}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose_Pincode}>
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
@@ -5530,6 +5647,12 @@ const AddOrder = () => {
                 </CardTitle>
                 {circle_btn12 ? (
                   <CardBody>
+                    {((!locality_id || locality_id === "") && (isupdating)) &&
+                      <div style={divStyle}>
+                        <div>These Fields Are Need To Add In Master Location Data</div>
+                        <div><span style={spanStyle}>State: {toTitleCase(eway_detail_l.shipper_na_state)}</span> <span style={spanStyle}>Pincode: {toTitleCase(eway_detail_l.shipper_na_pincode)}</span> <span style={spanStyle}>Locality: {toTitleCase(eway_detail_l.shipper_na_locality)}</span></div>
+                      </div>
+                    }
                     <Row>
                       <>
                         <Col lg={4} md={6} sm={6}>
@@ -5550,7 +5673,7 @@ const AddOrder = () => {
 
                               {isupdating ? (
                                 <Input
-                                  value={toTitleCase(eway_detail_l.shipper_state)}
+                                  value={toTitleCase(eway_detail_l?.shipper_state ? eway_detail_l?.shipper_state : eway_detail_l?.shipper_na_state)}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -5558,7 +5681,7 @@ const AddOrder = () => {
                                 />
                               ) : (
                                 <Input
-                                  value={toTitleCase(from_address.state_name)}
+                                  value={toTitleCase(from_address?.state_name ? from_address?.state_name : from_state_eway)}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -5573,13 +5696,13 @@ const AddOrder = () => {
                               <Label className="header-child">Pincode</Label>
                               {isupdating ? (
                                 <Input
-                                  value={eway_detail_l.shipper_pincode}
+                                  value={eway_detail_l?.shipper_pincode ? eway_detail_l?.shipper_pincode : eway_detail_l?.shipper_na_pincode}
                                   disabled
                                   id="input"
                                 />
                               ) : (
                                 <Input
-                                  value={from_address.pincode_name}
+                                  value={from_address?.pincode_name ? from_address?.pincode_name : eway_list?.fromPincode}
                                   type="text"
                                   className="form-control-md"
                                   id="input"
@@ -5589,31 +5712,55 @@ const AddOrder = () => {
                             </div>
                           </Col>
 
-                          <Col lg={4} md={6} sm={6}>
-                            <div className="mb-2">
-                              <Label className="header-child">
-                                Locality shipper
-                              </Label>
+                          {/* {from_state_eway && locality_list?.length === 0 ? */}
+                          {locality_list?.length === 0 ?
+                            <Col lg={4} md={6} sm={6}>
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Locality *
+                                </Label>
+                                <Input
+                                  value={locality_sel}
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  onChange={(e) => {
+                                    setlocality_sel(e.target.value);
+                                  }}
+                                  invalid={locality_sel_error}
+                                />
+                                <FormFeedback type="invalid">
+                                  Please Enter Locality
+                                </FormFeedback>
+                              </div>
+                            </Col>
+                            :
+                            <Col lg={4} md={6} sm={6}>
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Locality shipper *
+                                </Label>
 
-                              <SearchInput
-                                data_list={locality_list}
-                                setdata_list={setlocality_list}
-                                data_item_s={locality_sel}
-                                set_data_item_s={setlocality_sel}
-                                set_id={setlocality_id}
-                                page={locality_sel_page}
-                                setpage={setlocality_sel_page}
-                                error_message={"Please Select Locality Type"}
-                                error_s={locality_sel_error}
-                                search_item={locality_sel_search_item}
-                                setsearch_item={setlocality_sel_search_item}
-                                loaded={locality_sel_loaded}
-                                count={locality_sel_count}
-                                bottom={locality_sel_bottom}
-                                setbottom={setlocality_sel_bottom}
-                              />
-                            </div>
-                          </Col>
+                                <SearchInput
+                                  data_list={locality_list}
+                                  setdata_list={setlocality_list}
+                                  data_item_s={locality_sel}
+                                  set_data_item_s={setlocality_sel}
+                                  set_id={setlocality_id}
+                                  page={locality_sel_page}
+                                  setpage={setlocality_sel_page}
+                                  error_message={"Please Select Locality Type"}
+                                  error_s={locality_sel_error}
+                                  search_item={locality_sel_search_item}
+                                  setsearch_item={setlocality_sel_search_item}
+                                  loaded={locality_sel_loaded}
+                                  count={locality_sel_count}
+                                  bottom={locality_sel_bottom}
+                                  setbottom={setlocality_sel_bottom}
+                                />
+                              </div>
+                            </Col>
+                          }
 
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
@@ -5715,6 +5862,12 @@ const AddOrder = () => {
                 </CardTitle>
                 {circle_btn1 ? (
                   <CardBody>
+                    {((!locality_id_to || locality_id_to === "") && (isupdating)) &&
+                      <div style={divStyle}>
+                        <div>These Fields Are Need To Add In Master Location Data</div>
+                        <div><span style={spanStyle}>State: {toTitleCase(eway_detail_l.consignee_na_state)}</span> <span style={spanStyle}>Pincode: {toTitleCase(eway_detail_l.consignee_na_pincode)}</span> <span style={spanStyle}>Locality: {toTitleCase(eway_detail_l.consignee_na_locality)}</span></div>
+                      </div>
+                    }
                     <Row>
                       <>
                         <Col lg={4} md="6" sm="6">
@@ -5735,13 +5888,13 @@ const AddOrder = () => {
                                 <Label className="header-child">State</Label>
                                 {isupdating ? (
                                   <Input
-                                    value={toTitleCase(eway_detail_l?.consignee_state)}
+                                    value={toTitleCase(eway_detail_l?.consignee_state ? eway_detail_l?.consignee_state : eway_detail_l?.consignee_na_state)}
                                     disabled
                                     id="input"
                                   />
                                 ) : (
                                   <Input
-                                    value={toTitleCase(to_address?.state_name)}
+                                    value={toTitleCase(to_address?.state_name ? to_address?.state_name : to_state_eway)}
                                     disabled
                                     id="input"
                                   />
@@ -5754,43 +5907,66 @@ const AddOrder = () => {
                                 <Label className="header-child">Pincode</Label>
                                 {isupdating ? (
                                   <Input
-                                    value={eway_detail_l?.consignee_pincode}
+                                    value={eway_detail_l?.consignee_pincode ? eway_detail_l?.consignee_pincode : eway_detail_l?.consignee_na_pincode}
                                     disabled
                                     id="input"
                                   />
                                 ) : (
                                   <Input
-                                    value={to_address?.pincode_name}
+                                    value={to_address?.pincode_name ? to_address?.pincode_name : eway_list.toPincode}
                                     disabled
                                     id="input"
                                   />
                                 )}
                               </div>
                             </Col>
+                            {/* {to_state_eway && locslity_to_list?.length === 0 ? */}
+                            {locslity_to_list?.length === 0 ?
+                              <Col lg={4} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Label className="header-child">
+                                    Locality *
+                                  </Label>
+                                  <Input
+                                    value={locality_sel_to}
+                                    type="text"
+                                    className="form-control-md"
+                                    id="input"
+                                    onChange={(e) => {
+                                      setlocality_sel_to(e.target.value);
+                                    }}
+                                    invalid={locality_sel_to_error}
+                                  />
+                                  <FormFeedback type="invalid">
+                                    Please Enter Locality
+                                  </FormFeedback>
+                                </div>
+                              </Col>
+                              :
+                              <Col lg={4} md={6} sm={6}>
+                                <div className="mb-2">
+                                  <Label className="header-child">Locality *</Label>
 
-                            <Col lg={4} md={6} sm={6}>
-                              <div className="mb-2">
-                                <Label className="header-child">Locality</Label>
-
-                                <SearchInput
-                                  data_list={locslity_to_list}
-                                  setdata_list={setlocslity_to_list}
-                                  data_item_s={locality_sel_to}
-                                  set_data_item_s={setlocality_sel_to}
-                                  set_id={setlocality_id_to}
-                                  page={locality_sel_to_page}
-                                  setpage={setlocality_sel_to_page}
-                                  error_message={"Please Select Locality Type"}
-                                  error_s={locality_sel_to_error}
-                                  search_item={locality_sel_to_search_item}
-                                  setsearch_item={setlocality_sel_to_search_item}
-                                  loaded={locality_sel_to_loaded}
-                                  count={locality_sel_to_count}
-                                  bottom={locality_sel_to_bottom}
-                                  setbottom={setlocality_sel_to_bottom}
-                                />
-                              </div>
-                            </Col>
+                                  <SearchInput
+                                    data_list={locslity_to_list}
+                                    setdata_list={setlocslity_to_list}
+                                    data_item_s={locality_sel_to}
+                                    set_data_item_s={setlocality_sel_to}
+                                    set_id={setlocality_id_to}
+                                    page={locality_sel_to_page}
+                                    setpage={setlocality_sel_to_page}
+                                    error_message={"Please Select Locality Type"}
+                                    error_s={locality_sel_to_error}
+                                    search_item={locality_sel_to_search_item}
+                                    setsearch_item={setlocality_sel_to_search_item}
+                                    loaded={locality_sel_to_loaded}
+                                    count={locality_sel_to_count}
+                                    bottom={locality_sel_to_bottom}
+                                    setbottom={setlocality_sel_to_bottom}
+                                  />
+                                </div>
+                              </Col>
+                            }
 
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">

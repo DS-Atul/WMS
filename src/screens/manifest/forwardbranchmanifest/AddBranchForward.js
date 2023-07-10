@@ -580,9 +580,9 @@ const AddBranchForward = (manifest) => {
         fromState: userDetail.branch_location_state_code,
         transDocNo: e.trans_doc_no,
         transDocDate: String(
-          e.docDate.split("-")[2] +
-          "/" +
           e.docDate.split("-")[1] +
+          "/" +
+          e.docDate.split("-")[2] +
           "/" +
           e.docDate.split("-")[0]
         ),
@@ -598,8 +598,6 @@ const AddBranchForward = (manifest) => {
   }
     // Rest of your code...
   }, [EwayBillData, validation.values.vehicle_no]);
-console.log("EwayBillData-----", EwayBillData)
-console.log("docket_nos-----", docket_nos)
 
   useEffect(() => {
 

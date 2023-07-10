@@ -41,7 +41,6 @@ function LogInEwayBill() {
         }
       )
       .then(function (response) {
-        console.log("first get ressssss ===>>", response.data);
         if (response.data.results.length !== 0) {
           let res_data = response.data.results[0];
           setid_is(res_data.id);
@@ -90,7 +89,6 @@ function LogInEwayBill() {
         }
       )
       .then(function (response) {
-        console.log("resp----", response)
         if (response.data.message !== "Please verify account (or sign up first).") {
           dispatch(setEAccessToken(response.data.response.token));
           dispatch(setOrgs(response.data.response.orgs));
@@ -173,7 +171,6 @@ function LogInEwayBill() {
         }
       )
       .then(function (response) {
-        console.log("post busines token res ===>>", response.data);
 
       })
       .catch((error) => {
@@ -212,13 +209,9 @@ function LogInEwayBill() {
     if (AccessToken_Modifiedat) {
       var dateTime1 = new Date(AccessToken_Modifiedat);
       var dateTime2 = new Date(); // Current date-time
-      console.log("AccessToken_Modifiedat------", AccessToken_Modifiedat)
-      console.log("date time1---- ", dateTime1)
-      console.log("date time2--- ", dateTime2)
       var timeDiff = Math.abs(dateTime2 - dateTime1);
       var diffHours = Math.floor(timeDiff / (1000 * 60 * 60));
       settime_diff(diffHours);
-      console.log("time=====>>", diffHours, timeDiff); // Output: Number of hours between dateTime1 and current date-time
     }
 
   }, [AccessToken_Modifiedat]);

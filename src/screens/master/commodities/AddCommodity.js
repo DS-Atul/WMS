@@ -569,8 +569,8 @@ const Add_Commodity = () => {
           "transactionType": "1",
           "subSupplyType": "1",
           "docType": "INV",
-          "docNo": `DHLMH49009${index}`,
-          "docDate": "30/06/2023",
+          "docNo": `DHLMH423109${index}`,
+          "docDate": "10/07/2023",
           "invTyp": "B2B",
           "fromGstin": "05AAAAT2562R1Z3",
           "fromTrdName": "K R AGENCIES",
@@ -578,9 +578,9 @@ const Add_Commodity = () => {
           "dispatchFromTradeNam": "Nandss entity-1",
           "fromAddr1": "f 174 ground floor saraswati loke, ; sardhana road Roorkee road uttaranchal",
           "fromAddr2": "shyam vihar phase 3 complex;HO 1272 indira nagar sastri nagar; GDN: 25 5/2, OPP.MANDI, DELHI ROAD,MEERUT",
-          "fromPlace": "INDRAA NAGAR",
+          "fromPlace": "Shirur",
           "fromStateCode": "27",
-          "fromPincode": "415124",
+          "fromPincode": "413249",
           "toGstin": "05AAAAU1183B2ZZ",
           "toTrdName": "UTTARANCHALL KRISHI K R UTPADAN",
           "shipToGstin": "05AAAAU1183B2ZZ",
@@ -588,7 +588,7 @@ const Add_Commodity = () => {
           "toAddr1": "LASUDIA MORI DEWAS NAKA",
           "toAddr2": "LASUDIA MORI DEWAS NAKA",
           "toPlace": "Ichalkaranji",
-          "toPincode": "416115",
+          "toPincode": "413248",
           "toStateCode": "27",
           "totInvValue": "100032",
           "totalValue": "1000",
@@ -600,7 +600,7 @@ const Add_Commodity = () => {
           "otherValue": "0",
           "transMode": "2",
           "transDistance": "196",
-          "transDocDate": "30/06/2023",
+          "transDocDate": "10/07/2023",
           "transDocNo": "124423",
           "transId": "05AAAAR1685F1ZO",
           "transName": "Ashwin Guj Trans",
@@ -663,7 +663,7 @@ const Add_Commodity = () => {
   };
 
   useEffect(() => {
-    for (let index = 0; index < 10; index++) {
+    for (let index = 0; index < 3; index++) {
       post_awb(index)
 
     }

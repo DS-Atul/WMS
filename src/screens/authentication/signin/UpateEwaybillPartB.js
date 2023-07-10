@@ -3,11 +3,8 @@ import axios from 'axios';
 import { ServerAddress } from '../../../constants/ServerAddress';
 
 async function UpateEwaybillPartB({ gstin_no, Data, ewayTokenB, access_token }) {
-  console.log('Data=====', Data);
-  console.log('ewayTokenB=====', ewayTokenB);
 
   const send_data = async (e, val) => {
-    console.log('val------', val);
     try {
       const response = await axios.post(
         ServerAddress + 'analytic/add_eway_partb/',
@@ -26,15 +23,12 @@ async function UpateEwaybillPartB({ gstin_no, Data, ewayTokenB, access_token }) 
         }
       );
     
-      console.log('response=========', response);
     } catch (error) {
       alert(`Error Happened while posting Part B Data in Local DB: ${error}`);
     }
   };
 
   const EwayUpdate = async (e, i) => {
-    console.log('e=====', e);
-    console.log('i=====', i);
     try {
       const resp = await axios.put(
         `https://dev.api.easywaybill.in/ezewb/v1/ewb/updatePartBByNo?gstin=${gstin_no}`,
@@ -46,7 +40,6 @@ async function UpateEwaybillPartB({ gstin_no, Data, ewayTokenB, access_token }) 
           },
         }
       );
-      console.log('res=======', resp);
       await send_data(e, resp.data?.status === 1 ? true : false);
       alert(
         resp.data?.response?.ewbNo

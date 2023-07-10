@@ -537,15 +537,16 @@ const ChangedRusheet = () => {
     if (EwayBillData?.length > 0) {
       let li = [];
       EwayBillData?.forEach((e) => {
+        console.log("ewayDate=====", e)
         let obj = {
           transMode: "1",
           fromPlace: userDetail.branch_nm,
           fromState: userDetail.branch_location_state_code,
           transDocNo: e.trans_doc_no,
           transDocDate: String(
-            e.docDate.split("-")[2] +
-            "/" +
             e.docDate.split("-")[1] +
+            "/" +
+            e.docDate.split("-")[2] +
             "/" +
             e.docDate.split("-")[0]
           ),

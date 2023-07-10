@@ -15,9 +15,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
     const [invoice_value, setinvoice_value] = useState([])
     const [invoice_date, setinvoice_date] = useState([])
     const [eway_bill, seteway_bill] = useState([])
-
-    console.log("invoice_date-----", invoice_date)
-    console.log("invoice_value-----", invoice_value)
+    console.log("=====invoice_value", invoice_value)
     useLayoutEffect(() => {
         if (order.booking_at) {
             let s = new Date(order.booking_at).toLocaleString(undefined, {
@@ -27,18 +25,18 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
             setbooking_date(s_date[0]);
             setbooking_date_time(s_date[1]);
 
-            if(order?.invice_details?.length !== 0){
+            if (order?.invice_details?.length !== 0) {
                 let temp = order?.invice_details?.map((v) => v.invoice_no)
                 let temp2 = order?.invice_details?.map((v) => v.invoice_amount)
                 let temp3 = order?.invice_details?.map((v) => v.invoice_at.split('T')[0])
                 let temp4 = order?.invice_details?.map((v) => v.ewaybill_no)
-    
+
                 setinvoice_no(temp)
                 setinvoice_value(temp2)
                 setinvoice_date(temp3)
                 seteway_bill(temp4)
             }
-            
+
         }
     }, [order.booking_at]);
 
@@ -140,7 +138,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
 
                     <tr><th colSpan={1}>&nbsp;Invoice Values</th><td colSpan={3}>
                         {
-                            invoice_value.length !== 0 ? invoice_value.map((v) => {
+                            invoice_value.length !== 0 ? invoice_value.filter(v=>v!==0).map((v) => {
                                 return <>{v}{invoice_value.at(-1) === v ? null : ", "}</>
                             }
                             )
@@ -150,12 +148,15 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                     </td></tr>
                     <tr><th colSpan={1}>&nbsp;Invoice No.</th><td colSpan={3}>
                         {
-                            invoice_no.length !== 0 ? invoice_no.map((v) => {
-                                return <>{v}{invoice_no.at(-1) === v ? null : ", "}</>
-                            }
-                            )
-                                :
-                                '-'
+                            invoice_no.length !== 0 ? invoice_no
+                                .filter(v => v !== null && v !== "") // Filter out null and empty string values
+                                .map((v, index) => (
+                                    <React.Fragment key={index}>
+                                        {v}
+                                        {invoice_no.at(-1) === v ? null : ", "}
+                                    </React.Fragment>
+                                ))
+                                : '-'
                         }
                     </td></tr>
                     <tr><th colSpan={1}>&nbsp;Invoice Date</th><td colSpan={3}>
@@ -174,10 +175,12 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                     </td></tr>
                     <tr><th colSpan={1}>&nbsp;E-way Bill No.</th><td colSpan={3}>
                         {
-                            eway_bill.length !== 0 ? eway_bill.map((v) => {
-                                return <>{v}{eway_bill.at(-1) === v ? null : ", "}</>
-                            }
-                            )
+                            eway_bill.length !== 0 ? eway_bill.filter(v => v !== "").map((v, index) => (
+
+                                <React.Fragment key={index}>
+                                    {v}{eway_bill.at(-1) === v ? null : ", "}
+                                </React.Fragment>
+                            ))
                                 :
                                 "-"
                         }
@@ -192,7 +195,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
 
                     <tr>
                         <th colSpan={2}>&nbsp;Content:: Pharmacutical sample.<br></br>&emsp;</th>
-                        <th colSpan={4}>&nbsp;Special Instruction :<br></br>&nbsp;Dry ice with data logger.<br></br>&nbsp;<br></br><span style={{paddingLeft:"3px"}}>Remarks : </span><span style={{fontWeight:"normal"}}>{order.assettype_remarks ? toTitleCase(order.assettype_remarks) : "-"}</span></th>
+                        <th colSpan={4}>&nbsp;Special Instruction :<br></br>&nbsp;Dry ice with data logger.<br></br>&nbsp;<br></br><span style={{ paddingLeft: "3px" }}>Remarks : </span><span style={{ fontWeight: "normal" }}>{order.assettype_remarks ? toTitleCase(order.assettype_remarks) : "-"}</span></th>
                     </tr>
 
                     <tr>
@@ -201,7 +204,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                             Chain Logistics LTD liability for any loss or damage of the shipment will not exceed more<br></br> than $50 or declared value for insurance where shown . This is the non negotiable airway bill. </td>
                     </tr>
                     <tr colSpan={4}>
-                        <td> {order.type === "AMBIENT" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Ambient</td><td> {order.type === "FROZEN" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Frozen</td><td> {order.type === "REFRIGERATED" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Refrigerated</td><td> {order.type === "CONTROLLED AMBIENT" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Controlled Ambient&emsp;</td> 
+                        <td> {order.type === "AMBIENT" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Ambient</td><td> {order.type === "FROZEN" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Frozen</td><td> {order.type === "REFRIGERATED" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Refrigerated</td><td> {order.type === "CONTROLLED AMBIENT" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Controlled Ambient&emsp;</td>
                         {/* Other */}
                     </tr>
                     <tr>

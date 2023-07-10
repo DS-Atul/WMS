@@ -116,8 +116,8 @@ const NSearchInput = ({
             className="dataResult custom-select"
             style={{
               // position: "absolute",
-              // width: "95%",
-              width: current_width,
+              width: "95%",
+              // width: current_width,
               zIndex: "1",
               border: showfilter ? "1px solid #d3d3d3" : null,
             }}
