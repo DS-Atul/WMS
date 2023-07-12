@@ -7022,7 +7022,6 @@ const AddOrder = () => {
                                 key={index2}
                               >
                                 <Input
-                                  maxLength={12}
                                   // min={0}
                                   key={index2}
                                   value={item2[0]}

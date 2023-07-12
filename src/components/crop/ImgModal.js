@@ -50,7 +50,7 @@ const ImgModal = ({
   const [crop, setCrop] = useState();
   const [details, setdetails] = useState("");
   const handleCloseM = () => {
-    // modal_set(false);
+    modal_set(false);
   };
 
   const imageCrop = () => {
