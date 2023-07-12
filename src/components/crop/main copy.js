@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import "./ImgModal.scss";
+import "./main.scss";
 import RotateLeftOutlinedIcon from "@mui/icons-material/RotateLeftOutlined";
 import RotateRightOutlinedIcon from "@mui/icons-material/RotateRightOutlined";
 import { CgMergeVertical, CgMergeHorizontal } from "react-icons/cg";
@@ -9,26 +9,8 @@ import "react-image-crop/dist/ReactCrop.css";
 import storeData from "./linkedlist";
 import Modal from "react-bootstrap/Modal";
 import { Spinner } from "reactstrap";
-
-import {
-  MdOutlinePhotoSizeSelectActual,
-  MdOutlineCrop,
-  MdBrightnessMedium,
-} from "react-icons/md";
-import { BiSave } from "react-icons/bi";
-
-const ImgModal = ({
-  modal,
-  modal_set,
-  upload_image,
-  result_image,
-  heading,
-}) => {
-
-// console.log("modal=======", modal)
-// console.log("upload_image=======", upload_image)
-// console.log("result_image=======", result_image)
-
+import "./modal.css";
+const Main = ({ modal, modal_set, upload_image, result_image, heading }) => {
   const filterElement = [
     {
       name: "brightness",
@@ -50,7 +32,7 @@ const ImgModal = ({
   const [crop, setCrop] = useState();
   const [details, setdetails] = useState("");
   const handleCloseM = () => {
-    // modal_set(false);
+    modal_set(false);
   };
 
   const imageCrop = () => {
@@ -258,7 +240,7 @@ const ImgModal = ({
       canvas.height
     );
     const base64Image1 = canvas.toDataURL();
-    console.log("save image called3", base64Image1);
+    console.log("save image called3");
     result_image(base64Image1);
 
     console.log("save image called4");
@@ -269,7 +251,7 @@ const ImgModal = ({
       const myFile = new File([myBlob], "image.png", {
         type: myBlob.type,
       });
-      console.log("save image called5", myFile);
+      console.log("save image called5");
       upload_image(myFile);
 
       console.log("save image called6");
@@ -277,26 +259,88 @@ const ImgModal = ({
     setloader(false);
   };
   console.log(loader, "loader");
-
-  const [adjust_brightness, setadjust_brightness] = useState(false);
-
-  // console.log("image i ", state.image);
   return (
     <>
       {loader ? <Loading /> : null}
-      <Modal contentClassName="" show={modal} onHide={handleCloseM}>
+      <Modal contentClassName="content-test" show={modal} onHide={handleCloseM}>
         <Modal.Header closeButton>
           {/* <!-- <Modal.Title>Update Your Image:</Modal.Title> --> */}
         </Modal.Header>
-        <Modal.Body style={{ backgroundColor: "#fff" }}>
+        <Modal.Body style={{ overflow: "auto", backgroundColor: "#fff" }}>
           <div className="image_editor">
             <div className="card">
-              {/* <div className="card_header">
+              <div className="card_header">
                 <h3>----UPLOAD {heading} IMAGE----</h3>
-              </div> */}
+              </div>
               <div className="card_body">
-                {/* // for image */}
-                <div className="image_section parent_div">
+                <div className="sidebar">
+                  <div className="side_body">
+                    <div className="filter_section">
+                      <span>Filters</span>
+                      <div className="filter_key">
+                        {filterElement.map((item, index) => {
+                          return (
+                            <button
+                              className={
+                                property.name === item.name ? "active" : ""
+                              }
+                              onClick={() => setProperty(item)}
+                              key={index}
+                            >
+                              {item.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    {console.log("property checking", property)}
+                    <div className="filter_slider">
+                      <div className="label_bar">
+                        <label htmlFor="range">{property.name}</label>
+                        <span>100%</span>
+                      </div>
+                      <input
+                        name={property.name}
+                        onChange={inputHandle}
+                        value={state[property.name]}
+                        max={property.maxValue}
+                        type="range"
+                      />
+                    </div>
+                    <div className="rotate_section">
+                      <label htmlFor="">Rotate & Flip</label>
+                      <div className="icon">
+                        <div onClick={leftRotate}>
+                          <RotateLeftOutlinedIcon />
+                        </div>
+                        <div onClick={rightRotate}>
+                          <RotateRightOutlinedIcon />
+                        </div>
+                        {/* <div onClick={horizonatalFlip}>
+                          <CgMergeVertical />
+                        </div> */}
+                        <div onClick={verticalFlip}>
+                          <CgMergeHorizontal />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="reset">
+                    {/* <button className="save" onClick={() =>{
+                  downloadImage();
+                }}>Download Image</button> */}
+                    <button
+                      onClick={() => {
+                        saveImage();
+                        modal_set(false);
+                      }}
+                      className="save"
+                    >
+                      Save Image
+                    </button>
+                  </div>
+                </div>
+                <div className="image_section">
                   <div className="image">
                     {state.image ? (
                       <ReactCrop crop={crop} onChange={(c) => setCrop(c)}>
@@ -316,63 +360,22 @@ const ImgModal = ({
                         <span>Choose Image</span>
                       </label>
                     )}
-
-                    {adjust_brightness && (
-                      <div className="adjuster">
-                        <input
-                          name={property.name}
-                          onChange={inputHandle}
-                          value={state[property.name]}
-                          max={property.maxValue}
-                          type="range"
-                        />
-                      </div>
-                    )}
                   </div>
-
-                  {/* //Action btns */}
-                  <div
-                    className="image_select child_div"
-                    style={{ marginTop: "400px" }}
-                  >
-                    <button onClick={undo} className="">
+                  <div className="image_select">
+                    <button onClick={undo} className="undo">
                       <IoMdUndo />
                     </button>
-                    <button onClick={leftRotate}>
-                      <RotateLeftOutlinedIcon />
-                    </button>
-                    {crop && (
-                      <button onClick={imageCrop}>
-                        <MdOutlineCrop />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => setadjust_brightness(!adjust_brightness)}
-                    >
-                      <MdBrightnessMedium />
-                    </button>
-                    <button onClick={rightRotate}>
-                      <RotateRightOutlinedIcon />
-                    </button>
-                    <button onClick={redo}>
+                    <button onClick={redo} className="redo">
                       <IoMdRedo />
                     </button>
-                    {/* to select image */}
-                    <label htmlFor="choose">
-                      <MdOutlinePhotoSizeSelectActual />
-                    </label>
+                    {crop && (
+                      <button onClick={imageCrop} className="crop">
+                        Crop Image
+                      </button>
+                    )}
+
+                    <label htmlFor="choose">Choose Image</label>
                     <input onChange={imageHandle} type="file" id="choose" />
-                    <button
-                      style={{ background: "#6ECCAF", marginLeft: "3.5px",position: "absolute"}}
-                      onClick={() => {
-                        saveImage();
-                        modal_set(false);
-                      }}
-                      // className="save"
-                    >
-                     <span style={{fontSize:"14px", fontWeight:"500"}}>Save</span> 
-                      {/* <BiSave /> */}
-                    </button>
                   </div>
                 </div>
               </div>
@@ -384,4 +387,4 @@ const ImgModal = ({
   );
 };
 
-export default ImgModal;
+export default Main;

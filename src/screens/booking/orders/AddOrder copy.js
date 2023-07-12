@@ -63,7 +63,6 @@ import { gstin_no } from "../../../constants/CompanyDetails";
 import OrderImgDataFormat from "../../../data/images/orderImage/OrderDataFormat";
 import InvoiceImgDataFormat from "../../../data/images/invoicesImage/InvoiceImageDataFormat";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
-import ImgModal from "../../../components/crop/ImgModal";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -405,9 +404,7 @@ const AddOrder = () => {
   ];
 
   const [row2, setrow2] = useState([dimension_list2]);
-  console.log("row2=====", row2)
   const [row4, setrow4] = useState([["", val, "", "", ""]]);
-  console.log("row4------", row4)
 
   //For Calculation Info
   const [cal_type, setcal_type] = useState("");
@@ -525,7 +522,6 @@ const AddOrder = () => {
     value: false,
     ind: "",
   });
-  console.log("showModalInvoice2222222=====", showModalInvoice)
   const [img_index, setimg_index] = useState("")
 
   const [doc_result_image, setdoc_result_image] = useState([]);
@@ -4119,7 +4115,7 @@ const AddOrder = () => {
   const spanStyle = {
     marginRight: '10px',
   };
-
+  
   return (
     <div>
       {/* {!eway_loaded && memoizedLogInEwayBill} */}
@@ -6735,7 +6731,7 @@ const AddOrder = () => {
                     <>
                       {" "}
                       {isupdating && (
-                        <OrderImgDataFormat id={location.state.order.id}/>
+                        <OrderImgDataFormat id={location.state.order.id} />
                       )}
                       <Row className="hide">
                         <Col md={5} sm={5}>
@@ -6857,8 +6853,7 @@ const AddOrder = () => {
                           </div>
                         </Col>
                         {showModalOrder.value ? (
-                          // <Main_c
-                          <ImgModal
+                          <Main_c
                             modal={showModalOrder.value}
                             modal_set={() => {
                               setshowModalOrder({
@@ -6975,12 +6970,11 @@ const AddOrder = () => {
                   {order_active_btn === "third" ? (
                     <>
                       {isupdating && (
-                        <InvoiceImgDataFormat id={location.state.order.id}/>
+                        <InvoiceImgDataFormat id={location.state.order.id} />
                       )}
                       <Row>
                         {showModalInvoice.value ? (
-                          // <Main_c
-                          <ImgModal
+                          <Main_c
                             modal={showModalInvoice.value}
                             modal_set={() => {
                               setshowModalInvoice({
