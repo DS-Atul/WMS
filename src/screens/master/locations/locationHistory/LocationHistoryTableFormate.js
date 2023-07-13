@@ -19,13 +19,13 @@ const AssetHistoryTableFormate = ({ table_data}) => {
           }}>
             <td>{idx +1}</td>
             <td>{(item.action_flag === 1 ? "Created" : "Updated")}</td>
-          <td>{(new_data.countary_name ? new_data.countary_name : "-")}</td>
-          <td>{(new_data.state_name ? new_data.state_name : "-")}</td>
-          <td>{(new_data.city_name ? new_data.city_name : "-")}</td>
-          <td>{(new_data.pincode_name ? new_data.pincode_name : "-")}</td>
-          <td>{(new_data.name ? new_data.name : "-")}</td>
-          <td>{item.name_r }</td>
-          <td>{time}</td>
+          <td></td>
+          <td> </td>
+          <td> </td>
+          <td> </td>
+          <td> </td>
+          <td> </td>
+          <td> </td>
         </tr>
         )
          

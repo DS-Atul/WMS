@@ -30,6 +30,8 @@ const NewHistoryTab = ({
   Table_Data_Formate = [],
   path,
   path1,
+  path2,
+  path3,
 }) => {
   // redux state
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -44,18 +46,12 @@ const NewHistoryTab = ({
   //For Table Head
   const [data_title, setdata_title] = useState(Table_Data_Title);
   const myArr = JSON.parse(JSON.stringify(data_title));
-  // console.log("8888888888888888888888",Table_Data_Title);
-  // console.log("9999999999999999999999",myArr)
-
-  // this is used to show all data in one card
-  // let ele = Object.entries(Card_Data);
-  //For map card
-
-  // console.log("Formatae",TableFormate)
-
+  
   // used for Table
   const [page_data, setpage_data] = useState("");
   const [table_data, settable_data] = useState("");
+  const [callibration_data, setcallibration_data] =useState("");
+  const [callibration, setcallibration] =useState("");
 
   const getdata = () => {
     axios
@@ -65,17 +61,6 @@ const NewHistoryTab = ({
       .then((response) => {
         console.log("Updated History Response", response.data.results);
         settable_data(response.data.results);
-        // dispatch(setTotalData(response.data.count));
-        // dispatch(setDataLoaded(true));
-        // dispatch(setPrev(response.data.previous));
-        // dispatch(setNext(response.data.next));
-        // let total_data = response.data.results;
-        // let temp_data = [];
-        // for (let index = 0; index < total_data.length; index++) {
-        //   const element = total_data[index];
-        //   temp_data.push(element.id);
-        // }
-        // setdata_ids(temp_data);
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
@@ -90,22 +75,53 @@ const NewHistoryTab = ({
       .then((response) => {
         console.log("Created History Response", response.data.results);
         setpage_data(response.data.results);
-        // dispatch(setTotalData(response.data.count));
-        // dispatch(setDataLoaded(true));
-        // dispatch(setPrev(response.data.previous));
-        // dispatch(setNext(response.data.next));
-        // let total_data = response.data.results;
-        // let temp_data = [];
-        // for (let index = 0; index < total_data.length; index++) {
-        //   const element = total_data[index];
-        //   temp_data.push(element.id);
-        // }
-        // setdata_ids(temp_data);
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
       });
   };
+
+ 
+  const getCallibrationa= () => {
+    axios
+      .get(ServerAddress + path3, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((response) => {
+        console.log("Callibration Response==", response.data.results);
+        setcallibration(response.data.results);
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Data ${err}`);
+      });
+  };
+  const getCallibrationaData= () => {
+    axios
+      .get(ServerAddress + path2, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((response) => {
+        console.log("getCallibrationaData  Response==", response.data);
+        setcallibration_data(response.data.results);
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Data ${err}`);
+      });
+  };
+
+  useLayoutEffect(() => {
+    if (path2) {
+      getCallibrationaData();
+    }
+  }, [path2]);
+
+  useLayoutEffect(() => {
+    if (path3) {
+      getCallibrationa();
+    }
+  }, [path3]);
+   
+  
   useLayoutEffect(() => {
     if (path1) {
       getCreateddata();
@@ -170,7 +186,7 @@ const NewHistoryTab = ({
                       <CardText className="mb-0">
                         <Row>
                           <Page
-                          page_data={page_data}/>
+                          page_data={page_data} callibration={callibration}/>
                         
                         </Row>
                       </CardText>
@@ -251,7 +267,7 @@ const NewHistoryTab = ({
                                 </table>
                               </div>
                             </div>
-                          </Col>
+                          </Col>S
                         </Row>
                       </CardText>
                     </Col>

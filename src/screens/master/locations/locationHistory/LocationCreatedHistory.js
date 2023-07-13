@@ -48,25 +48,25 @@ setlocation_data(n_data);
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Countary Name</span> <span>{location_data.country_name}</span>
+                  <span>Countary Name</span> <span> Data Not Save </span>
                 </div>
                 <div className="container_element">
-                  <span>State Name</span> <span>{location_data.state_name}</span>
+                  <span>State Name</span> <span>Data not Save  </span>
                 </div>
                 <div className="container_element">
-                  <span>City Name</span> <span>{location_data.city_name}</span>
+                  <span>City Name</span> <span> Data not Save</span>
                 </div>
                 <div className="container_element">
-                  <span>Pin Code</span> <span>{location_data.pincode_name}</span>
+                  <span>Pin Code</span> <span> Data not Save </span>
                 </div>
                 <div className="container_element">
-                  <span>Locality</span> <span>{location_data.name}</span>
+                  <span>Locality</span> <span> Data not Save</span>
                 </div>
                 <div className="container_element">
-                  <span>Created By</span> <span>{user_name}</span>
+                  <span>Created By</span> <span>Data not Save</span>
                 </div>
                 <div className="container_element">
-                  <span>Created At</span> <span>{time}</span>
+                  <span>Created At</span> <span>Data not Save</span>
                 </div>
               </div>
             </CardBody>

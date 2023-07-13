@@ -2,23 +2,33 @@ import React ,{useState, useLayoutEffect} from 'react';
 import {Col,Card,CardTitle,CardBody} from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
-const AssetCreatedHistory = ({page_data}) => {
-  console.log(" asset created history page data",page_data)
+const AssetCreatedHistory = ({page_data,callibration }) => {
   const [asset_data, setasset_data] = useState("");
   const [user_name, setuser_name] = useState("");
+  const [callibration_data, setcallibration_data] = useState("");
 
   useLayoutEffect(() => {
     const p_data = page_data[0];
     if (p_data) {
       setuser_name(p_data.name_r)
-
-let data = p_data.change_message;
-let n_data = JSON.parse(data)  
-setasset_data(n_data);      
+   let data = p_data.change_message;
+   let n_data = JSON.parse(data)  
+   setasset_data(n_data);      
     }
   }, [page_data])
 
+  useLayoutEffect(() => {
+    const c_data = callibration[0];
+    if (c_data) {
+      let data = c_data.change_message;
+      let n_data = JSON.parse(data);
+      setcallibration_data(n_data);
+    }
+  }, [callibration]);
+
   console.log("Asset history  data >>>>>",asset_data);
+  console.log("Callibration history data >>>>", callibration_data);
+  
   
 
   let time = new Date(asset_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
@@ -156,19 +166,19 @@ setasset_data(n_data);
             <CardBody>
               <div className="body_container">
                 <div className="container_element">
-                  <span>Callibration From </span> <span>{asset_data.callibration_from}</span>
+                  <span>Callibration From </span> <span>{callibration_data.callibration_from}</span>
                 </div>
                 <div className="container_element">
-                  <span>Callibration To</span> <span>{asset_data.callibration_to}</span>
+                  <span>Callibration To</span> <span>{callibration_data.callibration_to}</span>
                 </div>
                 <div className="container_element">
-                  <span>Certificate Issued By</span> <span>Data Not Found </span>
+                  <span>Certificate Issued By</span> <span> {callibration_data.issued_by}</span>
                 </div>
                 <div className="container_element">
-                  <span>Issued Date</span> <span> Data Not Found</span>
+                  <span>Issued Date</span> <span> {callibration_data.issued_date}</span>
                 </div>
                 <div className="container_element">
-                  <span>Certificate</span> <span> Data Not Found</span>
+                  <span>Certificate</span> <span> Data Not Saved </span>
                 </div>
               </div>
             </CardBody>

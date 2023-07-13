@@ -1841,8 +1841,9 @@ const AddOrganization = () => {
           </div>
           {/* Add For History Button */}
           {isupdating && (
-            <div style={{ justifyContent: "right", display: "flex" }}>
+            <div style={{ justifyContent: "right", display: "flex",marginRight:"20px"}}>
               <Button
+               variant="primary"
                 type="button"
                 onClick={() => {
                   handlClk();

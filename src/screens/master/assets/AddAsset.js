@@ -51,6 +51,7 @@ const AddAsset = () => {
   const [circle_btn2, setcircle_btn2] = useState(true);
   const [isupdating, setisupdating] = useState(false);
   const location_data = useLocation();
+  console.log("the location data ",location_data)
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const [null_value, setnull_value] = useState(false)
@@ -137,8 +138,12 @@ const AddAsset = () => {
   const [expiry_date, setexpiry_date] = useState("");
   const [logger_box_no, setlogger_box_no] = useState("");
   const [old_box_no, setold_box_no] = useState("");
-  console.log("purchase_date====", purchase_date)
-  console.log("expiry_date====", expiry_date)
+  const [callibration_from, setcallibration_from] = useState("");
+  const [callibration_to, setcallibration_to] = useState("");
+  const [issued_by, setissued_by] = useState("");
+  const [issued_date, setissued_date] = useState("");
+  // console.log("purchase_date====", purchase_date)
+  // console.log("expiry_date====", expiry_date)
 
 
   const [expired, setexpired] = useState(false);
@@ -511,10 +516,10 @@ const AddAsset = () => {
 
   const updateAsset = async () => {
 
-    let fields_names = Object.entries({
-      asset_type: asset_type,
-      assigned_branch_n: branch_selected,
-      box_capacities: box_cap,
+      let fields_names = Object.entries({
+        asset_type: asset_type,
+        assigned_branch_n: branch_selected,
+        box_capacities: box_cap,
       box_type: asset_type === "Logger" ? logger_box_type : box_type,
       current_branch_n: user.branch_nm,
       expiry_date: expiry_date,
@@ -538,8 +543,30 @@ const AddAsset = () => {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
+    console.log("fields_names==",fields_names)
+    console.log("the chanages filed 1==",change_fields)
 
-    try {
+
+    let fields_names2 = Object.entries({
+      callibration_from: callibration_from,
+      callibration_to: callibration_to,
+      issued_by: issued_by,
+      issued_date:issued_date,
+    })
+    let change_fields2 = {};
+
+    for (let j = 0; j < fields_names2.length; j++) {
+      const ele = fields_names2[j];
+      let prev = location_data.state.asset.calibration_detail[0][`${ele[0]}`];
+      let new_v = ele[1];
+      if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+        change_fields2[`${ele[1]}`] = new_v.toString().toUpperCase();
+      }
+    }
+    console.log("chanages==",fields_names2)
+    console.log("the chanages filed 2==",change_fields2)
+
+    try { 
       const response = await axios.put(
         ServerAddress + "master/update_asset/" + asset.id,
         {
@@ -569,6 +596,7 @@ const AddAsset = () => {
           callibration_to: asset_type === "Logger" ? expiry_date : null,
           asset_callibration: asset_type === "Logger" ? row : [],
           change_fields: change_fields,
+          change_fields2:change_fields2,
           is_damaged: is_defective,
           deleted_calibration: deleted_calibration_id,
           //For C&M
@@ -858,8 +886,9 @@ const AddAsset = () => {
         </div>
         {/* Add For History Button */}
         {isupdating &&
-          <div style={{ justifyContent: "right", display: "flex" }}>
+          <div style={{ justifyContent: "right", display: "flex",marginRight:"20px" }}>
             <Button
+             variant="primary"
               type="button"
               onClick={() => {
                 handlClk();
