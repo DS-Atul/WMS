@@ -3,6 +3,7 @@ import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IconContext } from "react-icons";
+import { BiTrash } from "react-icons/bi";
 import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
@@ -64,13 +65,15 @@ import OrderImgDataFormat from "../../../data/images/orderImage/OrderDataFormat"
 import InvoiceImgDataFormat from "../../../data/images/invoicesImage/InvoiceImageDataFormat";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 import ImgModal from "../../../components/crop/ImgModal";
+import { Spinner } from "reactstrap";
+import Loader from "../../../components/loader/Loader";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const home_branch_id = useSelector(
     (state) => state.authentication.userdetails.home_branch
   );
-
+  const [isLoading, setIsLoading] = useState(false);
 
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
 
@@ -80,7 +83,6 @@ const AddOrder = () => {
   console.log("location====", location)
   const navigate = useNavigate();
   const [page, setpage] = useState(1);
-
 
   const [show_pincode, setshow_pincode] = useState(false);
 
@@ -369,16 +371,15 @@ const AddOrder = () => {
   const [selectedFile, setSelectedFile] = useState("");
   const [caption1, setcaption1] = useState("");
 
-  let dimension_list1 = [selectedFile, caption1];
+  let dimension_list1 = [selectedFile, caption1, ""];
   const [row1, setrow1] = useState([dimension_list1]);
   const [ord_image, setord_image] = useState([]);
 
   const [documentOrder, setdocumentOrder] = useState("");
   let dimension_list3 = [documentOrder, caption1];
-  const [row3, setrow3] = useState([["", ""]]);
+  const [row3, setrow3] = useState([["", "", ""]]);
 
   // adding extra input fields in Invoice
-  const [invoice_img, setinvoice_img] = useState("");
   let date = new Date();
   let added_date_time =
     String(date.getDate()).length === 1
@@ -392,6 +393,8 @@ const AddOrder = () => {
   let val = (`${year}-${month}-${added_date_time}`)
   const [today, settoday] = useState(val);
 
+  const [invoice_img, setinvoice_img] = useState("");
+  const [ewaybill_img, setewaybill_img] = useState("");
   const [invoice_no, setinvoice_no] = useState("");
   const [invoice_value, setinvoice_value] = useState("");
   const [e_waybill_inv, sete_waybill_inv] = useState("");
@@ -402,12 +405,14 @@ const AddOrder = () => {
     invoice_no,
     invoice_value,
     invoice_img,
+    ewaybill_img,
+    ""
   ];
 
   const [row2, setrow2] = useState([dimension_list2]);
-  console.log("row2=====", row2)
-  const [row4, setrow4] = useState([["", val, "", "", ""]]);
-  console.log("row4------", row4)
+
+  const [row4, setrow4] = useState([["", val, "", "", "", "", ""]]);
+
 
   //For Calculation Info
   const [cal_type, setcal_type] = useState("");
@@ -524,8 +529,9 @@ const AddOrder = () => {
   const [showModalInvoice, setshowModalInvoice] = useState({
     value: false,
     ind: "",
+    type: "",
   });
-  console.log("showModalInvoice2222222=====", showModalInvoice)
+
   const [img_index, setimg_index] = useState("")
 
   const [doc_result_image, setdoc_result_image] = useState([]);
@@ -561,83 +567,150 @@ const AddOrder = () => {
     setpackage_id_list(temp_2);
   };
 
-  // Order Images
-
-  const deleteOrderImg = (item1) => {
-    axios
-      .delete(ServerAddress + `booking/delete-order-images/${item1[2]}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((res) => {
-        if (res.data.message === "Image deleted successfully.") {
-          deleteimage(item1);
-        } else {
-          alert(res.data.message);
-        }
-      })
-      .catch((err) => {
-        console.warn("err while delete Order image", err);
-      });
-  };
-  const deleteInvoiceImg = (item2) => {
-    // alert()
-    axios
-      .delete(ServerAddress + `booking/delete-invoice-images/${item2[4]}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((res) => {
-        deleteinvoice(item2);
-      })
-      .catch((err) => {
-        console.warn("err----delete---invoice--", err)
-      });
-  };
 
   const addorderimage = () => {
     setSelectedFile("");
     setcaption1("");
-    dimension_list1 = ["", ""];
+    dimension_list1 = ["", "", ""];
     setrow1([...row1, dimension_list1]);
-    setrow3([...row3, ["", ""]]);
-  };
-  const deleteimage = (item1) => {
-    let temp1 = [...row1];
-    let temp3 = [...row3];
-
-    const index1 = temp1.indexOf(item1);
-
-    if (index1 > -1) {
-      temp1.splice(index1, 1);
-      temp3.splice(index1, 1);
-    }
-
-    setrow1(temp1);
-    setrow3(temp3);
+    setrow3([...row3, ["", "", ""]]);
   };
 
   // Invoice
   const addinvoice = () => {
     setinvoice_img("");
     // settoday("");
+    setewaybill_img("")
     setinvoice_no("");
     setinvoice_value("");
-    dimension_list2 = ["", val, "", "", ""];
+    dimension_list2 = ["", val, "", "", "", "", ""];
     setrow2([...row2, dimension_list2]);
-    setrow4([...row4, ["", val, "", "", ""]]);
+    setrow4([...row4, ["", val, "", "", "", "", ""]]);
   };
-  const deleteinvoice = (item2) => {
-    const updatedEwayValue = eway_value.filter(item => item.ewbNo !== item2[0]);
-    seteway_value(updatedEwayValue)
-    let temp2 = [...row2];
-    let temp4 = [...row4];
-    const index2 = temp2.indexOf(item2);
+  const [showinv, setShowinv] = useState(false);
+  const [inv_id, setinv_id] = useState(null)
+  const [inv_data, setinv_data] = useState("")
+  const [ord_id, setord_id] = useState(null)
+  const [ord_data, setord_data] = useState("")
+  const [delete_type, setdelete_type] = useState("")
 
-    if (index2 > -1) {
-      temp2.splice(index2, 1);
-      temp4.splice(index2, 1);
+  const deleteInvoice = (id, item2) => {
+    console.log("id", id)
+    axios
+      .delete(ServerAddress + `booking/delete-invoice-images/${id}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((res) => {
+        setShowinv(false)
+        if (res.data.message === "Image deleted successfully.") {
+          const updatedEwayValue = eway_value.filter(item => item.ewbNo !== item2[0]);
+          seteway_value(updatedEwayValue)
+          let temp2 = [...row2];
+          let temp4 = [...row4];
+          const index2 = temp2.indexOf(item2);
+
+          if (index2 > -1) {
+            temp2.splice(index2, 1);
+            temp4.splice(index2, 1);
+          }
+          setrow2(temp2);
+          setrow4(temp4);
+
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(`Invoice Deleted Successfully !`)
+          );
+          dispatch(setAlertType("danger"));
+        } else {
+          alert(res.data.message);
+        }
+      })
+      .catch((err) => {
+        console.log(console.log("err----delete---Order--", err))
+      });
+  };
+
+  const deleteOrderImage = (id, item1) => {
+    axios
+      .delete(ServerAddress + `booking/delete-order-images/${id}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((res) => {
+        setShowinv(false)
+        if (res.data.message === "Image deleted successfully.") {
+          let temp1 = [...row1];
+          let temp3 = [...row3];
+
+          const index1 = temp1.indexOf(item1);
+
+          if (index1 > -1) {
+            temp1.splice(index1, 1);
+            temp3.splice(index1, 1);
+          }
+
+          setrow1(temp1);
+          setrow3(temp3);
+
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(`Image Deleted Successfully !`)
+          );
+          dispatch(setAlertType("danger"));
+          getOrderImages();
+        } else {
+          alert(res.data.message);
+        }
+      })
+      .catch((err) => {
+        console.warn("deleteOrderImage--", err)
+      });
+  };
+
+  const deleteinvoice = (item2) => {
+    setdelete_type("invoice_image")
+    if (location.state !== null && item2[6] !== "") {
+      setinv_data(item2)
+      setinv_id(item2[6])
+      setShowinv(true)
     }
-    setrow2(temp2);
-    setrow4(temp4);
+    else {
+      const updatedEwayValue = eway_value.filter(item => item.ewbNo !== item2[0]);
+      seteway_value(updatedEwayValue)
+      let temp2 = [...row2];
+      let temp4 = [...row4];
+      const index2 = temp2.indexOf(item2);
+
+      if (index2 > -1) {
+        temp2.splice(index2, 1);
+        temp4.splice(index2, 1);
+      }
+      setrow2(temp2);
+      setrow4(temp4);
+    }
+  };
+
+  const deleteimage = (item1) => {
+    setdelete_type("order_image")
+    if (location.state !== null && item1[2] !== "") {
+      setord_data(item1)
+      setord_id(item1[2])
+      setShowinv(true)
+    }
+    else {
+      let temp1 = [...row1];
+      let temp3 = [...row3];
+
+      const index1 = temp1.indexOf(item1);
+
+      if (index1 > -1) {
+        temp1.splice(index1, 1);
+        temp3.splice(index1, 1);
+      }
+
+      setrow1(temp1);
+      setrow3(temp3);
+    }
+
   };
 
   //Logger PDF
@@ -872,17 +945,6 @@ const AddOrder = () => {
   let dimension_list8 = [box_bq];
   const [row6, setrow6] = useState([dimension_list8]);
 
-  // useEffect(() => {
-  //   if (validation.values.total_quantity !== 0) {
-  //     let val = validation.values.total_quantity;
-  //     let val_box = [];
-  //     for (let index = 0; index < val; index++) {
-  //       val_box.push([""]);
-  //     }
-  //     setrow6(val_box);
-  //   }
-  // }, [validation.values.total_quantity]);
-
   // Get Packages
   const get_packages = () => {
     let temp = [];
@@ -925,20 +987,8 @@ const AddOrder = () => {
       });
   };
 
-  // Delivery List
-  // const delivery_list = () => {
-  //   if (delivery_type === "LOCAL") {
-  //     setdelivery_mode_list(["Door To Door"]);
-  //     setdelivery_mode("Door To Door");
-  //   } else {
-  //     setdelivery_mode_list(["Door To Door", "Airport To AirPort"]);
-  //     setdelivery_mode("Door To Door");
-  //   }
-  // };
-
   // Get destination city
   const getDes_Cities = (place_id, filter_by) => {
-    // let cities_list = [...origincity_list];
     let dcities_list = [...destinationcity_list];
     axios
       .get(
@@ -954,17 +1004,6 @@ const AddOrder = () => {
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
-          // if (origincity_page == 1) {
-          //   cities_list = resp.data.results.map((v) => [
-          //     v.id,
-          //     toTitleCase(v.city),
-          //   ]);
-          // } else {
-          //   cities_list = [
-          //     ...origincity_list,
-          //     ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
-          //   ];
-          // }
 
           if (destinationcity_page == 1) {
             dcities_list = resp.data.results.map((v) => [
@@ -1018,9 +1057,6 @@ const AddOrder = () => {
       });
   };
 
-  // useLayoutEffect(() => {
-  //   check_ewb_attached();
-  // }, [])
   // Get Client Shipper & Consignee
   const get_client_shipper = (client_id, origin_id) => {
     let shipperlist = [];
@@ -1158,6 +1194,7 @@ const AddOrder = () => {
   // Post Order Data
   const send_order_data = async (values, type) => {
     try {
+      setIsLoading(true)
       const response = await axios.post(
         ServerAddress + "booking/add_order/",
         {
@@ -1284,6 +1321,8 @@ const AddOrder = () => {
               "CUSTOMER SERVICE EXECUTIVE"
               ? "NOT APPROVED"
               : cm_current_status.toUpperCase(),
+          invoice_image: (row2[row2.length - 1][0] === "" && row2[row2.length - 1][2] === "" && row2[row2.length - 1][3] === "" && row2[row2.length - 1][4] === "" && row2[row2.length - 1][5] === "") ? [] : row2,
+          order_image: (row1[row1.length - 1][0] === "" && row1[row1.length - 1][1] === "") ? [] : row1,
         },
         {
           headers: {
@@ -1293,16 +1332,17 @@ const AddOrder = () => {
       );
       // .then(function (response) {
       if (response.data.status === "success") {
+        setIsLoading(false)
         if (type === "yes") {
           setewaybill_no("")
           seteway_value([])
-          setrow2([["", val, "", "", ""]])
+          setrow2([["", val, "", "", "", "", ""]])
           seteway_list([])
           seteway_value([])
           seteway_detail_l([])
           setlocality_sel("")
           setlocality_sel_to("")
-          setrow4([["", val, "", "", ""]])
+          setrow4([["", val, "", "", "", "", ""]])
           settoggle_order(true);
           setShowOrder(false);
           setrow([["", "", "", ""]])
@@ -1313,7 +1353,7 @@ const AddOrder = () => {
           setlocality_c("")
           setcommodity("")
           setlocal_delivery_type("")
-          setrow1([["", ""]])
+          setrow1([["", "", ""]])
           seteway_confirm(false)
           setbooking_through(false)
           setfrom_address([])
@@ -1327,9 +1367,9 @@ const AddOrder = () => {
           navigate("/booking/orders");
         }
         // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no,response.data.data.booking_at)
-        if (row4[row4.length - 1][2] !== "" && row4[row4.length - 1][3] !== "") {
-          send_order_image(response.data.data.docket_no);
-        }
+        // if (row4[row4.length - 1][2] !== "" && row4[row4.length - 1][3] !== "") {
+        //   send_order_image(response.data.data.docket_no);
+        // }
         dispatch(setToggle(true));
         setsubmit_btn(true);
         setresponse_awb_no(response.data.awb_no);
@@ -1350,11 +1390,13 @@ const AddOrder = () => {
       }
       // })
     } catch (error) {
+      setIsLoading(false)
       alert(`Error Happen while posting Order  Data ${error}`);
     }
   };
   // Update Order
   const update_order = async (values) => {
+    setIsLoading(true)
     let id = order.id;
 
     let fields_names = Object.entries({
@@ -1508,6 +1550,8 @@ const AddOrder = () => {
           eway_bill_no: ewaybill_no,
           consignee_address1: consignee_address?.toUpperCase(),
           shipper_address1: shipper_address?.toUpperCase(),
+          invoice_image: (row2[row2.length - 1][0] === "" && row2[row2.length - 1][2] === "" && row2[row2.length - 1][3] === "" && row2[row2.length - 1][4] === "" && row2[row2.length - 1][5] === "") ? [] : row2,
+          order_image: (row1[row1.length - 1][0] === "" && row1[row1.length - 1][1] === "") ? [] : row1,
         },
         {
           headers: {
@@ -1516,8 +1560,9 @@ const AddOrder = () => {
         }
       );
       if (response.data.status === "success") {
+        setIsLoading(false)
         // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no)
-        send_order_image(order.docket_no);
+        // send_order_image(order.docket_no);
         dispatch(setToggle(true));
         dispatch(setDataExist(`Order Updated Sucessfully`));
         dispatch(setAlertType("info"));
@@ -1530,6 +1575,7 @@ const AddOrder = () => {
         dispatch(setAlertType("warning"));
       }
     } catch (error) {
+      setIsLoading(false)
       alert(`Error While  Updateing Orders,${error}`);
     }
   };
@@ -1903,10 +1949,14 @@ const AddOrder = () => {
 
   // Type Of Booking
   const booking_type = () => {
-    if (cold_chain === true && location.state === null) {
+    if( delivery_type==="DOMESTIC" && location.state === null){
       settype_of_booking(type_of_booking_list[0]);
-    } else if (cold_chain !== true && location.state === null) {
-      settype_of_booking("");
+    } else if (cold_chain === true && location.state === null) {
+      settype_of_booking(type_of_booking_list[0]);
+    } else if (nonecold_chain === true && location.state === null && delivery_type==="LOCAL") {
+      settype_of_booking(type_of_booking_list[1]);
+    } else if(location.state === null) {
+      settype_of_booking(type_of_booking_list[1]);
     }
   };
 
@@ -1936,8 +1986,10 @@ const AddOrder = () => {
   // }, []);
 
   useEffect(() => {
-    booking_type();
-  }, [cold_chain]);
+    if(location.state === null){
+      booking_type();
+    }
+  }, [cold_chain, delivery_type]);
 
   useLayoutEffect(() => {
     if (asset_info_selected !== "None" && asset_info_selected) {
@@ -2690,7 +2742,7 @@ const AddOrder = () => {
                 const uniqueEwayValue = Array.from(new Set(newEwayValue.map(item => item.ewbNo)))
                   .map(ewbNo => newEwayValue.find(item => item.ewbNo === ewbNo));
                 return uniqueEwayValue;
-             
+
               });
 
             }
@@ -3512,7 +3564,7 @@ const AddOrder = () => {
       // setisupdating(true);
       setorder_id("");
       setdocket_no_value("");
-      settype_of_booking("");
+      // settype_of_booking("");
 
       // setdelivery_mode(returned_data[0].delivery_mode);
       settransportation_cost("");
@@ -3622,6 +3674,8 @@ const AddOrder = () => {
           String(isoDate),
           String(element.docNo),
           String(element.totInvValue),
+          "",
+          "",
           ""
         ]);
 
@@ -3637,7 +3691,7 @@ const AddOrder = () => {
     if (eway_value && eway_value.length > 0) {
       for (let index = 0; index < row2.length; index++) {
         const element = row2[index];
-        temp_list2.push([element[0], element[1], element[2], element[3], ''])
+        temp_list2.push([element[0], element[1], element[2], element[3], '', '', ''])
       }
       setrow4(temp_list2);
     }
@@ -4059,7 +4113,7 @@ const AddOrder = () => {
       seteway_confirm(false);
       setewaybill_no("")
       seteway_value([])
-      setrow2([["", val, "", "", ""]])
+      setrow2([["", val, "", "", "", "", ""]])
       seteway_list([])
       seteway_value([])
       seteway_detail_l([])
@@ -4090,7 +4144,7 @@ const AddOrder = () => {
           setto_state_eway(resp.data?.results[0]?.state)
         }
       }
-      else if(resp.data.results.length === 0 && location.state === null) {
+      else if (resp.data.results.length === 0 && location.state === null) {
         if (type === "from") {
           setfrom_state_eway("")
         }
@@ -4106,8 +4160,81 @@ const AddOrder = () => {
   useEffect(() => {
     setlocality_sel_to(toTitleCase(eway_detail_l?.consignee_locality ? eway_detail_l?.consignee_locality : locslity_to_list?.length === 0 ? eway_detail_l.consignee_na_locality : ""));
     setlocality_sel(toTitleCase(eway_detail_l?.shipper_locality ? eway_detail_l?.shipper_locality : locality_list?.length === 0 ? eway_detail_l.shipper_na_locality : ""));
-  }, [eway_detail_l,locslity_to_list])
-  
+  }, [eway_detail_l, locslity_to_list])
+
+
+  const getOrderImages = (id) => {
+    axios
+      .get(
+        ServerAddress + `booking/get-order-images/${id}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((res) => {
+        console.log("res===", res)
+        let temp = []
+        let temp_list = []
+        if (res.data.Data.length > 0) {
+          temp = res.data.Data;
+          for (let index = 0; index < temp.length; index++) {
+            temp_list.push([
+              (bucket_address + temp[index].image),
+              temp[index].caption,
+              temp[index].id,
+            ]);
+          }
+          console.log("temp_list====", temp_list)
+          setrow1(temp_list);
+        }
+      })
+      .catch((err) => {
+        // console.log("errrrrrrrrrrrrrankit----", err)
+      });
+  };
+
+  const getInvoiceImages = (id) => {
+    axios
+      .get(
+        ServerAddress + `booking/get-invoice-images/${id}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((res) => {
+        console.log("res===", res)
+        let temp = []
+        let temp_list = []
+        if (res.data.Data.length > 0) {
+          temp = res.data.Data;
+          for (let index = 0; index < temp.length; index++) {
+            temp_list.push([
+              temp[index].ewaybill_no,
+              (temp[index].invoice_at).split("T")[0],
+              temp[index].invoice_no,
+              temp[index].invoice_amount,
+              (bucket_address + temp[index].invoice_image),
+              (bucket_address + temp[index].ewaybill_image),
+              temp[index].id,
+            ]);
+          }
+          console.log("temp_list====", temp_list)
+          setrow2(temp_list);
+        }
+      })
+      .catch((err) => {
+        // console.log("errrrrrrrrrrrrrankit----", err)
+      });
+  };
+
+  useEffect(() => {
+    if (location.state !== null && order?.id) {
+      getOrderImages(order?.id)
+      getInvoiceImages(order?.id)
+    }
+  }, [order])
+
+
   const divStyle = {
     backgroundColor: '#f2f2f2',
     padding: '8px',
@@ -4120,10 +4247,34 @@ const AddOrder = () => {
     marginRight: '10px',
   };
 
+  const action = () => {
+    if (delete_type === "order_image") {
+      deleteOrderImage(ord_id, ord_data)
+    }
+    else {
+      deleteInvoice(inv_id, inv_data)
+    }
+  }
+
   return (
     <div>
       {/* {!eway_loaded && memoizedLogInEwayBill} */}
       <LogInEwayBill />
+      {/* For Delete Invoice */}
+      <Modal show={showinv} onHide={() => setShowinv(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body> {delete_type === "order_image" ? "Do you Want to delete this order image." : "Do you Want to delete this invoice."}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowinv(false)}>
+            No
+          </Button>
+          <Button variant="danger" onClick={() => action()}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       {/* For Not Matching Pincode */}
       <Modal
@@ -4201,13 +4352,28 @@ const AddOrder = () => {
           </Modal.Header>
           <Modal.Body>Do you want add another docket with same shipper</Modal.Body>
           <Modal.Footer>
-            <Button type="button" variant="secondary" onClick={() => send_order_data(validation.values, "yes")}>
-              Yes
-            </Button>
-            <Button type="button" variant="primary" onClick={() => send_order_data(validation.values, "no")}>
-              {/* <Button type="button" variant="primary" onClick={handleSubmitOrder}> */}
-              No
-            </Button>
+            {!isLoading ?
+              <Button type="button" variant="secondary" onClick={() => send_order_data(validation.values, "yes")}>
+                Yes
+              </Button>
+              :
+              <Button
+                type="button" variant="secondary"
+              >
+                <Loader />
+              </Button>
+            }
+            {!isLoading ?
+              <Button type="button" variant="primary" onClick={() => send_order_data(validation.values, "no")}>
+                No
+              </Button>
+              :
+              <Button
+                type="button" variant="primary"
+              >
+                <Loader />
+              </Button>
+            }
             <Button
               variant="danger" onClick={() => setShowOrder(false)}
               style={{ marginLeft: "-420px", marginRight: "380px" }}>
@@ -4603,7 +4769,7 @@ const AddOrder = () => {
                             disabled={isupdating ? docket_no_value : ""}
                             onChange={(event) => {
                               setdocket_no_value(event.target.value);
-                              if (event.target.value.length != 6) {
+                              if (event.target.value.length <= 6) {
                                 setdocket_error(true);
                               } else {
                                 setdocket_error(false);
@@ -4627,7 +4793,7 @@ const AddOrder = () => {
                           {docket_error && (
                             <div className="mt-1 error-text" color="danger">
                               {/* <FormFeedback type="invalid"> */}
-                              Docket number must be 6 digit
+                              Docket number must be 6 or greater than 6 digit
                               {/* </FormFeedback> */}
                             </div>
                           )}
@@ -6733,11 +6899,48 @@ const AddOrder = () => {
                   )}
                   {order_active_btn === "second" ? (
                     <>
-                      {" "}
+                      {/* {" "}
                       {isupdating && (
-                        <OrderImgDataFormat id={location.state.order.id}/>
-                      )}
+                        <OrderImgDataFormat id={location.state.order.id} />
+                      )} */}
                       <Row className="hide">
+                        <Col md={5} sm={5}>
+                          <div className="mb-3">
+                            <Label className="header-child">Caption</Label>
+                            {row1.map((item1, index1) => (
+                              <div
+                                style={{ height: "95px", paddingTop: 35 }}
+                                key={index1}
+                              >
+                                <select
+                                  // disabled={item1[2] ? true : false}
+                                  style={{
+                                    marginBottom: "15px",
+                                    boxShadow: "none",
+                                  }}
+                                  className="form-select"
+                                  placeholder="Select status"
+                                  id="input"
+                                  value={item1[1]}
+                                  onChange={(val) => {
+                                    setcaption1(val.target.value);
+                                    item1[1] = val.target.value;
+                                    row3[index1][1] = val.target.value;
+                                  }}
+                                  defaultValue="Select status"
+                                >
+                                  <option value={item1[1]} disabled selected>
+                                    {item1[1] ? item1[1] : "Select Value"}
+                                  </option>
+                                  <option>Parcel Image</option>
+                                  <option>eWaybill Image</option>
+                                  <option>Order Image</option>
+                                  <option>Weight Image</option>
+                                </select>
+                              </div>
+                            ))}
+                          </div>
+                        </Col>
                         <Col md={5} sm={5}>
                           <div className="mb-3">
                             <Label className="header-child">Image</Label>
@@ -6748,10 +6951,10 @@ const AddOrder = () => {
                                     <img
                                       src={item1[0]}
                                       style={{
-                                        height: "110px",
-                                        width: "110px",
+                                        height: "95px",
+                                        width: "95px",
                                         borderRadius: "10px",
-                                        padding: 20,
+                                        paddingBottom: "5px",
                                       }}
                                       onClick={() => {
                                         setshowModalOrder({
@@ -6764,7 +6967,7 @@ const AddOrder = () => {
                                   ) : (
                                     <div
                                       style={{
-                                        height: "110px",
+                                        height: "95px",
                                         paddingTop: 35,
                                       }}
                                     >
@@ -6802,58 +7005,12 @@ const AddOrder = () => {
                                         >
                                           |
                                         </div>
-                                        {selectedFile === "" ? (
-                                          <a style={{ fontSize: 11 }}>
-                                            Image Not Uploaded
-                                          </a>
-                                        ) : (
-                                          <a style={{ fontSize: 11 }}>
-                                            Image Uploaded
-                                          </a>
-                                        )}
                                       </div>
                                     </div>
                                   )}
                                 </div>
                               );
                             })}
-                          </div>
-                        </Col>
-                        <Col md={5} sm={5}>
-                          <div className="mb-3">
-                            <Label className="header-child">Caption</Label>
-                            {row1.map((item1, index1) => (
-                              <div
-                                style={{ height: "110px", paddingTop: 35 }}
-                                key={index1}
-                              >
-                                <select
-                                  disabled={item1[2] ? true : false}
-                                  style={{
-                                    marginBottom: "15px",
-                                    boxShadow: "none",
-                                  }}
-                                  className="form-select"
-                                  placeholder="Select status"
-                                  id="input"
-                                  value={item1[1]}
-                                  onChange={(val) => {
-                                    setcaption1(val.target.value);
-                                    item1[1] = val.target.value;
-                                    row3[index1][1] = val.target.value;
-                                  }}
-                                  defaultValue="Select status"
-                                >
-                                  <option value={item1[1]} disabled selected>
-                                    {item1[1] ? item1[1] : "Select Value"}
-                                  </option>
-                                  <option>Parcel Image</option>
-                                  <option>eWaybill Image</option>
-                                  <option>Order Image</option>
-                                  <option>Weight Image</option>
-                                </select>
-                              </div>
-                            ))}
                           </div>
                         </Col>
                         {showModalOrder.value ? (
@@ -6897,7 +7054,7 @@ const AddOrder = () => {
                             ) : null}
                             {row1.map((item1, index1) => (
                               <div
-                                style={{ height: "110px", paddingTop: 35 }}
+                                style={{ height: "95px", paddingTop: 35 }}
                                 key={index1}
                               >
                                 <IconContext.Provider
@@ -6909,25 +7066,21 @@ const AddOrder = () => {
                                     <>
                                       <div
                                         onClick={() => {
-                                          if (item1[2]) {
-                                            deleteOrderImg(item1);
-                                          } else {
-                                            deleteimage(item1);
-                                            setSelectedFile(
-                                              row1[row1.length - 1][0]
-                                            );
-                                            setcaption1(
-                                              row1[row1.length - 1][1]
-                                            );
-                                          }
+                                          deleteimage(item1);
+                                          setSelectedFile(
+                                            row1[row1.length - 1][0]
+                                          );
+                                          setcaption1(
+                                            row1[row1.length - 1][1]
+                                          );
                                         }}
                                       >
-                                        <MdDeleteForever
+                                        <BiTrash
                                           color="red"
-                                          size={26}
+                                          size={21}
                                           style={{
                                             alignItems: "center",
-                                            background: "",
+                                            cursor: "pointer"
                                           }}
                                         />
                                       </div>
@@ -6974,9 +7127,9 @@ const AddOrder = () => {
                   )}
                   {order_active_btn === "third" ? (
                     <>
-                      {isupdating && (
-                        <InvoiceImgDataFormat id={location.state.order.id}/>
-                      )}
+                      {/* {isupdating && (
+                        <InvoiceImgDataFormat id={location.state.order.id} />
+                      )} */}
                       <Row>
                         {showModalInvoice.value ? (
                           // <Main_c
@@ -6989,26 +7142,47 @@ const AddOrder = () => {
                               });
                             }}
                             upload_image={(val) => {
-                              if (showModalInvoice.ind !== "") {
-                                row4[showModalInvoice.ind][4] = val;
-                                setshowModalInvoice({
-                                  ...showModalInvoice,
-                                  value: false,
-                                  ind: "",
-                                });
-                              } else {
-                                // row4[row4.length - 1][4] = val;
-                                row4[img_index][4] = val;
+                              if (showModalInvoice.type === "invoice") {
+                                if (showModalInvoice.ind !== "") {
+                                  row4[showModalInvoice.ind][4] = val;
+                                  setshowModalInvoice({
+                                    ...showModalInvoice,
+                                    value: false,
+                                    ind: "",
+                                  });
+                                } else {
+                                  row4[img_index][4] = val;
+                                }
+                              }
+                              else {
+                                if (showModalInvoice.ind !== "") {
+                                  row4[showModalInvoice.ind][5] = val;
+                                  setshowModalInvoice({
+                                    ...showModalInvoice,
+                                    value: false,
+                                    ind: "",
+                                  });
+                                } else {
+                                  row4[img_index][5] = val;
+                                }
                               }
                             }}
                             result_image={(val) => {
-                              if (showModalInvoice.ind !== "") {
-                                row2[showModalInvoice.ind][4] = val;
-                                // row2[img_index][4] = val;
-                              } else {
-                                // row2[row2.length - 1][4] = val;
-                                row2[img_index][4] = val;
-                                setinvoice_img(val);
+                              if (showModalInvoice.type === "invoice") {
+                                if (showModalInvoice.ind !== "") {
+                                  row2[showModalInvoice.ind][4] = val;
+                                } else {
+                                  row2[img_index][4] = val;
+                                  setinvoice_img(val);
+                                }
+                              }
+                              else {
+                                if (showModalInvoice.ind !== "") {
+                                  row2[showModalInvoice.ind][5] = val;
+                                } else {
+                                  row2[img_index][5] = val;
+                                  setewaybill_img(val);
+                                }
                               }
                             }}
                           />
@@ -7018,7 +7192,7 @@ const AddOrder = () => {
                             <Label className="header-child">EwayBill No</Label>
                             {row2.map((item2, index2) => (
                               <div
-                                style={{ height: "110px", paddingTop: 35 }}
+                                style={{ height: "95px", paddingTop: 35 }}
                                 key={index2}
                               >
                                 <Input
@@ -7044,63 +7218,11 @@ const AddOrder = () => {
                                       item2[0] = val.target.value;
                                       row4[index2][0] = val.target.value;
                                     }
-
-                                    // if (val.target.value.length === 12) {
-                                    //   // sete_waybill_inv(val.target.value);
-                                    //   // item2[0] = val.target.value;
-                                    //   // row4[index2][0] = val.target.value;
-                                    // } 
-                                    //     else if (val.target.value.length > 12) {
-                                    //   alert("----1")
-                                    //   // sete_waybill_inv(val.target.value);
-                                    //   // item2[0] = val.target.value;
-                                    //   // row4[index2][0] = val.target.value;
-                                    // }
                                   }}
-                                // onBlur={() => {
-                                //   if (e_waybill_inv.length !== 12) {
-                                //     dispatch(setShowAlert(true));
-                                //     dispatch(
-                                //       setDataExist(`Number Should be 12 digit`)
-                                //     );
-                                //     dispatch(setAlertType("warning"));
-                                //   }
-                                // }}
-                                // disabled={eway_confirm && index2 == 0}
+
                                 />
                               </div>
                             ))}
-                            {/* {row2.map((item2, index2) => (
-                              <div style={{ height: "110px", paddingTop: 35 }} key={index2}>
-                                <Input
-                                  maxLength={12}
-                                  value={item2[0]}
-                                  key={index2}
-                                  type="number"
-                                  className="form-control-md"
-                                  id="input"
-                                  style={{ marginBottom: "15px" }}
-                                  placeholder="Enter EwayBill No"
-                                  onChange={(e) => {
-                                    const value = e.target.value.slice(0, 12); // Enforce maximum length of 12 characters
-                                    item2[0] = value;
-                                    row4[index2][0] = value;
-                                    setrow2([...row2]); // Update the state with modified row2
-
-                                    if (value.length === 12 && booking_through) {
-                                      check_ewb_attached(value);
-                                    }
-                                  }}
-                                  onBlur={() => {
-                                    if (item2[0].length !== 12) {
-                                      dispatch(setShowAlert(true));
-                                      dispatch(setDataExist("Number should be 12 digits"));
-                                      dispatch(setAlertType("warning"));
-                                    }
-                                  }}
-                                />
-                              </div>
-                            ))} */}
 
                           </div>
                         </Col>
@@ -7112,7 +7234,7 @@ const AddOrder = () => {
                             {row2.map((item2, index2) => (
                               <div
                                 key={index2}
-                                style={{ height: "110px", paddingTop: 35 }}
+                                style={{ height: "95px", paddingTop: 35 }}
                               >
                                 <input
                                   style={{ marginBottom: "15px" }}
@@ -7139,7 +7261,7 @@ const AddOrder = () => {
                             {row2.map((item2, index2) => {
                               return (
                                 <div
-                                  style={{ height: "110px", paddingTop: 35 }}
+                                  style={{ height: "95px", paddingTop: 35 }}
                                   key={index2}
                                 >
                                   <Input
@@ -7173,7 +7295,7 @@ const AddOrder = () => {
                             </Label>
                             {row2.map((item2, index2) => (
                               <div
-                                style={{ height: "110px", paddingTop: 35 }}
+                                style={{ height: "95px", paddingTop: 35 }}
                                 key={index2}
                               >
                                 <Input
@@ -7196,7 +7318,7 @@ const AddOrder = () => {
                             ))}
                           </div>
                         </Col>
-                        <Col md={3} sm={2}>
+                        <Col md={2} sm={2}>
                           <div className="mb-3">
                             <Label className="header-child">
                               Invoice Images
@@ -7208,8 +7330,8 @@ const AddOrder = () => {
                                     <img
                                       src={item1[4]}
                                       style={{
-                                        height: "110px",
-                                        width: "110px",
+                                        height: "95px",
+                                        width: "95px",
                                         borderRadius: "10px",
                                         paddingBottom: "5px",
                                       }}
@@ -7218,6 +7340,7 @@ const AddOrder = () => {
                                           ...showModalInvoice,
                                           value: true,
                                           ind: index1,
+                                          type: "invoice",
                                         });
                                       }}
                                     />
@@ -7243,6 +7366,7 @@ const AddOrder = () => {
                                           setshowModalInvoice({
                                             ...showModalInvoice,
                                             value: true,
+                                            type: "invoice",
                                           });
                                         }}
                                       >
@@ -7263,7 +7387,7 @@ const AddOrder = () => {
                                         >
                                           |
                                         </div>
-                                        {invoice_img === "" ? (
+                                        {/* {invoice_img === "" ? (
                                           <a style={{ fontSize: 11 }}>
                                             Image Not Uploaded
                                           </a>
@@ -7271,7 +7395,7 @@ const AddOrder = () => {
                                           <a style={{ fontSize: 11 }}>
                                             Image Uploaded
                                           </a>
-                                        )}
+                                        )} */}
                                       </div>
                                     </div>
                                   )}
@@ -7280,33 +7404,119 @@ const AddOrder = () => {
                             })}
                           </div>
                         </Col>
-                        <Col md={1}>
-                          <div className="mb-3" style={{ textAlign: "center" }}>
-                            {row2.length > 1 ? (
-                              <Label className="header-child">Delete</Label>
-                            ) : null}
-                            {row2.map((item2, index2) => (
-                              <div
-                                style={{ height: "110px", paddingTop: 35 }}
-                                key={index2}
-                              >
-                                <IconContext.Provider
-                                  key={index2}
-                                  value={{
-                                    className: "icon multi-input",
-                                  }}
-                                >
-                                  {row2.length > 1 ? (
-                                    <>
+
+                        <Col md={2} sm={2}>
+                          <div className="mb-3">
+                            <Label className="header-child">
+                              EwayBill Images
+                            </Label>
+                            {row2.map((item1, index1) => {
+                              return (
+                                <div style={{ width: "100%" }} key={index1}>
+                                  {item1[5] ? (
+                                    <img
+                                      src={item1[5]}
+                                      style={{
+                                        height: "95px",
+                                        width: "95px",
+                                        borderRadius: "10px",
+                                        paddingBottom: "5px",
+                                      }}
+                                      onClick={() => {
+                                        setshowModalInvoice({
+                                          ...showModalInvoice,
+                                          value: true,
+                                          ind: index1,
+                                          type: "ewaybill",
+                                        });
+                                      }}
+                                    />
+                                  ) : (
+                                    <div
+                                      style={{
+                                        height: "110px",
+                                        paddingTop: 35,
+                                      }}
+                                    >
                                       <div
+                                        style={{
+                                          display: "flex",
+                                          flexDirection: "row",
+                                          border: "0.5px solid #dad7d7",
+                                          alignItems: "center",
+                                          height: "38px",
+                                          borderRadius: 5,
+                                          height: 31,
+                                        }}
                                         onClick={() => {
-                                          if (item2[4] && isupdating) {
-                                            deleteInvoiceImg(item2);
-                                          } else {
+                                          setimg_index(index1)
+                                          setshowModalInvoice({
+                                            ...showModalInvoice,
+                                            value: true,
+                                            type: "ewaybill",
+                                          });
+                                        }}
+                                      >
+                                        <a
+                                          style={{
+                                            marginLeft: "3px",
+                                            fontSize: 11,
+                                          }}
+                                        >
+                                          Chooose File
+                                        </a>
+                                        <div
+                                          style={{
+                                            fontSize: "25px",
+                                            color: "#dad7d7",
+                                            marginLeft: "5px",
+                                          }}
+                                        >
+                                          |
+                                        </div>
+                                        {/* {invoice_img === "" ? (
+                                          <a style={{ fontSize: 11 }}>
+                                            Image Not Uploaded
+                                          </a>
+                                        ) : (
+                                          <a style={{ fontSize: 11 }}>
+                                            Image Uploaded
+                                          </a>
+                                        )} */}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </Col>
+                        {row2.length > 1 && (
+                          <Col md={1}>
+                            <div className="mb-3" style={{ textAlign: "center" }}>
+                              {row2.length > 1 ? (
+                                <Label className="header-child">Delete</Label>
+                              ) : null}
+                              {row2.map((item2, index2) => (
+                                <div
+                                  style={{ height: "95px", paddingTop: 35 }}
+                                  key={index2}
+                                >
+                                  <IconContext.Provider
+                                    key={index2}
+                                    value={{
+                                      className: "icon multi-input",
+                                    }}
+                                  >
+                                    {row2.length > 1 ? (
+                                      <>
+                                        <div
+                                          onClick={() => {
+                                            // if (item2[4] && isupdating) {
+                                            //   deleteInvoiceImg(item2);
+                                            // } else {
                                             deleteinvoice(item2);
-                                            setinvoice_img(
-                                              row2[row2.length - 1][0]
-                                            );
+                                            sete_waybill_inv(row2[row2.length - 1][0]);
                                             settoday(row2[row2.length - 1][1]);
                                             setinvoice_no(
                                               row2[row2.length - 1][2]
@@ -7314,35 +7524,40 @@ const AddOrder = () => {
                                             setinvoice_value(
                                               row2[row2.length - 1][3]
                                             );
-                                          }
-                                        }}
-                                      >
-                                        <MdDeleteForever
-                                          color="red"
-                                          size={27}
-                                          style={{
-                                            alignItems: "center",
-                                            background: "",
+                                            setinvoice_img(
+                                              row2[row2.length - 1][4]
+                                            );
+                                            setewaybill_img(
+                                              row2[row2.length - 1][5]
+                                            );
+                                            // }
                                           }}
-                                        />
-                                      </div>
-                                    </>
-                                  ) : null}
-                                </IconContext.Provider>
-                              </div>
-                            ))}
-                          </div>
-                        </Col>
+                                        >
+                                          <BiTrash
+                                            color="red"
+                                            size={21}
+                                            style={{
+                                              alignItems: "center",
+                                              cursor: "pointer"
+                                            }}
+                                          />
+                                        </div>
+                                      </>
+                                    ) : null}
+                                  </IconContext.Provider>
+                                </div>
+                              ))}
+                            </div>
+                          </Col>
+                        )}
                         <div>
                           <span
                             className="link-text"
                             onClick={() => {
                               if (
                                 (row2[row2.length - 1][0].length === 12 || row2[row2.length - 1][0].length === 0) &&
-                                row2[row2.length - 1][1] &&
-                                row2[row2.length - 1][2] &&
-                                row2[row2.length - 1][3]
-                                // && row2[row2.length - 1][4]
+                                (row2[row2.length - 1][2] ||
+                                  row2[row2.length - 1][3])
                               ) {
                                 setshowModalInvoice({
                                   ...showModalInvoice,
@@ -7565,34 +7780,30 @@ const AddOrder = () => {
                 </Button>
               )}
               {currentStep === labelArray.length && (
-                <Button
-                  type="submit"
-                  className={
-                    isupdating &&
+                !isLoading ?
+                  <Button
+                    type="submit"
+                    className={"btn btn-info m-1"}
+                    onClick={() => setsame_as(false)}
+                  >
+                    {isupdating &&
                       (user.user_department_name + " " + user.designation_name ===
                         "DATA ENTRY OPERATOR" ||
-                        user.user_department_name +
-                        " " +
-                        user.designation_name ===
-                        "CUSTOMER SERVICE EXECUTIVE")
-                      ? "btn btn-info m-1"
+                        user.user_department_name + " " + user.designation_name ===
+                        "CUSTOMER SERVICE EXECUTIVE" ||
+                        user.is_superuser)
+                      ? "Update"
                       : !isupdating
-                        ? "btn btn-info m-1"
-                        : "btn btn-success m-1"
-                  }
-                  onClick={() => setsame_as(false)}
-                >
-                  {isupdating &&
-                    (user.user_department_name + " " + user.designation_name ===
-                      "DATA ENTRY OPERATOR" ||
-                      user.user_department_name + " " + user.designation_name ===
-                      "CUSTOMER SERVICE EXECUTIVE" ||
-                      user.is_superuser)
-                    ? "Update"
-                    : !isupdating
-                      ? "Save"
-                      : "Approved"}
-                </Button>
+                        ? "Save"
+                        : "Approved"}
+                  </Button>
+                  :
+                  <Button
+                    type="button"
+                    className={"btn btn-info m-1"}
+                  >
+                    <Loader />
+                  </Button>
               )}
 
               {isupdating &&

@@ -97,8 +97,8 @@ const InvoiceImgDataFormat = ({ id }) => {
         // console.log("errrrrrrrrrrrrrankit----", err)
       });
   };
+
   const deleteInvoice = (id) => {
-    console.log("id", id)
     axios
       .delete(ServerAddress + `booking/delete-invoice-images/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
