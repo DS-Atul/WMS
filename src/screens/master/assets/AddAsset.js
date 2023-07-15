@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -51,7 +51,6 @@ const AddAsset = () => {
   const [circle_btn2, setcircle_btn2] = useState(true);
   const [isupdating, setisupdating] = useState(false);
   const location_data = useLocation();
-  console.log("the location data ",location_data)
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const [null_value, setnull_value] = useState(false)
@@ -142,9 +141,6 @@ const AddAsset = () => {
   const [callibration_to, setcallibration_to] = useState("");
   const [issued_by, setissued_by] = useState("");
   const [issued_date, setissued_date] = useState("");
-  // console.log("purchase_date====", purchase_date)
-  // console.log("expiry_date====", expiry_date)
-
 
   const [expired, setexpired] = useState(false);
 
@@ -192,6 +188,7 @@ const AddAsset = () => {
   ];
 
   const [row, setrow] = useState([dimensiton_list]);
+  console.log("setrow=======", row)
   const [callibaration_from_date_error, setcallibaration_from_date_error] = useState(false);
 
   const add_callibration = () => {
@@ -499,7 +496,7 @@ const AddAsset = () => {
           )
         );
         dispatch(setAlertType("success"));
-        navigate(-1);
+        // navigate(-1);
       } else if (response.data === "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(
@@ -516,10 +513,10 @@ const AddAsset = () => {
 
   const updateAsset = async () => {
 
-      let fields_names = Object.entries({
-        asset_type: asset_type,
-        assigned_branch_n: branch_selected,
-        box_capacities: box_cap,
+    let fields_names = Object.entries({
+      asset_type: asset_type,
+      assigned_branch_n: branch_selected,
+      box_capacities: box_cap,
       box_type: asset_type === "Logger" ? logger_box_type : box_type,
       current_branch_n: user.branch_nm,
       expiry_date: expiry_date,
@@ -543,15 +540,12 @@ const AddAsset = () => {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
-    console.log("fields_names==",fields_names)
-    console.log("the chanages filed 1==",change_fields)
-
 
     let fields_names2 = Object.entries({
       callibration_from: callibration_from,
       callibration_to: callibration_to,
       issued_by: issued_by,
-      issued_date:issued_date,
+      issued_date: issued_date,
     })
     let change_fields2 = {};
 
@@ -563,10 +557,8 @@ const AddAsset = () => {
         change_fields2[`${ele[1]}`] = new_v.toString().toUpperCase();
       }
     }
-    console.log("chanages==",fields_names2)
-    console.log("the chanages filed 2==",change_fields2)
 
-    try { 
+    try {
       const response = await axios.put(
         ServerAddress + "master/update_asset/" + asset.id,
         {
@@ -596,7 +588,7 @@ const AddAsset = () => {
           callibration_to: asset_type === "Logger" ? expiry_date : null,
           asset_callibration: asset_type === "Logger" ? row : [],
           change_fields: change_fields,
-          change_fields2:change_fields2,
+          change_fields2: change_fields2,
           is_damaged: is_defective,
           deleted_calibration: deleted_calibration_id,
           //For C&M
@@ -841,6 +833,14 @@ const AddAsset = () => {
     }
   }, [logger_box_type]);
 
+
+  // for getting the data of  Qualification Details
+  const fileInputRef1 = React.useRef(null);
+
+  const handleIClick = () => {
+    fileInputRef1.current.click();
+  };
+
   return (
     <div>
 
@@ -886,9 +886,9 @@ const AddAsset = () => {
         </div>
         {/* Add For History Button */}
         {isupdating &&
-          <div style={{ justifyContent: "right", display: "flex",marginRight:"20px" }}>
+          <div style={{ justifyContent: "right", display: "flex", marginRight: "20px" }}>
             <Button
-             variant="primary"
+              variant="primary"
               type="button"
               onClick={() => {
                 handlClk();
@@ -1532,7 +1532,7 @@ const AddAsset = () => {
                         </div>
                       </Col> */}
 
-                      <Col lg={3} md={6} sm={6}>
+                      {/* <Col lg={2} md={6} sm={6}>
                         <div className="mb-3">
                           <Label className="header-child">
                             Certificate
@@ -1614,7 +1614,185 @@ const AddAsset = () => {
                             );
                           })}
                         </div>
+                      </Col> */}
+
+                      <Col lg={3} md={3} sm={6}>
+                        <Label className="header-child">
+                          Document
+                          <span className="manadatory">
+                            *
+                          </span>
+                        </Label>
+
+                        {row.map(
+                          (item, index) => (
+                            <div key={index}>
+                              {item[4] == "" ? (
+                                <input
+                                  className="form-control d-block from control-md"
+                                  bsSize="sm"
+                                  type="file"
+                                  style={{
+                                    marginBottom: "15px",
+                                  }}
+                                  name="degree_doc"
+                                  id="input"
+                                  accept=".pdf"
+                                  onChange={(event) => {
+                                    const file =
+                                      event.target
+                                        .files[0];
+                                    if (
+                                      file &&
+                                      file.type ===
+                                      "application/pdf"
+                                    ) {
+                                      const reader = new FileReader();
+
+                                      reader.onload =
+                                        () => {
+                                          const base64Url =
+                                            reader.result;
+                                          item[4] =
+                                            base64Url; // Set the value at index 5 in the 'item' directly
+                                          setrefresh(
+                                            !refresh
+                                          );
+                                        };
+
+                                      reader.readAsDataURL(
+                                        file
+                                      );
+                                    } else {
+                                      // Handle invalid file type error
+                                      console.log(
+                                        "Please select a PDF file."
+                                      );
+                                    }
+                                  }}
+                                />
+                              )
+                                :
+                                <>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      flexDirection: "row",
+                                      border: "0.5px solid #dad7d7",
+                                      alignItems: "center",
+                                      height: "38px",
+                                      borderRadius: 5,
+                                      height: 31,
+                                    }}
+                                    onClick={handleIClick}
+                                  >
+                                    <a
+                                      style={{
+                                        marginLeft: "3px",
+                                        fontSize: 11,
+                                      }}
+                                    >
+                                      Chooose File
+                                    </a>
+                                    <div
+                                      style={{
+                                        fontSize: "25px",
+                                        color: "#dad7d7",
+                                        marginLeft: "5px",
+                                      }}
+                                    >
+                                      |
+                                    </div>
+                                    <a style={{ fontSize: 11 }}>
+                                      Image Uploaded
+                                    </a>
+                                  </div>
+                                  {/* <button
+                                type="button"
+                                onClick={handleIClick}
+                                style={{
+                                  width: "120px",
+                                  height: "30px",
+                                }}
+                              >
+                                <p>
+                                  {item[4].substring(
+                                    item[4].lastIndexOf(
+                                      "/"
+                                    ) + 1
+                                  )}
+                                </p>
+                              </button> */}
+                                  <input
+                                    ref={fileInputRef1}
+                                    //  className="form-control d-block from control-md"
+                                    //  bsSize="sm"
+                                    type="file"
+                                    style={{
+                                      marginBottom:
+                                        "15px",
+                                      display: "none",
+                                    }}
+                                    name="degree_doc"
+                                    id="input-s"
+                                    accept=".pdf"
+                                    onChange={(event) => {
+                                      const file =
+                                        event.target
+                                          .files[0];
+
+                                      if (
+                                        file &&
+                                        file.type ===
+                                        "application/pdf"
+                                      ) {
+                                        const reader =
+                                          new FileReader();
+
+                                        reader.onload =
+                                          () => {
+                                            const base64Url =
+                                              reader.result;
+                                            //  item[5] = base64Url; // Set the value at index 5 in the 'item' directly
+                                            const updatedInfo =
+                                              [
+                                                ...row,
+                                              ];
+                                            updatedInfo[
+                                              index
+                                            ][4] =
+                                              base64Url;
+
+                                            // Update the state with the modified 'education_info' array
+                                            // seteducation_info(
+                                            //   updatedInfo
+                                            // );
+                                            setrefresh(
+                                              !refresh
+                                            );
+                                          };
+
+                                        reader.readAsDataURL(
+                                          file
+                                        );
+                                      } else {
+                                        // Handle invalid file type error
+                                        console.log(
+                                          "Please select a PDF file."
+                                        );
+                                      }
+                                    }}
+                                  />
+                                </>
+                              }
+
+                            </div>
+                          )
+                        )}
                       </Col>
+                      {/* ////////////////// */}
+                      {/* ////////////////// */}
+
                       <Col lg={1}>
                         <div className="mb-3" style={{ textAlign: "center" }}>
                           {row.length > 1 ? (

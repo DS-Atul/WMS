@@ -152,7 +152,7 @@ function AssigneBranch() {
       //   setbranch_list(resp.data);
       // })
       .catch((err) => {
-        alert(`Error Occur in Get`, err);
+        console.warn(`Error Occur in Get`, err);
       });
   };
 
@@ -207,7 +207,7 @@ function AssigneBranch() {
       //   setbranch_list(resp.data);
       // })
       .catch((err) => {
-        alert(`Error Occur in Get`, err);
+        console.warn(`Error Occur in Get`, err);
       });
   };
 

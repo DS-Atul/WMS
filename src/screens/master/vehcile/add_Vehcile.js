@@ -52,11 +52,11 @@ const Add_Vehcile = () => {
   };
   const [circle_btn, setcircle_btn] = useState(true);
   //   State For Saving For Data
-const [vehcile_owner, setvehcile_owner] = useState([   
-"Owned Vehicle",
-"Partner Vehicle",])
-const [vehcile_owner_s, setvehcile_owner_s] = useState("")
-const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
+  const [vehcile_owner, setvehcile_owner] = useState([
+    "Owned Vehicle",
+    "Partner Vehicle",])
+  const [vehcile_owner_s, setvehcile_owner_s] = useState("")
+  const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
 
   const [vehcile_type, setvehcile_type] = useState([
     "Truck",
@@ -215,7 +215,7 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
             transporter_name: vendor_id,
             branch: branch_ids,
             change_fields: change_fields,
-            vehcile_image: result_img?.substring(0,4) !== "http" ? result_img : null,
+            vehcile_image: result_img?.substring(0, 4) !== "http" ? result_img : null,
             vehcile_capacity: vehcile_capacity ? toTitleCase(vehcile_capacity).toUpperCase() : null,
             vehcile_owner: toTitleCase(vehcile_owner_s).toUpperCase(),
           },
@@ -274,7 +274,7 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
         data = response.data.vehicle_branch;
 
         if (data.length > 0) {
-          branch_temp = data.filter((v)=>v.branch !== null).map((v) => [v.branch, toTitleCase(v.branch__name)]);
+          branch_temp = data.filter((v) => v.branch !== null).map((v) => [v.branch, toTitleCase(v.branch__name)]);
           setbranch_list2(branch_temp)
         }
       })
@@ -363,13 +363,13 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
 
   useLayoutEffect(() => {
     if (location_data.state === null) {
-    getBranches("all");
+      getBranches("all");
     }
   }, [page, search_branch]);
 
   useLayoutEffect(() => {
     if (location_data.state !== null) {
-    getBranches(parseInt(location_data.state.vehcile.id));
+      getBranches(parseInt(location_data.state.vehcile.id));
     }
   }, [page, search_branch]);
 
@@ -384,7 +384,7 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
   const [vehicle_len_error, setvehicle_len_error] = useState(false);
 
   useEffect(() => {
-    if (branch_list2?.length>0) {
+    if (branch_list2?.length > 0) {
       setbranch_err(false);
     }
     if (vehcile_type_s !== "") {
@@ -402,7 +402,7 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
     if (vehcile_model !== "") {
       setvehicle_model_error(false);
     }
-    if (result_img !==""){
+    if (result_img !== "") {
       setvehcile_img_error(false)
     }
     if (vehcile_no !== "" && vehcile_no.length !== 10) {
@@ -413,7 +413,7 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
   }, [vehcile_type_s, vehcile_no, vehcile_model, result_img, branch_list2, vehcile_owner_s]);
 
   useEffect(() => {
-    
+
     if (location_data.state !== null && vehcile.length !== 0) {
       get_VehicleBranchDetails(vehcile.id)
     }
@@ -565,77 +565,6 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
                     </div>
                   </Col> */}
 
-
-                        <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2" style={{ position: "relative" }}>
-                          <Label>Vehicle Image*</Label>
-                          <Input
-                          style={{background:"white"}}
-                            className="form-control-md"
-                            name="logo"
-                            // type=""
-                            id="input"
-                            disabled
-                            value={result_img}
-                            invalid={vehcile_img_error}
-                            onChange={(val) => {
-                              setresult_img(val.target.value)
-                            }}
-                            // accept="image/png,image/jpeg, image/jpg"
-                          />
-                          <button
-                            style={{
-                              border:"none",
-                              position: "absolute",
-                              borderRadius:"2px",
-                              height: "29px",
-                              top: "28.5px",
-                              // padding: "0.375rem 0.75rem",
-                              marginLeft: ".9px",
-                              background:"#e9ecef",
-                            }}
-                            className="form-control-md"
-                            id="input"
-                            type="button"
-                            onClick={() => setmodal(true)}
-                          >
-                            Choose Image 
-                          </button>
-                          <ImgModal
-                            modal={modal}
-                            modal_set={() => {
-                              setmodal(false);
-                            }}
-                            upload_image={(val) => {
-                              setuploaded_img(val);
-                            }}
-                            result_image={(val) => {
-                              setresult_img(val);
-                            }}
-                          />
-                          <FormFeedback type="invalid">
-                           Vehcile Image is required
-                          </FormFeedback>
-                        </div>
-                      </Col>
-
-                      {result_img && (
-                        <Col lg={1} md={4} sm={6}>
-                          <div className="mb-3 parent_div">
-                            <img
-                              onClick={() => setmodal(true)}
-                              src={result_img}
-                              style={{
-                                width: "70px",
-                                height: "70px",
-                                borderRadius: "8px",
-                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                              }}
-                            />
-                          </div>
-                         </Col>
-                      )}
-                      
                   <Col lg={4} md={4} sm={4}>
                     <div className="mb-3">
                       <Label className="header-child">container capacity</Label>
@@ -661,26 +590,100 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
                       />
                     </div>
                   </Col>
+
+                  <ImgModal
+                    modal={modal}
+                    modal_set={() => {
+                      setmodal(false);
+                    }}
+                    pre_image={result_img ? result_img : ""}
+                    upload_image={(val) => {
+                      setuploaded_img(val);
+                    }}
+                    result_image={(val) => {
+                      setresult_img(val);
+                    }}
+                  />
+                  {(result_img === "" || !result_img) &&
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2" style={{ position: "relative" }}>
+                        <Label>Vehicle Image*</Label>
+                        <Input
+                          style={{ background: "white" }}
+                          className="form-control-md"
+                          name="logo"
+                          // type=""
+                          id="input"
+                          disabled
+                          value={result_img}
+                          invalid={vehcile_img_error}
+                          onChange={(val) => {
+                            setresult_img(val.target.value)
+                          }}
+                        // accept="image/png,image/jpeg, image/jpg"
+                        />
+                        <button
+                          style={{
+                            border: "none",
+                            position: "absolute",
+                            borderRadius: "2px",
+                            height: "29px",
+                            top: "28.5px",
+                            // padding: "0.375rem 0.75rem",
+                            marginLeft: ".9px",
+                            background: "#e9ecef",
+                          }}
+                          className="form-control-md"
+                          id="input"
+                          type="button"
+                          onClick={() => setmodal(true)}
+                        >
+                          Choose Image
+                        </button>
+                        <FormFeedback type="invalid">
+                          Vehcile Image is required
+                        </FormFeedback>
+                      </div>
+                    </Col>
+                  }
+                  {result_img && (
+                    <Col lg={4} md={4} sm={6}>
+                      <Label>Vehicle Image*</Label>
+                      <div className="mb-3">
+                        <img
+                          onClick={() => setmodal(true)}
+                          src={result_img}
+                          style={{
+                            width: "95px",
+                            height: "95px",
+                            borderRadius: "8px",
+                            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                          }}
+                        />
+                      </div>
+                    </Col>
+                  )}
+
                   <Col lg={12} md={12} sm={12}>
-                      <Label className="header-child">Associated Branch *:</Label>
-                      <TransferList
-                        list_a={branch_list}
-                        setlist_a={setbranch_list}
-                        list_b={branch_list2}
-                        setlist_b={setbranch_list2}
-                        page={page}
-                        setpage={setpage}
-                        setsearch_item={setsearch_branch}
-                        loaded={branch_loaded}
-                        count={branch_count}
-                        bottom={branch_bottom}
-                        setbottom={setbranch_bottom}
-                      />
-                      {branch_err ? (
-                        <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
-                          Please Select At Least One Branch
-                        </div>
-                      ) : null}
+                    <Label className="header-child">Associated Branch *:</Label>
+                    <TransferList
+                      list_a={branch_list}
+                      setlist_a={setbranch_list}
+                      list_b={branch_list2}
+                      setlist_b={setbranch_list2}
+                      page={page}
+                      setpage={setpage}
+                      setsearch_item={setsearch_branch}
+                      loaded={branch_loaded}
+                      count={branch_count}
+                      bottom={branch_bottom}
+                      setbottom={setbranch_bottom}
+                    />
+                    {branch_err ? (
+                      <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
+                        Please Select At Least One Branch
+                      </div>
+                    ) : null}
                   </Col>
                 </Row>
               </CardBody>
@@ -701,16 +704,16 @@ const [vehicle_owner_error, setvehicle_owner_error] = useState(false)
                   } else if (vehcile_type_s === "") {
                     setvehicle_type_error(true);
                   }
-                  else if ( 
+                  else if (
                     vehcile_owner_s === "Partner Vehicle" &&
                     vendor_name === ""
                   ) {
                     setvendor_error(true);
                   } else if (vehcile_no === "" || vehcile_no.length !== 10) {
                     setvehicle_number_error(true);
-                  }  else if (vehcile_model === "") {
+                  } else if (vehcile_model === "") {
                     setvehicle_model_error(true);
-                  } else if (result_img ===""){
+                  } else if (result_img === "") {
                     setvehcile_img_error(true);
                   } else if (branch_list2?.length === 0) {
                     setbranch_err(true);

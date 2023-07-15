@@ -250,12 +250,6 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
   };
 
   const send_hub_data = () => {
-    // let data1 = createRunsheet_list;
-    // let id = [];
-    // for (let index = 0; index < data1.length; index++) {
-    //   const element = data1[index];
-    //   id.push(element.id);
-    // }
     axios
       .post(
         ServerAddress + "manifest/add_hub_manifest/",

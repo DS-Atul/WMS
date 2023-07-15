@@ -23,10 +23,9 @@ const ImgModal = ({
   upload_image,
   result_image,
   heading,
+  pre_image
 }) => {
 
-// console.log("modal=======", modal)
-// console.log("upload_image=======", upload_image)
 // console.log("result_image=======", result_image)
 
   const filterElement = [
@@ -310,7 +309,19 @@ const ImgModal = ({
                           alt=""
                         />
                       </ReactCrop>
-                    ) : (
+                    ) : (pre_image !== "" && pre_image) ? 
+                    <ReactCrop crop={crop} onChange={(c) => setCrop(c)}>
+                    <img
+                      onLoad={(e) => setdetails(e.currentTarget)}
+                      style={{
+                        filter: `brightness(${state.brightness}%) grayscale(${state.grayscale}%) contrast(${state.contrast}%) hue-rotate(${state.hueRotate}deg)`,
+                        transform: `rotate(${state.rotate}deg) scale(${state.vertical}) scale(${state.horizontal})`,
+                      }}
+                      src={pre_image}
+                      alt=""
+                    />
+                  </ReactCrop>
+                    : (
                       <label htmlFor="choose">
                         <IoIosImage />
                         <span>Choose Image</span>

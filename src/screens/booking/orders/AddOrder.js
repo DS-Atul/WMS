@@ -531,6 +531,7 @@ const AddOrder = () => {
     ind: "",
     type: "",
   });
+  console.log("showModalInvoice===", showModalInvoice)
 
   const [img_index, setimg_index] = useState("")
 
@@ -1828,9 +1829,7 @@ const AddOrder = () => {
       .get(
         ServerAddress +
         `master/get_asset_details/?p=${type === "logger" ? Logger_page : box_list_page
-        }&records=${10}&asset_type=${String(
-          asset_info_selected
-        ).toUpperCase()}&product_id_search=${type === "logger" ? search_logger : search_box
+        }&records=${10}&asset_type=${type === "logger" ? "WITH LOGGER" : "WITH BOX"}&product_id_search=${type === "logger" ? search_logger : search_box
         }`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -1873,6 +1872,7 @@ const AddOrder = () => {
             } else {
               setbox_loaded(true);
             }
+            console.log("========", response.data.results)
 
             if (box_list_page === 1) {
               box = response.data.results.map(
@@ -1897,11 +1897,17 @@ const AddOrder = () => {
               ];
             }
             setbox_count(box_count + 2);
+            console.log("box========", box)
             setbox_list_1(box);
           }
-        } else {
-          setbox_list_1([]);
-          setLogger_list([]);
+        } 
+        else {
+          if(type === "logger"){
+            setLogger_list([]);
+          }
+          else{
+            setbox_list_1([])
+          }
         }
 
         // for (let index = 0; index < data.length; index++) {
@@ -1937,7 +1943,7 @@ const AddOrder = () => {
         }
       })
       .catch((err) => {
-        alert(`Error Occur in Get Data ${err}`);
+        console.warn(`Error Occur in Get Data ${err}`);
       });
   };
 
@@ -1991,16 +1997,34 @@ const AddOrder = () => {
     }
   }, [cold_chain, delivery_type]);
 
-  useLayoutEffect(() => {
-    if (asset_info_selected !== "None" && asset_info_selected) {
+  useEffect(() => {
+    let timeoutId;
+    if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Logger") {
+      timeoutId = setTimeout(() => {
       getassetData("logger");
+    }, 1);
     }
+    if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Box + With Logger") {
+      timeoutId = setTimeout(() => {
+      getassetData("logger");
+    }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [asset_info_selected, search_logger, Logger_page]);
 
-  useLayoutEffect(() => {
-    if (asset_info_selected !== "None" && asset_info_selected) {
+  useEffect(() => {
+    let timeoutId;
+    if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Box") {
+      timeoutId = setTimeout(() => {
       getassetData("box");
+    }, 1);
     }
+    if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Box + With Logger") {
+      timeoutId = setTimeout(() => {
+      getassetData("box");
+    }, 1);
+    }
+    return () => clearTimeout(timeoutId);
   }, [asset_info_selected, search_box, box_list_page]);
 
   useEffect(() => {
@@ -4256,6 +4280,20 @@ const AddOrder = () => {
     }
   }
 
+  useLayoutEffect(() => {
+    setbox_list_page(1)
+    setsearch_box("")
+    setbox_loaded(false)
+    setbox_count(1)
+    setbox_bottom(56)
+
+    setLogger_page(1)
+    setsearch_logger("")
+    setlogger_loaded(false)
+    setlogger_count(1)
+    setlogger_bottom(56)
+  }, [asset_info_selected])
+
   return (
     <div>
       {/* {!eway_loaded && memoizedLogInEwayBill} */}
@@ -4768,20 +4806,18 @@ const AddOrder = () => {
                             value={docket_no_value}
                             disabled={isupdating ? docket_no_value : ""}
                             onChange={(event) => {
+                              const { value } = event.target;
+                              if (value.length <= 20) {
                               setdocket_no_value(event.target.value);
+                              }
                               if (event.target.value.length <= 6) {
                                 setdocket_error(true);
                               } else {
                                 setdocket_error(false);
                               }
                             }}
-                            // onFocus={() => {
-                            //   setclicked(true);
-                            // }}
                             invalid={
-                              docket_no_value === "" && docket_error
-                                ? true
-                                : false
+                              docket_error
                             }
                             type="number"
                             label="First Name"
@@ -7023,6 +7059,7 @@ const AddOrder = () => {
                                 value: false,
                               });
                             }}
+                            pre_image={showModalOrder.ind !== "" ? row1[showModalOrder.ind][0] : ""}
                             upload_image={(val) => {
                               setdocumentOrder(val);
                               if (showModalOrder.ind !== "") {
@@ -7141,6 +7178,7 @@ const AddOrder = () => {
                                 value: false,
                               });
                             }}
+                            pre_image={(showModalInvoice.type === "invoice" && showModalInvoice.ind !== "") ? row2[showModalInvoice.ind][4] : (showModalInvoice.type ==='ewaybill' && showModalInvoice.ind !== "") ? row2[showModalInvoice.ind][5] : ""}
                             upload_image={(val) => {
                               if (showModalInvoice.type === "invoice") {
                                 if (showModalInvoice.ind !== "") {
@@ -7347,7 +7385,7 @@ const AddOrder = () => {
                                   ) : (
                                     <div
                                       style={{
-                                        height: "110px",
+                                        height: "95px",
                                         paddingTop: 35,
                                       }}
                                     >
@@ -7434,7 +7472,7 @@ const AddOrder = () => {
                                   ) : (
                                     <div
                                       style={{
-                                        height: "110px",
+                                        height: "95px",
                                         paddingTop: 35,
                                       }}
                                     >

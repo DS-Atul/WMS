@@ -560,7 +560,7 @@ const AddOrganization = () => {
           contact_person_email: values.contact_person_email,
           contact_person_mobile: values.contact_person_ph_no,
           logo_uploaded_by: user.id,
-          logo_image: result_img?.substring(0,4) !== "http" ? result_img : null,
+          logo_image: result_img?.substring(0, 4) !== "http" ? result_img : null,
           is_same: same_as_billing_add,
           address: [
             [
@@ -1841,9 +1841,9 @@ const AddOrganization = () => {
           </div>
           {/* Add For History Button */}
           {isupdating && (
-            <div style={{ justifyContent: "right", display: "flex",marginRight:"20px"}}>
+            <div style={{ justifyContent: "right", display: "flex", marginRight: "20px" }}>
               <Button
-               variant="primary"
+                variant="primary"
                 type="button"
                 onClick={() => {
                   handlClk();
@@ -2190,67 +2190,71 @@ const AddOrganization = () => {
                         </div>
                       </Col>
 
-                      <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2" style={{ position: "relative" }}>
-                          <Label>Upload Logos</Label>
-                          <Input
-                          style={{background:"white"}}
-                            className="form-control-md"
-                            name="logo"
-                            // type=""
-                            id="input"
-                            disabled
-                            value={result_img}
-                            invalid={upload_logo_error}
-                            onChange={(val) => {
-                              setresult_img(val.target.value)
-                            }}
-                            // accept="image/png,image/jpeg, image/jpg"
-                          />
-                          <button
-                            style={{
-                              border:"none",
-                              position: "absolute",
-                              borderRadius:"2px",
-                              height: "29px",
-                              top: "28.5px",
-                              marginLeft: "1px",
-                              background:"#e9ecef",
-                            }}
-                            className="form-control-md"
-                            id="input"
-                            type="button"
-                            onClick={() => setmodal(true)}
-                          >
-                            Choose Image 
-                          </button>
-                          <ImgModal
-                            modal={modal}
-                            modal_set={() => {
-                              setmodal(false);
-                            }}
-                            upload_image={(val) => {
-                              setuploaded_img(val);
-                            }}
-                            result_image={(val) => {
-                              setresult_img(val);
-                            }}
-                          />
-                          <FormFeedback type="invalid">
-                           Logo is required
-                          </FormFeedback>
-                        </div>
-                      </Col>
+                      <ImgModal
+                        modal={modal}
+                        modal_set={() => {
+                          setmodal(false);
+                        }}
+                        pre_image={result_img ? result_img : ""}
+                        upload_image={(val) => {
+                          setuploaded_img(val);
+                        }}
+                        result_image={(val) => {
+                          setresult_img(val);
+                        }}
+                      />
 
-                      {result_img  && (
-                        <Col lg={1} md={4} sm={6}>
-                          <div className="mb-3 parent_div">
+                      {(result_img === "" || !result_img) &&
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2" style={{ position: "relative" }}>
+                            <Label>Upload Logos</Label>
+                            <Input
+                              style={{ background: "white" }}
+                              className="form-control-md"
+                              name="logo"
+                              // type=""
+                              id="input"
+                              disabled
+                              value={result_img}
+                              invalid={upload_logo_error}
+                              onChange={(val) => {
+                                setresult_img(val.target.value)
+                              }}
+                            // accept="image/png,image/jpeg, image/jpg"
+                            />
+                            <button
+                              style={{
+                                border: "none",
+                                position: "absolute",
+                                borderRadius: "2px",
+                                height: "29px",
+                                top: "28.5px",
+                                marginLeft: "1px",
+                                background: "#e9ecef",
+                              }}
+                              className="form-control-md"
+                              id="input"
+                              type="button"
+                              onClick={() => setmodal(true)}
+                            >
+                              Choose Image
+                            </button>
+                            <FormFeedback type="invalid">
+                              Logo is required
+                            </FormFeedback>
+                          </div>
+                        </Col>
+                      }
+                      {result_img && (
+                        <Col lg={4} md={4} sm={6}>
+                         <Label>Upload Logos</Label>
+                          <div className="mb-3" onClick={() => setmodal(true)}>
                             <img
                               onClick={() => setmodal(true)}
                               src={result_img}
                               style={{
-                                width: "70px",
-                                height: "70px",
+                                width: "95px",
+                                height: "95px",
                                 borderRadius: "8px",
                                 boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
                               }}
@@ -2538,15 +2542,15 @@ const AddOrganization = () => {
                             </div>
                           </Col>
                           {gst_error ? (
-                                <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom:"12px"}}>
-                                 {gst_text}
-                                </div>
-                              ) : null}
+                            <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom: "12px" }}>
+                              {gst_text}
+                            </div>
+                          ) : null}
                         </Row>
                         <>
                           {row.length < 20 && (
                             <div style={{ margin: " 0 0 20px 0" }}>
-                                
+
                               <span
                                 className="link-text"
                                 onClick={() => {
@@ -2761,10 +2765,10 @@ const AddOrganization = () => {
                             </div>
                           </Col>
                           {service_error ? (
-                                <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom:"12px"}}>
+                            <div style={{ color: "#f46a6a", fontSize: "12px", marginBottom: "12px" }}>
                               Please Fill All Configuration Details
-                                </div>
-                              ) : null}
+                            </div>
+                          ) : null}
                         </Row>
                         <>
                           {row1.length < 20 && (
