@@ -55,6 +55,34 @@ const PendingDeliveryDataFormat = ({ check, local_list }) => {
                   ) {
                     return local;
                   }
+                  else if (
+                    local.shipper_city
+                      .toLowerCase()
+                      .includes(searchData.toLowerCase())
+                  ) {
+                    return local;
+                  }
+                  else if (
+                    local.consignee_city
+                      .toLowerCase()
+                      .includes(searchData.toLowerCase())
+                  ) {
+                    return local;
+                  }
+                  else if (
+                    local.shipper_locality
+                      .toLowerCase()
+                      .includes(searchData.toLowerCase())
+                  ) {
+                    return local;
+                  }
+                  else if (
+                    local.consignee_locality
+                      .toLowerCase()
+                      .includes(searchData.toLowerCase())
+                  ) {
+                    return local;
+                  }
                 })
                 .map((local, index) => {
                   let booking_date_n = local.booking_at

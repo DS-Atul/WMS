@@ -404,6 +404,7 @@ const BreakHubManifest = ({
                           <td colSpan={12}>
                             <Input
                               type="text"
+                              id="input"
                               placeholder="Enter Issue"
                               onChange={(val) => {
                                 received[index]["remarks"] =

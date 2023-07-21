@@ -8,6 +8,7 @@ const DocketIssueDataTitle = [
     "Barcode Number",
     "Barcode Type",
     "Is Resolved",
+    "Image"
     ]
     
     export default DocketIssueDataTitle

@@ -204,6 +204,9 @@ const EditHubDocket = () => {
       else if (!is_valid_box && total_box !== "" && total_box) {
         alert("Please Add Barcode Box With Unique Value")
       }
+      else if (old_barcodes.length < parseInt(total_bags ? total_bags : 0)+parseInt(total_box ? total_box : 0)) {
+        alert(`You Have Total ${old_barcodes.length} Quantity And You Have Enter Total No. Of Bag Or Box ${parseInt(total_bags ? total_bags : 0)+parseInt(total_box ? total_box : 0)} `)
+      }
       else {
         updateManifest(values);
       }
@@ -688,6 +691,13 @@ const EditHubDocket = () => {
   // }, []);
 
   // const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+
+  useEffect(() => {
+  if (old_barcodes.length < parseInt(total_bags ? total_bags : 0)+parseInt(total_box ? total_box : 0)) {
+      alert(`You Have Total ${old_barcodes.length} Quantity And You Have Enter Total No. Of Bag Or Box ${parseInt(total_bags ? total_bags : 0)+parseInt(total_box ? total_box : 0)} `)
+    }
+  }, [total_bags,total_box,old_barcodes])
+  
 
   return (
     <>

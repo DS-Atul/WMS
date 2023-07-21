@@ -210,6 +210,7 @@ const PendingForDispatch = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
+        console.log("response.dataresponse.dataresponse.data---", response.data)
         setdomestic_order(response.data);
       })
       .catch((err) => {

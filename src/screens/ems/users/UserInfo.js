@@ -1596,7 +1596,6 @@ const UserInfo = () => {
   };
 
   const getUserPermissions = (usern) => {
-    alert(usern)
     axios
       .get(ServerAddress + "ems/get_userpermission/?username=" + usern, {
         headers: { Authorization: `Bearer ${accessToken}` },

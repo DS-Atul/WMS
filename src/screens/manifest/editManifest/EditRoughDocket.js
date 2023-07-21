@@ -148,9 +148,12 @@ const EditRoughDocket = () => {
   const [flight_name, setflight_name] = useState("");
   const [data, setdata] = useState([]);
   const [data2, setdata2] = useState([]);
+  console.log("data--val-----", data)
+  console.log("data2--val-----", data2)
 
   useLayoutEffect(() => {
     let manifest_data = location_data.state.manifest;
+    console.log("manifest_data-----", manifest_data)
     setmanifest_data(manifest_data);
     setmanifest_no(manifest_data.manifest_no);
     setmanifest_id(manifest_data.id);
@@ -578,7 +581,8 @@ const EditRoughDocket = () => {
 
   }, [dimension_list_barcodebox])
 
-  console.log("data------", old_barcodes)
+  console.log("old_barcodes------", old_barcodes.length)
+  console.log("total_bagstotal_box----", parseInt(total_bags ? total_bags : 0)+parseInt(total_box ? total_box : 0))
   // console.log("row_barcode====", row_barcode)
   // console.log("row_barcode====", row_barcodebox)
   const [total_barcodes, settotal_barcodes] = useState([])
@@ -702,7 +706,12 @@ const EditRoughDocket = () => {
   // }, []);
 
   // const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
-
+  useEffect(() => {
+    if (old_barcodes.length < parseInt(total_bags ? total_bags : 0)+parseInt(total_box ? total_box : 0)) {
+        alert(`You Have Total ${old_barcodes.length} Quantity And You Have Enter Total No. Of Bag Or Box ${parseInt(total_bags ? total_bags : 0)+parseInt(total_box ? total_box : 0)} `)
+      }
+    }, [total_bags,total_box,old_barcodes])
+    
   return (
     <>
      {/* {!eway_loaded && memoizedLogInEwayBill} */}
@@ -723,6 +732,9 @@ const EditRoughDocket = () => {
             }
             else if (!is_valid_box && total_box !== "" && total_box) {
               alert("Please Add Barcode Box With Unique Value")
+            }
+            else if (old_barcodes.length < parseInt(total_bags ? total_bags : 0)+parseInt(total_box ? total_box : 0)) {
+              alert(`You Have Total ${old_barcodes.length} Quantity And You Have Enter Total No. Of Bag Or Box ${parseInt(total_bags ? total_bags : 0)+parseInt(total_box ? total_box : 0)} `)
             }
             else {
               updateManifest();

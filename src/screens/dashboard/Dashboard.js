@@ -170,6 +170,7 @@ const Dashboard = () => {
                 data_item_s={dashboard_time_frame}
                 set_data_item_s={setdashboard_time_frame}
                 current_width={"120px"}
+                child_width={"120px"}
                 show_search={false}
               />
             </div>
@@ -179,6 +180,7 @@ const Dashboard = () => {
                 data_item_s={dashboard_type}
                 set_data_item_s={setdashboard_type}
                 current_width={"120px"}
+                child_width={"120px"}
                 show_search={false}
               />
             </div>

@@ -562,7 +562,7 @@ const TrackingOrder = () => {
                               </>
                             ) : null}
 
-                            {last_ele.status === "SHIPMENT ARRIVED AT DESTINATION HUB"
+                            {last_ele.status === "SHIPMENT ARRIVED AT DESTINATION"
                               ? (
                                 <>
                                   <div className="step active">

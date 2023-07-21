@@ -257,10 +257,9 @@ const ImgModal = ({
       canvas.height
     );
     const base64Image1 = canvas.toDataURL();
-    console.log("save image called3", base64Image1);
+    // console.log("save image called3", base64Image1);
     result_image(base64Image1);
 
-    console.log("save image called4");
     canvas.toBlob((blob) => {
       const myBlob = blob;
       myBlob.name = "image.jpeg";
@@ -344,7 +343,7 @@ const ImgModal = ({
                   {/* //Action btns */}
                   <div
                     className="image_select child_div"
-                    style={{ marginTop: "400px" }}
+                    style={{ marginTop: "404px", marginRight:"82px" }}
                   >
                     <button onClick={undo} className="">
                       <IoMdUndo />

@@ -142,7 +142,6 @@ const DeliveryInfoDataFormat = ({ order_id }) => {
                   <img src={del_info.image} style={{ width: 70, height: 50 }} />
                 </td>
               </tr>
-              <div></div>
             </>
           );
         })}

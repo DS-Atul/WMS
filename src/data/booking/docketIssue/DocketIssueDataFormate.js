@@ -153,6 +153,8 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
       dispatch(setIndexValue("barcode_type"));
     } else if (index === 7) {
       dispatch(setIndexValue("is_solved"));
+    } else if (index === 8) {
+      dispatch(setIndexValue("image"));
     }
   }, [index]);
 
@@ -331,8 +333,35 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
       setShow(false)
     }
   }
+
+    // Image Modal
+    const [openModal, setopenModal] = useState(false);
+    const handleCloseMod = () => {
+      setopenModal(false);
+    }
+    const [img, setimg] = useState("");
+    const handle_img = (a) => {
+      setimg(a)
+    }
+
   return (
     <>
+    {/* For Image Modal */}
+    <Modal show={openModal} onHide={handleCloseMod}
+
+>
+  <Modal.Header closeButton>
+    <Modal.Title>
+
+    </Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+
+    <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px" }} />
+
+  </Modal.Body>
+
+</Modal>
 
       <Modal
         show={show}
@@ -563,6 +592,14 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
                   </div>
                 )}
               </td>
+              <td
+                  onClick={() => {
+                    handle_img(order.image);
+                    setopenModal(true)
+                  }}
+                >
+                  <img src={order.image} style={{ width: 70, height: 50 }} />
+                </td>
             </tr>
           );
         })

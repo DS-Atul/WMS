@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, {useMemo, useState, useEffect, useLayoutEffect } from "react";
+import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Card, Col, Row, CardBody, CardTitle, Label, Input, FormFeedback } from "reactstrap";
 import Modal from "react-bootstrap/Modal";
@@ -32,6 +32,8 @@ import SearchInput from "../../../components/formComponent/searchInput/SearchInp
 import { gstin_no } from "../../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
+import ImgModal from "../../../components/crop/ImgModal";
+import Loader from "../../../components/loader/Loader";
 const RecieveHubManifest = ({ depart }) => {
   const userDetail = useSelector((state) => state.authentication.userdetails);
   const [is_submit, setis_submit] = useState(false);
@@ -40,8 +42,10 @@ const RecieveHubManifest = ({ depart }) => {
   // const [notReceived, setNotReceived] = useState([]);
   // console.log("Recived", received);
   // console.log("Not Recived", notReceived);
+  const [refresh, setrefresh] = useState(false);
   const [is_issuerec, setis_issuerec] = useState(false);
   const [receivedrec, setReceivedrec] = useState([]);
+  console.log("receivedrec----", receivedrec)
   // const [notReceivedrec, setNotReceivedrec] = useState([]);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const success = useSelector((state) => state.alert.show_alert);
@@ -53,6 +57,7 @@ const RecieveHubManifest = ({ depart }) => {
   console.log("location_data--location_data-Hub-", location_data)
   const issue_id = useSelector((state) => state.manifest.issueorder_id);
   const loaded = useSelector((state) => state.manifest.loaded);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [circle_btn1, setcircle_btn1] = useState(true);
   const toggle_circle1 = () => {
@@ -149,6 +154,7 @@ const RecieveHubManifest = ({ depart }) => {
   }, [])
 
   const RecieveHubManifest = (steps) => {
+    setIsLoading(true)
     axios
       .post(
         ServerAddress + "manifest/add_hubrecieve_manifest/",
@@ -181,6 +187,8 @@ const RecieveHubManifest = ({ depart }) => {
         }
       )
       .then(function (response) {
+        setIsLoading(false)
+        setShow(false);
         if (response.data.status === "success") {
           if (list_data.length > 0) {
             UpateEwaybillPartB({
@@ -201,6 +209,7 @@ const RecieveHubManifest = ({ depart }) => {
         }
       })
       .catch(function (err) {
+        setIsLoading(false)
         alert(`Error While  Updateing Manifest ${err}`);
       });
   };
@@ -277,7 +286,7 @@ const RecieveHubManifest = ({ depart }) => {
     else {
       RecieveHubManifest("STEP1");
       setis_break(false);
-      setShow(false);
+      // setShow(false);
     }
   };
   const handleCloseAll = () => {
@@ -359,19 +368,130 @@ const RecieveHubManifest = ({ depart }) => {
       setvehicle_error(false)
     }
   }, [vehicle_no])
-  
-  // const [eway_loaded, seteway_loaded] = useState(false)
 
-  // useEffect(() => {
-  //   seteway_loaded(true)
-  // }, []);
+  //ReceivedRec
+  function handleIssueTypeChangeRec(e, universal_no, index, universal_type, barcode, issue_location, barcode_type, issue_image) {
+    setis_issuerec(true);
+    const issueType = e.target.value;
+    let remarks = "";
+    // if (issueType === "Other") {
+    //   remarks = prompt("Enter remarks:");
+    // }
+    const orderInfo = { universal_no, issueType, remarks, universal_type, barcode, issue_location, barcode_type, issue_image };
 
-  // const memoizedLogInEwayBill = useMemo(() => <LogInEwayBill />, []);
+    if (["Broken", "Damage", "Not Received", "None", "Custom Check Failed", "Other"].includes(issueType)) {
+      setReceivedrec((prevReceived) => {
+        const newReceived = [...prevReceived];
+        newReceived[index] = orderInfo;
+        return newReceived;
+      });
+      // setNotReceived((prevNotReceived) =>
+      //   prevNotReceived.filter((o) => o.bag_barcode !== bag_barcode)
+      // );
+    }
+    // else {
+    //   setNotReceived((prevNotReceived) => {
+    //     const newNotReceived = [...prevNotReceived];
+    //     newNotReceived[index] = orderInfo;
+    //     return newNotReceived;
+    //   });
+    //   setReceived((prevReceived) =>
+    //     prevReceived.filter((o) => o.bag_barcode !== bag_barcode)
+    //   );
+    // }
+  }
+
+  const RecieveManifestTitle = [
+    "Manifest No",
+    "Bag or Box",
+    "BarCode No",
+    "Issue Type"
+  ];
+
+  const [showModalReceive, setshowModalReceive] = useState({
+    value: false,
+    ind: "",
+  });
+  const [row4, setrow4] = useState([{ 'issue_image': "" }]);
+
+
+
+  //Received
+  const [data2, setdata2] = useState([])
+
+  const getOrderPieces = () => {
+    // let state_list = [...state_list_s];
+    let state_list = [];
+    axios
+      .get(
+        ServerAddress +
+        `booking/orderboxqrcodecheck/${hub_transfer_no}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((resp) => {
+        console.log("respfff-------", resp)
+        if (resp.data.length > 0) {
+          setdata2(resp.data)
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get orderboxqrcodecheck, ${err}`);
+      });
+  };
+  function handleIssueTypeChange(e, universal_no, index, universal_type, barcode, issue_location, barcode_type, issue_image) {
+    setis_issue(true);
+    const issueType = e.target.value;
+    let remarks = "";
+    // if (issueType === "Other") {
+    //   remarks = prompt("Enter remarks:");
+    // }
+    const orderInfo = { universal_no, issueType, remarks, universal_type, barcode, issue_location, barcode_type, issue_image };
+    if (["Broken", "Damage", "Not Received", "None", "Custom Check Failed", "Other"].includes(issueType)) {
+      setReceived((prevReceived) => {
+        const newReceived = [...prevReceived];
+        newReceived[index] = orderInfo;
+        return newReceived;
+      });
+      // setNotReceived((prevNotReceived) =>
+      //   prevNotReceived.filter((o) => o.docketNo !== docketNo)
+      // );
+    }
+    // else {
+    //   setNotReceived((prevNotReceived) => {
+    //     const newNotReceived = [...prevNotReceived];
+    //     newNotReceived[index] = orderInfo;
+    //     return newNotReceived;
+    //   });
+    //   setReceived((prevReceived) =>
+    //     prevReceived.filter((o) => o.docketNo !== docketNo)
+    //   );
+    // }
+  }
+  useLayoutEffect(() => {
+    if (hub_transfer_no !== "") {
+      getOrderPieces()
+    }
+  }, [hub_transfer_no]);
+
+  const RecieveHubTitle = [
+    "Docket No",
+    "Barcode Number",
+    "Issue Type",
+  ];
+
+  const [showModalOrder, setshowModalOrder] = useState({
+    value: false,
+    ind: "",
+  });
+
+  const [row3, setrow3] = useState([{ 'issue_image': "" }]);
 
   return (
     <>
-     {/* {!eway_loaded && memoizedLogInEwayBill} */}
-     <LogInEwayBill />
+      {/* {!eway_loaded && memoizedLogInEwayBill} */}
+      <LogInEwayBill />
       <Modal
         show={is_recv}
         onHide={() => {
@@ -410,7 +530,7 @@ const RecieveHubManifest = ({ depart }) => {
           >
             Cancel
           </Button>
-
+          {!isLoading ?
           <Button variant="success" onClick={() => {
             if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
               setvehicle_error(true);
@@ -421,6 +541,12 @@ const RecieveHubManifest = ({ depart }) => {
           }}>
             Update
           </Button>
+           :
+           <Button variant="success">
+             <Loader />
+           </Button>
+
+         }
         </Modal.Footer>
       </Modal>
 
@@ -435,7 +561,7 @@ const RecieveHubManifest = ({ depart }) => {
 
         {is_break ? (
           <Modal.Body>
-            <BreakHubManifest
+            {/* <BreakHubManifest
               hub_transfer_no={hub_transfer_no}
               is_issue={is_issue}
               setis_issue={setis_issue}
@@ -443,7 +569,401 @@ const RecieveHubManifest = ({ depart }) => {
               setReceived={setReceived}
             // notReceived={notReceived}
             // setNotReceived={setNotReceived}
-            />
+            /> */}
+            <div className="table" style={{ overflow: "scroll" }}>
+              <table
+                className="topheader table-light"
+                style={{ borderCollapse: "collapse", width: "100%", borderWidth: 1 }}
+              >
+                <thead>
+                  {showModalOrder.value ? (
+                    <ImgModal
+                      modal={showModalOrder.value}
+                      modal_set={() => {
+                        setshowModalOrder({
+                          ...showModalOrder,
+                          value: false,
+                        });
+                      }}
+                      pre_image={showModalOrder.ind !== "" ? received[showModalOrder.ind]['issue_image'] : ""}
+                      upload_image={(val) => {
+                        if (showModalOrder.ind !== "") {
+                          row3[showModalOrder.ind]['issue_image'] = val;
+                          setshowModalOrder({
+                            ...showModalOrder,
+                            value: false,
+                            ind: "",
+                          });
+                        } else {
+                          row3[row3.length - 1]['issue_image'] = val;
+                        }
+                      }}
+                      result_image={(val) => {
+                        setrefresh(!refresh)
+                        if (showModalOrder.ind !== "") {
+                          received[showModalOrder.ind]['issue_image'] = val;
+                        } else {
+                          received[received.length - 1]['issue_image'] = val;
+                        }
+                      }}
+                    />
+                  ) : null}
+                  <tr style={{ lineHeight: 2, borderWidth: 1 }}>
+                    {RecieveHubTitle.map((item, index) => {
+                      return (
+                        <th
+                          style={{ whiteSpace: "nowrap", textAlign: "center" }}
+                          key={index}
+                        >
+                          {item}{" "}
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {data2.length === 0 ? (
+                    <tr>
+                      <td>No Data Found</td>
+                    </tr>
+                  ) : (
+                    data2.map((order, index) => {
+                      // let f_date_f = order.booking_at.split("T")[0];
+                      // .substring(0, 11);
+
+                      return (
+                        <>
+                          <tr
+                            key={index}
+                            style={{
+                              borderWidth: 1,
+                            }}
+                          >
+                            <td>{order.docket_no}</td>
+                            <td>{order.barcode_no}</td>
+
+                            <td>
+                              <select
+                                onChange={(e) =>
+                                  handleIssueTypeChange(e, order.docket_no, index, "BOOKING", order.barcode_no, "ON BREAK", "PKT", '')
+                                }
+                              >
+                                <option defaultChecked>Select Issue</option>
+                                <option value="Not Received">Not Received</option>
+                                <option value="Broken">Broken</option>
+                                <option value="Damage">Damage</option>
+                                <option value="Custom Check Failed">Custom Check Failed</option>
+                                <option value="Other">Other</option>
+                                <option value="None">None</option>
+                              </select>
+                            </td>
+
+                            {received[index] &&
+                              received[index]["issueType"] === "Broken" && (
+                                <td>
+                                  <div style={{ width: "100%" }} key={index}>
+                                    {received[index]['issue_image'] ? (
+                                      <img
+                                        src={received[index]['issue_image']}
+                                        style={{
+                                          height: "95px",
+                                          width: "95px",
+                                          borderRadius: "10px",
+                                          paddingBottom: "5px",
+                                        }}
+                                        onClick={() => {
+                                          setshowModalOrder({
+                                            ...showModalOrder,
+                                            value: true,
+                                            ind: index,
+                                          });
+                                        }}
+                                      />
+                                    ) : (
+                                      <div
+                                        style={{
+                                          height: "95px",
+                                          paddingTop: 35,
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            border: "0.5px solid #DAD7D7",
+                                            alignItems: "center",
+                                            height: "38px",
+                                            borderRadius: 5,
+                                            height: 31,
+                                          }}
+                                          onClick={() => {
+                                            setshowModalOrder({
+                                              ...showModalOrder,
+                                              value: true,
+                                              ind: index,
+                                            });
+                                          }}
+                                        >
+                                          <a
+                                            style={{
+                                              marginLeft: "3px",
+                                              fontSize: 11,
+                                            }}
+                                          >
+                                            Chooose File
+                                          </a>
+                                          <div
+                                            style={{
+                                              fontSize: "25px",
+                                              color: "#DAD7D7",
+                                              marginLeft: "5px",
+                                            }}
+                                          >
+                                            |
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                            {received[index] &&
+                              received[index]["issueType"] === "Damage" && (
+                                <td>
+                                  <div style={{ width: "100%" }} key={index}>
+                                    {received[index]['issue_image'] ? (
+                                      <img
+                                        src={received[index]['issue_image']}
+                                        style={{
+                                          height: "95px",
+                                          width: "95px",
+                                          borderRadius: "10px",
+                                          paddingBottom: "5px",
+                                        }}
+                                        onClick={() => {
+                                          setshowModalOrder({
+                                            ...showModalOrder,
+                                            value: true,
+                                            ind: index,
+                                          });
+                                        }}
+                                      />
+                                    ) : (
+                                      <div
+                                        style={{
+                                          height: "95px",
+                                          paddingTop: 35,
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            border: "0.5px solid #DAD7D7",
+                                            alignItems: "center",
+                                            height: "38px",
+                                            borderRadius: 5,
+                                            height: 31,
+                                          }}
+                                          onClick={() => {
+                                            setshowModalOrder({
+                                              ...showModalOrder,
+                                              value: true,
+                                              ind: index,
+                                            });
+                                          }}
+                                        >
+                                          <a
+                                            style={{
+                                              marginLeft: "3px",
+                                              fontSize: 11,
+                                            }}
+                                          >
+                                            Chooose File
+                                          </a>
+                                          <div
+                                            style={{
+                                              fontSize: "25px",
+                                              color: "#DAD7D7",
+                                              marginLeft: "5px",
+                                            }}
+                                          >
+                                            |
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                            {received[index] &&
+                              received[index]["issueType"] === "Custom Check Failed" && (
+                                <td>
+                                  <div style={{ width: "100%" }} key={index}>
+                                    {received[index]['issue_image'] ? (
+                                      <img
+                                        src={received[index]['issue_image']}
+                                        style={{
+                                          height: "95px",
+                                          width: "95px",
+                                          borderRadius: "10px",
+                                          paddingBottom: "5px",
+                                        }}
+                                        onClick={() => {
+                                          setshowModalOrder({
+                                            ...showModalOrder,
+                                            value: true,
+                                            ind: index,
+                                          });
+                                        }}
+                                      />
+                                    ) : (
+                                      <div
+                                        style={{
+                                          height: "95px",
+                                          paddingTop: 35,
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            border: "0.5px solid #DAD7D7",
+                                            alignItems: "center",
+                                            height: "38px",
+                                            borderRadius: 5,
+                                            height: 31,
+                                          }}
+                                          onClick={() => {
+                                            setshowModalOrder({
+                                              ...showModalOrder,
+                                              value: true,
+                                              ind: index,
+                                            });
+                                          }}
+                                        >
+                                          <a
+                                            style={{
+                                              marginLeft: "3px",
+                                              fontSize: 11,
+                                            }}
+                                          >
+                                            Chooose File
+                                          </a>
+                                          <div
+                                            style={{
+                                              fontSize: "25px",
+                                              color: "#DAD7D7",
+                                              marginLeft: "5px",
+                                            }}
+                                          >
+                                            |
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+
+                            {received[index] &&
+                              received[index]["issueType"] === "Other" && (
+                                <td>
+                                  <div style={{ width: "100%" }} key={index}>
+                                    {received[index]['issue_image'] ? (
+                                      <img
+                                        src={received[index]['issue_image']}
+                                        style={{
+                                          height: "95px",
+                                          width: "95px",
+                                          borderRadius: "10px",
+                                          paddingBottom: "5px",
+                                        }}
+                                        onClick={() => {
+                                          setshowModalOrder({
+                                            ...showModalOrder,
+                                            value: true,
+                                            ind: index,
+                                          });
+                                        }}
+                                      />
+                                    ) : (
+                                      <div
+                                        style={{
+                                          height: "95px",
+                                          paddingTop: 35,
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            border: "0.5px solid #DAD7D7",
+                                            alignItems: "center",
+                                            height: "38px",
+                                            borderRadius: 5,
+                                            height: 31,
+                                          }}
+                                          onClick={() => {
+                                            setshowModalOrder({
+                                              ...showModalOrder,
+                                              value: true,
+                                              ind: index,
+                                            });
+                                          }}
+                                        >
+                                          <a
+                                            style={{
+                                              marginLeft: "3px",
+                                              fontSize: 11,
+                                            }}
+                                          >
+                                            Chooose File
+                                          </a>
+                                          <div
+                                            style={{
+                                              fontSize: "25px",
+                                              color: "#DAD7D7",
+                                              marginLeft: "5px",
+                                            }}
+                                          >
+                                            |
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+                          </tr>
+                          {received[index] &&
+                            received[index]["issueType"] === "Other" && (
+                              <tr>
+                                <td colSpan={12}>
+                                  <Input
+                                    type="text"
+                                    id="input"
+                                    placeholder="Enter Issue"
+                                    onChange={(val) => {
+                                      received[index]["remarks"] =
+                                        val.target.value;
+                                      setrefresh(!refresh);
+                                    }}
+                                  />
+                                </td>
+                              </tr>
+                            )}
+                        </>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
           </Modal.Body>
         ) : (
           <Modal.Body>
@@ -469,11 +989,15 @@ const RecieveHubManifest = ({ depart }) => {
           {
             is_break ?
               <Button variant="danger" onClick={handleCloseAll}>Cancel</Button>
-              :
+              : !isLoading ?
               <Button variant="danger" onClick={handleClose}>
                 No,Later
               </Button>
-          }
+           :
+           <Button variant="danger">
+             <Loader />
+           </Button>
+     }
 
           {!is_break ? (
             <Button
@@ -484,7 +1008,7 @@ const RecieveHubManifest = ({ depart }) => {
             >
               Yes
             </Button>
-          ) : (
+          )  : !isLoading ? (
             <Button
               variant="success"
               onClick={() => {
@@ -494,7 +1018,16 @@ const RecieveHubManifest = ({ depart }) => {
             >
               Break
             </Button>
-          )}
+          ):
+          (
+            <Button
+              variant="success"
+            >
+              <Loader />
+            </Button>
+          )
+
+        }
         </Modal.Footer>
       </Modal>
       {/* Modal For Break manifest Started*/}
@@ -525,7 +1058,7 @@ const RecieveHubManifest = ({ depart }) => {
                   </div>
 
                   {/* DataTable */}
-                  <RecieveHubDataFormat
+                  {/* <RecieveHubDataFormat
                     data={location_data.state.hub.orders}
                     barcode={mn_barcode}
                     // barcode={mn_barcode}
@@ -533,9 +1066,407 @@ const RecieveHubManifest = ({ depart }) => {
                     setis_issue={setis_issuerec}
                     received={receivedrec}
                     setReceived={setReceivedrec}
-                  // notReceived={notReceivedrec}
-                  // setNotReceived={setNotReceivedrec}
-                  />
+                  /> */}
+                  <div className="table">
+                    <table
+                      className="topheader table-light"
+                      style={{ borderCollapse: "collapse", width: "100%", borderWidth: 1 }}
+                    >
+                      <thead>
+                        {showModalReceive.value ? (
+                          <ImgModal
+                            modal={showModalReceive.value}
+                            modal_set={() => {
+                              setshowModalReceive({
+                                ...showModalReceive,
+                                value: false,
+                              });
+                            }}
+                            pre_image={showModalReceive.ind !== "" ? receivedrec[showModalReceive.ind]['issue_image'] : ""}
+                            upload_image={(val) => {
+                              if (showModalReceive.ind !== "") {
+                                row4[showModalReceive.ind]['issue_image'] = val;
+                                setshowModalReceive({
+                                  ...showModalReceive,
+                                  value: false,
+                                  ind: "",
+                                });
+                              } else {
+                                row4[row4.length - 1]['issue_image'] = val;
+                              }
+                            }}
+                            result_image={(val) => {
+                              setrefresh(!refresh)
+                              if (showModalReceive.ind !== "") {
+                                receivedrec[showModalReceive.ind]['issue_image'] = val;
+                              } else {
+                                receivedrec[receivedrec.length - 1]['issue_image'] = val;
+                              }
+                            }}
+                          />
+                        ) : null}
+                        <tr style={{ lineHeight: 2, borderWidth: 1 }}>
+                          {RecieveManifestTitle.map((item, index) => {
+                            return (
+                              <th
+                                style={{ whiteSpace: "nowrap", textAlign: "center" }}
+                                key={index}
+                              >
+                                {item}{" "}
+                              </th>
+                            );
+                          })}
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {mn_barcode.length === 0 ? (
+                          <tr>
+                            <td>No Data Found</td>
+                          </tr>
+                        ) : (
+                          mn_barcode.map((order, index) => {
+                            // let f_date_f = order.booking_at.split("T")[0];
+                            // .substring(0, 11);
+                            console.log("hello ji", order)
+                            return (
+                              <>
+                                <tr
+                                  key={index}
+                                  style={{
+                                    borderWidth: 1,
+                                  }}
+                                >
+                                  <td>{order.hub_transfer_no}</td>
+                                  <td>{order.box_tpye}</td>
+                                  <td>
+                                    {order.barcode_no}
+                                  </td>
+
+                                  <td>
+                                    <select
+                                      onChange={(e) =>
+                                        handleIssueTypeChangeRec(e, order.hub_transfer_no, index, "HUB MANIFEST", order.barcode_no, "ON RECEIVE", order.box_tpye, '')
+                                      }
+                                    >
+                                      <option defaultChecked>Select...</option>
+                                      <option value="Not Received">Not Received</option>
+                                      <option value="Broken">Broken</option>
+                                      <option value="Damage">Damage</option>
+                                      <option value="Custom Check Failed">
+                                        Custom Check Failed
+                                      </option>
+                                      <option value="Other">Other</option>
+                                      <option value="None">None</option>
+
+                                    </select>
+                                  </td>
+
+                                  {receivedrec[index] &&
+                                    receivedrec[index]["issueType"] === "Broken" && (
+                                      <td>
+                                        <div style={{ width: "100%" }} key={index}>
+                                          {receivedrec[index]['issue_image'] ? (
+                                            <img
+                                              src={receivedrec[index]['issue_image']}
+                                              style={{
+                                                height: "95px",
+                                                width: "95px",
+                                                borderRadius: "10px",
+                                                paddingBottom: "5px",
+                                              }}
+                                              onClick={() => {
+                                                setshowModalReceive({
+                                                  ...showModalReceive,
+                                                  value: true,
+                                                  ind: index,
+                                                });
+                                              }}
+                                            />
+                                          ) : (
+                                            <div
+                                              style={{
+                                                height: "95px",
+                                                paddingTop: 35,
+                                              }}
+                                            >
+                                              <div
+                                                style={{
+                                                  display: "flex",
+                                                  flexDirection: "row",
+                                                  border: "0.5px solid #DAD7D7",
+                                                  alignItems: "center",
+                                                  height: "38px",
+                                                  borderRadius: 5,
+                                                  height: 31,
+                                                }}
+                                                onClick={() => {
+                                                  setshowModalReceive({
+                                                    ...showModalReceive,
+                                                    value: true,
+                                                    ind: index,
+                                                  });
+                                                }}
+                                              >
+                                                <a
+                                                  style={{
+                                                    marginLeft: "3px",
+                                                    fontSize: 11,
+                                                  }}
+                                                >
+                                                  Chooose File
+                                                </a>
+                                                <div
+                                                  style={{
+                                                    fontSize: "25px",
+                                                    color: "#DAD7D7",
+                                                    marginLeft: "5px",
+                                                  }}
+                                                >
+                                                  |
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </td>
+                                    )}
+
+                                  {receivedrec[index] &&
+                                    receivedrec[index]["issueType"] === "Damage" && (
+                                      <td>
+                                        <div style={{ width: "100%" }} key={index}>
+                                          {receivedrec[index]['issue_image'] ? (
+                                            <img
+                                              src={receivedrec[index]['issue_image']}
+                                              style={{
+                                                height: "95px",
+                                                width: "95px",
+                                                borderRadius: "10px",
+                                                paddingBottom: "5px",
+                                              }}
+                                              onClick={() => {
+                                                setshowModalReceive({
+                                                  ...showModalReceive,
+                                                  value: true,
+                                                  ind: index,
+                                                });
+                                              }}
+                                            />
+                                          ) : (
+                                            <div
+                                              style={{
+                                                height: "95px",
+                                                paddingTop: 35,
+                                              }}
+                                            >
+                                              <div
+                                                style={{
+                                                  display: "flex",
+                                                  flexDirection: "row",
+                                                  border: "0.5px solid #DAD7D7",
+                                                  alignItems: "center",
+                                                  height: "38px",
+                                                  borderRadius: 5,
+                                                  height: 31,
+                                                }}
+                                                onClick={() => {
+                                                  setshowModalReceive({
+                                                    ...showModalReceive,
+                                                    value: true,
+                                                    ind: index,
+                                                  });
+                                                }}
+                                              >
+                                                <a
+                                                  style={{
+                                                    marginLeft: "3px",
+                                                    fontSize: 11,
+                                                  }}
+                                                >
+                                                  Chooose File
+                                                </a>
+                                                <div
+                                                  style={{
+                                                    fontSize: "25px",
+                                                    color: "#DAD7D7",
+                                                    marginLeft: "5px",
+                                                  }}
+                                                >
+                                                  |
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </td>
+                                    )}
+
+                                  {receivedrec[index] &&
+                                    receivedrec[index]["issueType"] === "Custom Check Failed" && (
+                                      <td>
+                                        <div style={{ width: "100%" }} key={index}>
+                                          {receivedrec[index]['issue_image'] ? (
+                                            <img
+                                              src={receivedrec[index]['issue_image']}
+                                              style={{
+                                                height: "95px",
+                                                width: "95px",
+                                                borderRadius: "10px",
+                                                paddingBottom: "5px",
+                                              }}
+                                              onClick={() => {
+                                                setshowModalReceive({
+                                                  ...showModalReceive,
+                                                  value: true,
+                                                  ind: index,
+                                                });
+                                              }}
+                                            />
+                                          ) : (
+                                            <div
+                                              style={{
+                                                height: "95px",
+                                                paddingTop: 35,
+                                              }}
+                                            >
+                                              <div
+                                                style={{
+                                                  display: "flex",
+                                                  flexDirection: "row",
+                                                  border: "0.5px solid #DAD7D7",
+                                                  alignItems: "center",
+                                                  height: "38px",
+                                                  borderRadius: 5,
+                                                  height: 31,
+                                                }}
+                                                onClick={() => {
+                                                  setshowModalReceive({
+                                                    ...showModalReceive,
+                                                    value: true,
+                                                    ind: index,
+                                                  });
+                                                }}
+                                              >
+                                                <a
+                                                  style={{
+                                                    marginLeft: "3px",
+                                                    fontSize: 11,
+                                                  }}
+                                                >
+                                                  Chooose File
+                                                </a>
+                                                <div
+                                                  style={{
+                                                    fontSize: "25px",
+                                                    color: "#DAD7D7",
+                                                    marginLeft: "5px",
+                                                  }}
+                                                >
+                                                  |
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </td>
+                                    )}
+
+                                  {receivedrec[index] &&
+                                    receivedrec[index]["issueType"] === "Other" && (
+                                      <td>
+                                        <div style={{ width: "100%" }} key={index}>
+                                          {receivedrec[index]['issue_image'] ? (
+                                            <img
+                                              src={receivedrec[index]['issue_image']}
+                                              style={{
+                                                height: "95px",
+                                                width: "95px",
+                                                borderRadius: "10px",
+                                                paddingBottom: "5px",
+                                              }}
+                                              onClick={() => {
+                                                setshowModalReceive({
+                                                  ...showModalReceive,
+                                                  value: true,
+                                                  ind: index,
+                                                });
+                                              }}
+                                            />
+                                          ) : (
+                                            <div
+                                              style={{
+                                                height: "95px",
+                                                paddingTop: 35,
+                                              }}
+                                            >
+                                              <div
+                                                style={{
+                                                  display: "flex",
+                                                  flexDirection: "row",
+                                                  border: "0.5px solid #DAD7D7",
+                                                  alignItems: "center",
+                                                  height: "38px",
+                                                  borderRadius: 5,
+                                                  height: 31,
+                                                }}
+                                                onClick={() => {
+                                                  setshowModalReceive({
+                                                    ...showModalReceive,
+                                                    value: true,
+                                                    ind: index,
+                                                  });
+                                                }}
+                                              >
+                                                <a
+                                                  style={{
+                                                    marginLeft: "3px",
+                                                    fontSize: 11,
+                                                  }}
+                                                >
+                                                  Chooose File
+                                                </a>
+                                                <div
+                                                  style={{
+                                                    fontSize: "25px",
+                                                    color: "#DAD7D7",
+                                                    marginLeft: "5px",
+                                                  }}
+                                                >
+                                                  |
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </td>
+                                    )}
+
+                                </tr>
+                                {receivedrec[index] &&
+                                  receivedrec[index]["issueType"] === "Other" && (
+                                    <tr>
+                                      <td colSpan={12}>
+                                        <Input
+                                          type="text"
+                                          id="input"
+                                          placeholder="Enter Issue"
+                                          onChange={(val) => {
+                                            receivedrec[index]["remarks"] =
+                                              val.target.value;
+                                            setrefresh(!refresh);
+                                          }}
+                                        />
+                                      </td>
+                                    </tr>
+                                  )}
+                              </>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
 
                 </div>
               </Row>
@@ -703,27 +1634,34 @@ const RecieveHubManifest = ({ depart }) => {
         <div className="m-3">
           <Col lg={12}>
             <div className="mb-1 footer_btn">
-              <Button
-                type="button"
-                className="btn btn-info m-1 cu_btn"
-                onClick={() => {
-                  if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
-                    setvehicle_error(true);
-                  }
-                  else {
-                    dispatch(setLoaded(true));
-                    if (receivedrec.length > 0) {
-                      handleShow();
-                    } else {
-                      setis_recv(true);
+              {!isLoading ?
+                <Button
+                  type="button"
+                  className="btn btn-info m-1 cu_btn"
+                  onClick={() => {
+                    if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
+                      setvehicle_error(true);
                     }
-                  }
+                    else {
+                      dispatch(setLoaded(true));
+                      if (receivedrec.length > 0) {
+                        handleShow();
+                      } else {
+                        setis_recv(true);
+                      }
+                    }
 
-                }}
-              >
-                Recieve
-              </Button>
+                  }}
+                >
+                  Recieve
+                </Button>
+                :
+                <Button type="button"
+                  className="btn btn-info m-1 cu_btn">
+                  <Loader />
+                </Button>
 
+              }
               <Button
                 type="button"
                 className="btn btn-info m-1 cu_btn"

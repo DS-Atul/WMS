@@ -199,6 +199,7 @@ const AddDocketStatus = () => {
         }
       )
       .then(function (response) {
+        console.log("bar response=====", response)
         if (response.data === "true") {
           row[index] = ['']
           setrefresh(!refresh)
@@ -373,6 +374,7 @@ const AddDocketStatus = () => {
           order: location.state.order.id,
           docket_no: location.state.order.docket_no,
           barcode_no: row.flat(),
+          asset_barcode: [],
           is_active: true,
         },
         {

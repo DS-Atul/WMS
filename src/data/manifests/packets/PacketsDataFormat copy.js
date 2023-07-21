@@ -1,8 +1,6 @@
-import React, { useLayoutEffect, useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Input } from "reactstrap";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
-import ImgModal from '../../../components/crop/ImgModal';
-import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect';
 const PacketTitle = [
   "Docket No.",
   "Packets",
@@ -12,29 +10,11 @@ const PacketTitle = [
 
 
 
-const PacketsDataFormat = ({ data, received1,
-  setReceived1, setis_issue }) => {
-
-
-  const [received, setReceived] = useState([]);
-  const [refresh, setrefresh] = useState(false);
+const PacketsDataFormat = ({ data, received,
+  setReceived,setis_issue}) => {
+    const [refresh, setrefresh] = useState(false);
   console.log("data--------", data)
   console.log("received--------", received)
-  // received[received.length - 1]['issue_image'] ="0000"
-  // console.log("received2222--------", received)
-  // console.log("received-len-------", received[0]['issue_image'])
-  const [row3, setrow3] = useState([]);
-  console.log("row3======", row3)
-
-  useLayoutEffect(() => {
-    setReceived(received1)
-    setrow3(received1)
-  }, [received1])
-
-  // useEffect(() => {
-  //   setReceived1(received)
-  // }, [received])
-
 
   // const [notreceived_packets, setnotreceived_packets] = useState([])
   // const [selected_id, setselected_id] = useState([]);
@@ -67,18 +47,6 @@ const PacketsDataFormat = ({ data, received1,
 
   }
 
-  const [showModalOrder, setshowModalOrder] = useState({
-    value: false,
-    ind: "",
-  });
-  console.log("showModalOrde---r", showModalOrder)
-
-  // useEffect(() => {
-  //   if (img !== "" && received.length > 0) {
-  //     received[received?.length - 1]['issue_image'] = img
-  //   }
-  // }, [img])
-
   return (
     <>
       <div className="table">
@@ -87,43 +55,6 @@ const PacketsDataFormat = ({ data, received1,
           style={{ borderCollapse: "collapse", width: "100%", borderWidth: 1 }}
         >
           <thead>
-
-            {showModalOrder.value ? (
-              <ImgModal
-                modal={showModalOrder.value}
-                modal_set={() => {
-                  setshowModalOrder({
-                    ...showModalOrder,
-                    value: false,
-                  });
-                }}
-                pre_image={showModalOrder.ind !== "" ? received[showModalOrder.ind]['issue_image'] : ""}
-                upload_image={(val) => {
-
-                  // setdocumentOrder(val);
-                  if (showModalOrder.ind !== "") {
-                    row3[showModalOrder.ind]['issue_image'] = val;
-                    setshowModalOrder({
-                      ...showModalOrder,
-                      value: false,
-                      ind: "",
-                    });
-                  } else {
-                    row3[row3.length - 1]['issue_image'] = val;
-                  }
-                }}
-                result_image={(val) => {
-                  setrefresh(!refresh)
-                  if (showModalOrder.ind !== "") {
-                    received[showModalOrder.ind]['issue_image'] = val;
-                  } else {
-                    received[received.length - 1]['issue_image'] = val;
-                  }
-                  // setdoc_result_image([...doc_result_image, val])
-                }}
-              />
-            ) : null}
-
             <tr style={{ lineHeight: 2, borderWidth: 1 }}>
               {/* {PacketTitle.map((i,index)=>)} */}
               {PacketTitle.map((i, j) => {
@@ -192,76 +123,18 @@ const PacketsDataFormat = ({ data, received1,
                             <option value="None">None</option>
                           </select>
                         </td>
-                        {/* /////////// */}
                         {received[index] &&
                           received[index]["issueType"] === "Broken" && (
                             <td>
-                              <div style={{ width: "100%" }} key={index}>
-                                {received[index]['issue_image'] ? (
-                                  <img
-                                    src={received[index]['issue_image']}
-                                    style={{
-                                      height: "95px",
-                                      width: "95px",
-                                      borderRadius: "10px",
-                                      paddingBottom: "5px",
-                                    }}
-                                    onClick={() => {
-                                      setshowModalOrder({
-                                        ...showModalOrder,
-                                        value: true,
-                                        ind: index,
-                                      });
-                                    }}
-                                  />
-                                ) : (
-                                  <div
-                                    style={{
-                                      height: "95px",
-                                      paddingTop: 35,
-                                    }}
-                                  >
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        border: "0.5px solid #DAD7D7",
-                                        alignItems: "center",
-                                        height: "38px",
-                                        borderRadius: 5,
-                                        height: 31,
-                                      }}
-                                      onClick={() => {
-                                        setshowModalOrder({
-                                          ...showModalOrder,
-                                          value: true,
-                                        });
-                                      }}
-                                    >
-                                      <a
-                                        style={{
-                                          marginLeft: "3px",
-                                          fontSize: 11,
-                                        }}
-                                      >
-                                        Chooose File
-                                      </a>
-                                      <div
-                                        style={{
-                                          fontSize: "25px",
-                                          color: "#DAD7D7",
-                                          marginLeft: "5px",
-                                        }}
-                                      >
-                                        |
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
+                              <Input
+                                type="file"
+                                name="file"
+                                id="exampleFile"
+                                size={"sm"}
+                                style={{ width: "12vw" }}
+                              />
                             </td>
                           )}
-                        {/* ////////////// */}
                         {received[index] &&
                           received[index]["issueType"] === "Damage" && (
                             <td>
@@ -296,7 +169,7 @@ const PacketsDataFormat = ({ data, received1,
                                 size={"sm"}
                                 onChange={(val) => {
                                   received[index]["issue_image"] =
-                                    val.target.files[0];
+                                  val.target.files[0];
                                   setrefresh(!refresh);
                                 }}
                                 style={{ width: "12vw" }}

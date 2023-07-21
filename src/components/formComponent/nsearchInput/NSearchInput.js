@@ -13,6 +13,7 @@ const NSearchInput = ({
   show_search = true,
   disable_me = false,
   current_width = "100%",
+  child_width = "95%"
 }) => {
   
   const [showfilter, setshowfilter] = useState(false);
@@ -116,8 +117,8 @@ const NSearchInput = ({
             className="dataResult custom-select"
             style={{
               // position: "absolute",
-              width: "95%",
-              // width: current_width,
+              // width: "95%",
+              width: child_width,
               zIndex: "1",
               border: showfilter ? "1px solid #d3d3d3" : null,
             }}

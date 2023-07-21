@@ -287,7 +287,7 @@ const AddOrder = () => {
   const [asset_info_list, setasset_info_list] = useState([
     // "None",
     "With Box",
-    "With Logger",
+    // "With Logger",
     "With Box + With Logger",
   ]);
   const [asset_info_selected, setasset_info_selected] = useState("");
@@ -1250,15 +1250,15 @@ const AddOrder = () => {
               asset_info_selected !== "None" &&
               cold_chain
               ? box
-              : asset_info_selected === "With Logger" &&
+              // : asset_info_selected === "With Logger" &&
+              //   asset_info_selected !== "None" &&
+              //   cold_chain
+              //   ? logger
+              : asset_info_selected === "With Box + With Logger" &&
                 asset_info_selected !== "None" &&
                 cold_chain
-                ? logger
-                : asset_info_selected === "With Box + With Logger" &&
-                  asset_info_selected !== "None" &&
-                  cold_chain
-                  ? both
-                  : [],
+                ? both
+                : [],
           current_branch: home_branch_id,
           client_name: client.toUpperCase(),
           branch_name: user.branch_nm ? user.branch_nm : "BRANCH NOT SET",
@@ -1349,9 +1349,13 @@ const AddOrder = () => {
           setrow([["", "", "", ""]])
           setconsignee_n("")
           setconsginee_st("")
+          setstate_id_f_c(0)
           setconsginee_c("")
+          setcity_id_c(0)
           setconsignee_pincode("")
+          setconsignee_p_id(0)
           setlocality_c("")
+          setlocality_id_f_c(0)
           setcommodity("")
           setlocal_delivery_type("")
           setrow1([["", "", ""]])
@@ -1380,11 +1384,13 @@ const AddOrder = () => {
         // setShowOrder(true);
       }
       else if (response.data === "duplicate") {
+        setIsLoading(false)
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Docket Number "${docket_no_value}"  Already Exist`));
         dispatch(setAlertType("warning"));
       }
       else {
+        setIsLoading(false)
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Somthing Went Wrong`));
         dispatch(setAlertType("warning"));
@@ -1502,15 +1508,15 @@ const AddOrder = () => {
               asset_info_selected !== "None" &&
               cold_chain
               ? box
-              : asset_info_selected === "With Logger" &&
+              // : asset_info_selected === "With Logger" &&
+              //   asset_info_selected !== "None" &&
+              //   cold_chain
+              //   ? logger
+              : asset_info_selected === "With Box + With Logger" &&
                 asset_info_selected !== "None" &&
                 cold_chain
-                ? logger
-                : asset_info_selected === "With Box + With Logger" &&
-                  asset_info_selected !== "None" &&
-                  cold_chain
-                  ? both
-                  : [],
+                ? both
+                : [],
 
           client_name: client?.toUpperCase(),
           branch_name: user.branch_nm ? user.branch_nm : "BRANCH NOT SET",
@@ -1560,6 +1566,7 @@ const AddOrder = () => {
           },
         }
       );
+
       if (response.data.status === "success") {
         setIsLoading(false)
         // eway_confirm && update_ewayBill(response.data.data.docket_no, response.data.data.eway_bill_no)
@@ -1571,6 +1578,7 @@ const AddOrder = () => {
         navigate("/booking/orders");
       }
       else {
+        setIsLoading(false)
         dispatch(setShowAlert(true));
         dispatch(setDataExist(`Somthing Went Wrong`));
         dispatch(setAlertType("warning"));
@@ -1900,12 +1908,12 @@ const AddOrder = () => {
             console.log("box========", box)
             setbox_list_1(box);
           }
-        } 
+        }
         else {
-          if(type === "logger"){
+          if (type === "logger") {
             setLogger_list([]);
           }
-          else{
+          else {
             setbox_list_1([])
           }
         }
@@ -1955,13 +1963,13 @@ const AddOrder = () => {
 
   // Type Of Booking
   const booking_type = () => {
-    if( delivery_type==="DOMESTIC" && location.state === null){
+    if (delivery_type === "DOMESTIC" && location.state === null) {
       settype_of_booking(type_of_booking_list[0]);
     } else if (cold_chain === true && location.state === null) {
       settype_of_booking(type_of_booking_list[0]);
-    } else if (nonecold_chain === true && location.state === null && delivery_type==="LOCAL") {
+    } else if (nonecold_chain === true && location.state === null && delivery_type === "LOCAL") {
       settype_of_booking(type_of_booking_list[1]);
-    } else if(location.state === null) {
+    } else if (location.state === null) {
       settype_of_booking(type_of_booking_list[1]);
     }
   };
@@ -1992,22 +2000,22 @@ const AddOrder = () => {
   // }, []);
 
   useEffect(() => {
-    if(location.state === null){
+    if (location.state === null) {
       booking_type();
     }
   }, [cold_chain, delivery_type]);
 
   useEffect(() => {
     let timeoutId;
-    if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Logger") {
-      timeoutId = setTimeout(() => {
-      getassetData("logger");
-    }, 1);
-    }
+    // if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Logger") {
+    //   timeoutId = setTimeout(() => {
+    //   getassetData("logger");
+    // }, 1);
+    // }
     if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Box + With Logger") {
       timeoutId = setTimeout(() => {
-      getassetData("logger");
-    }, 1);
+        getassetData("logger");
+      }, 1);
     }
     return () => clearTimeout(timeoutId);
   }, [asset_info_selected, search_logger, Logger_page]);
@@ -2016,13 +2024,13 @@ const AddOrder = () => {
     let timeoutId;
     if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Box") {
       timeoutId = setTimeout(() => {
-      getassetData("box");
-    }, 1);
+        getassetData("box");
+      }, 1);
     }
     if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Box + With Logger") {
       timeoutId = setTimeout(() => {
-      getassetData("box");
-    }, 1);
+        getassetData("box");
+      }, 1);
     }
     return () => clearTimeout(timeoutId);
   }, [asset_info_selected, search_box, box_list_page]);
@@ -4336,7 +4344,7 @@ const AddOrder = () => {
             </span>}
           {(to_pin && from_pin) &&
             <span>
-              Shipper And Consignee With This Pincode And Locality Is Not Present In Your Data Base To Proceed Further Enter Locality.
+              {`Shipper And Consignee With This Pincode And Locality Is Not Present In Your Data Base${location.state === null ? `To Proceed Further Enter Locality.` : `.`}`}
             </span>}
         </Modal.Body>
         <Modal.Footer>
@@ -4808,7 +4816,7 @@ const AddOrder = () => {
                             onChange={(event) => {
                               const { value } = event.target;
                               if (value.length <= 20) {
-                              setdocket_no_value(event.target.value);
+                                setdocket_no_value(event.target.value);
                               }
                               if (event.target.value.length <= 6) {
                                 setdocket_error(true);
@@ -5123,7 +5131,7 @@ const AddOrder = () => {
                         </>
                       ) : null}
 
-                      {asset_info_selected === "With Logger" ? (
+                      {/* {asset_info_selected === "With Logger" ? (
                         <>
                           <Col lg={12} md={6} sm={6}>
                             <Label className="header-child">Logger No *</Label>
@@ -5144,7 +5152,7 @@ const AddOrder = () => {
                             />
                           </Col>
                         </>
-                      ) : null}
+                      ) : null} */}
 
                       {asset_info_selected === "With Box + With Logger" ? (
                         <>
@@ -7021,6 +7029,7 @@ const AddOrder = () => {
                                           setshowModalOrder({
                                             ...showModalOrder,
                                             value: true,
+                                            ind: index1,
                                           });
                                         }}
                                       >
@@ -7074,6 +7083,7 @@ const AddOrder = () => {
                               }
                             }}
                             result_image={(val) => {
+                              console.log("val------------", val)
                               setSelectedFile(val);
                               if (showModalOrder.ind !== "") {
                                 row1[showModalOrder.ind][0] = val;
@@ -7178,7 +7188,7 @@ const AddOrder = () => {
                                 value: false,
                               });
                             }}
-                            pre_image={(showModalInvoice.type === "invoice" && showModalInvoice.ind !== "") ? row2[showModalInvoice.ind][4] : (showModalInvoice.type ==='ewaybill' && showModalInvoice.ind !== "") ? row2[showModalInvoice.ind][5] : ""}
+                            pre_image={(showModalInvoice.type === "invoice" && showModalInvoice.ind !== "") ? row2[showModalInvoice.ind][4] : (showModalInvoice.type === 'ewaybill' && showModalInvoice.ind !== "") ? row2[showModalInvoice.ind][5] : ""}
                             upload_image={(val) => {
                               if (showModalInvoice.type === "invoice") {
                                 if (showModalInvoice.ind !== "") {
@@ -7404,6 +7414,7 @@ const AddOrder = () => {
                                           setshowModalInvoice({
                                             ...showModalInvoice,
                                             value: true,
+                                            ind: index1,
                                             type: "invoice",
                                           });
                                         }}
@@ -7491,6 +7502,7 @@ const AddOrder = () => {
                                           setshowModalInvoice({
                                             ...showModalInvoice,
                                             value: true,
+                                            ind: index1,
                                             type: "ewaybill",
                                           });
                                         }}
@@ -7821,7 +7833,19 @@ const AddOrder = () => {
                 !isLoading ?
                   <Button
                     type="submit"
-                    className={"btn btn-info m-1"}
+                    className={
+                      isupdating &&
+                        (user.user_department_name + " " + user.designation_name ===
+                          "DATA ENTRY OPERATOR" ||
+                          user.user_department_name +
+                          " " +
+                          user.designation_name ===
+                          "CUSTOMER SERVICE EXECUTIVE")
+                        ? "btn btn-info m-1"
+                        : !isupdating
+                          ? "btn btn-info m-1"
+                          : "btn btn-success m-1"
+                    }
                     onClick={() => setsame_as(false)}
                   >
                     {isupdating &&
@@ -7838,7 +7862,19 @@ const AddOrder = () => {
                   :
                   <Button
                     type="button"
-                    className={"btn btn-info m-1"}
+                    className={
+                      isupdating &&
+                        (user.user_department_name + " " + user.designation_name ===
+                          "DATA ENTRY OPERATOR" ||
+                          user.user_department_name +
+                          " " +
+                          user.designation_name ===
+                          "CUSTOMER SERVICE EXECUTIVE")
+                        ? "btn btn-info m-1"
+                        : !isupdating
+                          ? "btn btn-info m-1"
+                          : "btn btn-success m-1"
+                    }
                   >
                     <Loader />
                   </Button>

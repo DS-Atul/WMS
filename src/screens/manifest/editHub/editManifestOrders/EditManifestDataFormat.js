@@ -157,16 +157,22 @@ const EditManifestDataFormat = ({ Manifest_list }) => {
                     <td>{booking_date_n}</td>
                     <td>{toTitleCase(order.current_status)}</td>
                     <td>
+                    {Manifest_list.length > 1 && (
+                      <div
+                      onClick={() => {
+                        handleModal(order.id, order.hub_transfer_no);
+                      }}
+                    >
                       <Button
                         color="danger"
                         size="sm"
                         outline
-                        onClick={() => {
-                          handleModal(order.id, order.hub_transfer_no);
-                        }}
+                        type="button"
                       >
                         Remove
                       </Button>
+                       </div>
+                       )}
                     </td>
                   </tr>
                 );
