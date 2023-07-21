@@ -322,6 +322,7 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
                     style={{ height: "70px", width: "90px" }}
                   />
                 </div>
+                <div style={{fontSize:"10px"}}>{asset.old_box_no}</div>
               </td>
               <td>{toTitleCase(asset.asset_type)}</td>
               <td>{toTitleCase(asset.box_type)}</td>

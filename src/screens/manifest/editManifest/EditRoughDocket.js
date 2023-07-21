@@ -728,6 +728,9 @@ const EditRoughDocket = () => {
               setvehicle_error(true);
             }
             else if (!is_valid_barcode && total_bags !== "" && total_bags) {
+              // console.log("is_valid_barcode===", is_valid_barcode)
+              // console.log("total_bags----", total_bags)
+              // console.log("total_bags==", total_bags)
               alert("Please Add Barcode Bag With Unique Value")
             }
             else if (!is_valid_box && total_box !== "" && total_box) {

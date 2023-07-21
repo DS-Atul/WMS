@@ -48,8 +48,10 @@ function AssetsCallibration() {
   const [callibration_to_date, setcallibration_to_date] = useState("")
   const [issued_by, setissued_by] = useState("")
   const [issued_date, setissued_date] = useState("")
-  const [certificate, setcertificate] = useState("")
-
+  const [document, setDocument] = useState('');
+  const [base64URL, setBase64URL] = useState('');
+  console.log("document---", document)
+  console.log("base64URL---", base64URL)
   // Asset
   const [asset_list_1, setasset_list_1] = useState([]);
   const [asset_list_2, setasset_list_2] = useState([]);
@@ -59,7 +61,7 @@ function AssetsCallibration() {
   const [asset_count, setasset_count] = useState(1)
   const [asset_bottom, setasset_bottom] = useState(56)
 
-    const [multiasset_error, setmultiasset_error] = useState(false)
+  const [multiasset_error, setmultiasset_error] = useState(false)
 
   //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
@@ -71,6 +73,17 @@ function AssetsCallibration() {
   const handleAction = () => {
     dispatch(setToggle(true));
     navigate("/master/assets");
+  };
+
+  const handleDocumentChange = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result;
+      setBase64URL(base64);
+    };
+    reader.readAsDataURL(file);
+    setDocument(file.name);
   };
 
   const update_asset_callibration = async () => {
@@ -86,23 +99,23 @@ function AssetsCallibration() {
         callibration_to: callibration_to_date,
         issued_by: issued_by,
         issued_date: issued_date,
-        certificate: certificate,
+        certificate: base64URL,
         is_callibration: true,
       }, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-        if (response.statusText === "Created") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(
-              `Callibration Updated Sucessfully`
-            )
-          );
-          dispatch(setAlertType("success"));
-          navigate("/master/assets");
-        }
+      if (response.statusText === "Created") {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Callibration Updated Sucessfully`
+          )
+        );
+        dispatch(setAlertType("success"));
+        navigate("/master/assets");
+      }
     } catch (error) {
       alert(`Error Happen while Updating Callibration ${error}`);
     }
@@ -114,7 +127,7 @@ function AssetsCallibration() {
     axios
       .get(
         ServerAddress +
-          `master/get_asset_details/?search=${""}&p=${asset_page}&records=${20}&asset_type=LOGGER&product_id_search=${asset_search}`,
+        `master/get_asset_details/?search=${""}&p=${asset_page}&records=${20}&asset_type=LOGGER&product_id_search=${asset_search}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -132,26 +145,26 @@ function AssetsCallibration() {
           if (asset_page === 1) {
             temp3 = response.data.results.map((v) => [
               v.id,
-             v.asset_id +
-             "-" +
-             v.box_type +
-             "-" +
-             v.manufacturer_name
+              v.asset_id +
+              "-" +
+              v.box_type +
+              "-" +
+              v.manufacturer_name
             ]);
           } else {
             temp3 = [
               ...asset_list_1,
-              ...response.data.results.map((v) => [v.id, v.asset_id+
+              ...response.data.results.map((v) => [v.id, v.asset_id +
                 "-" +
                 v.box_type +
                 "-" +
                 v.manufacturer_name]),
             ];
           }
-          setasset_count(asset_count+2)
+          setasset_count(asset_count + 2)
           setasset_list_1(temp3);
         }
-        else{
+        else {
           setasset_list_1([]);
         }
       })
@@ -173,20 +186,20 @@ function AssetsCallibration() {
       setmultiasset_error(false);
     }
   }, [asset_list_2])
-  
+
 
   return (
     <div>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          if (callibration_from_date === "" || callibration_to_date === "" || issued_by === "" || issued_date === ""  || certificate === ""){
+          if (callibration_from_date === "" || callibration_to_date === "" || issued_by === "" || issued_date === "" || base64URL === "") {
             alert("Please Fill All Callibaration Details")
           }
           else if (asset_list_2.length === 0) {
             setmultiasset_error(true);
           }
-          else{
+          else {
             update_asset_callibration()
           }
         }}
@@ -226,93 +239,92 @@ function AssetsCallibration() {
               {circle_btn ? (
                 <CardBody>
                   <Row>
-                  <Col lg={2} md={6} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child">
-                            Callibration From *
-                          </Label>
-                              <Input
-                                type="date"
-                                value={callibration_from_date}
-                                className="form-control-md"
-                                id="input"
-                                onChange={(val) => {
-                                  setcallibration_from_date(val.target.value);
-                                }}
-                              />
-                        </div>
-                      </Col>
+                    <Col lg={2} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child">
+                          Callibration From *
+                        </Label>
+                        <Input
+                          type="date"
+                          value={callibration_from_date}
+                          className="form-control-md"
+                          id="input"
+                          onChange={(val) => {
+                            setcallibration_from_date(val.target.value);
+                          }}
+                        />
+                      </div>
+                    </Col>
 
-                      <Col lg={2} md={6} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child">
-                            Callibration To
-                          </Label>
-                              <Input
-                                value={callibration_to_date}
-                                type="date"
-                                className="form-control-md"
-                                id="input"
-                                onChange={(val) => {
-                                  setcallibration_to_date(val.target.value);                                  
-                                }}
-                              />
-                        </div>
-                      </Col>
+                    <Col lg={2} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child">
+                          Callibration To
+                        </Label>
+                        <Input
+                          value={callibration_to_date}
+                          type="date"
+                          className="form-control-md"
+                          id="input"
+                          onChange={(val) => {
+                            setcallibration_to_date(val.target.value);
+                          }}
+                        />
+                      </div>
+                    </Col>
 
-                      <Col lg={3} md={6} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child">
-                            {/* Callibration */}
-                            Certificate Issued By *
-                          </Label>
-                              <Input
-                                value={issued_by}
-                                type="text"
-                                className="form-control-md"
-                                id="input"
-                                placeholder="Enter name"
-                                onChange={(val) => {
-                                  setissued_by(val.target.value);
-                                }}                              
-                              />
-                        </div>
-                      </Col>
+                    <Col lg={3} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child">
+                          {/* Callibration */}
+                          Certificate Issued By *
+                        </Label>
+                        <Input
+                          value={issued_by}
+                          type="text"
+                          className="form-control-md"
+                          id="input"
+                          placeholder="Enter name"
+                          onChange={(val) => {
+                            setissued_by(val.target.value);
+                          }}
+                        />
+                      </div>
+                    </Col>
 
-                      <Col lg={2} md={6} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child">
-                            {/* Callibration Certificate*/} Issued Date *
-                          </Label>
-                              <Input
-                                value={issued_date}
-                                type="date"
-                                className="form-control-md"
-                                id="input"
-                                onChange={(val) => {
-                                  setissued_date(val.target.value);
-                                }}
-                              />
-                        </div>
-                      </Col>
+                    <Col lg={2} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child">
+                          {/* Callibration Certificate*/} Issued Date *
+                        </Label>
+                        <Input
+                          value={issued_date}
+                          type="date"
+                          className="form-control-md"
+                          id="input"
+                          onChange={(val) => {
+                            setissued_date(val.target.value);
+                          }}
+                        />
+                      </div>
+                    </Col>
 
-                      <Col lg={2} md={6} sm={6}>
-                        <div className="mb-3">
-                          <Label className="header-child">
-                            {/* Callibration */}
-                            Certificate *
-                          </Label>
-                              <Input
-                                type="file"
-                                className="form-control-md"
-                                id="input"
-                                // value={item[4]}
-                                onChange={(val) => {
-                                  setcertificate(val.target.files[0]);
-                                }}
-                              />
-                        </div>
-                      </Col>
+                    <Col lg={2} md={6} sm={6}>
+                      <div className="mb-3">
+                        <Label className="header-child">
+                          {/* Callibration */}
+                          Certificate *
+                        </Label>
+                        <Input
+                          className="form-control d-block from control-md"
+                          name="document"
+                          type="file"
+                          id="input"
+                          readOnly
+                          onChange={(event) => { handleDocumentChange(event) }}
+                        />
+                      </div>
+                    </Col>
 
 
                     <Label className="header-child">Asset *</Label>
@@ -331,7 +343,7 @@ function AssetsCallibration() {
                         bottom={asset_bottom}
                         setbottom={setasset_bottom}
                       />
-                       {multiasset_error ? (
+                      {multiasset_error ? (
                         <div style={{ color: "#f46a6a", fontSize: "10.4px" }}>
                           Please Select At Least One Asset
                         </div>

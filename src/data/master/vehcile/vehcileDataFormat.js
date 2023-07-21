@@ -26,6 +26,7 @@ import correct from "../../../assets/images/bookings/check-mark.png";
 import cross from "../../../assets/images/bookings/remove.png";
 
 const VehcileDataFormat = ({ data, data1, can_delete }) => {
+  console.log("data---", data)
   // Permissions
   const dispatch = useDispatch();
 

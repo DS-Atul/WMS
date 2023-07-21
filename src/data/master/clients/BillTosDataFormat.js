@@ -255,7 +255,7 @@ const BillTosDataFormat = ({ data, data1, can_delete }) => {
                 </td>
               )}
               <td>
-              {(can_update && client.cm_current_status !== "APPROVED") || user.is_superuser ? (
+                {(can_update && client.cm_current_status !== "APPROVED") || user.is_superuser ? (
 
                   <Link
                     to="/master/billtos/addbillto"
@@ -269,22 +269,30 @@ const BillTosDataFormat = ({ data, data1, can_delete }) => {
               </td>
               <td>{client.pan_no}</td>
               <td>
-                <HashLink
-                  to="/master/billtos/addbillto#customer"
-                  state={{ client: client }}
-                >
-                  See Clients Section
-                </HashLink>
+                {(can_update && client.cm_current_status !== "APPROVED") || user.is_superuser ? (
+                  <HashLink
+                    to="/master/billtos/addbillto#customer"
+                    state={{ client: client }}
+                  >
+                    See Clients Section
+                  </HashLink>
+                ) : (
+                 " See Clients Section"
+                )}
               </td>
 
               {/* total_client_count */}
               <td>
-                <HashLink
-                  to="/master/billtos/addbillto#customer"
-                  state={{ client: client }}
-                >
-                  {client.total_client_count}
-                </HashLink>
+                {(can_update && client.cm_current_status !== "APPROVED") || user.is_superuser ? (
+                  <HashLink
+                    to="/master/billtos/addbillto#customer"
+                    state={{ client: client }}
+                  >
+                    {client.total_client_count}
+                  </HashLink>
+                ) : (
+                  client.total_client_count
+                )}
               </td>
               <td>{client.organization_name ? toTitleCase(client.organization_name) : "-"}</td>
               <td>

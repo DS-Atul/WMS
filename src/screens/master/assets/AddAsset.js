@@ -415,6 +415,7 @@ const AddAsset = () => {
   useLayoutEffect(() => {
     try {
       let asset_u = location_data.state.asset;
+      console.log("asset_u---", asset_u)
       setisupdating(true);
       setasset(asset_u);
       setasset_type(toTitleCase(asset_u.asset_type));
@@ -496,7 +497,7 @@ const AddAsset = () => {
           )
         );
         dispatch(setAlertType("success"));
-        // navigate(-1);
+        navigate(-1);
       } else if (response.data === "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(
@@ -1618,10 +1619,7 @@ const AddAsset = () => {
 
                       <Col lg={3} md={3} sm={6}>
                         <Label className="header-child">
-                          Document
-                          <span className="manadatory">
-                            *
-                          </span>
+                          Document *
                         </Label>
 
                         {row.map(
@@ -1636,6 +1634,7 @@ const AddAsset = () => {
                                     marginBottom: "15px",
                                   }}
                                   name="degree_doc"
+                                  // disabled={row.length - 1 !== index}
                                   id="input"
                                   accept=".pdf"
                                   onChange={(event) => {
@@ -1676,113 +1675,103 @@ const AddAsset = () => {
                                 <>
                                   <div
                                     style={{
-                                      display: "flex",
-                                      flexDirection: "row",
-                                      border: "0.5px solid #dad7d7",
-                                      alignItems: "center",
-                                      height: "38px",
-                                      borderRadius: 5,
-                                      height: 31,
+                                      // height: "5px",
+                                      paddingBottom: 8,
                                     }}
-                                    onClick={handleIClick}
                                   >
-                                    <a
-                                      style={{
-                                        marginLeft: "3px",
-                                        fontSize: 11,
-                                      }}
-                                    >
-                                      Chooose File
-                                    </a>
                                     <div
                                       style={{
-                                        fontSize: "25px",
-                                        color: "#dad7d7",
-                                        marginLeft: "5px",
+                                        background: row.length - 1 !== index && "#EFF2F7",
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        border: "0.5px solid #dad7d7",
+                                        alignItems: "center",
+                                        height: "38px",
+                                        borderRadius: 5,
+                                        height: 31,
                                       }}
+                                      onClick={row.length - 1 === index && handleIClick}
                                     >
-                                      |
+                                      <a
+                                        style={{
+                                          marginLeft: "3px",
+                                          fontSize: 11,
+                                        }}
+                                      >
+                                        Chooose File
+                                      </a>
+                                      <div
+                                        style={{
+                                          fontSize: "25px",
+                                          color: "#dad7d7",
+                                          marginLeft: "5px",
+                                        }}
+                                      >
+                                        |
+                                      </div>
+                                      <a style={{ fontSize: 11 }}>
+                                        Image Uploaded
+                                      </a>
                                     </div>
-                                    <a style={{ fontSize: 11 }}>
-                                      Image Uploaded
-                                    </a>
                                   </div>
-                                  {/* <button
-                                type="button"
-                                onClick={handleIClick}
-                                style={{
-                                  width: "120px",
-                                  height: "30px",
-                                }}
-                              >
-                                <p>
-                                  {item[4].substring(
-                                    item[4].lastIndexOf(
-                                      "/"
-                                    ) + 1
-                                  )}
-                                </p>
-                              </button> */}
-                                  <input
-                                    ref={fileInputRef1}
-                                    //  className="form-control d-block from control-md"
-                                    //  bsSize="sm"
-                                    type="file"
-                                    style={{
-                                      marginBottom:
-                                        "15px",
-                                      display: "none",
-                                    }}
-                                    name="degree_doc"
-                                    id="input-s"
-                                    accept=".pdf"
-                                    onChange={(event) => {
-                                      const file =
-                                        event.target
-                                          .files[0];
+                                    <input
+                                      ref={fileInputRef1}
+                                      type="file"
+                                      style={{
+                                        marginBottom:
+                                          "15px",
+                                        display: "none",
+                                      }}
+                                      name="degree_doc"
+                                      id="input-s"
+                                      accept=".pdf"
+                                      onChange={(event) => {
+                                        const file =
+                                          event.target
+                                            .files[0];
 
-                                      if (
-                                        file &&
-                                        file.type ===
-                                        "application/pdf"
-                                      ) {
-                                        const reader =
-                                          new FileReader();
+                                        if (
+                                          file &&
+                                          file.type ===
+                                          "application/pdf"
+                                        ) {
+                                          const reader =
+                                            new FileReader();
 
-                                        reader.onload =
-                                          () => {
-                                            const base64Url =
-                                              reader.result;
-                                            //  item[5] = base64Url; // Set the value at index 5 in the 'item' directly
-                                            const updatedInfo =
-                                              [
-                                                ...row,
-                                              ];
-                                            updatedInfo[
-                                              index
-                                            ][4] =
-                                              base64Url;
+                                          reader.onload =
+                                            () => {
+                                              const base64Url =
+                                                reader.result;
+                                              //  item[5] = base64Url; // Set the value at index 5 in the 'item' directly
+                                              const updatedInfo =
+                                                [
+                                                  ...row,
+                                                ];
+                                              updatedInfo[
+                                                index
+                                              ][4] =
+                                                base64Url;
 
-                                            // Update the state with the modified 'education_info' array
-                                            // seteducation_info(
-                                            //   updatedInfo
-                                            // );
-                                            setrefresh(
-                                              !refresh
-                                            );
-                                          };
+                                              // Update the state with the modified 'education_info' array
+                                              // seteducation_info(
+                                              //   updatedInfo
+                                              // );
+                                              setrefresh(
+                                                !refresh
+                                              );
+                                            };
 
-                                        reader.readAsDataURL(
-                                          file
-                                        );
-                                      } else {
-                                        // Handle invalid file type error
-                                        console.log(
-                                          "Please select a PDF file."
-                                        );
-                                      }
-                                    }}
-                                  />
+                                          reader.readAsDataURL(
+                                            file
+                                          );
+                                        } else {
+                                          // Handle invalid file type error
+                                          console.log(
+                                            "Please select a PDF file."
+                                          );
+                                        }
+                                      }}
+                                    />
                                 </>
                               }
 
@@ -1807,7 +1796,7 @@ const AddAsset = () => {
                             >
                               {row.length > 1 ? (
                                 <>
-                                  <div style={{ height: "14.5px" }}></div>
+                                  <div style={{ height: "10.5px" }}></div>
                                   <div
                                     onClick={() => {
                                       delete_callibration(item);
