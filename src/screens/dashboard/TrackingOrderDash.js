@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { Link } from "react-router-dom";
 // import "./Tracking.css";
 import "../track/trackingPage/Tracking.css";
@@ -9,11 +9,23 @@ import { FaBox, FaRoute } from "react-icons/fa";
 import axios from "axios";
 import { ServerAddress } from "../../constants/ServerAddress";
 import toTitleCase from "../../lib/titleCase/TitleCase";
-import { useSelector } from "react-redux";
+import { useSelector , useDispatch} from "react-redux";
+
+
+import {
+  setDocketNumber,
+  setSearchDocket,
+} from "../../store/orderTracking/OrderTracking";
 
 const TrackingOrderDash = () => {
 
-    const docket_no = useSelector((state) => state.OrderTracking.docket_number)
+
+  const dispatch = useDispatch();
+
+  const accessToken = useSelector((state) => state.authentication.access_token);
+  const docket_no = useSelector((state) => state.OrderTracking.docket_number);
+  const docket_search = useSelector((state) => state.OrderTracking.search_docket);   
+   console.log("doc are :" , docket_no);
   const [order_id, setorder_id] = useState("");
   const [search, setsearch] = useState(false);
   const [next, setnext] = useState(false);
@@ -23,24 +35,26 @@ const TrackingOrderDash = () => {
   const [get_orders, setget_orders] = useState([]);
   const [get_status, setget_status] = useState([]);
 
-  const get_order_data = () => {
+  const get_order_data = (docket_list) => {
     axios
       .get(
-        ServerAddress + "booking/get_order_status/?awb_no=" + docket_no,
+        ServerAddress + "booking/get_order_status/?awb_no=" + docket_list,
        
       )
       .then((response) => {
         console.log("Tracking response data", response.data);
         const docket_info = response.data[0];
         const last = docket_info[docket_info.length - 1];
-setget_status(last);
+        setget_status(last);
         if (response.data[0].length > 0) {
+          dispatch(setSearchDocket(true));
           let last_ele = response.data;
           let last_data_s = last_ele.map((item) => item.push(false));
           setget_orders(response.data);
 
           setsearch(true);
         } else {
+          // dispatch(setSearchDocket(false));
           alert("Docket Not Found");
         }
       })
@@ -49,6 +63,18 @@ setget_status(last);
       });
   };
   
+useEffect(() => {
+  if( accessToken && docket_no.length >5){
+    get_order_data(docket_no);
+  }
+}, [docket_no]);
+
+
+useEffect(() => {
+  dispatch(setDocketNumber([]))
+  // dispatch(setSearchDocket(false));
+}, [])
+
 
   return (
     <>
@@ -56,7 +82,8 @@ setget_status(last);
     //   className="background"
       >
 
-        <div className="main">
+<h1 style={{display:"flex",justifyContent:"center", alignItems:"center"}}>Docket Order Status :</h1>
+        <div className="main1">
           {/* <div>
             <form
               onSubmit={(e) => {
@@ -237,7 +264,7 @@ setget_status(last);
                                   <span className="icon">
                                     {" "}
                                     {/* <i className="fa fa-warehouse"></i>{" "} */}
-                                    <FaRoute />
+                                    <i className="fa fa-warehouse"></i>{" "}
                                   </span>{" "}
                                   <span className="text">
                                     {" "}
@@ -324,7 +351,7 @@ setget_status(last);
                                   <span className="icon">
                                     {" "}
                                     <i className="fa fa-warehouse"></i>{" "}
-                                    <FaRoute />
+                                    {/* <FaRoute /> */}
                                   </span>{" "}
                                   <span className="text">
                                     {" "}
@@ -413,7 +440,7 @@ setget_status(last);
                                     {" "}
                                     <i className="fa fa-warehouse">
                                       {" "}
-                                      <FaRoute />
+                                      {/* <FaRoute /> */}
                                     </i>{" "}
                                   </span>{" "}
                                   <span className="text">
@@ -501,7 +528,7 @@ setget_status(last);
                                   {" "}
                                   <span className="icon">
                                     {" "}
-                                    <FaRoute />
+                                    <i className="fa fa-warehouse"></i>{" "}
                                   </span>{" "}
                                   <span className="text">
                                     {" "}
@@ -588,7 +615,7 @@ setget_status(last);
                                   <span className="icon">
                                     {" "}
                                     {/* <i className="fas fa-route"></i> */}
-                                     <FaRoute />{" "}
+                                    <i className="fa fa-warehouse"></i>{" "}
                                   </span>{" "}
                                   <span className="text">
                                     Shipment Arrived At Destination
@@ -674,7 +701,9 @@ setget_status(last);
                                   {" "}
                                   <span className="icon">
                                     {" "}
-                                    <i class="fas fa-route"></i> <FaRoute />{" "}
+                                    <i className="fa fa-warehouse"></i>{" "}
+
+                                    {/* <i class="fas fa-route"></i> <FaRoute />{" "} */}
                                   </span>{" "}
                                   <span className="text">
                                     Shipment Arrived At Destination
@@ -831,6 +860,7 @@ setget_status(last);
                         >
                           Tracking / History
                           <div
+                          style={{cursor:"pointer"}}
                             onClick={() => {
                               // setnext(false);
                               item[item.length - 1] = false;
@@ -853,7 +883,7 @@ setget_status(last);
                             style={{
                               width: "100%",
                               textAlign: "center",
-                              // whiteSpace: "nowrap"
+                              whiteSpace: "nowrap"
                             }}
                           >
                             <thead>
@@ -895,15 +925,15 @@ setget_status(last);
                                     // let update_date1  = update_date.
                                     return (
                                       <tr key={index}>
-                                        <td>{item1.status}</td>
+                                        <td>{item1.status ? item1.status : "="}<br/><span style={{color:"gray", fontSize:"12.5px"}}>{toTitleCase(item1.transit_status ? item1.transit_status : "-")}</span></td>
                                         <td>{d_update_date}</td>
                                         <td>{update_time}</td>
                                         <td>
-                                          {item1.state}
+                                          {item1.status_current_city ? item1.status_current_city : "-"}
                                           {/* {" ,  "} */}
-                                          {item1.current_city} 
+                                          {item1.status_current_locality ? item1.status_current_locality : "-"} 
                                           {/* {" ,  "} */}
-                                          {item1.pincode}
+                                          {item1.status_current_pincode ? item1.status_current_pincode : "-"}
                                         </td>
                                       </tr>
                                     );

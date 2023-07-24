@@ -5,9 +5,18 @@ import SideBar from "./SideBar";
 import Footer from "./Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { setNavToggle } from "../../store/dataList/DataList";
+import TrackingOrderDash from "../../screens/dashboard/TrackingOrderDash";
+import { setDocketNumber, setSearchDocket } from "../../store/orderTracking/OrderTracking";
+import { useNavigate } from "react-router-dom";
 
 const Layout = () => {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
+
+    const docket_no = useSelector((state) => state.OrderTracking.docket_number);
+  const docket_search = useSelector((state) => state.OrderTracking.search_docket);
+
   const nav_toggle = useSelector((state) => state.datalist.nav_toggle);
   const [innerWidth, setinnerWidth] = useState();
 
@@ -17,8 +26,31 @@ const Layout = () => {
   }, [wind_Width]);
 
   useEffect(() => {
-    dispatch(setNavToggle(false));
-  }, []);
+    // Function to reset the state
+    const resetState = () => {
+      dispatch(setNavToggle(false));
+      dispatch(setDocketNumber([]));
+      dispatch(setSearchDocket(false));
+    };
+
+    // Call the resetState function for the initial render (when the component mounts)
+    resetState();
+
+    // Cleanup: Since there's no unlisten in v6, you don't need a cleanup function.
+
+    // Subscribe to route changes and call the resetState function
+    const unsubscribe = navigate((location) => {
+      resetState();
+    });
+
+    // The above navigation handler will be triggered when the route changes, and it calls resetState()
+
+    // To unsubscribe from the navigation handler when the component unmounts (not necessary in v6)
+    // return () => {
+    //   unsubscribe();
+    // };
+  }, [dispatch, navigate]);
+
 
   const handleClk = () => {
     if (innerWidth < 1200) {
@@ -66,7 +98,12 @@ const Layout = () => {
           }}
           onClick={() => handleClk()}
         >
+          {docket_search  ? 
+
+<TrackingOrderDash/>
+: 
           <Outlet />
+}
         </div>
         <div
           style={{

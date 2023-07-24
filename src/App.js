@@ -42,6 +42,29 @@ const App = () => {
     }
   }, [setpermission]);
 
+
+  // to loack Screen
+    // to lock screen by clicking shift + L
+    const [isDisabled, setIsDisabled] = useState(false);
+
+    useEffect(() => {
+      const handleKeyPress = (event) => {
+        // if (event.key === 'L')
+        // Window + Shift + L
+        if (event.key === "L" && event.shiftKey && event.metaKey) {
+          setIsDisabled(!isDisabled);
+          document.body.style.pointerEvents = isDisabled ? "auto" : "none";
+          document.onkeydown = isDisabled ? null : () => false;
+        }
+      };
+  
+      document.addEventListener("keydown", handleKeyPress);
+  
+      return () => {
+        document.removeEventListener("keydown", handleKeyPress);
+      };
+    }, [isDisabled]);
+
   return (
     <>
       <Routes>

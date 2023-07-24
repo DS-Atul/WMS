@@ -91,6 +91,43 @@ const Header = () => {
   //Tracking Docket
   const [docket_number_entry, setdocket_number_entry] = useState([]);
 
+
+  useEffect(() => {
+    if(docket_number_entry === "") {
+      dispatch(setDocketNumber([]));
+      dispatch(setSearchDocket(false));
+    }
+  }, [docket_number_entry])
+
+   // This Function Used for full screen
+   function toggleFullscreen() {
+    if (
+      !document.fullscreenElement &&
+      /* alternative standard method */ !document.mozFullScreenElement &&
+      !document.webkitFullscreenElement
+    ) {
+      // current working methods
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.mozRequestFullScreen) {
+        document.documentElement.mozRequestFullScreen();
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen(
+          Element.ALLOW_KEYBOARD_INPUT
+        );
+      }
+    } else {
+      if (document.cancelFullScreen) {
+        document.cancelFullScreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitCancelFullScreen) {
+        document.webkitCancelFullScreen();
+      }
+    }
+  }
+
+  
   return (
     <header>
       {show_alert ? (
@@ -410,6 +447,20 @@ const Header = () => {
                   <BsSearch />
                 </button>
               </div>
+
+              <div className="dropdown d-none d-lg-inline-block ms-1">
+                <button
+                  type="button"
+                  className="btn header-item noti-icon "
+                  onClick={() => {
+                    toggleFullscreen();
+                  }}
+                  data-toggle="fullscreen"
+                >
+                  <i className="bx bx-fullscreen" />
+                </button>
+              </div>
+
               <NotificationDropdown />
               <ProfileMenu />
               {/* <button

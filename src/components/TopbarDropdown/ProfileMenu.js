@@ -33,7 +33,11 @@ import { ServerAddress } from "../../constants/ServerAddress";
 import axios from "axios";
 import { setPermission } from "../../store/permissions/Permissions";
 import {resetAuthenticationState} from "../../store/authentication/Authentication";
-import localStorage from "redux-persist/es/storage";
+import {
+  setDocketNumber,
+  setSearchDocket,
+} from "../../store/orderTracking/OrderTracking";
+
 // users
 // import user1 from "../../../assets/images/users/avatar-1.jpg"
 
@@ -103,6 +107,8 @@ const ProfileMenu = (apiCall) => {
         dispatch(setRefreshToken(""));
         dispatch(setPermission(false));
         dispatch(resetAuthenticationState());
+        dispatch(setDocketNumber([]));
+        dispatch(setSearchDocket(false));
         localStorage.clear();
         window.location.reload();
       }, 1800000);
@@ -471,6 +477,8 @@ const ProfileMenu = (apiCall) => {
               // dispatch(setRefreshToken(""));
               dispatch(setPermission(false));
               dispatch(resetAuthenticationState());
+              dispatch(setDocketNumber([]));
+              dispatch(setSearchDocket(false));
               localStorage.clear();
               navigate("/");
             }}
