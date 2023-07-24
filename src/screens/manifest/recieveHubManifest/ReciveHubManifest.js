@@ -25,7 +25,7 @@ import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Question from "../../../assets/images/bookings/question.png";
 import BreakManifest from "../../../data/manifests/recieveManifest/BreakManifest";
 import RecieveDataFormat from "../../../data/manifests/recieveManifest/RecieveManifestFormat";
-import { setLoaded } from "../../../store/manifest/RecieveManifest";
+import { setFuther_conn_id, setGoing_hub_id, setLoaded, setOrder_id } from "../../../store/manifest/RecieveManifest";
 import RecieveHubDataFormat from "../../../data/manifests/recieveHubManifest/RecieveHubManifestFormat";
 import BreakHubManifest from "../../../data/manifests/recieveHubManifest/BreakHubManifest";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
@@ -440,6 +440,13 @@ const RecieveHubManifest = ({ depart }) => {
         alert(`Error Occur in Get orderboxqrcodecheck, ${err}`);
       });
   };
+
+  useEffect(() => {
+    let orderid_list = data2.map((v) => v.order);
+    let unique_orderid_list = [...new Set(orderid_list)];
+    dispatch(setOrder_id(unique_orderid_list));
+  }, [data2]);
+
   function handleIssueTypeChange(e, universal_no, index, universal_type, barcode, issue_location, barcode_type, issue_image) {
     setis_issue(true);
     const issueType = e.target.value;

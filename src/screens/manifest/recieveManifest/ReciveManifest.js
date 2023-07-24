@@ -270,6 +270,7 @@ const RecieveManifest = ({ depart }) => {
   useLayoutEffect(() => {
     get_vehcile_no();
   }, [vehicle_n_page, search_vehicle_name]);
+  
   useEffect(() => {
     setdata(location_data.state.depart.orders)
   }, [location_data])

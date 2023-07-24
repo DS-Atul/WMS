@@ -513,14 +513,9 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
               <td>
                 {/* {can_update || user.is_superuser  ? ( */}
                 {(can_update && order.cm_current_status !== "APPROVED") || user.is_superuser ? (
-
-                  <a style={{ color: "blue" }}
-                    onClick={() => handleSubmit(order)}
-                  >
-                    {/* {toTitleCase(order.docket_no)} */}
-                    {order.docket_no}
-
-                  </a>
+                  <Link to="/booking/updatedeliveryinfo" state={{ order: order }}>
+                    { order.docket_no}
+                  </Link>
 
                 ) : (
                   // toTitleCase(order.commodity_name)
