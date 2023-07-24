@@ -1,12 +1,24 @@
 import React, { useState, useCallback, useLayoutEffect } from "react";
 import {
   Dropdown,
+  DropdownItem,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem,
+  Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  FormFeedback,
+  InputGroupText,
+  InputGroup,
+  Alert,
 } from "reactstrap";
+import Modal from "react-bootstrap/Modal";
+import { IconContext } from "react-icons";
 import { BiUserCircle } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 //i18n
 // import { withTranslation } from "react-i18next"
 // Redux
@@ -21,6 +33,7 @@ import { ServerAddress } from "../../constants/ServerAddress";
 import axios from "axios";
 import { setPermission } from "../../store/permissions/Permissions";
 import {resetAuthenticationState} from "../../store/authentication/Authentication";
+import localStorage from "redux-persist/es/storage";
 // users
 // import user1 from "../../../assets/images/users/avatar-1.jpg"
 
@@ -111,8 +124,273 @@ const ProfileMenu = (apiCall) => {
     };
   }, [navigate, send_logout_time, dispatch, handleApi]);
 
+  /////////
+  const [old_password, setold_password] = useState("");
+  const [new_password, setnew_password] = useState("");
+  const [confirm_password, setconfirm_password] = useState("");
+
+  const [old_password_error, setold_password_error] = useState(false);
+  const [new_password_error, setnew_password_error] = useState(false);
+  const [confirm_password_error, setconfirm_password_error] = useState(false);
+
+  // error message if not matched password
+  const [error, seterror] = useState(false);
+
+  // Open Modal for change password
+  const [openModal, setopenModal] = useState(false);
+  const closeModal = () => {
+    // setopenModal(false);
+    setold_password("");
+    setnew_password("");
+    setconfirm_password("");
+  }
+  const ResetPassword = () => {
+    axios
+      .put(
+        ServerAddress + "ems/reset_password/",
+        {
+          username: userdetails.username,
+          old_password: old_password,
+          new_password: new_password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessTK}`,
+          },
+        }
+      )
+      .then(function (response) {
+        // console.log("response is", response.data);
+        if (response.data === "Password Reset Successfully") {
+          setopenModal(false)
+          alert('Password Reset SuccessFully, Login Again')
+          seterror(false);
+          send_logout_time();
+          // dispatch(setlogout());
+          dispatch(setUserDetails(null));
+          dispatch(setAccessToken(""));
+          dispatch(setRefreshToken(""));
+          dispatch(setPermission(false));
+          dispatch(resetAuthenticationState());
+          localStorage.clear();
+          // navigate("/login");
+          navigate("/");
+        } else
+          seterror(true);
+        // alert('Old Password Wrong')
+
+      })
+      .catch(function () {
+        seterror(true);
+      });
+  };
+
+  const [check_pass, setcheck_pass] = useState(false);
+  const [showPass, setshowPass] = useState(false);
+  const passwordRegex = /^(?=.\d)(?=.[a-z])(?=.[A-Z])(?=.[^a-zA-Z0-9]).{8,}$/;
+  const [check_Regex, setcheck_Regex] = useState(false);
+
+  const validatePassword = (password) => {
+    return passwordRegex.test(password);
+  };
+  console.log("validatePassword----", validatePassword)
+
+  useLayoutEffect(() => {
+    if (old_password !== "") {
+      setold_password_error(false)
+    }
+    if (new_password !== "") {
+      setnew_password_error(false)
+    }
+    if (validatePassword(new_password)) {
+      setcheck_Regex(false);
+    }
+    if (confirm_password !== "") {
+      setconfirm_password_error(false)
+    }
+    if (new_password === confirm_password) {
+      setcheck_pass(false);
+    }
+  }, [old_password, new_password, confirm_password])
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (old_password === "") {
+      setold_password_error(true)
+    }
+    else if (new_password === "") {
+      setnew_password_error(true)
+    }
+    else if (!validatePassword(new_password)) {
+      alert("Inv")
+      setcheck_Regex(true);
+    }
+    else if (confirm_password === "") {
+      setconfirm_password_error(true)
+    }
+    else if (new_password !== confirm_password) {
+      setcheck_pass(true);
+    }
+    else {
+      ResetPassword();
+      setcheck_Regex(false)
+      closeModal();
+    }
+  }
+  /////////
+
   return (
     <React.Fragment>
+      {/* ////// */}
+      <Modal show={openModal} onHide={() => {
+        setopenModal(false);
+        seterror(false);
+      }}>
+
+        <Modal.Header closeButton></Modal.Header>
+        {check_Regex &&
+          <div style={{
+            textAlign: "center", padding: "8px", background: "#E6F1FF", color: "#ea7878", fontSize: "15px"
+          }}>Password must contain at least one digit, one lowercase letter, one uppercase letter,
+            one special character, and have a minimum length of 8 characters.</div>
+        }
+        {check_pass &&
+          <div style={{
+            textAlign: "center", padding: "8px", background: "#E6F1FF", color: "#ea7878", fontSize: "15px"
+          }}>New Password Must Be Equal To Confirm Password</div>
+        }
+
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            {error ? (
+              <Alert color="danger">Old Password Wrong</Alert>
+            ) : null}
+            <FormGroup className="form-group">
+              <Label for="old_password" className="form-label">Old Password</Label>
+              {/* <InputGroup> */}
+              <Input
+                type="password"
+                name="old_password"
+                id="old_password"
+                className="form-input"
+                placeholder="Enter Old Password"
+                value={old_password}
+                onChange={(val) =>
+                  setold_password(val.target.value)
+                } invalid={old_password_error}
+              />
+              {old_password_error &&
+                (<FormFeedback type="invalid">
+                  {"Write Old Password"}
+                </FormFeedback>)
+              }
+              {/* <InputGroupText>
+                  <IconContext.Provider
+                    value={{ size: 16 }}
+                  >
+                    <div
+                      onClick={() => {
+                        setshowPass(!showPass);
+                      }}
+                    >
+                      {showPass ? (
+                        <FaEyeSlash style={{ size: 30 }} />
+                      ) : (
+                        <FaEye />
+                      )}
+                    </div>
+                  </IconContext.Provider>
+                </InputGroupText>
+              </InputGroup> */}
+            </FormGroup>
+
+            <FormGroup className="form-group">
+              <Label for="new_password" className="form-label">New Password</Label>
+              <Input
+                type="password"
+                name="new_password"
+                id="new_password"
+                className="form-input"
+                placeholder="Enter New Password"
+                value={new_password}
+                onChange={(val) =>
+                  setnew_password(val.target.value)
+                }
+                onBlur={() => {
+                  if (!validatePassword(new_password)) {
+                    setcheck_Regex(true)
+                  }
+                }}
+                invalid={new_password_error}
+              />
+              {new_password_error &&
+                (<FormFeedback type="invalid">
+                  {"Write New Password"}
+                </FormFeedback>)
+              }
+            </FormGroup>
+
+            <FormGroup className="form-group">
+
+              <Label for="confirm_password" className="form-label">Confirm Password</Label>
+              <InputGroup>
+                <Input
+                  type={showPass ? "text" : "password"}
+                  name="confirm_password"
+                  id="confirm_password"
+                  className="form-input"
+                  placeholder="Enter Confirm Password"
+                  value={confirm_password}
+                  onChange={(val) =>
+                    setconfirm_password(val.target.value)
+                  }
+                  invalid={confirm_password_error}
+                />
+                <InputGroupText>
+                  <IconContext.Provider
+                    value={{ size: 16 }}
+                  >
+                    <div
+                      onClick={() => {
+                        setshowPass(!showPass);
+                      }}
+                    >
+                      {showPass ? (
+                        <FaEyeSlash style={{ size: 30 }} />
+                      ) : (
+                        <FaEye />
+                      )}
+                    </div>
+                  </IconContext.Provider>
+                </InputGroupText>
+              </InputGroup>
+              {confirm_password_error &&
+                (<FormFeedback type="invalid">
+                  {"Write Confirm Password"}
+                </FormFeedback>)
+              }
+            </FormGroup>
+            <Button
+              color="primary"
+              type="submit"
+              className="btn btn-info m-1"
+            // onClick={() => {
+            //   seterror(false);
+            //   setopenModal_1(true);
+            // }}
+            >Change Password</Button>
+          </Form>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button color="secondary" className="btn btn-warning m-1"
+            onClick={() => {
+              setopenModal(false);
+              seterror(false);
+            }}>Cancel</Button>
+        </Modal.Footer>
+      </Modal>
+      {/* ////// */}
       <Dropdown
         isOpen={menu}
         toggle={() => setMenu(!menu)}
@@ -169,6 +447,20 @@ const ProfileMenu = (apiCall) => {
           </DropdownItem>
 
           <div className="dropdown-divider" />
+
+          {/* ////// */}
+          <Link
+            to="/"
+            className="dropdown-item"
+          >
+            <i className="bx bx-reset font-size-20 align-middle me-1" />
+            <span onClick={() => {
+              setopenModal(true);
+            }}
+            >Change Password</span>
+          </Link>
+          {/* ////// */}
+
           <Link
             to="/signin"
             className="dropdown-item"

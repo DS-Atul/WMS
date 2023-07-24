@@ -1,8 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import "../../../assets/scss/forms/form.scss";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import pdf from "../../../assets/images/Pdf/printer.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -25,7 +24,7 @@ import Modal from 'react-bootstrap/Modal';
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
-import { ServerAddress } from "../../../constants/ServerAddress";
+import { ServerAddress, bucket_address } from "../../../constants/ServerAddress";
 import {
   setAlertType,
   setShowAlert,
@@ -1673,105 +1672,122 @@ const AddAsset = () => {
                               )
                                 :
                                 <>
+                                  {console.log("item[4] ----", item[4].substring(0, 4))}
                                   <div
                                     style={{
                                       // height: "5px",
+                                      // display:"flex",
                                       paddingBottom: 8,
                                     }}
                                   >
-                                    <div
-                                      style={{
-                                        background: row.length - 1 !== index && "#EFF2F7",
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        border: "0.5px solid #dad7d7",
-                                        alignItems: "center",
-                                        height: "38px",
-                                        borderRadius: 5,
-                                        height: 31,
-                                      }}
-                                      onClick={row.length - 1 === index && handleIClick}
-                                    >
-                                      <a
-                                        style={{
-                                          marginLeft: "3px",
-                                          fontSize: 11,
-                                        }}
-                                      >
-                                        Chooose File
-                                      </a>
+                                    {item[4].substring(0, 4) !== "data" ?
+                                      <div style={{marginBottom:"13px"}}>
+                                        <a
+                                          href={`${bucket_address+item[4]}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          <img src={pdf} width="18" height="18" />
+                                        </a>
+
+                                      </div>
+                                      :
                                       <div
                                         style={{
-                                          fontSize: "25px",
-                                          color: "#dad7d7",
-                                          marginLeft: "5px",
+                                          background: row.length - 1 !== index && "#EFF2F7",
+                                          display: "flex",
+                                          flexDirection: "row",
+                                          border: "0.5px solid #dad7d7",
+                                          alignItems: "center",
+                                          height: "38px",
+                                          borderRadius: 5,
+                                          height: 31,
                                         }}
+                                        onClick={row.length - 1 === index && handleIClick}
                                       >
-                                        |
+                                        <a
+                                          style={{
+                                            marginLeft: "3px",
+                                            fontSize: 11,
+                                          }}
+                                        >
+                                          Chooose File
+                                        </a>
+                                        <div
+                                          style={{
+                                            fontSize: "25px",
+                                            color: "#dad7d7",
+                                            marginLeft: "5px",
+                                          }}
+                                        >
+                                          |
+                                        </div>
+                                        <a style={{ fontSize: 11 }}>
+                                          Image Uploaded
+                                        </a>
                                       </div>
-                                      <a style={{ fontSize: 11 }}>
-                                        Image Uploaded
-                                      </a>
-                                    </div>
+                                    }
+
                                   </div>
-                                    <input
-                                      ref={fileInputRef1}
-                                      type="file"
-                                      style={{
-                                        marginBottom:
-                                          "15px",
-                                        display: "none",
-                                      }}
-                                      name="degree_doc"
-                                      id="input-s"
-                                      accept=".pdf"
-                                      onChange={(event) => {
-                                        const file =
-                                          event.target
-                                            .files[0];
+                                  <input
+                                    ref={fileInputRef1}
+                                    type="file"
+                                    style={{
+                                      marginBottom:
+                                        "15px",
+                                      display: "none",
+                                    }}
+                                    name="degree_doc"
+                                    id="input-s"
+                                    accept=".pdf"
+                                    onChange={(event) => {
+                                      const file =
+                                        event.target
+                                          .files[0];
 
-                                        if (
-                                          file &&
-                                          file.type ===
-                                          "application/pdf"
-                                        ) {
-                                          const reader =
-                                            new FileReader();
+                                      if (
+                                        file &&
+                                        file.type ===
+                                        "application/pdf"
+                                      ) {
+                                        const reader =
+                                          new FileReader();
 
-                                          reader.onload =
-                                            () => {
-                                              const base64Url =
-                                                reader.result;
-                                              //  item[5] = base64Url; // Set the value at index 5 in the 'item' directly
-                                              const updatedInfo =
-                                                [
-                                                  ...row,
-                                                ];
-                                              updatedInfo[
-                                                index
-                                              ][4] =
-                                                base64Url;
+                                        reader.onload =
+                                          () => {
+                                            const base64Url =
+                                              reader.result;
+                                            //  item[5] = base64Url; // Set the value at index 5 in the 'item' directly
+                                            const updatedInfo =
+                                              [
+                                                ...row,
+                                              ];
+                                            updatedInfo[
+                                              index
+                                            ][4] =
+                                              base64Url;
 
-                                              // Update the state with the modified 'education_info' array
-                                              // seteducation_info(
-                                              //   updatedInfo
-                                              // );
-                                              setrefresh(
-                                                !refresh
-                                              );
-                                            };
+                                            // Update the state with the modified 'education_info' array
+                                            // seteducation_info(
+                                            //   updatedInfo
+                                            // );
+                                            setrefresh(
+                                              !refresh
+                                            );
+                                          };
 
-                                          reader.readAsDataURL(
-                                            file
-                                          );
-                                        } else {
-                                          // Handle invalid file type error
-                                          console.log(
-                                            "Please select a PDF file."
-                                          );
-                                        }
-                                      }}
-                                    />
+                                        reader.readAsDataURL(
+                                          file
+                                        );
+                                      } else {
+                                        // Handle invalid file type error
+                                        console.log(
+                                          "Please select a PDF file."
+                                        );
+                                      }
+                                    }}
+                                  />
+
                                 </>
                               }
 
@@ -1779,7 +1795,7 @@ const AddAsset = () => {
                           )
                         )}
                       </Col>
-                      {/* ////////////////// */}
+
                       {/* ////////////////// */}
 
                       <Col lg={1}>
