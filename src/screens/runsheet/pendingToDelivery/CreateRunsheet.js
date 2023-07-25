@@ -42,7 +42,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
   //Vehicle Type
   // const [vehicle_type, setvehicle_type] = useState("TRUCK")
   const [delivery_staff, setdelivery_staff] = useState("")
-
+const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
   //Route
   const [route_list, setroute_list] = useState([]);
   const [route, setroute] = useState("");
@@ -217,6 +217,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
           awb_no_list: awb_no_list,
           // vehicle_type: vehicle_type,
           delivery_staff: (delivery_staff).toUpperCase(),
+          delivery_staff_phone: delivery_staff_phone,
         },
         {
           headers: {
@@ -341,6 +342,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
         }
       )
       .then((resp) => {
+        console.log("Response of getvehicles========");
         if (resp.data.next === null) {
           setvehicle_loaded(false);
         } else {
@@ -365,7 +367,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
         }
       })
       .catch((err) => {
-        alert(`Error Occur in Get States, ${err}`);
+        alert(`Error Occur in Get States Runsheet,Pending Delivery. ${err}`);
       });
   };
 
@@ -782,7 +784,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
                     )}
 
                     <div style={{ marginTop: "10px" }}>
-                      <Label> Driver *:</Label>
+                      <Label> Driver *</Label>
                       <SearchInput
                         data_list={driver_list}
                         setdata_list={setdriver_list}
@@ -811,7 +813,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
                       />
                     </div>
                     <div style={{ marginTop: "10px" }}>
-                      <Label>Driver Phone No:</Label>
+                      <Label>Driver Phone No.</Label>
                       <Input
                         value={driver_phone_no}
                         type="text"
@@ -821,7 +823,7 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
                       />
                     </div>
                     <div style={{ marginTop: "10px" }}>
-                      <Label> Delivery Staff :</Label>
+                      <Label> Delivery Staff</Label>
                       <Input
                         value={delivery_staff}
                         onChange={(val) => {
@@ -831,6 +833,20 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
                         className="form-control-md"
                         id="input"
                         placeholder="Enter Staff Name"
+                      />
+                    </div>
+
+                    <div style={{ marginTop: "10px" }}>
+                      <Label> Delivery Staff Phone No.</Label>
+                      <Input
+                        value={delivery_staff_phone}
+                        onChange={(val) => {
+                          setdelivery_staff_phone(val.target.value);
+                        }}
+                        type="number" min={0}
+                        className="form-control-md"
+                        id="input"
+                        placeholder="Enter Phone Number"
                       />
                     </div>
                   </>

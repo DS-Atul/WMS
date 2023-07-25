@@ -245,7 +245,7 @@ const AddDocketStatus = () => {
       //   sethome_branch_list(resp.data);
       // })
       .catch((err) => {
-        alert(`Error Occur in Get`, err);
+        alert(`Error Occur in GetBranches`, err);
       });
   };
 
@@ -285,7 +285,7 @@ const AddDocketStatus = () => {
         }
       })
       .catch((err) => {
-        alert(`Error Occur in Get States, ${err}`);
+        alert(`Error Occur in Get getvehicles, ${err}`);
       });
   };
 

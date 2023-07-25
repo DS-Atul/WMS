@@ -166,7 +166,7 @@ useEffect(() => {
                               Origin:
                             </strong>
                             <br />
-                            {toTitleCase(last_ele.orgin_locality)}{","} {toTitleCase(last_ele.orgin_city)}{","} {toTitleCase(last_ele.orgin_pincode)}
+                            {toTitleCase(last_ele.orgin_locality ? last_ele.orgin_locality : "-")}{","} {toTitleCase(last_ele.orgin_city ? last_ele.orgin_city  : "-")}{","} {toTitleCase(last_ele.orgin_pincode ? last_ele.orgin_pincode :"-")}
                           </div>
 
                           <div className="col">
@@ -175,7 +175,7 @@ useEffect(() => {
                               Destination:
                             </strong>{" "}
                             <br />
-                            {toTitleCase(last_ele.destination_locality)}{" ,"} {toTitleCase(last_ele.destination_city)}{" , "} {toTitleCase(last_ele.destination_pincode)}
+                            {toTitleCase(last_ele.destination_locality ? last_ele.destination_locality : "-")}{" ,"} {toTitleCase(last_ele.destination_city ? last_ele.destination_city : "-")}{" , "} {toTitleCase(last_ele.destination_pincode ? last_ele.destination_pincode : "-")}
                             {/* {item[0].order_detail[0].consignee_city__city}{" "} */}
                           </div>
 
@@ -185,7 +185,7 @@ useEffect(() => {
                               Status:
                             </strong>
                             <br />
-                            {toTitleCase(last_ele.status)}
+                            {toTitleCase(last_ele.status ? last_ele.status : "-")}
                           </div>
 
                           <div className="col">
@@ -733,7 +733,7 @@ useEffect(() => {
                               </>
                             ) : null}
 
-                            {last_ele.status ===
+                            {/* {last_ele.status ===
                             "DELIVERED" ? (
                               <>
                                 <div className="step active">
@@ -795,6 +795,99 @@ useEffect(() => {
                                     Shipment Arrived At Destination
                                   </span>{" "}
                                 </div>
+                                <div className="step active">
+                                  {" "}
+                                  <span className="icon">
+                                    {" "}
+                                    <i className="fa fa-truck"></i>{" "}
+                                  </span>{" "}
+                                  <span className="text">
+                                    {" "}
+                                    Shipment Out for Delivery
+                                  </span>
+                                </div>
+                                <div className="step active">
+                                  {" "}
+                                  <span className="icon">
+                                    {" "}
+                                    <i>
+                                      {" "}
+                                      <FaBox />
+                                    </i>{" "}
+                                  </span>{" "}
+                                  <span className="text"> Delivered</span>
+                                </div>
+                              </>
+                            ) : null} */}
+
+
+{(last_ele.status ===
+                              "SHIPMENT DELIVERED" || last_ele.status ===
+                              "SHORT DELIVERED") ? (
+                              <>
+                                <div className="step active">
+                                  {" "}
+                                  <span className="icon">
+                                    {" "}
+                                    <i>
+                                      {" "}
+                                      <FaBitbucket />
+                                    </i>{" "}
+                                  </span>{" "}
+                                  <span className="text">
+                                    {" "}
+                                    Shipment Order Received
+                                  </span>{" "}
+                                </div>
+                                <div className="step active">
+                                  {" "}
+                                  <span className="icon">
+                                    {" "}
+                                    <i>
+                                      <FaPeopleCarry />
+                                    </i>{" "}
+                                  </span>{" "}
+                                  <span className="text">
+                                    {" "}
+                                    Shipment Picked up
+                                  </span>{" "}
+                                </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
+                                <div className="step active">
+                                  {" "}
+                                  <span className="icon">
+                                    {" "}
+                                    <i className="fa fa-home"></i>{" "}
+                                  </span>{" "}
+                                  <span className="text">
+                                    {" "}
+                                    Shipment Arrived at Hub
+                                  </span>{" "}
+                                </div>
+                                <div className="step active">
+                                  {" "}
+                                  <span className="icon">
+                                    {" "}
+                                    <i className="fa fa-plane"></i>{" "}
+                                  </span>{" "}
+                                  <span className="text">
+                                    Shipment In Transit
+                                  </span>{" "}
+                                </div>
+                                <div className="step active">
+                                  {" "}
+                                  <span className="icon">
+                                    {" "}
+                                    <i className="fa fa-warehouse"></i>{" "}
+                                    {/* <i className="fas fa-route"></i> */}
+                                  </span>{" "}
+                                  <span className="text">
+                                    Shipment Arrived At Destination
+                                  </span>{" "}
+                                </div>
+                                </>
+                                  ): null }
                                 <div className="step active">
                                   {" "}
                                   <span className="icon">
@@ -919,7 +1012,7 @@ useEffect(() => {
                                     ).substring(0, 10);
                                     let update_time = String(
                                       update_date[1]
-                                    ).substring(16, 25);
+                                    ).substring(0, 8);
 
                                     console.log("Date", d_update_date);
                                     // let update_date1  = update_date.
@@ -929,11 +1022,11 @@ useEffect(() => {
                                         <td>{d_update_date}</td>
                                         <td>{update_time}</td>
                                         <td>
-                                          {item1.status_current_city ? item1.status_current_city : "-"}
-                                          {/* {" ,  "} */}
-                                          {item1.status_current_locality ? item1.status_current_locality : "-"} 
-                                          {/* {" ,  "} */}
-                                          {item1.status_current_pincode ? item1.status_current_pincode : "-"}
+                                          {`
+                                          ${item1.status_current_city ? toTitleCase(item1.status_current_city) : "-"}${","}
+                                          ${item1.status_current_locality ? toTitleCase(item1.status_current_locality) : "-"}${","}
+                                          ${item1.status_current_pincode ? item1.status_current_pincode : "-"}${"."}
+                                          `}
                                         </td>
                                       </tr>
                                     );
