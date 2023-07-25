@@ -35,7 +35,7 @@ const DashboardNotificationSection = ({ show, setShow, date}) => {
   useLayoutEffect(() => {
     getdepartment();
   }, []);
-  console.log("blogData=====", blogData);
+  // console.log("blogData=====", blogData);
   // const formattedDate = new Date(date).toLocaleDateString('en-US');
   return (
     <>

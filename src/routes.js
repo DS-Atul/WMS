@@ -12,6 +12,9 @@ const ResetPassword = React.lazy(() =>
 const ForgetPassword = React.lazy(() =>
   import("./screens/authentication/forgetPassword/ForgetPassword.js")
 );
+const AdminChangePassword = React.lazy(() =>
+import("./screens/ems/adminChangePasspword/AdminChangePassword.js")
+);
 
 // Test
 const Test = React.lazy(() => import("./screens/test/Test.js"));
@@ -500,6 +503,10 @@ const routes = [
   {
     path: "/ems/users",
     element: <Users />,
+  },
+  {
+    path: "/ems/adminChangePassword",
+    element: <AdminChangePassword />,
   },
   {
     path: "/elogin",

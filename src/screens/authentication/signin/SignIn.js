@@ -513,6 +513,7 @@ const SignIn = () => {
             ["Users", "/ems/users"],
             ["Departments", "/ems/department"],
             ["Designations", "/ems/designation"],
+            ["Admin Change Password", "/ems/adminChangePassword"],
           ],
           trigger: false,
         },

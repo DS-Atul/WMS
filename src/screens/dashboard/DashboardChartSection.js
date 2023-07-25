@@ -58,7 +58,7 @@ const DashboardChartSection = () => {
   const [Total_count, setTotal_count] = useState("");
   useLayoutEffect(() => {
     if (data) {
-      console.log("first", data.billto);
+      // console.log("first", data.billto);
 
       setClient_distribution(
         data.client_distribution.map((item) => item.client_name)
@@ -66,7 +66,7 @@ const DashboardChartSection = () => {
       setTotal_count(data.client_distribution.map((item) => item.total_count));
     }
   }, [data]);
-  console.log("billto dat", billto_name_arr);
+  // console.log("billto dat", billto_name_arr);
 
   const getData1 = async () => {
     //-- Defines a function called getData1 that uses the async/await syntax to make an asynchronous HTTP GET request to a server's API endpoint.--////
@@ -81,7 +81,7 @@ const DashboardChartSection = () => {
         }
       );
 
-      console.log("data-----", resp.data); //--Logs the data returned from the server to the console.
+      // console.log("data-----", resp.data); //--Logs the data returned from the server to the console.
       const {
         //------ Destructures the resp.data object to extract specific data fields that are used to set the local state variables later in the code.
         delivery_type,

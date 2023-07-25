@@ -37,7 +37,7 @@ import {
   setDocketNumber,
   setSearchDocket,
 } from "../../store/orderTracking/OrderTracking";
-
+import localStorage from "redux-persist/es/storage";
 // users
 // import user1 from "../../../assets/images/users/avatar-1.jpg"
 
@@ -78,7 +78,7 @@ const ProfileMenu = (apiCall) => {
           }
         )
         .then(function (response) {
-          console.log("Logout time",response);
+          console.log("Logout time", response);
         })
         .catch(function () {
           alert("Error Occur While Sending Logout Data");
@@ -101,7 +101,7 @@ const ProfileMenu = (apiCall) => {
     const resetTimer = () => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
-        send_logout_time(); 
+        send_logout_time();
         dispatch(setUserDetails(null));
         dispatch(setAccessToken(""));
         dispatch(setRefreshToken(""));
@@ -145,11 +145,24 @@ const ProfileMenu = (apiCall) => {
   // Open Modal for change password
   const [openModal, setopenModal] = useState(false);
   const closeModal = () => {
-    // setopenModal(false);
     setold_password("");
     setnew_password("");
     setconfirm_password("");
+    setcheck_Regex(false);
+    setopenModal(false);
+    seterror(false);
   }
+
+  const [showPass, setshowPass] = useState(false);
+  const [showPass1, setshowPass1] = useState(false);
+  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+  const [check_Regex, setcheck_Regex] = useState(false);
+  const [check_pass, setcheck_pass] = useState(false);
+
+  const validatePassword = (password) => {
+    return passwordRegex.test(password);
+  };
+
   const ResetPassword = () => {
     axios
       .put(
@@ -166,7 +179,7 @@ const ProfileMenu = (apiCall) => {
         }
       )
       .then(function (response) {
-        // console.log("response is", response.data);
+        console.log("response is", response.data);
         if (response.data === "Password Reset Successfully") {
           setopenModal(false)
           alert('Password Reset SuccessFully, Login Again')
@@ -179,27 +192,16 @@ const ProfileMenu = (apiCall) => {
           dispatch(setPermission(false));
           dispatch(resetAuthenticationState());
           localStorage.clear();
-          // navigate("/login");
           navigate("/");
-        } else
+        }
+        else if (response.data === "Old Password Wrong")
           seterror(true);
-        // alert('Old Password Wrong')
 
       })
       .catch(function () {
         seterror(true);
       });
   };
-
-  const [check_pass, setcheck_pass] = useState(false);
-  const [showPass, setshowPass] = useState(false);
-  const passwordRegex = /^(?=.\d)(?=.[a-z])(?=.[A-Z])(?=.[^a-zA-Z0-9]).{8,}$/;
-  const [check_Regex, setcheck_Regex] = useState(false);
-
-  const validatePassword = (password) => {
-    return passwordRegex.test(password);
-  };
-  console.log("validatePassword----", validatePassword)
 
   useLayoutEffect(() => {
     if (old_password !== "") {
@@ -228,7 +230,6 @@ const ProfileMenu = (apiCall) => {
       setnew_password_error(true)
     }
     else if (!validatePassword(new_password)) {
-      alert("Inv")
       setcheck_Regex(true);
     }
     else if (confirm_password === "") {
@@ -240,7 +241,6 @@ const ProfileMenu = (apiCall) => {
     else {
       ResetPassword();
       setcheck_Regex(false)
-      closeModal();
     }
   }
   /////////
@@ -248,11 +248,11 @@ const ProfileMenu = (apiCall) => {
   return (
     <React.Fragment>
       {/* ////// */}
-      <Modal show={openModal} onHide={() => {
-        setopenModal(false);
-        seterror(false);
-      }}>
-
+      <Modal show={openModal}
+        onHide={() => {
+          closeModal();
+        }}
+        backdrop="static" keyboard={false}>
         <Modal.Header closeButton></Modal.Header>
         {check_Regex &&
           <div style={{
@@ -273,24 +273,20 @@ const ProfileMenu = (apiCall) => {
             ) : null}
             <FormGroup className="form-group">
               <Label for="old_password" className="form-label">Old Password</Label>
-              {/* <InputGroup> */}
-              <Input
-                type="password"
-                name="old_password"
-                id="old_password"
-                className="form-input"
-                placeholder="Enter Old Password"
-                value={old_password}
-                onChange={(val) =>
-                  setold_password(val.target.value)
-                } invalid={old_password_error}
-              />
-              {old_password_error &&
-                (<FormFeedback type="invalid">
-                  {"Write Old Password"}
-                </FormFeedback>)
-              }
-              {/* <InputGroupText>
+              <InputGroup>
+                <Input
+                  type={showPass ? "text" : "password"}
+                  name="old_password"
+                  id="old_password"
+                  className="form-input"
+                  placeholder="Enter Old Password"
+                  value={old_password}
+                  onChange={(val) =>
+                    setold_password(val.target.value)
+                  }
+                  invalid={old_password_error}
+                />
+                <InputGroupText>
                   <IconContext.Provider
                     value={{ size: 16 }}
                   >
@@ -307,7 +303,12 @@ const ProfileMenu = (apiCall) => {
                     </div>
                   </IconContext.Provider>
                 </InputGroupText>
-              </InputGroup> */}
+                {old_password_error &&
+                  (<FormFeedback type="invalid">
+                    {"Write Old Password"}
+                  </FormFeedback>)
+                }
+              </InputGroup>
             </FormGroup>
 
             <FormGroup className="form-group">
@@ -337,11 +338,10 @@ const ProfileMenu = (apiCall) => {
             </FormGroup>
 
             <FormGroup className="form-group">
-
               <Label for="confirm_password" className="form-label">Confirm Password</Label>
               <InputGroup>
                 <Input
-                  type={showPass ? "text" : "password"}
+                  type={showPass1 ? "text" : "password"}
                   name="confirm_password"
                   id="confirm_password"
                   className="form-input"
@@ -358,10 +358,10 @@ const ProfileMenu = (apiCall) => {
                   >
                     <div
                       onClick={() => {
-                        setshowPass(!showPass);
+                        setshowPass1(!showPass1);
                       }}
                     >
-                      {showPass ? (
+                      {showPass1 ? (
                         <FaEyeSlash style={{ size: 30 }} />
                       ) : (
                         <FaEye />
@@ -369,12 +369,12 @@ const ProfileMenu = (apiCall) => {
                     </div>
                   </IconContext.Provider>
                 </InputGroupText>
+                {confirm_password_error &&
+                  (<FormFeedback type="invalid">
+                    {"Write Confirm Password"}
+                  </FormFeedback>)
+                }
               </InputGroup>
-              {confirm_password_error &&
-                (<FormFeedback type="invalid">
-                  {"Write Confirm Password"}
-                </FormFeedback>)
-              }
             </FormGroup>
             <Button
               color="primary"
@@ -384,6 +384,9 @@ const ProfileMenu = (apiCall) => {
             //   seterror(false);
             //   setopenModal_1(true);
             // }}
+            // onClick={() => {
+            //   setopenModal(false);
+            // }}
             >Change Password</Button>
           </Form>
         </Modal.Body>
@@ -391,8 +394,7 @@ const ProfileMenu = (apiCall) => {
         <Modal.Footer>
           <Button color="secondary" className="btn btn-warning m-1"
             onClick={() => {
-              setopenModal(false);
-              seterror(false);
+              closeModal();
             }}>Cancel</Button>
         </Modal.Footer>
       </Modal>
@@ -429,11 +431,11 @@ const ProfileMenu = (apiCall) => {
           </DropdownItem>
           {/* <DropdownItem tag="a" href="/authentication/userProfile/Profile">
             {" "} */}
-            <Link to="/authentication/userProfile/Profile"    className="dropdown-item"
->
+          <Link to="/authentication/userProfile/Profile" className="dropdown-item"
+          >
             <i className="bx bx-user font-size-16 align-middle me-1" />
             "Profile
-            </Link>
+          </Link>
           {/* </DropdownItem> */}
 
           <DropdownItem tag="a" href="/crypto-wallet">
