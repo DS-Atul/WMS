@@ -43,6 +43,7 @@ const Add_Commodity = () => {
   );
   const navigate = useNavigate();
   const location = useLocation();
+  console.log("location-----", location)
 
   const [isupdating, setisupdating] = useState(false);
   const [commodity, setcommodity] = useState([]);
@@ -664,7 +665,7 @@ const Add_Commodity = () => {
 
   useEffect(() => {
     for (let index = 0; index < 3; index++) {
-      post_awb(index)
+      // post_awb(index)
 
     }
   }, [])

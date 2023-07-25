@@ -82,7 +82,7 @@ useEffect(() => {
     //   className="background"
       >
 
-<h1 style={{display:"flex",justifyContent:"center", alignItems:"center"}}>Docket Order Status :</h1>
+{/* <h1 style={{display:"flex",justifyContent:"center", alignItems:"center"}}>Docket Order Status :</h1> */}
         <div className="main1">
           {/* <div>
             <form
@@ -142,16 +142,24 @@ useEffect(() => {
                             fontSize: "21px",
                             borderRadius: "10px",
                             borderRadius: "10px 10px 0 0",
-                            textAlign:"left",
+                            textAlign: "left",
                           }}
                           className="card-title header"
                         >
                           Tracking
                         </h5>
-                        <div className="card-text" style={{ margin: "5px" }}>
-                          <b style={{ fontSize: "15px" }}>Docket Number:</b>{" "}
-                          {last_ele.docket_no}
+                        <div className="card-text" style={{ margin: "5px", display: "flex", justifyContent: "space-between" }}>
+                          <div>
+                            <b style={{ fontSize: "15px" }}>Docket Number :</b>{" "}
+                            {last_ele.docket_no}
+                          </div>
+                          {(last_ele.issue_notreceived).length !== 0 && last_ele.status!=="SHIPMENT DELIVERED"&&
+                            <div>
+                              <b style={{ fontSize: "15px" }}>Not Received Packets :</b>{" "} {(last_ele.issue_notreceived).length}
+                            </div>
+                          }
                         </div>
+                        {/* <div>Not Received Packets {(last_ele.issue_notreceived).length}</div> */}
                         <div
                           // className="row"
                           style={{
@@ -166,7 +174,7 @@ useEffect(() => {
                               Origin:
                             </strong>
                             <br />
-                            {toTitleCase(last_ele.orgin_locality)}{","} {toTitleCase(last_ele.orgin_city)}{","} {toTitleCase(last_ele.orgin_pincode)}
+                            {toTitleCase(last_ele.orgin_locality)}{", "} {toTitleCase(last_ele.orgin_city)}{", "} {toTitleCase(last_ele.orgin_pincode)}
                           </div>
 
                           <div className="col">
@@ -175,7 +183,7 @@ useEffect(() => {
                               Destination:
                             </strong>{" "}
                             <br />
-                            {toTitleCase(last_ele.destination_locality)}{" ,"} {toTitleCase(last_ele.destination_city)}{" , "} {toTitleCase(last_ele.destination_pincode)}
+                            {toTitleCase(last_ele.destination_locality)}{", "} {toTitleCase(last_ele.destination_city)}{", "} {toTitleCase(last_ele.destination_pincode)}
                             {/* {item[0].order_detail[0].consignee_city__city}{" "} */}
                           </div>
 
@@ -195,12 +203,12 @@ useEffect(() => {
                             </strong>{" "}
                             <br />
                             {
-                              toTitleCase(last_ele.current_locality)
-                            }
-                            {","}
-                            {
                               toTitleCase(last_ele.current_city)
-                            }{","} {
+                            }
+                            {", "}
+                            {
+                              toTitleCase(last_ele.current_locality)
+                            }{", "} {
                               last_ele.current_pincode
                             }
                           </div>
@@ -208,7 +216,7 @@ useEffect(() => {
                         <div style={{ padding: "15px" }}>
                           <div className="track">
                             {last_ele.status ===
-                            "SHIPMENT ORDER RECEIVED" ? (
+                              "SHIPMENT ORDER RECEIVED" ? (
                               <>
                                 {" "}
                                 <div className="step active">
@@ -249,6 +257,8 @@ useEffect(() => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -263,14 +273,16 @@ useEffect(() => {
                                   {" "}
                                   <span className="icon">
                                     {" "}
-                                    {/* <i className="fa fa-warehouse"></i>{" "} */}
                                     <i className="fa fa-warehouse"></i>{" "}
+                                    {/* <FaRoute /> */}
                                   </span>{" "}
                                   <span className="text">
                                     {" "}
                                     Shipment Arrived At Destination
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -296,7 +308,7 @@ useEffect(() => {
                             ) : null}
 
                             {last_ele.status ===
-                            "SHIPMENT PICKED UP" ? (
+                              "SHIPMENT PICKED UP" ? (
                               <>
                                 <div className="step active">
                                   {" "}
@@ -336,6 +348,8 @@ useEffect(() => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -358,6 +372,8 @@ useEffect(() => {
                                     Shipment Arrived At Destination
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step">
                                   {" "}
                                   <span className="icon">
@@ -383,7 +399,7 @@ useEffect(() => {
                             ) : null}
 
                             {last_ele.status ===
-                            "SHIPMENT ARRIVED AT HUB" ? (
+                              "SHIPMENT ARRIVED AT HUB" ? (
                               <>
                                 <div className="step active">
                                   {" "}
@@ -424,6 +440,10 @@ useEffect(() => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                               {order_id.t}
+                               { last_ele.delivery_type !== "LOCAL" ? (
+                              
+                                  <>
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -459,6 +479,8 @@ useEffect(() => {
                                     Shipment Out for Delivery
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -474,7 +496,7 @@ useEffect(() => {
                             ) : null}
 
                             {last_ele.status ===
-                            "SHIPMENT IN TRANSIT" ? (
+                              "SHIPMENT IN TRANSIT" ? (
                               <>
                                 <div className="step active">
                                   {" "}
@@ -514,6 +536,8 @@ useEffect(() => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step active">
                                   {" "}
                                   <span className="icon">
@@ -529,12 +553,16 @@ useEffect(() => {
                                   <span className="icon">
                                     {" "}
                                     <i className="fa fa-warehouse"></i>{" "}
+
+                                    {/* <FaRoute /> */}
                                   </span>{" "}
                                   <span className="text">
                                     {" "}
                                     Shipment Arrived At Destination
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">
@@ -559,95 +587,99 @@ useEffect(() => {
                               </>
                             ) : null}
 
-                            {last_ele.status === "SHIPMENT ARRIVED AT DESTINATION HUB"
-                             ? (
-                              <>
-                                <div className="step active">
-                                  {" "}
-                                  <span className="icon">
+                            {last_ele.status === "SHIPMENT ARRIVED AT DESTINATION"
+                              ? (
+                                <>
+                                  <div className="step active">
                                     {" "}
-                                    <i>
+                                    <span className="icon">
                                       {" "}
-                                      <FaBitbucket />
-                                    </i>{" "}
-                                  </span>{" "}
-                                  <span className="text">
-                                    {" "}
-                                    Shipment Order Received
-                                  </span>{" "}
-                                </div>
-                                <div className="step active">
-                                  {" "}
-                                  <span className="icon">
-                                    {" "}
-                                    <i>
-                                      <FaPeopleCarry />
-                                    </i>{" "}
-                                  </span>{" "}
-                                  <span className="text">
-                                    {" "}
-                                    Shipment Picked up
-                                  </span>{" "}
-                                </div>
-                                <div className="step active">
-                                  {" "}
-                                  <span className="icon">
-                                    {" "}
-                                    <i className="fa fa-home"></i>{" "}
-                                  </span>{" "}
-                                  <span className="text">
-                                    {" "}
-                                    Shipment Arrived at Hub
-                                  </span>{" "}
-                                </div>
-                                <div className="step active">
-                                  {" "}
-                                  <span className="icon">
-                                    {" "}
-                                    <i className="fa fa-plane"></i>{" "}
-                                  </span>{" "}
-                                  <span className="text">
-                                    Shipment In Transit
-                                  </span>{" "}
-                                </div>
-                                <div className="step active">
-                                  {" "}
-                                  <span className="icon">
-                                    {" "}
-                                    {/* <i className="fas fa-route"></i> */}
-                                    <i className="fa fa-warehouse"></i>{" "}
-                                  </span>{" "}
-                                  <span className="text">
-                                    Shipment Arrived At Destination
-                                  </span>
-                                </div>
-                                <div className="step ">
-                                  {" "}
-                                  <span className="icon">
-                                    {" "}
-                                    <i className="fa fa-truck"></i>{" "}
-                                  </span>{" "}
-                                  <span className="text">
-                                    {" "}
-                                    Shipment Out for Delivery
-                                  </span>
-                                </div>
-                                <div className="step ">
-                                  {" "}
-                                  <span className="icon">
-                                    {" "}
-                                    <i>
+                                      <i>
+                                        {" "}
+                                        <FaBitbucket />
+                                      </i>{" "}
+                                    </span>{" "}
+                                    <span className="text">
                                       {" "}
-                                      <FaBox />
-                                    </i>{" "}
-                                  </span>{" "}
-                                  <span className="text"> Delivered</span>
-                                </div>
-                              </>
-                            ) : null}
+                                      Shipment Order Received
+                                    </span>{" "}
+                                  </div>
+                                  <div className="step active">
+                                    {" "}
+                                    <span className="icon">
+                                      {" "}
+                                      <i>
+                                        <FaPeopleCarry />
+                                      </i>{" "}
+                                    </span>{" "}
+                                    <span className="text">
+                                      {" "}
+                                      Shipment Picked up
+                                    </span>{" "}
+                                  </div>
+                                  <div className="step active">
+                                    {" "}
+                                    <span className="icon">
+                                      {" "}
+                                      <i className="fa fa-home"></i>{" "}
+                                    </span>{" "}
+                                    <span className="text">
+                                      {" "}
+                                      Shipment Arrived at Hub
+                                    </span>{" "}
+                                  </div>
+                                  { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
+                                  <div className="step active">
+                                    {" "}
+                                    <span className="icon">
+                                      {" "}
+                                      <i className="fa fa-plane"></i>{" "}
+                                    </span>{" "}
+                                    <span className="text">
+                                      Shipment In Transit
+                                    </span>{" "}
+                                  </div>
+                                  <div className="step active">
+                                    {" "}
+                                    <span className="icon">
+                                      {" "}
+                                      <i className="fa fa-warehouse"></i>{" "}
+                                      {/* <FaRoute />{" "} */}
+                                    </span>{" "}
+                                    <span className="text">
+                                      Shipment Arrived At Destination
+                                    </span>
+                                  </div>
+                                  </>
+                                  ): null }
+                                  <div className="step ">
+                                    {" "}
+                                    <span className="icon">
+                                      {" "}
+                                      <i className="fa fa-truck"></i>{" "}
+                                    </span>{" "}
+                                    <span className="text">
+                                      {" "}
+                                      Shipment Out for Delivery
+                                    </span>
+                                  </div>
+                                  <div className="step ">
+                                    {" "}
+                                    <span className="icon">
+                                      {" "}
+                                      <i>
+                                        {" "}
+                                        <FaBox />
+                                      </i>{" "}
+                                    </span>{" "}
+                                    <span className="text"> Delivered</span>
+                                  </div>
+                                </>
+                              ) : null}
 
                             {last_ele.status ===
-                            "SHIPMENT OUT FOR DELIVERY" ? (
+                              "SHIPMENT OUT FOR DELIVERY" ? (
                               <>
                                 <div className="step active">
                                   {" "}
@@ -687,6 +719,8 @@ useEffect(() => {
                                     Shipment Arrived at Hub
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step active">
                                   {" "}
                                   <span className="icon">
@@ -702,13 +736,13 @@ useEffect(() => {
                                   <span className="icon">
                                     {" "}
                                     <i className="fa fa-warehouse"></i>{" "}
-
-                                    {/* <i class="fas fa-route"></i> <FaRoute />{" "} */}
                                   </span>{" "}
                                   <span className="text">
                                     Shipment Arrived At Destination
                                   </span>
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step active ">
                                   {" "}
                                   <span className="icon">
@@ -733,8 +767,9 @@ useEffect(() => {
                               </>
                             ) : null}
 
-                            {last_ele.status ===
-                            "DELIVERED" ? (
+                            {(last_ele.status ===
+                              "SHIPMENT DELIVERED" || last_ele.status ===
+                              "SHORT DELIVERED") ? (
                               <>
                                 <div className="step active">
                                   {" "}
@@ -763,6 +798,8 @@ useEffect(() => {
                                     Shipment Picked up
                                   </span>{" "}
                                 </div>
+                                { last_ele.delivery_type !== "LOCAL" ? (
+                                  <>
                                 <div className="step active">
                                   {" "}
                                   <span className="icon">
@@ -789,12 +826,14 @@ useEffect(() => {
                                   <span className="icon">
                                     {" "}
                                     <i className="fa fa-warehouse"></i>{" "}
-                                    <i className="fas fa-route"></i>
+                                    {/* <i className="fas fa-route"></i> */}
                                   </span>{" "}
                                   <span className="text">
                                     Shipment Arrived At Destination
                                   </span>{" "}
                                 </div>
+                                </>
+                                  ): null }
                                 <div className="step active">
                                   {" "}
                                   <span className="icon">
@@ -860,7 +899,6 @@ useEffect(() => {
                         >
                           Tracking / History
                           <div
-                          style={{cursor:"pointer"}}
                             onClick={() => {
                               // setnext(false);
                               item[item.length - 1] = false;
@@ -872,18 +910,17 @@ useEffect(() => {
                             <ImCross style={{ fontSize: "15px" }} />
                           </div>
                         </h5>
-                        <div className="card-text" style={{ margin: "5px" }}>
-                          <strong>Docket No. :</strong>{" "}
-                          {/* {item[0].order_detail[0].awb_no} */}
-                          {last_ele.docket_no}
-                        </div>
+                        {/* <div className="card-text" style={{ margin: "5px" }}> */}
+                          {/* <strong>Docket No. :</strong>{" "} */}
+                          {/* {last_ele.docket_no}
+                        </div> */}
                         <div>
                           <table
                             className="table table-bordered"
                             style={{
                               width: "100%",
                               textAlign: "center",
-                              whiteSpace: "nowrap"
+                              // whiteSpace: "nowrap"
                             }}
                           >
                             <thead>
@@ -911,29 +948,21 @@ useEffect(() => {
                                       "not last entry",
                                       item1.updated_at
                                     );
-                                    let update_date = String(
-                                      item1.created_at
-                                    ).split("T");
-                                    let d_update_date = String(
-                                      update_date[0]
-                                    ).substring(0, 10);
-                                    let update_time = String(
-                                      update_date[1]
-                                    ).substring(16, 25);
-
-                                    console.log("Date", d_update_date);
-                                    // let update_date1  = update_date.
+                                    const [date, timeWithOffset] = (item1.created_at).split("T");
+                                    const [time] = timeWithOffset.split(".");
+                                    const d_update_date = date; 
+                                    const update_time = time.substring(0, 8);
                                     return (
                                       <tr key={index}>
-                                        <td>{item1.status ? item1.status : "="}<br/><span style={{color:"gray", fontSize:"12.5px"}}>{toTitleCase(item1.transit_status ? item1.transit_status : "-")}</span></td>
+                                        <td>{toTitleCase(item1.status)}<br/><span style={{color:"gray", fontSize:"12.5px"}}>{toTitleCase(item1.transit_status)}</span></td>
                                         <td>{d_update_date}</td>
                                         <td>{update_time}</td>
                                         <td>
-                                          {item1.status_current_city ? item1.status_current_city : "-"}
-                                          {/* {" ,  "} */}
-                                          {item1.status_current_locality ? item1.status_current_locality : "-"} 
-                                          {/* {" ,  "} */}
-                                          {item1.status_current_pincode ? item1.status_current_pincode : "-"}
+                                          {toTitleCase(item1.status_current_city)}
+                                          {", "}
+                                          {toTitleCase(item1.status_current_locality)}
+                                          {", "}
+                                          {toTitleCase(item1.status_current_pincode)}
                                         </td>
                                       </tr>
                                     );

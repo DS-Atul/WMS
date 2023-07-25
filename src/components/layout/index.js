@@ -39,9 +39,10 @@ const Layout = () => {
     // Cleanup: Since there's no unlisten in v6, you don't need a cleanup function.
 
     // Subscribe to route changes and call the resetState function
-    const unsubscribe = navigate((location) => {
-      resetState();
-    });
+    
+    // const unsubscribe = navigate((location) => {
+    //   resetState();
+    // });
 
     // The above navigation handler will be triggered when the route changes, and it calls resetState()
 

@@ -46,6 +46,7 @@ const AddCharge = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [isupdating, setisupdating] = useState(false);
   const location_data = useLocation();
+  console.log("location_data--9999-", location_data)
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [circle_btn, setcircle_btn] = useState(true);
@@ -238,11 +239,11 @@ const AddCharge = () => {
       charge_category: charge_category,
       charge_name: values.charge_name,
     });
-
+console.log("fields_names---", fields_names)
     let change_fields = {};
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
-      let prev = location_data.state.charge[`${ele[0]}`];
+      let prev = charge[`${ele[0]}`];
       let new_v = ele[1];
 
       if (prev !== new_v.toUpperCase()) {
@@ -393,56 +394,56 @@ const AddCharge = () => {
   }
 
   // Used to History
-  const handlClk = () => {
-    navigate(
-      "/master/charges/chargesHistory/ChargeHistoryPage",
-      {
-        state: { charge: charge },
-      });
-  };
+  // const handlClk = () => {
+  //   navigate(
+  //     "/master/charges/chargesHistory/ChargeHistoryPage",
+  //     {
+  //       state: { charge: charge },
+  //     });
+  // };
 
   {/* For Checker Maker */ }
   const [table_data1, settable_data1] = useState([]);
   const [table_count1, settable_count1] = useState(0);
   const [data_type1, setdata_type1] = useState(false);
 
-  const get_charge = (value) => {
-    axios
-      .get(
-        ServerAddress +
-        `master/all_charges/?search=${""}&p=${1}&records=${""}&charge_category=${""}&data=&value=${value}`,
+  // const get_charge = (value) => {
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //       `master/all_charges/?search=${""}&p=${1}&records=${""}&charge_category=${""}&data=&value=${value}`,
 
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      )
-      .then((response) => {
-        console.log("com info", response.data);
-        settable_count1(response.data.count)
-        settable_data1(response.data.results);
-      });
-  };
+  //       {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       console.log("com info", response.data);
+  //       settable_count1(response.data.count)
+  //       settable_data1(response.data.results);
+  //     });
+  // };
 
-  useLayoutEffect(() => {
-    try {
-      if (location_data.state.type) {
-        console.log("location_data-----", location_data)
-        setdata_type1(true)
-        setcharge_category("")
-        get_charge(location_data.state.charge);
+  // useLayoutEffect(() => {
+  //   try {
+  //     if (location_data.state.type) {
+  //       console.log("location_data-----", location_data)
+  //       setdata_type1(true)
+  //       setcharge_category("")
+  //       get_charge(location_data.state.charge);
 
-      }
-    }
-    catch {
-      setdata_type1(false)
-    }
-  }, [location_data, alert]);
+  //     }
+  //   }
+  //   catch {
+  //     setdata_type1(false)
+  //   }
+  // }, [location_data, alert]);
 
-  const set_form_data1 = (item) => {
-    setcharge(item);
-    setcharge_category(toTitleCase(item.charge_category));
-    // setcharge_type_id(item.id); 
-  }
+  // const set_form_data1 = (item) => {
+  //   setcharge(item);
+  //   setcharge_category(toTitleCase(item.charge_category));
+  //   // setcharge_type_id(item.id); 
+  // }
 
   return (
     <div style={{ display: data_type1 && "flex" }}>
@@ -495,7 +496,7 @@ const AddCharge = () => {
         >
           <div style={{ background: "#f4bc61", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center", cursor: "pointer" }} onClick={() => {
             if (typeof (charge) === "object") {
-              handlClk();
+              // handlClk();
             }
           }}>History</div>
           <div style={{ background: "#E6F1FF", margin: "3px", padding: "3px", borderRadius: "5px", textAlign: "center" }}>
@@ -533,7 +534,7 @@ const AddCharge = () => {
                           <span
                             style={{ cursor: "pointer", color: "blue", fontSize: "11px" }}
                             onClick={() => {
-                              set_form_data1(item);
+                              // set_form_data1(item);
                               // setselected_docket(true);
                             }}
                           >
@@ -578,7 +579,7 @@ const AddCharge = () => {
                 <Button
                   type="button"
                   onClick={() => {
-                    handlClk();
+                    // handlClk();
                   }}
                 >
                   History

@@ -33,6 +33,7 @@ import Modal from 'react-bootstrap/Modal';
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import * as XLSX from "xlsx";
 import ImgModal from "../../../components/crop/ImgModal";
+import Loader from "../../../components/loader/Loader";
 const UpdateDeliveryInfo = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authentication.userdetails);
@@ -42,17 +43,19 @@ const UpdateDeliveryInfo = () => {
   );
   const navigate = useNavigate();
   const location = useLocation();
+  console.log("location----", location)
   const [delivery_data, setdelivery_data] = useState([])
   const [result_img, setresult_img] = useState("")
   const [vehcile_img_error, setvehcile_img_error] = useState(false);
   const [modal, setmodal] = useState(false);
   const [uploaded_img, setuploaded_img] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [sig_modal, setsig_modal] = useState(false);
   const [result_sig_img, setresult_sig_img] = useState("")
   const [signature_error, setsignature_error] = useState(false);
   const [uploaded_sig_img, setuploaded_sig_img] = useState("");
-
+  const [isupdating, setisupdating] = useState(false);
   const validation = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -74,9 +77,9 @@ const UpdateDeliveryInfo = () => {
   };
 
   const update_delivery_info = (values) => {
+    setIsLoading(false)
     let id = delivery_data.id;
     let fields_names = Object.entries({
-      docket_no: values.docket_no,
       signature_person_name: values.person_name,
       signature_person_phone_number: values.phone_no,
     });
@@ -84,7 +87,7 @@ const UpdateDeliveryInfo = () => {
 
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
-      let prev = location.state.order[`${ele[0]}`];
+      let prev = delivery_data[`${ele[0]}`];
       let new_v = ele[1];
       if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
@@ -93,12 +96,18 @@ const UpdateDeliveryInfo = () => {
 
     axios
       .put(
-        ServerAddress + "booking/update_delivery_info/" + id,
+        ServerAddress + "booking/update_POD/" + id,
         {
-          order: delivery_data.order,
+          // order: delivery_data.order,
+          pod: result_img?.substring(0, 4) !== "http" ? result_img : null,
+          signature: result_sig_img?.substring(0, 4) !== "http" ? result_sig_img : null,
           signature_person_name: values.person_name,
           signature_person_phone_number: values.phone_no,
           change_fields: change_fields,
+          //For C&M
+          cm_transit_status: status_toggle === true ? current_status : "",
+          cm_current_status: (current_status).toUpperCase(),
+          cm_remarks: "",
         },
         {
           headers: {
@@ -108,14 +117,16 @@ const UpdateDeliveryInfo = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
+          setIsLoading(false)
           // dispatch(Toggle(true))
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`Status Updated sucessfully`));
           dispatch(setAlertType("info"));
-          navigate(-1);
+          navigate("/booking/deliveryinfo");
         }
       })
       .catch(function (err) {
+        setIsLoading(false)
         alert(`rror While  Updateing Coloader ${err}`);
       });
   };
@@ -125,13 +136,119 @@ const UpdateDeliveryInfo = () => {
     try {
       let data = location.state.order
       setdelivery_data(data);
+      setisupdating(true);
       setresult_img(data.pod_image)
       setresult_sig_img(data.image)
     } catch (error) { }
   }, []);
 
+
+  //For Checker Maker
+  const [current_status, setcurrent_status] = useState("");
+  const [status_toggle, setstatus_toggle] = useState(false)
+  const [message, setmessage] = useState("")
+  const [message_error, setmessage_error] = useState(false);
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true)
+    setmessage_error(false)
+  };
+  useEffect(() => {
+    if (user.user_department_name === "ADMIN") {
+      setcurrent_status("NOT APPROVED")
+      setstatus_toggle(true)
+    }
+    else if (user.user_department_name === "ACCOUNTANT" || user.user_department_name + " " + user.designation_name === "ACCOUNT MANAGER" || user.is_superuser) {
+      setcurrent_status("APPROVED")
+      setstatus_toggle(true)
+    }
+    else {
+      setcurrent_status("NOT APPROVED")
+      // setstatus_toggle(false)
+    }
+
+  }, [user, isupdating])
+
+  const update_pod_status = (id) => {
+    setIsLoading(true)
+    axios
+      .put(
+        ServerAddress + "booking/update_POD/" + id,
+        {
+          cm_current_status: "REJECTED",
+          cm_remarks: toTitleCase(message).toUpperCase(),
+          change_fields: { 'cm_current_status': 'REJECTED' },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+      .then(function (response) {
+        if (response.data.status === "success") {
+          setIsLoading(false)
+          // dispatch(Toggle(true))
+          dispatch(setShowAlert(true));
+          dispatch(setDataExist(`Status Updated sucessfully`));
+          dispatch(setAlertType("info"));
+          navigate("/booking/deliveryinfo");
+        }
+      })
+      .catch(function (err) {
+        setIsLoading(false)
+        alert(`rror While  Updateing Coloader ${err}`);
+      });
+  };
+
+  const handleSubmit = () => {
+    if (message == "") {
+      setmessage_error(true);
+    }
+    else {
+      update_pod_status(delivery_data.id)
+      setShow(false)
+    }
+  }
+
   return (
     <div>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reject Resion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormGroup>
+            <Label for="exampleText">
+              Text Area
+            </Label>
+            <Input
+              id="exampleText"
+              name="text"
+              type="textarea"
+              style={{ height: "90px" }}
+              onChange={(e) => {
+                setmessage(e.target.value)
+              }}
+            />
+            <div className="mt-1 error-text" color="danger">
+              {message_error ? "Please Enter Reject Resion" : null}
+            </div>
+          </FormGroup>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={() => handleSubmit()}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Form
         onSubmit={(e) => {
           e.preventDefault();
@@ -368,7 +485,7 @@ const UpdateDeliveryInfo = () => {
                             Choose Image
                           </button>
                           <FormFeedback type="invalid">
-                          Signature Image is required
+                            Signature Image is required
                           </FormFeedback>
                         </div>
                       </Col>
@@ -401,12 +518,50 @@ const UpdateDeliveryInfo = () => {
         <div className="m-3">
           <Col lg={12}>
             <div className="mb-1 footer_btn">
-              <button
-                type="submit"
-                className={"btn btn-info m-1"}
-              >
-                Update
-              </button>
+              {!isLoading ?
+                <button
+                  type="submit"
+                  className={isupdating && (user.user_department_name + " " + user.designation_name ===
+                    "DATA ENTRY OPERATOR" ||
+                    user.user_department_name +
+                    " " +
+                    user.designation_name ===
+                    "CUSTOMER SERVICE EXECUTIVE") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
+                >
+                  {isupdating && (user.user_department_name + " " + user.designation_name ===
+                    "DATA ENTRY OPERATOR" ||
+                    user.user_department_name +
+                    " " +
+                    user.designation_name ===
+                    "CUSTOMER SERVICE EXECUTIVE" || user.is_superuser) ? "Update" : !isupdating ? "Save" : "Approved"}
+                </button>
+                :
+                <button
+                  type="button"
+                  className={isupdating && (user.user_department_name + " " + user.designation_name ===
+                    "DATA ENTRY OPERATOR" ||
+                    user.user_department_name +
+                    " " +
+                    user.designation_name ===
+                    "CUSTOMER SERVICE EXECUTIVE") ? "btn btn-info m-1" : !isupdating ? "btn btn-info m-1" : "btn btn-success m-1"}
+                >
+                  <Loader />
+                </button>
+              }
+              {
+                (isupdating && (user.user_department_name + " " + user.designation_name) !== "DATA ENTRY OPERATOR" &&
+                  (user.user_department_name + " " + user.designation_name) !== "CUSTOMER SERVICE EXECUTIVE") &&
+                !user.is_superuser &&
+                (
+                  <button
+                    type="button"
+                    className="btn btn-danger m-1"
+                    onClick={handleShow}
+                  >
+                    Rejected
+                  </button>
+                )
+              }
               <Button
                 className="btn btn-info m-1 cu_btn"
                 type="button"
