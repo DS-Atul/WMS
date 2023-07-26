@@ -262,14 +262,17 @@ const Add_Commodity = () => {
     var prom = new Promise((resolve, reject) => {
       for (let j = 0; j < fields_names.length; j++) {
         const ele = fields_names[j];
+        console.log("ele-----", ele)
         let prev = location.state.commodity[`${ele[0]}`];
         let new_v = ele[1];
+        console.log("new_v---", new_v)
         if (prev !== new_v.toUpperCase()) {
           change_fields[`${ele[0]}`] = new_v.toUpperCase();
         }
         if (j === fields_names.length - 1) resolve();
       }
     });
+    console.log("change_fields---", change_fields)
     prom.then(() => {
       axios
         .put(

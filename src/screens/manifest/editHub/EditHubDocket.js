@@ -780,6 +780,7 @@ const EditHubDocket = () => {
                             id="input"
                             name="total_bags"
                             placeholder="Enter No Of Bags"
+                            disabled
                           />
                           {/* {total_bags == "" && total_bag_error ? (
                             <FormFeedback type="invalid">

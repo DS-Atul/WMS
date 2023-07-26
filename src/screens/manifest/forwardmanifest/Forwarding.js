@@ -61,10 +61,10 @@ const Forwarding = () => {
     }, [userpermission]);
   return (
     <>
-      <PageTitle page="RoughManifest" />
+      <PageTitle page="Forwarding Details" />
       <Navigate />
-      <RoughTab/>
-      <Title title="Rough Manifest" parent_title="Manifest" />
+      {/* <RoughTab/> */}
+      <Title title="Forwarding Details" parent_title="Manifest" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
           <div className="mb-2 row ">

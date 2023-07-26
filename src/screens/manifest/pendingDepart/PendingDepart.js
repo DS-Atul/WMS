@@ -63,7 +63,7 @@ const PendingDepart = () => {
     <>
       <PageTitle page="Pending For Depart" />
       <Navigate />
-      <DepartTab/>
+      {/* <DepartTab/> */}
       <Title title="Pending For Depart" parent_title="Manifests" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>

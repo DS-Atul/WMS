@@ -95,6 +95,8 @@ const AddOrder = () => {
 
   //Get Updated Location Data
   const [order, setorder] = useState([]);
+  const [status_data, setstatus_data] = useState([])
+  console.log("status_data-----", status_data)
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
@@ -531,7 +533,7 @@ const AddOrder = () => {
     ind: "",
     type: "",
   });
-  console.log("showModalInvoice===", showModalInvoice)
+  console.log("showModalOrder===", showModalOrder)
 
   const [img_index, setimg_index] = useState("")
 
@@ -6582,7 +6584,7 @@ const AddOrder = () => {
                                 });
                               }
                             }}
-                            disabled={order.current_status !== "SHIPMENT PICKED UP" && order.current_status !== "SHIPMENT ORDER RECEIVED"}
+                            disabled={status_data?.length>1}
                           >
                             Add Status
                           </Button>
@@ -6620,6 +6622,7 @@ const AddOrder = () => {
                         Data_Format={StatusInfoDataFormat}
                         order_id={order.docket_no}
                         checkbox={"NO"}
+                        setstatus_data={setstatus_data}
                       />
                     </div>
                   </>
@@ -7070,7 +7073,7 @@ const AddOrder = () => {
                             }}
                             pre_image={showModalOrder.ind !== "" ? row1[showModalOrder.ind][0] : ""}
                             upload_image={(val) => {
-                              setdocumentOrder(val);
+                              // setdocumentOrder(val);
                               if (showModalOrder.ind !== "") {
                                 row3[showModalOrder.ind][0] = val;
                                 setshowModalOrder({

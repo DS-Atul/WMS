@@ -217,7 +217,7 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
           awb_no_list: awb_no_list,
           // vehicle_type: vehicle_type,
           delivery_staff: (delivery_staff).toUpperCase(),
-          delivery_staff_phone: delivery_staff_phone,
+          delivery_staff_phone: delivery_staff_phone ? delivery_staff_phone : null,
         },
         {
           headers: {

@@ -431,12 +431,13 @@ const ProfileMenu = (apiCall) => {
           </DropdownItem>
           {/* <DropdownItem tag="a" href="/authentication/userProfile/Profile">
             {" "} */}
-          <Link to="/authentication/userProfile/Profile" className="dropdown-item"
-          >
+           <DropdownItem  className="dropdown-item">
+            <Link to="/authentication/userProfile/Profile"
+>
             <i className="bx bx-user font-size-16 align-middle me-1" />
-            "Profile
-          </Link>
-          {/* </DropdownItem> */}
+            Profile
+            </Link>
+          </DropdownItem>
 
           <DropdownItem tag="a" href="/crypto-wallet">
             <i className="bx bx-wallet font-size-16 align-middle me-1" />
@@ -457,9 +458,9 @@ const ProfileMenu = (apiCall) => {
           <div className="dropdown-divider" />
 
           {/* ////// */}
+          <DropdownItem className="dropdown-item">
           <Link
             to="/"
-            className="dropdown-item"
           >
             <i className="bx bx-reset font-size-20 align-middle me-1" />
             <span onClick={() => {
@@ -467,6 +468,8 @@ const ProfileMenu = (apiCall) => {
             }}
             >Change Password</span>
           </Link>
+          </DropdownItem>
+
           {/* ////// */}
 
           <Link

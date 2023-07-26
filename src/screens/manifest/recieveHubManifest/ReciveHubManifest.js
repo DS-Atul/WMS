@@ -39,6 +39,7 @@ const RecieveHubManifest = ({ depart }) => {
   const [is_submit, setis_submit] = useState(false);
   const [is_issue, setis_issue] = useState(false);
   const [received, setReceived] = useState([]);
+  const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
   // const [notReceived, setNotReceived] = useState([]);
   // console.log("Recived", received);
   // console.log("Not Recived", notReceived);

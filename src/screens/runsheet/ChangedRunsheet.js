@@ -45,6 +45,7 @@ import {
 import { gstin_no } from "../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../authentication/signin/UpateEwaybillPartB";
 import ImgModal from "../../components/crop/ImgModal";
+import Loader from "../../components/loader/Loader";
 
 const ChangedRusheet = () => {
   const dispatch = useDispatch();
@@ -57,6 +58,7 @@ const ChangedRusheet = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user = useSelector((state) => state.authentication.userdetails);
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
   const [isupdating, setisupdating] = useState(false);
   const navigate = useNavigate();
   const [runsheet, setrunsheet] = useState([]);
@@ -93,6 +95,8 @@ const ChangedRusheet = () => {
   const [driver_page, setdriver_page] = useState(1)
   const [driver_bottom, setdriver_bottom] = useState(103)
   const [driver_loaded, setdriver_loaded] = useState(false)
+
+  const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
 
   //Route
   const [route_list, setroute_list] = useState([]);
@@ -249,6 +253,7 @@ const ChangedRusheet = () => {
 
   // Update Runsheet
   const update_runsheet = (id) => {
+    setIsLoading(true)
     let fields_names = Object.entries({
       branch_name: user.branch_nm,
       driver_name: driver_name.toUpperCase(),
@@ -273,7 +278,7 @@ const ChangedRusheet = () => {
         ServerAddress + "runsheet/update_runsheet/" + id,
         {
           change_fields: change_fields,
-          image:  result_img?.substring(0,4) !== "http" ? result_img : null,
+          image: result_img?.substring(0, 4) !== "http" ? result_img : null,
           is_defined_route: runsheet.is_defined_route,
           defined_route_name: (defined_route_name).toUpperCase(),
           branch: user.home_branch,
@@ -292,7 +297,9 @@ const ChangedRusheet = () => {
           cm_transit_status: status_toggle === true ? cm_current_status : "",
           cm_current_status: cm_current_status.toUpperCase(),
           cm_remarks: toTitleCase(message).toUpperCase(),
+          delivery_staff_phone: delivery_staff_phone ? delivery_staff_phone : null,
         },
+
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -301,6 +308,7 @@ const ChangedRusheet = () => {
       )
       .then(function (response) {
         if (response.data.status === "success") {
+          setIsLoading(false)
           if (list_data.length > 0) {
             UpateEwaybillPartB({
               gstin_no: gstin_no,
@@ -321,6 +329,7 @@ const ChangedRusheet = () => {
         }
       })
       .catch((error) => {
+        setIsLoading(false)
         alert(`Error While Creating Manifest ${error}`);
       });
   };
@@ -373,6 +382,7 @@ const ChangedRusheet = () => {
       setdriver_name(toTitleCase(runsheets.driver_name));
       setdriver_id(runsheets.driver);
       setresult_img(runsheets.pod_image);
+      setdelivery_staff_phone(runsheets.delivery_staff_phone)
       // setvehicle_type(toTitleCase(runsheets.vehicle_type));
       setrunsheet_no(runsheets.runsheet_no);
       setdelivery_staff(toTitleCase(runsheets.delivery_staff))
@@ -794,6 +804,23 @@ const ChangedRusheet = () => {
                         />
                       </div>
                     </Col>
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header-child">
+                          Delivery Staff Phone No.
+                        </Label>
+                        <Input
+                          value={delivery_staff_phone}
+                          onChange={(val) => {
+                            setdelivery_staff_phone(val.target.value);
+                          }}
+                          type="number" min={0}
+                          className="form-control-md"
+                          id="input"
+                          placeholder="Enter Phone Number"
+                        />
+                      </div>
+                    </Col>
                     {/* } */}
                     {/* <Col md={4} sm={6}>
                       <div className="mb-3">
@@ -801,63 +828,65 @@ const ChangedRusheet = () => {
                         <Input id="input" type="file" />
                       </div>
                     </Col> */}
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2" style={{ position: "relative" }}>
-                        <Label>Pod Image</Label>
-                        <Input
-                          style={{ background: "white" }}
-                          className="form-control-md"
-                          name="logo"
-                          value={result_img}
-                          onChange={(val) => {
-                            setresult_img(val.target.value)
-                          }}
-                          // type=""
-                          id="input"
-                          disabled
-                        // accept="image/png,image/jpeg, image/jpg"
-                        />
-                        <button
-                          style={{
-                            border: "none",
-                            position: "absolute",
-                            borderRadius: "2px",
-                            height: "29px",
-                            top: "28.5px",
-                            marginLeft: ".9px",
-                            background: "#e9ecef",
-                          }}
-                          className="form-control-md"
-                          id="input"
-                          type="button"
-                          onClick={() => setmodal(true)}
-                        >
-                          Choose Image
-                        </button>
-                        <ImgModal
-                          modal={modal}
-                          modal_set={() => {
-                            setmodal(false);
-                          }}
-                          upload_image={(val) => {
-                            setuploaded_img(val);
-                          }}
-                          result_image={(val) => {
-                            setresult_img(val);
-                          }}
-                        />
-                      </div>
-                    </Col>
-
+                    <ImgModal
+                      modal={modal}
+                      modal_set={() => {
+                        setmodal(false);
+                      }}
+                      upload_image={(val) => {
+                        setuploaded_img(val);
+                      }}
+                      result_image={(val) => {
+                        setresult_img(val);
+                      }}
+                    />
+                    {(result_img === "" || !result_img) &&
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2" style={{ position: "relative" }}>
+                          <Label>Pod Image</Label>
+                          <Input
+                            style={{ background: "white" }}
+                            className="form-control-md"
+                            name="logo"
+                            value={result_img}
+                            onChange={(val) => {
+                              setresult_img(val.target.value)
+                            }}
+                            // type=""
+                            id="input"
+                            disabled
+                          // accept="image/png,image/jpeg, image/jpg"
+                          />
+                          <button
+                            style={{
+                              border: "none",
+                              position: "absolute",
+                              borderRadius: "2px",
+                              height: "29px",
+                              top: "28.5px",
+                              marginLeft: ".9px",
+                              background: "#e9ecef",
+                            }}
+                            className="form-control-md"
+                            id="input"
+                            type="button"
+                            onClick={() => setmodal(true)}
+                          >
+                            Choose Image
+                          </button>
+                        </div>
+                      </Col>
+                    }
                     {result_img && (
-                      <Col lg={1} md={2} sm={6}>
-                        <div className="mb-3 parent_div">
+                      <Col lg={4} md={4} sm={6}>
+                        <Label>Pod Image</Label>
+                        <div className="mb-3">
                           <img
                             onClick={() => setmodal(true)}
                             src={result_img}
                             style={{
-                              width: "70px",
-                              height: "70px",
+                              width: "95px",
+                              height: "95px",
                               borderRadius: "8px",
                               boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
                             }}
@@ -917,34 +946,55 @@ const ChangedRusheet = () => {
         <div className="m-3">
           <Col lg={12}>
             <div className="mb-1 footer_btn">
-              <Button
-                type="submit"
-                className={
-                  isupdating &&
+              {!isLoading ?
+                <Button
+                  type="submit"
+                  className={
+                    isupdating &&
+                      (user.user_department_name + " " + user.designation_name ===
+                        "DATA ENTRY OPERATOR" ||
+                        user.user_department_name +
+                        " " +
+                        user.designation_name ===
+                        "CUSTOMER SERVICE EXECUTIVE")
+                      ? "btn btn-info m-1"
+                      : !isupdating
+                        ? "btn btn-info m-1"
+                        : "btn btn-success m-1"
+                  }
+                  onClick={() => handleSubmit()}
+                >
+                  {isupdating &&
                     (user.user_department_name + " " + user.designation_name ===
                       "DATA ENTRY OPERATOR" ||
-                      user.user_department_name +
-                      " " +
-                      user.designation_name ===
-                      "CUSTOMER SERVICE EXECUTIVE")
-                    ? "btn btn-info m-1"
+                      user.user_department_name + " " + user.designation_name ===
+                      "CUSTOMER SERVICE EXECUTIVE" ||
+                      user.is_superuser)
+                    ? "Update"
                     : !isupdating
+                      ? "Save"
+                      : "Approved"}
+                </Button>
+                :
+                <Button
+                  type="button"
+                  className={
+                    isupdating &&
+                      (user.user_department_name + " " + user.designation_name ===
+                        "DATA ENTRY OPERATOR" ||
+                        user.user_department_name +
+                        " " +
+                        user.designation_name ===
+                        "CUSTOMER SERVICE EXECUTIVE")
                       ? "btn btn-info m-1"
-                      : "btn btn-success m-1"
-                }
-                onClick={() => handleSubmit()}
-              >
-                {isupdating &&
-                  (user.user_department_name + " " + user.designation_name ===
-                    "DATA ENTRY OPERATOR" ||
-                    user.user_department_name + " " + user.designation_name ===
-                    "CUSTOMER SERVICE EXECUTIVE" ||
-                    user.is_superuser)
-                  ? "Update"
-                  : !isupdating
-                    ? "Save"
-                    : "Approved"}
-              </Button>
+                      : !isupdating
+                        ? "btn btn-info m-1"
+                        : "btn btn-success m-1"
+                  }
+                >
+                  <Loader />
+                </Button>
+              }
 
               {/* <Button
                 type="button"

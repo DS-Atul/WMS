@@ -8,7 +8,7 @@ import Title from '../../../components/title/Title';
 
 const PendingPartB = () => {
 
-    const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
+const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
 const [data, setdata] = useState([]);
 
 const [today_date, settoday_date] = useState("");

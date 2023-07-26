@@ -48,6 +48,7 @@ const DataList = ({
   order_id = "",
   checkbox = "",
   can_delete,
+  setstatus_data
 }) => {
   const [data_title, setdata_title] = useState(Data_Title);
 
@@ -396,6 +397,7 @@ const DataList = ({
               data1={data1}
               order_id={order_id}
               can_delete={can_delete}
+              setstatus_data={setstatus_data}
             />
           </tbody>
         </table>

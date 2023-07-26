@@ -14,7 +14,7 @@ const Layout = () => {
 
   const dispatch = useDispatch();
 
-    const docket_no = useSelector((state) => state.OrderTracking.docket_number);
+  const docket_no = useSelector((state) => state.OrderTracking.docket_number);
   const docket_search = useSelector((state) => state.OrderTracking.search_docket);
 
   const nav_toggle = useSelector((state) => state.datalist.nav_toggle);
@@ -39,7 +39,7 @@ const Layout = () => {
     // Cleanup: Since there's no unlisten in v6, you don't need a cleanup function.
 
     // Subscribe to route changes and call the resetState function
-    
+
     // const unsubscribe = navigate((location) => {
     //   resetState();
     // });
@@ -99,12 +99,12 @@ const Layout = () => {
           }}
           onClick={() => handleClk()}
         >
-          {docket_search  ? 
+          {docket_search ?
 
-<TrackingOrderDash/>
-: 
-          <Outlet />
-}
+            <TrackingOrderDash />
+            :
+            <Outlet />
+          }
         </div>
         <div
           style={{

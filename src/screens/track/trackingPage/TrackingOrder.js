@@ -456,6 +456,17 @@ const TrackingOrder = () => {
                                 </div>
                                 </>
                                   ): null }
+                                  <div className="step">
+                                  {" "}
+                                  <span className="icon">
+                                    {" "}
+                                    <i className="fa fa-truck"></i>{" "}
+                                  </span>{" "}
+                                  <span className="text">
+                                    {" "}
+                                    Shipment Out for Delivery
+                                  </span>
+                                </div>
                                 <div className="step ">
                                   {" "}
                                   <span className="icon">

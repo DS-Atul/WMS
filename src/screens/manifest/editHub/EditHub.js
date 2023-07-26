@@ -433,7 +433,7 @@ const EditHub = () => {
               <Card className="shadow bg-white rounded">
                 <CardTitle className="mb-1 header">
                   <div className="header-text-icon header-text">
-                    Hub Manifest Info :
+                    Hub Manifest Info111 :
                     <IconContext.Provider
                       value={{
                         className: "header-add-icon",

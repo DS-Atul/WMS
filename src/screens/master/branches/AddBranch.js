@@ -127,6 +127,7 @@ const AddBranch = () => {
   const [state_loaded, setstate_loaded] = useState(false);
   const [state_count, setstate_count] = useState(1);
   const [togstate, settogstate] = useState(false)
+  console.log("togstate----", togstate)
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -137,6 +138,7 @@ const AddBranch = () => {
   const [city_loaded, setcity_loaded] = useState(false);
   const [city_count, setcity_count] = useState(1);
   const [togcity, settogcity] = useState(false)
+  console.log("togcity----", togcity)
 
   const [by_pincode, setby_pincode] = useState(false);
   const [pincode_list_s, setpincode_list_s] = useState([]);

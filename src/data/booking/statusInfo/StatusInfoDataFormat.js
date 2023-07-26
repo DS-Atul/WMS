@@ -19,7 +19,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { Button } from "reactstrap";
 import { setIncomingTab, setManifestTab } from "../../../store/parentFilter/ParentFilter";
 
-const StatusInfoDataFormat = ({ order_id, data }) => {
+const StatusInfoDataFormat = ({ order_id, setstatus_data }) => {
   console.log("order_id---------", order_id)
   const dispatch = useDispatch();
   const success = useSelector((state) => state.alert.show_alert);
@@ -66,6 +66,7 @@ const StatusInfoDataFormat = ({ order_id, data }) => {
       .then(function (response) {
         console.log("response-----", response)
         setorder_status_list(response.data);
+        setstatus_data(response.data)
       })
       .catch((error) => {
         alert(`Error Happen while Geting Order Status Data ${error}`);

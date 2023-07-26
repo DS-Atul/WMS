@@ -57,11 +57,11 @@ const AddDocketStatus = () => {
   const [status_list, setstatus_list] = useState([
     "SHIPMENT ORDER RECEIVED",
     "SHIPMENT PICKED UP",
-    "SHIPMENT ARRIVED AT HUB",
-    "SHIPMENT IN TRANSIT",
-    "SHIPMENT ARRIVED AT DESTINATION HUB",
-    "SHIPMENT OUT FOR DELIVERY",
-    "SHIPMENT DELIVERED",
+    // "SHIPMENT ARRIVED AT HUB",
+    // "SHIPMENT IN TRANSIT",
+    // "SHIPMENT ARRIVED AT DESTINATION HUB",
+    // "SHIPMENT OUT FOR DELIVERY",
+    // "SHIPMENT DELIVERED",
   ]);
   const [status, setstatus] = useState("");
 
