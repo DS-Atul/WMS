@@ -45,6 +45,7 @@ import RouteFilter from "../../../screens/master/route/RouteFilter";
 import AssetsFilter from "../../../screens/master/assets/AssetsFilter";
 import ManifestFilter from "../../../screens/manifest/allmanifest/ManifestFilter";
 import NotUpdatedFilter from "../../../screens/ewayBill/docketEwaybill/NotUpdatedEwayFilter";
+import DeliveryInfoFilter from "../../../screens/booking/deliveryInfo/DeliveryInfoFilter";
 
 const Filter = ({ type }) => {
   const dispatch = useDispatch();
@@ -126,6 +127,9 @@ const Filter = ({ type }) => {
     else if (type === "notupdated_eway") {
       setfilter("notupdated_eway");
     }
+    else if (type === "delivery_info") {
+      setfilter("delivery_info");
+    }
     
   }, [type]);
 
@@ -154,7 +158,10 @@ const Filter = ({ type }) => {
           </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body style={{ paddingTop: "0px" }}>
-          { filter === "notupdated_eway" ? (
+          { 
+          filter === "delivery_info" ? (
+            <DeliveryInfoFilter />
+          ) : filter === "notupdated_eway" ? (
             <NotUpdatedFilter />
           ) :
           filter === "assets" ? (

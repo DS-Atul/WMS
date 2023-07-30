@@ -3,7 +3,7 @@ const IncomingHubTitle = [
     "Orgin", 
     "Destination", 
     "Total Orders", 
-    "Coloader",
+    // "Coloader",
     "Total Bags",
     "Total Box",
     "Total Weight",

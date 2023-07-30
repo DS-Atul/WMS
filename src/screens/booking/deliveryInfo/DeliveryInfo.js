@@ -18,8 +18,8 @@ import axios from "axios";
 import Navigate from "../navigateTab/Navigate";
 const DeliveryInfo = () => {
   const dispatch = useDispatch();
-  const commodity_type = useSelector((state) => state.filtervalue.data_a);
-  const commodity_name = useSelector((state) => state.filtervalue.data_b);
+  const from_date = useSelector((state) => state.filtervalue.data_a);
+  const to_date = useSelector((state) => state.filtervalue.data_b);
 
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
@@ -66,68 +66,6 @@ const DeliveryInfo = () => {
     }
   }, [userpermission]);
 
-  console.log("user.user_department_name----", user.user_department_name)
-  const downloadImage = () => {
-    // saveAs('https://logcube-s3-test1.s3.amazonaws.com/bookings/delivery/pod_images/800001_2023-03-22_POD.jpg', 'https://logcube-s3-test1.s3.amazonaws.com/bookings/delivery/pod_images/800001_2023-03-22_POD.jpg.jpg') // Put your image url here.
-    var element = document.createElement("a");
-    var file = new Blob(
-      [
-        "https://logcube-s3-test1.s3.amazonaws.com/bookings/delivery/pod_images/800001_2023-03-22_POD.jpg"
-      ],
-      { type: "image/*" }
-    );
-    element.href = URL.createObjectURL(file);
-    element.download = "image.jpg";
-    element.click();
-  }
-  const handleClick = async () => {
-    // axios({
-    //   url: "https://logcube-s3-test1.s3.amazonaws.com/bookings/delivery/pod_images/800001_2023-03-22_POD.jpg",
-    //   method: 'GET',
-    //   responseType: 'blob'
-    // })
-    //   .then(response => {
-    //     const url = window.URL.createObjectURL(new Blob([response.data]));
-    //     const link = document.createElement("a");
-    //     link.href = url;
-    //     link.setAttribute("download", "file.jpg");
-    //     document.body.appendChild(link);
-    //     link.click();
-    //   })
-
-    let url = "https://logcube-s3-test1.s3.amazonaws.com/bookings/delivery/pod_images/800001_2023-03-22_POD.jpg"
-
-    const a = document.createElement("a");
-    a.href = await toDataURL(url);
-    a.download = "Ankit.png";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-  function toDataURL(url) {
-    return axios({
-      url:url,
-      method:"POST",
-      // mode: 'no-cors',
-      headers: {
-        // authorization: '3JawyAd5JcSRSespUvWTSfplcFFAaDfMm+seyDYN',
-        'Access-Control-Allow-Origin':  'http://127.0.0.1:3000',
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      }
-    })
-      .then((response) => {
-        console.log("Ankittttttttttttttttttttttresponse", response)
-        return response.blob();
-      })
-      .then((blob) => {
-        console.log("errrrrrrrrrrrrr", blob)
-        return URL.createObjectURL(blob);
-      });
-  }
-
-
   return (
     <>
       <PageTitle page="Delivery Info" />
@@ -152,7 +90,7 @@ const DeliveryInfo = () => {
                   />
                 )} */}
                 {/* Filter Tool */}
-                {/* <Filter type={"commodity"} /> */}
+                <Filter type={"delivery_info"} />
               </div>
             </div>
             {(user.user_department_name + " " + user.designation_name === "DATA ENTRY OPERATOR" || user.user_department_name + " " + user.designation_name === "CUSTOMER SERVICE EXECUTIVE" || 
@@ -169,7 +107,7 @@ const DeliveryInfo = () => {
             can_delete={can_delete}
             Data_Title={OrderDeliveryDataTitle}
             Data_Format={OrderDeliveryDataFormate}
-            path={`booking/get_delivery_info/?search=${search}&p=${page_num}&records=${data_len}&signature_person_name=${''}&value=${cm_value}`}
+            path={`booking/get_delivery_info/?search=${search}&p=${page_num}&records=${data_len}&signature_person_name=${''}&from_date=${from_date}&to_date=${to_date}&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>
