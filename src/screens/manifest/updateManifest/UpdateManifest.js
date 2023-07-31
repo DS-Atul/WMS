@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { IconContext } from "react-icons";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
+import { BiTrash } from "react-icons/bi";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -37,6 +38,7 @@ import * as XLSX from "xlsx";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import EditManifestDataFormat from "../editManifest/editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "../editManifest/AddAnotherOrder";
+import ImgModal from "../../../components/crop/ImgModal";
 const UpdateManifest = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authentication.userdetails);
@@ -101,16 +103,16 @@ const UpdateManifest = () => {
   const [manifest_id, setmanifest_id] = useState();
   const [coloader_list, setcoloader_list] = useState([]);
 
-    //used for tax slab 
-    const [tax_slab_list, settax_slab_list] = useState([
-      "0%",
-      "9%",
-      "18%",
-      "27%",
-    ]);
-    const [tax_slab, settax_slab] = useState("0%");
-    const [isTaxSlabDisabled, setIsTaxSlabDisabled] = useState(false);
-  
+  //used for tax slab 
+  const [tax_slab_list, settax_slab_list] = useState([
+    "0%",
+    "9%",
+    "18%",
+    "27%",
+  ]);
+  const [tax_slab, settax_slab] = useState("0%");
+  const [isTaxSlabDisabled, setIsTaxSlabDisabled] = useState(false);
+
   // Manifest
   const [commodity_type_id, setcommodity_type_id] = useState(0);
   const [commodity_type_list, setcommodity_type_list] = useState([]);
@@ -137,13 +139,52 @@ const UpdateManifest = () => {
   let dimension_list = [length, breadth, height, pieces];
   const [row, setrow] = useState([dimension_list]);
   console.log("row-----------", row)
-
   // adding extra input fields in Order Images
   const [selectedFile, setSelectedFile] = useState("");
 
-  let dimension_list1 = [selectedFile];
+  let dimension_list1 = [selectedFile, ""];
   const [row1, setrow1] = useState([dimension_list1]);
+  console.log("row1----", row1)
+  const [row3, setrow3] = useState([["", ""]]);
+  const [showModalOrder, setshowModalOrder] = useState({
+    value: false,
+    ind: "",
+  });
+  const [ord_id, setord_id] = useState(null)
+  const [ord_data, setord_data] = useState("")
+  const [showinv, setShowinv] = useState(false);
 
+  const addorderimage = () => {
+    setSelectedFile("");
+    dimension_list1 = ["", ""];
+    setrow1([...row1, dimension_list1]);
+    setrow3([...row3, ["", ""]]);
+  };
+console.log("ord_id----", ord_id)
+console.log("ord_data----", ord_data)
+  const deleteimage = (item1) => {
+    console.log("Deleted item1======", item1)
+    if (location.state !== null && item1[1] !== "") {
+      setord_data(item1)
+      setord_id(item1[1])
+      setShowinv(true)
+    }
+    else {
+      let temp1 = [...row1];
+      let temp3 = [...row3];
+
+      const index1 = temp1.indexOf(item1);
+
+      if (index1 > -1) {
+        temp1.splice(index1, 1);
+        temp3.splice(index1, 1);
+      }
+
+      setrow1(temp1);
+      setrow3(temp3);
+    }
+
+  };
   // adding extra input fields in Invoice
   const [invoice_img, setinvoice_img] = useState("");
   const [invoice_no, setinvoice_no] = useState("");
@@ -315,7 +356,7 @@ const UpdateManifest = () => {
   useEffect(() => {
     let temp = []
     let temp_list = []
-    if(manifest_data?.images?.length>0){
+    if (manifest_data?.images?.length > 0) {
       temp = manifest_data.images;
       for (let index = 0; index < temp.length; index++) {
         temp_list.push([
@@ -328,7 +369,7 @@ const UpdateManifest = () => {
     }
 
   }, [manifest_data])
-  
+
 
   const updateManifest = (values) => {
     let fields_name = Object.entries({
@@ -337,10 +378,10 @@ const UpdateManifest = () => {
       box_count: values.no_of_box ? values.no_of_box : 0,
       carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
       carrier_name: values.flight_name ? toTitleCase(values.flight_name).toUpperCase() : '',
-      carrier_no:values.flight_num ? toTitleCase(values.flight_num).toUpperCase() : '',
-      chargeable_weight:values.chargeable_weight ? values.chargeable_weight : "",
-      coloader_mode:coloader_selcted_m,
-      coloader_name:coloader_selected,
+      carrier_no: values.flight_num ? toTitleCase(values.flight_num).toUpperCase() : '',
+      chargeable_weight: values.chargeable_weight ? values.chargeable_weight : "",
+      coloader_mode: coloader_selcted_m,
+      coloader_name: coloader_selected,
       coloader: coloader_id,
       total_weight: values.actual_weight,
     });
@@ -377,7 +418,7 @@ const UpdateManifest = () => {
           carrier_no: values.flight_num ? toTitleCase(values.flight_num).toUpperCase() : null,
           carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
           tsp: values.tsp ? values.tsp : 0,
-          rate:  values.rate ? values.rate : 0,
+          rate: values.rate ? values.rate : 0,
           tax_slab: tax_slab,
           other_charges: values.other_charges ? values.other_charges : null,
           departed: "False",
@@ -391,6 +432,7 @@ const UpdateManifest = () => {
           forwarded_branch: user_branch,
           modified_by: user_id,
           manifest_packages: row,
+          manifest_image: row1,
           deleted_packages: deleted_packages_id,
 
           cm_transit_status: status_toggle === true ? cm_current_status : "",
@@ -616,12 +658,69 @@ const UpdateManifest = () => {
     if (coloader_selcted_m === "Direct AWB") {
       settax_slab("18%");
       setIsTaxSlabDisabled(true);
-    } else{
+    } else {
       setIsTaxSlabDisabled(false);
     }
   }, [coloader_selcted_m]);
+
+  const deleteManifestImage = (id, item1) => {
+    axios
+      .delete(ServerAddress + `manifest/delete_manifest_images/${id}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then((res) => {
+        setShowinv(false)
+        if (res.data.message === "Image deleted successfully.") {
+          let temp1 = [...row1];
+          let temp3 = [...row3];
+
+          const index1 = temp1.indexOf(item1);
+
+          if (index1 > -1) {
+            temp1.splice(index1, 1);
+            temp3.splice(index1, 1);
+          }
+
+          setrow1(temp1);
+          setrow3(temp3);
+
+          dispatch(setShowAlert(true));
+          dispatch(
+            setDataExist(`Image Deleted Successfully !`)
+          );
+          dispatch(setAlertType("danger"));
+          // getOrderImages();
+        } else {
+          alert(res.data.message);
+        }
+      })
+      .catch((err) => {
+        console.warn("deleteManifestImage--", err)
+      });
+  };
+
+
+  const action = () => {
+    deleteManifestImage(ord_id, ord_data)
+  }
   return (
     <div>
+
+      <Modal show={showinv} onHide={() => setShowinv(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body> "Do you Want to delete this Manifest image.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowinv(false)}>
+            No
+          </Button>
+          <Button variant="danger" onClick={() => action()}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
@@ -1443,116 +1542,117 @@ const UpdateManifest = () => {
                   ) : (
                     ""
                   )}
-
                   {order_active_btn === "second" ? (
                     <Row className="hide">
-                      <Col md={row1.length > 1 ? 5 : 6} sm={5}>
+                      <Col md={5} sm={5}>
                         <div className="mb-3">
                           <Label className="header-child">Image</Label>
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              border: "1px solid #dad7d7",
-                              alignItems: "center",
-                              height: "38px",
-                            }}
-                            onClick={() => {
-                              setshowModal(true);
-                            }}
-                          >
-                            <div style={{ marginLeft: "3px" }}>
-                              Chooose File
-                            </div>
-                            <div
-                              style={{
-                                fontSize: "25px",
-                                color: "#dad7d7",
-                                marginLeft: "5px",
-                              }}
-                            >
-                              |
-                            </div>
-                            {doc_result_image.length !== 0 ? (
-                              <div>Image Not Uploaded</div>
-                            ) : (
-                              <div>Image Uploaded</div>
-                            )}
-                          </div>
-                        </div>
-                      </Col>
-                      <Col lg={6} md={6} sm={6}>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                          }}
-                        >
-                          {doc_result_image.length !== 0 ? (
-                            <div style={{ flex: 1 }}>
-                              {doc_result_image.map((e, i) => {
-                                return (
+                          {row1.map((item1, index1) => {
+                            return (
+                              <div style={{ width: "100%" }} key={index1}>
+                                {item1[0] ? (
+                                  <img
+                                    src={item1[0]}
+                                    style={{
+                                      height: "95px",
+                                      width: "95px",
+                                      borderRadius: "10px",
+                                      paddingBottom: "5px",
+                                    }}
+                                    onClick={() => {
+                                      setshowModalOrder({
+                                        ...showModalOrder,
+                                        value: true,
+                                        ind: index1,
+                                      });
+                                    }}
+                                  />
+                                ) : (
                                   <div
                                     style={{
-                                      width: "100%",
-                                      flexDirection: "column",
-                                      justifyContent: "space-between",
+                                      height: "95px",
+                                      paddingTop: 35,
                                     }}
                                   >
-                                    <img
-                                      src={e}
+                                    <div
                                       style={{
-                                        height: "110px",
-                                        width: "110px",
-                                        borderRadius: "10px",
-                                        padding: 20,
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        border: "0.5px solid #DAD7D7",
+                                        alignItems: "center",
+                                        height: "38px",
+                                        borderRadius: 5,
+                                        height: 31,
                                       }}
-                                      key={i}
-                                    />
-                                    <MdDeleteForever
-                                      size={30}
-                                      color="#ff7b7b"
-                                      style={{ marginLeft: 50 }}
                                       onClick={() => {
-                                        let filterData =
-                                          doc_result_image.filter(
-                                            (fe, fi) => i !== fi
-                                          );
-                                        console.log(
-                                          "filerData----------------------",
-                                          filterData
-                                        );
-                                        setdoc_result_image(filterData);
-                                        let documentfilterData =
-                                          document.filter(
-                                            (fe, fi) => i !== fi
-                                          );
-                                        console.log(
-                                          "documentfilerData----------------------",
-                                          documentfilterData
-                                        );
-                                        setdocument(documentfilterData);
+                                        setshowModalOrder({
+                                          ...showModalOrder,
+                                          value: true,
+                                          ind: index1,
+                                        });
                                       }}
-                                    />
-                                    {/* <a>Delete</a> */}
+                                    >
+                                      <a
+                                        style={{
+                                          marginLeft: "3px",
+                                          fontSize: 11,
+                                        }}
+                                      >
+                                        Chooose File
+                                      </a>
+                                      <div
+                                        style={{
+                                          fontSize: "25px",
+                                          color: "#DAD7D7",
+                                          marginLeft: "5px",
+                                        }}
+                                      >
+                                        |
+                                      </div>
+                                    </div>
                                   </div>
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            <div
-                              style={{
-                                marginTop: "28px",
-                                color: "red",
-                                fontSize: "14px",
-                              }}
-                            >
-                              {" "}
-                              No Image Has Been Selected
-                            </div>
-                          )}
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       </Col>
+                      {showModalOrder.value ? (
+                        // <Main_c
+                        <ImgModal
+                          modal={showModalOrder.value}
+                          modal_set={() => {
+                            setshowModalOrder({
+                              ...showModalOrder,
+                              value: false,
+                            });
+                          }}
+                          pre_image={showModalOrder.ind !== "" ? row1[showModalOrder.ind][0] : ""}
+                          upload_image={(val) => {
+                            // setdocumentOrder(val);
+                            if (showModalOrder.ind !== "") {
+                              row3[showModalOrder.ind][0] = val;
+                              setshowModalOrder({
+                                ...showModalOrder,
+                                value: false,
+                                ind: "",
+                              });
+                            } else {
+                              row3[row3.length - 1][0] = val;
+                            }
+                          }}
+                          result_image={(val) => {
+                            console.log("val------------", val)
+                            setSelectedFile(val);
+                            if (showModalOrder.ind !== "") {
+                              row1[showModalOrder.ind][0] = val;
+                            } else {
+                              row1[row1.length - 1][0] = val;
+                            }
+                            // setdoc_result_image([...doc_result_image, val])
+                          }}
+                        />
+                      ) : null}
 
                       <Col md={1}>
                         <div className="mb-3" style={{ textAlign: "center" }}>
@@ -1560,30 +1660,38 @@ const UpdateManifest = () => {
                             <Label className="header-child">Delete</Label>
                           ) : null}
                           {row1.map((item1, index1) => (
-                            <IconContext.Provider
+                            <div
+                              style={{ height: "95px", paddingTop: 35 }}
                               key={index1}
-                              value={{
-                                className: "icon multi-input",
-                              }}
                             >
-                              {row1.length > 1 ? (
-                                <>
-                                  <div style={{ height: "14.5px" }}></div>
-                                  <div
-                                  // onClick={() => {
-                                  //   deleteimage(item1);
-                                  // }}
-                                  >
-                                    <MdDeleteForever
-                                      style={{
-                                        alignItems: "center",
-                                        background: "",
+                              <IconContext.Provider
+                                value={{
+                                  className: "icon multi-input",
+                                }}
+                              >
+                                {row1.length > 1 ? (
+                                  <>
+                                    <div
+                                      onClick={() => {
+                                        deleteimage(item1);
+                                        setSelectedFile(
+                                          row1[row1.length - 1][0]
+                                        );
                                       }}
-                                    />
-                                  </div>
-                                </>
-                              ) : null}
-                            </IconContext.Provider>
+                                    >
+                                      <BiTrash
+                                        color="red"
+                                        size={21}
+                                        style={{
+                                          alignItems: "center",
+                                          cursor: "pointer"
+                                        }}
+                                      />
+                                    </div>
+                                  </>
+                                ) : null}
+                              </IconContext.Provider>
+                            </div>
                           ))}
                         </div>
                       </Col>
@@ -1591,8 +1699,13 @@ const UpdateManifest = () => {
                         <span
                           className="link-text"
                           onClick={() => {
-                            if (doc_result_image.length !== 0) {
-                              setshowModal(true);
+                            if (row1[row1.length - 1][0]) {
+                              setshowModalOrder({
+                                ...showModalOrder,
+                                value: false,
+                                ind: "",
+                              });
+                              addorderimage();
                             } else {
                               alert("Order images is required");
                             }

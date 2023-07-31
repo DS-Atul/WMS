@@ -1032,6 +1032,7 @@ const RecieveHubManifest = ({ depart }) => {
                           count={vehicle_count}
                           bottom={vehicle_bottom}
                           setbottom={setvehicle_bottom}
+                          disable_me={true}
                         />
                       )}
 

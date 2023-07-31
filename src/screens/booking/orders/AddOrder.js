@@ -67,6 +67,7 @@ import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 import ImgModal from "../../../components/crop/ImgModal";
 import { Spinner } from "reactstrap";
 import Loader from "../../../components/loader/Loader";
+import { RiNurseFill } from "react-icons/ri";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -1051,6 +1052,7 @@ const AddOrder = () => {
         } else {
           if (e_waybill_inv.length === 12 && booking_through && business_access_token && booking_through) {
             get_eway_detail(e_waybill_inv, "no")
+            alert("00")
           }
           get_eway_detail(ewb_no, "yes");
         }
@@ -2268,6 +2270,8 @@ const AddOrder = () => {
       setto_state_eway(toTitleCase(order_data.consignee_na_state))
       setfrom_state_eway(toTitleCase(order_data.shipper_na_state))
       settype(toTitleCase(order_data.type))
+      setm_origin(order_data.mobile_origin ? toTitleCase(order_data.mobile_origin) : null)
+      setm_destination(order_data.mobile_destination ? toTitleCase(order_data.mobile_destination) : null)
       setstate(toTitleCase(order_data.shipper_state));
       setlocality_id_f(order_data.shipper_location);
       setcity(toTitleCase(order_data.shipper_city));
@@ -2732,6 +2736,8 @@ const AddOrder = () => {
   const [locality_sel_bottom, setlocality_sel_bottom] = useState(103)
 
   const [eway_detail_l, seteway_detail_l] = useState([]);
+  console.log("eway_detail_l----", eway_detail_l)
+  console.log("eway_confirm----", eway_confirm)
 
   const [eway_value, seteway_value] = useState([])
 
@@ -2931,6 +2937,8 @@ const AddOrder = () => {
   const [consignee_contact_no, setconsignee_contact_no] = useState(null)
   const [shipper_address, setshipper_address] = useState("");
   const [shipper_contact_no, setshipper_contact_no] = useState(null)
+  const [m_origin, setm_origin] = useState(null)
+  const [m_destination, setm_destination] = useState(null)
   // Address Line 1 Shipper and consignee Ended
   const [state_error, setstate_error] = useState(false);
   const [state_page, setstate_page] = useState(1);
@@ -4334,6 +4342,15 @@ const AddOrder = () => {
     }
   }, [userpermission]);
 
+  useEffect(() => {
+    // eway_detail_l.transDocNo
+    if(eway_confirm && location.state === null){
+      setentry_type_btn("MANUALLY");
+      setdocket_no_value(eway_detail_l?.transDocNo)
+    }
+  }, [eway_confirm,eway_detail_l])
+  
+
   return (
     <div>
       {/* {!eway_loaded && memoizedLogInEwayBill} */}
@@ -5578,7 +5595,25 @@ const AddOrder = () => {
                               />
                             </div>
                           </Col>
-
+                          {!booking_through && isupdating && order?.order_channel === "MOBILE" && !locality_id_f &&
+                            <Col lg={4} md={6} sm={6}>
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Mobile Origin
+                                </Label>
+                                <Input
+                                  value={m_origin}
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  onChange={(e) => {
+                                    setm_origin(e.target.value);
+                                  }}
+                                  disabled
+                                />
+                              </div>
+                            </Col>
+                          }
                         </>
                       </>
                     </Row>
@@ -5858,6 +5893,26 @@ const AddOrder = () => {
                               />
                             </div>
                           </Col>
+
+                          {!booking_through && isupdating && order?.order_channel === "MOBILE" && !locality_id_f_c &&
+                            <Col lg={4} md={6} sm={6}>
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Mobile Destination
+                                </Label>
+                                <Input
+                                  value={m_destination}
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  onChange={(e) => {
+                                    setm_destination(e.target.value);
+                                  }}
+                                  disabled
+                                />
+                              </div>
+                            </Col>
+                          }
                         </>
                       </>
                     </Row>
@@ -7263,7 +7318,8 @@ const AddOrder = () => {
                             }}
                           />
                         ) : null}
-                        <Col md={row2.length > 1} sm={2}>
+                        {/* <Col md={row2.length > 1} sm={2}> */}
+                        <Col md={2} sm={2}>
                           <div className="mb-3">
                             <Label className="header-child">EwayBill No</Label>
                             {row2.map((item2, index2) => (
@@ -7364,10 +7420,10 @@ const AddOrder = () => {
                             })}
                           </div>
                         </Col>
-                        <Col md={2} sm={2}>
+                        <Col md={1} sm={2}>
                           <div className="mb-3">
                             <Label className="header-child">
-                              Invoice Amount
+                               Amount
                             </Label>
                             {row2.map((item2, index2) => (
                               <div

@@ -24,6 +24,7 @@ const PacketTitle = [
 const ExtendDataFormat = ({ type, count }) => {
   // console.log("type=====", type)
   const [data, setdata] = useState([])
+  console.log("data-------", data)
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
   const user = useSelector((state) => state.authentication.userdetails);
   const dispatch = useDispatch();
