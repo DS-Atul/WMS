@@ -100,56 +100,72 @@ const StatusInfoDataFormat = ({ order_id, setstatus_data }) => {
     }
   }, [order_id, success]);
 
+  //Permission
+  const userpermission = useSelector(
+    (state) => state.authentication.userpermission
+  );
+  const [can_update, setcan_update] = useState(false);
+
+  useEffect(() => {
+    if (
+      userpermission.some((e) => e.sub_model === "Order Status" && e.update === true)
+    ) {
+      setcan_update(true);
+    } else {
+      setcan_update(false);
+    }
+  }, [userpermission]);
+
   return (
     <>
       {order_status_list.length === 0
         ? " No Data Found"
         : order_status_list.map((status, index) => {
-            let added_at = "-";
-            if (status.created_at) {
-              let added_at_r = status.created_at.split("T");
-              let date = added_at_r[0];
-              let time = added_at_r[1].substring(0, 5);
-              added_at = date + " " + time;
-            }
+          let added_at = "-";
+          if (status.created_at) {
+            let added_at_r = status.created_at.split("T");
+            let date = added_at_r[0];
+            let time = added_at_r[1].substring(0, 5);
+            added_at = date + " " + time;
+          }
 
-            return (
-              <>
-                <tr
-                  key={index}
-                  style={{
-                    borderWidth: 1,
-                  }}
-                >
-                  <td>{index + 1}</td>
-                  <td
-                  
-                  onClick={()=>{
-                    status.status!=="SHIPMENT ORDER RECEIVED" &&
-                    dispatch(setManifestTab(5))
+          return (
+            <>
+              <tr
+                key={index}
+                style={{
+                  borderWidth: 1,
+                }}
+              >
+                <td>{index + 1}</td>
+                <td
+
+                  onClick={() => {
+                    status.status !== "SHIPMENT ORDER RECEIVED" &&
+                      dispatch(setManifestTab(5))
                     dispatch(setIncomingTab(3))
                   }
                   }>
-                    {status.status==="SHIPMENT ORDER RECEIVED" ?
-                    toTitleCase(status.status)
-                    :
+                  {can_update || user.is_superuser ? (
                     <Link
-                      // to="/booking/orders/adddocketstatus"
-                      to="/manifest/pickeduporders"                      
+                      to="/booking/orders/adddocketstatus"
+                      // to="/manifest/pickeduporders"                      
                       state={{
                         order: status,
                         index: index,
                         status_len: order_status_list.length,
                         order_id: order_id,
-                        type:"update" 
+                        type: "update"
                       }}
-                    
+
                     >
                       {toTitleCase(status.status)}
                     </Link>
-                     }
-                  </td>
-                  {/* <td>
+                  ) : (
+                    toTitleCase(status.status)
+                  )}
+                </td>
+                {/* <td>
                   {user_permissions.includes('Can change Update Docket Status') ?
                   <Link
                     to="/booking/orders/adddocketstatus"
@@ -166,46 +182,46 @@ const StatusInfoDataFormat = ({ order_id, setstatus_data }) => {
                   //  "-"
                   // } 
                 </td> */}
-                  <td className="selection-cell">{added_at}</td>
+                <td className="selection-cell">{added_at}</td>
 
-                  <td>{toTitleCase(status.username)}</td>
-                  {/* <td>-</td>
+                <td>{toTitleCase(status.username)}</td>
+                {/* <td>-</td>
           <td>-</td>
           <td>-</td>
           <td>-</td> */}
 
-                  {/* {user_permissions.includes('Can delete Update Docket Status') && */}
-                  <td>
-                    {index == order_status_list.length - 1 &&
+                {/* {user_permissions.includes('Can delete Update Docket Status') && */}
+                <td>
+                  {index == order_status_list.length - 1 &&
                     order_status_list.length > 1 &&
                     status.status !== "Shipment Delivered" ? (
-                      <Button
-                        size="sm"
-                        outline
-                        color="danger"
-                        type="button"
-                        onClick={() => {
-                          if (
-                            confirm(
-                              `Do you want to delete of status "${status.status}"`
-                            ) == true
-                          ) {
-                            delete_order_status(status.id, status.status);
-                          }
-                        }}
-                        disabled={!user.is_superuser}
-                      >
-                        Delete
-                      </Button>
-                    ) : null}
-                  </td>
-                  {/* } */}
-                </tr>
+                    <Button
+                      size="sm"
+                      outline
+                      color="danger"
+                      type="button"
+                      onClick={() => {
+                        if (
+                          confirm(
+                            `Do you want to delete of status "${status.status}"`
+                          ) == true
+                        ) {
+                          delete_order_status(status.id, status.status);
+                        }
+                      }}
+                      disabled={!user.is_superuser}
+                    >
+                      Delete
+                    </Button>
+                  ) : null}
+                </td>
+                {/* } */}
+              </tr>
 
-                <div></div>
-              </>
-            );
-          })}
+              <div></div>
+            </>
+          );
+        })}
     </>
   );
 };

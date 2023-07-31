@@ -312,6 +312,24 @@ const UpdateManifest = () => {
     } catch (error) { }
   }, []);
 
+  useEffect(() => {
+    let temp = []
+    let temp_list = []
+    if(manifest_data?.images?.length>0){
+      temp = manifest_data.images;
+      for (let index = 0; index < temp.length; index++) {
+        temp_list.push([
+          temp[index].manifest_image,
+          temp[index].id,
+        ]);
+      }
+      console.log("temp_list====", temp_list)
+      setrow1(temp_list);
+    }
+
+  }, [manifest_data])
+  
+
   const updateManifest = (values) => {
     let fields_name = Object.entries({
       airwaybill_no: values.coloader_no,
@@ -1425,16 +1443,7 @@ const UpdateManifest = () => {
                   ) : (
                     ""
                   )}
-                  {showModal ? (
-                    <Main_c
-                      modal={showModal}
-                      modal_set={setshowModal}
-                      upload_image={(val) => setdocument([...document, val])}
-                      result_image={(val) =>
-                        setdoc_result_image([...doc_result_image, val])
-                      }
-                    />
-                  ) : null}
+
                   {order_active_btn === "second" ? (
                     <Row className="hide">
                       <Col md={row1.length > 1 ? 5 : 6} sm={5}>

@@ -479,11 +479,11 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
       ) : (
         (list_toggle === true ? data1 : data).map((order, index) => {
           let added_at = "-";
-          if (order.created_date) {
-            console.log("order.created_date----", order.created_date)
-            let added_at_r = order.created_date.split("T");
+          if (order.created_at) {
+            console.log("order.created_date----", order.created_at)
+            let added_at_r = order.created_at?.split("T");
             let date = added_at_r[0];
-            let time = added_at_r[1].substring(0, 5);
+            let time = added_at_r[1]?.substring(0, 5);
             added_at = date + " " + time;
           }
           return (

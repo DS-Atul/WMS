@@ -26,6 +26,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import { ServerAddress } from "../../../constants/ServerAddress";
+import { BiTrash } from "react-icons/bi";
 import {
   setAlertType,
   setDataExist,
@@ -36,6 +37,7 @@ import Main_c from "../../../components/crop/main";
 import EditManifestDataFormat from "../editManifest/editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "../editManifest/AddAnotherOrder";
 import { gstin_no } from "../../../constants/CompanyDetails";
+import ImgModal from "../../../components/crop/ImgModal";
 
 const AddForward = (manifest) => {
   console.log("manifest--yyy---", manifest)
@@ -150,8 +152,47 @@ const AddForward = (manifest) => {
   // adding extra input fields in Order Images
   const [selectedFile, setSelectedFile] = useState("");
 
-  let dimension_list1 = [selectedFile];
+  let dimension_list1 = [selectedFile, ""];
   const [row1, setrow1] = useState([dimension_list1]);
+  console.log("row1")
+  const [row3, setrow3] = useState([["", ""]]);
+  const [showModalOrder, setshowModalOrder] = useState({
+    value: false,
+    ind: "",
+  });
+  const [ord_id, setord_id] = useState(null)
+  const [ord_data, setord_data] = useState("")
+  const [showinv, setShowinv] = useState(false);
+
+  const addorderimage = () => {
+    setSelectedFile("");
+    dimension_list1 = ["", ""];
+    setrow1([...row1, dimension_list1]);
+    setrow3([...row3, ["", ""]]);
+  };
+
+  const deleteimage = (item1) => {
+    if (location_data.state !== null && item1[1] !== "") {
+      setord_data(item1)
+      setord_id(item1[1])
+      setShowinv(true)
+    }
+    else {
+      let temp1 = [...row1];
+      let temp3 = [...row3];
+
+      const index1 = temp1.indexOf(item1);
+
+      if (index1 > -1) {
+        temp1.splice(index1, 1);
+        temp3.splice(index1, 1);
+      }
+
+      setrow1(temp1);
+      setrow3(temp3);
+    }
+
+  };
 
   // adding extra input fields in Invoice
   const [invoice_img, setinvoice_img] = useState("");
@@ -174,10 +215,10 @@ const AddForward = (manifest) => {
   };
 
   const [ewb_no, setewb_no] = useState([])
-useEffect(() => {
-  let m = data?.map(item=>item.eway_bill_no).filter(Boolean);
-  setewb_no(m)
-}, [data])
+  useEffect(() => {
+    let m = data?.map(item => item.eway_bill_no).filter(Boolean);
+    setewb_no(m)
+  }, [data])
 
   const deletePackage = (item) => {
     setlength("length");
@@ -203,7 +244,7 @@ useEffect(() => {
     initialValues: {
       coloader_no: "",
       flight_name: "",
-      flight_num:"",
+      flight_num: "",
       no_of_bags: manifest_data.bag_count || "",
       actual_weight: "",
       chargeable_weight: "",
@@ -212,16 +253,16 @@ useEffect(() => {
       tsp: "",
       rate: "",
       carrier_charges: "",
-      
+
     },
 
     validationSchema: Yup.object({
       coloader_no: Yup.string().required("Coloader No is required"),
       // flight_name: Yup.string().required("Flight Name is required"),
-      flight_num:Yup.string()
-      .min(7,"Flight Number must be 7 Digit")
-      .max(7,"Flight Number must be 7 Digit")
-      .required("Flight Number is required"),
+      flight_num: Yup.string()
+        .min(7, "Flight Number must be 7 Digit")
+        .max(7, "Flight Number must be 7 Digit")
+        .required("Flight Number is required"),
       // no_of_bags: Yup.string().required("Bags is required"),
       // no_of_box: Yup.string().required("Box is required"),
       chargeable_weight: Yup.string().required("Enter Chargable Weight"),
@@ -229,7 +270,7 @@ useEffect(() => {
     }),
 
     onSubmit: (values) => {
-      console.log("tax slab values",tax_slab)
+      console.log("tax slab values", tax_slab)
       if (docket_weight + 5 >= values.actual_weight) {
         updateManifest(values);
         // update_eway_b(values);
@@ -253,8 +294,8 @@ useEffect(() => {
         }
       )
       .then((response) => {
-        setdata(response.data[0].orders); 
-        setdata2(response.data[0].orders); 
+        setdata(response.data[0].orders);
+        setdata2(response.data[0].orders);
       })
       .catch((err) => {
         alert(`Error While Loading Client , ${err}`);
@@ -271,11 +312,11 @@ useEffect(() => {
       box_count: values.no_of_box ? values.no_of_box : 0,
       carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
       carrier_name: values.flight_name ? toTitleCase(values.flight_name).toUpperCase() : '',
-      carrier_no:values.flight_num ? toTitleCase(values.flight_num).toUpperCase() : '',
-      chargeable_weight:values.chargeable_weight ? values.chargeable_weight : "",
-      coloader_mode:coloader_selcted_m,
+      carrier_no: values.flight_num ? toTitleCase(values.flight_num).toUpperCase() : '',
+      chargeable_weight: values.chargeable_weight ? values.chargeable_weight : "",
+      coloader_mode: coloader_selcted_m,
       coloader: coloader_id,
-      coloader_name:coloader_selected,
+      coloader_name: coloader_selected,
       total_weight: values.actual_weight,
     });
     console.log("fields_name-------", fields_name)
@@ -318,8 +359,9 @@ useEffect(() => {
           forwarded_branch: user_branch,
           modified_by: user_id,
           manifest_packages: row,
+          manifest_image: row1,
           tsp: values.tsp ? values.tsp : 0,
-          rate:  values.rate ? values.rate : 0,
+          rate: values.rate ? values.rate : 0,
           carrier_charges: values.carrier_charges ? values.carrier_charges : 0,
           tax_slab: tax_slab,
           other_charges: values.other_charges ? values.other_charges : null,
@@ -408,7 +450,7 @@ useEffect(() => {
     if (coloader_selcted_m === "Direct AWB") {
       settax_slab("18%");
       setIsTaxSlabDisabled(true);
-    } else{
+    } else {
       setIsTaxSlabDisabled(false);
     }
   }, [coloader_selcted_m]);
@@ -425,25 +467,25 @@ useEffect(() => {
       )
       .then((response) => {
         if (response.data.results.length > 0) {
-            if (response.data.next === null) {
-              setcoloader_loaded(false);
-            } else {
-              setcoloader_loaded(true);
-            }
-            if (page == 1) {
-              coloader_lst = response.data.results.map((v) => [
-                v.id,
-                toTitleCase(v.name),
-              ]);
-            } else {
-              coloader_lst = [
-                ...coloader_list,
-                ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
-              ];
-            }
-            setcoloader_count(coloader_count + 2);
-            setcoloader_list(coloader_lst);
-          
+          if (response.data.next === null) {
+            setcoloader_loaded(false);
+          } else {
+            setcoloader_loaded(true);
+          }
+          if (page == 1) {
+            coloader_lst = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            coloader_lst = [
+              ...coloader_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setcoloader_count(coloader_count + 2);
+          setcoloader_list(coloader_lst);
+
         }
 
         else {
@@ -544,88 +586,103 @@ useEffect(() => {
 
   const user_l_state = useSelector((state) => state.authentication.userdetails.branch_location_state);
   const user_l_statecode = useSelector((state) => state.authentication.userdetails.branch_location_state_code);
-//   const update_eway_b = (values) => { 
-//     const dateString = '2023-04-16T16:45';
-// const date = new Date(dateString);
-// const day = String(date.getDate()).padStart(2, '0');
-// const month = String(date.getMonth() + 1).padStart(2, '0');
-// const year = date.getFullYear();
-// const formattedDate = `${day}/${month}/${year}`;
-//     axios
-//       .post(
-//         `https://dev.api.easywaybill.in/ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
-   
-//         {
-            
-//           "fromPlace":user_l_state,
-//           "fromState": user_l_statecode,
-//           "vehicleNo": null,
-//           "transMode": "3",
-//           "transDocNo": values.coloader_no,
-//           "transDocDate": formattedDate, 
-//           "ewbNos": ewb_no,
-//           "userGstin": gstin_no,
-//          },
-  
-//         {
-//           headers: {
-//             "Content-Type": "application/json",
-//             Authorization: `Bearer ${b_acess_token}`,
-//           },
-    
-  
-//           }
-        
-//       )
-//       .then(function (response) {
-  
-//         console.log("response=======eway bill detail", response);
-//         if (response.data.status === 1) {
-//           dispatch(setToggle(true));
-//           dispatch(setShowAlert(true));
-//           dispatch(
-//             setDataExist(`Updated  ${ewb_no}sucessfully`)
-//           )
-//           dispatch(setAlertType("success"));
-//             setShow(false)
-//             updateManifest(values)
-//         }else{
-//           dispatch(setToggle(true));
-//           dispatch(setShowAlert(true));
-//           dispatch(
-//             setDataExist(`Updated  ${ewb_no} Failed `)
-//           )
-//           dispatch(setAlertType("danger"));
-//             setShow(false)
-//             updateManifest(values)
-//         }
-       
-//       })
-//       .catch((error) => {
-//         console.log("eroorrrrrrrr",error)
-//         dispatch(setToggle(true));
-//         dispatch(setShowAlert(true));
-//         dispatch(
-//           setDataExist(`Updated  ${ewb_no} Failed `)
-//         )
-//         dispatch(setAlertType("danger"));
-//           setShow(false)
-//           updateManifest(values)
-     
-//       })
-//   };
-const showFun = () =>{
-  setcoloader_selected("")
-  setcoloader_selcted_m("")
-  setcoloader_mode_list([])
-  setShow(true)
-}
+  //   const update_eway_b = (values) => { 
+  //     const dateString = '2023-04-16T16:45';
+  // const date = new Date(dateString);
+  // const day = String(date.getDate()).padStart(2, '0');
+  // const month = String(date.getMonth() + 1).padStart(2, '0');
+  // const year = date.getFullYear();
+  // const formattedDate = `${day}/${month}/${year}`;
+  //     axios
+  //       .post(
+  //         `https://dev.api.easywaybill.in/ezewb/v1/cewb/generateByEwbNos?gstin=${gstin_no}`,
+
+  //         {
+
+  //           "fromPlace":user_l_state,
+  //           "fromState": user_l_statecode,
+  //           "vehicleNo": null,
+  //           "transMode": "3",
+  //           "transDocNo": values.coloader_no,
+  //           "transDocDate": formattedDate, 
+  //           "ewbNos": ewb_no,
+  //           "userGstin": gstin_no,
+  //          },
+
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${b_acess_token}`,
+  //           },
+
+
+  //           }
+
+  //       )
+  //       .then(function (response) {
+
+  //         console.log("response=======eway bill detail", response);
+  //         if (response.data.status === 1) {
+  //           dispatch(setToggle(true));
+  //           dispatch(setShowAlert(true));
+  //           dispatch(
+  //             setDataExist(`Updated  ${ewb_no}sucessfully`)
+  //           )
+  //           dispatch(setAlertType("success"));
+  //             setShow(false)
+  //             updateManifest(values)
+  //         }else{
+  //           dispatch(setToggle(true));
+  //           dispatch(setShowAlert(true));
+  //           dispatch(
+  //             setDataExist(`Updated  ${ewb_no} Failed `)
+  //           )
+  //           dispatch(setAlertType("danger"));
+  //             setShow(false)
+  //             updateManifest(values)
+  //         }
+
+  //       })
+  //       .catch((error) => {
+  //         console.log("eroorrrrrrrr",error)
+  //         dispatch(setToggle(true));
+  //         dispatch(setShowAlert(true));
+  //         dispatch(
+  //           setDataExist(`Updated  ${ewb_no} Failed `)
+  //         )
+  //         dispatch(setAlertType("danger"));
+  //           setShow(false)
+  //           updateManifest(values)
+
+  //       })
+  //   };
+  const showFun = () => {
+    setcoloader_selected("")
+    setcoloader_selcted_m("")
+    setcoloader_mode_list([])
+    setShow(true)
+  }
 
   return (
     <>
       <Button size="sm" outline color="primary" type="button" onClick={() => showFun()}>
         Forward
       </Button>
+
+      <Modal show={showinv} onHide={() => setShowinv(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body> "Do you Want to delete this Manifest image.</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowinv(false)}>
+            No
+          </Button>
+          {/* <Button variant="danger" onClick={() => action()}>
+            Yes
+          </Button> */}
+        </Modal.Footer>
+      </Modal>
 
       <Modal
         show={show}
@@ -811,61 +868,61 @@ const showFun = () =>{
                           </div>
                         </Col>
                         {(coloader_selcted_m === "Direct AWB" || coloader_selcted_m === "Air Console") &&
-                        <>
-                          <Col lg={3} md={3} sm={6}>
-                            <div className="mb-2">
-                              <Label className="header-child">
-                                Flight Name:
-                              </Label>
-                              <Input
-                                onChange={validation.handleChange}
-                                onBlur={validation.handleBlur}
-                                value={validation.values.flight_name}
-                                invalid={
-                                  validation.touched.flight_name &&
-                                    validation.errors.flight_name
-                                    ? true
-                                    : false
-                                }
-                                type="text"
-                                className="form-control-md"
-                                id="input"
-                                name="flight_name"
-                                placeholder="Enter Flight Name"
-                              />
-                            </div>
-                          </Col>
+                          <>
+                            <Col lg={3} md={3} sm={6}>
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Flight Name:
+                                </Label>
+                                <Input
+                                  onChange={validation.handleChange}
+                                  onBlur={validation.handleBlur}
+                                  value={validation.values.flight_name}
+                                  invalid={
+                                    validation.touched.flight_name &&
+                                      validation.errors.flight_name
+                                      ? true
+                                      : false
+                                  }
+                                  type="text"
+                                  className="form-control-md"
+                                  id="input"
+                                  name="flight_name"
+                                  placeholder="Enter Flight Name"
+                                />
+                              </div>
+                            </Col>
 
-                          <Col lg={3} md={3} sm={6}>
-                            <div className="mb-2">
-                              <Label className="header-child">
-                                Flight Number *:
-                              </Label>
-                              <Input
-                                onChange={validation.handleChange}
-                                onBlur={validation.handleBlur}
-                                value={validation.values.flight_num}
-                                invalid={
-                                  validation.touched.flight_num &&
-                                    validation.errors.flight_num
-                                    ? true
-                                    : false
-                                }
-                                type="text"
-                                maxLength={7}
-                                className="form-control-md"
-                                id="input"
-                                name="flight_num"
-                                placeholder="Enter Flight Number"
-                              />
-                              {validation.touched.flight_num &&
-                                validation.errors.flight_num ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.flight_num}
-                                </FormFeedback>
-                              ) : null}
-                            </div>
-                          </Col>
+                            <Col lg={3} md={3} sm={6}>
+                              <div className="mb-2">
+                                <Label className="header-child">
+                                  Flight Number *:
+                                </Label>
+                                <Input
+                                  onChange={validation.handleChange}
+                                  onBlur={validation.handleBlur}
+                                  value={validation.values.flight_num}
+                                  invalid={
+                                    validation.touched.flight_num &&
+                                      validation.errors.flight_num
+                                      ? true
+                                      : false
+                                  }
+                                  type="text"
+                                  maxLength={7}
+                                  className="form-control-md"
+                                  id="input"
+                                  name="flight_num"
+                                  placeholder="Enter Flight Number"
+                                />
+                                {validation.touched.flight_num &&
+                                  validation.errors.flight_num ? (
+                                  <FormFeedback type="invalid">
+                                    {validation.errors.flight_num}
+                                  </FormFeedback>
+                                ) : null}
+                              </div>
+                            </Col>
                           </>
                         }
                         <Col lg={3} md={3} sm={6}>
@@ -1035,7 +1092,7 @@ const showFun = () =>{
                               name="actual_weight"
                               placeholder="Enter Manifest Weight"
                             />
-                               <FormFeedback type="invalid">
+                            <FormFeedback type="invalid">
                               Please Enter Actual Weight
                             </FormFeedback>
                           </div>
@@ -1063,7 +1120,7 @@ const showFun = () =>{
                               name="chargeable_weight"
                               placeholder="Enter Chargeable Weight"
                             />
-                              <FormFeedback type="invalid">
+                            <FormFeedback type="invalid">
                               Please Enter Chargeable Weight
                             </FormFeedback>
                           </div>
@@ -1121,19 +1178,19 @@ const showFun = () =>{
                             />
                           </div>
                         </Col>
-                       
+
                         <Col lg={3} md={3} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">Tax Slab</Label>
-                          <NSearchInput
-                            data_list={tax_slab_list}
-                            data_item_s={tax_slab}
-                            set_data_item_s={settax_slab}
-                            show_search={false} 
-                            disable_me={isTaxSlabDisabled}
-                          />
-                        </div>
-                      </Col>
+                          <div className="mb-2">
+                            <Label className="header-child">Tax Slab</Label>
+                            <NSearchInput
+                              data_list={tax_slab_list}
+                              data_item_s={tax_slab}
+                              set_data_item_s={settax_slab}
+                              show_search={false}
+                              disable_me={isTaxSlabDisabled}
+                            />
+                          </div>
+                        </Col>
                         {/* <Col lg={3} md={3} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">Open Box</Label>
@@ -1435,125 +1492,118 @@ const showFun = () =>{
                       ) : (
                         ""
                       )}
-                      {showModal ? (
-                        <Main_c
-                          modal={showModal}
-                          modal_set={setshowModal}
-                          upload_image={(val) => setdocument([...document, val])}
-                          result_image={(val) =>
-                            setdoc_result_image([...doc_result_image, val])
-                          }
-                        />
-                      ) : null}
+
                       {order_active_btn === "second" ? (
                         <Row className="hide">
-                          <Col md={row1.length > 1 ? 5 : 6} sm={5}>
+                          <Col md={5} sm={5}>
                             <div className="mb-3">
                               <Label className="header-child">Image</Label>
-                              <div
-                                style={{
-                                  display: "flex",
-                                  flexDirection: "row",
-                                  border: "1px solid #dad7d7",
-                                  alignItems: "center",
-                                  height: "38px",
-                                }}
-                                onClick={() => {
-                                  setshowModal(true);
-                                }}
-                              >
-                                <div style={{ marginLeft: "3px" }}>
-                                  Chooose File
-                                </div>
-                                <div
-                                  style={{
-                                    fontSize: "25px",
-                                    color: "#dad7d7",
-                                    marginLeft: "5px",
-                                  }}
-                                >
-                                  |
-                                </div>
-                                {doc_result_image.length !== 0 ? (
-                                  <div>Image Not Uploaded</div>
-                                ) : (
-                                  <div>Image Uploaded</div>
-                                )}
-                              </div>
-                            </div>
-                          </Col>
-                          <Col lg={6} md={6} sm={6}>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                              }}
-                            >
-                              {doc_result_image.length !== 0 ? (
-                                <div style={{ flex: 1 }}>
-                                  {doc_result_image.map((e, i) => {
-                                    return (
+                              {row1.map((item1, index1) => {
+                                return (
+                                  <div style={{ width: "100%" }} key={index1}>
+                                    {item1[0] ? (
+                                      <img
+                                        src={item1[0]}
+                                        style={{
+                                          height: "95px",
+                                          width: "95px",
+                                          borderRadius: "10px",
+                                          paddingBottom: "5px",
+                                        }}
+                                        onClick={() => {
+                                          setshowModalOrder({
+                                            ...showModalOrder,
+                                            value: true,
+                                            ind: index1,
+                                          });
+                                        }}
+                                      />
+                                    ) : (
                                       <div
                                         style={{
-                                          width: "100%",
-                                          flexDirection: "column",
-                                          justifyContent: "space-between",
+                                          height: "95px",
+                                          paddingTop: 35,
                                         }}
                                       >
-                                        <img
-                                          src={e}
+                                        <div
                                           style={{
-                                            height: "110px",
-                                            width: "110px",
-                                            borderRadius: "10px",
-                                            padding: 20,
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            border: "0.5px solid #DAD7D7",
+                                            alignItems: "center",
+                                            height: "38px",
+                                            borderRadius: 5,
+                                            height: 31,
                                           }}
-                                          key={i}
-                                        />
-                                        <MdDeleteForever
-                                          size={30}
-                                          color="#ff7b7b"
-                                          style={{ marginLeft: 50 }}
                                           onClick={() => {
-                                            let filterData =
-                                              doc_result_image.filter(
-                                                (fe, fi) => i !== fi
-                                              );
-                                            console.log(
-                                              "filerData----------------------",
-                                              filterData
-                                            );
-                                            setdoc_result_image(filterData);
-                                            let documentfilterData =
-                                              document.filter(
-                                                (fe, fi) => i !== fi
-                                              );
-                                            console.log(
-                                              "documentfilerData----------------------",
-                                              documentfilterData
-                                            );
-                                            setdocument(documentfilterData);
+                                            setshowModalOrder({
+                                              ...showModalOrder,
+                                              value: true,
+                                              ind: index1,
+                                            });
                                           }}
-                                        />
-                                        {/* <a>Delete</a> */}
+                                        >
+                                          <a
+                                            style={{
+                                              marginLeft: "3px",
+                                              fontSize: 11,
+                                            }}
+                                          >
+                                            Chooose File
+                                          </a>
+                                          <div
+                                            style={{
+                                              fontSize: "25px",
+                                              color: "#DAD7D7",
+                                              marginLeft: "5px",
+                                            }}
+                                          >
+                                            |
+                                          </div>
+                                        </div>
                                       </div>
-                                    );
-                                  })}
-                                </div>
-                              ) : (
-                                <div
-                                  style={{
-                                    marginTop: "28px",
-                                    color: "red",
-                                    fontSize: "14px",
-                                  }}
-                                >
-                                  {" "}
-                                  No Image Has Been Selected
-                                </div>
-                              )}
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           </Col>
+                          {showModalOrder.value ? (
+                            // <Main_c
+                            <ImgModal
+                              modal={showModalOrder.value}
+                              modal_set={() => {
+                                setshowModalOrder({
+                                  ...showModalOrder,
+                                  value: false,
+                                });
+                              }}
+                              pre_image={showModalOrder.ind !== "" ? row1[showModalOrder.ind][0] : ""}
+                              upload_image={(val) => {
+                                // setdocumentOrder(val);
+                                if (showModalOrder.ind !== "") {
+                                  row3[showModalOrder.ind][0] = val;
+                                  setshowModalOrder({
+                                    ...showModalOrder,
+                                    value: false,
+                                    ind: "",
+                                  });
+                                } else {
+                                  row3[row3.length - 1][0] = val;
+                                }
+                              }}
+                              result_image={(val) => {
+                                console.log("val------------", val)
+                                setSelectedFile(val);
+                                if (showModalOrder.ind !== "") {
+                                  row1[showModalOrder.ind][0] = val;
+                                } else {
+                                  row1[row1.length - 1][0] = val;
+                                }
+                                // setdoc_result_image([...doc_result_image, val])
+                              }}
+                            />
+                          ) : null}
 
                           <Col md={1}>
                             <div className="mb-3" style={{ textAlign: "center" }}>
@@ -1561,30 +1611,38 @@ const showFun = () =>{
                                 <Label className="header-child">Delete</Label>
                               ) : null}
                               {row1.map((item1, index1) => (
-                                <IconContext.Provider
+                                <div
+                                  style={{ height: "95px", paddingTop: 35 }}
                                   key={index1}
-                                  value={{
-                                    className: "icon multi-input",
-                                  }}
                                 >
-                                  {row1.length > 1 ? (
-                                    <>
-                                      <div style={{ height: "14.5px" }}></div>
-                                      <div
-                                        onClick={() => {
-                                          deleteimage(item1);
-                                        }}
-                                      >
-                                        <MdDeleteForever
-                                          style={{
-                                            alignItems: "center",
-                                            background: "",
+                                  <IconContext.Provider
+                                    value={{
+                                      className: "icon multi-input",
+                                    }}
+                                  >
+                                    {row1.length > 1 ? (
+                                      <>
+                                        <div
+                                          onClick={() => {
+                                            deleteimage(item1);
+                                            setSelectedFile(
+                                              row1[row1.length - 1][0]
+                                            );
                                           }}
-                                        />
-                                      </div>
-                                    </>
-                                  ) : null}
-                                </IconContext.Provider>
+                                        >
+                                          <BiTrash
+                                            color="red"
+                                            size={21}
+                                            style={{
+                                              alignItems: "center",
+                                              cursor: "pointer"
+                                            }}
+                                          />
+                                        </div>
+                                      </>
+                                    ) : null}
+                                  </IconContext.Provider>
+                                </div>
                               ))}
                             </div>
                           </Col>
@@ -1592,8 +1650,13 @@ const showFun = () =>{
                             <span
                               className="link-text"
                               onClick={() => {
-                                if (doc_result_image.length !== 0) {
-                                  setshowModal(true);
+                                if (row1[row1.length - 1][0]) {
+                                  setshowModalOrder({
+                                    ...showModalOrder,
+                                    value: false,
+                                    ind: "",
+                                  });
+                                  addorderimage();
                                 } else {
                                   alert("Order images is required");
                                 }

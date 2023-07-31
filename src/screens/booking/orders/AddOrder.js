@@ -4304,6 +4304,36 @@ const AddOrder = () => {
     setlogger_bottom(56)
   }, [asset_info_selected])
 
+  //Permission
+
+  const [can_add, setcan_add] = useState(false);
+  const [can_view, setcan_view] = useState(false);
+  console.log("can_add----", can_add)
+
+  useEffect(() => {
+    if (
+      userpermission.some(
+        (e) => e.sub_model === "Order Status" && e.write === true
+      )
+    ) {
+      setcan_add(true);
+    } else {
+      setcan_add(false);
+    }
+  }, [userpermission]);
+
+  useEffect(() => {
+    if (
+      userpermission.some(
+        (e) => e.sub_model === "Order Status" && e.read === true
+      )
+    ) {
+      setcan_view(true);
+    } else {
+      setcan_view(false);
+    }
+  }, [userpermission]);
+
   return (
     <div>
       {/* {!eway_loaded && memoizedLogInEwayBill} */}
@@ -6548,7 +6578,7 @@ const AddOrder = () => {
         </div>
 
         {/*Status Info */}
-        {isupdating ? (
+        {(isupdating && can_view) || (isupdating && user.is_superuser) ? (
           <div className="m-3">
             <Col lg={12}>
               <Card className="shadow bg-white rounded" id="status_info">
@@ -6562,20 +6592,15 @@ const AddOrder = () => {
                         alignItems: "center",
                       }}
                     >
-                      {
-                        // current_status !== "Shipment Arrived at Hub" &&
-                        // current_status !== "Shipment In Transit" &&
-                        // current_status !==
-                        // "Shipment Arrived at Destination Hub" &&
-                        // current_status !== "Shipment Delivered" &&
-                        // user.is_superuser && (
+
+                      {(can_add || user.is_superuser) && (
                         <span>
                           <Button
                             type="button"
                             className="btn btn-info mx-1 cu_btn "
                             onClick={() => {
                               if (
-                                order.current_status === "SHIPMENT PICKED UP"
+                                status_data?.length > 1
                               ) {
                                 navigate("/manifest/pickeduporders");
                               } else {
@@ -6584,12 +6609,12 @@ const AddOrder = () => {
                                 });
                               }
                             }}
-                            disabled={status_data?.length>1}
+                            disabled={(status_data?.length > 2)}
                           >
                             Add Status
                           </Button>
                         </span>
-                        // )
+                      )
                       }
 
                       <IconContext.Provider

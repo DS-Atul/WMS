@@ -35,6 +35,7 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import { gstin_no } from "../../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
+import { setToggle } from "../../../store/pagination/Pagination";
 
 const AddDocketStatus = () => {
   const dispatch = useDispatch();
@@ -124,23 +125,29 @@ const AddDocketStatus = () => {
     validationSchema: Yup.object({}),
 
     onSubmit: (values) => {
-      if (added_date_time == "") {
-        alert("Please Add Added Date and Time");
-      } else if (status == "") {
-        alert("Please Add Status");
-      } else if (status == "SHIPMENT IN TRANSIT" && transit_status == null) {
-        alert("Please Add Transist Status");
-      } else if (status == "SHIPMENT IN TRANSIT" && transit_to_branch == null) {
-        alert("Please Add Transist To Branch");
-      }
-      else if (status == "SHIPMENT PICKED UP" && vehicle === "") {
-        alert("Please Add Vehicle Number")
-      }
-      else if (status == "SHIPMENT PICKED UP" && !is_valid_barcode) {
-        alert("Please Add Barcode With Unique Value")
+      if (!isupdating) {
+        if (added_date_time == "") {
+          alert("Please Add Added Date and Time");
+        } else if (status == "") {
+          alert("Please Add Status");
+        } else if (status == "SHIPMENT IN TRANSIT" && transit_status == null) {
+          alert("Please Add Transist Status");
+        } else if (status == "SHIPMENT IN TRANSIT" && transit_to_branch == null) {
+          alert("Please Add Transist To Branch");
+        }
+        else if (status == "SHIPMENT PICKED UP" && vehicle === "") {
+          alert("Please Add Vehicle Number")
+        }
+        else if (status == "SHIPMENT PICKED UP" && !is_valid_barcode) {
+          alert("Please Add Barcode With Unique Value")
+        }
+        else {
+          add_order_status(values);
+        }
+
       }
       else {
-        add_order_status(values);
+        update_Status(values)
       }
     },
   });
@@ -365,6 +372,34 @@ const AddDocketStatus = () => {
       });
   };
 
+  const update_Status = async (values) => {
+    try {
+      const response = await axios.put(
+        ServerAddress + "booking/update_orderstatus/" + ord_status.id,
+        {
+          transit_remarks: values.remarks,
+          created_at: added_date_time,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(setDataExist(`Status Updated Sucessfully`));
+        dispatch(setAlertType("info"));
+        dispatch(setShowAlert(true));
+        navigate(-1);
+      }
+    } catch (error) {
+      alert(`Error While  Updateing Status,${error}`);
+    }
+  };
+
+
   const add_barcode = () => {
     axios
       .post(
@@ -419,9 +454,9 @@ const AddDocketStatus = () => {
       String(date.getMinutes()).length === 1
         ? "0" + String(date.getMinutes())
         : date.getMinutes();
-    setadded_date_time(
-      `${year}-${month}-${added_date_time}T${hour}:${minutes}`
-    );
+    // setadded_date_time(
+    //   `${year}-${month}-${added_date_time}T${hour}:${minutes}`
+    // );
   }, []);
 
   useEffect(() => {
@@ -457,9 +492,20 @@ const AddDocketStatus = () => {
       ) {
         setcant_change_status(true);
       }
+
       setord_status(status_ul);
 
       setstatus(status_ul.status);
+      let data = status_ul.created_at
+      const dateTime = new Date(data);
+
+      // Get the hours and minutes in the desired format
+      const hours = String(dateTime.getUTCHours()).padStart(2, '0');
+      const minutes = String(dateTime.getUTCMinutes()).padStart(2, '0');
+
+      // Create the converted date and time string
+      const convertedDateTime = `${dateTime.toISOString().slice(0, 10)}T${hours}:${minutes}`;
+      setadded_date_time(convertedDateTime)
     } catch { }
   }, []);
 
@@ -654,14 +700,15 @@ const AddDocketStatus = () => {
                             show_search={false}
                             error_message={"Select status"}
                             disable_me={
-                              location.state.order.status
-                                ? cant_change_status
-                                : false
+                              isupdating
+                              // location.state.order.status
+                              //   ? cant_change_status
+                              //   : false
                             }
                           />
                         </div>
                       </Col>
-                      {status == "SHIPMENT PICKED UP" ? (
+                      {status == "SHIPMENT PICKED UP" && !isupdating ? (
                         <>
                           <Col lg={4} md={6} sm={6}>
                             <div className="mb-2">
@@ -691,35 +738,35 @@ const AddDocketStatus = () => {
                           </Col>
 
                           <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                          {rental ? (
-                            <Label className="header-child">
-                              {" "}
-                              Market Vehcile No* :
-                            </Label>
-                          ) : (
-                            <Label className="header-child">
-                              Vehcile No* :
-                            </Label>
-                          )}
-                          {rental ? null : (
-                              <SearchInput
-                                data_list={vehicle_list_s}
-                                setdata_list={setvehicle_list_s}
-                                data_item_s={vehicle}
-                                set_data_item_s={setvehicle}
-                                set_id={setvehicle_id}
-                                page={vehicle_page}
-                                setpage={setvehicle_page}
-                                error_message={"Please Select Any State"}
-                                error_s={vehicle_error}
-                                search_item={vehicle_search_item}
-                                setsearch_item={setvehicle_search_item}
-                                loaded={vehicle_loaded}
-                                count={vehicle_count}
-                                bottom={vehicle_bottom}
-                                setbottom={setvehicle_bottom}
-                              />
+                            <div className="mb-2">
+                              {rental ? (
+                                <Label className="header-child">
+                                  {" "}
+                                  Market Vehcile No* :
+                                </Label>
+                              ) : (
+                                <Label className="header-child">
+                                  Vehcile No* :
+                                </Label>
+                              )}
+                              {rental ? null : (
+                                <SearchInput
+                                  data_list={vehicle_list_s}
+                                  setdata_list={setvehicle_list_s}
+                                  data_item_s={vehicle}
+                                  set_data_item_s={setvehicle}
+                                  set_id={setvehicle_id}
+                                  page={vehicle_page}
+                                  setpage={setvehicle_page}
+                                  error_message={"Please Select Any State"}
+                                  error_s={vehicle_error}
+                                  search_item={vehicle_search_item}
+                                  setsearch_item={setvehicle_search_item}
+                                  loaded={vehicle_loaded}
+                                  count={vehicle_count}
+                                  bottom={vehicle_bottom}
+                                  setbottom={setvehicle_bottom}
+                                />
                               )}
 
                               {rental &&
@@ -754,7 +801,7 @@ const AddDocketStatus = () => {
                           </Col>
                         </>
                       ) : null}
-                      {status == "SHIPMENT IN TRANSIT" ? (
+                      {status == "SHIPMENT IN TRANSIT" && !isupdating ? (
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">
@@ -771,7 +818,7 @@ const AddDocketStatus = () => {
                         </Col>
                       ) : null}
 
-                      {status === "SHIPMENT IN TRANSIT" ? (
+                      {status === "SHIPMENT IN TRANSIT" && !isupdating ? (
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-2">
                             <Label className="header-child">
@@ -810,16 +857,10 @@ const AddDocketStatus = () => {
                               id="input"
                               placeholder="Enter Remarks"
                             />
-                            {validation.touched.remarks &&
-                              validation.errors.remarks ? (
-                              <FormFeedback type="invalid">
-                                {validation.errors.remarks}
-                              </FormFeedback>
-                            ) : null}
                           </div>
                         </div>
                       </Col>
-                      {status == "SHIPMENT PICKED UP" ? (
+                      {status == "SHIPMENT PICKED UP" && !isupdating ? (
                         // <Row className="hide">
                         // <Col lg={4} md={6} sm={6}>
                         //   <div className="mb-2">
@@ -898,7 +939,6 @@ const AddDocketStatus = () => {
           <Col lg={12}>
             <div className="mb-1 footer_btn">
               <Button type="submit" className="btn btn-info m-1 cu_btn"
-                disabled={status === "SHIPMENT ORDER RECEIVED"}
               >
                 {isupdating ? "Update" : "Save"}
               </Button>

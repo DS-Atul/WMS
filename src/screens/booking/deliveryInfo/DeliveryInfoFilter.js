@@ -63,7 +63,7 @@ function DeliveryInfoFilter() {
               className="form-control-md"
               id="input"
               name="date"
-              type="datetime-local"
+              type="date"
               onChange={(val) => {
                 setfrom_date(val.target.value);
               }}
@@ -77,7 +77,7 @@ function DeliveryInfoFilter() {
               className="form-control-md"
               id="input"
               name="date"
-              type="datetime-local"
+              type="date"
               onChange={(val) => {
                 setto_date(val.target.value);
               }}

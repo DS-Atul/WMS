@@ -264,7 +264,7 @@ const AdminChangePassword = () => {
                                                     className="btn btn-primary btn-block"
                                                     type="submit"
                                                 >
-                                                    Admin Change Password
+                                                    Change Password
                                                 </button>
                                             </div>
                                         </Form>
