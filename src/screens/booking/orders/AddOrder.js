@@ -413,6 +413,7 @@ const AddOrder = () => {
   ];
 
   const [row2, setrow2] = useState([dimension_list2]);
+  console.log("row2-----", row2)
 
   const [row4, setrow4] = useState([["", val, "", "", "", "", ""]]);
 
@@ -1050,11 +1051,14 @@ const AddOrder = () => {
           );
           dispatch(setAlertType("danger"));
         } else {
-          if (e_waybill_inv.length === 12 && booking_through && business_access_token && booking_through) {
-            get_eway_detail(e_waybill_inv, "no")
-            alert("00")
-          }
-          get_eway_detail(ewb_no, "yes");
+          // if (ewb_no.length === 12 && type==="Invoice") {
+          //   alert("-=---22---")
+          //   // get_eway_detail(e_waybill_inv, "no")
+          // }
+          // if(eway_detail_l?.length === 0 && type==="Ewaybill"){
+          // if(ewb_no.length === 12  && type==="Ewaybill"){
+            get_eway_detail(ewb_no, "yes");
+          // }
         }
       })
       .catch((error) => {
@@ -2737,9 +2741,13 @@ const AddOrder = () => {
 
   const [eway_detail_l, seteway_detail_l] = useState([]);
   console.log("eway_detail_l----", eway_detail_l)
-  console.log("eway_confirm----", eway_confirm)
+  console.log("e_waybill_inv----", e_waybill_inv)
+  console.log("e_waybill_inv----", e_waybill_inv.length)
+  console.log("booking_through----", booking_through)
+  console.log("business_access_token----", business_access_token)
 
   const [eway_value, seteway_value] = useState([])
+  console.log("eway_value=====", eway_value)
 
   const get_eway_detail = (eway, is_eway) => {
     axios
@@ -2753,11 +2761,14 @@ const AddOrder = () => {
         }
       )
       .then(function (response) {
-
         if (response.data.response !== null && typeof (response.data) !== "string") {
           // if (response.data.length > 0) {
+            // alert("----app----")
           if (is_eway === "yes") {
-            seteway_detail_l(response.data.response);
+            if(location.state === null){
+              seteway_detail_l(response.data.response);
+            }
+           
             // seteway_value([...eway_value, response.data.response])
             seteway_value(prevEwayValue => {
               const newEwayValue = [...prevEwayValue, response.data.response];
@@ -3701,7 +3712,7 @@ const AddOrder = () => {
   useEffect(() => {
     let temp_list = [];
 
-    if (eway_value && eway_value.length > 0) {
+    if (eway_value && eway_value.length > 0 && location.state===null) {
       const uniqueValues = eway_value.filter(
         (value, index, self) => index === self.findIndex(obj => obj.ewbNo === value.ewbNo)
       );
@@ -3725,6 +3736,56 @@ const AddOrder = () => {
       setrow2(temp_list);
 
     }
+  }, [eway_value]);
+
+  useEffect(() => {
+    if(location.state !==null ){
+
+    if (!eway_value || eway_value.length === 0) return;
+  
+    setrow2(prevRow2 => {
+      // Create a new array to hold the updated rows
+      const updatedRows = [...prevRow2];
+  
+      // Iterate through each element in eway_value
+      for (let i = 0; i < eway_value.length; i++) {
+        const element = eway_value[i];
+        const dateStr = element.docDate ?? "";
+        const [day, month, year] = dateStr?.split("-") ?? ["", "", ""];
+        const isoDate = `${year}-${(month || "").padStart(2, "0")}-${(day || "").padStart(2, "0")}`;
+  
+        // Find the index of the row with the same 'ewbNo' in updatedRows
+        const existingRowIndex = updatedRows.findIndex(row => row[0] === String(element.ewbNo));
+  
+        // If the 'ewbNo' is found in existingRows, update the row with new data
+        if (existingRowIndex !== -1) {
+          updatedRows[existingRowIndex] = [
+            String(element.ewbNo),
+            String(isoDate),
+            String(element.docNo),
+            String(element.totInvValue),
+            "",
+            "",
+            "",
+          ];
+        }
+        // If the 'ewbNo' is not found in existingRows, add a new row
+        else {
+          updatedRows.push([
+            String(element.ewbNo),
+            String(isoDate),
+            String(element.docNo),
+            String(element.totInvValue),
+            "",
+            "",
+            "",
+          ]);
+        }
+      }
+  
+      return updatedRows;
+    });
+  }
   }, [eway_value]);
 
 

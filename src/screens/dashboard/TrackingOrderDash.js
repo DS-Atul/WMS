@@ -559,7 +559,7 @@ useEffect(() => {
                               </>
                             ) : null}
 
-                            {last_ele.status === "SHIPMENT ARRIVED AT DESTINATION HUB"
+                            {last_ele.status === "SHIPMENT ARRIVED AT DESTINATION"
                              ? (
                               <>
                                 <div className="step active">
@@ -821,7 +821,7 @@ useEffect(() => {
                             ) : null} */}
 
 
-{(last_ele.status ===
+                          {(last_ele.status ===
                               "SHIPMENT DELIVERED" || last_ele.status ===
                               "SHORT DELIVERED") ? (
                               <>

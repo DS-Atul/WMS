@@ -147,15 +147,15 @@ const AddForward = (manifest) => {
 
   let dimension_list = [length, breadth, height, pieces];
   const [row, setrow] = useState([dimension_list]);
-  console.log("row-----------", row)
+  // console.log("row-----------", row)
 
   // adding extra input fields in Order Images
   const [selectedFile, setSelectedFile] = useState("");
 
-  let dimension_list1 = [selectedFile, ""];
+  let dimension_list1 = [selectedFile];
   const [row1, setrow1] = useState([dimension_list1]);
-  console.log("row1")
-  const [row3, setrow3] = useState([["", ""]]);
+  console.log("row1=====================", row1)
+  const [row3, setrow3] = useState([[""]]);
   const [showModalOrder, setshowModalOrder] = useState({
     value: false,
     ind: "",
@@ -166,9 +166,9 @@ const AddForward = (manifest) => {
 
   const addorderimage = () => {
     setSelectedFile("");
-    dimension_list1 = ["", ""];
+    dimension_list1 = [""];
     setrow1([...row1, dimension_list1]);
-    setrow3([...row3, ["", ""]]);
+    setrow3([...row3, [""]]);
   };
 
   const deleteimage = (item1) => {
