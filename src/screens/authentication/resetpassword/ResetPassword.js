@@ -30,6 +30,8 @@ const Reset_Password = () => {
   const [error, seterror] = useState(false);
   const username = useSelector((state) => state.authentication.username);
   const accessToken = useSelector((state) => state.authentication.access_token);
+  const [message, setmessage] = useState("")
+  console.log("message----", message)
 
   const reset_password = (oldpassword, newpassword) => {
     axios
@@ -47,14 +49,17 @@ const Reset_Password = () => {
         }
       )
       .then(function (response) {
-        if (response.data == "Pass Reset") {
+        console.log("Pass Reset------", response.data)
+        if (response.data == "Password Reset Successfully") {
           seterror(false);
           navigate("/signin");
         } else {
+          setmessage(response.data)
           seterror(true);
         }
       })
       .catch(function () {
+        setmessage("Some Error Occur")
         seterror(true);
       });
   };
@@ -137,7 +142,7 @@ const Reset_Password = () => {
                     >
                       {error ? (
                         <Alert color="danger" style={{ fontSize: "12px" }}>
-                          Some Error Occur
+                          {message}
                         </Alert>
                       ) : null}
 
