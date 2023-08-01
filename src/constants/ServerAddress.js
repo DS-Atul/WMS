@@ -5,8 +5,9 @@
 
 const EServerAddress = "http://dev.api.easywaybill.in/";
 
-// const ServerAddress = "http://192.168.1.36:8000/";                                                                                    
-const ServerAddress = "http://192.168.15.95:8000/"; 
+// const ServerAddress = "http://192.168.1.34:8000/";                                                                                    
+const ServerAddress = "http://192.168.81.114:8000/";                                                                                    
+// const ServerAddress = "http://192.168.1.41:8000/"; 
 
 const bucket_address = "https://logcube-s3-test1.s3.amazonaws.com/";
 

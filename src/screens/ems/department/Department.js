@@ -5,7 +5,7 @@ import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import { setPageNumber } from "../../../store/pagination/Pagination";
-import Filter from "../../../components/listDisplay/filter/Filter";
+// import Filter from "../../../components/listDisplay/filter/Filter";
 import Nav_Btn from "../../../components/btn/NavBtn";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
 // import { setToggle } from "../../../store/parentFilter/ParentFilter";

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import toTitleCase from "../../../lib/titleCase/TitleCase";
+// import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { setFilterA, setFilterB } from "../../../store/filterValue/FilterValue";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import MultiSelect from "../../../components/formComponent/multiSelect/MultiSelect";
@@ -21,8 +21,6 @@ function LoginDetailsFilter() {
   const [user, setuser] = useState([]);
   const [platform_filter, setplatform_filter] = useState([]);
   const [platform, setplatform] = useState([]);
-  const [is_mob_filter, setis_mob_filter] = useState([]);
-  const [is_mob, setis_mob] = useState([]);
 
   //   const [commodity_type_filter, setcommodity_type_filter] = useState([
   //     ["1", "General"],

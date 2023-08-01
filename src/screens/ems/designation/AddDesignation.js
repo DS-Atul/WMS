@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IconContext } from "react-icons";
@@ -28,31 +28,31 @@ import {
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { Button } from "react-bootstrap";
-import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
+// import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 const AddDesignation = () => {
   const dispatch = useDispatch();
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const department = useSelector((state) => state.authentication.userdetails);
-  const userdepartment = useSelector(
-    (state) => state.authentication.userdepartment
-  );
+  // const department = useSelector((state) => state.authentication.userdetails);
+  // const userdepartment = useSelector(
+  //   (state) => state.authentication.userdepartment
+  // );
   const location = useLocation();
-  console.log("location---", location);
+  // console.log("location---", location);
   const [isupdating, setisupdating] = useState(false);
   const [designation, setdesignation] = useState("");
 
   // Commodity
-  const [search_commodity_type, setsearch_commodity_type] = useState("");
+  // const [search_commodity_type, setsearch_commodity_type] = useState("");
   const [approved_entry, setapproved_entry] = useState(false);
-  const [commodity_type_search_item, setcommodity_type_search_item] =
-    useState("");
+  // const [commodity_type_search_item, setcommodity_type_search_item] =
+  //   useState("");
 
-  const navigatee = useNavigate();
+  // const navigatee = useNavigate();
 
-  const refreshPage = () => {
-    navigatee(0);
-  };
+  // const refreshPage = () => {
+  //   navigatee(0);
+  // };
 
   const validation = useFormik({
     enableReinitialize: true,

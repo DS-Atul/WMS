@@ -17,9 +17,6 @@ import {
     InputGroup,
 } from "reactstrap";
 import { useNavigate, Link } from "react-router-dom";
-// Formik validation
-import * as Yup from "yup";
-import { useFormik } from "formik";
 import { useSelector } from "react-redux";
 import { IconContext } from "react-icons";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -36,12 +33,6 @@ const AdminChangePassword = () => {
 
     const [new_password, setnew_password] = useState("");
     const [new_password_error, setnew_password_error] = useState(false);
-
-    console.log("user_name==", user_name);
-    console.log("user_name type==", typeof user_name);
-    console.log("new_password==", new_password);
-    console.log("new_password type==", typeof new_password);
-
 
     const [showPass, setshowPass] = useState(false);
     const [error, seterror] = useState(false);
@@ -81,22 +72,6 @@ const AdminChangePassword = () => {
                 seterror(true);
             });
     };
-    // const validation = useFormik({
-    //     // enableReinitialize : use this flag when initial values needs to be changed
-    //     enableReinitialize: true,
-    //     initialValues: {
-    //         newpassword: "Default@123",
-    //         // user_name: "",
-    //     },
-    //     validationSchema: Yup.object({
-    //         newpassword: Yup.string().required("Please Enter New Password"),
-    //         // user_name: Yup.string().user_name("Invalid Username")
-    //     }),
-    //     onSubmit: values => {
-    //         // console.log(values);
-    //         changepassword(values.newpassword);
-    //     },
-    // });
 
     useLayoutEffect(() => {
         if (user_name !== "") {
@@ -133,7 +108,7 @@ const AdminChangePassword = () => {
                                             </div>
                                         </Col>
                                         <Col className="col-5">
-                                            <img className="img-fluid" />
+                                            <img className="img-fluid"  alt="" />
                                         </Col>
                                     </Row>
                                 </div>

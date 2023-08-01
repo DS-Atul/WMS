@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -81,7 +81,7 @@ const AddOrder = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
   const dispatch = useDispatch();
   const location = useLocation();
-  console.log("location====", location)
+  // console.log("location====", location)
   const navigate = useNavigate();
   const [page, setpage] = useState(1);
 
@@ -97,7 +97,7 @@ const AddOrder = () => {
   //Get Updated Location Data
   const [order, setorder] = useState([]);
   const [status_data, setstatus_data] = useState([])
-  console.log("status_data-----", status_data)
+  // console.log("status_data-----", status_data)
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
@@ -230,7 +230,6 @@ const AddOrder = () => {
   const [billto_list, setbillto_list] = useState([]);
   const [billto, setbillto] = useState("");
   const [billto_id, setbillto_id] = useState(0);
-  const [selectbillto, setselectbillto] = useState([]);
   const [search_billto, setsearch_billto] = useState("");
   const [billto_page, setbillto_page] = useState(1);
 
@@ -259,7 +258,7 @@ const AddOrder = () => {
   const [shipper_locality_id, setshipper_locality_id] = useState(0);
   const [shipper_add_1, setshipper_add_1] = useState("");
   const [shipper_add_2, setshipper_add_2] = useState("");
-  const [search_shipper, setsearch_shipper] = useState("");
+  
   const [all_shipper_details, setall_shipper_details] = useState([]);
   //consignee
   const [consignee_details, setconsignee_details] = useState([]);
@@ -280,12 +279,10 @@ const AddOrder = () => {
   const [consignee_locality, setconsignee_locality] = useState("");
   const [consignee_add_1, setconsignee_add_1] = useState("");
   const [consignee_add_2, setconsignee_add_2] = useState("");
-  const [search_consignee, setsearch_consignee] = useState("");
   const [all_consignee_details, setall_consignee_details] = useState([]);
   // Asset Info
   const [asset_idlist, setasset_idlist] = useState([]);
   const [assetdeleted_ids, setassetdeleted_ids] = useState([]);
-  const [assetold_ids, setassetold_ids] = useState([]);
   const [assetnew_ids, setassetnew_ids] = useState([]);
   const [asset_info_list, setasset_info_list] = useState([
     // "None",
@@ -299,20 +296,10 @@ const AddOrder = () => {
   const [both, setboth] = useState([]);
 
   //Box Type
-  const [box_list, setbox_list] = useState([
-    "CREDO",
-    "VYPE",
-    "COOL GUARD",
-    "ISGO",
-    "SAFE",
-  ]);
-  const [box_selected, setbox_selected] = useState("");
 
   //Box Number
   const [box_list_1, setbox_list_1] = useState([]);
   const [box_list_2, setbox_list_2] = useState([]);
-  const [box_no_selected, setbox_no_selected] = useState("");
-  const [box_selected_id, setbox_selected_id] = useState("");
   const [box_list_page, setbox_list_page] = useState(1);
   const [search_box, setsearch_box] = useState("");
   const [box_loaded, setbox_loaded] = useState(false);
@@ -325,18 +312,11 @@ const AddOrder = () => {
   const [logger_loaded, setlogger_loaded] = useState(false);
   const [logger_count, setlogger_count] = useState(1);
   const [logger_bottom, setlogger_bottom] = useState(56)
-  const [Logger_selected_id, setLogger_selected_id] = useState("");
   const [Logger_page, setLogger_page] = useState(1);
   const [search_logger, setsearch_logger] = useState("");
 
   //Temperature Type
-  const [temp_list, settemp_list] = useState([
-    "2c-8c",
-    "15c-25c",
-    "-25c To -15c",
-    "Dry Ice",
-    "All In One",
-  ]);
+
   const [temp_selected, settemp_selected] = useState("");
 
   //Commodity
@@ -376,7 +356,6 @@ const AddOrder = () => {
 
   let dimension_list1 = [selectedFile, caption1, ""];
   const [row1, setrow1] = useState([dimension_list1]);
-  const [ord_image, setord_image] = useState([]);
 
   const [documentOrder, setdocumentOrder] = useState("");
   let dimension_list3 = [documentOrder, caption1];
@@ -446,10 +425,6 @@ const AddOrder = () => {
   const [by_pincode, setby_pincode] = useState(false);
 
   // Delivery Info
-  const [delivery_info, setdelivery_info] = useState([]);
-  const [delivered_date, setdelivered_date] = useState("");
-  const [deliverySigFile, setdeliverySigFile] = useState(null);
-  const [podSigFile, setpodSigFile] = useState(null);
   const [response_awb_no, setresponse_awb_no] = useState("");
 
   //Circle Toogle Btn
@@ -509,9 +484,6 @@ const AddOrder = () => {
   const [billto_count, setbillto_count] = useState(1);
   const [billto_loaded, setbillto_loaded] = useState(false);
   const [transport_mode_error, settransport_mode_error] = useState(false);
-  const [order_hist, setorder_hist] = useState();
-  const [origin_city_error, setorigin_city_error] = useState(false);
-  const [destination_city_error, setdestination_city_error] = useState(false);
   const [shipper_error, setshipper_error] = useState(false);
   const [consignee_error, setconsignee_error] = useState(false);
   const [ewaybill_no_error, setewaybill_no_error] = useState(false)
@@ -519,13 +491,6 @@ const AddOrder = () => {
   const [local_delivery_type_error, setlocal_delivery_type_error] =
     useState(false);
   const [d_cod_error, setd_cod_error] = useState(false);
-  const [asset_info_selected_error, setasset_info_selected_error] =
-    useState(false);
-  const [box_selected_error, setbox_selected_error] = useState(false);
-  const [box_no_selected_error, setbox_no_selected_error] = useState(false);
-  const [Logger_Selected_error, setLogger_Selected_error] = useState(false);
-  const [temp_selected_error, settemp_selected_error] = useState("");
-  const [actual_weight_error, setactual_weight_error] = useState("");
   const [showModalOrder, setshowModalOrder] = useState({
     value: false,
     ind: "",
@@ -535,11 +500,9 @@ const AddOrder = () => {
     ind: "",
     type: "",
   });
-  console.log("showModalOrder===", showModalOrder)
+  // console.log("showModalOrder===", showModalOrder)
 
   const [img_index, setimg_index] = useState("")
-
-  const [doc_result_image, setdoc_result_image] = useState([]);
 
   // Packages
   let p = row.length - 1;
@@ -600,7 +563,7 @@ const AddOrder = () => {
   const [delete_type, setdelete_type] = useState("")
 
   const deleteInvoice = (id, item2) => {
-    console.log("id", id)
+    // console.log("id", id)
     axios
       .delete(ServerAddress + `booking/delete-invoice-images/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -1010,7 +973,7 @@ const AddOrder = () => {
       .then((resp) => {
         if (resp.data.results.length > 0) {
 
-          if (destinationcity_page == 1) {
+          if (destinationcity_page === 1) {
             dcities_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
@@ -1457,7 +1420,7 @@ const AddOrder = () => {
       const ele = fields_names[j];
       let prev = location.state.order[`${ele[0]}`];
       let new_v = ele[1];
-      if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
@@ -1621,7 +1584,7 @@ const AddOrder = () => {
           } else {
             setbillto_loaded(true);
           }
-          if (billto_page == 1) {
+          if (billto_page === 1) {
             b_temp2 = response.data.results.map((v) => [
               v.id,
               toTitleCase(v.name),
@@ -1662,7 +1625,7 @@ const AddOrder = () => {
           } else {
             setclient_loaded(true);
           }
-          if (client_page == 1) {
+          if (client_page === 1) {
             temp2 = response.data.results.map((v) => [
               v.id,
               toTitleCase(v.name),
@@ -1706,7 +1669,7 @@ const AddOrder = () => {
         }
         if (response.data.results.length > 0) {
           data = response.data.results;
-          if (page == 1) {
+          if (page === 1) {
             temp3 = data.map((v) => [v.id, toTitleCase(v.commodity_name)]);
           } else {
             temp3 = [
@@ -1888,7 +1851,7 @@ const AddOrder = () => {
             } else {
               setbox_loaded(true);
             }
-            console.log("========", response.data.results)
+            // console.log("========", response.data.results)
 
             if (box_list_page === 1) {
               box = response.data.results.map(
@@ -1913,7 +1876,7 @@ const AddOrder = () => {
               ];
             }
             setbox_count(box_count + 2);
-            console.log("box========", box)
+            // console.log("box========", box)
             setbox_list_1(box);
           }
         }
@@ -2143,7 +2106,7 @@ const AddOrder = () => {
     if (data === true && isupdating === true && returned_data.length === 0) {
       setclient_id(order.client);
     }
-    if (location.state === null && order_type == "New") {
+    if (location.state === null && order_type === "New") {
       setorigincity("");
       setorigincity_id("");
       setshipper_id("");
@@ -2423,25 +2386,25 @@ const AddOrder = () => {
 
   useEffect(() => {
     if (box !== [] && asset_info_selected === "With Box") {
-      let item = asset_idlist.filter((p) => box.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => box.indexOf(p) === -1);
       setassetdeleted_ids(item);
       // let item2 = asset_idlist.filter((p) => box.indexOf(p) !== -1);
       // setassetold_ids(item2);
-      let item3 = box.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = box.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     } else if (logger !== [] && asset_info_selected === "With Logger") {
-      let item = asset_idlist.filter((p) => logger.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => logger.indexOf(p) === -1);
       setassetdeleted_ids(item);
       // let item2 = asset_idlist.filter((p) => logger.indexOf(p) !== -1);
       // setassetold_ids(item2);
-      let item3 = logger.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = logger.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     } else {
-      let item = asset_idlist.filter((p) => both.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => both.indexOf(p) === -1);
       setassetdeleted_ids(item);
       // let item2 = asset_idlist.filter((p) => both.indexOf(p) !== -1);
       // setassetold_ids(item2);
-      let item3 = both.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = both.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     }
   }, [asset_idlist, box, logger, both]);
@@ -2655,7 +2618,7 @@ const AddOrder = () => {
   };
 
   const handleSubmit = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     } else {
       update_orderstatus(order.id);
@@ -2846,7 +2809,7 @@ const AddOrder = () => {
         }
         if (resp.data.results.length !== 0) {
           setfrom_address(resp.data.results[0]);
-          if (locality_sel_page == 1) {
+          if (locality_sel_page === 1) {
             locality_from = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.name),
@@ -2913,7 +2876,7 @@ const AddOrder = () => {
           } else {
             setlocality_sel_to_loaded(true);
           }
-          if (locality_sel_to_page == 1) {
+          if (locality_sel_to_page === 1) {
             localityto = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.name),
@@ -3017,7 +2980,7 @@ const AddOrder = () => {
           setstate_loaded(true);
         }
         if (resp.data.results.length > 0) {
-          if (state_page == 1) {
+          if (state_page === 1) {
             state_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.state),
@@ -3066,7 +3029,7 @@ const AddOrder = () => {
             } else {
               setcity_loaded(true);
             }
-            if (city_page == 1) {
+            if (city_page === 1) {
               cities_list = resp.data.results.map((v) => [
                 v.id,
                 toTitleCase(v.city),
@@ -3086,7 +3049,7 @@ const AddOrder = () => {
             } else {
               setcityc_loaded(true);
             }
-            if (city_page_c == 1) {
+            if (city_page_c === 1) {
               cities_list = resp.data.results.map((v) => [
                 v.id,
                 toTitleCase(v.city),
@@ -3135,7 +3098,7 @@ const AddOrder = () => {
             } else {
               setload_pincode(true);
             }
-            if (pincode_page == 1) {
+            if (pincode_page === 1) {
               pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
             } else {
               pincode_list = [
@@ -3152,7 +3115,7 @@ const AddOrder = () => {
             } else {
               setloadc_pincode(true);
             }
-            if (pincode_page_c == 1) {
+            if (pincode_page_c === 1) {
               pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
             } else {
               pincode_list = [
@@ -3219,7 +3182,7 @@ const AddOrder = () => {
                 setlocality_loaded(true);
               }
 
-              if (locality_page == 1) {
+              if (locality_page === 1) {
                 locality_list = resp.data.results.map((v) => [
                   v.id,
                   toTitleCase(v.name),
@@ -3242,7 +3205,7 @@ const AddOrder = () => {
               } else {
                 setlocalityc_loaded(true);
               }
-              if (locality_page_c == 1) {
+              if (locality_page_c === 1) {
                 locality_list = resp.data.results.map((v) => [
                   v.id,
                   toTitleCase(v.name),
@@ -3327,12 +3290,12 @@ const AddOrder = () => {
   }, [state_id_f_c, city_page_c, city_search_item_c]);
 
   useLayoutEffect(() => {
-    if (state != "") {
+    if (state !== "") {
       setpincode_loaded(true);
     }
   }, [state]);
   useLayoutEffect(() => {
-    if (consginee_st != "") {
+    if (consginee_st !== "") {
       setpincode_loaded_f_c(true);
     }
   }, [consginee_st]);
@@ -3398,7 +3361,7 @@ const AddOrder = () => {
           } else {
             setstatec_loaded(true);
           }
-          if (state_page_c == 1) {
+          if (state_page_c === 1) {
             state_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.state),
@@ -4275,7 +4238,7 @@ const AddOrder = () => {
         }
       )
       .then((res) => {
-        console.log("res===", res)
+        // console.log("res===", res)
         let temp = []
         let temp_list = []
         if (res.data.Data.length > 0) {
@@ -4287,7 +4250,7 @@ const AddOrder = () => {
               temp[index].id,
             ]);
           }
-          console.log("temp_list====", temp_list)
+          // console.log("temp_list====", temp_list)
           setrow1(temp_list);
         }
       })
@@ -4305,7 +4268,7 @@ const AddOrder = () => {
         }
       )
       .then((res) => {
-        console.log("res===", res)
+        // console.log("res===", res)
         let temp = []
         let temp_list = []
         if (res.data.Data.length > 0) {
@@ -4321,7 +4284,7 @@ const AddOrder = () => {
               temp[index].id,
             ]);
           }
-          console.log("temp_list====", temp_list)
+          // console.log("temp_list====", temp_list)
           setrow2(temp_list);
         }
       })
@@ -4377,7 +4340,7 @@ const AddOrder = () => {
 
   const [can_add, setcan_add] = useState(false);
   const [can_view, setcan_view] = useState(false);
-  console.log("can_add----", can_add)
+  // console.log("can_add----", can_add)
 
   useEffect(() => {
     if (
@@ -4619,7 +4582,7 @@ const AddOrder = () => {
                   <Row>
                     <Col
                       lg={
-                        order_type == "Return" || order_type == "Issue" ? 2 : 4
+                        order_type === "Return" || order_type === "Issue" ? 2 : 4
                       }
                       md={6}
                       sm={6}
@@ -4635,7 +4598,7 @@ const AddOrder = () => {
                         />
                       </div>
                     </Col>
-                    {(order_type == "Return" || order_type == "Issue") && (
+                    {(order_type === "Return" || order_type === "Issue") && (
                       <Col lg={2} md={6} sm={6}>
                         <Label className="header-child">
                           Refrence Docket No
@@ -6606,7 +6569,7 @@ const AddOrder = () => {
                         ) : null}
                       </div>
                     </Col>
-                    {order_type == "Issue" && returned_data.length !== 0 && (
+                    {order_type === "Issue" && returned_data.length !== 0 && (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">
@@ -7227,7 +7190,7 @@ const AddOrder = () => {
                               }
                             }}
                             result_image={(val) => {
-                              console.log("val------------", val)
+                              // console.log("val------------", val)
                               setSelectedFile(val);
                               if (showModalOrder.ind !== "") {
                                 row1[showModalOrder.ind][0] = val;

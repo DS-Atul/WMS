@@ -107,7 +107,7 @@ function AddDepartment() {
           );
           dispatch(setAlertType("success"));
           navigate("/ems/department");
-        } else if (response.data == "duplicate") {
+        } else if (response.data === "duplicate") {
           dispatch(setShowAlert(true));
           dispatch(
             setDataExist(
@@ -297,10 +297,10 @@ function AddDepartment() {
   useLayoutEffect(() => {
     // console.log("Lenght", permission_title_list.length);
     let arr = permission_title_list.map((item, idx) => {
-      return item.slice(2, -1).some((v) => v == true);
+      return item.slice(2, -1).some((v) => v === true);
     });
 
-    let res = arr.some((v) => v == true);
+    let res = arr.some((v) => v === true);
     setcheck_validation(res);
     // console.log("////////////", res);
     // console.log("validation999",check_validation)
@@ -915,7 +915,7 @@ function AddDepartment() {
                                   }}
                                 >
                                   <td style={{ alignItems: "center" }}>
-                                    {TilteColor(idx) == "red" ?
+                                    {TilteColor(idx) === "red" ?
                                       <RiArrowDropDownLine color="#000" size={30}
                                         onClick={() => {
                                           showData(idx)
@@ -924,7 +924,7 @@ function AddDepartment() {
                                       />
                                       : null}
                                     {item[0]}
-                                    {TilteColor(idx) == "red" ? <Input
+                                    {TilteColor(idx) === "red" ? <Input
                                       className="form-check-input-sm"
                                       type="checkbox"
                                       style={{ margin: 10, borderColor: "red" }}

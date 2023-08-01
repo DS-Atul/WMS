@@ -91,7 +91,6 @@ const Header = () => {
   //Tracking Docket
   const [docket_number_entry, setdocket_number_entry] = useState([]);
 
-
   useEffect(() => {
     if(docket_number_entry === "") {
       dispatch(setDocketNumber([]));

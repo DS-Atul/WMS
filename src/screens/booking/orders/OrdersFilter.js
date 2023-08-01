@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Label } from "reactstrap";
-import { useNavigate } from "react-router-dom";
 
 import { Col, Row } from "reactstrap";
 import "../../../assets/scss/filters/filter.scss";
@@ -19,7 +18,6 @@ import {
   setFilterG,
   setFilterH,
   setFilterI,
-  setFilterJ,
 } from "../../../store/filterValue/FilterValue";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
@@ -32,7 +30,6 @@ function OrdersFilter() {
   const [toggle, settoggle] = useState(false);
   // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
 
   const [delivery_type_filter, setdelivery_type_filter] = useState([
     ["1", "Domestic"],
@@ -42,12 +39,8 @@ function OrdersFilter() {
   const [delivery_type, setdelivery_type] = useState([]);
   const [delivery_type_id, setdelivery_type_id] = useState([]);
 
-  const [order_origin_filter, setorder_origin_filter] = useState([]);
-  const [order_origin, setorder_origin] = useState([]);
   const [order_origin_id, setorder_origin_id] = useState([]);
 
-  const [order_destination_filter, setorder_destination_filter] = useState([]);
-  const [order_destination, setorder_destination] = useState([]);
   const [order_destination_id, setorder_destination_id] = useState([]);
 
   const [transportation_mode_filter, settransportation_mode_filter] = useState([

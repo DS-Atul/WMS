@@ -260,6 +260,10 @@ const OrderPdf = React.lazy(() =>
 
 const OrderHistoryPage = React.lazy(() => import("./screens/booking/orders/orderHistory/OrderHistoryPage.js"));
 
+const AirportOrder = React.lazy(() => import("./screens/booking/airportOrder/AirportOrder.js"));
+const AddAirportOrder = React.lazy(() => import("./screens/booking/airportOrder/AddAirportOrder.js"));
+
+
 //Delivery Info
 
 const DeliveryInfo = React.lazy(() =>
@@ -891,6 +895,15 @@ const routes = [
   {
     path: "/booking/deliveryinfo",
     element: <DeliveryInfo />,
+  },
+
+  {
+    path: "/booking/airportorder/airportorder",
+    element: <AirportOrder />,
+  },
+  {
+    path: "/booking/airportorder/addairportorder",
+    element: <AddAirportOrder />,
   },
 
   //Runsheet

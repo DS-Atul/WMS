@@ -12,13 +12,10 @@ import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
 import OrderDataFormat from "../../../data/booking/order/OrderDataFormat";
 import OrderDataTitle from "../../../data/booking/order/OrderDataTitle";
-import { useLocation } from "react-router-dom";
 import OperationNavigate from "../navigateTab/OperationNavigate";
 
 const Orders = () => {
-  const location = useLocation();
   const dispatch = useDispatch();
-  const toggle = useSelector((state) => state.parentfilter.toggle);
   const delivery_type = useSelector((state) => state.filtervalue.data_a);
   const cold_chain_btn = useSelector((state) => state.filtervalue.data_b);
   const transportation_mode = useSelector((state) => state.filtervalue.data_c);
@@ -34,15 +31,6 @@ const Orders = () => {
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
-
-  // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
-
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
 
   useEffect(() => {
     dispatch(setToggle(false));
