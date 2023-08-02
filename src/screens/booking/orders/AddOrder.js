@@ -124,6 +124,7 @@ const AddOrder = () => {
 
   //Docket number
   const [docket_no_value, setdocket_no_value] = useState("");
+  console.log("docket_no_value", (docket_no_value).length)
   const [docket_error, setdocket_error] = useState(false);
 
   // Logger Remarks
@@ -142,7 +143,8 @@ const AddOrder = () => {
   const [d_cod, setd_cod] = useState("No");
 
   const [type_list, settype_list] = useState(["Ambient", "Frozen", "Refrigerated", "Controlled Ambient"])
-  const [type, settype] = useState("Ambient")
+  const [type, settype] = useState(type_list[0])
+  console.log("type====", type)
 
   const [state_list_c, setstate_list_c] = useState([]);
   const [state_s_c, setstate_s_c] = useState("");
@@ -258,7 +260,7 @@ const AddOrder = () => {
   const [shipper_locality_id, setshipper_locality_id] = useState(0);
   const [shipper_add_1, setshipper_add_1] = useState("");
   const [shipper_add_2, setshipper_add_2] = useState("");
-  
+
   const [all_shipper_details, setall_shipper_details] = useState([]);
   //consignee
   const [consignee_details, setconsignee_details] = useState([]);
@@ -734,8 +736,10 @@ const AddOrder = () => {
     "New",
     "Return",
     "Issue",
+    "Airport To Airport"
   ]);
   const [order_type, setorder_type] = useState(order_type_list[0]);
+  console.log("order_type----", order_type)
   // validation
   const validation = useFormik({
     enableReinitialize: true,
@@ -759,6 +763,16 @@ const AddOrder = () => {
       consignee_address_line1: order.consignee_address || "",
       consignee_address_line2: "",
       consignee_phone_no: order.mobile_consignee || "",
+
+      rate_class: order.rate_class && toTitleCase(order.rate_class) || "",
+      airlines_name: order.airlines_name && toTitleCase(order.airlines_name) || "",
+      no_of_bags: order.no_of_bags || "0",
+      flight_no: order.flight_no || "",
+      handling_charge: order.handling_charge || 0,
+      tsp: order.tsp || 0,
+      other_charge: order.other_charge || 0,
+      carrier_charge: order.carrier_charge || 0,
+      rate: order.rate || 0,
     },
 
     validationSchema: Yup.object({
@@ -779,12 +793,12 @@ const AddOrder = () => {
 
       if (
         entry_type_btn === "MANUALLY" &&
-        docket_no_value.length < 6
+        docket_no_value.length <= 5
         // || (entry_type_btn === "MANUALLY" && docket_no_value.length < 6)
       ) {
         setdocket_error(true);
         doc_no_scroll.scrollIntoView();
-      } else if (transport_mode === "" && delivery_type !== "LOCAL") {
+      } else if (transport_mode === "" && delivery_type !== "LOCAL" && order_type !== "Airport To Airport") {
         settransport_mode_error(true);
         doc_no_scroll.scrollIntoView();
       } else if (billto === "") {
@@ -797,7 +811,7 @@ const AddOrder = () => {
       else if (ewaybill_no?.length !== 12 && booking_through) {
         setewaybill_no_error(true);
         doc_no_scroll.scrollIntoView();
-      } else if (!cold_chain && !nonecold_chain) {
+      } else if (!cold_chain && !nonecold_chain && order_type !== "Airport To Airport") {
         setcoldchain_error(true);
         doc_no_scroll.scrollIntoView();
       }
@@ -852,10 +866,10 @@ const AddOrder = () => {
       } else if (commodity === "" || !commodity) {
         setcommodity_error(true);
         tariff_info.scrollIntoView();
-      } else if (delivery_type === "LOCAL" && local_delivery_type === "") {
+      } else if (delivery_type === "LOCAL" && local_delivery_type === "" && order_type !== "Airport To Airport") {
         setlocal_delivery_type_error(true);
         tariff_info.scrollIntoView();
-      } else if (d_cod === "") {
+      } else if (d_cod === "" && order_type !== "Airport To Airport") {
         setd_cod_error(true);
         tariff_info.scrollIntoView();
       } else if (
@@ -1020,7 +1034,7 @@ const AddOrder = () => {
           // }
           // if(eway_detail_l?.length === 0 && type==="Ewaybill"){
           // if(ewb_no.length === 12  && type==="Ewaybill"){
-            get_eway_detail(ewb_no, "yes");
+          get_eway_detail(ewb_no, "yes");
           // }
         }
       })
@@ -1164,7 +1178,7 @@ const AddOrder = () => {
   };
 
   // Post Order Data
-  const send_order_data = async (values, type) => {
+  const send_order_data = async (values, val) => {
     try {
       setIsLoading(true)
       const response = await axios.post(
@@ -1179,14 +1193,14 @@ const AddOrder = () => {
           consignee_na_locality: (!locality_id_to && eway_confirm) ? toTitleCase(locality_sel_to).toUpperCase() : "",
           type: type ? type.toUpperCase() : null,
           assettype_remarks: assettype_remarks,
-          docket_no: entry_type_btn === "AUTO GENERATE" ? "" : docket_no_value,
-          entry_type: entry_type_btn,
-          delivery_type: String(delivery_type).toUpperCase(),
+          docket_no: (entry_type_btn === "AUTO GENERATE" &&  order_type !== "Airport To Airport") ? "" : docket_no_value,
+          entry_type: order_type !== "Airport To Airport" ? entry_type_btn : "MANUALLY",
+          delivery_type: order_type !== "Airport To Airport" ? String(delivery_type).toUpperCase() : "DOMESTIC",
           order_created_branch: user.home_branch,
           transportation_mode:
             delivery_type === "LOCAL"
               ? "LOCAL"
-              : String(transport_mode).toUpperCase(),
+              : order_type === "Airport To Airport" ? "AIR" : String(transport_mode).toUpperCase(),
           // delivery_mode: delivery_type === "LOCAL" ? "LOCAL" : String(delivery_mode).toUpperCase(),
           delivery_mode: "DOOR TO DOOR",
           order_channel: "WEB",
@@ -1275,7 +1289,7 @@ const AddOrder = () => {
           consignee_contact_no: consignee_contact_no ? consignee_contact_no : null,
           // barcode_no: row6,
           barcode_no: [],
-          linked_order: order_type === "New" ? null : linked_order,
+          linked_order: (order_type === "New" || order_type === "Airport To Airport") ? null : linked_order,
           order_type: order_type.toUpperCase(),
 
           cm_current_department: user.user_department,
@@ -1295,6 +1309,18 @@ const AddOrder = () => {
               : cm_current_status.toUpperCase(),
           invoice_image: (row2[row2.length - 1][0] === "" && row2[row2.length - 1][2] === "" && row2[row2.length - 1][3] === "" && row2[row2.length - 1][4] === "" && row2[row2.length - 1][5] === "") ? [] : row2,
           order_image: (row1[row1.length - 1][0] === "" && row1[row1.length - 1][1] === "") ? [] : row1,
+
+          rate_class: (order_type === "Airport To Airport" && values.rate_class) ? toTitleCase(values.rate_class).toUpperCase() : "",
+          coloader: (order_type === "Airport To Airport" && coloader_id) ? coloader_id : null,
+          airlines_name: (order_type === "Airport To Airport" && values.airlines_name) ? toTitleCase(values.airlines_name).toUpperCase()  : "",
+          flight_no: (order_type === "Airport To Airport" && values.flight_no) ? values.flight_no : "",
+          no_of_bags: (order_type === "Airport To Airport" && values.no_of_bags) ? values.no_of_bags : 0,
+          rate: (order_type === "Airport To Airport" && values.rate) ? values.rate : 0,
+          other_charge: (order_type === "Airport To Airport" && values.other_charge) ? values.other_charge : 0,
+          carrier_charge: (order_type === "Airport To Airport" && values.carrier_charge) ? values.carrier_charge : 0,
+          handling_charge: (order_type === "Airport To Airport" && values.handling_charge) ? values.handling_charge : 0,
+          tsp: (order_type === "Airport To Airport" && values.tsp) ? values.tsp : 0,
+          tax_slab: (order_type === "Airport To Airport" && tax_slab) ? tax_slab : "",
         },
         {
           headers: {
@@ -1305,7 +1331,7 @@ const AddOrder = () => {
       // .then(function (response) {
       if (response.data.status === "success") {
         setIsLoading(false)
-        if (type === "yes") {
+        if (val === "yes") {
           setewaybill_no("")
           seteway_value([])
           setrow2([["", val, "", "", "", "", ""]])
@@ -1445,7 +1471,7 @@ const AddOrder = () => {
           transportation_mode:
             delivery_type === "LOCAL"
               ? "LOCAL"
-              : String(transport_mode)?.toUpperCase(),
+              : order_type === "Airport To Airport" ? "AIR" : String(transport_mode).toUpperCase(),
           // delivery_mode: delivery_type === "LOCAL" ? "LOCAL" : String(delivery_mode).toUpperCase(),
           delivery_mode: "DOOR TO DOOR",
           order_channel: "WEB",
@@ -1512,7 +1538,7 @@ const AddOrder = () => {
           assetdeleted_ids: assetdeleted_ids,
           // assetold_ids: assetold_ids,
           assetnew_ids: assetnew_ids,
-          linked_order: order_type === "New" ? null : linked_order,
+          linked_order: (order_type === "New" || order_type === "Airport To Airport") ? null : linked_order,
           order_type: order_type?.toUpperCase(),
           eway_detail: eway_confirm ? eway_value : [],
           cm_transit_status: status_toggle === true ? cm_current_status : "",
@@ -1530,6 +1556,18 @@ const AddOrder = () => {
           shipper_address1: shipper_address?.toUpperCase(),
           invoice_image: (row2[row2.length - 1][0] === "" && row2[row2.length - 1][2] === "" && row2[row2.length - 1][3] === "" && row2[row2.length - 1][4] === "" && row2[row2.length - 1][5] === "") ? [] : row2,
           order_image: (row1[row1.length - 1][0] === "" && row1[row1.length - 1][1] === "") ? [] : row1,
+
+          rate_class: (order_type === "Airport To Airport" && values.rate_class) ? toTitleCase(values.rate_class).toUpperCase() : "",
+          coloader: (order_type === "Airport To Airport" && coloader_id) ? coloader_id : null,
+          airlines_name: (order_type === "Airport To Airport" && values.airlines_name) ? toTitleCase(values.airlines_name).toUpperCase()  : "",
+          flight_no: (order_type === "Airport To Airport" && values.flight_no) ? values.flight_no : "",
+          no_of_bags: (order_type === "Airport To Airport" && values.no_of_bags) ? values.no_of_bags : 0,
+          rate: (order_type === "Airport To Airport" && values.rate) ? values.rate : 0,
+          other_charge: (order_type === "Airport To Airport" && values.other_charge) ? values.other_charge : 0,
+          carrier_charge: (order_type === "Airport To Airport" && values.carrier_charge) ? values.carrier_charge : 0,
+          handling_charge: (order_type === "Airport To Airport" && values.handling_charge) ? values.handling_charge : 0,
+          tsp: (order_type === "Airport To Airport" && values.tsp) ? values.tsp : 0,
+          tax_slab: (order_type === "Airport To Airport" && tax_slab) ? tax_slab : "",
         },
         {
           headers: {
@@ -1977,6 +2015,13 @@ const AddOrder = () => {
   }, [cold_chain, delivery_type]);
 
   useEffect(() => {
+    if (order_type === "Airport To Airport") {
+      setcoldchain_error(false);
+    }
+  }, [order_type])
+
+
+  useEffect(() => {
     let timeoutId;
     // if (asset_info_selected !== "None" && asset_info_selected && asset_info_selected === "With Logger") {
     //   timeoutId = setTimeout(() => {
@@ -2213,10 +2258,13 @@ const AddOrder = () => {
   useLayoutEffect(() => {
     try {
       let order_data = location.state.order;
+      console.log("order_data-----", order_data)
       setisupdating(true);
       setshipper_n(toTitleCase(order_data.shipper));
       setorder_type(toTitleCase(order_data.order_type));
-
+      settax_slab(order_data.tax_slab)
+      setcoloader(order_data.coloader_name ? toTitleCase(order_data.coloader_name) : "")
+      setcoloader_id(order_data.coloader)
       setlinked_order(
         order_data.order_type === "RETURN" || order_data.order_type === "ISSUE"
           ? order_data.linked_order_value
@@ -2726,12 +2774,12 @@ const AddOrder = () => {
       .then(function (response) {
         if (response.data.response !== null && typeof (response.data) !== "string") {
           // if (response.data.length > 0) {
-            // alert("----app----")
+          // alert("----app----")
           if (is_eway === "yes") {
-            if(location.state === null){
+            if (location.state === null) {
               seteway_detail_l(response.data.response);
             }
-           
+
             // seteway_value([...eway_value, response.data.response])
             seteway_value(prevEwayValue => {
               const newEwayValue = [...prevEwayValue, response.data.response];
@@ -3675,7 +3723,7 @@ const AddOrder = () => {
   useEffect(() => {
     let temp_list = [];
 
-    if (eway_value && eway_value.length > 0 && location.state===null) {
+    if (eway_value && eway_value.length > 0 && location.state === null) {
       const uniqueValues = eway_value.filter(
         (value, index, self) => index === self.findIndex(obj => obj.ewbNo === value.ewbNo)
       );
@@ -3702,53 +3750,53 @@ const AddOrder = () => {
   }, [eway_value]);
 
   useEffect(() => {
-    if(location.state !==null ){
+    if (location.state !== null) {
 
-    if (!eway_value || eway_value.length === 0) return;
-  
-    setrow2(prevRow2 => {
-      // Create a new array to hold the updated rows
-      const updatedRows = [...prevRow2];
-  
-      // Iterate through each element in eway_value
-      for (let i = 0; i < eway_value.length; i++) {
-        const element = eway_value[i];
-        const dateStr = element.docDate ?? "";
-        const [day, month, year] = dateStr?.split("-") ?? ["", "", ""];
-        const isoDate = `${year}-${(month || "").padStart(2, "0")}-${(day || "").padStart(2, "0")}`;
-  
-        // Find the index of the row with the same 'ewbNo' in updatedRows
-        const existingRowIndex = updatedRows.findIndex(row => row[0] === String(element.ewbNo));
-  
-        // If the 'ewbNo' is found in existingRows, update the row with new data
-        if (existingRowIndex !== -1) {
-          updatedRows[existingRowIndex] = [
-            String(element.ewbNo),
-            String(isoDate),
-            String(element.docNo),
-            String(element.totInvValue),
-            "",
-            "",
-            "",
-          ];
+      if (!eway_value || eway_value.length === 0) return;
+
+      setrow2(prevRow2 => {
+        // Create a new array to hold the updated rows
+        const updatedRows = [...prevRow2];
+
+        // Iterate through each element in eway_value
+        for (let i = 0; i < eway_value.length; i++) {
+          const element = eway_value[i];
+          const dateStr = element.docDate ?? "";
+          const [day, month, year] = dateStr?.split("-") ?? ["", "", ""];
+          const isoDate = `${year}-${(month || "").padStart(2, "0")}-${(day || "").padStart(2, "0")}`;
+
+          // Find the index of the row with the same 'ewbNo' in updatedRows
+          const existingRowIndex = updatedRows.findIndex(row => row[0] === String(element.ewbNo));
+
+          // If the 'ewbNo' is found in existingRows, update the row with new data
+          if (existingRowIndex !== -1) {
+            updatedRows[existingRowIndex] = [
+              String(element.ewbNo),
+              String(isoDate),
+              String(element.docNo),
+              String(element.totInvValue),
+              "",
+              "",
+              "",
+            ];
+          }
+          // If the 'ewbNo' is not found in existingRows, add a new row
+          else {
+            updatedRows.push([
+              String(element.ewbNo),
+              String(isoDate),
+              String(element.docNo),
+              String(element.totInvValue),
+              "",
+              "",
+              "",
+            ]);
+          }
         }
-        // If the 'ewbNo' is not found in existingRows, add a new row
-        else {
-          updatedRows.push([
-            String(element.ewbNo),
-            String(isoDate),
-            String(element.docNo),
-            String(element.totInvValue),
-            "",
-            "",
-            "",
-          ]);
-        }
-      }
-  
-      return updatedRows;
-    });
-  }
+
+        return updatedRows;
+      });
+    }
   }, [eway_value]);
 
 
@@ -4368,12 +4416,77 @@ const AddOrder = () => {
 
   useEffect(() => {
     // eway_detail_l.transDocNo
-    if(eway_confirm && location.state === null){
+    if (eway_confirm && location.state === null) {
       setentry_type_btn("MANUALLY");
       setdocket_no_value(eway_detail_l?.transDocNo)
     }
-  }, [eway_confirm,eway_detail_l])
-  
+  }, [eway_confirm, eway_detail_l])
+
+  //////////////A2A
+  // Airport To Aiport  work
+  const [tax_slab_list, settax_slab_list] = useState(["0%", "9%", "18%", "27%",]);
+  const [tax_slab, settax_slab] = useState(tax_slab_list[2]);
+  const [coloader, setcoloader] = useState("");
+  const [coloader_list, setcoloader_list] = useState([]);
+  const [coloader_page, setcoloader_page] = useState(1)
+  const [coloader_bottom, setcoloader_bottom] = useState(103)
+  const [coloader_count, setcoloader_count] = useState(1)
+  const [coloader_error, setcoloader_error] = useState(false)
+  const [coloader_loaded, setcoloader_loaded] = useState(false)
+  const [coloader_search_item, setcoloader_search_item] = useState("")
+  const [coloader_id, setcoloader_id] = useState(null)
+
+  const get_coloader = () => {
+    let coloader_list = [];
+    axios
+      .get(
+        ServerAddress +
+        `master/get_coloader/?search=${coloader_search_item}&p=${coloader_page}&records=${10}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        // temp = response.data.results;
+        // for (let index = 0; index < temp.length; index++) {
+        //   temp2.push([temp[index].id, toTitleCase(temp[index].name)]);
+        // }
+        // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+        // setcoloader_list(temp2);
+
+        if (response.data.next === null) {
+          setcoloader_loaded(false);
+        } else {
+          setcoloader_loaded(true);
+        }
+        if (response.data.results.length > 0) {
+          if (coloader_page === 1) {
+            coloader_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            coloader_list = [
+              ...coloader_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setcoloader_count(coloader_count + 2);
+          setcoloader_list(coloader_list);
+        } else {
+          setcoloader_list([]);
+        }
+      })
+      .catch((err) => {
+        alert(`Error While Loading Client , ${err}`);
+      });
+  };
+
+  useEffect(() => {
+    if(order_type === "Airport To Airport"){
+      get_coloader();
+    }
+  }, [coloader_search_item, coloader_page, order_type])
 
   return (
     <div>
@@ -4665,161 +4778,164 @@ const AddOrder = () => {
                       </Col>
                     )}
 
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">Booking Through</Label>
-                        <Row>
-                          <Col lg={5} md={6} sm={6}>
-                            <div className="form-check mb-2">
-                              <input
-                                className="form-check-input "
-                                type="checkbox"
-                                name="booking_through"
-                                id="OrderTypeRadio"
-                                // disabled={isupdating ? delivery_type : ""}
-                                onClick={() => {
-                                  setbooking_through(!booking_through);
-                                }}
-                                checked={booking_through}
-                                readOnly={true}
-                                disabled={isupdating}
-                              />
-                              <label
-                                className="form-check-label input-box"
-                                htmlFor="exampleRadios1"
-                              >
-                                With Eway Bill No.
-                              </label>
-                            </div>
-                          </Col>
-                          {booking_through && (
-                            <Col lg={7} md={6} sm={6}>
-                              <div className="">
-                                <Input
-                                  // max={12}
-                                  type="number"
-                                  className="form-control-md"
-                                  id="input"
-                                  value={ewaybill_no}
-                                  onChange={(e) => {
-                                    const { value } = e.target;
-                                    if (value.length <= 12) {
-                                      setewaybill_no(e.target.value);
-                                    }
-                                    // if (e.target.value.length <= 12) {
-                                    //   // check_ewb_attached(e.target.value);
-                                    // }
-                                    // else {
-                                    //   setewaybill_no_error(true);
-                                    // }
+                    {order_type !== "Airport To Airport" &&
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Booking Through</Label>
+                          <Row>
+                            <Col lg={5} md={6} sm={6}>
+                              <div className="form-check mb-2">
+                                <input
+                                  className="form-check-input "
+                                  type="checkbox"
+                                  name="booking_through"
+                                  id="OrderTypeRadio"
+                                  // disabled={isupdating ? delivery_type : ""}
+                                  onClick={() => {
+                                    setbooking_through(!booking_through);
                                   }}
-                                  // onBlur={() => {
-                                  //   if (ewaybill_no.length !== 12 && booking_through) {
-                                  //     setewaybill_no_error(true);
-                                  //   }
-                                  // }}
-                                  placeholder="Enter Eway Bill Number"
+                                  checked={booking_through}
+                                  readOnly={true}
                                   disabled={isupdating}
-                                  invalid={
-                                    ewaybill_no_error
-                                  }
                                 />
-                              </div>
-                              {ewaybill_no_error && (
-                                <div
-                                  className="error-text" color="danger"
-                                  style={{
-                                    marginTop: 1,
-                                  }}
+                                <label
+                                  className="form-check-label input-box"
+                                  htmlFor="exampleRadios1"
                                 >
-                                  Please Add Eway Bill No. (12 Digit)
-                                </div>
-                              )}
+                                  With Eway Bill No.
+                                </label>
+                              </div>
                             </Col>
-                          )}
-                        </Row>
-                      </div>
-                    </Col>
+                            {booking_through && (
+                              <Col lg={7} md={6} sm={6}>
+                                <div className="">
+                                  <Input
+                                    // max={12}
+                                    type="number"
+                                    className="form-control-md"
+                                    id="input"
+                                    value={ewaybill_no}
+                                    onChange={(e) => {
+                                      const { value } = e.target;
+                                      if (value.length <= 12) {
+                                        setewaybill_no(e.target.value);
+                                      }
+                                      // if (e.target.value.length <= 12) {
+                                      //   // check_ewb_attached(e.target.value);
+                                      // }
+                                      // else {
+                                      //   setewaybill_no_error(true);
+                                      // }
+                                    }}
+                                    // onBlur={() => {
+                                    //   if (ewaybill_no.length !== 12 && booking_through) {
+                                    //     setewaybill_no_error(true);
+                                    //   }
+                                    // }}
+                                    placeholder="Enter Eway Bill Number"
+                                    disabled={isupdating}
+                                    invalid={
+                                      ewaybill_no_error
+                                    }
+                                  />
+                                </div>
+                                {ewaybill_no_error && (
+                                  <div
+                                    className="error-text" color="danger"
+                                    style={{
+                                      marginTop: 1,
+                                    }}
+                                  >
+                                    Please Add Eway Bill No. (12 Digit)
+                                  </div>
+                                )}
+                              </Col>
+                            )}
+                          </Row>
+                        </div>
+                      </Col>
+                    }
+                    {order_type !== "Airport To Airport" &&
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Delivery Type</Label>
+                          <Row>
+                            <Col lg={3} md={3} sm={3}>
+                              <div className="form-check mb-2">
+                                <Input
+                                  className="form-check-input"
+                                  type="radio"
+                                  name="delivery_type"
+                                  id="exampleRadios2"
+                                  value="LOCAL"
+                                  disabled={isupdating ? delivery_type : ""}
+                                  onClick={() => {
+                                    setdelivery_type("LOCAL");
+                                  }}
+                                  checked={delivery_type === "LOCAL"}
+                                  readOnly={true}
+                                />
+                                <Label
+                                  className="form-check-label input-box"
+                                  htmlFor="exampleRadios2"
+                                >
+                                  Local
+                                </Label>
+                              </div>
+                            </Col>
+                            <Col lg={4} md={4} sm={4}>
+                              <div className="form-check mb-2">
+                                <Input
+                                  className="form-check-input "
+                                  type="radio"
+                                  name="delivery_type"
+                                  id="exampleRadios1"
+                                  value="DOMESTIC"
+                                  disabled={isupdating ? delivery_type : ""}
+                                  onClick={() => {
+                                    setdelivery_type("DOMESTIC");
+                                  }}
+                                  checked={delivery_type === "DOMESTIC"}
+                                  readOnly={true}
+                                />
 
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header-child">Delivery Type</Label>
-                        <Row>
-                          <Col lg={3} md={3} sm={3}>
-                            <div className="form-check mb-2">
-                              <Input
-                                className="form-check-input"
-                                type="radio"
-                                name="delivery_type"
-                                id="exampleRadios2"
-                                value="LOCAL"
-                                disabled={isupdating ? delivery_type : ""}
-                                onClick={() => {
-                                  setdelivery_type("LOCAL");
-                                }}
-                                checked={delivery_type === "LOCAL"}
-                                readOnly={true}
-                              />
-                              <Label
-                                className="form-check-label input-box"
-                                htmlFor="exampleRadios2"
-                              >
-                                Local
-                              </Label>
-                            </div>
-                          </Col>
-                          <Col lg={4} md={4} sm={4}>
-                            <div className="form-check mb-2">
-                              <Input
-                                className="form-check-input "
-                                type="radio"
-                                name="delivery_type"
-                                id="exampleRadios1"
-                                value="DOMESTIC"
-                                disabled={isupdating ? delivery_type : ""}
-                                onClick={() => {
-                                  setdelivery_type("DOMESTIC");
-                                }}
-                                checked={delivery_type === "DOMESTIC"}
-                                readOnly={true}
-                              />
+                                <Label
+                                  className="form-check-label input-box"
+                                  htmlFor="exampleRadios1"
+                                >
+                                  Domestic
+                                </Label>
+                              </div>
+                            </Col>
 
-                              <Label
-                                className="form-check-label input-box"
-                                htmlFor="exampleRadios1"
-                              >
-                                Domestic
-                              </Label>
-                            </div>
-                          </Col>
-
-                          <Col lg={5} md={5} sm={5}>
-                            <div className="form-check">
-                              <Input
-                                className="form-check-input"
-                                type="radio"
-                                name="delivery_type"
-                                id="exampleRadios2"
-                                value="INTERNATIONAL"
-                                disabled={isupdating ? delivery_type : ""}
-                                onClick={() => {
-                                  setdelivery_type("INTERNATIONAL");
-                                }}
-                                checked={delivery_type === "INTERNATIONAL"}
-                                readOnly={true}
-                              />
-                              <Label
-                                className="form-check-label input-box"
-                                htmlFor="exampleRadios2"
-                              >
-                                International
-                              </Label>
-                            </div>
-                          </Col>
-                        </Row>
-                      </div>
-                    </Col>
-
+                            <Col lg={5} md={5} sm={5}>
+                              <div className="form-check">
+                                <Input
+                                  className="form-check-input"
+                                  type="radio"
+                                  name="delivery_type"
+                                  id="exampleRadios2"
+                                  value="INTERNATIONAL"
+                                  disabled={isupdating ? delivery_type : ""}
+                                  onClick={() => {
+                                    setdelivery_type("INTERNATIONAL");
+                                  }}
+                                  checked={delivery_type === "INTERNATIONAL"}
+                                  readOnly={true}
+                                />
+                                <Label
+                                  className="form-check-label input-box"
+                                  htmlFor="exampleRadios2"
+                                >
+                                  International
+                                </Label>
+                              </div>
+                            </Col>
+                          </Row>
+                        </div>
+                      </Col>
+                    }
+                    {order_type !== "Airport To Airport" &&
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child text-color">
@@ -4876,7 +4992,8 @@ const AddOrder = () => {
                         </Row>
                       </div>
                     </Col>
-                    {entry_type_btn === "MANUALLY" ? (
+                     } 
+                    {entry_type_btn === "MANUALLY" && order_type !== "Airport To Airport"? (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-2">
                           <Label className="header-child">
@@ -4891,7 +5008,7 @@ const AddOrder = () => {
                               if (value.length <= 20) {
                                 setdocket_no_value(event.target.value);
                               }
-                              if (event.target.value.length <= 6) {
+                              if (event.target.value.length <= 5) {
                                 setdocket_error(true);
                               } else {
                                 setdocket_error(false);
@@ -4917,6 +5034,49 @@ const AddOrder = () => {
                         </div>
                       </Col>
                     ) : null}
+
+{order_type === "Airport To Airport" ? (
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">
+                          AWB Number *
+                          </Label>
+                          <Input
+                            min={0}
+                            value={docket_no_value}
+                            disabled={isupdating ? docket_no_value : ""}
+                            onChange={(event) => {
+                              const { value } = event.target;
+                              if (value.length <= 20) {
+                                setdocket_no_value(event.target.value);
+                              }
+                              if (event.target.value.length <= 5) {
+                                setdocket_error(true);
+                              } else {
+                                setdocket_error(false);
+                              }
+                            }}
+                            invalid={
+                              docket_error
+                            }
+                            type="number"
+                            label="First Name"
+                            name="docket_no"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Docket Number"
+                          />
+                          {docket_error && (
+                            <div className="mt-1 error-text" color="danger">
+                              {/* <FormFeedback type="invalid"> */}
+                              AWB number must be 6 or greater than 6 digit
+                              {/* </FormFeedback> */}
+                            </div>
+                          )}
+                        </div>
+                      </Col>
+                    ) : null}
+
                     {/* Field */}
                     {entry_type_btn === "AUTO GENERATE" && isupdating ? (
                       <Col lg={4} md={6} sm={6}>
@@ -4939,78 +5099,82 @@ const AddOrder = () => {
                       </Col>
                     ) : null}
 
-                    <Col lg={2} md={2} sm={6}>
-                      <div className="mb-3">
-                        <Label className="header-child">Cold Chain</Label>
-                        <br />
-                        <Input
-                          className="form-check-input-sm"
-                          type="checkbox"
-                          // value="false"
-                          id="defaultCheck1"
-                          onClick={() => {
-                            setcold_chain(!cold_chain);
-                          }}
-                          readOnly={true}
-                          checked={cold_chain}
-                          disabled={isupdating}
-                          invalid={
-                            coldchain_error
-                          }
-                        />
-                      </div>
-                      {coldchain_error && (
-                        <div
-                          className="error-text" color="danger"
-                          style={{
-                            marginTop: -14,
-                          }}
+                    {order_type !== "Airport To Airport" &&
+                      <>
+                        <Col lg={2} md={2} sm={6}>
+                          <div className="mb-3">
+                            <Label className="header-child">Cold Chain</Label>
+                            <br />
+                            <Input
+                              className="form-check-input-sm"
+                              type="checkbox"
+                              // value="false"
+                              id="defaultCheck1"
+                              onClick={() => {
+                                setcold_chain(!cold_chain);
+                              }}
+                              readOnly={true}
+                              checked={cold_chain}
+                              disabled={isupdating}
+                              invalid={
+                                coldchain_error
+                              }
+                            />
+                          </div>
+                          {coldchain_error && (
+                            <div
+                              className="error-text" color="danger"
+                              style={{
+                                marginTop: -14,
+                              }}
+                            >
+                              Select Any One Option
+                            </div>
+                          )}
+                        </Col>
+                        <Col
+                          // lg={user.view_coldchain || user.is_superuser ? 2 : 4}
+                          lg={2}
+                          md={2}
+                          sm={6}
                         >
-                          Select Any One Option
+                          <div className="mb-3">
+                            <Label className="header-child">Non Cold Chain</Label>
+                            <br />
+                            <Input
+                              className="form-check-input-sm"
+                              type="checkbox"
+                              // value="false"
+                              id="defaultCheck1"
+                              onClick={() => {
+                                setnonecold_chain(!nonecold_chain);
+                              }}
+                              readOnly={true}
+                              checked={nonecold_chain}
+                              disabled={isupdating}
+                              invalid={
+                                coldchain_error
+                              }
+                            />
+                          </div>
+                        </Col>
+                      </>
+                    }
+                    {order_type !== "Airport To Airport" &&
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">Type Of Booking*</Label>
+                          <NSearchInput
+                            data_list={type_of_booking_list}
+                            data_item_s={type_of_booking}
+                            set_data_item_s={settype_of_booking}
+                            show_search={false}
+                            error_message={"Please Select Type Of Booking"}
+                            error_s={booking_type_error}
+                          />
                         </div>
-                      )}
-                    </Col>
-                    <Col
-                      // lg={user.view_coldchain || user.is_superuser ? 2 : 4}
-                      lg={2}
-                      md={2}
-                      sm={6}
-                    >
-                      <div className="mb-3">
-                        <Label className="header-child">Non Cold Chain</Label>
-                        <br />
-                        <Input
-                          className="form-check-input-sm"
-                          type="checkbox"
-                          // value="false"
-                          id="defaultCheck1"
-                          onClick={() => {
-                            setnonecold_chain(!nonecold_chain);
-                          }}
-                          readOnly={true}
-                          checked={nonecold_chain}
-                          disabled={isupdating}
-                          invalid={
-                            coldchain_error
-                          }
-                        />
-                      </div>
-                    </Col>
-
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-3">
-                        <Label className="header-child">Type Of Booking*</Label>
-                        <NSearchInput
-                          data_list={type_of_booking_list}
-                          data_item_s={type_of_booking}
-                          set_data_item_s={settype_of_booking}
-                          show_search={false}
-                          error_message={"Please Select Type Of Booking"}
-                          error_s={booking_type_error}
-                        />
-                      </div>
-                    </Col>
-
+                      </Col>
+                    }
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
                         <Label className="header-child">
@@ -5058,24 +5222,24 @@ const AddOrder = () => {
                         </div>
                       </div>
                     </Col> */}
-
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-3">
-                        <Label className="header-child">Delivery Mode</Label>
-                        <NSearchInput
-                          data_list={delivery_mode_list}
-                          data_item_s={delivery_mode}
-                          set_data_item_s={setdelivery_mode}
-                          show_search={false}
-                        />
-                        {/* <div className="mt-1 error-text" color="danger">
+                    {order_type !== "Airport To Airport" &&
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">Delivery Mode</Label>
+                          <NSearchInput
+                            data_list={delivery_mode_list}
+                            data_item_s={delivery_mode}
+                            set_data_item_s={setdelivery_mode}
+                            show_search={false}
+                          />
+                          {/* <div className="mt-1 error-text" color="danger">
                           {delivery_mode_error
                             ? "Delivery Mode is required"
                             : null}
                         </div> */}
-                      </div>
-                    </Col>
-
+                        </div>
+                      </Col>
+                    }
                     {delivery_type !== "LOCAL" && (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-3">
@@ -6416,245 +6580,649 @@ const AddOrder = () => {
         )} */}
 
         {/* Tariff Info */}
-        <div className="m-3">
-          <Col lg={12}>
-            <Card className="shadow bg-white rounded">
-              <CardTitle className="mb-1 header">
-                <div className="header-text-icon header-text" id="tariff_info">
-                  Tariff Info
-                  <IconContext.Provider
-                    value={{
-                      className: "header-add-icon",
-                    }}
-                  >
-                    <div onClick={toggle_circle3}>
-                      {circle_btn3 ? (
-                        <MdRemoveCircleOutline />
-                      ) : (
-                        <MdAddCircleOutline />
-                      )}
-                    </div>
-                  </IconContext.Provider>
-                </div>
-              </CardTitle>
-              {circle_btn3 ? (
-                <CardBody>
-                  <Row>
-                    <Col lg={4} md={6} sm={6}>
-                      <Label className="header-child">Commodity *</Label>
-                      <SearchInput
-                        data_list={client_commidities_list}
-                        setdata_list={setclient_commidities_list}
-                        data_item_s={commodity}
-                        set_data_item_s={setcommodity}
-                        set_id={setcommodity_id}
-                        page={page}
-                        setpage={setpage}
-                        setsearch_item={setsearch_commodity}
-                        error_message={"Please Select Any Commodity"}
-                        error_s={commodity_error}
-                        loaded={commodity_loaded}
-                        count={commodity_count}
-                        bottom={commodity_bottom}
-                        setbottom={setcommodity_bottom}
-                      />
-                      {/* {commodity_error ? (
+        {order_type !== "Airport To Airport" ?
+          <div className="m-3">
+            <Col lg={12}>
+              <Card className="shadow bg-white rounded">
+                <CardTitle className="mb-1 header">
+                  <div className="header-text-icon header-text" id="tariff_info">
+                    Tariff Info
+                    <IconContext.Provider
+                      value={{
+                        className: "header-add-icon",
+                      }}
+                    >
+                      <div onClick={toggle_circle3}>
+                        {circle_btn3 ? (
+                          <MdRemoveCircleOutline />
+                        ) : (
+                          <MdAddCircleOutline />
+                        )}
+                      </div>
+                    </IconContext.Provider>
+                  </div>
+                </CardTitle>
+                {circle_btn3 ? (
+                  <CardBody>
+                    <Row>
+                      <Col lg={4} md={6} sm={6}>
+                        <Label className="header-child">Commodity *</Label>
+                        <SearchInput
+                          data_list={client_commidities_list}
+                          setdata_list={setclient_commidities_list}
+                          data_item_s={commodity}
+                          set_data_item_s={setcommodity}
+                          set_id={setcommodity_id}
+                          page={page}
+                          setpage={setpage}
+                          setsearch_item={setsearch_commodity}
+                          error_message={"Please Select Any Commodity"}
+                          error_s={commodity_error}
+                          loaded={commodity_loaded}
+                          count={commodity_count}
+                          bottom={commodity_bottom}
+                          setbottom={setcommodity_bottom}
+                        />
+                        {/* {commodity_error ? (
                         <div className="mt-1 error-text" color="danger">
                           Please Select Any Commodity
                         </div>
                       ) : null} */}
-                    </Col>
-
-                    {delivery_type === "LOCAL" ? (
-                      <Col lg={4} md={6} sm={6}>
-                        <Label className="header-child">
-                          Local Delivery Type *{" "}
-                        </Label>
-                        <NSearchInput
-                          data_list={local_delivery_type_list}
-                          data_item_s={local_delivery_type}
-                          set_data_item_s={setlocal_delivery_type}
-                          error_message={"Select local delivery type"}
-                          show_search={false}
-                          error_s={local_delivery_type_error}
-                        />
                       </Col>
-                    ) : null}
 
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-3">
-                        <Label className="header-child">COD *</Label>
-                        <NSearchInput
-                          data_list={cod_list}
-                          data_item_s={d_cod}
-                          set_data_item_s={setd_cod}
-                          show_search={false}
-                          error_message={"Select any option"}
-                          error_s={d_cod_error}
-                        />
-                        {/* <div className="mt-1 error-text" color="danger">
-                          {d_cod_error ? "Select COD Type" : null}
-                        </div> */}
-                      </div>
-                    </Col>
+                      {delivery_type === "LOCAL" ? (
+                        <Col lg={4} md={6} sm={6}>
+                          <Label className="header-child">
+                            Local Delivery Type *{" "}
+                          </Label>
+                          <NSearchInput
+                            data_list={local_delivery_type_list}
+                            data_item_s={local_delivery_type}
+                            set_data_item_s={setlocal_delivery_type}
+                            error_message={"Select local delivery type"}
+                            show_search={false}
+                            error_s={local_delivery_type_error}
+                          />
+                        </Col>
+                      ) : null}
 
-                    {d_cod === "Yes" ? (
                       <Col lg={4} md={6} sm={6}>
                         <div className="mb-3">
-                          <Label className="header-child">
-                            Transportation cost
-                          </Label>
+                          <Label className="header-child">COD *</Label>
+                          <NSearchInput
+                            data_list={cod_list}
+                            data_item_s={d_cod}
+                            set_data_item_s={setd_cod}
+                            show_search={false}
+                            error_message={"Select any option"}
+                            error_s={d_cod_error}
+                          />
+                          {/* <div className="mt-1 error-text" color="danger">
+                          {d_cod_error ? "Select COD Type" : null}
+                        </div> */}
+                        </div>
+                      </Col>
+
+                      {d_cod === "Yes" ? (
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-3">
+                            <Label className="header-child">
+                              Transportation cost
+                            </Label>
+                            <Input
+                              min={0}
+                              onChange={(val) => {
+                                settransportation_cost(val.target.value);
+                                if (val.target.value !== "") {
+                                  settransportation_cost_err(false);
+                                }
+                              }}
+                              onBlur={() => {
+                                if (transportation_cost === "") {
+                                  settransportation_cost_err(true);
+                                }
+                              }}
+                              value={transportation_cost}
+                              type="number"
+                              name="transportation_cost"
+                              className="form-control-md"
+                              id="input"
+                              placeholder="Enter Transportation cost"
+                              invalid={
+                                transportation_cost_err
+                              }
+                            />
+                          </div>
+
+                          {transportation_cost_err && (
+                            <div
+                              className="error-text" color="danger"
+                              style={{
+                                marginTop: -14,
+                              }}
+                            >
+                              Please Add Transportation Cost
+                            </div>
+                          )}
+                        </Col>
+                      ) : null}
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Total Quantity *</Label>
                           <Input
                             min={0}
-                            onChange={(val) => {
-                              settransportation_cost(val.target.value);
-                              if (val.target.value !== "") {
-                                settransportation_cost_err(false);
-                              }
-                            }}
-                            onBlur={() => {
-                              if (transportation_cost === "") {
-                                settransportation_cost_err(true);
-                              }
-                            }}
-                            value={transportation_cost}
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.total_quantity || ""}
+                            invalid={
+                              validation.touched.total_quantity &&
+                                validation.errors.total_quantity
+                                ? true
+                                : false
+                            }
                             type="number"
-                            name="transportation_cost"
+                            name="total_quantity"
                             className="form-control-md"
                             id="input"
-                            placeholder="Enter Transportation cost"
-                            invalid={
-                              transportation_cost_err
-                            }
+                            placeholder="Enter Total Quantity"
+                          />
+                          {validation.touched.total_quantity &&
+                            validation.errors.total_quantity ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.total_quantity}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                      </Col>
+                      {order_type === "Issue" && returned_data.length !== 0 && (
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-2">
+                            <Label className="header-child">
+                              Total Delivered PCS
+                            </Label>
+                            <Input
+                              value={total_delivered_pcs}
+                              type="number"
+                              name="total_delivered_pcs"
+                              className="form-control-md"
+                              id="input"
+                              disabled
+                            />
+                          </div>
+                        </Col>
+                      )}
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Actual Weight</Label>
+                          <Input
+                            min={0}
+                            onChange={(e) => setactual_weigth(e.target.value)}
+                            value={actual_weigth}
+                            type="number"
+                            name="actual_weight"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Actual Weight"
                           />
                         </div>
-
-                        {transportation_cost_err && (
-                          <div
-                            className="error-text" color="danger"
-                            style={{
-                              marginTop: -14,
-                            }}
-                          >
-                            Please Add Transportation Cost
-                          </div>
-                        )}
                       </Col>
-                    ) : null}
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">
+                            Chargeable Weight
+                          </Label>
+                          <Input
+                            disabled
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.chargeable_weight || ""}
+                            type="number"
+                            lname="chargeable_weight"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Chargeable Weight"
+                          />
+                        </div>
+                      </Col>
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">Type</Label>
+                          <NSearchInput
+                            data_list={type_list}
+                            data_item_s={type}
+                            set_data_item_s={settype}
+                            show_search={false}
+                          />
+                          {/* <div className="mt-1 error-text" color="danger">
+                          {d_cod_error ? "Select COD Type" : null}
+                        </div> */}
+                        </div>
+                      </Col>
+                      <Col lg={8}>
+                        <div className="mb-2">
+                          <Label className="header-child">Remarks</Label>
+                          <Input
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.remarks || ""}
+                            type="Text"
+                            name="remarks"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Remarks"
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                ) : null}
+              </Card>
+            </Col>
+          </div>
+          :
+          <div className="m-3">
+            <Col lg={12}>
+              <Card className="shadow bg-white rounded">
+                <CardTitle className="mb-1 header">
+                  <div className="header-text-icon header-text" id="tariff_info">
+                    Commodity Flight Weight Info
+                    <IconContext.Provider
+                      value={{
+                        className: "header-add-icon",
+                      }}
+                    >
+                      <div onClick={toggle_circle3}>
+                        {circle_btn3 ? (
+                          <MdRemoveCircleOutline />
+                        ) : (
+                          <MdAddCircleOutline />
+                        )}
+                      </div>
+                    </IconContext.Provider>
+                  </div>
+                </CardTitle>
+                {circle_btn3 ? (
+                  <CardBody>
+                    <Row>
+                      <Col lg={4} md={6} sm={6}>
+                        <Label className="header-child">Commodity *</Label>
+                        <SearchInput
+                          data_list={client_commidities_list}
+                          setdata_list={setclient_commidities_list}
+                          data_item_s={commodity}
+                          set_data_item_s={setcommodity}
+                          set_id={setcommodity_id}
+                          page={page}
+                          setpage={setpage}
+                          setsearch_item={setsearch_commodity}
+                          error_message={"Please Select Any Commodity"}
+                          error_s={commodity_error}
+                          loaded={commodity_loaded}
+                          count={commodity_count}
+                          bottom={commodity_bottom}
+                          setbottom={setcommodity_bottom}
+                        />
+                        {/* {commodity_error ? (
+                        <div className="mt-1 error-text" color="danger">
+                          Please Select Any Commodity
+                        </div>
+                      ) : null} */}
+                      </Col>
+                      
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">Total Quantity *</Label>
+                        <Label className="header-child">Rate Class</Label>
                         <Input
-                          min={0}
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.total_quantity || ""}
-                          invalid={
-                            validation.touched.total_quantity &&
-                              validation.errors.total_quantity
-                              ? true
-                              : false
-                          }
-                          type="number"
-                          name="total_quantity"
+
+                          type="text"
+                          name="rate_class"
                           className="form-control-md"
                           id="input"
-                          placeholder="Enter Total Quantity"
+                          placeholder="Enter Rate Class"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.rate_class || ""}
+                        // onChange={(e)=>{
+                        //   setrate_class(e.target.value)
+                        // }}
+                        // value={rate_class}
                         />
-                        {validation.touched.total_quantity &&
+                        {/* {validation.touched.total_quantity &&
                           validation.errors.total_quantity ? (
                           <FormFeedback type="invalid">
                             {validation.errors.total_quantity}
                           </FormFeedback>
-                        ) : null}
+                        ) : null} */}
                       </div>
                     </Col>
-                    {order_type === "Issue" && returned_data.length !== 0 && (
+
                       <Col lg={4} md={6} sm={6}>
-                        <div className="mb-2">
-                          <Label className="header-child">
-                            Total Delivered PCS
-                          </Label>
-                          <Input
-                            value={total_delivered_pcs}
-                            type="number"
-                            name="total_delivered_pcs"
-                            className="form-control-md"
-                            id="input"
-                            disabled
+                        <div className="mb-3">
+                          <Label className="header-child">Coloader</Label>
+                          <SearchInput
+                            data_list={coloader_list}
+                            setdata_list={coloader_list}
+                            data_item_s={coloader}
+                            set_data_item_s={setcoloader}
+                            set_id={setcoloader_id}
+                            page={coloader_page}
+                            setpage={setcoloader_page}
+                            error_message={"Please Select Any State"}
+                            error_s={coloader_error}
+                            search_item={coloader_search_item}
+                            setsearch_item={setcoloader_search_item}
+                            loaded={coloader_loaded}
+                            count={coloader_count}
+                            bottom={coloader_bottom}
+                            setbottom={setcoloader_bottom}
                           />
                         </div>
                       </Col>
-                    )}
-                    <Col lg={4} md={6} sm={6}>
+
+                      <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">Actual Weight</Label>
+                        <Label className="header-child">Airlines Name *</Label>
                         <Input
-                          min={0}
-                          onChange={(e) => setactual_weigth(e.target.value)}
-                          value={actual_weigth}
-                          type="number"
-                          name="actual_weight"
+                          type="text"
+                          name="airlines_name"
                           className="form-control-md"
                           id="input"
-                          placeholder="Enter Actual Weight"
+                          placeholder="Enter Flight Name"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.airlines_name || ""}
+                        // onChange={(e)=>{
+                        //   setairlines_name(e.target.value)
+                        // }}
+                        // value={airlines_name}
                         />
                       </div>
                     </Col>
 
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">
-                        <Label className="header-child">
-                          Chargeable Weight
-                        </Label>
+                        <Label className="header-child">Flight Number *</Label>
                         <Input
-                          disabled
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.chargeable_weight || ""}
-                          type="number"
-                          lname="chargeable_weight"
+                          type="text"
+                          name="flight_no"
                           className="form-control-md"
                           id="input"
-                          placeholder="Enter Chargeable Weight"
+                          placeholder="Enter Flight Number"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.flight_no || ""}
+                        // onChange={(e) => {
+                        //   setflight_no(e.target.value)
+                        // }}
+                        // value={flight_no}
                         />
                       </div>
                     </Col>
+
                     <Col lg={4} md={6} sm={6}>
-                      <div className="mb-3">
-                        <Label className="header-child">Type</Label>
-                        <NSearchInput
-                          data_list={type_list}
-                          data_item_s={type}
-                          set_data_item_s={settype}
-                          show_search={false}
+                      <div className="mb-2">
+                        <Label className="header-child">Number Of Bags *</Label>
+                        <Input
+                          type="number"
+                          name="no_of_bags"
+                          className="form-control-md"
+                          id="input"
+                          placeholder="Enter Number Of Bags"
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.no_of_bags || ""}
+                        // onChange={(e) => {
+                        //   setno_of_bags(e.target.value)
+                        // }}
+                        // value={no_of_bags}
                         />
-                        {/* <div className="mt-1 error-text" color="danger">
+                      </div>
+                    </Col>
+                    
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Actual Weight</Label>
+                          <Input
+                            min={0}
+                            onChange={(e) => setactual_weigth(e.target.value)}
+                            value={actual_weigth}
+                            type="number"
+                            name="actual_weight"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Actual Weight"
+                          />
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">
+                            Chargeable Weight
+                          </Label>
+                          <Input
+                            disabled
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.chargeable_weight || ""}
+                            type="number"
+                            lname="chargeable_weight"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Chargeable Weight"
+                          />
+                        </div>
+                      </Col>
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">Type</Label>
+                          <NSearchInput
+                            data_list={type_list}
+                            data_item_s={type}
+                            set_data_item_s={settype}
+                            show_search={false}
+                          />
+                          {/* <div className="mt-1 error-text" color="danger">
                           {d_cod_error ? "Select COD Type" : null}
                         </div> */}
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                ) : null}
+              </Card>
+            </Col>
+          </div>
+        }
+
+        {/* Tariff Info A2A*/}
+        {order_type === "Airport To Airport" &&
+          <div className="m-3">
+            <Col lg={12}>
+              <Card className="shadow bg-white rounded">
+                <CardTitle className="mb-1 header">
+                  <div className="header-text-icon header-text">
+                    Tariff Info
+                    <IconContext.Provider
+                      value={{
+                        className: "header-add-icon",
+                      }}
+                    >
+                      <div onClick={toggle_circle3}>
+                        {circle_btn3 ? (
+                          <MdRemoveCircleOutline />
+                        ) : (
+                          <MdAddCircleOutline />
+                        )}
                       </div>
-                    </Col>
-                    <Col lg={8}>
-                      <div className="mb-2">
-                        <Label className="header-child">Remarks</Label>
-                        <Input
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.remarks || ""}
-                          type="Text"
-                          name="remarks"
-                          className="form-control-md"
-                          id="input"
-                          placeholder="Enter Remarks"
-                        />
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-              ) : null}
-            </Card>
-          </Col>
-        </div>
+                    </IconContext.Provider>
+                  </div>
+                </CardTitle>
+                {circle_btn3 ? (
+                  <CardBody>
+                    <Row>
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Rate *</Label>
+                          <Input
+                            type="number"
+                            name="rate"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Rate"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.rate || ""}
+                          // onChange={(e) => {
+                          //   setrate(e.target.value)
+                          // }}
+                          // value={rate}
+                          />
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Other Charge *</Label>
+                          <Input
+                            type="number"
+                            name="other_charge"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Other Charge"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.other_charge || ""}
+                          // onChange={(e) => {
+                          //   setother_charge(e.target.value)
+                          // }}
+                          // value={other_charge}
+                          />
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Carrier Charge *</Label>
+                          <Input
+                            type="number"
+                            name="carrier_charge"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Carrier Charge"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.carrier_charge || ""}
+                          // onChange={(e) => {
+                          //   setcarrier_charge(e.target.value)
+                          // }}
+                          // value={carrier_charge}
+                          />
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-3">
+                          <Label className="header-child">Tax Slab</Label>
+                          <NSearchInput
+                            data_list={tax_slab_list}
+                            data_item_s={tax_slab}
+                            set_data_item_s={settax_slab}
+                            show_search={false}
+                          />
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Handling Charge*</Label>
+                          <Input
+                            type="number"
+                            name="handling_charge"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Handling Charge"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.handling_charge || ""}
+                          // onChange={(e) => {
+                          //   sethandling_charge(e.target.value)
+                          // }}
+                          // value={handling_charge}
+                          />
+                        </div>
+                      </Col>
+
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">TSP *</Label>
+                          <Input
+                            type="number"
+                            name="tsp"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter TSP"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.tsp || ""}
+                          // onChange={(e) => {
+                          //   settsp(e.target.value)
+                          // }}
+                          // value={tsp}
+                          />
+                        </div>
+                      </Col>
+                      <Col lg={4} md={6} sm={6}>
+                        <div className="mb-2">
+                          <Label className="header-child">Total Quantity *</Label>
+                          <Input
+                            min={0}
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.total_quantity || ""}
+                            invalid={
+                              validation.touched.total_quantity &&
+                                validation.errors.total_quantity
+                                ? true
+                                : false
+                            }
+                            type="number"
+                            name="total_quantity"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Total Quantity"
+                          />
+                          {validation.touched.total_quantity &&
+                            validation.errors.total_quantity ? (
+                            <FormFeedback type="invalid">
+                              {validation.errors.total_quantity}
+                            </FormFeedback>
+                          ) : null}
+                        </div>
+                      </Col>
+                      <Col lg={8}>
+                        <div className="mb-2">
+                          <Label className="header-child">Remarks</Label>
+                          <Input
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.remarks || ""}
+                            type="Text"
+                            name="remarks"
+                            className="form-control-md"
+                            id="input"
+                            placeholder="Enter Remarks"
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                ) : null}
+              </Card>
+            </Col>
+          </div>
+        }
 
         {/*Status Info */}
         {(isupdating && can_view) || (isupdating && user.is_superuser) ? (
@@ -7447,7 +8015,7 @@ const AddOrder = () => {
                         <Col md={1} sm={2}>
                           <div className="mb-3">
                             <Label className="header-child">
-                               Amount
+                              Amount
                             </Label>
                             {row2.map((item2, index2) => (
                               <div

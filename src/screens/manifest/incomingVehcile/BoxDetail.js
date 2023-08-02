@@ -199,9 +199,9 @@ const BoxDetail = () => {
                     result_image={(val) => {
                       setrefresh(!refresh)
                       if (showModalOrder.ind !== "") {
-                        received[showModalOrder.ind]['issue_image'] = val;
+                        received[showModalOrder.ind]['issue_image'] = [val];
                       } else {
-                        received[received.length - 1]['issue_image'] = val;
+                        received[received.length - 1]['issue_image'] = [val];
                       }
                     }}
                   />

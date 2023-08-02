@@ -451,8 +451,9 @@ const RecieveHubManifest = ({ depart }) => {
               color: "blue",
             }}
           >
-            In {hub_transfer_no} You Have Recieved All Bags And Boxes Do You Want To
-            Update Status Connecting To Hub ?
+            Do You Want To Receive Of Hub Number {hub_transfer_no} Of All Bags And Boxes ?
+            {/* In {hub_transfer_no} You Have Recieved All Bags And Boxes Do You Want To
+            Update Status Connecting To Hub ? */}
           </div>
         </Modal.Body>
 
@@ -463,7 +464,7 @@ const RecieveHubManifest = ({ depart }) => {
               setis_recv(false);
             }}
           >
-            Cancel
+            No
           </Button>
           {!isLoading ?
           <Button variant="success" onClick={() => {
@@ -474,7 +475,8 @@ const RecieveHubManifest = ({ depart }) => {
               RecieveHubManifest("STEP2");
             }
           }}>
-            Update
+            {/* Update */}
+            Yes
           </Button>
            :
            <Button variant="success">
@@ -553,9 +555,9 @@ const RecieveHubManifest = ({ depart }) => {
                             result_image={(val) => {
                               setrefresh(!refresh)
                               if (showModalReceive.ind !== "") {
-                                receivedrec[showModalReceive.ind]['issue_image'] = val;
+                                receivedrec[showModalReceive.ind]['issue_image'] = [val];
                               } else {
-                                receivedrec[receivedrec.length - 1]['issue_image'] = val;
+                                receivedrec[receivedrec.length - 1]['issue_image'] = [val];
                               }
                             }}
                           />

@@ -545,9 +545,9 @@ const RecieveManifest = ({ depart }) => {
                       result_image={(val) => {
                         setrefresh(!refresh)
                         if (showModalOrder.ind !== "") {
-                          received[showModalOrder.ind]['issue_image'] = val;
+                          received[showModalOrder.ind]['issue_image'] = [val];
                         } else {
-                          received[received.length - 1]['issue_image'] = val;
+                          received[received.length - 1]['issue_image'] = [val];
                         }
                       }}
                     />
@@ -1029,9 +1029,9 @@ const RecieveManifest = ({ depart }) => {
                             result_image={(val) => {
                               setrefresh(!refresh)
                               if (showModalReceive.ind !== "") {
-                                receivedrec[showModalReceive.ind]['issue_image'] = val;
+                                receivedrec[showModalReceive.ind]['issue_image'] = [val];
                               } else {
-                                receivedrec[receivedrec.length - 1]['issue_image'] = val;
+                                receivedrec[receivedrec.length - 1]['issue_image'] = [val];
                               }
                             }}
                           />

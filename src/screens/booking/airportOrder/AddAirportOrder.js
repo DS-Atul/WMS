@@ -72,8 +72,8 @@ const AddAirportOrder = () => {
   const [airport_order_id, setairport_order_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
 
-
-  const [hash, sethash] = useState("");
+  const [togclient, settogclient] = useState(false)
+  const [togcommodity, settogcommodity] = useState(false)
 
   //Submit Buttom
   const [submit_btn, setsubmit_btn] = useState(false);
@@ -139,6 +139,9 @@ const AddAirportOrder = () => {
   const [selectbillto, setselectbillto] = useState([]);
   const [search_billto, setsearch_billto] = useState("");
   const [billto_page, setbillto_page] = useState(1);
+  const [billto_bottom, setbillto_bottom] = useState(103);
+  const [billto_count, setbillto_count] = useState(1);
+  const [billto_loaded, setbillto_loaded] = useState(false);
 
   //transport Mode
   const [transport_mode_data_list, settransport_mode_data_list] = useState([
@@ -243,6 +246,12 @@ const AddAirportOrder = () => {
   const [temp_selected, settemp_selected] = useState("");
 
   //Commodity
+    // Clients Commidities Lists
+    const [clients_commidities_lists, setclients_commidities_lists] = useState(
+      []
+    );
+    const [client_commidities_list, setclient_commidities_list] = useState([]);
+  
   const [commodity_data_list, setcommodity_data_list] = useState([]);
   const [commodity, setcommodity] = useState("");
   const [commodity_id, setcommodity_id] = useState(0);
@@ -305,6 +314,9 @@ const AddAirportOrder = () => {
   const [origincity_error, setorigincity_error] = useState(false);
   const [origincity_page, setorigincity_page] = useState(1);
   const [origincity_search_item, setorigincity_search_item] = useState("");
+  const [origincity_bottom, setorigincity_bottom] = useState(103)
+  const [origincity_count, setorigincity_count] = useState(1)
+  const [origincity_loaded, setorigincity_loaded] = useState(false)
 
   //destinationcity
   const [destinationcity_list, setdestinationcity_list] = useState([]);
@@ -314,6 +326,9 @@ const AddAirportOrder = () => {
   const [destinationcity_page, setdestinationcity_page] = useState(1);
   const [destinationcity_search_item, setdestinationcity_search_item] =
     useState("");
+  const [destinationcity_bottom, setdestinationcity_bottom] = useState(103)
+  const [destinationcity_count, setdestinationcity_count] = useState(1)
+  const [destinationcity_loaded, setdestinationcity_loaded] = useState(false)
 
   //State
   const [state_list_s, setstate_list_s] = useState([]);
@@ -402,11 +417,19 @@ const AddAirportOrder = () => {
   const [pincode_error2, setpincode_error2] = useState(false);
   const [delivery_mode_error, setdelivery_mode_error] = useState(false);
   const [client_error, setclient_error] = useState(false);
+  const [client_bottom, setclient_bottom] = useState(103);
+  const [client_loaded, setclient_loaded] = useState(false);
+  const [client_count, setclient_count] = useState(1);
+
   const [billto_error, setbillto_error] = useState(false);
   const [transport_mode_error, settransport_mode_error] = useState(false);
   const [shipper_error, setshipper_error] = useState(false);
   const [consignee_error, setconsignee_error] = useState(false);
   const [commodity_error, setcommodity_error] = useState(false);
+  const [commodity_loaded, setcommodity_loaded] = useState(false);
+  const [commodity_count, setcommodity_count] = useState(1);
+  const [commodity_bottom, setcommodity_bottom] = useState(103);
+
   const [local_delivery_type_error, setlocal_delivery_type_error] =
     useState(false);
   const [d_cod_error, setd_cod_error] = useState(false);
@@ -621,6 +644,11 @@ const AddAirportOrder = () => {
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
+          if (resp.data.next === null) {
+            setorigincity_loaded(false);
+          } else {
+            setorigincity_loaded(true);
+          }
           if (origincity_page == 1) {
             cities_list = resp.data.results.map((v) => [
               v.id,
@@ -644,14 +672,18 @@ const AddAirportOrder = () => {
           //     ...resp.data.results.map((v) => [v.id, toTitleCase(v.city)]),
           //   ];
           // }
-          cities_list = [...new Set(cities_list.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
+          // cities_list = [...new Set(cities_list.map((v) => `${v}`))].map((v) =>
+          //   v.split(",")
+          // );
           // dcities_list = [...new Set(dcities_list.map((v) => `${v}`))].map(
           //   (v) => v.split(",")
           // );
+          setorigincity_count(origincity_count + 2);
           setorigincity_list(cities_list);
           // setdestinationcity_list(dcities_list);
+        }
+        else{
+          setorigincity_list([]);
         }
       })
       .catch((err) => {
@@ -677,6 +709,11 @@ const AddAirportOrder = () => {
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
+          if (resp.data.next === null) {
+            setdestinationcity_loaded(false);
+          } else {
+            setdestinationcity_loaded(true);
+          }
           // if (origincity_page == 1) {
           //   cities_list = resp.data.results.map((v) => [
           //     v.id,
@@ -703,11 +740,14 @@ const AddAirportOrder = () => {
           // cities_list = [...new Set(cities_list.map((v) => `${v}`))].map((v) =>
           //   v.split(",")
           // );
-          dcities_list = [...new Set(dcities_list.map((v) => `${v}`))].map(
-            (v) => v.split(",")
-          );
-          // setorigincity_list(cities_list);
+          // dcities_list = [...new Set(dcities_list.map((v) => `${v}`))].map(
+          //   (v) => v.split(",")
+          // );
+          setdestinationcity_count(destinationcity_count + 2);
           setdestinationcity_list(dcities_list);
+        }
+        else{
+          setdestinationcity_list([]);
         }
       })
       .catch((err) => {
@@ -1051,33 +1091,46 @@ const AddAirportOrder = () => {
   const [data, setdata] = useState(false);
 
   const getBillto = () => {
-    let b_temp2 = [...billto_list];
+    let b_temp2 = [];
     let b_data = [];
     axios
       .get(
         ServerAddress +
-        `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${search_billto}`,
+        `master/all_billtoes/?search=${""}&p=${billto_page}&records=${10}&name_search=${search_billto}&pan_no=${[]}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
+        settogclient(true);
         b_data = response.data.results;
-        for (let index = 0; index < b_data.length; index++) {
-          b_temp2.push([b_data[index].id, toTitleCase(b_data[index].name)]);
+        if (response.data.results.length > 0) {
+          if (response.data.next === null) {
+            setbillto_loaded(false);
+          } else {
+            setbillto_loaded(true);
+          }
+          if (billto_page === 1) {
+            b_temp2 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            b_temp2 = [
+              ...billto_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
         }
-        b_temp2 = [...new Set(b_temp2.map((v) => `${v}`))].map((v) =>
-          v.split(",")
-        );
+        setbillto_count(billto_count + 2);
         setbillto_list(b_temp2);
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
       });
   };
-
   const getClient = () => {
-    let temp2 = [...client_list];
+    let temp2 = [];
     let data = [];
     axios
       .get(
@@ -1089,44 +1142,81 @@ const AddAirportOrder = () => {
       )
       .then((response) => {
         data = response.data.results;
-        for (let index = 0; index < data.length; index++) {
-          temp2.push([data[index].id, toTitleCase(data[index].name)]);
+        let com_list_cl = data.map((v) => [v.id, v.commodities]);
+        setclients_commidities_lists(com_list_cl);
+        if (response.data.results.length > 0) {
+          if (response.data.next === null) {
+            setclient_loaded(false);
+          } else {
+            setclient_loaded(true);
+          }
+          if (client_page === 1) {
+            temp2 = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            temp2 = [
+              ...client_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
         }
-        temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
+
+        setclient_count(client_count + 2);
         setclient_list(temp2);
+        // temp2 = [...new Set(temp2.map((v) => `${v}`))].map((v) => v.split(","));
       })
       .catch((err) => {
         alert(`Error Occur in Get Data ${err}`);
       });
   };
 
+
   // Get Commodity
   const getCommidityData = () => {
     let data = [];
-    let temp3 = [...commodity_data_list];
+    let temp3 = [];
     axios
       .get(
         ServerAddress +
-        `master/all_commodities/?search=${""}&p=${page}&records=${10}&commodity_type=${[
-          "",
-        ]}&commodity_name=${[""]}&commodity_name_search=${search_commodity}`,
+        // &commodity_name_search=${search_commodity}&data=all
+        `master/get_clientcommodity/?search=${search_commodity}&p=${page}&records=${10}&client=${client_id}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((response) => {
+        settogcommodity(true)
+        if (response.data.next === null) {
+          setcommodity_loaded(false);
+        } else {
+          setcommodity_loaded(true);
+        }
         if (response.data.results.length > 0) {
           data = response.data.results;
-          for (let index = 0; index < data.length; index++) {
-            temp3.push([
-              data[index].id,
-              toTitleCase(data[index].commodity_name),
-            ]);
+          if (page === 1) {
+            temp3 = data.map((v) => [v.id, toTitleCase(v.commodity_name)]);
+          } else {
+            temp3 = [
+              ...client_commidities_list,
+              ...data.map((v) => [v.id, toTitleCase(v.commodity_name)]),
+            ];
           }
-          temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
-            v.split(",")
-          );
-          setcommodity_data_list(temp3);
+          // for (let index = 0; index < data.length; index++) {
+          //   temp3.push([
+          //     data[index].id,
+          //     toTitleCase(data[index].commodity_name),
+          //   ]);
+          // }
+          // temp3 = [...new Set(temp3.map((v) => `${v}`))].map((v) =>
+          //   v.split(",")
+          // );
+          setcommodity_count(commodity_count + 2);
+          // setcommodity_data_list(temp3);
+          setclient_commidities_list(temp3);
+        } else {
+          setclient_commidities_list([]);
         }
       })
       .catch((err) => {
@@ -1303,6 +1393,12 @@ const AddAirportOrder = () => {
   }, []);
 
   useEffect(() => {
+    if (isupdating) {
+      settogclient(false)
+    }
+  }, [])
+
+  useEffect(() => {
     booking_type();
   }, [cold_chain]);
 
@@ -1332,9 +1428,58 @@ const AddAirportOrder = () => {
     }
   }, [billto_id]);
 
+  useLayoutEffect(() => {
+    if (billto_id !== 0) {
+      setclient_page(1);
+      setclient_count(1);
+      setclient_bottom(103);
+      setclient_loaded(true);
+    }
+  }, [billto_id]);
+
   useEffect(() => {
-    getCommidityData();
-  }, [page, search_commodity]);
+    let timeoutId;
+    if (billto_id !== 0) {
+      timeoutId = setTimeout(() => {
+        getClient();
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [billto_id, search_client, client_page]);
+
+  useEffect(() => {
+    let timeoutId;
+    if (client_id !== 0 && client_id !== "") {
+      timeoutId = setTimeout(() => {
+        getCommidityData();
+      }, 1);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [page, search_commodity, client_id, search_commodity]);
+
+  useEffect(() => {
+    if (isupdating) {
+      settogcommodity(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (billto_id !== 0) {
+      if (togclient) {
+        setclient("");
+        setclient_id("");
+      }
+    }
+  }, [billto_id]);
+
+  useEffect(() => {
+    if (client_id !== 0) {
+      if (togcommodity) {
+        setcommodity("");
+        setcommodity_id("");
+      }
+    }
+  }, [client_id]);
 
   useEffect(() => {
     if (airport_order_id !== "") {
@@ -1812,17 +1957,21 @@ const AddAirportOrder = () => {
                         setdata_list={setbillto_list}
                         data_item_s={billto}
                         set_data_item_s={setbillto}
-                        // error_message="Select Client "
                         set_id={setbillto_id}
-                        disable_me={isupdating}
+                        // disable_me={isupdating}
                         page={billto_page}
                         setpage={setbillto_page}
                         setsearch_item={setsearch_billto}
+                        error_message={"Plesae Select Any Bill To"}
+                        error_s={billto_error}
+                        loaded={billto_loaded}
+                        count={billto_count}
+                        bottom={billto_bottom}
+                        setbottom={setbillto_bottom}
                       />
-                      <div className="mt-1 error-text" color="danger">
-                        {billto_error ? "Please Select Client " : null}
-                      </div>
                     </Col>
+
+
                     {billto && (
                       <Col lg={4} md={6} sm={6}>
                         <Label className="header-child">Client *</Label>
@@ -1833,14 +1982,20 @@ const AddAirportOrder = () => {
                           set_data_item_s={setclient}
                           // error_message="Select Client "
                           set_id={setclient_id}
-                          disable_me={isupdating}
+                          // disable_me={isupdating}
                           page={client_page}
                           setpage={setclient_page}
                           setsearch_item={setsearch_client}
+                          error_message={"Plesae Select Any Client"}
+                          error_s={client_error}
+                          loaded={client_loaded}
+                          count={client_count}
+                          bottom={client_bottom}
+                          setbottom={setclient_bottom}
                         />
-                        <div className="mt-1 error-text" color="danger">
+                        {/* <div className="mt-1 error-text" color="danger">
                           {client_error ? "Please Select Client " : null}
-                        </div>
+                        </div> */}
                       </Col>
                     )}
 
@@ -1900,14 +2055,19 @@ const AddAirportOrder = () => {
                             <Label className="header-child">Origin City*</Label>
                             <SearchInput
                               data_list={origincity_list}
-                              setdata_list={setorigincity}
+                              setdata_list={setorigincity_list}
                               data_item_s={origincity}
                               set_data_item_s={setorigincity}
                               set_id={setorigincity_id}
                               page={origincity_page}
                               setpage={setorigincity_page}
                               error_message={"Please Select Any Option"}
+                              error_s={origincity_error}
                               setsearch_item={setorigincity_search_item}
+                              loaded={origincity_loaded}
+                              count={origincity_count}
+                              bottom={origincity_bottom}
+                              setbottom={setorigincity_bottom}
                             />
                           </div>
                         </Col>
@@ -1915,26 +2075,35 @@ const AddAirportOrder = () => {
                         <Col lg={4} md={6} sm={6}>
                           <div className="mb-3">
                             <Label className="header-child">Shipper *</Label>
-                            <SearchInput
-                              data_list={shipper_list}
-                              setdata_list={setshipper_list}
-                              data_item_s={shipper}
-                              set_data_item_s={setshipper}
-                              set_id={setshipper_id}
-                              page={shipper_page}
-                              setpage={setshipper_page}
-                              error_message={"Please Select Any Option"}
-                              search_item={shipper_search_item}
-                              setsearch_item={setshipper_search_item}
-                            />
-                            <div className="mt-1 error-text" color="danger">
-                              {shipper_error ? "Please Select Shipper" : null}
-                            </div>
+                            <Input
+                              placeholder="Enter shipper name"
+                              id="input"
+                              value={shipper}
+                              onChange={(e) => {
+                                setshipper(e.target.value);
+                              }}
+                              onBlur={() => {
+                                if (shipper === "") {
+                                  setshipper_error(true);
+                                }
+                              }}
+                              invalid={
+                                shipper_error
+                              }
+                            />                            
                           </div>
+                           {shipper_error && (
+                            <div
+                              className="error-text" color="danger"
+                              style={{
+                                marginTop: -14,
+                              }}
+                            >
+                              Please Add Shipper Name
+                            </div>
+                          )}
                         </Col>
 
-                        {shipper_id && (
-                          <>
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
                                 <Label className="header-child">State</Label>
@@ -1988,8 +2157,6 @@ const AddAirportOrder = () => {
                                 />
                               </div>
                             </Col>
-                          </>
-                        )}
                       </>
                     </Row>
                   </CardBody>
@@ -2040,8 +2207,13 @@ const AddAirportOrder = () => {
                               page={destinationcity_page}
                               setpage={setdestinationcity_page}
                               error_message={"Please Select Any Option"}
+                              error_s={destinationcity_error}
                               search_item={destinationcity_search_item}
                               setsearch_item={setdestinationcity_search_item}
+                              loaded={destinationcity_loaded}
+                              count={destinationcity_count}
+                              bottom={destinationcity_bottom}
+                              setbottom={setdestinationcity_bottom}
                             />
                           </div>
                         </Col>
@@ -2049,26 +2221,36 @@ const AddAirportOrder = () => {
                         <Col lg={4} md="6" sm="6">
                           <div className="mb-3">
                             <Label className="header-child">Consignee *</Label>
-                            <SearchInput
-                              data_list={consignee_list}
-                              setdata_list={setconsignee_list}
-                              data_item_s={consignee}
-                              set_data_item_s={setconsignee}
-                              set_id={setconsignee_id}
-                              page={consignee_page}
-                              setpage={setconsignee_page}
-                              error_message={"Please Select Any Option"}
-                              search_item={consignee_search_item}
-                              setsearch_item={setconsignee_search_item}
+                            <Input
+                              value={consignee}
+                              id="input"
+                              onChange={(e) => {
+                                setconsignee(e.target.value);
+                              }}
+                              onBlur={() => {
+                                if (consignee === "") {
+                                  setconsignee_error(true);
+                                }
+                              }}
+                              invalid={
+                                consignee_error
+                              }
+                              placeholder="Enter Consignee Name"
                             />
-                            <div className="mt-1 error-text" color="danger">
-                              {consignee_error ? "Consignee is required" : null}
-                            </div>
+                            
                           </div>
+                            {consignee_error && (
+                            <div
+                              className="error-text" color="danger"
+                              style={{
+                                marginTop: -14,
+                              }}
+                            >
+                              Please Add Consignee Name
+                            </div>
+                          )}
                         </Col>
 
-                        {consignee_id && (
-                          <>
                             <Col lg={4} md={6} sm={6}>
                               <div className="mb-2">
                                 <Label className="header-child">State</Label>
@@ -2122,8 +2304,7 @@ const AddAirportOrder = () => {
                                 />
                               </div>
                             </Col>
-                          </>
-                        )}
+    
                       </>
                     </Row>
                   </CardBody>
@@ -2330,24 +2511,29 @@ const AddAirportOrder = () => {
               {circle_btn3 ? (
                 <CardBody>
                   <Row>
-                    <Col lg={4} md={6} sm={6}>
+                  <Col lg={4} md={6} sm={6}>
                       <Label className="header-child">Commodity *</Label>
                       <SearchInput
-                        data_list={commodity_data_list}
-                        setdata_list={setcommodity_data_list}
+                        data_list={client_commidities_list}
+                        setdata_list={setclient_commidities_list}
                         data_item_s={commodity}
                         set_data_item_s={setcommodity}
                         set_id={setcommodity_id}
                         page={page}
                         setpage={setpage}
                         setsearch_item={setsearch_commodity}
-                      // error_message={"Please Select Any Commodity"}
+                        error_message={"Please Select Any Commodity"}
+                        error_s={commodity_error}
+                        loaded={commodity_loaded}
+                        count={commodity_count}
+                        bottom={commodity_bottom}
+                        setbottom={setcommodity_bottom}
                       />
-                      {commodity_error ? (
+                      {/* {commodity_error ? (
                         <div className="mt-1 error-text" color="danger">
                           Please Select Any Commodity
                         </div>
-                      ) : null}
+                      ) : null} */}
                     </Col>
 
                     <Col lg={4} md={6} sm={6}>
@@ -2781,7 +2967,7 @@ const AddAirportOrder = () => {
                         setorder_active_btn("second");
                       }}
                     >
-                      Coloader Images
+                      Order Images
                     </div>
                     <div
                       style={{

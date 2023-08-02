@@ -195,6 +195,7 @@ const AddClient = () => {
       name: toTitleCase(client.name) || "",
       email: client.email || "",
       phone_number: client.phone_number || "",
+      account_number: client.account_number || "",
       authorised_person_name: toTitleCase(client.authorised_person_name) || "",
       authorised_email: client.authorised_person_email || "",
       authorised_number: client.authorised_person_number || "",
@@ -217,6 +218,10 @@ const AddClient = () => {
         .min(10, "Phone number must 10 digit long")
         .max(10, "Phone number must 10 digit long")
         .required("Phone number is required"),
+        account_number: Yup.string()
+        .min(12, "Account number must 12 digit long")
+        .max(12, "Account number must 12 digit long")
+        .required("Account number is required"),
       authorised_person_name: Yup.string().required(
         "Authorised person name is required"
       ),
@@ -239,7 +244,7 @@ const AddClient = () => {
       let all_value = map_value[0];
       let field = ["address_line_1"]
       let fields2 = ["authorised_person_name", "authorised_email", "authorised_number"]
-      let fields3 = ["name", "email", "phone_number"]
+      let fields3 = ["name", "email", "phone_number",'account_number']
 
       if (pan_no === "") {
         setpan_no_error(true);
@@ -622,6 +627,7 @@ const AddClient = () => {
           email: values.email,
           name: toTitleCase(values.name).toUpperCase(),
           phone_number: values.phone_number,
+          account_number: values.account_number,
           address_line: toTitleCase(values.address_line_1).toUpperCase(),
           location: locality_id,
           authorised_person_name: toTitleCase(
@@ -795,6 +801,7 @@ const AddClient = () => {
         email: values.email,
         name: toTitleCase(values.name).toUpperCase(),
         phone_number: values.phone_number,
+        account_number: values.account_number,
         address_line: toTitleCase(values.address_line_1).toUpperCase(),
         location: locality_id,
         authorised_person_name: toTitleCase(
@@ -833,6 +840,7 @@ const AddClient = () => {
           email: values.email,
           name: toTitleCase(values.name).toUpperCase(),
           phone_number: values.phone_number,
+          account_number: values.account_number,
           address_line: toTitleCase(values.address_line_1).toUpperCase(),
           location: locality_id,
           authorised_person_name: toTitleCase(
@@ -1583,7 +1591,7 @@ const AddClient = () => {
           let all_value = map_value[0];
           let field = ["address_line_1"];
           let fields2 = ["authorised_person_name", "authorised_email", "authorised_number"];
-          let fields3 = ["name", "email", "phone_number"];
+          let fields3 = ["name", "email", "phone_number",'account_number'];
 
 
           if (pan_no === "") {
@@ -1787,6 +1795,35 @@ const AddClient = () => {
                         validation.errors.phone_number ? (
                         <FormFeedback type="invalid">
                           {validation.errors.phone_number}
+                        </FormFeedback>
+                      ) : null}
+                    </div>
+                  </Col>
+
+                  <Col lg={4} md={6} sm={6}>
+                    <Label className="header-child">Account number*</Label>
+                    <div className="mb-3">
+                      <Input
+                        onChange={validation.handleChange}
+                        onBlur={validation.handleBlur}
+                        value={validation.values.account_number || ""}
+                        invalid={
+                          validation.touched.account_number &&
+                            validation.errors.account_number
+                            ? true
+                            : false
+                        }
+                        type="number"
+                        name="account_number"
+                        className="form-control-md"
+                        id="input"
+                        placeholder="Enter phone number"
+                        min={0}
+                      />
+                      {validation.touched.account_number &&
+                        validation.errors.account_number ? (
+                        <FormFeedback type="invalid">
+                          {validation.errors.account_number}
                         </FormFeedback>
                       ) : null}
                     </div>

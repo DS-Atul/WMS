@@ -132,7 +132,7 @@ const EditManifestDataFormat = ({ Manifest_list }) => {
             ) : (
               Manifest_list.map((order, index) => {
                 let booking_date_n = order.booking_at
-                  ? order.booking_at.split("+")[0]
+                  ? order.booking_at.split("T")[0]
                   : "none";
 
                 return (

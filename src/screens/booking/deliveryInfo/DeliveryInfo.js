@@ -20,6 +20,7 @@ const DeliveryInfo = () => {
   const dispatch = useDispatch();
   const from_date = useSelector((state) => state.filtervalue.data_a);
   const to_date = useSelector((state) => state.filtervalue.data_b);
+  const client = useSelector((state) => state.filtervalue.data_c);
 
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
@@ -107,7 +108,7 @@ const DeliveryInfo = () => {
             can_delete={can_delete}
             Data_Title={OrderDeliveryDataTitle}
             Data_Format={OrderDeliveryDataFormate}
-            path={`booking/get_delivery_info/?search=${search}&p=${page_num}&records=${data_len}&signature_person_name=${''}&from_date=${from_date}&to_date=${to_date}&value=${cm_value}`}
+            path={`booking/get_delivery_info/?search=${search}&p=${page_num}&records=${data_len}&signature_person_name=${''}&from_date=${from_date}&to_date=${to_date}&client=${client}&value=${cm_value}`}
           />
           <NumPagination path={"path"} />
         </div>

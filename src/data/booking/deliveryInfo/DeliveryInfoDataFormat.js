@@ -35,7 +35,7 @@ const DeliveryInfoDataFormat = ({ order_id }) => {
     axios
       .get(
         ServerAddress +
-        `booking/get_delivery_info/?order_id=${order_id}&signature_person_name=${''}&p=1&records=50`,
+        `booking/get_delivery_info/?order_id=${order_id}&signature_person_name=${''}&p=1&records=50&client=${''}`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -105,9 +105,9 @@ const DeliveryInfoDataFormat = ({ order_id }) => {
         ? " No Data Found"
         : delivery_list.map((del_info, index) => {
           let added_at = "-";
-          if (del_info.created_date) {
-            console.log("del_info.created_date----", del_info.created_date)
-            let added_at_r = del_info.created_date.split("T");
+          if (del_info?.created_at) {
+            console.log("del_info.created_date----", del_info.created_at)
+            let added_at_r = del_info?.created_at.split("T");
             let date = added_at_r[0];
             let time = added_at_r[1].substring(0, 5);
             added_at = date + " " + time;

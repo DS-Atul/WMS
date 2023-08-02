@@ -198,7 +198,7 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
         ServerAddress + "booking/update_issue/" + id,
         {
           is_solved: is_resolved,
-          remarks: remarks!== null ? toTitleCase(remarks).toUpperCase() : "",
+          remarks: remarks !== null ? toTitleCase(remarks).toUpperCase() : "",
           change_fields: { 'is_solved': is_resolved, 'remarks': remarks, 'solved_by': user.username },
           barcode: barcode,
           barcode_type: barcode_type,
@@ -302,7 +302,7 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
 
           cm_current_status: "REJECTED",
           cm_remarks: toTitleCase(message).toUpperCase(),
-          change_fields: {'cm_current_status': 'REJECTED'},
+          change_fields: { 'cm_current_status': 'REJECTED' },
         },
         {
           headers: {
@@ -334,34 +334,48 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
     }
   }
 
-    // Image Modal
-    const [openModal, setopenModal] = useState(false);
-    const handleCloseMod = () => {
-      setopenModal(false);
-    }
-    const [img, setimg] = useState("");
-    const handle_img = (a) => {
-      setimg(a)
-    }
+  // Image Modal
+  const [openModal, setopenModal] = useState(false);
+  const handleCloseMod = () => {
+    setopenModal(false);
+  }
+  const [img, setimg] = useState([]);
+  const handle_img = (a) => {
+    setimg(a)
+  }
 
   return (
     <>
-    {/* For Image Modal */}
-    <Modal show={openModal} onHide={handleCloseMod}
+      {/* For Image Modal */}
+      <Modal show={openModal} onHide={handleCloseMod}>
+        <Modal.Header closeButton>
+          <Modal.Title>
 
->
-  <Modal.Header closeButton>
-    <Modal.Title>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
 
-    </Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
+          {/* <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px" }} /> */}
+          {img.map((imageData) => (
+            <img
+              key={imageData.id}
+              src={imageData.issue_image}
+              style={{
+                maxWidth: "150px",
+                maxHeight: "150px",
+                display: "inline-block",
+                margin: "10px",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+              // onClick={() => handle_img(imageData.issue_image)}
+              alt={`Image ${imageData.id + 1}`}
+            />
+          ))}
 
-    <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px" }} />
+        </Modal.Body>
 
-  </Modal.Body>
-
-</Modal>
+      </Modal>
 
       <Modal
         show={show}
@@ -592,14 +606,23 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
                   </div>
                 )}
               </td>
-              <td
+              {/* <td
                   onClick={() => {
                     handle_img(order.image);
                     setopenModal(true)
                   }}
                 >
                   <img src={order.image} style={{ width: 70, height: 50 }} />
-                </td>
+                </td> */}
+              <td>
+                <div
+                  onClick={() => {
+                    handle_img(order.issue_image);
+                    setopenModal(true)
+                  }}>
+                  {(order.issue_image).length}
+                </div>
+              </td>
             </tr>
           );
         })
