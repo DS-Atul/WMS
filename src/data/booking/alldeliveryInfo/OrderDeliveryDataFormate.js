@@ -333,20 +333,26 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
   const handle_img = (a) => {
     setimg(a)
   }
+  const [rotationAngle, setRotationAngle] = useState(0);
+  const handleClick = () => {
+    // Increase the rotation angle by 45 degrees on each click
+    setRotationAngle(prevAngle => prevAngle + 90);
+  };
 
   return (
     <>
-      <Modal show={openModal} onHide={handleCloseMod}
-
-      >
+      <Modal show={openModal} onHide={handleCloseMod}>
         <Modal.Header closeButton>
           <Modal.Title>
 
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-
-          <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px" }} />
+            <div style={{overflow:"hidden"}}>
+              <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px", transform: `rotate(${rotationAngle}deg)` }}
+                onClick={handleClick}
+              />
+          </div>
 
         </Modal.Body>
 
@@ -514,7 +520,7 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
                 {/* {can_update || user.is_superuser  ? ( */}
                 {(can_update && order.cm_current_status !== "APPROVED") || user.is_superuser ? (
                   <Link to="/booking/updatedeliveryinfo" state={{ order: order }}>
-                    { order.docket_no}
+                    {order.docket_no}
                   </Link>
 
                 ) : (

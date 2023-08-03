@@ -344,8 +344,36 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
     setimg(a)
   }
 
+  const [img_data, setimg_data] = useState("")
+  const [fullscreen, setFullscreen] = useState(true);
+  const [showimg, setshowimg] = useState(false);
+
+  function handleShowimg(breakpoint) {
+    setFullscreen(breakpoint);
+    setshowimg(true);
+  }
+  const [rotationAngle, setRotationAngle] = useState(0);
+  const handleClick = () => {
+    // Increase the rotation angle by 45 degrees on each click
+    setRotationAngle(prevAngle => prevAngle + 90);
+  };
+
   return (
     <>
+      {/* For Big Img Modal */}
+      <Modal show={showimg} fullscreen={fullscreen} onHide={() => setshowimg(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Issue Image</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div style={{ overflow: "hidden" }}>
+            <img src={img_data} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px", transform: `rotate(${rotationAngle}deg)` }}
+              onClick={handleClick}
+            />
+          </div>
+        </Modal.Body>
+      </Modal>
+
       {/* For Image Modal */}
       <Modal show={openModal} onHide={handleCloseMod}>
         <Modal.Header closeButton>
@@ -368,7 +396,10 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
                 borderRadius: "5px",
                 cursor: "pointer",
               }}
-              // onClick={() => handle_img(imageData.issue_image)}
+              onClick={() => {
+                setimg_data(imageData.issue_image);
+                handleShowimg(true)
+              }}
               alt={`Image ${imageData.id + 1}`}
             />
           ))}
@@ -616,6 +647,7 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
                 </td> */}
               <td>
                 <div
+                  style={{ color: "blue", cursor: "pointer" }}
                   onClick={() => {
                     handle_img(order.issue_image);
                     setopenModal(true)

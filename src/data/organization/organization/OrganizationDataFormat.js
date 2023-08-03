@@ -139,7 +139,11 @@ const OrganizationDataFormat = ({ data, data1 }) => {
   const handle_img = (a) => {
     setimg(a)
   }
-
+  const [rotationAngle, setRotationAngle] = useState(0);
+  const handleClick = () => {
+    // Increase the rotation angle by 45 degrees on each click
+    setRotationAngle(prevAngle => prevAngle + 90);
+  };
   return (
     <>
       <Modal show={openModal} onHide={handleCloseMod}>
@@ -149,9 +153,11 @@ const OrganizationDataFormat = ({ data, data1 }) => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-
-          <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px" }} />
-
+          <div style={{ overflow: "hidden" }}>
+            <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px", transform: `rotate(${rotationAngle}deg)` }}
+              onClick={handleClick}
+            />
+          </div>
         </Modal.Body>
 
       </Modal>
@@ -168,7 +174,7 @@ const OrganizationDataFormat = ({ data, data1 }) => {
                 borderWidth: 1,
               }}
             >
-              {( user.is_superuser) && (
+              {(user.is_superuser) && (
                 <td
                   className="selection-cell"
                   onClick={() => {
@@ -199,15 +205,15 @@ const OrganizationDataFormat = ({ data, data1 }) => {
               </td>
               <td>{organization.pan_no}</td>
               <td>
-              
+
                 {organization.organization_gst.length !== 0 &&
-                 organization.organization_gst.map((organization, index) => {
-                   return (
-                  <span>{organization.gst_no +",  "}</span>
-                   )
-                }
-                
-                )}
+                  organization.organization_gst.map((organization, index) => {
+                    return (
+                      <span>{organization.gst_no + ",  "}</span>
+                    )
+                  }
+
+                  )}
               </td>
               <td>{organization.regd_no}</td>
               <td>{organization.website}</td>

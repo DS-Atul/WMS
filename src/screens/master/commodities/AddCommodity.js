@@ -559,10 +559,6 @@ const Add_Commodity = () => {
   //Eway no
   const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
   console.log("b_acess_token com====", b_acess_token)
-  // 361003171398,  800179
-
-  // 341003179578, 311003179579, 371003179580, 341003179581, 311003179582, 381003179583, 321003179585, 391003179586, 361003179587, 361003179590, 301003179589, 331003179591
-  // 371003179593, 341003179594, 301003179592, ['321003179598', '391003179599', '321003179600']
   const [a, seta] = useState([])
   const post_awb = (index) => {
     axios

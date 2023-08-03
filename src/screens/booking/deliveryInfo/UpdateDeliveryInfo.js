@@ -77,7 +77,7 @@ const UpdateDeliveryInfo = () => {
   };
 
   const update_delivery_info = (values) => {
-    setIsLoading(false)
+    setIsLoading(true)
     let id = delivery_data.id;
     let fields_names = Object.entries({
       signature_person_name: values.person_name,

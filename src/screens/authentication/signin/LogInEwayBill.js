@@ -47,12 +47,12 @@ function LogInEwayBill() {
           seteuser_name(res_data.username);
           setepass(res_data.password);
           setAccessToken_Modifiedat(res_data.AccessToken_Modifiedat);
-          if (e_access_token === "") {
+          // if (e_access_token === "") {
             dispatch(setEAccessToken(res_data.access_token));
-          }
-          if (business_access_token === "") {
+          // }
+          // if (business_access_token === "") {
             dispatch(setBusinesssAccessToken(res_data.business_token));
-          }
+          // }
 
           if (response.data.results[0].access_token === null) {
             setass_token(true);
