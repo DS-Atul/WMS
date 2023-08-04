@@ -5,7 +5,6 @@ import { FaTruck } from "react-icons/fa";
 import { IoMdTrain } from "react-icons/io";
 import { GiCommercialAirplane } from "react-icons/gi";
 import SpineAreaChart from "../../components/dashboardComponents/Charts/SpineAreaChart";
-import Dropdown from "react-bootstrap/Dropdown";
 import "bootstrap/dist/css/bootstrap.css";
 
 import BarChart from "../../components/dashboardComponents/Charts/BarChart";
@@ -99,7 +98,7 @@ const DashboardChartSection = () => {
         delivery_type[2] ? delivery_type[2].total_count : 0
       );
       //------Sets the values of two local state variables called billto_arr and billto_name_arr to arrays that contain the total count and name of the top five bill-to customers returned from the server, respectively.
-      console.log("billto", billto);
+      // console.log("billto", billto);
       setbillto_arr(billto.map(({ total_count }) => total_count).slice(0, 5));
       setbillto_name_arr(
         billto.map(({ billto_name }) => billto_name).slice(0, 5)
@@ -195,7 +194,7 @@ const DashboardChartSection = () => {
           <Col lg={6} md={6} sm={12}>
             <Card
               className="shadow bg-white rounded"
-              style={{ margin: "-1px", height: "100%", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px", width:"100%",marginRight:"2px"}}
+              style={{ margin: "-1px", height: "100%", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px", width: "100%", marginRight: "2px" }}
             >
               <CardTitle
                 style={{
@@ -228,7 +227,7 @@ const DashboardChartSection = () => {
                 margin: "0px",
                 height: "100%",
                 boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-                width:"100%",marginLeft:'3px'
+                width: "100%", marginLeft: '3px'
               }}
             >
               <CardTitle
@@ -255,7 +254,7 @@ const DashboardChartSection = () => {
       </Col>
 
       {/* Pie Chart */}
-      <Card className="shadow bg-white rounded" style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px"}}>
+      <Card className="shadow bg-white rounded" style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
         <CardTitle
           style={{
             display: "flex",
@@ -278,7 +277,7 @@ const DashboardChartSection = () => {
       </Card>
 
       {/* Horizontal Chart */}
-      <div style={{ background: "white", margin: "2px",  boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
+      <div style={{ background: "white", margin: "2px", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
         <CardTitle
           style={{
             display: "flex",
@@ -301,7 +300,7 @@ const DashboardChartSection = () => {
 
       {/* Vertical Chart */}
       <div style={{ background: "white", margin: "2px", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
-      <CardTitle
+        <CardTitle
           style={{
             display: "flex",
             justifyContent: "center",
@@ -311,7 +310,7 @@ const DashboardChartSection = () => {
             fontFamily: "Poppins, sansSerif",
           }}
         >
-          Top 10 branch 
+          Top 10 branch
         </CardTitle>
         <BarChart
           seriesData={consignee_name_arr}
@@ -322,7 +321,7 @@ const DashboardChartSection = () => {
       </div>
 
       {/* Spine Area Chart */}
-      <div style={{ background: "white", margin: "2px",boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
+      <div style={{ background: "white", margin: "2px", boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
         <SpineAreaChart
           seriesData={seriesData1}
           optionsData={optionsData}

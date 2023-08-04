@@ -5,7 +5,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../../assets/scss/forms/form.scss";
 import { Col, Label, Input, FormFeedback } from "reactstrap";
-import { Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
@@ -38,9 +38,7 @@ function HiredDetailsEndModal({ id, Start_Km }) {
     axios
       .post(
         ServerAddress + "Transporter/post-tripendtime/",
-
         // server_address + "Transporter/post-tripendtime/",
-
         {
           hired_id: id,
           end_km: values.end_km,

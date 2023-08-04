@@ -10,11 +10,10 @@ import { setDocketNumber, setSearchDocket } from "../../store/orderTracking/Orde
 import { useNavigate } from "react-router-dom";
 
 const Layout = () => {
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const docket_no = useSelector((state) => state.OrderTracking.docket_number);
   const docket_search = useSelector((state) => state.OrderTracking.search_docket);
 
   const nav_toggle = useSelector((state) => state.datalist.nav_toggle);

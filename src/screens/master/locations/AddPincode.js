@@ -17,7 +17,6 @@ import {
   Input,
   FormFeedback,
   Form,
-  FormGroup
 } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
@@ -28,16 +27,10 @@ import {
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-import { Button } from "react-bootstrap";
-import Modal from 'react-bootstrap/Modal';
 
 const AddPincode = () => {
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
-  const user = useSelector((state) => state.authentication.userdetails);
 
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const [isupdating, setisupdating] = useState(false);
   const location_data = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -101,7 +94,7 @@ const AddPincode = () => {
       }
 
       if (resp.data.results.length > 0) {
-        if (city_page == 1) {
+        if (city_page === 1) {
           cities_list = resp.data.results.map((v) => [
             v.id,
             toTitleCase(v.city),
@@ -136,16 +129,16 @@ const AddPincode = () => {
       city_name: city,
       pincode: values.pincode,
     });
-    console.log("fields_names----", fields_names)
+    // console.log("fields_names----", fields_names)
 
     let change_fields = {};
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
       let prev = location_data.state.pincode[`${ele[0]}`];
       let new_v = ele[1];
-      console.log("prev===", prev)
+      // console.log("prev===", prev)
 
-      if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
@@ -173,7 +166,7 @@ const AddPincode = () => {
         );
         dispatch(setAlertType("info"));
         pincode.is_pincode ? navigate(-1) : navigate("/master/locations");
-      } else if (response.data == "duplicate") {
+      } else if (response.data === "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
@@ -193,7 +186,7 @@ const AddPincode = () => {
   useLayoutEffect(() => {
     try {
       let pincode = location_data.state;
-      console.log("pincode====", pincode)
+      // console.log("pincode====", pincode)
       setpincode(pincode)
       setcity_id(pincode.pincode.city)
       setcity(toTitleCase(pincode.pincode.city_name))

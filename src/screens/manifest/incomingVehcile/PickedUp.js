@@ -10,19 +10,17 @@ import PickDataFormat from "../../../data/manifests/recieveManifest/PickDataForm
 import IncomingTab from "../navigateTab/IncomingTab";
 import Navigate from "../navigateTab/Navigate";
 
-
-
 const PickedUpOrders = () => {
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.authentication.access_token);
-const [picked_orders, setpicked_orders] = useState([]);
+  const [picked_orders, setpicked_orders] = useState([]);
   const getPendindOrders = () => {
     axios
       .get(ServerAddress + `booking/orderboxqrcodecheck/`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
-        console.log("response[[[]",response.data)
+        console.log("response[[[]", response.data)
         setpicked_orders(response.data);
       })
       .catch((err) => {
@@ -36,8 +34,8 @@ const [picked_orders, setpicked_orders] = useState([]);
   return (
     <>
       <PageTitle page="Picked Orders" />
-      <Navigate/>
-    <IncomingTab/>
+      <Navigate />
+      <IncomingTab />
       <Title title="Picked Orders" parent_title="Incoming" />
       <div className="mx-3">
         <div className="container-fluid " style={{ background: "white" }}>
@@ -56,9 +54,9 @@ const [picked_orders, setpicked_orders] = useState([]);
           </div>
 
           {/* DataTable */}
-         <PickDataFormat 
-         data={picked_orders}
-         />
+          <PickDataFormat
+            data={picked_orders}
+          />
         </div>
       </div>
     </>

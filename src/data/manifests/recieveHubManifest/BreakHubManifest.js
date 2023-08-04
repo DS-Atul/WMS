@@ -2,8 +2,6 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
-import correct from "../../../assets/images/bookings/check-mark.png";
-import cross from "../../../assets/images/bookings/remove.png";
 import {
   setFuther_conn_id,
   setGoing_hub_id,
@@ -11,9 +9,7 @@ import {
   setOrder_id,
 } from "../../../store/manifest/RecieveManifest";
 import axios from "axios";
-import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { Input } from "reactstrap";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import { ServerAddress } from "../../../constants/ServerAddress";
 const RecieveManifestTitle = [
   "Docket No",
@@ -41,7 +37,6 @@ const BreakHubManifest = ({
 }) => {
   console.log("hub_transfer_no00000000000000", hub_transfer_no)
   const [data, setdata] = useState([])
-  const searchData = useSelector((state) => state.searchbar.search_item);
   const [refresh, setrefresh] = useState(false);
   const [selected_id, setselected_id] = useState([]);
   const [going_hub_id, setgoing_hub_id] = useState([]);
@@ -72,7 +67,6 @@ const BreakHubManifest = ({
 
   const getOrderPieces = () => {
     // let state_list = [...state_list_s];
-    let state_list = [];
     axios
       .get(
         ServerAddress +

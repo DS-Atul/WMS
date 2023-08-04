@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
@@ -126,7 +126,7 @@ const ChargesDataFormat = ({ data, data1, can_delete }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       deleteCharge(ids);
     }
   }, [delete_id]);
@@ -135,9 +135,9 @@ const ChargesDataFormat = ({ data, data1, can_delete }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("charge_name"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("charge_category"));
     }
   }, [index]);

@@ -27,7 +27,7 @@ import {
 } from "reactstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { setIncomingTab, setManifestTab, setToggle } from "../../../store/parentFilter/ParentFilter";
+import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import {
   setAlertType,
   setDataExist,
@@ -51,23 +51,12 @@ import {
 } from "../../../store/booking/order/Order";
 // import Button from 'react-bootstrap/Button';
 import Modal from "react-bootstrap/Modal";
-import Main_c from "../.././../components/crop/main";
-import { CleanHands } from "@mui/icons-material";
 import DeliveryInfoDataTitle from "../../../data/booking/deliveryInfo/DeliveryInfoDataTitle";
 import DeliveryInfoDataFormat from "../../../data/booking/deliveryInfo/DeliveryInfoDataFormat";
-import {
-  setBusinesssAccessToken,
-  setEAccessToken,
-  setOrgs,
-} from "../../../store/ewayBill/EwayBill";
 import { gstin_no } from "../../../constants/CompanyDetails";
-import OrderImgDataFormat from "../../../data/images/orderImage/OrderDataFormat";
-import InvoiceImgDataFormat from "../../../data/images/invoicesImage/InvoiceImageDataFormat";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 import ImgModal from "../../../components/crop/ImgModal";
-import { Spinner } from "reactstrap";
 import Loader from "../../../components/loader/Loader";
-import { RiNurseFill } from "react-icons/ri";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -91,8 +80,6 @@ const AddOrder = () => {
   // const handleShow_Pincode = () => setshow_pincode(true);
   const [from_pin, setfrom_pin] = useState(false)
   const [to_pin, setto_pin] = useState(false)
-  const [from_locality_eway, setfrom_locality_eway] = useState("")
-  const [to_locality_eway, setto_locality_eway] = useState("")
 
   //Get Updated Location Data
   const [order, setorder] = useState([]);
@@ -147,7 +134,6 @@ const AddOrder = () => {
   console.log("type====", type)
 
   const [state_list_c, setstate_list_c] = useState([]);
-  const [state_s_c, setstate_s_c] = useState("");
   const [state_id_f_c, setstate_id_f_c] = useState(0);
   const [state_error_c, setstate_error_c] = useState(false);
   const [state_page_c, setstate_page_c] = useState(1);
@@ -157,7 +143,6 @@ const AddOrder = () => {
 
   const [state_search_item_c, setstate_search_item_c] = useState("");
   const [city_list__c, setcity_list__c] = useState([]);
-  const [city_c, setcity_c] = useState("");
   const [city_id_c, setcity_id_c] = useState(0);
   const [city_error_c, setcity_error_c] = useState(false);
   const [city_page_c, setcity_page_c] = useState(1);
@@ -168,13 +153,10 @@ const AddOrder = () => {
 
   const [by_pincode_f_c, setby_pincode_f_c] = useState(false);
   const [pincode_list_f_c, setpincode_list_f_c] = useState([]);
-  const [pincode_f_c, setpincode_f_c] = useState("");
-  const [pin_code_error_c, setpin_code_error_c] = useState(false);
   const [pincode_error_f_c, setpincode_error_f_c] = useState(false);
   const [pincode_error2_f_c, setpincode_error2_f_c] = useState(false);
   const [pincode_page_c, setpincode_page_c] = useState(1);
   const [pincode_search_item_c, setpincode_search_item_c] = useState("");
-  const [pincode_id_c, setpincode_id_c] = useState(0);
   const [pincode_loaded_f_c, setpincode_loaded_f_c] = useState(false);
   const [pincode_list_error_c, setpincode_list_error_c] = useState(false);
   const [locality_c, setlocality_c] = useState("");
@@ -187,7 +169,6 @@ const AddOrder = () => {
   const [locality_search_item_c, setlocality_search_item_c] = useState("");
   const [locality_id_f_c, setlocality_id_f_c] = useState(0);
   const [locality_error_c, setlocality_error_c] = useState(false);
-  const [locality_error2_c, setlocality_error2_c] = useState(false);
   const [refresh_c, setrefresh_c] = useState(false);
 
   //Type of Booking
@@ -7669,6 +7650,7 @@ const AddOrder = () => {
                                   {item1[0] ? (
                                     <img
                                       src={item1[0]}
+                                      alt="item1[0]"
                                       style={{
                                         height: "95px",
                                         width: "95px",
@@ -7698,7 +7680,7 @@ const AddOrder = () => {
                                           alignItems: "center",
                                           height: "38px",
                                           borderRadius: 5,
-                                          height: 31,
+                                          // height: 31,
                                         }}
                                         onClick={() => {
                                           setshowModalOrder({
@@ -8053,6 +8035,7 @@ const AddOrder = () => {
                                   {item1[4] ? (
                                     <img
                                       src={item1[4]}
+                                      alt="item1[4]"
                                       style={{
                                         height: "95px",
                                         width: "95px",
@@ -8083,7 +8066,7 @@ const AddOrder = () => {
                                           alignItems: "center",
                                           height: "38px",
                                           borderRadius: 5,
-                                          height: 31,
+                                          // height: 31,
                                         }}
                                         onClick={() => {
                                           setimg_index(index1)
@@ -8141,6 +8124,7 @@ const AddOrder = () => {
                                   {item1[5] ? (
                                     <img
                                       src={item1[5]}
+                                      alt="item1[5]"
                                       style={{
                                         height: "95px",
                                         width: "95px",
@@ -8171,7 +8155,7 @@ const AddOrder = () => {
                                           alignItems: "center",
                                           height: "38px",
                                           borderRadius: 5,
-                                          height: 31,
+                                          // height: 31,
                                         }}
                                         onClick={() => {
                                           setimg_index(index1)

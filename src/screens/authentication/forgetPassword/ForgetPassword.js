@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import * as company_details from "../../../constants/CompanyDetails";
-import axios from "axios";
 import {
   Row,
   Col,
@@ -11,26 +10,20 @@ import {
   Container,
   Form,
   Input,
-  FormFeedback,
   Label,
   InputGroup,
   InputGroupText,
 } from "reactstrap";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import profile from "../../../assets/images/profile-img.png";
-import { ServerAddress } from "../../../constants/ServerAddress";
-import { useSelector } from "react-redux";
 
 const ForgetPassword = () => {
-  const navigate = useNavigate();
 
   const [showPass, setshowPass] = useState(false);
   const [error, seterror] = useState(false);
   const [step, setstep] = useState(1);
-  const username = useSelector((state) => state.authentication.username);
-  const accessToken = useSelector((state) => state.authentication.access_token);
 
   //   const forget_password = (email, newpassword) => {
   //     axios

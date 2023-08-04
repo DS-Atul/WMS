@@ -5,10 +5,7 @@ import {
   Col,
   Row,
   CardBody,
-  CardTitle,
-  Label,
   Button,
-  Input,
 } from "reactstrap";
 // import Button from "react-bootstrap/Button";
 import axios from "axios";
@@ -16,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 // import CreateRunsheet from "./CreateRunsheet";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
+import { ServerAddress } from "../../../constants/ServerAddress";
 import Modal from "react-bootstrap/Modal";
 import {
   setAlertType,
@@ -25,46 +22,23 @@ import {
 } from "../../../store/alert/Alert";
 import EditUnmanifestDataFormat from "./addAnother/unmanifests/UnrunsheetsDataFormat";
 import EditDeliveryDataFormat from "./addAnother/manifests/PendingDeliveryDataFormat";
-import { useNavigate } from "react-router-dom";
-import { Select } from "@mui/material";
-import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
-import { gstin_no } from "../../../constants/CompanyDetails";
 // import "./addanother.css";
 
 const AddAnotherOrder = ({ id_m, edit = false, data2, setrefresh2}) => {
   const [refresh, setrefresh] = useState(false);
   const [old_data2, setold_data2] = useState(data2);
   const data2Ref = useRef(data2);
-  console.log("data2--------", data2)
+  // console.log("data2--------", data2)
   const [deleted_ids, setdeleted_ids] = useState([])
   const [new_ids, setnew_ids] = useState([])
   // Additional Fields
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
   // const success = useSelector((state) => state.alert.show_alert);
 
-  const username = useSelector((state) => state.authentication.username);
-  const user_homebranch_id = useSelector(
-    (state) => state.authentication.userdetails.home_branch
-  );
-  const user_home_branch = useSelector(
-    (state) => state.authentication.userdetails.branch_nm
-  );
-  const user_home_branch_city = useSelector(
-    (state) => state.authentication.userdetails.branch_orgin_city
-  );
-  const user_home_branch_location_id = useSelector(
-    (state) => state.authentication.userdetails.branch_location_id
-  );
-
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const [divide_deliverys, setdivide_deliverys] = useState([]);
   const [domestic_order, setdomestic_order] = useState([]);
   const [unmanifest_list, setunmanifest_list] = useState(domestic_order);
-  const [local_list, setlocal_list] = useState(divide_deliverys);
   const [Show, setShow] = useState(false);
   const [success, setsuccess] = useState(false);
 
@@ -74,7 +48,6 @@ const AddAnotherOrder = ({ id_m, edit = false, data2, setrefresh2}) => {
     if (refresh) {
       setcreateRunsheet_list(data2)
     }
-
   }, [refresh])
 
   const handleClose = () => {
@@ -124,6 +97,7 @@ const AddAnotherOrder = ({ id_m, edit = false, data2, setrefresh2}) => {
   const [branch_dest, setbranch_dest] = useState("");
   const [branch_dest_id, setbranch_dest_id] = useState("");
   const [page, setpage] = useState(1);
+
   const get_branch = () => {
     axios
       .get(

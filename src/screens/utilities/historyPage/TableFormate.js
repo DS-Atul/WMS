@@ -1,7 +1,7 @@
 import React from "react";
 
 const TableFormat = ({ table_data }) => {
-  console.log("Table Data", table_data);
+  // console.log("Table Data", table_data);
 
   return (
     <>
@@ -13,7 +13,7 @@ const TableFormat = ({ table_data }) => {
             // console.log("CHnage msg", item.change_message);
             const new_data = JSON.parse(item.change_message);
 
-          console.log("length",new_data)
+          // console.log("length",new_data)
           return (
             <tr key={idx}   style={{
               borderWidth: 1,

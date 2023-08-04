@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
@@ -21,10 +21,9 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { HiQuestionMarkCircle } from "react-icons/hi";
-import Modal from 'react-bootstrap/Modal';
 
 const PincodeDataFormat = ({ data, data1, can_delete }) => {
+
   console.log("data-----", data)
   // Permissions
   const dispatch = useDispatch();
@@ -127,7 +126,7 @@ const PincodeDataFormat = ({ data, data1, can_delete }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       deleteCity(ids);
     }
   }, [delete_id]);
@@ -136,9 +135,9 @@ const PincodeDataFormat = ({ data, data1, can_delete }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("pincode"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("city_name"));
     }
   }, [index]);

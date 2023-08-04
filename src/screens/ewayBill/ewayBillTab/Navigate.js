@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setEwayBilltTab } from "../../../store/parentFilter/ParentFilter";
@@ -7,12 +7,8 @@ const Navigate = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const ewaybill_tab = useSelector((state) => state.parentfilter.ewaybill_tab);
-  console.log("ewaybill_tab-----", ewaybill_tab)
-  const user = useSelector((state) => state.authentication.userdetails);
-  //Permission
-  const userpermission = useSelector(
-    (state) => state.authentication.userpermission
-  );
+  // console.log("ewaybill_tab-----", ewaybill_tab)
+  
   // const [p_delivery, setp_delivery] = useState(false);
   // const [all_runsheet, setall_runsheet] = useState(false);
 

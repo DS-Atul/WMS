@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { MdAdd } from "react-icons/md";
-import Nav_Btn from "../../../components/btn/NavBtn";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -8,7 +6,6 @@ import Title from "../../../components/title/Title";
 import { setPageNumber } from "../../../store/pagination/Pagination";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
 import DocketIssueDataTitle from "../../../data/booking/docketIssue/DocketIssueDataTitle";
 import DocketIssueDataFormate from "../../../data/booking/docketIssue/DocketIssueDataFormate";
@@ -16,8 +13,6 @@ import Navigate from "../navigateTab/Navigate";
 
 const DocketIssue = () => {
   const dispatch = useDispatch();
-  const commodity_type = useSelector((state) => state.filtervalue.data_a);
-  const commodity_name = useSelector((state) => state.filtervalue.data_b);
 
   const user = useSelector((state) => state.authentication.userdetails);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
@@ -64,7 +59,7 @@ const DocketIssue = () => {
     }
   }, [userpermission]);
 
-  console.log("user.user_department_name----", user.user_department_name)
+  // console.log("user.user_department_name----", user.user_department_name)
   return (
     <>
       <PageTitle page="Docket Issues" />

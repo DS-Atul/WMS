@@ -39,9 +39,6 @@ const [state, setstate] = useState("");
   const [state_count, setstate_count] = useState(1);
   const [state_bottom, setstate_bottom] = useState(100);
 
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
-
   const getStateName = () => {
     let temp = [];
     let temp_list = [];

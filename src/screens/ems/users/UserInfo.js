@@ -9,7 +9,6 @@ import {
   Label,
   FormFeedback,
   Row,
-  Button,
 } from "reactstrap";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { ServerAddress } from "../../../constants/ServerAddress";
@@ -30,18 +29,15 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import { useDispatch } from "react-redux";
-import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import { useLayoutEffect } from "react";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
-import Main_c from "../../../components/crop/main";
 import { setUserDetails, setUserPermission } from "../../../store/authentication/Authentication";
 import ImgModal from "../../../components/crop/ImgModal";
 const UserInfo = () => {
   const locations = useLocation();
 
   const { state: up_params } = useLocation();
-  const [profile_pic, setprofile_pic] = useState("")
   const [is_update, setis_update] = useState(false);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [is_active, setis_active] = useState(true);
@@ -57,8 +53,6 @@ const UserInfo = () => {
   const [user, setuser] = useState("");
   const [user_type, setuser_type] = useState("");
   const [user_type_o, setuser_type_id] = useState([]);
-  const [lodated, setlodated] = useState(false);
-  const [user_role, setuser_role] = useState("");
   const [page, setpage] = useState(1);
   const [showRow, setshowRow] = useState([]);
   const [designation_list, setdesignation_list] = useState([]);
@@ -82,9 +76,6 @@ const UserInfo = () => {
   const [circle_btn, setcircle_btn] = useState(true);
   const [circle_btn2, setcircle_btn2] = useState(true);
   const [confirm_password, setconfirm_password] = useState("");
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
-  const search = useSelector((state) => state.searchbar.search_item);
   const [password_err_1, setpassword_err_1] = useState(false);
   const [password_err_2, setpassword_err_2] = useState(false);
   const [password_err_3, setpassword_err_3] = useState(false);
@@ -92,7 +83,6 @@ const UserInfo = () => {
   const [channel_access_err, setchannel_access_err] = useState(false);
 
   const [designation_err, setdesignation_err] = useState(false);
-  const [user_role_err, setuser_role_err] = useState(false);
   const [home_branch_id, sethome_branch_id] = useState(user_detail.home_branch);
   const [home_branch_list, sethome_branch_list] = useState([]);
   const [home_branch, sethome_branch] = useState(toTitleCase(user_detail?.branch_nm));
@@ -158,7 +148,6 @@ const UserInfo = () => {
   const [uploaded_img, setuploaded_img] = useState("");
   const [result_img, setresult_img] = useState("");
   const [document, setdocument] = useState("");
-  const [doc_result_image, setdoc_result_image] = useState("");
 
   const getBranches = () => {
     let temp3 = [];
@@ -703,7 +692,7 @@ const UserInfo = () => {
           // getUserPermissions(validation.values.username)
         }
     
-        if (resp.status == 202 && is_superuser === false && permission_title_list[1][6] !== "") {
+        if (resp.status === 202 && is_superuser === false && permission_title_list[1][6] !== "") {
           // setlodated(true)
           update_user_permission();
           if (document) {
@@ -712,10 +701,10 @@ const UserInfo = () => {
 
           // navigate("/ems/users");
         }
-        else if (resp.status == 202 && is_superuser === false && permission_title_list[1][6] === "") {
+        else if (resp.status === 202 && is_superuser === false && permission_title_list[1][6] === "") {
           add_user_permission(up_params.user.id);
         }
-        else if (resp.status == 202 && user.is_superuser === true) {
+        else if (resp.status === 202 && user.is_superuser === true) {
           dispatch(setDataExist(`"${values.username}" Updated Sucessfully`));
           dispatch(setAlertType("info"));
           dispatch(setShowAlert(true));
@@ -762,7 +751,7 @@ const UserInfo = () => {
         }
       )
       .then(function (resp) {
-        if (resp.data.status == "success" && is_superuser === false && permission_title_list[1][6] === "") {
+        if (resp.data.status === "success" && is_superuser === false && permission_title_list[1][6] === "") {
           dispatch(setDataExist(`Permission Updated Sucessfully`));
           dispatch(setAlertType("info"));
           dispatch(setShowAlert(true));
@@ -1523,7 +1512,7 @@ const UserInfo = () => {
     let prev = ass_branch_list2.map((p) => p[1])
     let next = new_datas.map((p) => p[1])
 
-    let deleted_id = next.filter((p) => prev.indexOf(p) == -1);
+    let deleted_id = next.filter((p) => prev.indexOf(p) === -1);
 
     let deleted_ids = new_datas
       .filter(item => deleted_id.includes(item[1]))
@@ -1574,13 +1563,13 @@ const UserInfo = () => {
       sethome_branch("");
       sethome_branch_list([]);
     }
-  }, [org]);
+  }, [org, toOrg]);
 
   useEffect(() => {
     if (is_update) {
       settoOrg(false);
     }
-  }, []);
+  }, [is_update]);
 
   const getUserDetails = (usern) => {
     axios
@@ -2219,6 +2208,7 @@ const UserInfo = () => {
                             <img
                               onClick={() => setmodal(true)}
                               src={result_img}
+                              alt="result_img"
                               style={{
                                 width: "70px",
                                 height: "70px",
@@ -2380,7 +2370,7 @@ const UserInfo = () => {
                                   }}
                                 >
                                   <td style={{ alignItems: "center" }}>
-                                    {TilteColor(idx) == "red" ?
+                                    {TilteColor(idx) === "red" ?
                                       <RiArrowDropDownLine color="#000" size={30}
                                         onClick={() => {
                                           showData(idx)
@@ -2389,7 +2379,7 @@ const UserInfo = () => {
                                       />
                                       : null}
                                     {item[0]}
-                                    {TilteColor(idx) == "red" ? <Input
+                                    {TilteColor(idx) === "red" ? <Input
                                       className="form-check-input-sm"
                                       type="checkbox"
                                       style={{ margin: 10, borderColor: "red" }}

@@ -4,7 +4,7 @@ import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import { useDispatch, useSelector } from "react-redux";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { BsCheckLg, BsXLg } from "react-icons/bs";
+import { BsXLg } from "react-icons/bs";
 import { FiSquare, FiCheckSquare, FiMinusSquare } from "react-icons/fi";
 import { RiArrowUpDownLine } from "react-icons/ri";
 
@@ -72,7 +72,6 @@ const DataList = ({
   const nextb = useSelector((state) => state.pagination.nextb);
   const prevb = useSelector((state) => state.pagination.prevb);
   const togb = useSelector((state) => state.pagination.toggleb);
-  const total_data = useSelector((state) => state.pagination.total_data);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
 
   const [data_ids, setdata_ids] = useState([]);

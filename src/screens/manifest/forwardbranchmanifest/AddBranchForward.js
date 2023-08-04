@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, {useMemo, useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import { Button } from "reactstrap";
@@ -25,21 +25,17 @@ import { useDispatch, useSelector } from "react-redux";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
+import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setAlertType,
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-import PageTitle from "../../../components/pageTitle/PageTitle";
-import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
 import Main_c from "../../../components/crop/main";
-import { responsivePropType } from "react-bootstrap/esm/createUtilityClasses";
 import EditManifestDataFormat from "../editHub/editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "../editHub/AddAnotherOrder";
 import { gstin_no } from "../../../constants/CompanyDetails";
-import { setBusinesssAccessToken, setEAccessToken } from "../../../store/ewayBill/EwayBill";
 import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 
@@ -57,7 +53,7 @@ const AddBranchForward = (manifest) => {
 
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("manifest Hub-----", manifest);
+  // console.log("manifest Hub-----", manifest);
   const navigate = useNavigate();
 
   //Circle Toogle Btn
@@ -96,7 +92,7 @@ const AddBranchForward = (manifest) => {
     // "Direct Vehicle",
     // "Partload",
   ]);
-  console.log("coloader_mode_list-----", coloader_mode_list)
+  // console.log("coloader_mode_list-----", coloader_mode_list)
 
   const [coloader_selcted_m, setcoloader_selcted_m] = useState("");
   const [coloader_selected, setcoloader_selected] = useState("");
@@ -111,8 +107,6 @@ const AddBranchForward = (manifest) => {
   const [today, settoday] = useState("");
   const [refresh, setrefresh] = useState("false");
   const [coloader_list, setcoloader_list] = useState([]);
-  const [company_slected_list, setcompany_slected_list] = useState("");
-  const [coloader_selected_s, setcoloader_selected_s] = useState("");
   const [coloader_id, setcoloader_id] = useState("");
   const [orgin, setorgin] = useState("");
   const [dest, setdest] = useState("");
@@ -124,7 +118,6 @@ const AddBranchForward = (manifest) => {
 
   const [data, setdata] = useState([]);
   const [data2, setdata2] = useState([])
-  console.log("data----", data)
   //This state is used for date
   const [coloader_mode_error, setcoloader_mode_error] = useState(false);
   const [forwording_date_error, setforwording_date_error] = useState(false);
@@ -144,8 +137,6 @@ const AddBranchForward = (manifest) => {
   const [height, setheight] = useState("");
   const [pieces, setpieces] = useState("");
   const [package_id_list, setpackage_id_list] = useState("");
-  const [packages_id, setpackages_id] = useState([]);
-  const [deleted_packages_id, setdeleted_packages_id] = useState([]);
 
   let dimension_list = [length, breadth, height, pieces];
   const [row, setrow] = useState([dimension_list]);

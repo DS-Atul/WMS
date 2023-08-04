@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import classnames from "classnames";
 import {
   CardBody,
@@ -12,12 +12,8 @@ import {
   Input,
   Label,
 } from "reactstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
-// import Associated_Charges from "./Tab_Components/Associated_Charges";
-import { FiCheckSquare, FiSquare } from "react-icons/fi";
-import { IconContext } from "react-icons";
-import { MdAdd, MdDelete } from "react-icons/md";
 import axios from "axios";
 import toTitleCase from "../../../../lib/titleCase/TitleCase";
 import {
@@ -28,12 +24,7 @@ import {
   setSurfaceCal,
   setTrainCal,
 } from "../../../../store/master/client/Client";
-import { setLocalCalCust } from "../../../../store/master/customer/Customer";
 import { ServerAddress } from "../../../../constants/ServerAddress";
-import AssociatedCharges from "../associatedCharges/AssociatedCharges";
-import SearchInput from "../../searchInput/SearchInput";
-import MultiRowSearchInput from "../../multiRowSearchInput/MultiRowSearchInput";
-import NSearchInput from "../../nsearchInput/NSearchInput";
 import CalTab from "../cal_tab/CalTab";
 
 const Tab = ({
@@ -42,7 +33,6 @@ const Tab = ({
 
   // active tabs
   active_tabs,
-  setactive_tabs,
 
   is_local,
   is_air,
@@ -52,14 +42,10 @@ const Tab = ({
   is_courier,
   is_warehouse,
 }) => {
-  const dispatch = useDispatch();
-  const refl = useRef();
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const username = useSelector((state) => state.authentication.username);
   // const search = useSelector((state) => state.searchbar.search_item);
 
   //  Additional Charges
-  const [refresh, setrefresh] = useState(false);
 
   const [oth_charges_list, setoth_charges_list] = useState([]);
   const [ot_chg_page, setot_chg_page] = useState(1);
@@ -103,21 +89,7 @@ const Tab = ({
     (state) => state.client.courier_cal.box_cal
   );
 
-  const [per_charge_categories, setper_charge_categories] = useState([
-    "% of client invoice",
-    "% of other charges",
-  ]);
-
-  // const [activeTab, setactiveTab] = useState("1");
-
-  // Cal Info Temp
-  const [cft, setcft] = useState("");
-  const [div_by, setdiv_by] = useState("");
-  const [box_val, setbox_val] = useState("");
-  const [refh, setrefh] = useState(false);
-
-  const [transportation_mode, settransportation_mode] = useState("LOCAL");
-  const [calculation_type, setcalculation_type] = useState("DONT");
+  
 
   const [local_cal_errd, setlocal_cal_errd] = useState(false);
   const [local_cal_errb, setlocal_cal_errb] = useState(false);
@@ -299,7 +271,7 @@ const Tab = ({
             )}
             {is_air && (
               <TabPane tabId="2">
-                {activeTab == "2" && (
+                {activeTab === "2" && (
                   <CalTab
                     cal={air_cal}
                     cal_dimn={air_cal_dimn}
@@ -313,7 +285,7 @@ const Tab = ({
             )}
             {is_surface && (
               <TabPane tabId="3">
-                {activeTab == "3" && (
+                {activeTab === "3" && (
                   <CalTab
                     cal={surface_cal}
                     cal_dimn={surface_cal_dimn}
@@ -327,7 +299,7 @@ const Tab = ({
             )}
             {is_cargo && (
               <TabPane tabId="4">
-                {activeTab == "4" && (
+                {activeTab === "4" && (
                   <CalTab
                     cal={cargo_cal}
                     cal_dimn={cargo_cal_dimn}
@@ -341,7 +313,7 @@ const Tab = ({
             )}
             {is_train && (
               <TabPane tabId="5">
-                {activeTab == "5" && (
+                {activeTab === "5" && (
                   <CalTab
                     cal={train_cal}
                     cal_dimn={train_cal_dimn}
@@ -356,7 +328,7 @@ const Tab = ({
 
             {is_courier && (
               <TabPane tabId="6">
-                {activeTab == "6" && (
+                {activeTab === "6" && (
                   <CalTab
                     cal={courier_cal}
                     cal_dimn={courier_cal_dimn}
@@ -371,7 +343,7 @@ const Tab = ({
 
             {is_warehouse && (
               <TabPane tabId="7">
-                {activeTab == "7" && (
+                {activeTab === "7" && (
                   <Row>
                     <Col lg={3}>
                       <Label className="header-child">

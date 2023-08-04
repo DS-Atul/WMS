@@ -9,11 +9,12 @@ import Calendar from "./Logo/Calendar.png";
 import Whatsapp from "./Logo/Whatsapp.png";
 import Attendance from "./Logo/Attendance.png";
 import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { TiPlus } from "react-icons/ti";
 import { ServerAddress } from "../../constants/ServerAddress";
-const DashboardNotificationSection = ({ show, setShow, date}) => {
+
+const DashboardNotificationSection = ({ show, setShow, date }) => {
   const navigate = useNavigate();
   const [blogData, setBlogData] = useState([]);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -71,21 +72,21 @@ const DashboardNotificationSection = ({ show, setShow, date}) => {
           {blogData.map((val, index) => {
             console.log("raggg====", val)
             // <li key={a.id}>{a.text}</li>
-          let f_date_f = val.created_at.split("T");
-          let f_date = f_date_f[0];
-          return (
-            <Notification
-              avatarSrc={
-                "https://media.licdn.com/dms/image/C5103AQEVLuPfI_Rh3w/profile-displayphoto-shrink_200_200/0/1518872449311?e=1686182400&v=beta&t=KqqwW_dpTmgCsXS5MZCDFfABQTRR6g1YVyJUPx2RRa4"
-              }
-              title={val.title}
-              text={val.description}
-              author={val.title}
-              date={f_date}
-              comment={val.comment}
-            />
-          )
-            })}
+            let f_date_f = val.created_at.split("T");
+            let f_date = f_date_f[0];
+            return (
+              <Notification
+                avatarSrc={
+                  "https://media.licdn.com/dms/image/C5103AQEVLuPfI_Rh3w/profile-displayphoto-shrink_200_200/0/1518872449311?e=1686182400&v=beta&t=KqqwW_dpTmgCsXS5MZCDFfABQTRR6g1YVyJUPx2RRa4"
+                }
+                title={val.title}
+                text={val.description}
+                author={val.title}
+                date={f_date}
+                comment={val.comment}
+              />
+            )
+          })}
         </div>
         <div className="notification_Card_container">
           <div className="notification_row">

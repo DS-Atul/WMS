@@ -9,7 +9,6 @@ import {
   Input,
   FormFeedback,
   Form,
-  FormGroup,
   Button,
 } from "reactstrap";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -66,7 +65,6 @@ const Add_Vehcile = () => {
   const [active_list, setactive_list] = useState(["Active", "Inactive"]);
   const [active_selected, setactive_selected] = useState("Active");
   const [vehcile_type_s, setvehcile_type_s] = useState("");
-  const [trans_name, settrans_name] = useState("");
   const [vehcile_no, setvehcile_no] = useState("");
   const [vehcile_capacity, setvehcile_capacity] = useState("")
   // vehcile image 
@@ -82,7 +80,7 @@ const Add_Vehcile = () => {
   const [branch_id, setbranch_id] = useState("");
   const [branch_list, setbranch_list] = useState([]);
   const [branch_list2, setbranch_list2] = useState([])
-  console.log("branch_list2----", branch_list2)
+  // console.log("branch_list2----", branch_list2)
   const [branch, setbranch] = useState("");
   const [search_branch, setsearch_branch] = useState("");
   const [branch_count, setbranch_count] = useState(1)
@@ -97,7 +95,7 @@ const Add_Vehcile = () => {
 
         setis_updating(true);
         let vehicle_data = location_data.state.vehcile;
-        console.log("vehicle_data===", vehicle_data)
+        // console.log("vehicle_data===", vehicle_data)
         setvehicle(vehicle_data);
         setbranch(toTitleCase(vehicle_data.branch_name));
         setbranch_id(vehicle_data.branch);
@@ -191,13 +189,13 @@ const Add_Vehcile = () => {
       vehcile_type: vehcile_type_s,
     });
     let change_fields = {};
-    console.log("fields_names ========", fields_names)
+    // console.log("fields_names ========", fields_names)
     var prom = new Promise((resolve, reject) => {
       for (let j = 0; j < fields_names.length; j++) {
         const ele = fields_names[j];
         let prev = location_data.state.vehcile[`${ele[0]}`];
         let new_v = ele[1];
-        if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+        if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
           change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
         }
         if (j === fields_names.length - 1) resolve();
@@ -270,7 +268,7 @@ const Add_Vehcile = () => {
         }
       )
       .then((response) => {
-        console.log("V response====", response)
+        // console.log("V response====", response)
         data = response.data.vehicle_branch;
 
         if (data.length > 0) {
@@ -296,10 +294,10 @@ const Add_Vehcile = () => {
       )
       .then((response) => {
         data = response.data.results;
-        console.log("data printing", data);
+        // console.log("data printing", data);
         setvendor_data(data);
         if (response.data.results.length > 0) {
-          if (vendor_n_page == 1) {
+          if (vendor_n_page === 1) {
             vendor_temp = response.data.results.map((v) => [
               v.id,
               toTitleCase(v.name),

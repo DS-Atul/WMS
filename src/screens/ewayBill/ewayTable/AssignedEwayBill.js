@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import PageTitle from '../../../components/pageTitle/PageTitle';
 import Title from '../../../components/title/Title';
-import SearchList from '../../../components/listDisplay/searchList/SearchList';
 import AssignedDataFormat from '../../../data/ewayBill/assignedEwayBill/AssignedDataFormat';
 import { Input } from "reactstrap";
 
@@ -27,8 +26,8 @@ const AssignedEwayBill = () => {
     const beforeDateStr = beforeDate.toISOString().slice(0, 10).replace(/-/g, '/');
     settoday_date(currentDateStr);
     setprev_date(beforeDateStr)
-    console.log("Current date:", currentDateStr);
-    console.log("48 hours before date:", beforeDateStr);
+    // console.log("Current date:", currentDateStr);
+    // console.log("48 hours before date:", beforeDateStr);
   }, [])
   const get_assign_eway = () => {
     axios
@@ -64,7 +63,7 @@ const AssignedEwayBill = () => {
         }
       )
       .then(function (response) {
-        console.log("response=======eway bill assigned", response);
+        // console.log("response=======eway bill assigned", response);
         // setpart_b_12(response.data.response);
         setdata(response.data.response);
 

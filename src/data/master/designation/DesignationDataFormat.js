@@ -18,10 +18,6 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { HiQuestionMarkCircle } from "react-icons/hi";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import { Input, FormGroup, Label } from "reactstrap";
 
 const DesignationDataFormat = ({ data, data1, can_delete }) => {
   const dispatch = useDispatch();
@@ -31,14 +27,6 @@ const DesignationDataFormat = ({ data, data1, can_delete }) => {
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
   const user = useSelector((state) => state.authentication.userdetails);
 
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
-
-  // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
 
   // For Delete designation
   const delete_designation_row = (id) => {

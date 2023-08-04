@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Card, Col, Row, CardBody, CardTitle, Label, Input } from "reactstrap";
 import Modal from "react-bootstrap/Modal";
@@ -9,8 +9,6 @@ import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
-import toTitleCase from "../../../lib/titleCase/TitleCase";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setAlertType,
@@ -21,19 +19,14 @@ import {
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
-import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import RecieveDataFormat from "../../../data/manifests/recieveManifest/RecieveManifestFormat";
-import { setLoaded } from "../../../store/manifest/RecieveManifest";
 import Question from "../../../assets/images/bookings/question.png";
-import BreakManifestT from "../../../data/manifests/recieveManifest/BreakManifest";
 import ImgModal from "../../../components/crop/ImgModal";
 import Loader from "../../../components/loader/Loader";
 const BreakManifest = ({ depart }) => {
-  const [is_submit, setis_submit] = useState(false);
   const [is_issue, setis_issue] = useState(false);
   const [received, setReceived] = useState([]);
   const [notReceived, setNotReceived] = useState([]);
-  console.log("received received===", received)
+  // console.log("received received===", received)
   const [isLoading, setIsLoading] = useState(false);
   const [is_issuerec, setis_issuerec] = useState(false);
   const [receivedrec, setReceivedrec] = useState([]);
@@ -59,7 +52,6 @@ const BreakManifest = ({ depart }) => {
     navigate("/manifest/incomingmanifest");
   };
   const [is_break, setis_break] = useState(false);
-  const [is_recv, setis_recv] = useState(false);
 
   const [coloader_selected, setcoloader_selected] = useState("");
   const [coloader_id, setcoloader_id] = useState("");
@@ -74,10 +66,10 @@ const BreakManifest = ({ depart }) => {
   const [flight_name, setflight_name] = useState("");
   const [data, setdata] = useState([]);
 
-  console.log("99999999999999999", location_data)
+  // console.log("99999999999999999", location_data)
   useLayoutEffect(() => {
     let manifest_data = location_data.state.depart;
-    console.log("vehicle no {{{{", manifest_data)
+    // console.log("vehicle no {{{{", manifest_data)
     setmanifest_no(manifest_data.manifest_no);
     setvehicle_no(manifest_data.vehicle_no);
     setmanifest_id(manifest_data.id);
@@ -92,13 +84,6 @@ const BreakManifest = ({ depart }) => {
     setflight_name(manifest_data.carrier_name);
   }, []);
 
-  const [trans_mode_list, settrans_mode_list] = useState([
-    "Air",
-    "Road",
-    "Rail",
-    "Ship",
-    "In Transit",
-  ]);
   const [trans_mode_selected, settrans_mode_selected] = useState("");
   const [vehicle_no, setvehicle_no] = useState("");
   const get_orderof_manifest = () => {

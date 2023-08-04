@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import HeaderCard from "../../../components/dashboardComponents/card/HeaderCard";
+import React from "react";
 import useWindowDimensions from "../ScreenSize";
 import { MdDashboard } from "react-icons/md";
 // import "bootstrap/dist/css/bootstrap.css";
@@ -10,10 +9,9 @@ import BarChart from "../../../components/dashboardComponents/Charts/BarChart";
 import DonutChart from "../../../components/dashboardComponents/Charts/DonutChart";
 import PieChart from "../../../components/dashboardComponents/Charts/PieChart";
 // import { Card } from "react-bootstrap";
-import VerticalBarChart from "../../../components/dashboardComponents/Charts/VerticalBarChart";
 import LineColumnArea from "../../../components/dashboardComponents/Charts/LineColumnArea";
 import SpineAreaChart from "../../../components/dashboardComponents/Charts/SpineAreaChart";
-import { CardBody, CardTitle, Col, Table, Row, Card } from "reactstrap";
+import { CardBody, Col, Row, Card } from "reactstrap";
 
 const ClientDashboard = () => {
   // To get Screen Size
@@ -53,7 +51,7 @@ const ClientDashboard = () => {
     tooltip: { x: { format: "dd/MM/yy HH:mm" } },
   };
 
-  let list1 = ["1", "2", "3", "4", "5", "6"];
+  // let list1 = ["1", "2", "3", "4", "5", "6"];
 
   return (
     <>

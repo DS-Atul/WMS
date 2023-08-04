@@ -49,7 +49,7 @@ const AddVendor = () => {
 
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("location_data======", location_data)
+  // console.log("location_data======", location_data)
   const navigate = useNavigate();
 
   //Circle Toogle Btn
@@ -116,7 +116,7 @@ const AddVendor = () => {
   ]);
 
   const [msme_registerd, setmsme_registerd] = useState(false);
-  console.log("msme_registerd====", msme_registerd)
+  // console.log("msme_registerd====", msme_registerd)
   const [msme_registerd_number, setmsme_registerd_number] = useState("");
   const [msme_registerd_number_error, setmsme_registerd_number_error] =
     useState(false);
@@ -132,7 +132,7 @@ const AddVendor = () => {
 
   //Service Offered
   const [by_rentred, setby_rentred] = useState([])
-  console.log("setby_rentred===", by_rentred)
+  // console.log("setby_rentred===", by_rentred)
   const [by_rentred2, setby_rentred2] = useState([])
   const [by_rentred3, setby_rentred3] = useState([])
   const [by_air, setby_air] = useState([]);
@@ -227,7 +227,6 @@ const AddVendor = () => {
   };
 
   // Calculation Info
-  const local_cal_cust = useSelector((state) => state.customer.local_cal_cust);
   const local_cal = useSelector((state) => state.client.local_cal);
   const air_cal = useSelector((state) => state.client.air_cal);
   // active Tabs

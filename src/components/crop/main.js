@@ -1,8 +1,8 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState } from "react";
 import "./main.scss";
 import RotateLeftOutlinedIcon from "@mui/icons-material/RotateLeftOutlined";
 import RotateRightOutlinedIcon from "@mui/icons-material/RotateRightOutlined";
-import { CgMergeVertical, CgMergeHorizontal } from "react-icons/cg";
+import { CgMergeHorizontal } from "react-icons/cg";
 import { IoMdUndo, IoMdRedo, IoIosImage } from "react-icons/io";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";

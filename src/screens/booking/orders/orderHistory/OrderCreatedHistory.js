@@ -2,7 +2,7 @@ import React, { useState, useLayoutEffect } from "react";
 import { Col, Card, CardTitle, CardBody } from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 const OrderCreatedHistory = ({ page_data }) => {
-  console.log("pge", page_data);
+  // console.log("pge", page_data);
   const [order_data, setorder_data] = useState("");
   const [user_name, setuser_name] = useState("");
   useLayoutEffect(() => {
@@ -10,12 +10,12 @@ const OrderCreatedHistory = ({ page_data }) => {
     if (p_data) {
       setuser_name(p_data.name_r);
       let data = p_data.change_message;
-      console.log("data", data);
+      // console.log("data", data);
       let n_data = JSON.parse(data);
       setorder_data(n_data);
     }
   }, [page_data]);
-  console.log("Order data====>>>", order_data);
+  // console.log("Order data====>>>", order_data);
   let booking_time = new Date(order_data.booking_at).toLocaleString(undefined, {
     timeZone: "Asia/Kolkata",
   });

@@ -63,9 +63,6 @@ function BranchesFilter() {
   const [branch_type, setbranch_type] = useState([]);
   const [branch_type_id, setbranch_type_id] = useState([]);
 
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
-
   const getBranch = () => {
     let temp = [];
     let temp_list = [];

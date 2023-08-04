@@ -1,4 +1,4 @@
-import React,{ useEffect, useState }from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -16,7 +16,6 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 const Users = () => {
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
-  const toggle = useSelector((state) => state.parentfilter.toggle);
   const home_branch = useSelector((state) => state.filtervalue.data_a);
   const usertype = useSelector((state) => state.filtervalue.data_b);
   const accesstype = useSelector((state) => state.filtervalue.data_c);
@@ -25,41 +24,38 @@ const Users = () => {
   const search = useSelector((state) => state.searchbar.search_item);
   const user = useSelector((state) => state.authentication.userdetails);
 
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
   const dispatch = useDispatch();
 
-    //Permission
-    const userpermission = useSelector(
-      (state) => state.authentication.userpermission
-    );
-    const [can_add, setcan_add] = useState(false);
-    const [can_delete, setcan_delete] = useState(false);
-  
-    useEffect(() => {
-      if (
-        userpermission.some((e) => e.sub_model === "Users" && e.write === true)
-      ) {
-        setcan_add(true);
-      } else {
-        setcan_add(false);
-      }
-    }, [userpermission]);
-  
-    useEffect(() => {
-      if (
-        userpermission.some((e) => e.sub_model === "Users" && e.delete === true)
-      ) {
-        setcan_delete(true);
-      } else {
-        setcan_delete(false);
-      }
-    }, [userpermission]);
+  //Permission
+  const userpermission = useSelector(
+    (state) => state.authentication.userpermission
+  );
+  const [can_add, setcan_add] = useState(false);
+  const [can_delete, setcan_delete] = useState(false);
 
-    useEffect(() => {
-      dispatch(setToggle(false));
-    }, []);
+  useEffect(() => {
+    if (
+      userpermission.some((e) => e.sub_model === "Users" && e.write === true)
+    ) {
+      setcan_add(true);
+    } else {
+      setcan_add(false);
+    }
+  }, [userpermission]);
+
+  useEffect(() => {
+    if (
+      userpermission.some((e) => e.sub_model === "Users" && e.delete === true)
+    ) {
+      setcan_delete(true);
+    } else {
+      setcan_delete(false);
+    }
+  }, [userpermission]);
+
+  useEffect(() => {
+    dispatch(setToggle(false));
+  }, []);
 
   return (
     <>
@@ -76,12 +72,12 @@ const Users = () => {
                 className="text-sm-end"
                 onClick={() => dispatch(setPageNumber(1))}
               >
-               {(can_add || user.is_superuser) && (
-                <Nav_Btn
-                  btn_name="Add User"
-                  icon={<MdAdd size={20} />}
-                  form_path="/ems/users/userinfo"
-                />
+                {(can_add || user.is_superuser) && (
+                  <Nav_Btn
+                    btn_name="Add User"
+                    icon={<MdAdd size={20} />}
+                    form_path="/ems/users/userinfo"
+                  />
                 )}
                 {/* Filter Tool */}
                 <Filter type={"Users"} />

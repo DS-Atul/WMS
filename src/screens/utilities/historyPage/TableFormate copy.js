@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const TableFormate = ({ table_data }) => {
-  console.log("History Table data", table_data.length);
+  // console.log("History Table data", table_data.length);
   const [data, setdata] = useState("");
 
   const jsonData = JSON.stringify(table_data); // convert the dictionary to a JSON string
@@ -21,7 +21,7 @@ const TableFormate = ({ table_data }) => {
           // console.log("json Data ==>>", jsonData);
           const objData = JSON.parse(jsonData);
           const a = objData.change_message;
-          console.log("object Data a ==>>", a);
+          // console.log("object Data a ==>>", a);
           const addedObject = a[idx]["added"];
          
           {

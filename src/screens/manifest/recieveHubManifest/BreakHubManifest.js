@@ -20,11 +20,7 @@ import {
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
-import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import RecieveDataFormat from "../../../data/manifests/recieveManifest/RecieveManifestFormat";
-import { setLoaded } from "../../../store/manifest/RecieveManifest";
 import Question from "../../../assets/images/bookings/question.png";
-import BreakHubManifestT from "../../../data/manifests/recieveHubManifest/BreakHubManifest";
 import ImgModal from "../../../components/crop/ImgModal";
 import Loader from "../../../components/loader/Loader";
 const BreakHubManifest = ({ depart }) => {
@@ -32,7 +28,7 @@ const BreakHubManifest = ({ depart }) => {
   const [is_issue, setis_issue] = useState(false);
   const [received, setReceived] = useState([]);
   const [notReceived, setNotReceived] = useState([]);
-  console.log("received received===", received)
+  // console.log("received received===", received)
 
   const [is_issuerec, setis_issuerec] = useState(false);
   const [receivedrec, setReceivedrec] = useState([]);
@@ -45,7 +41,6 @@ const BreakHubManifest = ({ depart }) => {
   const navigate = useNavigate();
   const order_id = useSelector((state) => state.manifest.order_id);
   const issue_id = useSelector((state) => state.manifest.issueorder_id);
-  const loaded = useSelector((state) => state.manifest.loaded);
 
   const [circle_btn1, setcircle_btn1] = useState(true);
   const toggle_circle1 = () => {
@@ -58,7 +53,6 @@ const BreakHubManifest = ({ depart }) => {
     navigate("/manifest/incomingmanifest");
   };
   const [is_break, setis_break] = useState(false);
-  const [is_recv, setis_recv] = useState(false);
 
   const [coloader_selected, setcoloader_selected] = useState("");
   const [coloader_id, setcoloader_id] = useState("");
@@ -73,10 +67,10 @@ const BreakHubManifest = ({ depart }) => {
   const [flight_name, setflight_name] = useState("");
   const [data, setdata] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  console.log("99999999999999999", location_data)
+  // console.log("99999999999999999", location_data)
   useLayoutEffect(() => {
     let manifest_data = location_data.state.hub;
-    console.log("vehicle no {{{{", manifest_data)
+    // console.log("vehicle no {{{{", manifest_data)
     sethub_transfer_no(manifest_data.hub_transfer_no);
     setvehicle_no(manifest_data.vehicle_no);
     setmanifest_id(manifest_data.id);
@@ -91,13 +85,6 @@ const BreakHubManifest = ({ depart }) => {
     setflight_name(manifest_data.carrier_name);
   }, []);
 
-  const [trans_mode_list, settrans_mode_list] = useState([
-    "Air",
-    "Road",
-    "Rail",
-    "Ship",
-    "In Transit",
-  ]);
   const [trans_mode_selected, settrans_mode_selected] = useState("");
   const [vehicle_no, setvehicle_no] = useState("");
   const get_orderof_manifest = () => {
@@ -177,14 +164,14 @@ const BreakHubManifest = ({ depart }) => {
   }, [is_submit]);
 
   const [show, setShow] = useState(false);
-  console.log("[][]data", data)
+  // console.log("[][]data", data)
   let docket_no_list = []
   for (let index = 0; index < data.length; index++) {
     const element = data[index]?.docket_number;
     docket_no_list.push(element)
-    console.log("element[]", element)
+    // console.log("element[]", element)
   }
-  console.log("docket_number---", docket_no_list)
+  // console.log("docket_number---", docket_no_list)
   const handleClose = () => {
     RecieveManifest("Steps1");
     setis_break(false);
@@ -210,7 +197,7 @@ const BreakHubManifest = ({ depart }) => {
         }
       )
       .then((resp) => {
-        console.log("respfff-------", resp)
+        // console.log("respfff-------", resp)
         if (resp.data.length > 0) {
           setdata(resp.data)
         }

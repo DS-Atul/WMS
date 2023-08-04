@@ -1,21 +1,15 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { FiSquare, FiCheckSquare } from "react-icons/fi";
-// import { setMain_checkbox } from "../../../store/Components/ListDisplay/Main_Checkbox/action";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setIsDeleted,
-  setPageNumber,
   setToggle,
 } from "../../../store/pagination/Pagination";
 import {
-  setClose,
-  setDeleteId,
   setIds,
   setIndexValue,
-  setSelect,
 } from "../../../store/dataList/DataList";
 import {
   setAlertType,
@@ -23,35 +17,26 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { Button, Input } from "reactstrap";
+import { Button } from "reactstrap";
 import Modal from "react-bootstrap/Modal";
 import Question from "../../../assets/images/bookings/question.png";
 
 const PendingDepartDataFormat = ({ data, data1, can_delete }) => {
+
   console.log("data----------bbb----",data )
   const navigate = useNavigate();
-  // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
+  
   const user = useSelector((state) => state.authentication.userdetails);
 
   const dispatch = useDispatch();
-  const cust_user_permissions = useSelector(
-    (state) => state.permissions.cust_user_permissions
-  );
 
-  const searchData = useSelector((state) => state.searchbar.search_item);
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
 
   //Multi Delete function
   const close = useSelector((state) => state.datalist.close);
   const select_all = useSelector((state) => state.datalist.select_all);
-  const select = useSelector((state) => state.datalist.select);
-  const delete_id = useSelector((state) => state.datalist.delete_id);
 
   const [selected, setselected] = useState([]);
 
@@ -61,11 +46,6 @@ const PendingDepartDataFormat = ({ data, data1, can_delete }) => {
   const [manifest_id, setmanifest_id] = useState("");
   const [manifest_no, setmanifest_no] = useState("");
   const ids = useSelector((state) => state.datalist.ids);
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
-
-  const [click, setclick] = useState(true);
 
   const updateManifest = (id) => {
     axios
@@ -187,9 +167,9 @@ const PendingDepartDataFormat = ({ data, data1, can_delete }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("asset_id"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("barcode"));
     }
   }, [index]);
@@ -222,7 +202,7 @@ const PendingDepartDataFormat = ({ data, data1, can_delete }) => {
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
           <div style={{ marginLeft: "170px" }}>
-            <img src={Question} width="100vw" height="100vh" />
+            <img src={Question} alt="question" width="100vw" height="100vh" />
           </div>
           <div
             style={{

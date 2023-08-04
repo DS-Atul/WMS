@@ -3,7 +3,7 @@ import { Col, Card, CardTitle, CardBody } from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
 const OrganizationCreatedHistory = ({ page_data }) => {
-  console.log("page  ===>", page_data)
+  // console.log("page  ===>", page_data)
   const [org_data, setorg_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -18,7 +18,7 @@ const OrganizationCreatedHistory = ({ page_data }) => {
     }
   }, [page_data])
 
-  console.log("Organization  data >>>>>", org_data);
+  // console.log("Organization  data >>>>>", org_data);
 
 
   let time = new Date(org_data.created_at).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });

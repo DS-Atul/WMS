@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { MdAdd } from "react-icons/md";
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import {
@@ -11,15 +10,12 @@ import {
   Col,
   CardBody,
   Card,
-  InputGroupText,
 } from "reactstrap";
 import { IconContext } from "react-icons";
-import { useSelector, useDispatch } from "react-redux";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 const Report = () => {
-  const toggle = useSelector((state) => state.parentfilter.toggle);
   const navigate = useNavigate();
   const [circle_btn, setcircle_btn] = useState(true);
 
@@ -32,14 +28,14 @@ const Report = () => {
 
   const toggle_circle1 = () => {
     setcircle_btn1(!circle_btn1);
-    console.log("circle_btn");
+    // console.log("circle_btn");
   };
 
   const [circle_btn2, setcircle_btn2] = useState(true);
 
   const toggle_circle2 = () => {
     setcircle_btn2(!circle_btn2);
-    console.log("circle_btn");
+    // console.log("circle_btn");
   };
 
   return (

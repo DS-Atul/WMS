@@ -12,7 +12,7 @@ import { setAlertType, setDataExist, setShowAlert } from "../../../../store/aler
 import toTitleCase from "../../../../lib/titleCase/TitleCase";
 
 const EditManifestDataFormat = ({ Manifest_list }) => {
-  console.log("Manifest_list-hub------------", Manifest_list)
+  // console.log("Manifest_list-hub------------", Manifest_list)
   const [data_title, setdata_title] = useState(EditManifestTitle);
   const [hub_transfer_no, sethub_transfer_no] = useState("");
   const [openMoal, setopenMoal] = useState(false);

@@ -1,21 +1,13 @@
-import React, {useMemo, useLayoutEffect, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import assign from "../../../assets/images/eway/assignment.png";
-import {
-  setBAccessToken,
-  setBusinesssAccessToken,
-  setEAccessToken,
-  setOrgs,
-} from "../../../store/ewayBill/EwayBill";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { gstin_no } from "../../../constants/CompanyDetails";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 
 const EwayDashboard = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const accessToken = useSelector((state) => state.authentication.access_token);
   const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
 
   const [expire_ewb_yesterday, setexpire_ewb_yesterday] = useState("");
@@ -40,7 +32,7 @@ const EwayDashboard = () => {
         }
       )
       .then(function (response) {
-        console.log("response=======eway bill detail", response.data.response);
+        // console.log("response=======eway bill detail", response.data.response);
         setexpire_ewb_yesterday(response.data.response)
       })
       .catch((error) => { });
@@ -76,7 +68,7 @@ const EwayDashboard = () => {
         }
       )
       .then(function (response) {
-        console.log("response=======eway bill detail todayyyy", response.data.response);
+        // console.log("response=======eway bill detail todayyyy", response.data.response);
         setexpiring_today(response.data.response);
       })
       .catch((error) => { });
@@ -98,7 +90,7 @@ const EwayDashboard = () => {
         }
       )
       .then(function (response) {
-        console.log("response=======eway bill part b 12", response.data.response);
+        // console.log("response=======eway bill part b 12", response.data.response);
         setpart_b_12(response.data.response);
 
       })
@@ -122,7 +114,7 @@ const EwayDashboard = () => {
         }
       )
       .then(function (response) {
-        console.log("response=======eway bill part b 12", response.data.response);
+        // console.log("response=======eway bill part b 12", response.data.response);
         setmy_eway(response.data.response);
 
       })
@@ -143,8 +135,8 @@ const EwayDashboard = () => {
     const beforeDateStr = beforeDate.toISOString().slice(0, 10).replace(/-/g, '/');
     settoday_date(currentDateStr);
     setprev_date(beforeDateStr)
-    console.log("Current date:", currentDateStr);
-    console.log("48 hours before date:", beforeDateStr);
+    // console.log("Current date:", currentDateStr);
+    // console.log("48 hours before date:", beforeDateStr);
   }, [])
 
 
@@ -184,7 +176,7 @@ const EwayDashboard = () => {
         }
       )
       .then(function (response) {
-        console.log("assigned to me", response.data.response)
+        // console.log("assigned to me", response.data.response)
         setassigned(response.data.response)
       })
       .catch((error) => { });
@@ -239,7 +231,7 @@ const EwayDashboard = () => {
         >
           <div style={{ display: "flex", flexDirection: "column"}}>
             <div style={{ position: "relative", bottom: "24px", zIndex: "1000" }}>
-              <img src={assign} width="80px" height="70px" />
+              <img src={assign} alt="assign" width="80px" height="70px" />
             </div>
             <div style={{ color: "white", fontWeight: "bold", fontSize: "20px", marginLeft: "5vw" }}>{assigned}</div>
           </div>

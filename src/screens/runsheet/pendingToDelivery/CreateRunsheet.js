@@ -1,16 +1,13 @@
-import React, { useMemo, useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
-import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
+import { ServerAddress } from "../../../constants/ServerAddress";
 import {
-  Col,
-  Row,
   Label,
   Input,
   FormFeedback,
@@ -22,7 +19,6 @@ import {
 } from "../../../store/alert/Alert";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
 import { gstin_no } from "../../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
@@ -34,15 +30,13 @@ function CreateRunsheet({ awb_numbers, docket_no, issuereceived_total, issuenon_
 
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [show, setShow] = useState(false);
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
   const user = useSelector((state) => state.authentication.userdetails);
   const navigate = useNavigate();
 
   //Vehicle Type
   // const [vehicle_type, setvehicle_type] = useState("TRUCK")
   const [delivery_staff, setdelivery_staff] = useState("")
-const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
+  const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
   //Route
   const [route_list, setroute_list] = useState([]);
   const [route, setroute] = useState("");
@@ -89,7 +83,7 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
 
   const awb_no_list = awb_numbers;
   const docket_nos = docket_no;
-  console.log("awb_no_list------", awb_no_list)
+  // console.log("awb_no_list------", awb_no_list)
 
   const handleClose = () => {
     setShow(false)
@@ -102,19 +96,19 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
     initialValues: {},
 
     onSubmit: (values) => {
-      if(runsheet_type === "Create_Runsheet"){
-        if (vehicle_no == "" || vehicle_no?.toString().length !== 10) {
+      if (runsheet_type === "Create_Runsheet") {
+        if (vehicle_no === "" || vehicle_no?.toString().length !== 10) {
           setvehicle_error(true);
         }
-        else{
+        else {
           send_runsheet_data(values);
         }
       }
-      else{
-        if(branch_selected === ""){
+      else {
+        if (branch_selected === "") {
           setbranch_error(true)
         }
-        else{
+        else {
           send_hub_data();
         }
 
@@ -174,7 +168,7 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
       li.push(obj);
     });
     setlist_data(li)
-    console.log("li--------", li)
+    // console.log("li--------", li)
     // Rest of your code...
   }, [EwayBillData, vehicle_no]);
 
@@ -226,7 +220,7 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
         }
       )
       .then(function (response) {
-        console.log("done", response.data);
+        // console.log("done", response.data);
         if (response.data.status === "success") {
           if (list_data.length > 0) {
             UpateEwaybillPartB({
@@ -255,7 +249,7 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
       .post(
         ServerAddress + "manifest/add_hub_manifest/",
         {
-          type:"RUNSHEET",
+          type: "RUNSHEET",
           origin_branch: user.home_branch,
           destination_branch: branch_type_short,
           origin_location: user.branch_location_id,
@@ -307,7 +301,7 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
           setroute_loaded(true);
         }
         if (response.data.results.length > 0) {
-          if (route_page == 1) {
+          if (route_page === 1) {
             route_lists = response.data.results.map((v) => [
               v.id,
               toTitleCase(v.name),
@@ -342,14 +336,14 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
         }
       )
       .then((resp) => {
-        console.log("Response of getvehicles========");
+        // console.log("Response of getvehicles========");
         if (resp.data.next === null) {
           setvehicle_loaded(false);
         } else {
           setvehicle_loaded(true);
         }
         if (resp.data.results.length > 0) {
-          if (vehicle_page == 1) {
+          if (vehicle_page === 1) {
             vehicle_list = resp.data.results.map((v) => [
               v.id,
               v.vehcile_no,
@@ -383,22 +377,22 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
         }
       )
       .then((response) => {
-        console.log("U Rresponse===", response)
+        // console.log("U Rresponse===", response)
         if (response.data.next === null) {
           setdriver_loaded(false);
         } else {
           setdriver_loaded(true);
         }
         if (response.data.results.length > 0) {
-          if (driver_page == 1) {
+          if (driver_page === 1) {
             driver_lists = response.data.results.map((v) => [
               v.id,
-              toTitleCase(v.username),v.mobilenumber
+              toTitleCase(v.username), v.mobilenumber
             ]);
           } else {
             driver_lists = [
               ...driver_list,
-              ...response.data.results.map((v) => [v.id, toTitleCase(v.username),v.mobilenumber]),
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.username), v.mobilenumber]),
             ];
           }
           setdriver_count(driver_count + 2);
@@ -435,7 +429,7 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
     if (vehicle_no !== "") {
       setvehicle_no_error(false);
     }
-    if (driver_name != "") {
+    if (driver_name !== "") {
       setdriver_name_error(false);
     }
   }, [route, vehicle_no, driver_name, defined_route_name]);
@@ -452,10 +446,9 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
   const [runsheet_type, setrunsheet_type] = useState("Create_Runsheet");
   //  For Fetching Branch Data Started
   const [branch_list, setbranch_list] = useState([]);
-  console.log("branch_list-------", branch_list)
+  // console.log("branch_list-------", branch_list)
   const [branch_type_short, setbranch_type_short] = useState("");
   const [branch_selected, setbranch_selected] = useState("");
-  const [manifest_type, setmanifest_type] = useState("Create_Manifest");
   const [branch_dest, setbranch_dest] = useState("");
   const [branch_dest_id, setbranch_dest_id] = useState("");
   const [branch_search, setbranch_search] = useState("");
@@ -589,10 +582,10 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (route === "" && defined_route_name === "" && runsheet_type === "Create_Runsheet" ) {
+            if (route === "" && defined_route_name === "" && runsheet_type === "Create_Runsheet") {
               setroute_error(true);
             }
-            if (driver_name === "" && runsheet_type === "Create_Runsheet" ) {
+            if (driver_name === "" && runsheet_type === "Create_Runsheet") {
               setdriver_name_error(true);
             }
             validation.handleSubmit(e.values);
@@ -796,7 +789,7 @@ const [delivery_staff_phone, setdelivery_staff_phone] = useState("");
                               setdriver_phone_no(e[2]);
                             }
                           });
-  
+
                           setdriver_name(value);
                         }}
                         set_id={setdriver_id}

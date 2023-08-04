@@ -26,23 +26,17 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import {
   setAlertType,
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-import PageTitle from "../../../components/pageTitle/PageTitle";
-import Title from "../../../components/title/Title";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
 import TransferList from "../../../components/formComponent/transferList/TransferList";
-import Tab from "../../../components/formComponent/clientComponent/tab/Tab";
-import { setLocalCal } from "../../../store/master/client/Client";
 import ClientsDataTitle from "../../../data/master/customers/ClientsDataTitles";
 import ClientsDataFormat from "../../../data/master/customers/ClientsDataFormat";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import { Button } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
@@ -64,14 +58,6 @@ const AddClient = () => {
   const [client, setclient] = useState({});
   const [client_id, setclient_id] = useState(0);
   const [isupdating, setisupdating] = useState(false);
-
-  const [client_mode_short, setclient_mode_short] = useState("");
-  const [client_mode, setclient_mode] = useState("");
-  const [client_mode_error, setclient_mode_error] = useState(false);
-
-  const [client_type, setclient_type] = useState("");
-  const [client_type_short, setclient_type_short] = useState("");
-  const [client_type_error, setclient_type_error] = useState(false);
 
   const [associate_branch_list_1, setassociate_branch_list_1] = useState([]);
   const [associate_branch_list_2, setassociate_branch_list_2] = useState([]);
@@ -113,7 +99,6 @@ const AddClient = () => {
   const [pincode_list_s, setpincode_list_s] = useState([]);
   const [pincode, setpincode] = useState("");
   const [select_pincode_error, setsetselect_pincode_error] = useState(false);
-  const [pin_code_error, setpin_code_error] = useState(false);
   const [pincode_error, setpincode_error] = useState(false);
   const [pincode_error2, setpincode_error2] = useState(false);
   const [pincode_page, setpincode_page] = useState(1);
@@ -136,25 +121,14 @@ const AddClient = () => {
   const [locality_loaded, setlocality_loaded] = useState(false)
 
   // GST NO
-  const [package_id_list, setpackage_id_list] = useState([]);
 
   const [pan_no, setpan_no] = useState("")
   const [pan_no_error, setpan_no_error] = useState(false);
 
-  let dimension_list = ["", "", "", ""];
-  const [row, setrow] = useState([dimension_list]);
+ 
   const [refresh, setrefresh] = useState(false);
 
   // Business Info
-  const [agreement, setagreement] = useState(false);
-  const [documentFile, setdocumentFile] = useState(null);
-  const [agreement_date, setagreement_date] = useState(
-    new Date(new Date().setMonth(new Date().getMonth() + 1))
-      .toISOString()
-      .split("T")[0]
-  );
-
-  const [is_local_temp, setis_local_temp] = useState()
 
   //Permission
   const user = useSelector((state) => state.authentication.userdetails);
@@ -237,9 +211,9 @@ const AddClient = () => {
     }),
 
     onSubmit: (values) => {
-      let data = row2.some((a) => a[5] == true)
+      let data = row2.some((a) => a[5] === true)
       let shaw = Object.entries(validation.values);
-      let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+      let filter_value = shaw.filter((v) => v[1] === "" || v[1] === 0);
       let map_value = filter_value.map((m) => m[0]);
       let all_value = map_value[0];
       let field = ["address_line_1"]
@@ -329,7 +303,7 @@ const AddClient = () => {
       }
 
       if (resp.data.results.length > 0) {
-        if (state_page == 1) {
+        if (state_page === 1) {
           state_list = resp.data.results.map((v) => [
             v.id,
             toTitleCase(v.state),
@@ -375,7 +349,7 @@ const AddClient = () => {
       }
 
       if (resp.data.results.length > 0) {
-        if (city_page == 1) {
+        if (city_page === 1) {
           cities_list = resp.data.results.map((v) => [
             v.id,
             toTitleCase(v.city),
@@ -419,7 +393,7 @@ const AddClient = () => {
       }
 
       if (filter_by !== "pincode") {
-        if (pincode_page == 1) {
+        if (pincode_page === 1) {
           pincode_list = resp.data.results.map((v) => [v.id, v.pincode]);
         } else {
           pincode_list = [...pincode_list_s, ...resp.data.results.map((v) => [v.id, v.pincode]),
@@ -465,7 +439,7 @@ const AddClient = () => {
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
-          if (locality_page == 1) {
+          if (locality_page === 1) {
             locality_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.name),
@@ -663,7 +637,7 @@ const AddClient = () => {
         dispatch(setAlertType("success"));
         dispatch(setShowAlert(true));
       }
-      else if (resp.data == "duplicate") {
+      else if (resp.data === "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
@@ -877,7 +851,7 @@ const AddClient = () => {
         dispatch(setDataExist(`BillTo '${values.name}' Updated Sucessfully`));
         dispatch(setAlertType("info"));
         dispatch(setShowAlert(true));
-      } else if (resp.data == "duplicate") {
+      } else if (resp.data === "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
@@ -1162,7 +1136,7 @@ const AddClient = () => {
   };
 
   const handleSubmit = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     }
     else {
@@ -1469,7 +1443,7 @@ const AddClient = () => {
 
   useEffect(() => {
     let timeoutId;
-    if (gst_city_id != "") {
+    if (gst_city_id !== "") {
       timeoutId = setTimeout(() => {
         getGstPincode(gst_city_id, "city");
       }, 1);
@@ -1488,7 +1462,7 @@ const AddClient = () => {
 
   useLayoutEffect(() => {
     let timeoutId;
-    if (gst_pincode_id != "") {
+    if (gst_pincode_id !== "") {
       timeoutId = setTimeout(() => {
         getGstLocality(gst_pincode_id, "pincode");
       }, 1);
@@ -1541,7 +1515,7 @@ const AddClient = () => {
   }, [pan_no]);
 
   useEffect(() => {
-    let data = row2.some((a) => a[5] == true)
+    let data = row2.some((a) => a[5] === true)
     if (row2[row2.length - 1].every((e) => e !== "" && data !== false && row2[row2.length - 1][0].substring(2, 12) === pan_no) && row2[row2.length - 1][0].length === 15) {
       setgst_error(false)
     }
@@ -1584,9 +1558,9 @@ const AddClient = () => {
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          let data = row2.some((a) => a[5] == true)
+          let data = row2.some((a) => a[5] === true)
           let shaw = Object.entries(validation.values);
-          let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+          let filter_value = shaw.filter((v) => v[1] === "" || v[1] === 0);
           let map_value = filter_value.map((m) => m[0]);
           let all_value = map_value[0];
           let field = ["address_line_1"];
@@ -1971,8 +1945,8 @@ const AddClient = () => {
                                   let itm = item[0];
 
                                   if (
-                                    item[0].length == 15 &&
-                                    gst_val ==
+                                    item[0].length === 15 &&
+                                    gst_val ===
                                     itm[0] +
                                     itm[1] +
                                     pan_no
@@ -2107,7 +2081,7 @@ const AddClient = () => {
                             return (
                               <div
                               >
-                                {row2.some((a) => a[5] == true && a[5] === row2[index][5]) &&
+                                {row2.some((a) => a[5] === true && a[5] === row2[index][5]) &&
                                   (
                                     <FiCheckSquare
                                       onClick={() => {
@@ -2129,7 +2103,7 @@ const AddClient = () => {
                                   )
                                 }
 
-                                {row2.every((a) => a[5] == false) ?
+                                {row2.every((a) => a[5] === false) ?
                                   <FiSquare onClick={() => {
                                     if (selected.includes(index)) {
                                       let lis = [...selected];
@@ -2214,7 +2188,7 @@ const AddClient = () => {
                               setgst_city_list([])
                               setgst_city_page(1)
                               setgstcity_bottom(103)
-                              const lastRow = row[row.length - 1];
+                              // const lastRow = row[row.length - 1];
                               if (row2[row2.length - 1].some((data) => data === "")) {
                                 setgst_error(true)
                                 setgst_text("Please Fill All GST Address")

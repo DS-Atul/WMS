@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { MdAdd } from "react-icons/md";
-import Nav_Btn from "../../../components/btn/NavBtn";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -13,9 +11,8 @@ import NumPagination from "../../../components/listDisplay/numPagination/NumPagi
 
 import OrderDeliveryDataTitle from "../../../data/booking/alldeliveryInfo/OrderDeliveryDataTitle";
 import OrderDeliveryDataFormate from "../../../data/booking/alldeliveryInfo/OrderDeliveryDataFormate";
-import { saveAs } from 'file-saver'
-import axios from "axios";
 import Navigate from "../navigateTab/Navigate";
+
 const DeliveryInfo = () => {
   const dispatch = useDispatch();
   const from_date = useSelector((state) => state.filtervalue.data_a);

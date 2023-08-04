@@ -9,7 +9,6 @@ const Navigate = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const tab = useSelector((state) => state.parentfilter.manifest_tab);
 
-  console.log("navigateTab", tab)
   //Permission
   const userpermission = useSelector(
     (state) => state.authentication.userpermission

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -17,7 +17,6 @@ import {
   Input,
   FormFeedback,
   Form,
-  FormGroup
 } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
@@ -28,16 +27,9 @@ import {
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-import { Button } from "react-bootstrap";
-import Modal from 'react-bootstrap/Modal';
 
 const AddPincode = () => {
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
-  const user = useSelector((state) => state.authentication.userdetails);
-
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const [isupdating, setisupdating] = useState(false);
   const location_data = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -135,7 +127,7 @@ const AddPincode = () => {
       let prev = location_data.state.city[`${ele[0]}`];
       let new_v = ele[1];
 
-      if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
@@ -163,7 +155,7 @@ const AddPincode = () => {
         );
         dispatch(setAlertType("info"));
         city?.city ? navigate(-1) : navigate("/master/locations");
-      } else if (response.data == "duplicate") {
+      } else if (response.data === "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(

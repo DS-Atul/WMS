@@ -3,7 +3,7 @@ import { Col, Card, CardTitle, CardBody } from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
 const OrderOriginsHistoryCreatedPage = ({ page_data }) => {
-  console.log("page", page_data)
+  // console.log("page", page_data)
   const [order_data, setorder_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -18,7 +18,7 @@ const OrderOriginsHistoryCreatedPage = ({ page_data }) => {
     }
   }, [page_data])
 
-  console.log("OrderOrigins data >>>>>", order_data);
+  // console.log("OrderOrigins data >>>>>", order_data);
 
 
   let time = new Date(order_data.created_at).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });

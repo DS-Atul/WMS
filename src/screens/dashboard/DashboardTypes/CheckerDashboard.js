@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.css";
 import { Card } from "react-bootstrap";
 import LineColumnArea from "../../../components/dashboardComponents/Charts/LineColumnArea";
 import { CardBody, CardTitle, Col, Row } from "reactstrap";
-import { AiOutlineEllipsis } from "react-icons/ai";
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import { useSelector } from "react-redux";
@@ -27,14 +26,14 @@ const CheckerDashboard = () => {
       );
       data = response;
 
-      console.log("data========123", data);
+      // console.log("data========123", data);
       const counts = Object.values(data.data).map((obj) => Object.values(obj));
-      const count = Object.values(data.data);
-      console.log("count=====1", count);
-      console.log("counts=====2", counts);
+      // const count = Object.values(data.data);
+      // console.log("count=====1", count);
+      // console.log("counts=====2", counts);
       const totals = counts.reduce(
         (acc, curr) => {
-          console.log("acc====111", acc);
+          // console.log("acc====111", acc);
           acc[0] += curr[0];
           acc[1] += curr[1];
           acc[2] += curr[2];
@@ -564,68 +563,68 @@ const CheckerDashboard = () => {
               data-title="Quantity"
               style={{ cursor: "pointer" }}
             >
-              
-                {!user.is_superuser ?
+
+              {!user.is_superuser ?
                 <span
-                className="arrow"
-                style={{ color: "blue", fontSize: "15px" }}
-              >
+                  className="arrow"
+                  style={{ color: "blue", fontSize: "15px" }}
+                >
                   <Link
                     to={{
                       pathname: `/master/charges/addcharge`,
                     }}
-                  state={{ charge: "P", type: "Charges" }}
+                    state={{ charge: "P", type: "Charges" }}
                   >
                     {pending?.charge_counts?.not_approved}{" "}
                   </Link>
-                  </span>
-                  :
-                  <span>{pending?.charge_counts?.not_approved}{" "}</span>
-                }
-             
+                </span>
+                :
+                <span>{pending?.charge_counts?.not_approved}{" "}</span>
+              }
+
 
             </div>
             <div class="cell" data-title="Date Sold">
-             
-                {!user.is_superuser ?
-                 <span
-                 className="arrow"
-                 style={{ color: "blue", fontSize: "15px" }}
-               >
+
+              {!user.is_superuser ?
+                <span
+                  className="arrow"
+                  style={{ color: "blue", fontSize: "15px" }}
+                >
                   <Link
                     to={{
                       pathname: `/master/charges/addcharge`,
                     }}
-                  state={{ charge: "A", type: "Charges" }}
+                    state={{ charge: "A", type: "Charges" }}
                   >
                     {pending?.charge_counts?.approved}{" "}
                   </Link>
-                  </span>
-                  :
-                  <span>{pending?.charge_counts?.approved}{" "}</span>
-                }
-             
+                </span>
+                :
+                <span>{pending?.charge_counts?.approved}{" "}</span>
+              }
+
             </div>
             <div class="cell" data-title="Date Sold">
-             
-                {!user.is_superuser && user.user_department_name === "ADMIN" ?
-                 <span
-                 className="arrow"
-                 style={{ color: "blue", fontSize: "15px" }}
-               >
+
+              {!user.is_superuser && user.user_department_name === "ADMIN" ?
+                <span
+                  className="arrow"
+                  style={{ color: "blue", fontSize: "15px" }}
+                >
                   <Link
                     to={{
                       pathname: `/master/charges/addcharge`,
                     }}
-                  state={{ charge: "R", type: "Charges" }}
+                    state={{ charge: "R", type: "Charges" }}
                   >
                     {pending?.charge_counts?.rejected}{" "}
                   </Link>
-                  </span>
-                  :
-                  <span>{pending?.charge_counts?.rejected}{" "}</span>
-                }
-             
+                </span>
+                :
+                <span>{pending?.charge_counts?.rejected}{" "}</span>
+              }
+
             </div>
           </div>
           <div class="row1">

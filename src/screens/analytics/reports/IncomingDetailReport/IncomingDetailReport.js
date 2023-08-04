@@ -110,7 +110,7 @@ const IncomingDetailReport = () => {
         }
       )
       .then((response) => {
-        if (response.data.length != 0) {
+        if (response.data.length !== 0) {
           let sample_data = response.data[0];
           let columns = Object.keys(sample_data);
           for (let index = 0; index < columns.length; index++) {
@@ -180,19 +180,19 @@ const IncomingDetailReport = () => {
         let colmn = rmv_title(entry_item[0]);
         console.log("colmn----", colmn);
         let data = entry_item[1];
-        console.log("selected_report_columns----", selected_report_columns);
+        // console.log("selected_report_columns----", selected_report_columns);
         let idx = selected_report_columns.indexOf(colmn);
-        console.log("idx------", idx);
+        // console.log("idx------", idx);
         let or_idx = column_list.indexOf(colmn);
 
-        if (idx == -1) {
+        if (idx === -1) {
           entr_list[ind] = ["Removed Data", "Removed Data"];
         } else {
           sheet_dta_obj[colmn] = data;
           sheet_tle_obj[colmn] = colmn;
         }
       }
-      console.log("entr_list-----", entr_list);
+      // console.log("entr_list-----", entr_list);
       sheet_dta_list.push(sheet_dta_obj);
       selected_entries.push(entr_list);
     }
@@ -203,7 +203,7 @@ const IncomingDetailReport = () => {
   };
 
   useEffect(() => {
-    if (detailed_report_list.length != 0) {
+    if (detailed_report_list.length !== 0) {
       setData();
     }
   }, [selected_report_columns]);
@@ -231,7 +231,7 @@ const IncomingDetailReport = () => {
                     />
                   )}
                 </span>
-                {sheet_data.length != 0 && (
+                {sheet_data.length !== 0 && (
                 <Button
                   type="button"
                   className="btn-rounded fluid mb-2 me-2 mt-3 btn btn-success"
@@ -350,7 +350,7 @@ const IncomingDetailReport = () => {
           </div>
           <div>
             {/* DataTable */}
-            {selected_details_report_data.length != 0 ? (
+            {selected_details_report_data.length !== 0 ? (
               <ReportDataList
                 Data_Title={selected_report_columns}
                 Data_Format={selected_details_report_data}

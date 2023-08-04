@@ -51,7 +51,6 @@ import {
 // import Button from 'react-bootstrap/Button';
 import Modal from "react-bootstrap/Modal";
 import Main_c from "../.././../components/crop/main";
-import { CleanHands } from "@mui/icons-material";
 
 const AddDocketIssue = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -59,14 +58,10 @@ const AddDocketIssue = () => {
     (state) => state.authentication.userdetails.home_branch
   );
 
-  const data_len = useSelector((state) => state.pagination.data_length);
-  // const page_num = useSelector((state) => state.pagination.page_number);
-  const [page_num, setpage_num] = useState(1);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const search = useSelector((state) => state.searchbar.search_item);
   const dispatch = useDispatch();
   const location = useLocation();
-  console.log("Order Data is ====>>", location)
+  // console.log("Order Data is ====>>", location)
   const navigate = useNavigate();
   const [page, setpage] = useState(1);
 
@@ -82,8 +77,7 @@ const AddDocketIssue = () => {
   // For Onfocus
   const [clicked, setclicked] = useState(false);
 
-  //For order type
-  const [order_type, setorder_type] = useState("NORMAL_ORDER");
+  
   //local delivery_type
   const [delivery_type, setdelivery_type] = useState("LOCAL");
 
@@ -106,7 +100,7 @@ const AddDocketIssue = () => {
   const [nonecold_chain, setnonecold_chain] = useState(false);
   const [cod_list, setcod_list] = useState(["Yes", "No"]);
   const [asset_prov, setasset_prov] = useState(false)
-  console.log("----------asset_prov", asset_prov)
+  // console.log("----------asset_prov", asset_prov)
   const [d_cod, setd_cod] = useState("No");
   //Type of Booking
   const [type_of_booking_list, setype_of_booking_list] = useState([
@@ -143,7 +137,6 @@ const AddDocketIssue = () => {
   const [billto_list, setbillto_list] = useState([]);
   const [billto, setbillto] = useState("");
   const [billto_id, setbillto_id] = useState(0);
-  const [selectbillto, setselectbillto] = useState([]);
   const [search_billto, setsearch_billto] = useState("");
   const [billto_page, setbillto_page] = useState(1);
 
@@ -172,7 +165,6 @@ const AddDocketIssue = () => {
   const [shipper_locality_id, setshipper_locality_id] = useState(0);
   const [shipper_add_1, setshipper_add_1] = useState("");
   const [shipper_add_2, setshipper_add_2] = useState("");
-  const [search_shipper, setsearch_shipper] = useState("");
   const [all_shipper_details, setall_shipper_details] = useState([]);
   //consignee
   const [consignee_details, setconsignee_details] = useState([]);
@@ -189,7 +181,6 @@ const AddDocketIssue = () => {
   const [consignee_locality, setconsignee_locality] = useState("");
   const [consignee_add_1, setconsignee_add_1] = useState("");
   const [consignee_add_2, setconsignee_add_2] = useState("");
-  const [search_consignee, setsearch_consignee] = useState("");
   const [all_consignee_details, setall_consignee_details] = useState([]);
   // Asset Info
   const [asset_idlist, setasset_idlist] = useState([]);
@@ -209,39 +200,18 @@ const AddDocketIssue = () => {
   const [logger, setlogger] = useState([]);
   const [both, setboth] = useState([]);
 
-  //Box Type
-  const [box_list, setbox_list] = useState([
-    "CREDO",
-    "VYPE",
-    "COOL GUARD",
-    "ISGO",
-    "SAFE",
-  ]);
-  const [box_selected, setbox_selected] = useState("");
-
   //Box Number
   const [box_list_1, setbox_list_1] = useState([]);
   const [box_list_2, setbox_list_2] = useState([]);
-  const [box_no_selected, setbox_no_selected] = useState("");
-  const [box_selected_id, setbox_selected_id] = useState("");
   const [box_list_page, setbox_list_page] = useState(1);
   const [search_box_list, setsearch_box_list] = useState("");
 
   //Logger Number
   const [Logger_list, setLogger_list] = useState([]);
   const [Logger_Selected, setLogger_Selected] = useState([]);
-  const [Logger_selected_id, setLogger_selected_id] = useState("");
   const [Logger_page, setLogger_page] = useState(1);
   const [search_logger, setsearch_logger] = useState("");
 
-  //Temperature Type
-  const [temp_list, settemp_list] = useState([
-    "2c-8c",
-    "15c-25c",
-    "-25c To -15c",
-    "Dry Ice",
-    "All In One",
-  ]);
   const [temp_selected, settemp_selected] = useState("");
 
   //Commodity
@@ -307,7 +277,6 @@ const AddDocketIssue = () => {
   const [origincity, setorigincity] = useState("");
   // console.log("origincity----", origincity)
   const [origincity_id, setorigincity_id] = useState(0);
-  const [origincity_error, setorigincity_error] = useState(false);
   const [origincity_page, setorigincity_page] = useState(1);
   const [origincity_search_item, setorigincity_search_item] = useState("");
 
@@ -315,27 +284,12 @@ const AddDocketIssue = () => {
   const [destinationcity_list, setdestinationcity_list] = useState([]);
   const [destinationcity, setdestinationcity] = useState("");
   const [destinationcity_id, setdestinationcity_id] = useState(0);
-  const [destinationcity_error, setdestinationcity_error] = useState(false);
   const [destinationcity_page, setdestinationcity_page] = useState(1);
   const [destinationcity_search_item, setdestinationcity_search_item] =
     useState("");
 
-  //State
-  const [state_list_s, setstate_list_s] = useState([]);
-  const [state, setstate] = useState("");
-  const [state_id, setstate_id] = useState("");
-
-  //Pincode
-  const [pincode_list_s, setpincode_list_s] = useState([]);
-  const [pincode_loaded, setpincode_loaded] = useState(false);
-  const [pincode, setpincode] = useState("");
-  const [by_pincode, setby_pincode] = useState(false);
-
   // Delivery Info
   const [delivery_info, setdelivery_info] = useState([]);
-  const [delivered_date, setdelivered_date] = useState("");
-  const [deliverySigFile, setdeliverySigFile] = useState(null);
-  const [podSigFile, setpodSigFile] = useState(null);
   const [response_awb_no, setresponse_awb_no] = useState("");
 
   //Circle Toogle Btn
@@ -381,8 +335,6 @@ const AddDocketIssue = () => {
 
   // Error State
   const [transportation_cost_err, settransportation_cost_err] = useState(false);
-  const [pincode_error, setpincode_error] = useState(false);
-  const [pincode_error2, setpincode_error2] = useState(false);
   // const [delivery_mode_error, setdelivery_mode_error] = useState(false);
   const [client_error, setclient_error] = useState(false);
   const [billto_error, setbillto_error] = useState(false);
@@ -396,13 +348,6 @@ const AddDocketIssue = () => {
   const [local_delivery_type_error, setlocal_delivery_type_error] =
     useState(false);
   const [d_cod_error, setd_cod_error] = useState(false);
-  const [asset_info_selected_error, setasset_info_selected_error] =
-    useState(false);
-  const [box_selected_error, setbox_selected_error] = useState(false);
-  const [box_no_selected_error, setbox_no_selected_error] = useState(false);
-  const [Logger_Selected_error, setLogger_Selected_error] = useState(false);
-  const [temp_selected_error, settemp_selected_error] = useState("");
-  const [actual_weight_error, setactual_weight_error] = useState("");
   const [showModalOrder, setshowModalOrder] = useState({
     value: false,
     ind: "",
@@ -411,8 +356,6 @@ const AddDocketIssue = () => {
     value: false,
     ind: "",
   });
-
-  const [doc_result_image, setdoc_result_image] = useState([]);
 
   // Packages
   let p = row.length - 1;
@@ -444,8 +387,6 @@ const AddDocketIssue = () => {
     setrow(temp);
     setpackage_id_list(temp_2);
   };
-
-
 
   // Order Images
 
@@ -803,7 +744,7 @@ const AddDocketIssue = () => {
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
-          if (origincity_page == 1) {
+          if (origincity_page === 1) {
             cities_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
@@ -871,7 +812,7 @@ const AddDocketIssue = () => {
           //   ];
           // }
 
-          if (destinationcity_page == 1) {
+          if (destinationcity_page === 1) {
             dcities_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
@@ -1165,7 +1106,7 @@ const AddDocketIssue = () => {
       const ele = fields_names[j];
       let prev = location.state.order[`${ele[0]}`];
       let new_v = ele[1];
-      if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
@@ -1581,13 +1522,13 @@ const AddDocketIssue = () => {
       setconsignee_id("");
     }
     // Setting Client Commidities After Selecting Client
-    if (client_id != 0 && clients_commidities_lists.length !== 0) {
-      let sel_com = clients_commidities_lists.find(v => v[0] == client_id)[1]
-      console.log("commodity_data_list", commodity_data_list)
-      console.log("sel_com", sel_com)
+    if (client_id !== 0 && clients_commidities_lists.length !== 0) {
+      let sel_com = clients_commidities_lists.find(v => v[0] === client_id)[1]
+      // console.log("commodity_data_list", commodity_data_list)
+      // console.log("sel_com", sel_com)
       let tmp_com_data_list = commodity_data_list.filter(v => sel_com.includes(parseInt(v[0])))
 
-      console.log("tmp_com_data_list", tmp_com_data_list)
+      // console.log("tmp_com_data_list", tmp_com_data_list)
       setclient_commidities_list(tmp_com_data_list)
     }
   }, [client_id, data, clients_commidities_lists]);
@@ -1832,25 +1773,25 @@ const AddDocketIssue = () => {
 
   useEffect(() => {
     if (box !== [] && asset_info_selected === "With Box") {
-      let item = asset_idlist.filter((p) => box.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => box.indexOf(p) === -1);
       setassetdeleted_ids(item);
       let item2 = asset_idlist.filter((p) => box.indexOf(p) !== -1);
       setassetold_ids(item2);
-      let item3 = box.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = box.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     } else if (logger !== [] && asset_info_selected === "With Logger") {
-      let item = asset_idlist.filter((p) => logger.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => logger.indexOf(p) === -1);
       setassetdeleted_ids(item);
       let item2 = asset_idlist.filter((p) => logger.indexOf(p) !== -1);
       setassetold_ids(item2);
-      let item3 = logger.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = logger.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     } else {
-      let item = asset_idlist.filter((p) => both.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => both.indexOf(p) === -1);
       setassetdeleted_ids(item);
       let item2 = asset_idlist.filter((p) => both.indexOf(p) !== -1);
       setassetold_ids(item2);
-      let item3 = both.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = both.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     }
   }, [asset_idlist, box, logger, both]);
@@ -1863,8 +1804,6 @@ const AddDocketIssue = () => {
       setdeleted_packages_id(id_list);
     }
   }, [package_id_list, packages_id]);
-
-  const [ewaybill, setewaybill] = useState(false);
 
   useLayoutEffect(() => {
     getCities("all", "all");
@@ -2051,7 +1990,7 @@ const AddDocketIssue = () => {
 
 
   const handleSubmit = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     }
     else {
@@ -2384,7 +2323,7 @@ const AddDocketIssue = () => {
                             disabled={isupdating ? docket_no_value : ""}
                             onChange={(event) => {
                               setdocket_no_value(event.target.value);
-                              if (event.target.value.length != 6) {
+                              if (event.target.value.length !== 6) {
                                 setdocket_error(true);
                               } else {
                                 setdocket_error(false);
@@ -3659,6 +3598,7 @@ const AddDocketIssue = () => {
                                   <div style={{ width: "100%" }} key={index1}>
                                     <img
                                       src={item1[0]}
+                                      alt="item1[0]"
                                       style={{
                                         height: "110px",
                                         width: "110px",
@@ -3687,7 +3627,7 @@ const AddDocketIssue = () => {
                                   alignItems: "center",
                                   height: "38px",
                                   borderRadius: 5,
-                                  height: 31,
+                                  // height: 31,
                                 }}
                                 onClick={() => {
                                   setshowModalOrder({
@@ -3931,6 +3871,7 @@ const AddDocketIssue = () => {
                                   <div style={{ width: "100%" }} key={index1}>
                                     <img
                                       src={item1[0]}
+                                      alt="item1[0]"
                                       style={{
                                         height: "110px",
                                         width: "110px",
@@ -3959,7 +3900,7 @@ const AddDocketIssue = () => {
                                   alignItems: "center",
                                   height: "38px",
                                   borderRadius: 5,
-                                  height: 31,
+                                  // height: 31,
                                 }}
                                 onClick={() => {
                                   setshowModalInvoice({

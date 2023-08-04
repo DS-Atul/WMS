@@ -1,11 +1,10 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { IconContext } from "react-icons";
 import { MdAdd } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import axios from "axios";
-import { FiSquare, FiCheckSquare } from "react-icons/fi";
-import { Col, Row, Input, Label, FormFeedback, Button } from "reactstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { Col, Row, Input, Label, Button } from "reactstrap";
+import { useSelector } from "react-redux";
 import { ServerAddress } from "../../../../constants/ServerAddress";
 import toTitleCase from "../../../../lib/titleCase/TitleCase";
 import ChargeRates from "../chargeRates/ChargeRates";
@@ -27,11 +26,8 @@ const AssociatedCharges = ({
 
   is_per_charge,
 }) => {
-  const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const username = useSelector((state) => state.authentication.username);
-
-  const [use_sec_ch_lst, setuse_sec_ch_lst] = useState([]);
+  
 
   const [sec_charge, setsec_charge] = useState("");
   const [rate_category, setrate_category] = useState("");
@@ -63,7 +59,6 @@ const AssociatedCharges = ({
 
   const [fr_mn_amt_blr, setfr_mn_amt_blr] = useState(false);
 
-  const [rate_in_p, setrate_in_p] = useState(false);
 
   const [rate_blr, setrate_blr] = useState(false);
 
@@ -83,7 +78,6 @@ const AssociatedCharges = ({
   const [freight_added, setfreight_added] = useState(0);
 
   const [changing, setchanging] = useState(false);
-  const [freight_rate_error, setfreight_rate_error] = useState(false);
   const [freight_rate_error2, setfreight_rate_error2] = useState(false);
   const [ass_charges_err, setass_charges_err] = useState(false);
   const [btn_click, setbtn_click] = useState(false);
@@ -118,11 +112,11 @@ const AssociatedCharges = ({
         setsec_charges_list(temp_lis);
 
         try {
-          let fght_idx = temp_lis.find((val) => val[1] == "Freight")[0];
+          let fght_idx = temp_lis.find((val) => val[1] === "Freight")[0];
           setfreight_idx(fght_idx);
-          let wrai_idx = temp_lis.find((val) => val[1] == "Warai")[0];
+          let wrai_idx = temp_lis.find((val) => val[1] === "Warai")[0];
           setwarai_idx(wrai_idx);
-          let oda_idx = temp_lis.find((val) => val[1] == "Oda")[0];
+          let oda_idx = temp_lis.find((val) => val[1] === "Oda")[0];
           setoda_idx(oda_idx);
         } catch {}
       })
@@ -132,7 +126,7 @@ const AssociatedCharges = ({
   };
 
   const addAssociated_Charge_entry = () => {
-    let freigth_p = associated_charges.filter((val) => val[0] == freight_idx);
+    let freigth_p = associated_charges.filter((val) => val[0] === freight_idx);
     setfreight_added(freigth_p.length);
 
     let dimension_list = [["", ""], "", 0, 0, activeTab, false, "", 0, 0, 0, 0];
@@ -201,7 +195,7 @@ const AssociatedCharges = ({
                         className="option"
                         value={itms[0]}
                         key={index}
-                        hidden={use_sec_ch_lst.some((v) => v[0] == itms[0])}
+                        hidden={use_sec_ch_lst.some((v) => v[0] === itms[0])}
                       >
                         {itms[1]}
                       </option>
@@ -224,7 +218,7 @@ const AssociatedCharges = ({
             </Col>
             <Col lg={3}>
               <div className="mb-3">
-                {item[0][0] == warai_idx ? (
+                {item[0][0] === warai_idx ? (
                   <div
                     className="mb-3"
                     style={{ paddingTop: 8, paddingBottom: 22 }}
@@ -238,7 +232,7 @@ const AssociatedCharges = ({
                     type="select"
                     onChange={(event) => {
                       setrefresh(!refresh);
-                      if (item[0][0] == freight_idx) {
+                      if (item[0][0] === freight_idx) {
                         setfreight_rate_category(event.target.value);
                         setfreight_rate_category_o(event.target.value);
                       } else {
@@ -249,7 +243,7 @@ const AssociatedCharges = ({
                     style={{ marginBottom: "15px" }}
                   >
                     <option value="" hidden></option>
-                    {item[0][0] == freight_idx && (
+                    {item[0][0] === freight_idx && (
                       <>
                         {freight_rate_categories.map((item, idx) => {
                           return (
@@ -260,9 +254,9 @@ const AssociatedCharges = ({
                         })}
                       </>
                     )}
-                    {item[0][0] != freight_idx && (
+                    {item[0][0] !== freight_idx && (
                       <>
-                        {local_cal_type == "BOX"
+                        {local_cal_type === "BOX"
                           ? other_rate_categories.map((item, idx) => {
                               return (
                                 <option value={`${item}`} key={idx}>
@@ -305,7 +299,7 @@ const AssociatedCharges = ({
                           if (
                             window.confirm(
                               "Do You Want To Delete this row ? "
-                            ) == true
+                            ) === true
                           ) {
                             deleteAssociated_Charge_entry(index);
                           } else {
@@ -332,7 +326,7 @@ const AssociatedCharges = ({
               </div>
             </Col>
             <Col lg={3}>
-              {item[0][0] != warai_idx ? (
+              {item[0][0] !== warai_idx ? (
                 <div className="mb-3">
                   <Button
                     color={item[5] ? "danger" : "success"}
@@ -369,12 +363,12 @@ const AssociatedCharges = ({
                   overflowX: "scroll",
                 }}
               >
-                {activeTab == "1" && (
+                {activeTab === "1" && (
                   <ChargeRates
                     refresh={refresh}
                     setrefresh={setrefresh}
                     rate_category={
-                      item[0][0] == freight_idx
+                      item[0][0] === freight_idx
                         ? freight_rate_category
                         : item[1]
                     }

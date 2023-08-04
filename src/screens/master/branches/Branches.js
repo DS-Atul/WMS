@@ -16,7 +16,6 @@ import Navigate from "../navigateTab/Navigate";
 
 const Branches = () => {
   const dispatch = useDispatch();
-  const toggle = useSelector((state) => state.parentfilter.toggle);
   const branchname = useSelector((state) => state.filtervalue.data_a);
   const vendorid = useSelector((state) => state.filtervalue.data_b);
   const branch_cityid = useSelector((state) => state.filtervalue.data_c);
@@ -29,13 +28,13 @@ const Branches = () => {
   const cm_value = useSelector((state) => state.datalist.cm_filter);
 
   // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
+  // const user_permissions = useSelector(
+  //   (state) => state.permissions.user_permissions
+  // );
 
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
+  // let is_superuser = useSelector(
+  //   (state) => state.authentication.userdetails.is_superuser
+  // );
 
   useEffect(() => {
     dispatch(setToggle(false));

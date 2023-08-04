@@ -45,7 +45,7 @@ const TransferList = ({
             cursor: "default",
           }}
           onClick={() => {
-            setselected(selected.filter((val) => val != name));
+            setselected(selected.filter((val) => val !== name));
           }}
         >
           {" "}
@@ -73,8 +73,6 @@ const TransferList = ({
   const [selected_filter_a, setselected_filter_a] = useState([]);
   const [selected_b, setselected_b] = useState([]);
   const [selected_filter_b, setselected_filter_b] = useState([]);
-
-  const [btn, setbtn] = useState("");
 
   const [filter_a, setfilter_a] = useState([]);
   const [filter_b, setfilter_b] = useState([]);
@@ -150,7 +148,7 @@ const TransferList = ({
             className="card-body p-2"
             style={{ border: "1px solid #D3D3D3" }}
           >
-            {search_a != ""
+            {search_a !== ""
               ? filter_a.map((item, index) =>
                   getselected(
                     selected_filter_a,
@@ -222,7 +220,7 @@ const TransferList = ({
               onClick={() => {
                 if(disabled === false){
                 let temp_selected =
-                  search_a != "" ? selected_filter_a : selected_a;
+                  search_a !== "" ? selected_filter_a : selected_a;
                 setlist_b([...list_b, ...temp_selected]);
 
                 let temp2 = list_a;
@@ -257,7 +255,7 @@ const TransferList = ({
               onClick={() => {
                 if(disabled === false){
                 let temp_selected =
-                  search_b != "" ? selected_filter_b : selected_b;
+                  search_b !== "" ? selected_filter_b : selected_b;
                 setlist_a([...list_a, ...temp_selected]);
 
                 let temp2 = list_b;
@@ -349,7 +347,7 @@ const TransferList = ({
             className="card-body p-2"
             style={{ border: "1px solid #D3D3D3" }}
           >
-            {search_b != ""
+            {search_b !== ""
               ? filter_b.map((item, index) =>
                   getselected(
                     selected_filter_b,

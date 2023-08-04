@@ -1,11 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Button, Label } from "reactstrap";
 import toTitleCase from "../../../../lib/titleCase/TitleCase";
 import WithWaraiDataTitle from "./WithWaraiDataTitle";
 
 const WithWaraiDataFormat = ({ warai_ords_list, remove_list, total_warai }) => {
-  const search = useSelector((state) => state.searchbar.search_item);
 
   return (
     <div className="table">
@@ -68,7 +66,7 @@ const WithWaraiDataFormat = ({ warai_ords_list, remove_list, total_warai }) => {
                       <td>{local.total_quantity}</td>
                       <td>{total_warai}</td>
                       <td>
-                        {total_warai != 0
+                        {total_warai !== 0
                           ? local.total_quantity * total_warai
                           : "-"}
                       </td>

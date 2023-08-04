@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { MdAdd } from "react-icons/md";
-import Nav_Btn from "../../../components/btn/NavBtn";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -8,19 +6,10 @@ import Title from "../../../components/title/Title";
 import { setPageNumber } from "../../../store/pagination/Pagination";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
-import BillTosDataFormat from "../../../data/master/clients/BillTosDataFormat";
-import ClientsDataTitle from "../../../data/master/clients/BillTosDataTitles";
-import AssetDataTitle from "../../../data/master/assets/AssetDataTitle";
-import AssetsDataFormat from "../../../data/master/assets/AssetDataFormat";
-import PendingDataTitle from "../../../data/manifests/pendingForDepart/PendingDepartTitle";
 import PendingDepartTitle from "../../../data/manifests/pendingForDepart/PendingDepartTitle";
 import PendingDepartDataFormat from "../../../data/manifests/pendingForDepart/PendingDepartFormat";
-import PendingHubTitle from "../../../data/manifests/pendingForHub/PendingForHubTitle";
-import PendingHubDataFormat from "../../../data/manifests/pendingForHub/PendingForHub";
 import Navigate from "../navigateTab/Navigate";
-import DepartTab from "../navigateTab/DepartTab";
 
 const PendingDepart = () => {
   const dispatch = useDispatch();
@@ -29,15 +18,6 @@ const PendingDepart = () => {
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
-
-  // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
-
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
 
   useEffect(() => {
     dispatch(setToggle(false));

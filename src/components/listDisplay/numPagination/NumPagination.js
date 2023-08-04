@@ -5,7 +5,6 @@ import {
   setDataLength,
   setDataLengthB,
   setDataLoaded,
-  setDataLoadedB,
   setPageNumber,
   setPageNumberB,
   setToggle,
@@ -30,7 +29,7 @@ const NumPagination = ({ path, pathb }) => {
   const [first, setfirst] = useState(0);
   const [page_no, setpage_no] = useState(1);
   let total = total_data;
-console.log("next=========", next)
+  console.log("next=========", next)
   const leftClick = () => {
     if (prev !== null && is_loaded === true) {
       setpage_no(page_no - 1);
@@ -152,23 +151,23 @@ console.log("next=========", next)
                 <div className="dataResult_sort">
                   {showfilter
                     ? show_per_page_list.map((item, index) => {
-                        if (total >= item) {
-                          return (
-                            <div
-                              key={index}
-                              className="dataItem"
-                              onClick={() => {
-                                setshow_per_page(item);
-                                setshowfilter(false);
-                                dispatch(setDataLength(item));
-                                dispatch(setToggle(true));
-                              }}
-                            >
-                              <span style={{ fontSize: "13px" }}>{item}</span>
-                            </div>
-                          );
-                        }
-                      })
+                      if (total >= item) {
+                        return (
+                          <div
+                            key={index}
+                            className="dataItem"
+                            onClick={() => {
+                              setshow_per_page(item);
+                              setshowfilter(false);
+                              dispatch(setDataLength(item));
+                              dispatch(setToggle(true));
+                            }}
+                          >
+                            <span style={{ fontSize: "13px" }}>{item}</span>
+                          </div>
+                        );
+                      }
+                    })
                     : null}
                 </div>
               </>
@@ -254,23 +253,23 @@ console.log("next=========", next)
                 <div className="dataResult_sort">
                   {showfilter
                     ? show_per_page_listb.map((item, index) => {
-                        if (totalb >= item) {
-                          return (
-                            <div
-                              key={index}
-                              className="dataItem"
-                              onClick={() => {
-                                setshow_per_pageb(item);
-                                setshowfilterb(false);
-                                dispatch(setDataLengthB(item));
-                                dispatch(setToggleB(true));
-                              }}
-                            >
-                              <span style={{ fontSize: "13px" }}>{item}</span>
-                            </div>
-                          );
-                        }
-                      })
+                      if (totalb >= item) {
+                        return (
+                          <div
+                            key={index}
+                            className="dataItem"
+                            onClick={() => {
+                              setshow_per_pageb(item);
+                              setshowfilterb(false);
+                              dispatch(setDataLengthB(item));
+                              dispatch(setToggleB(true));
+                            }}
+                          >
+                            <span style={{ fontSize: "13px" }}>{item}</span>
+                          </div>
+                        );
+                      }
+                    })
                     : null}
                 </div>
               </>

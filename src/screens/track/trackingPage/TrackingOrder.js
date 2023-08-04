@@ -4,7 +4,7 @@ import "./Tracking.css";
 import { ImSearch } from "react-icons/im";
 import { ImCross } from "react-icons/im";
 import { FaBitbucket, FaPeopleCarry } from "react-icons/fa";
-import { FaBox, FaRoute } from "react-icons/fa";
+import { FaBox } from "react-icons/fa";
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
@@ -12,12 +12,11 @@ import toTitleCase from "../../../lib/titleCase/TitleCase";
 const TrackingOrder = () => {
   const [order_id, setorder_id] = useState("");
   const [search, setsearch] = useState(false);
-  const [next, setnext] = useState(false);
   const [refresh, setrefresh] = useState(false);
 
   // _________
   const [get_orders, setget_orders] = useState([]);
-  console.log("get_orders====", get_orders)
+  // console.log("get_orders====", get_orders)
   const [get_status, setget_status] = useState([]);
 
   const get_order_data = () => {
@@ -27,7 +26,7 @@ const TrackingOrder = () => {
 
       )
       .then((response) => {
-        console.log("Tracking response data", response.data);
+        // console.log("Tracking response data", response.data);
         const docket_info = response.data[0];
         const last = docket_info[docket_info.length - 1];
         setget_status(last);
@@ -63,7 +62,7 @@ const TrackingOrder = () => {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                if (order_id == "") {
+                if (order_id === "") {
                   alert("Please Enter a valid Docket Number");
                 }
                 get_order_data();
@@ -95,12 +94,12 @@ const TrackingOrder = () => {
             {get_orders.map((item, index) => {
 
               const last_ele = item[item.length - 2];
-              console.log("222222222222222", last_ele)
-              console.log("item", item);
+              // console.log("222222222222222", last_ele)
+              // console.log("item", item);
 
               return (
                 <div key={index}>
-                  {console.log("------", item)}
+                  {/* {console.log("------", item)} */}
 
                   {search ? (
                     <div
@@ -864,7 +863,7 @@ const TrackingOrder = () => {
                     </div>
                   ) : null}
 
-                  {item[item.length - 1] == true ? (
+                  {item[item.length - 1] === true ? (
                     <div
                       className="t-card"
                       style={{ width: "100%", borderRadius: "10px" }}
@@ -918,7 +917,7 @@ const TrackingOrder = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {item.length == 0 ? (
+                              {item.length === 0 ? (
                                 <tr>
                                   <td>No Data Found</td>
                                 </tr>
@@ -927,9 +926,9 @@ const TrackingOrder = () => {
                                   console.log(
                                     item.length,
                                     index,
-                                    item.length - 1 != index
+                                    item.length - 1 !== index
                                   );
-                                  if (item.length - 1 != index) {
+                                  if (item.length - 1 !== index) {
                                     console.log(
                                       "not last entry",
                                       item1.updated_at

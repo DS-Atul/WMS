@@ -2,17 +2,12 @@ import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
-import { setPageNumber } from "../../../store/pagination/Pagination";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import Filter from "../../../components/listDisplay/filter/Filter";
-import Navigate from "../navigateTab/Navigate";
-import PacketsDataFormat from "../../../data/manifests/packets/PacketsDataFormat";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
 import { setAlertType, setDataExist, setShowAlert } from "../../../store/alert/Alert";
 import {
   Input,
@@ -32,13 +27,11 @@ const PacketTitle = [
 const BoxDetail = () => {
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const user = useSelector((state) => state.authentication.userdetails);
   const location_data = useLocation();
   const navigate = useNavigate();
   const [data, setdata] = useState([]);
   const [docket_no, setdocket_no] = useState("")
   const [order_id, setorder_id] = useState()
-  const [selected_id, setselected_id] = useState([]);
   const [is_issue, setis_issue] = useState(false);
   const [remarks, setremarks] = useState("")
   const [local_cal_type, setlocal_cal_type] = useState("")
@@ -46,9 +39,9 @@ const BoxDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [received, setReceived] = useState([]);
   const [refresh, setrefresh] = useState(false);
-  console.log("received--------", received)
+  // console.log("received--------", received)
   const [row3, setrow3] = useState([{ 'issue_image': "" }]);
-  console.log("row3--------", row3)
+  // console.log("row3--------", row3)
 
   function handleIssueTypeChange(e, universal_no, index, universal_type, barcode, issue_location, barcode_type, issue_image) {
     setis_issue(true);
@@ -71,7 +64,7 @@ const BoxDetail = () => {
     ind: "",
   });
 
-  console.log("showModalOrder---", showModalOrder)
+  // console.log("showModalOrder---", showModalOrder)
 
   const getOrderBarcode = (no) => {
     axios.get(ServerAddress + `booking/orderboxqrcodecheck/${no}`, {
@@ -79,7 +72,7 @@ const BoxDetail = () => {
       headers: { Authorization: `Bearer ${accessToken}` }
 
     }).then((res) => {
-      console.log("ress", res)
+      // console.log("ress", res)
       setdata(res.data);
       setdocket_no(res.data[0].docket_no)
       setlocal_cal_type(res.data[0].local_cal_type)
@@ -91,7 +84,7 @@ const BoxDetail = () => {
         }
       }
       setorder_id(data)
-      console.log("data==========", data)
+      // console.log("data==========", data)
     }).catch((err) => {
       console.log("errrrrr", err)
     })
@@ -124,7 +117,7 @@ const BoxDetail = () => {
         }
       )
       .then(function (response) {
-        if (response.statusText == "Created") {
+        if (response.statusText === "Created") {
           setIsLoading(false)
           dispatch(
             setDataExist(

@@ -17,12 +17,10 @@ import {
   Input,
   FormFeedback,
   Form,
-  Button,
 } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import {
   setAlertType,
   setDataExist,
@@ -40,7 +38,7 @@ const AddClient = (props) => {
   const dispatch = useDispatch();
 
   const { state: up_params } = useLocation();
-  console.log("up_params-------", up_params)
+  // console.log("up_params-------", up_params)
 
   const [same_as_data, setsame_as_data] = useState(false)
 
@@ -48,7 +46,7 @@ const AddClient = (props) => {
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [isupdating, setisupdating] = useState(false);
   const [update_cal, setupdate_cal] = useState(false);
-  const [update_bill, setupdate_bill] = useState(false);
+  // const [update_bill, setupdate_bill] = useState(false);
 
   // Client Details
   const [client_id, setclient_id] = useState(null);
@@ -104,8 +102,8 @@ const AddClient = (props) => {
   const [locality_error, setlocality_error] = useState(false);
   const [locality_error2, setlocality_error2] = useState(false);
 
-  console.log("locality_id-----", locality_id)
-  console.log("locality-----", locality)
+  // console.log("locality_id-----", locality_id)
+  // console.log("locality-----", locality)
 
   // Calculation Info
   const local_cal = useSelector((state) => state.client.local_cal);
@@ -120,7 +118,6 @@ const AddClient = (props) => {
     "DONT",
     "DONT",
     "DONT",
-
   ];
   const [active_tabs, setactive_tabs] = useState(temp_active_tabs);
   const [activeTab, setactiveTab] = useState("1");
@@ -129,13 +126,8 @@ const AddClient = (props) => {
   const [is_oda_air, setis_oda_air] = useState(false);
   const [is_oda_surface, setis_oda_surface] = useState(false);
 
-  // Calculation Info Data Error State
-  const [local_cal_errd_o, setlocal_cal_errd_o] = useState(false);
-  const [local_cal_errb_o, setlocal_cal_errb_o] = useState(false);
-
   // % Of Charge State
   const [is_per_charge, setis_per_charge] = useState(false);
-  const [is_ass_charge, setis_ass_charge] = useState(false);
   let per_tmp_lst = [[["", ""], "", ""]];
   const [per_charge_list, setper_charge_list] = useState(per_tmp_lst);
 
@@ -149,7 +141,6 @@ const AddClient = (props) => {
   const [per_charge_list_surface, setper_charge_list_surface] = useState(per_tmp_lst_srfc)
 
   // Business Info
-  const [agreement, setagreement] = useState(false);
   const [documentFiles, setdocumentFiles] = useState("");
   const [agreement_date, setagreement_date] = useState(
     new Date().toISOString().split("T")[0]
@@ -443,7 +434,7 @@ const AddClient = (props) => {
 
     onSubmit: (values) => {
       let shaw = Object.entries(validation.values);
-            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+            let filter_value = shaw.filter((v) => v[1] === "" || v[1] === 0);
             let map_value = filter_value.map((m) => m[0]);
             let all_value = map_value[0];
         let fields = ["customer_name","email","phone_number"];
@@ -901,7 +892,7 @@ const AddClient = (props) => {
       .then(function (resp) {
         console.log("add client resp", resp);
         if (resp.status === 201) {
-          if (documentFiles != "") {
+          if (documentFiles !== "") {
             addClientDoc(resp.data.data.id);
           }
 
@@ -964,7 +955,7 @@ const AddClient = (props) => {
     );
     let com_change = commidity_lst.every((v, idx) => commidity_lst_tmp.includes(v))
 
-    if ((commidity_lst_tmp.length !== commidity_lst.length) || com_change == false) {
+    if ((commidity_lst_tmp.length !== commidity_lst.length) || com_change === false) {
       change_fields['commodities'] = commidity_lst
     }
 
@@ -995,10 +986,10 @@ const AddClient = (props) => {
         console.log("update data " ,  resp.data);
         if (resp.data.status === "success") {
 
-          if (documentFiles != "") {
+          if (documentFiles !== "") {
             // addClientDoc(resp.data.data.id);
           }
-          if (local_cal.cal_type != "DONT" || air_cal.cal_type != "DONT" || surface_cal.cal_type !== "DONT") {
+          if (local_cal.cal_type !== "DONT" || air_cal.cal_type !== "DONT" || surface_cal.cal_type !== "DONT") {
             if (update_cal) {
               updateCalculation(values.customer_name);
             } else {
@@ -1053,7 +1044,7 @@ const AddClient = (props) => {
       .then(function (resp) {
         // console.log("add cal resp", resp);
         if (resp.status === 201) {
-          if (local_cal.cal_type !== "DONT" && local_datalist.filter((v) => v[0][0][0] != "")) {
+          if (local_cal.cal_type !== "DONT" && local_datalist.filter((v) => v[0][0][0] !== "")) {
             addAssociatedCharges(cust_id, name);
           }
           else if (is_per_charge) {
@@ -1065,9 +1056,9 @@ const AddClient = (props) => {
 
 
           if (air_cal.cal_type !== "DONT") {
-            if (dom_rate_category == "City to City") {
+            if (dom_rate_category === "City to City") {
               addDomesticCityRates(cust_id, name);
-            } else if (dom_rate_category == "Zone to Zone") {
+            } else if (dom_rate_category === "Zone to Zone") {
               addDomesticZoneRates(cust_id, name);
             } else {
               addDomesticCityRates(cust_id, name);
@@ -1076,9 +1067,9 @@ const AddClient = (props) => {
           }
 
           if (surface_cal.cal_type !== "DONT") {
-            if (dom_rate_category == "City to City") {
+            if (dom_rate_category === "City to City") {
               addDomesticCityRates(cust_id, name);
-            } else if (dom_rate_category == "Zone to Zone") {
+            } else if (dom_rate_category === "Zone to Zone") {
               addDomesticZoneRates(cust_id, name);
             } else {
               addDomesticCityRates(cust_id, name);
@@ -1135,7 +1126,7 @@ const AddClient = (props) => {
         let field_nm = [];
 
         // Object To Check Changes
-        if (local_cal.cal_type == "DIMENSION") {
+        if (local_cal.cal_type === "DIMENSION") {
           let fields_names_dimn = Object.entries({
             cft: local_cal.dimn.cft,
             divided_by: local_cal.dimn.divided_by,
@@ -1173,7 +1164,7 @@ const AddClient = (props) => {
       if (pr_cal.transportation_mode === "AIR") {
         let change_fields = {};
         let field_nm = [];
-        if (air_cal.cal_type == "DIMENSION") {
+        if (air_cal.cal_type === "DIMENSION") {
           let fields_names_dimn = Object.entries({
             cft: air_cal.dimn.cft,
             divided_by: air_cal.dimn.divided_by,
@@ -1210,7 +1201,7 @@ const AddClient = (props) => {
       if (pr_cal.transportation_mode === "SURFACE") {
         let change_fields = {};
         let field_nm = [];
-        if (surface_cal.cal_type == "DIMENSION") {
+        if (surface_cal.cal_type === "DIMENSION") {
           let fields_names_dimn = Object.entries({
             cft: surface_cal.dimn.cft,
             divided_by: surface_cal.dimn.divided_by,
@@ -1246,7 +1237,7 @@ const AddClient = (props) => {
     }
 
     // To Check If its have any changes or Goto UpdateAssociated Charges
-    if (!change_fields_list.every((v) => v == "No Change")) {
+    if (!change_fields_list.every((v) => v === "No Change")) {
       axios
         .put(
           ServerAddress + "master/update_calculation/",
@@ -1264,13 +1255,13 @@ const AddClient = (props) => {
           }
         )
         .then(function (resp) {
-          if (resp.status == 200) {
+          if (resp.status === 200) {
             if (local_cal.cal_type !== "DONT") {
               updateAssociatedCharge(name);
             }
 
             if (air_cal.cal_type !== "DONT") {
-              if (dom_rate_category == "City to City") {
+              if (dom_rate_category === "City to City") {
                 updateDomesticCityRates(name);
               } else {
                 updateDomesticZoneRates(name);
@@ -1278,7 +1269,7 @@ const AddClient = (props) => {
             }
 
             if (surface_cal.cal_type !== "DONT") {
-              if (dom_rate_category == "City to City") {
+              if (dom_rate_category === "City to City") {
                 updateDomesticCityRates(name);
               } else {
                 updateDomesticZoneRates(name);
@@ -1306,7 +1297,7 @@ const AddClient = (props) => {
 
   // Local Associated Charges Functions
   const addAssociatedCharges = (cust_id, name) => {
-    let temp_ass_list = local_datalist.filter((v) => v[0][0][0] != "");
+    let temp_ass_list = local_datalist.filter((v) => v[0][0][0] !== "");
 
     axios
       .post(
@@ -1342,13 +1333,13 @@ const AddClient = (props) => {
     let add_local_datalist = [];
 
     // To remove empty row from Billing Table
-    let temp_ass_list = local_datalist.filter((v) => v[0][0][0] != "");
+    let temp_ass_list = local_datalist.filter((v) => v[0][0][0] !== "");
 
     for (let n = 0; n < temp_ass_list.length; n++) {
       const itm = temp_ass_list[n];
 
       if (itm.length > 3) {
-        const prv_itm = cust_up_asso.find((v) => v.id == itm[3]);
+        const prv_itm = cust_up_asso.find((v) => v.id === itm[3]);
         let change_fields = {};
         let asso_fields = Object.entries({
           calculation_type: local_cal.cal_type,
@@ -1408,7 +1399,7 @@ const AddClient = (props) => {
           }
         )
         .then(function (resp) {
-          if (resp.status == 200) {
+          if (resp.status === 200) {
             updatePerCharges(name, resp.data.asschrg_ids);
           }
         })
@@ -1443,7 +1434,7 @@ const AddClient = (props) => {
       )
       .then(function (resp) {
         // console.log("add per resp", resp);
-        if (resp.status == 201) {
+        if (resp.status === 201) {
           addOthCharges(
             name,
             cust_id,
@@ -1462,7 +1453,7 @@ const AddClient = (props) => {
   const updatePerCharges = (name, asschrg_ids = []) => {
     let cust_up_per = up_params.customer.per_chrg_client;
 
-    let tmp_per_list = per_charge_list.filter((v) => v[0][0] != "");
+    let tmp_per_list = per_charge_list.filter((v) => v[0][0] !== "");
 
     let chng_list = [];
     let f_per_chrg_list_add = [];
@@ -1470,7 +1461,7 @@ const AddClient = (props) => {
 
     for (let m of tmp_per_list) {
       if (m.length > 3) {
-        let prev_per = cust_up_per.find((v) => v.id == m[3]);
+        let prev_per = cust_up_per.find((v) => v.id === m[3]);
         let prev_per_fields = Object.entries({
           rate_percentage: m[2],
           charge: m[0][0],
@@ -1522,7 +1513,7 @@ const AddClient = (props) => {
         )
         .then(function (resp) {
           // console.log('update per resp', resp)
-          if (resp.status == 200) {
+          if (resp.status === 200) {
             updateOthCharges(
               name,
               asschrg_ids,
@@ -1543,16 +1534,15 @@ const AddClient = (props) => {
   const updatePerChargesAir = (name, domrts_ids = []) => {
     let cust_up_per = up_params.customer.per_chrg_client;
 
-    let tmp_per_list = per_charge_list_air.filter((v) => v[0][0] != "");
+    let tmp_per_list = per_charge_list_air.filter((v) => v[0][0] !== "");
 
-    let chng_list = [];
     let chng_list_air = [];
     let f_per_chrg_list_air_add = [];
     let f_per_chrg_list_air = [];
 
     for (let m of tmp_per_list) {
       if (m.length > 3) {
-        let prev_per = cust_up_per.find((v) => v.id == m[3]);
+        let prev_per = cust_up_per.find((v) => v.id === m[3]);
         let prev_per_fields = Object.entries({
           rate_percentage: m[2],
           charge: m[0][0],
@@ -1604,10 +1594,10 @@ const AddClient = (props) => {
         )
         .then(function (resp) {
           // console.log('update per air resp', resp)
-          if (resp.status == 200) {
-            if (dom_rate_category == "City to City") {
+          if (resp.status === 200) {
+            if (dom_rate_category === "City to City") {
               updateOthChargesAir(name, domrts_ids, resp.data.perchrg_ids_air);
-            } else if (dom_rate_category == "Zone to Zone") {
+            } else if (dom_rate_category === "Zone to Zone") {
               updateOthChargesAirZone(
                 name,
                 domrts_ids,
@@ -1620,9 +1610,9 @@ const AddClient = (props) => {
           alert(`Error Happen while Updating Percentage Charges ${error}`);
         });
     } else {
-      if (dom_rate_category == "City to City") {
+      if (dom_rate_category === "City to City") {
         updateOthChargesAir(name, domrts_ids, []);
-      } else if (dom_rate_category == "Zone to Zone") {
+      } else if (dom_rate_category === "Zone to Zone") {
         updateOthChargesAirZone(name, domrts_ids, []);
       }
       // updateOthChargesAir(name, domrts_ids, []);
@@ -1632,16 +1622,15 @@ const AddClient = (props) => {
   const updatePerChargesSurface = (name, domrts_ids = []) => {
     let cust_up_per = up_params.customer.per_chrg_client;
 
-    let tmp_per_list = per_charge_list_surface.filter((v) => v[0][0] != "");
+    let tmp_per_list = per_charge_list_surface.filter((v) => v[0][0] !== "");
 
-    let chng_list = [];
     let chng_list_surface = [];
     let f_per_chrg_list_surface_add = [];
     let f_per_chrg_list_surface = [];
 
     for (let m of tmp_per_list) {
       if (m.length > 3) {
-        let prev_per = cust_up_per.find((v) => v.id == m[3]);
+        let prev_per = cust_up_per.find((v) => v.id === m[3]);
         let prev_per_fields = Object.entries({
           rate_percentage: m[2],
           charge: m[0][0],
@@ -1693,11 +1682,11 @@ const AddClient = (props) => {
         )
         .then(function (resp) {
           // console.log('update per air resp', resp)
-          if (resp.status == 200) {
-            if (dom_rate_category == "City to City") {
+          if (resp.status === 200) {
+            if (dom_rate_category === "City to City") {
               updateOthChargesSurface(name, domrts_ids, resp.data.perchrg_ids_surface);
 
-            } else if (dom_rate_category == "Zone to Zone") {
+            } else if (dom_rate_category === "Zone to Zone") {
               updateOthChargesSurfaceZone(
                 name,
                 domrts_ids,
@@ -1710,9 +1699,9 @@ const AddClient = (props) => {
           alert(`Error Happen while Updating Percentage Charges ${error}`);
         });
     } else {
-      if (dom_rate_category == "City to City") {
+      if (dom_rate_category === "City to City") {
         updateOthChargesSurface(name, domrts_ids, []);
-      } else if (dom_rate_category == "Zone to Zone") {
+      } else if (dom_rate_category === "Zone to Zone") {
         updateOthChargesSurfaceZone(name, domrts_ids, []);
       }
       // updateOthChargesAir(name, domrts_ids, []);
@@ -1741,15 +1730,15 @@ const AddClient = (props) => {
         .then(function (resp) {
           // console.log("per air resp", resp);
 
-          if (resp.status == 201) {
-            if (dom_rate_category == "City to City") {
+          if (resp.status === 201) {
+            if (dom_rate_category === "City to City") {
               addOthChargesAir(
                 name,
                 cust_id,
                 domrts_ids,
                 resp.data.perchrg_ids_air
               );
-            } else if (dom_rate_category == "Zone to Zone") {
+            } else if (dom_rate_category === "Zone to Zone") {
               addOthChargesAirZone(
                 name,
                 cust_id,
@@ -1763,9 +1752,9 @@ const AddClient = (props) => {
           alert(`Error Happen while add_percentage_charge ${error}`);
         });
     } else {
-      if (dom_rate_category == "City to City") {
+      if (dom_rate_category === "City to City") {
         addOthChargesAir(name, cust_id, domrts_ids, []);
-      } else if (dom_rate_category == "Zone to Zone") {
+      } else if (dom_rate_category === "Zone to Zone") {
         addOthChargesAirZone(name, cust_id, domrts_ids, []);
       }
     }
@@ -1793,15 +1782,15 @@ const AddClient = (props) => {
         .then(function (resp) {
           // console.log("per air resp", resp);
 
-          if (resp.status == 201) {
-            if (dom_rate_category == "City to City") {
+          if (resp.status === 201) {
+            if (dom_rate_category === "City to City") {
               addOthChargesSurface(
                 name,
                 cust_id,
                 domrts_ids,
                 resp.data.perchrg_ids_air
               );
-            } else if (dom_rate_category == "Zone to Zone") {
+            } else if (dom_rate_category === "Zone to Zone") {
               addOthChargesSurfaceZone(
                 name,
                 cust_id,
@@ -1815,9 +1804,9 @@ const AddClient = (props) => {
           alert(`Error Happen while add_percentage_charge ${error}`);
         });
     } else {
-      if (dom_rate_category == "City to City") {
+      if (dom_rate_category === "City to City") {
         addOthChargesAir(name, cust_id, domrts_ids, []);
-      } else if (dom_rate_category == "Zone to Zone") {
+      } else if (dom_rate_category === "Zone to Zone") {
         addOthChargesAirZone(name, cust_id, domrts_ids, []);
       }
     }
@@ -1828,14 +1817,14 @@ const AddClient = (props) => {
   const addOthCharges = (name, cust_id, asschrg_ids = [], perchrg_ids = []) => {
     let n_list = [];
 
-    let cl_local_datalist = local_datalist.filter((v) => v[0][0][0] != "");
+    let cl_local_datalist = local_datalist.filter((v) => v[0][0][0] !== "");
 
     for (let t = 0; t < perchrg_ids.length; t++) {
       let k = 0;
       for (let a = 0; a < cl_local_datalist.length; a++) {
         const ld = cl_local_datalist[a];
 
-        if (ld[0][0] != "") {
+        if (ld[0][0] !== "") {
           n_list.push([
             ld[1][3 + t],
             ld[2][3 + t],
@@ -1867,11 +1856,11 @@ const AddClient = (props) => {
         )
         .then(function (resp) {
           console.log("add oth resp", resp);
-          if (air_cal.cal_type == "DONT") {
+          if (air_cal.cal_type === "DONT") {
 
             setAllAdd()
           }
-          if (surface_cal.cal_type == "DONT") {
+          if (surface_cal.cal_type === "DONT") {
 
             setAllAdd()
           }
@@ -1889,14 +1878,14 @@ const AddClient = (props) => {
     perchrg_ids = []
   ) => {
     let n_list = [];
-    let cl_datalist = datalist.filter((v) => v[0][0][0] != "");
+    let cl_datalist = datalist.filter((v) => v[0][0][0] !== "");
 
     for (let t = 0; t < perchrg_ids.length; t++) {
       let k = 0;
       for (let a = 0; a < cl_datalist.length; a++) {
         const ld = cl_datalist[a];
 
-        if (ld[0][0] != "") {
+        if (ld[0][0] !== "") {
           n_list.push([
             ld[1][4 + t],
             ld[2][4 + t],
@@ -1942,14 +1931,14 @@ const AddClient = (props) => {
     perchrg_ids = []
   ) => {
     let n_list = [];
-    let cl_datalist = datalist.filter((v) => v[0][0][0] != "");
+    let cl_datalist = datalist.filter((v) => v[0][0][0] !== "");
 
     for (let t = 0; t < perchrg_ids.length; t++) {
       let k = 0;
       for (let a = 0; a < cl_datalist.length; a++) {
         const ld = cl_datalist[a];
 
-        if (ld[0][0] != "") {
+        if (ld[0][0] !== "") {
           n_list.push([
             ld[1][4 + t],
             ld[2][4 + t],
@@ -1996,14 +1985,14 @@ const AddClient = (props) => {
     perchrg_ids = []
   ) => {
     let n_list = [];
-    let cl_datalist = datalist1.filter((v) => v[0][0][0] != "");
+    let cl_datalist = datalist1.filter((v) => v[0][0][0] !== "");
 
     for (let t = 0; t < perchrg_ids.length; t++) {
       let k = 0;
       for (let a = 0; a < cl_datalist.length; a++) {
         const ld = cl_datalist[a];
 
-        if (ld[0][0] != "") {
+        if (ld[0][0] !== "") {
           n_list.push([
             ld[1][4 + t],
             ld[2][4 + t],
@@ -2049,14 +2038,14 @@ const AddClient = (props) => {
     perchrg_ids = []
   ) => {
     let n_list = [];
-    let cl_datalist = datalist1.filter((v) => v[0][0][0] != "");
+    let cl_datalist = datalist1.filter((v) => v[0][0][0] !== "");
 
     for (let t = 0; t < perchrg_ids.length; t++) {
       let k = 0;
       for (let a = 0; a < cl_datalist.length; a++) {
         const ld = cl_datalist[a];
 
-        if (ld[0][0] != "") {
+        if (ld[0][0] !== "") {
           n_list.push([
             ld[1][4 + t],
             ld[2][4 + t],
@@ -2120,7 +2109,7 @@ const AddClient = (props) => {
       for (let a = 0; a < local_datalist.length; a++) {
         const ld = local_datalist[a];
 
-        if (ld[1].length > 3 && ld[0][0] != "") {
+        if (ld[1].length > 3 && ld[0][0] !== "") {
           if (ld.length > 3) {
             // Format for updated data
             c_list.push([ld[1][3 + t], ld[2][3 + t], pel[3], ld[3]]);
@@ -2142,17 +2131,17 @@ const AddClient = (props) => {
       }
     }
 
-    if (c_list.length == p_list.length) {
+    if (c_list.length === p_list.length) {
       for (let p = 0; p < c_list.length; p++) {
         let nw = c_list[p];
         let pw = p_list[p];
         let change_fields = {};
         // To Check Changes
-        if (nw[0] != pw[0] || nw[1] != pw[1]) {
-          if (nw[0] != pw[0]) {
+        if (nw[0] !== pw[0] || nw[1] !== pw[1]) {
+          if (nw[0] !== pw[0]) {
             change_fields["cc_rate_percentage"] = nw[0];
           }
-          if (nw[1] != pw[1]) {
+          if (nw[1] !== pw[1]) {
             change_fields["nc_rate_percentage"] = nw[1];
           }
           chng_list.push(change_fields);
@@ -2223,7 +2212,7 @@ const AddClient = (props) => {
       (v) => v[1] === "% of other charges"
     );
 
-    let cl_datalist = datalist.filter((v) => v[0][0][0] != "");
+    let cl_datalist = datalist.filter((v) => v[0][0][0] !== "");
 
     for (let t = 0; t < per_otch_tmp.length; t++) {
       const pel = per_otch_tmp[t];
@@ -2232,7 +2221,7 @@ const AddClient = (props) => {
       for (let a = 0; a < cl_datalist.length; a++) {
         const ld = cl_datalist[a];
 
-        if (ld[1].length > 3 && ld[0][0] != "") {
+        if (ld[1].length > 3 && ld[0][0] !== "") {
           if (ld.length > 3) {
             // Format for updated data
             c_list.push([ld[1][4 + t], ld[2][4 + t], pel[3], ld[3]]);
@@ -2254,17 +2243,17 @@ const AddClient = (props) => {
       }
     }
 
-    if (c_list.length == p_list.length) {
+    if (c_list.length === p_list.length) {
       for (let p = 0; p < c_list.length; p++) {
         let nw = c_list[p];
         let pw = p_list[p];
         let change_fields = {};
         // To Check Changes
-        if (nw[0] != pw[0] || nw[1] != pw[1]) {
-          if (nw[0] != pw[0]) {
+        if (nw[0] !== pw[0] || nw[1] !== pw[1]) {
+          if (nw[0] !== pw[0]) {
             change_fields["cc_rate_percentage"] = nw[0];
           }
-          if (nw[1] != pw[1]) {
+          if (nw[1] !== pw[1]) {
             change_fields["nc_rate_percentage"] = nw[1];
           }
           chng_list.push(change_fields);
@@ -2319,7 +2308,7 @@ const AddClient = (props) => {
       (v) => v[1] === "% of other charges"
     );
 
-    let cl_datalist = datalist.filter((v) => v[0][0][0] != "");
+    let cl_datalist = datalist.filter((v) => v[0][0][0] !== "");
 
     for (let t = 0; t < per_otch_tmp.length; t++) {
       const pel = per_otch_tmp[t];
@@ -2328,7 +2317,7 @@ const AddClient = (props) => {
       for (let a = 0; a < cl_datalist.length; a++) {
         const ld = cl_datalist[a];
 
-        if (ld[1].length > 3 && ld[0][0] != "") {
+        if (ld[1].length > 3 && ld[0][0] !== "") {
           if (ld.length > 3) {
             // Format for updated data
             c_list.push([ld[1][4 + t], ld[2][4 + t], pel[3], ld[3]]);
@@ -2350,17 +2339,17 @@ const AddClient = (props) => {
       }
     }
 
-    if (c_list.length == p_list.length) {
+    if (c_list.length === p_list.length) {
       for (let p = 0; p < c_list.length; p++) {
         let nw = c_list[p];
         let pw = p_list[p];
         let change_fields = {};
         // To Check Changes
-        if (nw[0] != pw[0] || nw[1] != pw[1]) {
-          if (nw[0] != pw[0]) {
+        if (nw[0] !== pw[0] || nw[1] !== pw[1]) {
+          if (nw[0] !== pw[0]) {
             change_fields["cc_rate_percentage"] = nw[0];
           }
-          if (nw[1] != pw[1]) {
+          if (nw[1] !== pw[1]) {
             change_fields["nc_rate_percentage"] = nw[1];
           }
           chng_list.push(change_fields);
@@ -2415,7 +2404,7 @@ const AddClient = (props) => {
       (v) => v[1] === "% of other charges"
     );
 
-    let cl_datalist = datalist1.filter((v) => v[0][0][0] != "");
+    let cl_datalist = datalist1.filter((v) => v[0][0][0] !== "");
 
     for (let t = 0; t < per_otch_tmp.length; t++) {
       const pel = per_otch_tmp[t];
@@ -2424,7 +2413,7 @@ const AddClient = (props) => {
       for (let a = 0; a < cl_datalist.length; a++) {
         const ld = cl_datalist[a];
 
-        if (ld[1].length > 3 && ld[0][0] != "") {
+        if (ld[1].length > 3 && ld[0][0] !== "") {
           if (ld.length > 3) {
             // Format for updated data
             c_list.push([ld[1][4 + t], ld[2][4 + t], pel[3], ld[3]]);
@@ -2446,17 +2435,17 @@ const AddClient = (props) => {
       }
     }
 
-    if (c_list.length == p_list.length) {
+    if (c_list.length === p_list.length) {
       for (let p = 0; p < c_list.length; p++) {
         let nw = c_list[p];
         let pw = p_list[p];
         let change_fields = {};
         // To Check Changes
-        if (nw[0] != pw[0] || nw[1] != pw[1]) {
-          if (nw[0] != pw[0]) {
+        if (nw[0] !== pw[0] || nw[1] !== pw[1]) {
+          if (nw[0] !== pw[0]) {
             change_fields["cc_rate_percentage"] = nw[0];
           }
-          if (nw[1] != pw[1]) {
+          if (nw[1] !== pw[1]) {
             change_fields["nc_rate_percentage"] = nw[1];
           }
           chng_list.push(change_fields);
@@ -2511,7 +2500,7 @@ const AddClient = (props) => {
       (v) => v[1] === "% of other charges"
     );
 
-    let cl_datalist = datalist1.filter((v) => v[0][0][0] != "");
+    let cl_datalist = datalist1.filter((v) => v[0][0][0] !== "");
 
     for (let t = 0; t < per_otch_tmp.length; t++) {
       const pel = per_otch_tmp[t];
@@ -2520,7 +2509,7 @@ const AddClient = (props) => {
       for (let a = 0; a < cl_datalist.length; a++) {
         const ld = cl_datalist[a];
 
-        if (ld[1].length > 3 && ld[0][0] != "") {
+        if (ld[1].length > 3 && ld[0][0] !== "") {
           if (ld.length > 3) {
             // Format for updated data
             c_list.push([ld[1][4 + t], ld[2][4 + t], pel[3], ld[3]]);
@@ -2542,17 +2531,17 @@ const AddClient = (props) => {
       }
     }
 
-    if (c_list.length == p_list.length) {
+    if (c_list.length === p_list.length) {
       for (let p = 0; p < c_list.length; p++) {
         let nw = c_list[p];
         let pw = p_list[p];
         let change_fields = {};
         // To Check Changes
-        if (nw[0] != pw[0] || nw[1] != pw[1]) {
-          if (nw[0] != pw[0]) {
+        if (nw[0] !== pw[0] || nw[1] !== pw[1]) {
+          if (nw[0] !== pw[0]) {
             change_fields["cc_rate_percentage"] = nw[0];
           }
-          if (nw[1] != pw[1]) {
+          if (nw[1] !== pw[1]) {
             change_fields["nc_rate_percentage"] = nw[1];
           }
           chng_list.push(change_fields);
@@ -2624,7 +2613,7 @@ const AddClient = (props) => {
   };
 
   const addDomesticZoneRates = (cust_id, name) => {
-    let temp_as_list = datalist1.filter((v) => v[0][0][0] != "");
+    let temp_as_list = datalist1.filter((v) => v[0][0][0] !== "");
 
     if (temp_as_list.length > 0) {
       axios
@@ -2647,7 +2636,7 @@ const AddClient = (props) => {
         .then(function (resp) {
           if (resp.status === 201) {
             // console.log("add zone resp", resp);
-            if (dom_rate_category != "Both") {
+            if (dom_rate_category !== "Both") {
               addPerChargesAir(cust_id, name, resp.data.domrts_ids);
               addPerChargesSurface(cust_id, name, resp.data.domrts_ids);
             } else {
@@ -2671,13 +2660,13 @@ const AddClient = (props) => {
     let add_datalist = [];
 
     // To remove empty row from Domestic Billing Table
-    let temp_ass_list = datalist.filter((v) => v[0][0][0] != "");
+    let temp_ass_list = datalist.filter((v) => v[0][0][0] !== "");
 
     for (let n = 0; n < temp_ass_list.length; n++) {
       const itm = temp_ass_list[n];
       let change_fields = {};
       if (itm.length > 3) {
-        const prv_itm = cust_up_dom.find((v) => v.id == itm[3]);
+        const prv_itm = cust_up_dom.find((v) => v.id === itm[3]);
 
         let dom_city_fields = Object.entries({
           calculation_type: air_cal.cal_type || surface_cal.cal_type,
@@ -2741,7 +2730,7 @@ const AddClient = (props) => {
         )
         .then(function (resp) {
           // console.log("domestic city rate resp",resp)
-          if (resp.status == 201) {
+          if (resp.status === 201) {
             updatePerChargesAir(name, resp.data.domrts_ids);
             updatePerChargesSurface(name, resp.data.domrts_ids);
           }
@@ -2762,13 +2751,13 @@ const AddClient = (props) => {
     let add_datalist = [];
 
     // To remove empty row from Domestic Billing Table
-    let temp_ass_list = datalist1.filter((v) => v[0][0][0] != "");
+    let temp_ass_list = datalist1.filter((v) => v[0][0][0] !== "");
 
     for (let n = 0; n < temp_ass_list.length; n++) {
       const itm = temp_ass_list[n];
       let change_fields = {};
       if (itm.length > 3) {
-        const prv_itm = cust_up_dom.find((v) => v.id == itm[3]);
+        const prv_itm = cust_up_dom.find((v) => v.id === itm[3]);
         let dom_city_fields = Object.entries({
           calculation_type: air_cal.cal_type || surface_cal.cal_type,
           rate_type: dom_rate_type.toUpperCase(),
@@ -2788,7 +2777,7 @@ const AddClient = (props) => {
           const ele = dom_city_fields[j];
           let prev = prv_itm[`${ele[0]}`];
           let new_v = ele[1];
-          if (prev !== new_v) {
+          if (prev === new_v) {
             change_fields[`${ele[0]}`] = new_v;
           }
         }
@@ -2830,8 +2819,8 @@ const AddClient = (props) => {
         )
         .then(function (resp) {
           // console.log("domestic city rate resp",resp)
-          if (resp.status == 201) {
-            if (dom_rate_category != "Both") {
+          if (resp.status === 201) {
+            if (dom_rate_category !== "Both") {
               updatePerChargesAir(name, resp.data.domrts_ids);
               updatePerChargesSurface(name, resp.data.domrts_ids);
             } else {
@@ -2852,7 +2841,7 @@ const AddClient = (props) => {
           alert(`Error Happen while Updating Associated Charges ${error}`);
         });
     } else {
-      if (dom_rate_category != "Both") {
+      if (dom_rate_category !== "Both") {
         updatePerChargesAir(name, []);
         updatePerChargesSurface(name, []);
       } else {
@@ -3096,7 +3085,7 @@ const AddClient = (props) => {
         if (dom_chrg.length > 0) {
           setdom_rate_type(toTitleCase(dom_chrg[0].rate_type));
 
-          if (dom_chrg[0].cc_oda_rate != "") {
+          if (dom_chrg[0].cc_oda_rate !== "") {
             setis_oda_air(true);
             setis_per_charge_surfc(true);
           }
@@ -3125,7 +3114,7 @@ const AddClient = (props) => {
           setdom_rate_category("Zone to Zone");
           setdom_rate_type(toTitleCase(dom_chrg_zone[0].rate_type));
 
-          if (dom_chrg_zone[0].cc_oda_rate != "") {
+          if (dom_chrg_zone[0].cc_oda_rate !== "") {
             setis_oda_air(true);
             setis_oda_surface(true);
           }
@@ -3170,10 +3159,10 @@ const AddClient = (props) => {
         let asso_set_surface = false;
 
         let local_per = cl_per_chrg.filter(
-          (v) => v.transportation_mode == "LOCAL"
+          (v) => v.transportation_mode === "LOCAL"
         );
-        let air_per = cl_per_chrg.filter((v) => v.transportation_mode == "AIR");
-        let surface_per = cl_per_chrg.filter((v) => v.transportation_mode == "SURFACE")
+        let air_per = cl_per_chrg.filter((v) => v.transportation_mode === "AIR");
+        let surface_per = cl_per_chrg.filter((v) => v.transportation_mode === "SURFACE")
 
         if (local_per.length > 0) {
           setis_per_charge(true);
@@ -3187,7 +3176,7 @@ const AddClient = (props) => {
             ];
             ptmp_lst.push(ptmp);
 
-            if (pel.category != "% of client invoice") {
+            if (pel.category !== "% of client invoice") {
               let ot_chg_list = pel.other_percentage_charge;
 
               for (let m = 0; m < ot_chg_list.length; m++) {
@@ -3219,7 +3208,7 @@ const AddClient = (props) => {
             ];
             ptmp_lst_air.push(ptmp);
 
-            if (pela.category != "% of client invoice") {
+            if (pela.category !== "% of client invoice") {
               let ot_chg_list = pela.other_percentage_charge;
 
               for (let g = 0; g < ot_chg_list.length; g++) {
@@ -3258,7 +3247,7 @@ const AddClient = (props) => {
             ];
             ptmp_lst_surface.push(ptmp);
 
-            if (pela.category != "% of client invoice") {
+            if (pela.category !== "% of client invoice") {
               let ot_chg_list = pela.other_percentage_charge;
 
               for (let g = 0; g < ot_chg_list.length; g++) {
@@ -3292,14 +3281,14 @@ const AddClient = (props) => {
         setper_charge_list_air(ptmp_lst_air);
         setper_charge_list_surface(ptmp_lst_surface);
 
-        if (asso_set == false) {
+        if (asso_set === false) {
           setlocal_datalist(temp_lis);
         }
-        if (asso_set_air == false) {
+        if (asso_set_air === false) {
           setdatalist(tmplist_air);
           setdatalist1(tmplist_air_zone);
         }
-        if (asso_set_surface == false) {
+        if (asso_set_surface === false) {
           setdatalist(tmplist_surface);
           setdatalist1(tmplist_surface_zone);
         }
@@ -3309,19 +3298,19 @@ const AddClient = (props) => {
         if (cust_up.cal_infos_cust.length > 0) {
           setupdate_cal(true);
           let local_cals = cust_up.cal_infos_cust.filter(
-            (v) => v.transportation_mode == "LOCAL"
+            (v) => v.transportation_mode === "LOCAL"
           );
           let air_cals = cust_up.cal_infos_cust.filter(
-            (v) => v.transportation_mode == "AIR"
+            (v) => v.transportation_mode === "AIR"
           );
           let surface_cals = cust_up.cal_infos_cust.filter(
-            (v) => v.transportation_mode == "SURFACE"
+            (v) => v.transportation_mode === "SURFACE"
           );
 
-          if (local_cals[0].calculation_type != "DONT") {
+          if (local_cals[0].calculation_type !== "DONT") {
             setis_local(true);
             let cal = local_cals[local_cals.length - 1];
-            if (cal.calculation_type == "DIMENSION") {
+            if (cal.calculation_type === "DIMENSION") {
               dispatch(
                 setLocalCal({
                   ...local_cal,
@@ -3353,11 +3342,11 @@ const AddClient = (props) => {
             setis_local(false);
           }
 
-          if (air_cals[0].calculation_type != "DONT") {
+          if (air_cals[0].calculation_type !== "DONT") {
             setis_air(true);
             setactiveTab("2");
             let cal = air_cals[air_cals.length - 1];
-            if (cal.calculation_type == "DIMENSION") {
+            if (cal.calculation_type === "DIMENSION") {
               dispatch(
                 setAirCal({
                   ...air_cal,
@@ -3387,11 +3376,11 @@ const AddClient = (props) => {
             }
           }
 
-          if (surface_cals[0].calculation_type != "DONT") {
+          if (surface_cals[0].calculation_type !== "DONT") {
             setis_surface(true);
             setactiveTab("3");
             let cal = surface_cals[surface_cals.length - 1];
-            if (cal.calculation_type == "DIMENSION") {
+            if (cal.calculation_type === "DIMENSION") {
               dispatch(
                 setSurfaceCal({
                   ...surface_cal,
@@ -3465,19 +3454,19 @@ const AddClient = (props) => {
 
 
   useLayoutEffect(() => {
-    if (commodities_list2.length != 0) {
+    if (commodities_list2.length !== 0) {
       setcommodities_error(false);
     }
   }, [commodities_list2])
 
-  console.log("client_id--------", client_id)
+  // console.log("client_id--------", client_id)
 
   return (
     <Form
       onSubmit={(e) => {
         e.preventDefault();
         let shaw = Object.entries(validation.values);
-            let filter_value = shaw.filter((v) => v[1] == "" || v[1] == 0);
+            let filter_value = shaw.filter((v) => v[1] === "" || v[1] === 0);
             let map_value = filter_value.map((m) => m[0]);
             let all_value = map_value[0];
         let fields = ["customer_name","email","phone_number"];

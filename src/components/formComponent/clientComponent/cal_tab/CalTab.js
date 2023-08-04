@@ -1,11 +1,9 @@
-import React, { useLayoutEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Input, Label, Row, Col } from "reactstrap";
-import { setLocalCal } from "../../../../store/master/client/Client";
 
 const CalTab = ({
   active_tabs,
-  setactiveTab,
   cal,
   cal_dimn,
   box_cal,
@@ -107,7 +105,7 @@ const CalTab = ({
               active_tabs[0] = "BOX";
               setrefh(!refh);
             }}
-            checked={cal.cal_type == "BOX"}
+            checked={cal.cal_type === "BOX"}
             readOnly
           />
           <Label
@@ -237,7 +235,7 @@ const CalTab = ({
           </>
         )}
 
-        {cal.cal_type == "BOX" && (
+        {cal.cal_type === "BOX" && (
           <>
             <Col lg={4} md={6} sm={6}>
               <div className="mb-2">

@@ -49,7 +49,6 @@ const AddLocation = () => {
   };
 
   const [district_id, setdistrict_id] = useState(0);
-  const [search_state, setsearch_state] = useState("");
   const [district, setdistrict] = useState("");
   const [empty_city, setempty_city] = useState(false);
   const [location, setlocation] = useState([]);
@@ -88,7 +87,6 @@ const AddLocation = () => {
   const [country_error, setcountry_error] = useState(false);
   const [other_country, setother_country] = useState("");
   const [empty_country, setempty_country] = useState(false);
-  const [search_country, setsearch_country] = useState("");
 
   const [city_list_s, setcity_list_s] = useState([]);
   const [city, setcity] = useState("");
@@ -120,8 +118,6 @@ const AddLocation = () => {
 
   const [pincode_loaded, setpincode_loaded] = useState(false);
   const [pincode_count, setpincode_count] = useState(1);
-
-  let district_list = [];
 
   const validation = useFormik({
     enableReinitialize: true,
@@ -868,7 +864,7 @@ const AddLocation = () => {
   };
 
   const handleSubmit = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     } else {
       update_locationstatus(location.id);
@@ -1269,7 +1265,7 @@ const AddLocation = () => {
                               onBlur={() => {
                                 if (
                                   other_pincode !== "" &&
-                                  other_pincode.length == 6
+                                  other_pincode.length === 6
                                 ) {
                                   if (
                                     window.confirm(

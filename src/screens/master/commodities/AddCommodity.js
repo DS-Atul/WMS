@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { IconContext } from "react-icons";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
-import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
+import { ServerAddress } from "../../../constants/ServerAddress";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -38,12 +38,10 @@ const Add_Commodity = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const alert = useSelector((state) => state.alert.show_alert);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const userdepartment = useSelector(
-    (state) => state.authentication.userdepartment
-  );
+
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("location-----", location)
+  // console.log("location-----", location)
 
   const [isupdating, setisupdating] = useState(false);
   const [commodity, setcommodity] = useState([]);
@@ -79,8 +77,8 @@ const Add_Commodity = () => {
       isupdating ? update_commodity(values) : add_commodity(values);
     },
   });
-  console.log("location--commodity------", commodity.length)
-  console.log("location--commodity------", typeof (commodity))
+  // console.log("location--commodity------", commodity.length)
+  // console.log("location--commodity------", typeof (commodity))
   const [circle_btn, setcircle_btn] = useState(true);
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
@@ -117,7 +115,7 @@ const Add_Commodity = () => {
             setcommodity_type_loaded(true);
           }
 
-          if (commodity_type_page == 1) {
+          if (commodity_type_page === 1) {
             commodity_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.type),
@@ -130,7 +128,7 @@ const Add_Commodity = () => {
           }
         }
         let a_index = commodity_list.indexOf("Add New");
-        if (a_index != -1) {
+        if (a_index !== -1) {
           commodity_list.splice(a_index, 1);
         }
         commodity_list = [...new Set(commodity_list.map((v) => `${v}`))].map(
@@ -488,7 +486,7 @@ const Add_Commodity = () => {
   };
 
   const handleSubmit = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     }
     else {
@@ -675,7 +673,7 @@ const Add_Commodity = () => {
 
   return (
     <div style={{ display: data_type && "flex" }}>
-     <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Reject Resion</Modal.Title>
         </Modal.Header>
@@ -751,7 +749,7 @@ const Add_Commodity = () => {
             </thead>
 
             <tbody>
-              {table_data.length == 0 ? (
+              {table_data.length === 0 ? (
                 <tr>
                   <td>No Data Found</td>
                 </tr>
@@ -798,10 +796,10 @@ const Add_Commodity = () => {
         <Form
           onSubmit={(e) => {
             e.preventDefault();
-            if (commodity_type == "") {
+            if (commodity_type === "") {
               setcommodity_type_error(true);
             }
-            if (other_commodity_type == "") {
+            if (other_commodity_type === "") {
               setadd_como_err(true);
             }
             validation.handleSubmit(e.values);
@@ -890,7 +888,7 @@ const Add_Commodity = () => {
                                 setother_commodity_type(val.target.value)
                               }
                               onBlur={() => {
-                                if (other_commodity_type != "") {
+                                if (other_commodity_type !== "") {
                                   if (
                                     window.confirm(
                                       `Are you want to add commodity type ${toTitleCase(

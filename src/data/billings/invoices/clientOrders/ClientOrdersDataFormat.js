@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import { GrOrderedList } from "react-icons/gr";
-import { useSelector } from "react-redux";
-import { Button, Input, Label } from "reactstrap";
-import toTitleCase from "../../../../lib/titleCase/TitleCase";
+import { Input, Label } from "reactstrap";
 import ClientOrdersDataTitle from "./ClientOrdersDataTitle";
-import { BiCheckbox, BiCheckboxChecked } from "react-icons/bi";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
 
 const ClientOrdersDataFormat = ({ cl_ords_list }) => {
-  const search = useSelector((state) => state.searchbar.search_item);
   const [refresh, setrefresh] = useState(false);
 
   return (
@@ -26,7 +21,7 @@ const ClientOrdersDataFormat = ({ cl_ords_list }) => {
                   style={{ whiteSpace: "nowrap", textAlign: "center" }}
                   key={index}
                 >
-                  {typeof item == "object" && (
+                  {typeof item === "object" && (
                     <span
                       onClick={() => {
                         item[1] = !item[1];
@@ -45,7 +40,7 @@ const ClientOrdersDataFormat = ({ cl_ords_list }) => {
                       )}
                     </span>
                   )}{" "}
-                  {typeof item == "object" ? item[0] : item}
+                  {typeof item === "object" ? item[0] : item}
                 </th>
               );
             })}
@@ -60,20 +55,20 @@ const ClientOrdersDataFormat = ({ cl_ords_list }) => {
               let booking_date_n = ord.booking_at.split("T")[0];
 
               let freight_charge = ord.ordertocost.filter(
-                (v) => v.cost_name.toUpperCase() == "FREIGHT"
+                (v) => v.cost_name.toUpperCase() === "FREIGHT"
               );
               let oda_charge = ord.ordertocost.filter(
-                (v) => v.cost_name.toUpperCase() == "ODA"
+                (v) => v.cost_name.toUpperCase() === "ODA"
               );
               let warai_charge = ord.ordertocost.filter(
-                (v) => v.cost_name.toUpperCase() == "WARAI"
+                (v) => v.cost_name.toUpperCase() === "WARAI"
               );
 
               let other_charge = ord.ordertocost.filter(
                 (v) =>
-                  v.cost_name.toUpperCase() != "WARAI" &&
-                  v.cost_name.toUpperCase() != "ODA" &&
-                  v.cost_name.toUpperCase() != "FREIGHT"
+                  v.cost_name.toUpperCase() !== "WARAI" &&
+                  v.cost_name.toUpperCase() !== "ODA" &&
+                  v.cost_name.toUpperCase() !== "FREIGHT"
               );
 
               let frg =

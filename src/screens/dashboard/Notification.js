@@ -1,13 +1,10 @@
 import React from "react";
-import useWindowDimensions from "./ScreenSize";
 import { AiOutlineEllipsis } from "react-icons/ai";
-import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 const Notification = ({ avatarBg, avatarSrc, title, text, author, date, comment }) => {
   // To get Screen Size
-  console.log("name66-----", text);
-  const { height, width } = useWindowDimensions();
-  const navigate = useNavigate();
+  // console.log("name66-----", text);
+
   return (
     <li className="list-group-item border-0" style={{ marginBottom: "5px" }}>
       <div className="d-flex">

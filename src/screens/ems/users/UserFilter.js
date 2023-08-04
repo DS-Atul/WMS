@@ -8,7 +8,6 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import { useDispatch } from "react-redux";
 import { setFilterA,setFilterB,setFilterC,setFilterD, setFilterE } from "../../../store/filterValue/FilterValue";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { BsCheckLg } from "react-icons/bs";
 
 const UserFilter = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -114,7 +113,7 @@ const UserFilter = () => {
       }
       )
       .then((response) => {
-        console.log("the department name is =====",response);
+        // console.log("the department name is =====",response);
         if (response.data.next === null) {
           setdepartment_loaded(false);
         } else {
@@ -159,7 +158,7 @@ const UserFilter = () => {
   }, [toggle]);
 
   useEffect(() => {
-    console.log("branch_name_id====", branch_name_id)
+    // console.log("branch_name_id====", branch_name_id)
     dispatch(setFilterA([branch_name_id]));
     dispatch(setFilterB([String(user_type).toUpperCase()]));
     dispatch(setFilterC([String(access_type).toUpperCase()]));

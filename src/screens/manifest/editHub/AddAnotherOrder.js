@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 // import "../../../assets/scss/forms/form.scss";
 import {
-  Card,
   Col,
   Row,
   CardBody,
-  CardTitle,
-  Label,
   Button,
-  Input,
 } from "reactstrap";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,7 +21,7 @@ import EditDeliveryDataFormat from "./addAnother/manifests/PendingDeliveryDataFo
 import "./addanother.css";
 
 const AddAnotherOrder = ({id_m, data2, setrefresh2, type}) => {
-  console.log("id_mdata2-------", data2)
+  // console.log("id_mdata2-------", data2)
   const [success, setsuccess] = useState(false);
   const [refresh, setrefresh] = useState(false);
   const [old_data2, setold_data2] = useState(data2);
@@ -33,26 +29,11 @@ const AddAnotherOrder = ({id_m, data2, setrefresh2, type}) => {
   const [deleted_ids, setdeleted_ids] = useState([])
   const [new_ids, setnew_ids] = useState([])
   // Additional Fields
-  const search = useSelector((state) => state.searchbar.search_item);
-  const user_homebranch_id = useSelector(
-    (state) => state.authentication.userdetails.home_branch
-  );
-  const user_home_branch = useSelector(
-    (state) => state.authentication.userdetails.branch_nm
-  );
-  const user_home_branch_city = useSelector(
-    (state) => state.authentication.userdetails.branch_orgin_city
-  );
-  const user_home_branch_location_id = useSelector(
-    (state) => state.authentication.userdetails.branch_location_id
-  );
 
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const [divide_deliverys, setdivide_deliverys] = useState([]);
   const [domestic_order, setdomestic_order] = useState([]);
   const [unmanifest_list, setunmanifest_list] = useState(domestic_order);
-  const [local_list, setlocal_list] = useState(divide_deliverys);
   const [Show, setShow] = useState(false);
 
   const [createRunsheet_list, setcreateRunsheet_list] = useState([]);
@@ -99,12 +80,6 @@ const AddAnotherOrder = ({id_m, data2, setrefresh2, type}) => {
     setcreateRunsheet_list(temp_list1);
     setunmanifest_list(unmanifest_list.filter((data) => data !== item));
   };
-  //  For Fetching Branch Data Started
-  const [branch_selected, setbranch_selected] = useState("");
-  const [branch_dest, setbranch_dest] = useState("");
-  const [branch_dest_id, setbranch_dest_id] = useState("");
-  const [page, setpage] = useState(1);
-
   //  FOr fetching Branch Data Ended
   useLayoutEffect(() => {
     setunmanifest_list(domestic_order);
@@ -130,8 +105,6 @@ const AddAnotherOrder = ({id_m, data2, setrefresh2, type}) => {
   useEffect(() => {
     setsuccess(false);
   }, [success]);
-
-
 
   const send_hub_data = () => {
     let data1 = createRunsheet_list;

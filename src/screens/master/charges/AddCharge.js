@@ -20,7 +20,6 @@ import {
   FormGroup
 } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
-import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import {
@@ -46,7 +45,6 @@ const AddCharge = () => {
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [isupdating, setisupdating] = useState(false);
   const location_data = useLocation();
-  console.log("location_data--9999-", location_data)
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [circle_btn, setcircle_btn] = useState(true);
@@ -234,12 +232,10 @@ const AddCharge = () => {
   // };
 
   const updateCharge = async (values) => {
-    let id = charge.id;
     let fields_names = Object.entries({
       charge_category: charge_category,
       charge_name: values.charge_name,
     });
-console.log("fields_names---", fields_names)
     let change_fields = {};
     for (let j = 0; j < fields_names.length; j++) {
       const ele = fields_names[j];
@@ -279,7 +275,7 @@ console.log("fields_names---", fields_names)
         );
         dispatch(setAlertType("info"));
         navigate("/master/charges");
-      } else if (response.data == "duplicate") {
+      } else if (response.data === "duplicate") {
         dispatch(setShowAlert(true));
         dispatch(
           setDataExist(
@@ -384,7 +380,7 @@ console.log("fields_names---", fields_names)
   };
 
   const handleSubmit = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     }
     else {
@@ -565,7 +561,7 @@ console.log("fields_names---", fields_names)
         <Form
           onSubmit={(e) => {
             e.preventDefault();
-            if (charge_category == "") {
+            if (charge_category === "") {
               setcharge_category_error(true);
             }
             validation.handleSubmit(e.values);

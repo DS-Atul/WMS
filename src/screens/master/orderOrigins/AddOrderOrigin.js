@@ -68,8 +68,6 @@ const AddOrderOrigin = () => {
   const [pincode_search_item, setpincode_search_item] = useState("");
   const [pincode_id, setpincode_id] = useState(0);
   const [pincode_loaded, setpincode_loaded] = useState(false);
-  const [loaded_pincode, setloaded_pincode] = useState(false);
-  const [pincode_count, setpincode_count] = useState(1);
 
   const [locality, setlocality] = useState("");
   const [locality_list_s, setlocality_list_s] = useState([]);
@@ -501,7 +499,7 @@ const AddOrderOrigin = () => {
       }
   
       if (response.data.results.length > 0) {
-        if (billto_page == 1) {
+        if (billto_page === 1) {
           billto_list = response.data.results.map((v) => [v.id, v.name]);
         } else {
           billto_list = [
@@ -586,7 +584,7 @@ const getClient = async () => {
     }
 
     if (response.data.results.length > 0) {
-      if (client_page == 1) {
+      if (client_page === 1) {
         client_list = response.data.results.map((v) => [v.id, v.name]);
       } else {
         client_list = [
@@ -976,7 +974,7 @@ const getClient = async () => {
   };
 
   const handleSubmit = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     }
     else {
@@ -1032,19 +1030,19 @@ const getClient = async () => {
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          if (billto == "") {
+          if (billto === "") {
             setbill_to_error(true);
           }
-          if (client == "") {
+          if (client === "") {
             setclient_error(true);
           }
-          if (city == "") {
+          if (city === "") {
             setcity_error(true);
           }
-          if (city !== 0 && pincode == "") {
+          if (city !== 0 && pincode === "") {
             setpincode_error(true);
           }
-          if (city !== 0 && locality == "") {
+          if (city !== 0 && locality === "") {
             setlocality_error(true);
           }
           validation.handleSubmit(e.values);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setHubTab, setManifestTab, setRoughTab } from "../../../store/parentFilter/ParentFilter";
+import { setHubTab, setManifestTab } from "../../../store/parentFilter/ParentFilter";
 
 const HubManifestTab = () => {
   const navigate = useNavigate();

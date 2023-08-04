@@ -35,12 +35,12 @@ const RecieveManifest = ({ depart }) => {
   const userDetail = useSelector((state) => state.authentication.userdetails);
   const [is_issue, setis_issue] = useState(false);
   const [received, setReceived] = useState([]);
-  console.log("received----", received)
+  // console.log("received----", received)
   const [isLoading, setIsLoading] = useState(false);
 
   const [is_issuerec, setis_issuerec] = useState(false);
   const [receivedrec, setReceivedrec] = useState([]);
-  console.log("receivedrec------", receivedrec)
+  // console.log("receivedrec------", receivedrec)
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
 
   const accessToken = useSelector((state) => state.authentication.access_token);

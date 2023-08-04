@@ -1,12 +1,8 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Label } from "reactstrap";
-import { useSelector } from "react-redux";
-import axios from "axios";
 import { useDispatch } from "react-redux";
-import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
-import { ServerAddress } from "../../../constants/ServerAddress";
-import { setFilterA, setFilterB } from "../../../store/filterValue/FilterValue";
+import { setFilterA } from "../../../store/filterValue/FilterValue";
 import MultiSelect from "../../../components/formComponent/multiSelect/MultiSelect";
 
 const ChargesFilter = () => {
@@ -19,10 +15,6 @@ const ChargesFilter = () => {
 
   const [primary_charge, setprimary_charge] = useState([]);
 
-  const accessToken = useSelector((state) => state.authentication.access_token);
-  const [test_lst, settest_lst] = useState([]);
-  const [test_st, settest_st] = useState("");
-  const [test_id, settest_id] = useState(0);
   const [page, setpage] = useState(1);
   const [search_txt, setsearch_txt] = useState("");
 

@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { MdAdd } from "react-icons/md";
-import Nav_Btn from "../../../components/btn/NavBtn";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setPageNumber } from "../../../store/pagination/Pagination";
-import CommoditiesDataTitle from "../../../data/master/commodities/CommoditiesDataTitle";
-import CommoditiesDataFormat from "../../../data/master/commodities/CommoditiesDataFormat";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Filter from "../../../components/listDisplay/filter/Filter";
@@ -20,8 +16,6 @@ import NotUpdatedEwayBillDataFormat from "../../../data/ewayBill/NotUpdatedEwayB
 const NotUpdatedDocketEway = () => {
   const dispatch = useDispatch();
   const is_updated = useSelector((state) => state.filtervalue.data_a);
-  const user = useSelector((state) => state.authentication.userdetails);
-  const cm_value = useSelector((state) => state.datalist.cm_filter);
 
   // // Pagination
   const data_len = useSelector((state) => state.pagination.data_length);
@@ -38,7 +32,6 @@ const NotUpdatedDocketEway = () => {
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
   );
-  const [can_add, setcan_add] = useState(false);
   const [can_delete, setcan_delete] = useState(false);
 
   useEffect(() => {

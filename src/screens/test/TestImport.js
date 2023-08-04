@@ -1,6 +1,4 @@
-import axios from "axios";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Input, Label, Row } from "reactstrap";
 import NSearchInput from "../../components/formComponent/nsearchInput/NSearchInput";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
@@ -9,14 +7,11 @@ import { MdDelete } from "react-icons/md";
 import { IconContext } from "react-icons";
 
 import MultiRowSearchInput from "../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
-import { ServerAddress } from "../../constants/ServerAddress";
-import toTitleCase from "../../lib/titleCase/TitleCase";
 import "./Test.css";
 import * as XLSX from "xlsx";
 
 const Test = () => {
   // Redux States
-  const accessToken = useSelector((state) => state.authentication.access_token);
 
   let dlist = [
     ["1", "", "", "", "5", "", "", "", "", "", "", "", "", ""],
@@ -219,15 +214,14 @@ const Test = () => {
     });
   }
 
-  console.log("Row FOrmate data", add_data);
+  // console.log("Row FOrmate data", add_data);
 
   const [datalist, setdatalist] = useState(imported_file ? add_data : alist);
-  console.log("7777777777777777777777777777777", imported_file);
+  // console.log("7777777777777777777777777777777", imported_file);
 
   const [refresh, setrefresh] = useState(false);
 
   //For Domestic
-  const [dom_rate, setdom_rate] = useState([]);
   const [dom_rate_category, setdom_rate_category] = useState("City to City");
   const [dom_rate_category_list] = useState([
     "City to City",
@@ -312,7 +306,7 @@ const Test = () => {
   useEffect(() => {
     if (per_charge_list) {
       let per_otch_tmp = per_charge_list.filter(
-        (v) => v[1] == "% of other charges"
+        (v) => v[1] === "% of other charges"
       );
       setfillterd_charge_list(per_otch_tmp);
 
@@ -480,7 +474,7 @@ const Test = () => {
                   </Col>
 
                   <Col md={2}>
-                    {per_chrg[1] == "% of client invoice" ? (
+                    {per_chrg[1] === "% of client invoice" ? (
                       <Input
                         key={idx}
                         step={0.01}
@@ -520,7 +514,7 @@ const Test = () => {
                               if (
                                 window.confirm(
                                   "Do You Want To Delete this row ? "
-                                ) == true
+                                ) === true
                               ) {
                                 let temp = [...per_charge_list];
                                 temp.splice(idx, 1);
@@ -711,7 +705,7 @@ const Test = () => {
                 >
                   Rate Per Kg
                 </th>
-                {dom_rate_type != "Flat" && (
+                {dom_rate_type !== "Flat" && (
                   <th
                     style={{
                       width: "2rem",
@@ -778,7 +772,7 @@ const Test = () => {
                   Rate Per Kg
                 </th>
 
-                {dom_rate_type != "Flat" && (
+                {dom_rate_type !== "Flat" && (
                   <th
                     style={{
                       width: "2rem",
@@ -892,7 +886,7 @@ const Test = () => {
 
                       {/* For COld Chain */}
                       {itm[1].map((v, i) => {
-                        if (i == 0) {
+                        if (i === 0) {
                           return (
                             <td key={i}>
                               <input
@@ -921,7 +915,7 @@ const Test = () => {
                             </td>
                           );
                         }
-                        if (i == 1 && dom_rate_type === "Upto") {
+                        if (i === 1 && dom_rate_type === "Upto") {
                           return (
                             <td key={i}>
                               <input
@@ -943,7 +937,7 @@ const Test = () => {
                             </td>
                           );
                         }
-                        if (i == 2 && dom_rate_type != "Flat") {
+                        if (i === 2 && dom_rate_type !== "Flat") {
                           return (
                             <td key={i}>
                               <input
@@ -962,7 +956,7 @@ const Test = () => {
                             </td>
                           );
                         }
-                        if (i == 3 && is_oda) {
+                        if (i === 3 && is_oda) {
                           return (
                             <td key={i}>
                               <input
@@ -1030,7 +1024,7 @@ const Test = () => {
                       {/*  For Non cold Chain */}
 
                       {itm[2].map((v, i) => {
-                        if (i == 0) {
+                        if (i === 0) {
                           return (
                             <td key={i}>
                               <input
@@ -1049,7 +1043,7 @@ const Test = () => {
                             </td>
                           );
                         }
-                        if (i == 1 && dom_rate_type === "Upto") {
+                        if (i === 1 && dom_rate_type === "Upto") {
                           return (
                             <td key={i}>
                               <input
@@ -1068,7 +1062,7 @@ const Test = () => {
                             </td>
                           );
                         }
-                        if (i == 2 && dom_rate_type != "Flat") {
+                        if (i === 2 && dom_rate_type !== "Flat") {
                           return (
                             <td key={i}>
                               <input
@@ -1087,7 +1081,7 @@ const Test = () => {
                             </td>
                           );
                         }
-                        if (i == 3 && is_oda) {
+                        if (i === 3 && is_oda) {
                           return (
                             <td key={i}>
                               <input

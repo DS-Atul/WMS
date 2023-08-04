@@ -6,7 +6,6 @@ import { IconContext } from "react-icons";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import {
   Card,
   Col,
@@ -402,7 +401,7 @@ function AddDepartment() {
       return 0;
     });
 
-    console.log("sorted----", sorted)
+    // console.log("sorted----", sorted)
 
     setSortedArray(sorted);
     setShouldSort(false); // Disable sorting until permission_title_list changes
@@ -528,6 +527,7 @@ function AddDepartment() {
         if (i < 3) {
           e[2] = !ttt
         }
+        // return e;  // after add this line, this type warning is removed.==> // Array.prototype.map() expects a return value from arrow function
       })
     } else if (idx === 3) {
       permission_title_list.map((e, i) => {

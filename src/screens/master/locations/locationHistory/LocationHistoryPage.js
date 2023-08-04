@@ -10,7 +10,7 @@ const LocationHistoryPage = () => {
 
   // console.log(location)
   const [location_id, setlocation_id] = useState(location.state.location.id);
-  console.log("location=-=-=-=->>",location_id) 
+  // console.log("location=-=-=-=->>",location_id) 
   return (
     <>
       

@@ -9,7 +9,7 @@ import { ServerAddress } from "../../../constants/ServerAddress";
 
 export const ComponentToPrint = React.forwardRef((props, ref) => {
   const { runsheet } = props;
-  console.log("runsheet=====", runsheet)
+  // console.log("runsheet=====", runsheet)
 
   const [order_data, setorder_data] = useState("");
   const [booking_date, setbooking_date] = useState("");

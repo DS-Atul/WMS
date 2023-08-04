@@ -1,5 +1,4 @@
-import React, { useMemo, useEffect, useState, useLayoutEffect} from "react";
-import axios from "axios";
+import React, { useEffect, useState} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -30,7 +29,6 @@ const DocketEway = () => {
   const userpermission = useSelector(
     (state) => state.authentication.userpermission
   );
-  const [can_add, setcan_add] = useState(false);
   const [can_delete, setcan_delete] = useState(false);
 
   useEffect(() => {

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { IconContext } from "react-icons";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,9 +7,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
-  MdAdd,
-  MdDeleteForever,
-  MdDelete,
 } from "react-icons/md";
 import {
   Card,
@@ -21,28 +16,22 @@ import {
   CardTitle,
   Label,
   Input,
-  FormFeedback,
   Form,
   Button,
 } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
-import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import {
   setAlertType,
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import WithoutWaraiDataFormat from "../../../data/billings/waraies/withoutWarai/WithoutWaraiDataFormat";
 import WithWaraiDataFormat from "../../../data/billings/waraies/withWarai/WithWaraiDataFormat";
 import { Modal } from "react-bootstrap";
 
 const AddWarai = () => {
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
   const search = useSelector((state) => state.searchbar.search_item);
 
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -74,7 +63,6 @@ const AddWarai = () => {
   const [warai_date, setwarai_date] = useState(
     new Date().toISOString().split("T")[0]
   );
-  const [toggle1, settoggle1] = useState(true);
   const [refresh, setrefresh] = useState(false);
 
   const [warai_id, setwarai_id] = useState(null);
@@ -88,7 +76,6 @@ const AddWarai = () => {
   // Without Warai
   const [wow_ords_list, setwow_ords_list] = useState([]);
   const [wow_page, setwow_page] = useState(1);
-  const [wow_search, setwow_search] = useState("");
 
   //modal state
   const [show, setshow] = useState(false);
@@ -99,7 +86,7 @@ const AddWarai = () => {
     let temp_list1 = created_warai;
     temp_list1.push(item);
     setcreated_warai(temp_list1);
-    setwow_ords_list(wow_ords_list.filter((data) => data != item));
+    setwow_ords_list(wow_ords_list.filter((data) => data !== item));
     setrefresh(!refresh);
   };
 
@@ -122,13 +109,13 @@ const AddWarai = () => {
     //     setwarai_amount_error(true);
     // }
 
-    if (created_warai.length != 0) {
+    if (created_warai.length !== 0) {
       for (let index = 0; index < created_warai.length; index++) {
         let qnty = created_warai[index].total_quantity;
         all_qnty += qnty;
       }
 
-      if (all_qnty != total_boxes) {
+      if (all_qnty !== total_boxes) {
         setshow(true);
       } else {
         isupdating ? update_warai() : send_warai_data();
@@ -231,13 +218,13 @@ const AddWarai = () => {
   };
 
   useEffect(() => {
-    if (search != "") {
+    if (search !== "") {
       getWithoutWaraiOrders();
     }
   }, [wow_page, search]);
 
   useEffect(() => {
-    if (warai_amount != 0 && total_boxes != 0) {
+    if (warai_amount !== 0 && total_boxes !== 0) {
       settotal(parseFloat(warai_amount / total_boxes).toFixed(3));
     }
   }, [warai_amount, total_boxes]);
@@ -303,12 +290,12 @@ const AddWarai = () => {
                         min={1}
                         onChange={(val) => {
                           settotal_boxes(val.target.value);
-                          if (val.target.value != "") {
+                          if (val.target.value !== "") {
                             settotal_boxes_error(false);
                           }
                         }}
                         onBlur={() => {
-                          if (total_boxes == "") {
+                          if (total_boxes === "") {
                             settotal_boxes_error(true);
                           }
                         }}
@@ -341,12 +328,12 @@ const AddWarai = () => {
                         min={1}
                         onChange={(val) => {
                           setwarai_amount(val.target.value);
-                          if (val.target.value != "") {
+                          if (val.target.value !== "") {
                             setwarai_amount_error(false);
                           }
                         }}
                         onBlur={() => {
-                          if (warai_amount == "") {
+                          if (warai_amount === "") {
                             setwarai_amount_error(true);
                           }
                         }}
@@ -497,11 +484,11 @@ const AddWarai = () => {
               type="submit"
               className="btn btn-info m-1"
               disabled={
-                voucher_amount == 0 ||
-                warai_amount == 0 ||
-                voucher_no == 0 ||
-                total_boxes == 0 ||
-                created_warai.length == 0
+                voucher_amount === 0 ||
+                warai_amount === 0 ||
+                voucher_no === 0 ||
+                total_boxes === 0 ||
+                created_warai.length === 0
               }
             >
               Save

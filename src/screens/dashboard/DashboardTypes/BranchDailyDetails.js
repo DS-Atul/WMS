@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Col, Row } from "reactstrap";
 import BranchStatusCard from "../../../components/dashboardComponents/branchStatusCard/BranchStatusCard";
 // import useWindowDimensions from "./ScreenSize";
-import { useSelector } from "react-redux";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import axios from "axios";
 
 const BranchDailyDetails = () => {
   const [branchStatus, setbranchStatus] = useState([]);
   // const [total_count, setTotal_count] = useState([]);
-  const accessToken = useSelector((state) => state.authentication.access_token);
   // const getData1 = async () => {
   //   try {
   //     const resp = await axios.get(

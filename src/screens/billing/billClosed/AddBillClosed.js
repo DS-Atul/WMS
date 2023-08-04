@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { IconContext } from "react-icons";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,7 +8,6 @@ import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
   MdAdd,
-  MdDeleteForever,
   MdDelete,
 } from "react-icons/md";
 import {
@@ -21,31 +18,20 @@ import {
   CardTitle,
   Label,
   Input,
-  FormFeedback,
   Form,
 } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
-import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
-import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import {
   setAlertType,
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
 
 const AddBillClosed = () => {
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
   const [bill_orders, setbill_orders] = useState({});
 
-  const [charge, setcharge] = useState([]);
   const [primary_charge, setprimary_charge] = useState("");
-  const [primary_charge_list] = useState([
-    "Associated Charge",
-    "Percentage Charge",
-  ]);
   
   const [primary_charge_error, setprimary_charge_error] = useState(false);
 
@@ -74,13 +60,11 @@ const AddBillClosed = () => {
 
   const [additional_charges, setadditional_charges] = useState([]);
 
-  const [charges_list, setcharges_list] = useState([]);
   const [chg_page, setchg_page] = useState(1);
   const [search_txt, setsearch_txt] = useState("");
 
   // getAllCharges
   const getAllCharges = (available_charges, temps) => {
-    let temp3 = [...temps];
     axios
       .get(
         ServerAddress +
@@ -98,10 +82,10 @@ const AddBillClosed = () => {
         let temp3 = resp.data.results
           .filter(
             (v) =>
-              available_charges.indexOf(v.secondary_charge) == -1 &&
-              available_charges.indexOf(v.secondary_charge) == -1 &&
-              v.secondary_charge != "WARAI" &&
-              v.primary_charge != "OTHER CHARGE"
+              available_charges.indexOf(v.secondary_charge) === -1 &&
+              available_charges.indexOf(v.secondary_charge) === -1 &&
+              v.secondary_charge !== "WARAI" &&
+              v.primary_charge !== "OTHER CHARGE"
           )
           .map((el) => [el.id, el.secondary_charge]);
 
@@ -118,7 +102,7 @@ const AddBillClosed = () => {
 
   const removeCharge = (entry, indxx) => {
     additional_charges.splice(indxx, 1);
-    // if (additional_charges.length - 1 == indxx && indxx != 0) {
+    // if (additional_charges.length - 1 === indxx && indxx != 0) {
     //   let slst = additional_charges[additional_charges.length - 2][0];
     //   let indx = selected_charges.indexOf(slst);
     //   selected_charges.splice(indx, 1);
@@ -141,7 +125,7 @@ const AddBillClosed = () => {
 
   const addCharge = (last_entr) => {
     if (additional_charges.length > 0) {
-      if (last_entr[0] != "" && +last_entr[1] > 0) {
+      if (last_entr[0] !== "" && +last_entr[1] > 0) {
         setadditional_charges([...additional_charges, [["", ""], 0]]);
         setselected_charges([...selected_charges, last_entr[0]]);
       } else {
@@ -171,7 +155,7 @@ const AddBillClosed = () => {
         }
       )
       .then((resp) => {
-        if (resp.data == "done") {
+        if (resp.data === "done") {
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`BillClosed Updated Sucessfully`));
           dispatch(setAlertType("info"));
@@ -189,9 +173,9 @@ const AddBillClosed = () => {
 
       setisupdating(true);
       setbill_orders(bill_ord);
-      let as_chrg = bill_ord.ordertocost.filter((chr) => chr.cost_value != 0);
+      let as_chrg = bill_ord.ordertocost.filter((chr) => chr.cost_value !== 0);
       let temp2 = bill_ord.ordertocost
-        .filter((ch) => ch.additional_new == false)
+        .filter((ch) => ch.additional_new === false)
         .map((chr) => chr.cost_name);
       let tempa = [];
       let temps = [];
@@ -203,7 +187,7 @@ const AddBillClosed = () => {
       }
       let temp = [];
       for (const chr of bill_ord.ordertocost) {
-        if (chr.additional_new == false) {
+        if (chr.additional_new === false) {
           temp.push([
             chr.cost_name,
             (Math.round(+chr.cost_value * 2) / 2).toFixed(2),
@@ -219,7 +203,7 @@ const AddBillClosed = () => {
   }, []);
 
   useEffect(() => {
-    if (primary_charge != "") {
+    if (primary_charge !== "") {
       setprimary_charge_error(false);
     }
   }, [primary_charge]);
@@ -484,7 +468,7 @@ const AddBillClosed = () => {
                                   if (
                                     window.confirm(
                                       "Do You Want To Delete This Entry ?"
-                                    ) == true
+                                    ) === true
                                   ) {
                                     removeCharge(item, index);
                                   } else {

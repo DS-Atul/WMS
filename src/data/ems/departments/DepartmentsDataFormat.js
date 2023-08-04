@@ -1,12 +1,10 @@
-import React, { useLayoutEffect, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import correct from "../../../assets/images/bookings/check-mark.png";
-import cross from "../../../assets/images/bookings/remove.png";
 import {
   setAlertType,
   setDataExist,
@@ -14,7 +12,6 @@ import {
 } from "../../../store/alert/Alert";
 import {
   setIsDeleted,
-  setPageNumber,
   setToggle,
 } from "../../../store/pagination/Pagination";
 import {
@@ -31,7 +28,6 @@ const DepartmentsDataFormat = ({ data, data1 }) => {
   const [selected, setselected] = useState([]);
   const dispatch = useDispatch();
   const [click, setclick] = useState(true);
-  const [users_list, setusers_list] = useState([]);
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
 
@@ -129,7 +125,7 @@ const DepartmentsDataFormat = ({ data, data1 }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       deleteUser(ids);
     }
   }, [delete_id]);
@@ -138,9 +134,9 @@ const DepartmentsDataFormat = ({ data, data1 }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("name"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("user_name"));
     }
   }, [index]);

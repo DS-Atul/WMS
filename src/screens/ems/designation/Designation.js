@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
-// import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -16,12 +15,6 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 
 function Designation() {
   const dispatch = useDispatch();
-  // const toggle = useSelector((state) => state.parentfilter.toggle);
-  // const commodity_type = useSelector((state) => state.filtervalue.data_a);
-  // const commodity_name = useSelector((state) => state.filtervalue.data_b);
-  // const user_role = useSelector(
-  //   (state) => state.authentication.userdetails.user_role
-  // );
   const user = useSelector((state) => state.authentication.userdetails);
 
   // // Pagination
@@ -32,11 +25,6 @@ function Designation() {
   useEffect(() => {
     dispatch(setToggle(false));
   }, []);
-
-  //Permission
-  // const userpermission = useSelector(
-  //   (state) => state.authentication.userpermission
-  // );
 
   const [can_add, setcan_add] = useState(false);
   const [can_delete, setcan_delete] = useState(false);

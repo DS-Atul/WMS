@@ -8,7 +8,7 @@ import "./assets/scss/theme.scss";
 
 import { useSelector, useDispatch } from "react-redux";
 import Layout from "./components/layout";
-import { withRouter, Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   setAccessToken,
   setRefreshToken,

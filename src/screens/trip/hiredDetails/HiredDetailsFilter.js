@@ -11,7 +11,6 @@ import toTitleCase from "../../../components/Title_Case/Title_Case";
 import {
   setFiltA,
   setFiltB,
-  setFiltC,
 } from "../../../store/Components/FilterValue/action";
 
 function Hired_Details_Filter() {

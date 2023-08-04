@@ -1,13 +1,12 @@
 /* eslint-disable */
-import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 // import Search_list from "../../../components/List_Display/Search_list";
 import { Card, Col, Row, CardBody } from "reactstrap";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { EServerAddress, ServerAddress } from "../../constants/ServerAddress";
+import { ServerAddress } from "../../constants/ServerAddress";
 import SearchList from "../../components/listDisplay/searchList/SearchList";
 import AllDocketsDataFormat from "../../data/runsheets/allDockets/AllDockets/AllDocketsDataFormat";
 import CreatedDocketDataFormat from "../../data/runsheets/allDockets/CreatedDockets/CreatedDocketDataFormat";
@@ -34,9 +33,6 @@ function AddDocket({ runsheet }) {
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
 
   // Additional Fields
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
-  const search = useSelector((state) => state.searchbar.search_item);
   const [local_list, setlocal_list] = useState([]);
   const [createRunsheet_list, setcreateRunsheet_list] = useState([]);
   let awb_no_list = [];
@@ -101,7 +97,7 @@ function AddDocket({ runsheet }) {
         alert(`Error While Add Docket ${error}`);
       });
   };
-  console.log("createRunsheet_list-----", createRunsheet_list)
+  // console.log("createRunsheet_list-----", createRunsheet_list)
   const handleClick = () => {
     if (createRunsheet_list.length !== 0) {
       let temp = [];
@@ -167,14 +163,14 @@ function AddDocket({ runsheet }) {
     }
   }, [createRunsheet_list, local_list])
 
-  console.log("docket_nos-------", docket_nos)
+  // console.log("docket_nos-------", docket_nos)
 
   //For Update Part B
   const userDetail = useSelector((state) => state.authentication.userdetails);
 
   const [EwayBillData, setEwayBillData] = useState([])
   const [list_data, setlist_data] = useState([])
-  console.log("list_data------", list_data)
+  // console.log("list_data------", list_data)
 
   const getEwayBills = (docket_num) => {
     axios
@@ -188,7 +184,7 @@ function AddDocket({ runsheet }) {
         }
       )
       .then((res) => {
-        console.log("resres----", res)
+        // console.log("resres----", res)
         if (res?.data?.length !== 0) {
           setEwayBillData(prevData => prevData.concat(res.data));
           // setEwayBillData((prevData) => [...prevData, res.data]);

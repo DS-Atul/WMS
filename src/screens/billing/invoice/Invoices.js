@@ -17,26 +17,16 @@ import Filter from "../../../components/listDisplay/filter/Filter";
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
 import { setPageNumber } from "../../../store/pagination/Pagination";
-import { setToggle } from "../../../store/parentFilter/ParentFilter";
-import ChargesDataFormat from "../../../data/master/charges/ChargesDataFormat";
-import ChargesDataTitle from "../../../data/master/charges/ChargesDataTitle";
 import { setFilterA } from "../../../store/filterValue/FilterValue";
 import InvoiceDataTitle from "../../../data/billings/invoices/InvoiceDataTitle";
 import InvoiceDataFormat from "../../../data/billings/invoices/InvoiceDataFormat";
 
 const Invoices = () => {
   const dispatch = useDispatch();
-  const toggle = useSelector((state) => state.parentfilter.toggle);
-  const primary_charges = useSelector((state) => state.filtervalue.data_a);
   const search = useSelector((state) => state.searchbar.search_item);
   // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
-
-  // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
 
   useEffect(() => {
     dispatch(setFilterA([]));

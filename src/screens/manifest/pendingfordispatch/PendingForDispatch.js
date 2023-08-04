@@ -8,16 +8,12 @@ import {
   CardTitle,
   Label,
   // Button,
-  FormFeedback,
   Input,
-  Form,
 } from "reactstrap";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { useFormik } from "formik";
-import * as Yup from "yup";
 // import CreateRunsheet from "./CreateRunsheet";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import UnrunsheetsDataFormat from "../../../data/manifests/pendingForDispatch/unmanifests/UnrunsheetsDataFormat";
@@ -34,25 +30,20 @@ import {
 } from "../../../store/alert/Alert";
 import Navigate from "../navigateTab/Navigate";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { useStepContext } from "@mui/material";
 
 // import Navigate from "../../runsheet/runsheetTab/Navigate";
 
 const PendingForDispatch = () => {
   // Additional Fields
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
-  const search = useSelector((state) => state.searchbar.search_item);
-  const [refresh, setrefresh] = useState(false);
   const [toggle, settoggle] = useState(false);
   const [awbno_list, setawbno_list] = useState([])
   const [issuereceived_total, setreceived_total] = useState()
   const [issuenon_received_total, setissuenon_received_total] = useState()
   const [total_pieces, settotal_pieces] = useState()
-  console.log("total_pieces----------", total_pieces)
-  console.log("issuereceived_total-----------", issuereceived_total)
-  console.log("issuenon_received_total--------", issuenon_received_total)
-  console.log("awbno_list--1qqq--------", awbno_list)
+  // console.log("total_pieces----------", total_pieces)
+  // console.log("issuereceived_total-----------", issuereceived_total)
+  // console.log("issuenon_received_total--------", issuenon_received_total)
+  // console.log("awbno_list--1qqq--------", awbno_list)
   const user = useSelector((state) => state.authentication);
   const user_homebranch_id = useSelector(
     (state) => state.authentication.userdetails.home_branch
@@ -102,7 +93,7 @@ const PendingForDispatch = () => {
   };
   //  For Fetching Branch Data Started
   const [branch_list, setbranch_list] = useState([]);
-  console.log("branch_list-------", branch_list)
+  // console.log("branch_list-------", branch_list)
   const [branch_type_short, setbranch_type_short] = useState("");
   const [branch_selected, setbranch_selected] = useState("");
   const [manifest_type, setmanifest_type] = useState("Create_Manifest");
@@ -113,10 +104,6 @@ const PendingForDispatch = () => {
   const [branch_loaded, setbranch_loaded] = useState(false)
   const [branch_count, setbranch_count] = useState(1)
   const [branch_bottom, setbranch_bottom] = useState(103)
-
-  const [page, setpage] = useState(1);
-  console.log("branch_selected----", branch_selected)
-  console.log("branch_type_short-----", branch_type_short)
 
   const get_branch = () => {
     let temp = [];
@@ -195,7 +182,7 @@ const PendingForDispatch = () => {
   // }, [branch_type_short]);
 
   useLayoutEffect(() => {
-    console.log("branch_dest,branch_dest", branch_dest);
+    // console.log("branch_dest,branch_dest", branch_dest);
   }, [branch_dest]);
 
 
@@ -210,7 +197,7 @@ const PendingForDispatch = () => {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
-        console.log("response.dataresponse.dataresponse.data---", response.data)
+        // console.log("response.dataresponse.dataresponse.data---", response.data)
         setdomestic_order(response.data);
       })
       .catch((err) => {

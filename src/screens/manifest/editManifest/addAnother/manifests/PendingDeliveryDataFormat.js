@@ -9,7 +9,7 @@ import toTitleCase from "../../../../../lib/titleCase/TitleCase";
 const EditDeliveryDataFormat = ({ check, local_list }) => {
   const searchData = useSelector((state) => state.searchbar.search_item);
   const [data_title, setdata_title] = useState(PendingDeliveryDataTitle);
-  console.log("local_list====", local_list);
+  // console.log("local_list====", local_list);
   return (
     <>
       <div className="table">

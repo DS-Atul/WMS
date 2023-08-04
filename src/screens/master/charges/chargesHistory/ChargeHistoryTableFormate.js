@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ChargeHistoryTableFormate = ({ table_data }) => {
-  console.log("table data", table_data);
+  // console.log("table data", table_data);
   return (
     <>
       {table_data.length === 0 ? (

@@ -8,9 +8,9 @@ import OrderHistoryFormate from "../orderHistory/OrderHistoryFormate"
 
 const OrderHistoryPage = () => {
   const location = useLocation();
-  console.log("order data",location.state.Booking)
+  // console.log("order data",location.state.Booking)
   const [order_id] = useState(location.state.Booking.id);
-  console.log("order id =-=-=-=->>",order_id)
+  // console.log("order id =-=-=-=->>",order_id)
   return (
     <div>
         <NewHistoryTab

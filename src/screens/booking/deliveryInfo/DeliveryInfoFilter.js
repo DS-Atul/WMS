@@ -2,14 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { Form, Label, Input } from "reactstrap";
 import "../../../assets/scss/filters/filter.scss";
-import { useSelector } from "react-redux";
-import { ServerAddress } from "../../../constants/ServerAddress";
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { setFilterA, setFilterB, setFilterC } from "../../../store/filterValue/FilterValue";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
-import MultiSelect from "../../../components/formComponent/multiSelect/MultiSelect";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { ServerAddress } from "../../../constants/ServerAddress";
+import { MultiSelect } from "react-multi-select-component";
 
 function DeliveryInfoFilter() {
     const dispatch = useDispatch();
@@ -26,7 +26,7 @@ function DeliveryInfoFilter() {
   
     const [from_date, setfrom_date] = useState("")
     const [to_date, setto_date] = useState("")
-    console.log("from_date----", from_date)
+    // console.log("from_date----", from_date)
 
     const handleSubmit = () => {
       settoggle(true);

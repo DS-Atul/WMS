@@ -3,7 +3,7 @@ import {Col,Card,CardTitle,CardBody} from "reactstrap";
 
 
 const BookingCreatedHistory = ({page_data}) => {
-  console.log("page",page_data)
+  // console.log("page",page_data)
   const [booking_data, setbooking_data] = useState("");
   const [user_name, setuser_name] = useState("");
 

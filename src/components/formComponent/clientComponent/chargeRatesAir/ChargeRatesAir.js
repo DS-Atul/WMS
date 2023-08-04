@@ -1,11 +1,5 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
-import { MdDelete } from "react-icons/md";
-import axios from "axios";
-import { FiSquare, FiCheckSquare } from "react-icons/fi";
-import { Col, Row, Input, Label, FormFeedback } from "reactstrap";
-import { IconContext } from "react-icons";
-import { MdAdd } from "react-icons/md";
-import { Button } from "react-bootstrap";
+import React, { useState, useLayoutEffect } from "react";
+import { Col, Row, Input, Label } from "reactstrap";
 
 const ChargeRatesAir = ({
   refresh,
@@ -43,7 +37,6 @@ const ChargeRatesAir = ({
   // local_cal_type,
 
   per_charge_list,
-  setper_charge_list,
 
   is_per_charge,
 }) => {
@@ -52,7 +45,7 @@ const ChargeRatesAir = ({
 
   useLayoutEffect(() => {
     let per_otch_tmp = per_charge_list.filter(
-      (v) => v[1] == "% of other charges"
+      (v) => v[1] === "% of other charges"
     );
 
     setper_of_otch_list(per_otch_tmp);
@@ -75,7 +68,7 @@ const ChargeRatesAir = ({
           </div>
         </Col>
 
-        {rate_type == "Upto" && (
+        {rate_type === "Upto" && (
           <Col md={2} sm={2} style={{ marginTop: -20 }}>
             <div className="mb-3">
               <Label className="header-child">Min Boxes</Label>
@@ -116,7 +109,7 @@ const ChargeRatesAir = ({
           </Col>
         )}
 
-        {(rate_type == "Upto" || rate_type == "Minimum") && (
+        {(rate_type === "Upto" || rate_type === "Minimum") && (
           <Col md={2} sm={2} style={{ marginTop: -20 }}>
             <div className="mb-3">
               <Label className="header-child">Min Amount</Label>

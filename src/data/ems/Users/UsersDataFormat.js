@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { ServerAddress } from "../../../constants/ServerAddress";
@@ -13,7 +13,6 @@ import {
 } from "../../../store/alert/Alert";
 import {
   setIsDeleted,
-  setPageNumber,
   setToggle,
 } from "../../../store/pagination/Pagination";
 import {
@@ -119,7 +118,7 @@ const UsersDataFormat = ({ data, data1, can_delete }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       deleteUser(ids);
     }
   }, [delete_id]);
@@ -128,19 +127,19 @@ const UsersDataFormat = ({ data, data1, can_delete }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("username"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("email"));
-    } else if (index == 2) {
+    } else if (index === 2) {
       dispatch(setIndexValue("first_name"));
-    } else if (index == 3) {
+    } else if (index === 3) {
       dispatch(setIndexValue("mobilenumber"));
-    } else if (index == 4) {
+    } else if (index === 4) {
       dispatch(setIndexValue("branch_nm"));
-    } else if (index == 5) {
+    } else if (index === 5) {
       dispatch(setIndexValue("channel_access"));
-    } else if (index == 6) {
+    } else if (index === 6) {
       dispatch(setIndexValue("user_type"));
     }
   }, [index]);
@@ -215,11 +214,11 @@ const UsersDataFormat = ({ data, data1, can_delete }) => {
               <td>
                 {user.is_active ? (
                   <div>
-                    <img src={correct} width="20" height="20" />
+                    <img src={correct} alt="correct" width="20" height="20" />
                   </div>
                 ) : (
                   <div>
-                    <img src={cross} width="20" height="20" />
+                    <img src={cross} alt="cross" width="20" height="20" />
                   </div>
                 )}
               </td>

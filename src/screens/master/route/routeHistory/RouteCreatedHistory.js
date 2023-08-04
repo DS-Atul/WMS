@@ -3,7 +3,7 @@ import {Col,Card,CardTitle,CardBody} from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
 const RouteCreatedHistory = ({page_data}) => {
-  console.log("page",page_data)
+  // console.log("page",page_data)
   const [route_data, setroute_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -18,7 +18,7 @@ setroute_data(n_data);
     }
   }, [page_data])
 
-  console.log("Route data >>>>>",route_data);
+  // console.log("Route data >>>>>",route_data);
   
 
   let time = new Date(route_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});

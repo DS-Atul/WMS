@@ -3,7 +3,7 @@ import { setIsSearch, setSearchItem } from "../../../store/searchBar/SearchBar";
 import { useDispatch } from "react-redux";
 import { setPageNumber } from "../../../store/pagination/Pagination";
 import { setFilterToggle } from "../../../store/filterValue/FilterValue";
-import { Input, Form } from "reactstrap";
+import { Input } from "reactstrap";
 
 const SearchList = () => {
   const dispatch = useDispatch();

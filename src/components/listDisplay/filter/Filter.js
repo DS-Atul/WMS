@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Offcanvas } from "react-bootstrap";
 // import { Button, Offcanvas } from "react-bootstrap";
-import { MdFilterListAlt, MdClear } from "react-icons/md";
+import { MdFilterListAlt } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import LoginDetailsFilter from "../../../screens/ems/loginDetails/LoginDetailsFilter";
 import ChargesFilter from "../../../screens/master/charges/ChargesFilter";

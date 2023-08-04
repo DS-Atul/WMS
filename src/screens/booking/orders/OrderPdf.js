@@ -7,7 +7,7 @@ import Logo003 from "../../../assets/images/Logo003.jpg";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
-    console.log("order======", order)
+    // console.log("order======", order)
     //used for date and time
     const [booking_date, setbooking_date] = useState("");
     const [booking_date_time, setbooking_date_time] = useState("");
@@ -15,7 +15,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
     const [invoice_value, setinvoice_value] = useState([])
     const [invoice_date, setinvoice_date] = useState([])
     const [eway_bill, seteway_bill] = useState([])
-    console.log("=====invoice_value", invoice_value)
+    // console.log("=====invoice_value", invoice_value)
     useLayoutEffect(() => {
         if (order.booking_at) {
             let s = new Date(order.booking_at).toLocaleString(undefined, {

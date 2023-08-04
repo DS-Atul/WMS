@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { Button, Form, Label, Col, Row } from "reactstrap";
-import toTitleCase from "../../../../lib/titleCase/TitleCase";
 import SearchList from "../../../../components/listDisplay/searchList/SearchList";
 import PageTitle from "../../../../components/pageTitle/PageTitle";
 import Title from "../../../../components/title/Title";
 import { MultiSelect } from "react-multi-select-component";
 import { ServerAddress } from "../../../../constants/ServerAddress";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { setToggle } from "../../../../store/parentFilter/ParentFilter";
 import ReportDataList from "../../../../components/listDisplay/ReportDatalist/ReportDataList";
 import ColumnFilter from "../../../../components/listDisplay/columnfilter/ColumnFilter";
 // eslint-disable-next-line
@@ -21,8 +18,6 @@ const LocalRunsheetReport = () => {
   const [selected_report_columns, setselected_report_columns] = useState([]);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [branch, setbranch] = useState([]);
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
   const [from_date, setfrom_date] = useState("");
   const [to_date, setto_date] = useState("");
   const username = useSelector((state) => state.filtervalue.data_b);
@@ -89,9 +84,9 @@ const LocalRunsheetReport = () => {
         let colmn = rmv_title(entry_item[0]);
         let data = entry_item[1];
         let idx = selected_report_columns.indexOf(colmn);
-        let or_idx = column_list.indexOf(colmn);
+        // let or_idx = column_list.indexOf(colmn);
 
-        if (idx == -1) {
+        if (idx === -1) {
           entr_list[ind] = ["Removed Data", "Removed Data"];
         } else {
           sheet_dta_obj[colmn] = data;
@@ -114,13 +109,13 @@ const LocalRunsheetReport = () => {
   }, []);
 
   useEffect(() => {
-    if (detailed_report_list.length != 0) {
+    if (detailed_report_list.length !== 0) {
       setData();
     }
   }, [selected_report_columns]);
 
   const getLocalRunsheetReport = (branches) => {
-    console.log("runsheetdata",branches)
+    // console.log("runsheetdata",branches)
     let temp2 = [];
     axios
       .post(
@@ -135,8 +130,8 @@ const LocalRunsheetReport = () => {
         }
       )
       .then((response) => {
-        console.log("runsheet report data length", response.data);
-        if (response.data.length != 0) {
+        // console.log("runsheet report data length", response.data);
+        if (response.data.length !== 0) {
           let sample_data = response.data[0];
           let columns = Object.keys(sample_data);
           for (let index = 0; index < columns.length; index++) {
@@ -157,7 +152,7 @@ const LocalRunsheetReport = () => {
         alert(`Error Occur in Get Branches , ${err}`);
       });
   };
-  console.log("columns22.....",column_list)
+  // console.log("columns22.....",column_list)
   const submit_data = () => {
     let branches = [];
     for (let index = 0; index < branch.length; index++) {
@@ -194,7 +189,7 @@ const LocalRunsheetReport = () => {
                     />
                     )}
                 </span>
-                {sheet_data.length != 0 && (
+                {sheet_data.length !== 0 && (
                   <Button
                   onClick={() =>
                     saveAsCsv({

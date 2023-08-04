@@ -103,21 +103,15 @@ const AddOrganization = () => {
   // Location Info
 
   const [by_pincode, setby_pincode] = useState(false);
-  const [pincode, setpincode] = useState("");
-
-  const [pincode_id, setpincode_id] = useState(0);
   const [pincode_loaded, setpincode_loaded] = useState(false);
 
   const [state_error, setstate_error] = useState(false);
   const [city_error, setcity_error] = useState(false);
   const [state_error1, setstate_error1] = useState(false);
   const [city_error1, setcity_error1] = useState(false);
-  const [pin_code_error, setpin_code_error] = useState(false);
   const [pincode_error, setpincode_error] = useState(false);
   const [pincode_error2, setpincode_error2] = useState(false);
   const [sec_mobile2, setsec_mobile2] = useState("");
-  const [mobile_error, setmobile_error] = useState(false);
-
   const [pan_no, setpan_no] = useState("")
   const [pan_no_error, setpan_no_error] = useState(false);
   const [isupdating, setisupdating] = useState(false);
@@ -224,8 +218,8 @@ const AddOrganization = () => {
   const [uploaded_img, setuploaded_img] = useState("");
   const [result_img, setresult_img] = useState("");
   const [upload_logo_error, setupload_logo_error] = useState(false);
-  console.log("resu image ", result_img);
-  console.log("uploaded image ", uploaded_img);
+  // console.log("resu image ", result_img);
+  // console.log("uploaded image ", uploaded_img);
 
   // Validation
   const validation = useFormik({

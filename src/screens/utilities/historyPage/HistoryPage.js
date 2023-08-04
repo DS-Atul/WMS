@@ -8,20 +8,7 @@ const HistoryPage = () => {
   const location = useLocation();
   console.log("\\\\\\\\", location);
   const [commdity_id, setcommdity_id] = useState(location.state.commodity.id);
-  console.log("id is",commdity_id)
-
-  const [heading, setheading] = useState([
-    "Heading 1",
-    "Heading 2",
-    "Heading 3",
-    "Heading 4",
-    "Heading 5",
-    "Heading 6",
-    "Heading 7",
-    "Heading 8",
-    "Heading 9",
-    "Heading 10",
-  ]);
+  console.log("id is", commdity_id)
 
   const [card_data, setcard_data] = useState({
     0: "Sonari",
@@ -43,11 +30,12 @@ const HistoryPage = () => {
     commodity_data[3],
     // commodity_data[9],
   ];
-console.log("List is",commdity_list)
-  console.log("com Data", commodity_data);
+  // console.log("List is", commdity_list)
+  // console.log("com Data", commodity_data);
   let ele = Object.entries(card_data);
-  console.log("ele", ele);
-  console.log(card_data[0], card_data[1]);
+  // console.log("ele", ele);
+  // console.log(card_data[0], card_data[1]);
+  
   //Make list to pass the component
   let list1 = [ele[0], ele[1], ele[4], ele[5]];
   let list2 = [ele[3], ele[9], ele[6], ele[4]];
@@ -59,11 +47,11 @@ console.log("List is",commdity_list)
         Number_OF_Card={1}
         Card_Title1={"Commodity Details"}
         Card_Data1={commdity_list}
-        Table_Data_Title={["Operation","Commodity Type","Commodity Name","Created By","Created At","Modified By","Modified At"]}
+        Table_Data_Title={["Operation", "Commodity Type", "Commodity Name", "Created By", "Created At", "Modified By", "Modified At"]}
         Table_Data_Formate={TableFormate}
         path={`analytic/get_masterdatahistory/?search=${""}&p=${1}&records=${10}&model_name=${["Commodity"]}&app_name=${["masters"]}&object_id=${[commdity_id]}`}
       />
-      <NumPagination path={"path"}/>
+      <NumPagination path={"path"} />
       {/* <HistoryPage/> */}
     </>
   );

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { IconContext } from "react-icons";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,9 +7,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
-  MdAdd,
-  MdDeleteForever,
-  MdDelete,
 } from "react-icons/md";
 import {
   Card,
@@ -21,31 +16,21 @@ import {
   CardTitle,
   Label,
   Input,
-  FormFeedback,
   Form,
   Button,
 } from "reactstrap";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import {
   setAlertType,
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
-import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import WithoutWaraiDataFormat from "../../../data/billings/waraies/withoutWarai/WithoutWaraiDataFormat";
-import WithWaraiDataFormat from "../../../data/billings/waraies/withWarai/WithWaraiDataFormat";
-import { Modal } from "react-bootstrap";
-import BillTosDataFormat from "../../../data/master/clients/BillTosDataFormat";
 import ClientOrdersDataFormat from "../../../data/billings/invoices/clientOrders/ClientOrdersDataFormat";
 
 const AddInvoice = () => {
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
-  const search = useSelector((state) => state.searchbar.search_item);
 
   const accessToken = useSelector((state) => state.authentication.access_token);
   const [isupdating, setisupdating] = useState(false);
@@ -66,23 +51,13 @@ const AddInvoice = () => {
   };
 
   //  Order Wise State
-  const [docket_type_list, setdocket_type_list] = useState("");
-  const [docket_no, setdocket_no] = useState([]);
-  const [docket_type, setdocket_type] = useState("");
-  const [docket_id, setdocket_id] = useState("");
   const [remark, setremark] = useState("");
   const [discount, setdiscount] = useState("");
-  const [fetch_order, setfetch_order] = useState([]);
   const [draft, setdraft] = useState(false);
 
   //modal state
-  const [show, setshow] = useState(false);
   const [active_tab, setactive_tab] = useState("first");
 
-  const [client_type, setclient_type] = useState("");
-  const [client_type_list, setclient_type_list] = useState([]);
-  const [from_date, setfrom_date] = useState("");
-  const [clientid, setclientid] = useState("");
   const [show_Table, setshow_Table] = useState(false);
   const [client, setclient] = useState("");
   const [client_id, setclient_id] = useState(0);
@@ -92,7 +67,6 @@ const AddInvoice = () => {
 
   const [cl_ords_list, setcl_ords_list] = useState([]);
   const [cl_ords_page, setcl_ords_page] = useState(1);
-  const [cl_ords_search, setcl_ords_search] = useState("");
 
   const [inv_st_list_list, setinv_st_list_list] = useState([
     "Approved",
@@ -112,7 +86,7 @@ const AddInvoice = () => {
       }
     }
 
-    if (tmps.length == 0) {
+    if (tmps.length === 0) {
       alert("No Order Included to Create Invoice");
     } else {
       axios
@@ -240,7 +214,7 @@ const AddInvoice = () => {
   }, [client_page, client_search]);
 
   useEffect(() => {
-    if (client_id != 0) {
+    if (client_id !== 0) {
       setshow_Table(true);
       getClientOrders();
     }
@@ -266,7 +240,7 @@ const AddInvoice = () => {
                 <div className="btn-subheader">
                   <div
                     style={{
-                      background: active_tab == "first" ? "#C4D7FE" : null,
+                      background: active_tab === "first" ? "#C4D7FE" : null,
                     }}
                     className="btn1 footer-text"
                     value="first"
@@ -279,7 +253,7 @@ const AddInvoice = () => {
 
                   <div
                     style={{
-                      background: active_tab == "second" ? "#C4D7FE" : null,
+                      background: active_tab === "second" ? "#C4D7FE" : null,
                     }}
                     className="btn1 footer-text"
                     value="second"
@@ -311,7 +285,7 @@ const AddInvoice = () => {
             {circle_btn ? (
               <CardBody>
                 <Row>
-                  {active_tab == "first" ? (
+                  {active_tab === "first" ? (
                     // Client Wise Report
                     <>
                       <Col lg={12} md={12} sm={12}>

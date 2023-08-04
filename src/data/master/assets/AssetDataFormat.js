@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
@@ -7,7 +7,6 @@ import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setIsDeleted,
-  setPageNumber,
   setToggle,
 } from "../../../store/pagination/Pagination";
 import {
@@ -23,8 +22,6 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { Input } from "reactstrap";
-import { MdDelete } from "react-icons/md";
 import Modal from "react-bootstrap/Modal";
 import cross from "../../../assets/images/ComponentsIcon/cross.png";
 import correct from "../../../assets/images/ComponentsIcon/check-mark.png";
@@ -33,27 +30,16 @@ import { HiQuestionMarkCircle } from "react-icons/hi";
 
 const AssetsDataFormat = ({ data, data1, can_delete }) => {
   // Permissions
-  console.log("data-----", data);
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
-
+  
   const dispatch = useDispatch();
-  const cust_user_permissions = useSelector(
-    (state) => state.permissions.cust_user_permissions
-  );
-
-  const searchData = useSelector((state) => state.searchbar.search_item);
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
   const user = useSelector((state) => state.authentication.userdetails);
 
   //Multi Delete function
   const close = useSelector((state) => state.datalist.close);
   const select_all = useSelector((state) => state.datalist.select_all);
-  const select = useSelector((state) => state.datalist.select);
   const delete_id = useSelector((state) => state.datalist.delete_id);
 
   const [selected, setselected] = useState([]);
@@ -64,10 +50,7 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
   const [asset_barcode, setasset_barcode] = useState("");
   const [asset_id, setasset_id] = useState("");
   const ids = useSelector((state) => state.datalist.ids);
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
-
+  
   const [click, setclick] = useState(true);
 
   const deleteCharge = (id) => {
@@ -152,7 +135,7 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       deleteCharge(ids);
     }
   }, [delete_id]);
@@ -161,33 +144,33 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("asset_id"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("barcode"));
     }
-    else if (index == 2) {
+    else if (index === 2) {
       dispatch(setIndexValue("box_type"));
     }
-    else if (index == 3) {
+    else if (index === 3) {
       dispatch(setIndexValue("product_id"));
     }
-    else if (index == 4) {
+    else if (index === 4) {
       dispatch(setIndexValue("current_branch_n"));
     }
-    else if (index == 5) {
+    else if (index === 5) {
       dispatch(setIndexValue("created_by_n"));
     }
-    else if (index == 6) {
+    else if (index === 6) {
       dispatch(setIndexValue("in_use"));
     }
-    else if (index == 7) {
+    else if (index === 7) {
       dispatch(setIndexValue("no_of_usage"));
     }
-    else if (index == 8) {
+    else if (index === 8) {
       dispatch(setIndexValue("is_damaged"));
     }
-    else if (index == 9) {
+    else if (index === 9) {
       dispatch(setIndexValue("created_branch_n"));
     }
   }, [index]);
@@ -257,7 +240,7 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
             flexDirection: "column",
           }}
         >
-          <img src={asset_barcode} />
+          <img src={asset_barcode} alt="asset_barcode" />
           <div style={{ display: "flex", justifyContent: "center" }}>
             <BsPrinterFill color="#82C3EC" size={30} />
           </div>
@@ -319,6 +302,7 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
                 >
                   <img
                     src={asset.barcode}
+                    alt="barcode"
                     style={{ height: "70px", width: "90px" }}
                   />
                 </div>
@@ -340,10 +324,11 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
                 {asset.in_use ? (
                   <img
                     src={correct}
+                    alt="correct"
                     style={{ width: "22px", height: "22px" }}
                   />
                 ) : (
-                  <img src={cross} style={{ width: "22px", height: "22px" }} />
+                  <img src={cross} alt="cross" style={{ width: "22px", height: "22px" }} />
                 )}
               </td>
               <td>{asset.no_of_usage}</td>
@@ -351,10 +336,11 @@ const AssetsDataFormat = ({ data, data1, can_delete }) => {
                 {asset.is_damaged ? (
                   <img
                     src={correct}
+                    alt="correct1"
                     style={{ width: "22px", height: "22px" }}
                   />
                 ) : (
-                  <img src={cross} style={{ width: "22px", height: "22px" }} />
+                  <img src={cross} alt="cross1" style={{ width: "22px", height: "22px" }} />
                 )}
               </td>
               <td>{toTitleCase(asset.created_branch_n)}</td>            

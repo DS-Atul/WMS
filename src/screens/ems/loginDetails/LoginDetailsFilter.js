@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-// import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { setFilterA, setFilterB } from "../../../store/filterValue/FilterValue";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import MultiSelect from "../../../components/formComponent/multiSelect/MultiSelect";
@@ -38,7 +37,6 @@ function LoginDetailsFilter() {
 
   const getLoginDetails = () => {
     let temp = [];
-    let temp_list = [];
     axios
       .get(
         ServerAddress +

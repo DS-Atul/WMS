@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
-import { FiSquare, FiCheckSquare, FiX, FiTarget } from "react-icons/fi";
+import { FiSquare, FiCheckSquare, FiX } from "react-icons/fi";
 import "../../../assets/scss/forms/form.scss";
 import { IconContext } from "react-icons";
 import { Input } from "reactstrap";
 // import { setIsSearch, setSearchItem } from "../../../store/searchBar/SearchBar";
-import { useDispatch } from "react-redux";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 const MultiSelect = ({
   list_a,
-  setlist_a,
   setlist_b,
   show_search = true,
   setlist_id,
@@ -24,7 +22,7 @@ const MultiSelect = ({
   setbottom,
   count=1,
 }) => {
-  const dispatch = useDispatch();
+
   const [selected_a, setselected_a] = useState([]);
   const [data, setdata] = useState(false);
   const [multidata, setmultidata] = useState(false);
@@ -49,7 +47,7 @@ const MultiSelect = ({
             cursor: "default",
           }}
           onClick={() => {
-            setselected(selected.filter((val) => val != name));
+            setselected(selected.filter((val) => val !== name));
             setmultidata(false);
           }}
         >
@@ -83,7 +81,7 @@ const MultiSelect = ({
   }, [selected_a.length >= 2]);
 
   useLayoutEffect(() => {
-    if (multidata == true) {
+    if (multidata === true) {
       setselected_a(list_a);
     } else {
       setselected_a(selected_a);
@@ -122,7 +120,7 @@ const MultiSelect = ({
     <>
       <div
         // className="d-flex flex-wrap"
-        style={{ height: showfilter == true ? "210px" : "" }}
+        style={{ height: showfilter === true ? "210px" : "" }}
       >
         <button
           type="button"
@@ -201,7 +199,7 @@ const MultiSelect = ({
           </div>
         </button>
 
-        {showfilter == true && (
+        {showfilter === true && (
           <>
             {show_search === true && (
               <div
@@ -228,7 +226,7 @@ const MultiSelect = ({
                   }}
                   style={{ paddingTop: "5px", width: "8%" }}
                 >
-                  {multidata == true ? (
+                  {multidata === true ? (
                     <FiCheckSquare size={18} style={{ margin: "5px 5px" }} />
                   ) : (
                     <FiSquare size={18} style={{ margin: "5px 5px" }} />
@@ -277,13 +275,13 @@ const MultiSelect = ({
               onScroll={() => {
                 console.log("bottom-------",bottom)
                 console.log("-----", ref.current.scrollTop)
-                if (ref.current.scrollTop > bottom - count && loaded && type == "backend") {
+                if (ref.current.scrollTop > bottom - count && loaded && type === "backend") {
                   setpage(page + 1);
                   setbottom(bottom + 235);
                 }
               }}
             >
-              {search_a != ""
+              {search_a !== ""
                 ? filter_a.map((item, index) =>
                     getselected(selected_a, setselected_a, item, index)
                   )

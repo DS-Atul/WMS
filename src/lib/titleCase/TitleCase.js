@@ -5,7 +5,7 @@ const toTitleCase = (strng) => {
     let clean_list = [];
     for (let index = 0; index < strg.length; index++) {
       const element = strg[index];
-      if (element != "") {
+      if (element !== "") {
         clean_list.push(element);
       }
     }

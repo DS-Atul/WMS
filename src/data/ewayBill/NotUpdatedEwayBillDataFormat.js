@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import axios from "axios";
 import { ServerAddress } from "../../constants/ServerAddress";
@@ -22,12 +21,11 @@ import {
   setDataExist,
   setShowAlert,
 } from "../../store/alert/Alert";
-import toTitleCase from "../../lib/titleCase/TitleCase";
 
 // import { saveAs } from 'file-saver';
 
 const NotUpdatedEwayBillDataFormat = ({ data, data1, can_delete }) => {
-    console.log("dataaaaaaaaaa",data)
+  console.log("dataaaaaaaaaa", data)
   const dispatch = useDispatch();
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -72,7 +70,6 @@ const NotUpdatedEwayBillDataFormat = ({ data, data1, can_delete }) => {
   const close = useSelector((state) => state.datalist.close);
   const select_all = useSelector((state) => state.datalist.select_all);
   const delete_id = useSelector((state) => state.datalist.delete_id);
-  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
   const [selected, setselected] = useState([]);
   const handlefunn = (id) => {
     if (selected.includes(id)) {
@@ -145,66 +142,61 @@ const NotUpdatedEwayBillDataFormat = ({ data, data1, can_delete }) => {
     }
   }, [index]);
 
-  //Permission
-  const userpermission = useSelector(
-    (state) => state.authentication.userpermission
-  );
+  //For Modal
+  const [ewaypartb_id, setewaypartb_id] = useState("")
+  const [eway_no, seteway_no] = useState("")
+  console.log("ewaypartb_id=====", ewaypartb_id)
+  const [show, setShow] = useState(false);
 
-//For Modal
-const [ewaypartb_id, setewaypartb_id] = useState("")
-const [eway_no, seteway_no] = useState("")
-console.log("ewaypartb_id=====", ewaypartb_id)
-const [show, setShow] = useState(false);
-
-const handleClose = () => {
-  setewaypartb_id("")
-  setShow(false);
-}
-const handleShow = (e,val) =>{
-  seteway_no(val)
-  setewaypartb_id(e)
-  setShow(true);
-} 
-
-const update_partb = async () => {
-
-  try {
-    const response = await axios.put(
-      ServerAddress + "analytic/update_partb/" + ewaypartb_id,
-      {
-        is_updated: true,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    if (response.data.status === "success") {
-      dispatch(setToggle(true));
-      dispatch(
-        setDataExist(`"${eway_no}" Updated Sucessfully`)
-      );
-      dispatch(setAlertType("info"));
-      dispatch(setShowAlert(true));
-      setShow(false);
-    } else {
-      dispatch(setShowAlert(true));
-      dispatch(
-        setDataExist(
-          `Some Thing Went Wrong`
-        )
-      );
-      dispatch(setAlertType("warning"));
-      setShow(false);
-    }
-  } catch (error) {
-    alert("Error Error While Updateing branches");
+  const handleClose = () => {
+    setewaypartb_id("")
+    setShow(false);
   }
-};
-useEffect(() => {
-  dispatch(setToggle(false));
-}, [success])
+  const handleShow = (e, val) => {
+    seteway_no(val)
+    setewaypartb_id(e)
+    setShow(true);
+  }
+
+  const update_partb = async () => {
+
+    try {
+      const response = await axios.put(
+        ServerAddress + "analytic/update_partb/" + ewaypartb_id,
+        {
+          is_updated: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (response.data.status === "success") {
+        dispatch(setToggle(true));
+        dispatch(
+          setDataExist(`"${eway_no}" Updated Sucessfully`)
+        );
+        dispatch(setAlertType("info"));
+        dispatch(setShowAlert(true));
+        setShow(false);
+      } else {
+        dispatch(setShowAlert(true));
+        dispatch(
+          setDataExist(
+            `Some Thing Went Wrong`
+          )
+        );
+        dispatch(setAlertType("warning"));
+        setShow(false);
+      }
+    } catch (error) {
+      alert("Error Error While Updateing branches");
+    }
+  };
+  useEffect(() => {
+    dispatch(setToggle(false));
+  }, [success])
 
   return (
     <>
@@ -218,8 +210,8 @@ useEffect(() => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={()=>update_partb()}>
-           Update
+          <Button variant="primary" onClick={() => update_partb()}>
+            Update
           </Button>
         </Modal.Footer>
       </Modal>
@@ -230,17 +222,17 @@ useEffect(() => {
         </tr>
       ) : (
         (list_toggle === true ? data1 : data).map((ewaybill, index) => {
-            var time = new Date(ewaybill.valid_upto).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
-            var crtime = new Date(ewaybill.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+          var time = new Date(ewaybill.valid_upto).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
+          var crtime = new Date(ewaybill.created_at).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
           return (
-            
+
             <tr
               key={index}
               style={{
                 borderWidth: 1,
               }}
             >
-         {(can_delete || user.is_superuser) && (
+              {(can_delete || user.is_superuser) && (
                 <td
                   className="selection-cell"
                   onClick={() => {
@@ -256,7 +248,7 @@ useEffect(() => {
                     <FiSquare size={14} />
                   )}
                 </td>
-         ) }             
+              )}
               <td>{ewaybill.ewb_no}</td>
               <td>{ewaybill.docket_no}</td>
               <td>{ewaybill.ewb_id}</td>
@@ -264,22 +256,22 @@ useEffect(() => {
               <td>{time}</td>
               <td>{crtime}</td>
               <td>
-                  {ewaybill.is_updated ? (
-                    <div>
-                      <img src={correct} width="18" height="18" />
-                    </div>
-                  ) : (
-                    <div>
-                      <img src={cross} width="18" height="18" />
-                    </div>
-                  )}
-                </td>
+                {ewaybill.is_updated ? (
+                  <div>
+                    <img src={correct} alt="correct" width="18" height="18" />
+                  </div>
+                ) : (
+                  <div>
+                    <img src={cross} alt="cross" width="18" height="18" />
+                  </div>
+                )}
+              </td>
               <td>
-                <Button size="sm" variant="success" onClick={()=>{
-                    handleShow(ewaybill.id, ewaybill.ewb_no)
+                <Button size="sm" variant="success" onClick={() => {
+                  handleShow(ewaybill.id, ewaybill.ewb_no)
                 }}>Updated</Button>
               </td>
-             
+
             </tr>
           );
         })

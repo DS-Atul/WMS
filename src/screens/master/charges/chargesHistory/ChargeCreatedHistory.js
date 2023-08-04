@@ -1,11 +1,10 @@
-import React,{useState,useLayoutEffect} from 'react';
-import {Col,Card,CardTitle,CardBody} from "reactstrap";
+import React, { useState, useLayoutEffect } from 'react';
+import { Col, Card, CardTitle, CardBody } from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css"
 
 
-const ChargeCreatedHistory = ({page_data}) => {
+const ChargeCreatedHistory = ({ page_data }) => {
 
-    console.log("page",page_data)
   const [charge_data, setcharge_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -14,18 +13,16 @@ const ChargeCreatedHistory = ({page_data}) => {
     if (p_data) {
       setuser_name(p_data.name_r)
 
-let data = p_data.change_message;
-let n_data = JSON.parse(data)
-setcharge_data(n_data);      
+      let data = p_data.change_message;
+      let n_data = JSON.parse(data)
+      setcharge_data(n_data);
     }
   }, [page_data])
 
-  console.log("Carge data====>>",charge_data);
-
-  let time = new Date(charge_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+  let time = new Date(charge_data.created_at).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
 
   return (
-<>
+    <>
       <Col lg={12} md={12} sm={12}>
         <div>
           <Card
@@ -65,8 +62,8 @@ setcharge_data(n_data);
           </Card>
         </div>
       </Col>
-     
-    </>  )
+
+    </>)
 }
 
 export default ChargeCreatedHistory

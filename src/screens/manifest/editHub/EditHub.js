@@ -23,15 +23,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-
-import TransferList from "../../../components/formComponent/transferList/TransferList";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setAlertType,
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
@@ -40,14 +37,13 @@ import AddAnotherOrder from "./AddAnotherOrder";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 
 const EditHub = () => {
-  const user = useSelector((state) => state.authentication.userdetails);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const search = useSelector((state) => state.searchbar.search_item);
   const [page, setpage] = useState(1);
   const [refresh, setrefresh] = useState("false");
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("location_data--------hub-", location_data)
+  // console.log("location_data--------hub-", location_data)
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const navigate = useNavigate();
   const [hub_data, sethub_data] = useState([])

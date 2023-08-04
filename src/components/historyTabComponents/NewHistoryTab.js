@@ -7,7 +7,6 @@ import {
   Card,
   CardBody,
   CardText,
-  CardTitle,
   Col,
   Nav,
   NavItem,
@@ -16,12 +15,9 @@ import {
   TabContent,
   TabPane,
 } from "reactstrap";
-
-import toTitleCase from "../../lib/titleCase/TitleCase";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { ServerAddress } from "../../constants/ServerAddress";
-import BranchHistoryPage from "../../screens/master/branches/branchHistory/BranchHistoryPage";
 
 const NewHistoryTab = ({
   Page,

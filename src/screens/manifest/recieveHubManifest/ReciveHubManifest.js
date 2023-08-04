@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Card, Col, Row, CardBody, CardTitle, Label, Input, FormFeedback } from "reactstrap";
 import Modal from "react-bootstrap/Modal";
@@ -10,8 +10,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
+import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setAlertType,
   setDataExist,
@@ -21,13 +20,8 @@ import {
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
-import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Question from "../../../assets/images/bookings/question.png";
-import BreakManifest from "../../../data/manifests/recieveManifest/BreakManifest";
-import RecieveDataFormat from "../../../data/manifests/recieveManifest/RecieveManifestFormat";
-import { setFuther_conn_id, setGoing_hub_id, setLoaded, setOrder_id } from "../../../store/manifest/RecieveManifest";
-import RecieveHubDataFormat from "../../../data/manifests/recieveHubManifest/RecieveHubManifestFormat";
-import BreakHubManifest from "../../../data/manifests/recieveHubManifest/BreakHubManifest";
+import { setLoaded, setOrder_id } from "../../../store/manifest/RecieveManifest";
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import { gstin_no } from "../../../constants/CompanyDetails";
 import UpateEwaybillPartB from "../../authentication/signin/UpateEwaybillPartB";
@@ -45,7 +39,7 @@ const RecieveHubManifest = ({ depart }) => {
   const [refresh, setrefresh] = useState(false);
   const [is_issuerec, setis_issuerec] = useState(false);
   const [receivedrec, setReceivedrec] = useState([]);
-  console.log("receivedrec----", receivedrec)
+  // console.log("receivedrec----", receivedrec)
   // const [notReceivedrec, setNotReceivedrec] = useState([]);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const success = useSelector((state) => state.alert.show_alert);
@@ -54,7 +48,7 @@ const RecieveHubManifest = ({ depart }) => {
   const location_data = useLocation();
   const navigate = useNavigate();
   const order_id = useSelector((state) => state.manifest.order_id);
-  console.log("location_data--location_data-Hub-", location_data)
+  // console.log("location_data--location_data-Hub-", location_data)
   const issue_id = useSelector((state) => state.manifest.issueorder_id);
   const loaded = useSelector((state) => state.manifest.loaded);
   const [isLoading, setIsLoading] = useState(false);
@@ -147,7 +141,7 @@ const RecieveHubManifest = ({ depart }) => {
   const [mn_barcode, setmn_barcode] = useState([]);
   useEffect(() => {
 
-    console.log("hello ji pass check", location_data.state.hub.mn_barcode);
+    // console.log("hello ji pass check", location_data.state.hub.mn_barcode);
     if (location_data.state.hub.mn_barcode) {
       setmn_barcode(location_data.state.hub.mn_barcode);
     }
@@ -277,7 +271,7 @@ const RecieveHubManifest = ({ depart }) => {
   for (let index = 0; index < data.length; index++) {
     const element = data[index]?.docket_no;
     docket_no_list.push(element)
-    console.log("docket_no_list hub-------", docket_no_list)
+    // console.log("docket_no_list hub-------", docket_no_list)
   }
 
   useEffect(() => {
@@ -300,7 +294,7 @@ const RecieveHubManifest = ({ depart }) => {
         }
       )
       .then((res) => {
-        console.log("resres----", res);
+        // console.log("resres----", res);
         if (res?.data?.length !== 0) {
           setEwayBillData(res.data);
         }
@@ -339,7 +333,7 @@ const RecieveHubManifest = ({ depart }) => {
     }
     // Rest of your code...
   }, [EwayBillData, vehicle_no]);
-  console.log("EwayBillData-----", EwayBillData)
+  // console.log("EwayBillData-----", EwayBillData)
 
   useEffect(() => {
 

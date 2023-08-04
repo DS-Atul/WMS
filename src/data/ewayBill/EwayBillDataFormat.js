@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import axios from "axios";
 import { ServerAddress } from "../../constants/ServerAddress";
@@ -18,14 +17,12 @@ import {
   setDataExist,
   setShowAlert,
 } from "../../store/alert/Alert";
-import toTitleCase from "../../lib/titleCase/TitleCase";
-import { Button } from "react-bootstrap";
 import { gstin_no } from "../../constants/CompanyDetails";
 import FileSaver from 'file-saver';
 // import { saveAs } from 'file-saver';
 
 const EwayDocDataFormat = ({ data, data1, can_delete }) => {
-  console.log("dataaaaaaaaaa", data)
+  // console.log("dataaaaaaaaaa", data)
   const dispatch = useDispatch();
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -135,10 +132,7 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
     }
   }, [index]);
 
-  //Permission
-  const userpermission = useSelector(
-    (state) => state.authentication.userpermission
-  );
+  
   // const [can_update, setcan_update] = useState(false);
 
   // useEffect(() => {
@@ -245,7 +239,7 @@ const EwayDocDataFormat = ({ data, data1, can_delete }) => {
               </td> */}
               <td>
                 <div style={{cursor:"pointer"}}>
-                  <img src={pdf} width="18" height="18" onClick={() => {
+                  <img src={pdf} alt="pdf" width="18" height="18" onClick={() => {
                   downloadEwayBill(ewaybill.ewb_no);
                 }}/>
                 </div>

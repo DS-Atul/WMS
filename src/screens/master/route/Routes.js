@@ -16,18 +16,12 @@ import Navigate from "../navigateTab/Navigate";
 
 const Routes = () => {
   const dispatch = useDispatch();
-  const toggle = useSelector((state) => state.parentfilter.toggle);
   const user = useSelector((state) => state.authentication.userdetails);
   const name = useSelector((state) => state.filtervalue.data_a);
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
   const cm_value = useSelector((state) => state.datalist.cm_filter);
-
-  // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
 
   let is_superuser = useSelector(
     (state) => state.authentication.userdetails.is_superuser

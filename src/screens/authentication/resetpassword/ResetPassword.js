@@ -49,8 +49,8 @@ const Reset_Password = () => {
         }
       )
       .then(function (response) {
-        console.log("Pass Reset------", response.data)
-        if (response.data == "Password Reset Successfully") {
+        // console.log("Pass Reset------", response.data)
+        if (response.data === "Password Reset Successfully") {
           seterror(false);
           navigate("/signin");
         } else {

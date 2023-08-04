@@ -1,9 +1,9 @@
-import React ,{useState, useEffect, useLayoutEffect} from 'react';
-import {Col,Card,CardTitle,CardBody} from "reactstrap";
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { Col, Card, CardTitle, CardBody } from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
-const CommodityCreatedHistory = ({page_data}) => {
-  console.log("page",page_data)
+const CommodityCreatedHistory = ({ page_data }) => {
+  // console.log("page",page_data)
   const [commodity_data, setcommodity_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -12,19 +12,19 @@ const CommodityCreatedHistory = ({page_data}) => {
     if (p_data) {
       setuser_name(p_data.name_r)
 
-let data = p_data.change_message;
-let n_data = JSON.parse(data)
-setcommodity_data(n_data);      
+      let data = p_data.change_message;
+      let n_data = JSON.parse(data)
+      setcommodity_data(n_data);
     }
   }, [page_data])
 
-  console.log("COmmodity  History data",commodity_data);
+  // console.log("COmmodity  History data",commodity_data);
   // console.log("COmmodity data",user_name);
-  let time = new Date(commodity_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
-  
-  
+  let time = new Date(commodity_data.created_at).toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
+
+
   return (
-<>
+    <>
       <Col lg={12} md={12} sm={12}>
         <div>
           <Card
@@ -64,9 +64,9 @@ setcommodity_data(n_data);
           </Card>
         </div>
       </Col>
-     
+
     </>
-   )
+  )
 }
 
 export default CommodityCreatedHistory

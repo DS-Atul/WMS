@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../../../assets/scss/filters/filter.scss";
-import { useSelector } from "react-redux";
-import { ServerAddress } from "../../../constants/ServerAddress";
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { Form, Label,Col, Row  } from "reactstrap";
 import { setFilterA } from "../../../store/filterValue/FilterValue";
@@ -10,10 +7,7 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 
 function NotUpdatedFilter() {
   const dispatch = useDispatch();
-  const accessToken = useSelector((state) => state.authentication.access_token);
   // Additional Fields
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
   const [user_active_btn, setuser_active_btn] = useState(["True", "False"]);
 
 useEffect(() => {

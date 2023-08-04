@@ -1,7 +1,5 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
 import "../../assets/scss/forms/form.scss";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { IconContext } from "react-icons";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -52,9 +50,6 @@ const ChangedRusheet = () => {
   const business_access_token = useSelector((state) => state.eway_bill.business_access_token);
   const userDetail = useSelector((state) => state.authentication.userdetails);
   const success = useSelector((state) => state.alert.show_alert);
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
-  const search = useSelector((state) => state.searchbar.search_item);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user = useSelector((state) => state.authentication.userdetails);
   const location = useLocation();
@@ -62,7 +57,7 @@ const ChangedRusheet = () => {
   const [isupdating, setisupdating] = useState(false);
   const navigate = useNavigate();
   const [runsheet, setrunsheet] = useState([]);
-  console.log("runsheet-------", runsheet)
+  // console.log("runsheet-------", runsheet)
   const [runsheet_orders, setrunsheet_orders] = useState([])
   //Vehicle
 
@@ -147,7 +142,7 @@ const ChangedRusheet = () => {
           setdriver_loaded(true);
         }
         if (response.data.results.length > 0) {
-          if (driver_page == 1) {
+          if (driver_page === 1) {
             driver_lists = response.data.results.map((v) => [
               v.id,
               toTitleCase(v.username),
@@ -187,7 +182,7 @@ const ChangedRusheet = () => {
           setroute_loaded(true);
         }
         if (response.data.results.length > 0) {
-          if (route_page == 1) {
+          if (route_page === 1) {
             route_lists = response.data.results.map((v) => [
               v.id,
               toTitleCase(v.name),
@@ -229,7 +224,7 @@ const ChangedRusheet = () => {
           setvehicle_loaded(true);
         }
         if (resp.data.results.length > 0) {
-          if (vehicle_page == 1) {
+          if (vehicle_page === 1) {
             vehicle_list = resp.data.results.map((v) => [
               v.id,
               v.vehcile_no,
@@ -269,7 +264,7 @@ const ChangedRusheet = () => {
       const ele = fields_names[j];
       let prev = location.state.runsheet[`${ele[0]}`];
       let new_v = ele[1];
-      if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
@@ -457,7 +452,7 @@ const ChangedRusheet = () => {
 
 
   const handleSubmit2 = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     } else {
       update_runsheetstatus(runsheet.id);

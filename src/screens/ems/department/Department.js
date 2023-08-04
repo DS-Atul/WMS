@@ -5,23 +5,16 @@ import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import { setPageNumber } from "../../../store/pagination/Pagination";
-// import Filter from "../../../components/listDisplay/filter/Filter";
 import Nav_Btn from "../../../components/btn/NavBtn";
+// import NAV_BTN from "../../../components/btn/NavBtn"; add this line warning is removed, Imported JSX component Nav_Btn must be in PascalCase or SCREAMING_SNAKE_CASE
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
-// import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import DepartmentsDataTitle from "../../../data/ems/departments/DepartmentsDataTitle";
 import DepartmentsDataFormat from "../../../data/ems/departments/DepartmentsDataFormat";
 
 const Users = () => {
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
-  // const toggle = useSelector((state) => state.parentfilter.toggle);
-  // const home_branch = useSelector((state) => state.filtervalue.data_a);
   const search = useSelector((state) => state.searchbar.search_item);
-  // const username = useSelector((state) => state.filtervalue.data_b);
-  // const user_permissions = useSelector(
-  //   (state) => state.permissions.user_permissions
-  // );
   const dispatch = useDispatch();
 
   return (
@@ -40,7 +33,7 @@ const Users = () => {
                 onClick={() => dispatch(setPageNumber(1))}
               >
                 {/* {user_permissions.includes('Can add locations') || is_superuser &&( */}
-                <Nav_Btn
+                <Nav_Btn        //   <NAV_BTN,       Imported JSX component Nav_Btn must be in PascalCase or SCREAMING_SNAKE_CASE
                   btn_name="Add Department"
                   // icon={<MdAdd size={20}/>}
                   form_path="/ems/department/adddepartment"

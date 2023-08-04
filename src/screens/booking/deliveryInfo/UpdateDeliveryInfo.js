@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IconContext } from "react-icons";
@@ -20,7 +20,6 @@ import {
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { setToggle } from "../../../store/pagination/Pagination";
 import {
   setAlertType,
   setDataExist,
@@ -30,20 +29,16 @@ import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { Button } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
-import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
-import * as XLSX from "xlsx";
 import ImgModal from "../../../components/crop/ImgModal";
 import Loader from "../../../components/loader/Loader";
 const UpdateDeliveryInfo = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authentication.userdetails);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const userdepartment = useSelector(
-    (state) => state.authentication.userdepartment
-  );
+ 
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("location----", location)
+  // console.log("location----", location)
   const [delivery_data, setdelivery_data] = useState([])
   const [result_img, setresult_img] = useState("")
   const [vehcile_img_error, setvehcile_img_error] = useState(false);
@@ -54,7 +49,6 @@ const UpdateDeliveryInfo = () => {
   const [sig_modal, setsig_modal] = useState(false);
   const [result_sig_img, setresult_sig_img] = useState("")
   const [signature_error, setsignature_error] = useState(false);
-  const [uploaded_sig_img, setuploaded_sig_img] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const validation = useFormik({
     enableReinitialize: true,
@@ -89,7 +83,7 @@ const UpdateDeliveryInfo = () => {
       const ele = fields_names[j];
       let prev = delivery_data[`${ele[0]}`];
       let new_v = ele[1];
-      if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
@@ -130,7 +124,7 @@ const UpdateDeliveryInfo = () => {
         alert(`rror While  Updateing Coloader ${err}`);
       });
   };
-  console.log("location-----", location)
+  // console.log("location-----", location)
 
   useEffect(() => {
     try {
@@ -205,7 +199,7 @@ const UpdateDeliveryInfo = () => {
   };
 
   const handleSubmit = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     }
     else {
@@ -424,6 +418,7 @@ const UpdateDeliveryInfo = () => {
                           <img
                             onClick={() => setmodal(true)}
                             src={result_img}
+                            alt="result_img"
                             style={{
                               width: "95px",
                               height: "95px",
@@ -497,6 +492,7 @@ const UpdateDeliveryInfo = () => {
                           <img
                             onClick={() => setsig_modal(true)}
                             src={result_sig_img}
+                            alt="result_sig_img"
                             style={{
                               width: "95px",
                               height: "95px",

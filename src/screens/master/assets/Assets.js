@@ -34,13 +34,13 @@ const Assets = () => {
   const search = useSelector((state) => state.searchbar.search_item);
 
   // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
+  // const user_permissions = useSelector(
+  //   (state) => state.permissions.user_permissions
+  // );
 
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
+  // let is_superuser = useSelector(
+  //   (state) => state.authentication.userdetails.is_superuser
+  // );
 
   useEffect(() => {
     dispatch(setToggle(false));

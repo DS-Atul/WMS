@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { useLocation } from 'react-router-dom';
-import HistoryTab from '../../../../components/historyTabComponents/HistoryTab';
 import NumPagination from '../../../../components/listDisplay/numPagination/NumPagination';
 import BranchHistoryTableFormate from "./BranchHistoryTableFormate";
 import BranchHistoryTableTitle from "./BranchHistoryTableTitle";

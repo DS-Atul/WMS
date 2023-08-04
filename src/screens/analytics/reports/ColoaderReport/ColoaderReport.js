@@ -15,7 +15,6 @@ const ColoaderReport = () => {
     const [branch, setbranch] = useState([]);
     const [from_date, setfrom_date] = useState("");
     const [to_date, setto_date] = useState("");
-    const username = useSelector((state) => state.filtervalue.data_b);
     const [selected_details_report_data, setselected_details_report_data] =
     useState([]);
     

@@ -1,14 +1,13 @@
 import axios from "axios";
 import React, { useState, useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Col, Input, Button, Label, Table } from "reactstrap";
+import { useNavigate } from "react-router-dom";
+import { Col, Input, Button, Table } from "reactstrap";
 import * as XLSX from "xlsx";
 import { ServerAddress } from "../../../constants/ServerAddress";
 
 const ImportLocalAssoData = () => {
   const navigate = useNavigate();
-  const { state: up_params } = useLocation();
 
   // on change states
   const [excelFile, setExcelFile] = useState(null);
@@ -16,10 +15,6 @@ const ImportLocalAssoData = () => {
 
   //map the data list of excel app
   let mtarr = [];
-  let add_data = [];
-
-  let otherColumns = {};
-  let other_data = {};
 
   // FOr Table
   const [local_datalisttmp, setlocal_datalisttmp] = useState([]);
@@ -306,12 +301,12 @@ const ImportLocalAssoData = () => {
 
               <tbody>
                 {local_datalisttmp.map((itm, idx) => {
-                  console.log("itm", itm[0][0], itm[0][0][0] == "");
+                  console.log("itm", itm[0][0], itm[0][0][0] === "");
                   return (
                     <tr
                       key={idx}
                       // style={{backgroundColor: itm[0][0][0] ==''? 'red' : '' }}
-                      className={itm[0][0][0] == "" ? "table-danger" : ""}
+                      className={itm[0][0][0] === "" ? "table-danger" : ""}
                     >
                       <td>{idx + 1}</td>
 

@@ -15,20 +15,10 @@ import IncomingTab from "../navigateTab/IncomingTab";
 const IncomingHub = () => {
   const dispatch = useDispatch();
 
-
   // // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
-
-  // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
-
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
 
   useEffect(() => {
     dispatch(setToggle(false));

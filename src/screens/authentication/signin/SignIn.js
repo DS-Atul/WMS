@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  Button,
   Row,
   Col,
   CardBody,
@@ -24,14 +23,12 @@ import axios from "axios";
 // Formik validation
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setAccessToken,
   setLoginID,
   setRefreshToken,
   setUserDetails,
-  setUserPass,
   setUsername,
   setUserPermission,
 } from "../../../store/authentication/Authentication";
@@ -62,7 +59,6 @@ const SignIn = () => {
 
   const userData = useSelector((state) => state.authentication.userdetails);
   const e_acess_token = useSelector((state) => state.eway_bill.e_access_token);
-  const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
 
   const [showPass, setshowPass] = useState(false);
   const [error, seterror] = useState(false);
@@ -147,8 +143,8 @@ const SignIn = () => {
         }
       )
       .then(function (response) {
-        console.log("response-------eway bill step 1", response.data.response);
-        console.log("token", response.data);
+        // console.log("response-------eway bill step 1", response.data.response);
+        // console.log("token", response.data);
         dispatch(setEAccessToken(response.data.response.token));
         dispatch(setOrgs(response.data.response.orgs));
       })
@@ -174,8 +170,8 @@ const SignIn = () => {
         }
       )
       .then(function (response) {
-        console.log("responseblogin", response.data);
-        console.log("token", response.data.response.token);
+        // console.log("responseblogin", response.data);
+        // console.log("token", response.data.response.token);
         dispatch(setBusinesssAccessToken(response.data.response.token));
       })
       .catch((error) => {
@@ -258,7 +254,7 @@ const SignIn = () => {
         password: password,
       })
       .then(function (response) {
-        console.log("sign in resp", response);
+        // console.log("sign in resp", response);
         dispatch(setUsername(username));
         if (response.status === 200) {
           // setusername(username);

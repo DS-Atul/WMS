@@ -1,6 +1,6 @@
 import React, { useState, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Col, Input, Button, Label } from "reactstrap";
+import { Col, Input, Button } from "reactstrap";
 import * as XLSX from "xlsx";
 
 const ImportCityData = () => {
@@ -65,12 +65,9 @@ const ImportCityData = () => {
 
   //map the data list of excel app
   let mtarr = [];
-  let add_data = [];
-
   let cc_head_list = [];
   let Ncc_head_list = [];
   let otherColumns = {};
-  let other_data = {};
 
   if (excelData !== null) {
     excelData.forEach((element) => {
@@ -127,7 +124,6 @@ const ImportCityData = () => {
   const [datalist, setdatalist] = useState();
 
   useLayoutEffect(() => {
-    let list = [];
     if (excelData !== null) {
       excelData.forEach((element) => {
         // for(let i=0 ; i < excelData.length ; i++) {

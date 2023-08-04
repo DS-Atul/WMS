@@ -8,7 +8,6 @@ import ChargeHistoryTableTitle from './ChargeHistoryTableTitle'
 const ChargeHistoryPage = () => {
 
   const location = useLocation();
-  console.log(location);
   const [charge_id, setcharge_id] = useState(location.state.charge.id);
   return (
 <>

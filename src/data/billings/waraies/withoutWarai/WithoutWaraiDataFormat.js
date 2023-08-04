@@ -1,11 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Button, Label } from "reactstrap";
 import toTitleCase from "../../../../lib/titleCase/TitleCase";
 import WithoutWaraiDataTitle from "./WithoutWaraiDataTitle";
 
 const WithoutWaraiDataFormat = ({ wow_ords_list, check }) => {
-  const search = useSelector((state) => state.searchbar.search_item);
 
   return (
     <div className="table">

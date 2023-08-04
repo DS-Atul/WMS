@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { BiUserCircle } from "react-icons/bi";
 // import { setNumber } from '../../../store/Components/Data_List/action';
 // import { setDataLength, setPageNumber } from '../../../store/Components/Pagination/action';
 // import { setManifestTab } from '../../../store/parentFilter/ParentFilter';
@@ -12,8 +10,8 @@ import {
   DropdownItem,
 } from "reactstrap";
 import { setCmFilter } from '../../../store/dataList/DataList';
+
 const Navigate = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   // const number = useSelector(state => state.data_list.number);
   // const [order_active_btn, setorder_active_btn] = useState(1);

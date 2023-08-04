@@ -2,9 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import pdf from "../../../assets/images/Pdf/printer.png";
-import correct from "../../../assets/images/bookings/check-mark.png";
-import cross from "../../../assets/images/bookings/remove.png";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import {
@@ -21,10 +18,9 @@ import {
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { ServerAddress } from "../../../constants/ServerAddress";
-import { HashLink } from "react-router-hash-link";
 const AirportOrderDataFormat = ({ data, data1 }) => {
 
-console.log("Airport Data====",data);
+// console.log("Airport Data====",data);
 
 
   // Permissions

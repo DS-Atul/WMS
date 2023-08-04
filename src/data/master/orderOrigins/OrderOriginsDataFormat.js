@@ -29,26 +29,19 @@ const OrderOriginsDataFormat = ({ data, data1, can_delete }) => {
 
   const dispatch = useDispatch();
 
-  const searchData = useSelector((state) => state.searchbar.search_item);
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
   const user = useSelector((state) => state.authentication.userdetails);
 
   //Multi Delete function
   const close = useSelector((state) => state.datalist.close);
   const select_all = useSelector((state) => state.datalist.select_all);
-  const select = useSelector((state) => state.datalist.select);
   const delete_id = useSelector((state) => state.datalist.delete_id);
 
   const [selected, setselected] = useState([]);
 
   const ids = useSelector((state) => state.datalist.ids);
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
-
   const [click, setclick] = useState(true);
 
   const deletecustomer = (id) => {
@@ -133,7 +126,7 @@ const OrderOriginsDataFormat = ({ data, data1, can_delete }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       deletecustomer(ids);
     }
   }, [delete_id]);
@@ -142,13 +135,13 @@ const OrderOriginsDataFormat = ({ data, data1, can_delete }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("name"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("city_name"));
-    } else if (index == 2) {
+    } else if (index === 2) {
       dispatch(setIndexValue("billto_name"));
-    } else if (index == 3) {
+    } else if (index === 3) {
       dispatch(setIndexValue("client_name"));
     }
   }, [index]);

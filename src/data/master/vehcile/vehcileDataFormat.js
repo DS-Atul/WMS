@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
@@ -26,6 +26,7 @@ import correct from "../../../assets/images/bookings/check-mark.png";
 import cross from "../../../assets/images/bookings/remove.png";
 
 const VehcileDataFormat = ({ data, data1, can_delete }) => {
+
   console.log("data---", data)
   // Permissions
   const dispatch = useDispatch();
@@ -33,7 +34,6 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const list_toggle = useSelector((state) => state.datalist.list_toggle);
-  const user = useSelector((state) => state.authentication.userdetails);
 
   //Multi Delete function
   const close = useSelector((state) => state.datalist.close);
@@ -128,7 +128,7 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       delete_vehicle(ids);
     }
   }, [delete_id]);
@@ -137,15 +137,15 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("vehcile_no"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("organization_name"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("vehcile_type"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("vehcile_model"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("vehcile_status"));
     }
   }, [index]);
@@ -243,10 +243,10 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
               <td>{toTitleCase(vehcile.vehcile_model)}</td>
               <td>{vehcile.vehcile_status ?
                 <div>
-                  <img src={correct} height="18px" width="18px" />
+                  <img src={correct} alt="correct" height="18px" width="18px" />
                 </div> :
                 <div>
-                  <img src={cross} height="18px" width="18px" />
+                  <img src={cross} alt="cross" height="18px" width="18px" />
                 </div>
               }</td>
 
@@ -255,7 +255,7 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
                   handle_img(vehcile.image);
                   setopenModal(true)
                 }}>
-                  <img src={vehcile.image} height="70px" width="70px"
+                  <img src={vehcile.image} alt="vehicle_image" height="70px" width="70px"
 
                   />
                 </div>

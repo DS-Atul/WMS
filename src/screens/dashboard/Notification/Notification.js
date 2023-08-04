@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 // import MetaTags from 'react-meta-tags';
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 // import Dropzone from "react-dropzone";
 import "../../../assets/scss/forms/form.scss";
 import { IconContext } from "react-icons";
@@ -11,7 +11,6 @@ import SearchInput from "../../../components/formComponent/searchInput/SearchInp
 import * as Yup from "yup";
 import axios from "axios";
 //Import Date Picker
-
 
 import {
   Card,
@@ -35,19 +34,18 @@ import {
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-import { useLocation, useNavigate } from "react-router-dom";
-import PageTitle from "../../../components/pageTitle/PageTitle";
-import Title from "../../../components/title/Title";
+import { useNavigate } from "react-router-dom";
+// import PageTitle from "../../../components/pageTitle/PageTitle";
+// import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
 // import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
 import { MdAdd, MdDeleteForever } from "react-icons/md";
-import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
-import { FiCheckSquare, FiSquare } from "react-icons/fi";
+// import MultiRowSearchInput from "../../../components/formComponent/multiRowSearchInput/MultiRowSearchInput";
+// import { FiCheckSquare, FiSquare } from "react-icons/fi";
 
 function Notification() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location_data = useLocation();
 
   const [startDate, setstartDate] = useState(new Date());
   const [refresh, setrefresh] = useState(false);
@@ -62,7 +60,6 @@ function Notification() {
   };
   //  Client details
   const [client, setclient] = useState({});
-  const [timeline_btn, settimeline_btn] = useState("first");
   const [package_id_list, setpackage_id_list] = useState([]);
   const [comment, setcomment] = useState("")
   let dimension_list = ["", "", "", ""];
@@ -116,7 +113,7 @@ function Notification() {
     onSubmit: (values) => {
       console.log("values", values);
       send_timeline_data(values);
-     
+
     },
   });
 
@@ -127,7 +124,7 @@ function Notification() {
     let data = [];
     try {
       const response = await axios.get(
-        ServerAddress + `notice_board/get-Category/?search=${""}&p=${category_n_page}&records=${10}&name_search=${search_category_name}&category_name=&data=all` ,
+        ServerAddress + `notice_board/get-Category/?search=${""}&p=${category_n_page}&records=${10}&name_search=${search_category_name}&category_name=&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -156,11 +153,10 @@ function Notification() {
 
   useLayoutEffect(() => {
     get_timeline();
-  }, [refresh]); 
+  }, [refresh]);
 
   const send_timeline_data = async (values) => {
     const buttonType = window.event.submitter.name;
-
     try {
       const response = await axios.post(
         ServerAddress + "notice_board/add-Notice/",
@@ -180,8 +176,8 @@ function Notification() {
       );
 
       console.log("rahul---", response.data); // Log the response data to console
-      
-      if(response.data.status ==="success") {
+
+      if (response.data.status === "success") {
         alert(response.data)
         dispatch(setToggle(true));
         dispatch(setShowAlert(true));
@@ -248,7 +244,7 @@ function Notification() {
                             value={validation.values.Timeline || ""}
                             invalid={
                               validation.touched.Timeline &&
-                              validation.errors.Timeline
+                                validation.errors.Timeline
                                 ? true
                                 : false
                             }
@@ -280,7 +276,7 @@ function Notification() {
                             value={validation.values.Description || ""}
                             invalid={
                               validation.touched.Description &&
-                              validation.errors.Description
+                                validation.errors.Description
                                 ? true
                                 : false
                             }
@@ -305,18 +301,18 @@ function Notification() {
                         <Col lg="10">
                           <Row>
                             <Col lg={3} md={6} sm={6} className="pr-0">
-                            <div>
-                          <input
-                            type="date"
-                            className="form-control d-block form-control-md "
-                            id="input"
-                            value={booking_date1}
-                            onChange={(val) => {
-                              setbooking_date1(val.target.value);
-                            }}
-                          />
-                        </div>
-                            
+                              <div>
+                                <input
+                                  type="date"
+                                  className="form-control d-block form-control-md "
+                                  id="input"
+                                  value={booking_date1}
+                                  onChange={(val) => {
+                                    setbooking_date1(val.target.value);
+                                  }}
+                                />
+                              </div>
+
                             </Col>
                           </Row>
                         </Col>
@@ -331,7 +327,7 @@ function Notification() {
                               value={validation.values.Status || ""}
                               invalid={
                                 validation.touched.Status &&
-                                validation.errors.Status
+                                  validation.errors.Status
                                   ? true
                                   : false
                               }
@@ -520,9 +516,9 @@ function Notification() {
                     className="btn btn-info m-2"
                     type="submit"
                     name="save_add"
-                    // onClick={() => {
-                    //   ();
-                    // }}
+                  // onClick={() => {
+                  //   ();
+                  // }}
                   >
                     Save
                   </button>

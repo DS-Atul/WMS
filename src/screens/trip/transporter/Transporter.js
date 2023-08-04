@@ -10,15 +10,12 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
-import BillTosDataFormat from "../../../data/master/clients/BillTosDataFormat";
 // import ClientsDataTitle from "../../../data/master/clients/ClientsDataTitles";
 import TransporterDataTitle from "../../../data/trip/transporter/TransporterDataTitle";
 import TransporterDtataFormate from "../../../data/trip/transporter/TransporterDataFormate";
 
 const Transporter = () => {
   const dispatch = useDispatch();
-  const toggle = useSelector((state) => state.parentfilter.toggle);
-  const client_name = useSelector((state) => state.filtervalue.data_a);
 
   // // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
@@ -26,13 +23,13 @@ const Transporter = () => {
   const search = useSelector((state) => state.searchbar.search_item);
 
   // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
+  // const user_permissions = useSelector(
+  //   (state) => state.permissions.user_permissions
+  // );
 
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
+  // let is_superuser = useSelector(
+  //   (state) => state.authentication.userdetails.is_superuser
+  // );
 
   useEffect(() => {
     dispatch(setToggle(false));

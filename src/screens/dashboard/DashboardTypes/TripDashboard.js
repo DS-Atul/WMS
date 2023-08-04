@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import HeaderCard from "../../../components/dashboardComponents/card/HeaderCard";
 import useWindowDimensions from "../ScreenSize";
 import { FaTruck } from "react-icons/fa";
@@ -12,7 +12,7 @@ import PieChart from "../../../components/dashboardComponents/Charts/PieChart";
 import { Card } from "react-bootstrap";
 import VerticalBarChart from "../../../components/dashboardComponents/Charts/VerticalBarChart";
 import SpineAreaChart from "../../../components/dashboardComponents/Charts/SpineAreaChart";
-import { CardBody, CardTitle, Col } from "reactstrap";
+import { CardBody, Col } from "reactstrap";
 
 const TripDashboard = () => {
   // To get Screen Size
@@ -52,7 +52,7 @@ const TripDashboard = () => {
     tooltip: { x: { format: "dd/MM/yy HH:mm" } },
   };
 
-  let list1 = ["1", "2", "3", "4", "5", "6"];
+  // let list1 = ["1", "2", "3", "4", "5", "6"];
 
   return (
     <>

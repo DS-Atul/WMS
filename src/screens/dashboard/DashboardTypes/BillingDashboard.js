@@ -1,22 +1,13 @@
-import React, { useState } from "react";
-import HeaderCard from "../../../components/dashboardComponents/card/HeaderCard";
+import React from "react";
 import useWindowDimensions from "../ScreenSize";
-import { FaTruck } from "react-icons/fa";
-import { IoMdTrain } from "react-icons/io";
-import { GiCommercialAirplane } from "react-icons/gi";
 import "bootstrap/dist/css/bootstrap.css";
 import "./Client.scss";
-
-import BarChart from "../../../components/dashboardComponents/Charts/BarChart";
 import DonutChart from "../../../components/dashboardComponents/Charts/DonutChart";
 // import SimpleBarChart from "../../../components/dashboardComponents/Charts/SimpleBarChart";
 // import SimplePieChart from "../../../components/dashboardComponents/Charts/SimplePieChart";
-import SimpleBarChart from "../../../components/dashboardComponents/Charts/SimpleBarChart";
-import PieChart from "../../../components/dashboardComponents/Charts/PieChart";
 import { Card } from "react-bootstrap";
-import VerticalBarChart from "../../../components/dashboardComponents/Charts/VerticalBarChart";
 import SpineAreaChart from "../../../components/dashboardComponents/Charts/SpineAreaChart";
-import { CardBody, CardTitle, Col, Table, Row } from "reactstrap";
+import { CardBody, Col, Row } from "reactstrap";
 
 const BillingDashboard = () => {
   // To get Screen Size
@@ -28,21 +19,21 @@ const BillingDashboard = () => {
   const colors = ["#34c38f", "#556ee6", "#f46a6a", "#50a5f1", "#f1b44c"];
 
   // used for bar chart
-  const seriesData = [380, 430, 450, 475, 550, 584, 780, 1100, 1220, 1365, 100];
-  const categories = [
-    "South Korea",
-    "Canada",
-    "United Kingdom",
-    "Netherlands",
-    "Italy",
-    "France",
-    "Japan",
-    "United States",
-    "China",
-    "Germany",
-    "USA",
-  ];
-  const color = " rgb(136 , 132,216)";
+  // const seriesData = [380, 430, 450, 475, 550, 584, 780, 1100, 1220, 1365, 100];
+  // const categories = [
+  //   "South Korea",
+  //   "Canada",
+  //   "United Kingdom",
+  //   "Netherlands",
+  //   "Italy",
+  //   "France",
+  //   "Japan",
+  //   "United States",
+  //   "China",
+  //   "Germany",
+  //   "USA",
+  // ];
+  // const color = " rgb(136 , 132,216)";
 
   //  Spine Area Chart
   const seriesData1 = [
@@ -56,7 +47,7 @@ const BillingDashboard = () => {
     tooltip: { x: { format: "dd/MM/yy HH:mm" } },
   };
 
-  let list1 = ["1", "2", "3", "4", "5", "6"];
+  // let list1 = ["1", "2", "3", "4", "5", "6"];
 
   return (
     <>

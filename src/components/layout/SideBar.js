@@ -9,8 +9,6 @@ import {
 import { useSelector } from "react-redux";
 import { setPageNumber } from "../../store/pagination/Pagination";
 import { setNavToggle } from "../../store/dataList/DataList";
-import { BsCheckLg } from "react-icons/bs";
-import SimpleBar from "simplebar-react";
 import {
   setFilterA,
   setFilterB,

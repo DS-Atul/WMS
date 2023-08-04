@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import Nav_Btn from "../../../components/btn/NavBtn";
 import { useSelector, useDispatch } from "react-redux";
@@ -27,11 +27,11 @@ const Organization = () => {
   }, []);
 
   //Permission
-  const userpermission = useSelector(
-    (state) => state.authentication.userpermission
-  );
-  const [can_add, setcan_add] = useState(false);
-  const [can_delete, setcan_delete] = useState(false);
+  // const userpermission = useSelector(
+  //   (state) => state.authentication.userpermission
+  // );
+  // const [can_add, setcan_add] = useState(false);
+  // const [can_delete, setcan_delete] = useState(false);
 
   return (
     <>

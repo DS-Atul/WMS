@@ -3,7 +3,7 @@ import {Col,Card,CardTitle,CardBody} from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
 const LocationCreatedHistory = ({page_data}) => {
-  console.log("page",page_data)
+  // console.log("page",page_data)
   const [location_data, setlocation_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -18,7 +18,7 @@ setlocation_data(n_data);
     }
   }, [page_data])
 
-  console.log("Loction data >>>>>",location_data);
+  // console.log("Loction data >>>>>",location_data);
   
 
   let time = new Date(location_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});

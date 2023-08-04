@@ -2,15 +2,10 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Input } from "reactstrap";
 import { MdOutlineKeyboardArrowDown, MdErrorOutline } from "react-icons/md";
 import { IconContext } from "react-icons";
-import { setIsSearch, setSearchItem } from "../../../store/searchBar/SearchBar";
-import { useDispatch, useSelector } from "react-redux";
-import { setFilterToggle } from "../../../store/filterValue/FilterValue";
-import { setPageNumber } from "../../../store/pagination/Pagination";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 const MultiRowSearchInput = ({
   data_list,
-  setdata_list,
   data_item_s,
   error_message = null,
   show_search = true,
@@ -28,7 +23,6 @@ const MultiRowSearchInput = ({
   setbottom,
   count=1,
 }) => {
-  const dispatch = useDispatch();
   // const is_search = useSelector((state) => state.searchbar.is_search);
   const [is_search, setis_search] = useState(false);
   const [showfilter, setshowfilter] = useState(false);
@@ -109,7 +103,7 @@ const MultiRowSearchInput = ({
         }}
         className="form-control-sm"
         onClick={() => {
-          if (disable_me == false) {
+          if (disable_me === false) {
             setshowfilter(!showfilter);
           }
         }}
@@ -239,7 +233,7 @@ const MultiRowSearchInput = ({
                           if (typeof value === "string") {
                             data_item_s = value;
                           } else {
-                            if (data_item_s.length == 3) {
+                            if (data_item_s.length === 3) {
                               data_item_s[0] = value[0];
                               data_item_s[1] = value[1];
                               data_item_s[2] = value[2];

@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 
 const RouteHistoryPage = () => {
   const location = useLocation();  
-  console.log(location)
+  // console.log(location)
   const [route_id, setroute_id] = useState(location.state.routes.id);
   return (
     <>

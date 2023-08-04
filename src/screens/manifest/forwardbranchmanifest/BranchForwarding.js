@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { MdAdd } from "react-icons/md";
-import Nav_Btn from "../../../components/btn/NavBtn";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -8,7 +6,6 @@ import Title from "../../../components/title/Title";
 import { setPageNumber } from "../../../store/pagination/Pagination";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
 import Navigate from "../navigateTab/Navigate";
 import BranchManifestDataFormat from "../../../data/manifests/branchManifest/BranchManifestDataFormat";
@@ -17,23 +14,11 @@ import RoughTab from "../navigateTab/RoughManifestTab";
 
 const BranchForwarding = () => {
   const dispatch = useDispatch();
-  const toggle = useSelector((state) => state.parentfilter.toggle);
-  const commodity_type = useSelector((state) => state.filtervalue.data_a);
-  const commodity_name = useSelector((state) => state.filtervalue.data_b);
 
   // // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
-
-  // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
-
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
 
   useEffect(() => {
     dispatch(setToggle(false));

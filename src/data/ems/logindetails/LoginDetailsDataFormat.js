@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 // import { setMain_checkbox } from "../../../store/Components/ListDisplay/Main_Checkbox/action";
 import axios from "axios";
@@ -19,13 +18,8 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { Input } from "reactstrap";
 
 const LoginDetailsDataFormat = ({ data, data1 }) => {
-  // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
 
   const dispatch = useDispatch();
   const cust_user_permissions = useSelector(
@@ -33,15 +27,14 @@ const LoginDetailsDataFormat = ({ data, data1 }) => {
   );
 
   const commidity_checker_maker_row = cust_user_permissions.find(
-    (v) => v[0] == "Commodity"
+    (v) => v[0] === "Commodity"
   );
   let commidity_checker_maker = "Maker";
 
-  const searchData = useSelector((state) => state.searchbar.search_item);
+  
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const user_id = useSelector((state) => state.authentication.userdetails.id);
-  const [refresh, setrefresh] = useState(false);
   const [cu_status_com_id, setcu_status_com_id] = useState(null);
   const [cu_status, setcu_status] = useState("");
 
@@ -67,9 +60,7 @@ const LoginDetailsDataFormat = ({ data, data1 }) => {
   // };
 
   const ids = useSelector((state) => state.datalist.ids);
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
+  
 
   const [click, setclick] = useState(true);
   const delete_commidity_row = (id) => {
@@ -135,7 +126,7 @@ const LoginDetailsDataFormat = ({ data, data1 }) => {
   }, [total_data]);
 
   useEffect(() => {
-    if (cu_status != "") {
+    if (cu_status !== "") {
       changed_commodity_status();
     }
   }, [cu_status]);
@@ -187,7 +178,7 @@ const LoginDetailsDataFormat = ({ data, data1 }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       delete_commidity_row(ids);
     }
   }, [delete_id]);
@@ -196,19 +187,19 @@ const LoginDetailsDataFormat = ({ data, data1 }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("user_name"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("ip_address"));
-    } else if (index == 2) {
+    } else if (index === 2) {
       dispatch(setIndexValue("longitude"));
-    } else if (index == 3) {
+    } else if (index === 3) {
       dispatch(setIndexValue("platform"));
-    } else if (index == 4) {
+    } else if (index === 4) {
       dispatch(setIndexValue("is_mob"));
-    } else if (index == 5) {
+    } else if (index === 5) {
       dispatch(setIndexValue("logintime"));
-    } else if (index == 6) {
+    } else if (index === 6) {
       dispatch(setIndexValue("logouttime"));
     }
   }, [index, data]);

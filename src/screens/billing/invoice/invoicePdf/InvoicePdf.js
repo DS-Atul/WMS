@@ -16,19 +16,12 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
 
   const [invoice_order, setinvoice_order] = useState([]);
   const [total_net, settotal_net] = useState();
-  const [billto_name, setbillto_name] = useState(
-    location.state.invoice.billto_name
-  );
 
   const [data, setdata] = useState([]);
   let len = data.length;
-  const [fright, setfright] = useState(false);
-  const [warai, setwarai] = useState(false);
-  const [oda, setoda] = useState(false);
   const [total_inword, settotal_inword] = useState();
 
   const get_invoice_order = () => {
-    let temp_list = [];
     axios
       .get(
         ServerAddress +
@@ -50,20 +43,20 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
         for (const ots of otis) {
           let i_ord = ots.order;
           let freight_charge = i_ord.ordertocost.filter(
-            (v) => v.cost_name.toUpperCase() == "FREIGHT"
+            (v) => v.cost_name.toUpperCase() === "FREIGHT"
           );
           let oda_charge = i_ord.ordertocost.filter(
-            (v) => v.cost_name.toUpperCase() == "ODA"
+            (v) => v.cost_name.toUpperCase() === "ODA"
           );
           let warai_charge = i_ord.ordertocost.filter(
-            (v) => v.cost_name.toUpperCase() == "WARAI"
+            (v) => v.cost_name.toUpperCase() === "WARAI"
           );
 
           let other_charge = i_ord.ordertocost.filter(
             (v) =>
-              v.cost_name.toUpperCase() != "WARAI" &&
-              v.cost_name.toUpperCase() != "ODA" &&
-              v.cost_name.toUpperCase() != "FREIGHT"
+              v.cost_name.toUpperCase() !== "WARAI" &&
+              v.cost_name.toUpperCase() !== "ODA" &&
+              v.cost_name.toUpperCase() !== "FREIGHT"
           );
 
           let frg =
@@ -255,27 +248,27 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
     if (!num) return;
 
     let outputText =
-      num[1] != 0
+      num[1] !== 0
         ? (oneToNineteen[Number(num[1])] ||
             `${tenth[num[1][0]]} ${oneToNineteen[num[1][1]]}`) + " Crore "
         : "";
     outputText +=
-      num[2] != 0
+      num[2] !== 0
         ? (oneToNineteen[Number(num[2])] ||
             `${tenth[num[2][0]]} ${oneToNineteen[num[2][1]]}`) + "Lakh "
         : "";
     outputText +=
-      num[3] != 0
+      num[3] !== 0
         ? (oneToNineteen[Number(num[3])] ||
             `${tenth[num[3][0]]} ${oneToNineteen[num[3][1]]}`) + " Thousand "
         : "";
     outputText +=
-      num[4] != 0
+      num[4] !== 0
         ? (oneToNineteen[Number(num[4])] ||
             `${tenth[num[4][0]]} ${oneToNineteen[num[4][1]]}`) + "Hundred "
         : "";
     outputText +=
-      num[5] != 0
+      num[5] !== 0
         ? oneToNineteen[Number(num[5])] ||
           `${tenth[num[5][0]]} ${oneToNineteen[num[5][1]]} `
         : "";
@@ -506,7 +499,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
             })}
 
             <tr className="a">
-              <td colSpan={len == len && len - 3} rowSpan="3" className="ps-1">
+              <td colSpan={len === len && len - 3} rowSpan="3" className="ps-1">
                 (Rupees : {numToString} Only)
               </td>
               <td colSpan={2} style={{ textAlign: "center" }}>
@@ -526,7 +519,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
             </tr>
 
             <tr className="a">
-              <td colSpan={len == len && len - 3} id="pdf-main-text">
+              <td colSpan={len === len && len - 3} id="pdf-main-text">
                 Terms And Payments
               </td>
               <td colSpan={2}>
@@ -543,7 +536,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
               </td>
             </tr>
             <tr className="a">
-              <td colSpan={len == len && len - 3} className="ps-1">
+              <td colSpan={len === len && len - 3} className="ps-1">
                 <div>
                   1. All cheques and Demand draft should be made in the name of{" "}
                   <span className="pdf-bold">
@@ -560,7 +553,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
             </tr>
             <tr className="a">
               <td
-                colSpan={len == len && len - 3}
+                colSpan={len === len && len - 3}
                 className="ps-1"
                 style={{ borderTop: "none" }}
               >
@@ -581,7 +574,7 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
               ></td>
             </tr>
             <tr className="a">
-              <td colSpan={len == len && len - 3} style={{ borderTop: "none" }}>
+              <td colSpan={len === len && len - 3} style={{ borderTop: "none" }}>
                 <div className="ps-1 pdf-bold">
                   SUBJECT TO MUMBAI JURISDICATION
                 </div>

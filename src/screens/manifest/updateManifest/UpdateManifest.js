@@ -19,7 +19,6 @@ import {
   Form,
   FormGroup
 } from "reactstrap";
-import Main_c from "../../../components/crop/main";
 import { MdDeleteForever, MdAdd } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
@@ -34,7 +33,6 @@ import Title from "../../../components/title/Title";
 import { Button } from "react-bootstrap";
 import Modal from 'react-bootstrap/Modal';
 import SearchInput from "../../../components/formComponent/searchInput/SearchInput";
-import * as XLSX from "xlsx";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
 import EditManifestDataFormat from "../editManifest/editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "../editManifest/AddAnotherOrder";
@@ -44,9 +42,7 @@ const UpdateManifest = () => {
   const user = useSelector((state) => state.authentication.userdetails);
   const alert = useSelector((state) => state.alert.show_alert);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const userdepartment = useSelector(
-    (state) => state.authentication.userdepartment
-  );
+  
   // const location= useLocation
   const success = useSelector((state) => state.alert.show_alert);
 
@@ -56,7 +52,7 @@ const UpdateManifest = () => {
   );
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("location---------", location)
+  // console.log("location---------", location)
   const [circle_btn, setcircle_btn] = useState(true);
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
@@ -92,11 +88,8 @@ const UpdateManifest = () => {
   const [coloader_id, setcoloader_id] = useState("");
   const [search, setsearch] = useState("");
   const [page, setpage] = useState(1);
-  const [forward_branch, setforward_branch] = useState("");
   const [today, settoday] = useState("");
-  console.log("today-----=========", today)
-  const [open_box, setopen_box] = useState(false);
-  const [box_quantity, setbox_quantity] = useState("");
+  // console.log("today-----=========", today)
   const [coloader_mode_error, setcoloader_mode_error] = useState(false);
   const [forwording_date_error, setforwording_date_error] = useState(false);
   const [docket_weight, setdocket_weight] = useState("")
@@ -113,19 +106,8 @@ const UpdateManifest = () => {
   const [tax_slab, settax_slab] = useState("0%");
   const [isTaxSlabDisabled, setIsTaxSlabDisabled] = useState(false);
 
-  // Manifest
-  const [commodity_type_id, setcommodity_type_id] = useState(0);
-  const [commodity_type_list, setcommodity_type_list] = useState([]);
-  const [approved_entry, setapproved_entry] = useState(false);
-  const [commodity_type, setcommodity_type] = useState("");
-  const [commodity_type_error, setcommodity_type_error] = useState(false);
-  const [commodity_type_page, setcommodity_type_page] = useState(1);
-  const [commodity_type_search_item, setcommodity_type_search_item] =
-    useState("");
   //  State For Cropping In React Crop
-  const [showModal, setshowModal] = useState(false);
   const [document, setdocument] = useState([]);
-  const [doc_result_image, setdoc_result_image] = useState([]);
 
   // adding extra input fields in Packages
   const [length, setlength] = useState("");
@@ -135,16 +117,16 @@ const UpdateManifest = () => {
   const [package_id_list, setpackage_id_list] = useState("");
   const [packages_id, setpackages_id] = useState([]);
   const [deleted_packages_id, setdeleted_packages_id] = useState([]);
-  console.log("deleted_packages_id----", deleted_packages_id)
+  // console.log("deleted_packages_id----", deleted_packages_id)
   let dimension_list = [length, breadth, height, pieces];
   const [row, setrow] = useState([dimension_list]);
-  console.log("row-----------", row)
+  // console.log("row-----------", row)
   // adding extra input fields in Order Images
   const [selectedFile, setSelectedFile] = useState("");
 
   let dimension_list1 = [selectedFile];
   const [row1, setrow1] = useState([dimension_list1]);
-  console.log("row1----", row1)
+  // console.log("row1----", row1)
   const [row3, setrow3] = useState([[""]]);
   const [showModalOrder, setshowModalOrder] = useState({
     value: false,
@@ -160,10 +142,10 @@ const UpdateManifest = () => {
     setrow1([...row1, dimension_list1]);
     setrow3([...row3, [""]]);
   };
-console.log("ord_id----", ord_id)
-console.log("ord_data----", ord_data)
+// console.log("ord_id----", ord_id)
+// console.log("ord_data----", ord_data)
   const deleteimage = (item1) => {
-    console.log("Deleted item1======", item1)
+    // console.log("Deleted item1======", item1)
     if (location.state !== null && item1[1] !== "") {
       setord_data(item1)
       setord_id(item1[1])
@@ -191,7 +173,6 @@ console.log("ord_data----", ord_data)
   const [invoice_value, setinvoice_value] = useState("");
 
   let dimension_list2 = [invoice_img, today, invoice_no, invoice_value];
-  const [row2, setrow2] = useState([dimension_list2]);
 
   // Packages
   let p = row.length - 1;
@@ -291,7 +272,7 @@ console.log("ord_data----", ord_data)
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((resp) => {
-        console.log("vendor res------", resp)
+        // console.log("vendor res------", resp)
 
         for (let index = 0; index < resp.data.vendor_service.length; index++) {
           const data = resp.data.vendor_service[index];
@@ -364,7 +345,7 @@ console.log("ord_data----", ord_data)
           temp[index].id,
         ]);
       }
-      console.log("temp_list====", temp_list)
+      // console.log("temp_list====", temp_list)
       setrow1(temp_list);
     }
 
@@ -385,20 +366,20 @@ console.log("ord_data----", ord_data)
       coloader: coloader_id,
       total_weight: values.actual_weight,
     });
-    console.log("fields_name-------", fields_name)
+    // console.log("fields_name-------", fields_name)
     let change_fields = {};
     for (let j = 0; j < fields_name.length; j++) {
       const ele = fields_name[j];
-      console.log("ele-----", ele)
+      // console.log("ele-----", ele)
       let prev = manifest_data[`${ele[0]}`];
-      console.log("prev-----", prev)
+      // console.log("prev-----", prev)
       let new_v = ele[1];
-      console.log("new_v-----", new_v)
+      // console.log("new_v-----", new_v)
       if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
-    console.log("change_fields----", change_fields)
+    // console.log("change_fields----", change_fields)
     axios
       .put(
         ServerAddress + "manifest/update_manifest/" + manifest_id,
@@ -447,7 +428,7 @@ console.log("ord_data----", ord_data)
         }
       )
       .then(function (response) {
-        console.log("response-----", response.data)
+        // console.log("response-----", response.data)
         if (response.data.status === "success") {
           dispatch(setToggle(true));
           dispatch(setShowAlert(true));
@@ -473,14 +454,14 @@ console.log("ord_data----", ord_data)
                 },
               })
               .then((res) => {
-                console.log("ImageResssssssssssssssssssss", res.data);
+                // console.log("ImageResssssssssssssssssssss", res.data);
                 // successMSg();
               })
               .catch((err) => {
                 console.log("ImaeErrrrrrrrrrrrrrrrrrr", err);
               });
           } else {
-            console.log("Manifest created without image");
+            // console.log("Manifest created without image");
           }
         } else if (response.data === "duplicate") {
           dispatch(setShowAlert(true));
@@ -550,7 +531,7 @@ console.log("ord_data----", ord_data)
   };
 
   const handleSubmit = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     } else {
       update_manifeststatus(manifest_data.id);
@@ -619,7 +600,7 @@ console.log("ord_data----", ord_data)
   useEffect(() => {
     if (location.state.manifest.packages.length !== 0) {
       let data = location.state.manifest.packages
-      console.log("daat88888888", data)
+      // console.log("daat88888888", data)
       let temp_list = [];
       let temp_list2 = [];
       for (let index = 0; index < data.length; index++) {
@@ -1012,9 +993,9 @@ console.log("ord_data----", ord_data)
                           onBlur={() => {
                             setforwording_date_error(true);
                           }}
-                          invalid={today == "" && forwording_date_error}
+                          invalid={today === "" && forwording_date_error}
                         />
-                        {today == "" && forwording_date_error ? (
+                        {today === "" && forwording_date_error ? (
                           <FormFeedback type="invalid">
                             Date is required
                           </FormFeedback>

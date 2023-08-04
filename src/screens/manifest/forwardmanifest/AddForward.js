@@ -33,14 +33,12 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import { setToggle } from "../../../store/pagination/Pagination";
-import Main_c from "../../../components/crop/main";
 import EditManifestDataFormat from "../editManifest/editManifestOrders/EditManifestDataFormat";
 import AddAnotherOrder from "../editManifest/AddAnotherOrder";
-import { gstin_no } from "../../../constants/CompanyDetails";
 import ImgModal from "../../../components/crop/ImgModal";
 
 const AddForward = (manifest) => {
-  console.log("manifest--yyy---", manifest)
+  // console.log("manifest--yyy---", manifest)
   const user_id = useSelector((state) => state.authentication.userdetails.id);
   const user_branch = useSelector(
     (state) => state.authentication.userdetails.home_branch
@@ -55,7 +53,7 @@ const AddForward = (manifest) => {
   const b_acess_token = useSelector((state) => state.eway_bill.business_access_token);
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("location_data-----", location_data);
+  // console.log("location_data-----", location_data);
   const navigate = useNavigate();
   const [manifest_data, setmanifest_data] = useState([])
   //Circle Toogle Btn
@@ -96,7 +94,7 @@ const AddForward = (manifest) => {
     // "Direct Vehicle",
     // "Partload",
   ]);
-  console.log("coloader_mode_list-----", coloader_mode_list)
+  // console.log("coloader_mode_list-----", coloader_mode_list)
   const [refresh, setrefresh] = useState("false");
   const [coloader_selcted_m, setcoloader_selcted_m] = useState("");
   const [coloader_selected, setcoloader_selected] = useState("");
@@ -108,12 +106,8 @@ const AddForward = (manifest) => {
   const [manifest_no, setmanifest_no] = useState("");
   const [forward_branch, setforward_branch] = useState("");
   const [today, settoday] = useState("");
-  const [open_box, setopen_box] = useState(false);
-  const [box_quantity, setbox_quantity] = useState("");
 
   const [coloader_list, setcoloader_list] = useState([]);
-  const [company_slected_list, setcompany_slected_list] = useState("");
-  const [coloader_selected_s, setcoloader_selected_s] = useState("");
   const [coloader_id, setcoloader_id] = useState("");
   const [orgin, setorgin] = useState("");
   const [dest, setdest] = useState("");
@@ -130,9 +124,7 @@ const AddForward = (manifest) => {
   const [order_active_btn, setorder_active_btn] = useState("first");
 
   //  State For Cropping In React Crop
-  const [showModal, setshowModal] = useState(false);
   const [document, setdocument] = useState([]);
-  const [doc_result_image, setdoc_result_image] = useState([]);
 
   //  State For Cropping In React Crop Ended
 
@@ -142,8 +134,6 @@ const AddForward = (manifest) => {
   const [height, setheight] = useState("");
   const [pieces, setpieces] = useState("");
   const [package_id_list, setpackage_id_list] = useState("");
-  const [packages_id, setpackages_id] = useState([]);
-  const [deleted_packages_id, setdeleted_packages_id] = useState([]);
 
   let dimension_list = [length, breadth, height, pieces];
   const [row, setrow] = useState([dimension_list]);
@@ -154,7 +144,7 @@ const AddForward = (manifest) => {
 
   let dimension_list1 = [selectedFile];
   const [row1, setrow1] = useState([dimension_list1]);
-  console.log("row1=====================", row1)
+  // console.log("row1=====================", row1)
   const [row3, setrow3] = useState([[""]]);
   const [showModalOrder, setshowModalOrder] = useState({
     value: false,

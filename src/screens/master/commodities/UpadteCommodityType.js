@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IconContext } from "react-icons";
 import { MdAddCircleOutline, MdRemoveCircleOutline } from "react-icons/md";
 import axios from "axios";
-import { EServerAddress, ServerAddress } from "../../../constants/ServerAddress";
+import { ServerAddress } from "../../../constants/ServerAddress";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -16,7 +16,6 @@ import {
   Input,
   FormFeedback,
   Form,
-  FormGroup
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
@@ -33,7 +32,6 @@ import { Button } from "react-bootstrap";
 
 const UpdateCommodityType = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.authentication.userdetails);
   const alert = useSelector((state) => state.alert.show_alert);
   const accessToken = useSelector((state) => state.authentication.access_token);
   const navigate = useNavigate();

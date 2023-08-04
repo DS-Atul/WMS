@@ -1,22 +1,13 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
-import { MdDelete } from "react-icons/md";
-import axios from "axios";
+import React, { useState, useLayoutEffect } from "react";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
-import { Col, Row, Input, Label, FormFeedback } from "reactstrap";
-import { IconContext } from "react-icons";
-import { MdAdd } from "react-icons/md";
-import { Button } from "react-bootstrap";
+import { Col, Row, Input, Label } from "reactstrap";
 
 const ChargeRates = ({
   refresh,
   setrefresh,
-  rate_category,
-  sec_charge,
-  freight_idx,
   item,
   index,
   setfr_mn_amt_blr,
-
   rate_blr,
   nc_rate,
 
@@ -25,23 +16,18 @@ const ChargeRates = ({
   setonfocus_inp,
 
   setnc_rate,
-  cc_rate,
   setcc_rate,
 
-  setnc_min_boxes,
   setnc_min_amount,
   setcc_min_boxes,
   setcc_min_amount,
 
   nc_min_amount,
-  cc_min_amount,
   nc_min_boxes,
-  cc_min_boxes,
 
   local_cal_type,
 
   per_charge_list,
-  setper_charge_list,
 
   is_per_charge,
 }) => {
@@ -50,7 +36,7 @@ const ChargeRates = ({
 
   useLayoutEffect(() => {
     let per_otch_tmp = per_charge_list.filter(
-      (v) => v[1] == "% of other charges"
+      (v) => v[1] === "% of other charges"
     );
     setper_of_otch_list(per_otch_tmp);
   }, [refresh, per_charge_list]);
@@ -70,7 +56,7 @@ const ChargeRates = ({
           </div>
         </Col>
 
-        {item[1] == "Upto" && (
+        {item[1] === "Upto" && (
           <Col md={2} sm={2} style={{ marginTop: -20 }}>
             <div className="mb-3">
               <Label className="header-child">Min Boxes</Label>
@@ -110,7 +96,7 @@ const ChargeRates = ({
             </div>
           </Col>
         )}
-        {(item[1] == "Upto" || item[1] == "Minimum") && (
+        {(item[1] === "Upto" || item[1] === "Minimum") && (
           <Col md={2} sm={2} style={{ marginTop: -20 }}>
             <div className="mb-3">
               <Label className="header-child">Min Amount</Label>
@@ -154,7 +140,7 @@ const ChargeRates = ({
         <Col md={3} sm={3} style={{ marginTop: -20 }}>
           <div className="mb-3">
             <Label className="header-child">
-              Rate per {local_cal_type == "BOX" ? "Box" : "Kg"}
+              Rate per {local_cal_type === "BOX" ? "Box" : "Kg"}
             </Label>
 
             <Input
@@ -182,7 +168,7 @@ const ChargeRates = ({
               onBlur={() => {
                 setrate_blr(true);
               }}
-              invalid={rate_blr == true && nc_rate == 0 && onfocus_inp == index}
+              invalid={rate_blr === true && nc_rate === 0 && onfocus_inp === index}
               className="form-control-md input"
               id="multi-input"
               style={{ marginBottom: "15px" }}

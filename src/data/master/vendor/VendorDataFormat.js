@@ -125,7 +125,7 @@ const VendorDataFormat = ({ data, data1, can_delete }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       deleteCharge(ids);
     }
   }, [delete_id]);

@@ -1,16 +1,15 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
 // import { HashLink } from 'react-router-hash-link';
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Modal from 'react-bootstrap/Modal';
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
-import Button from 'react-bootstrap/Button';
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 const DeliveryInfoDataFormat = ({ order_id }) => {
-  const dispatch = useDispatch();
-  const success = useSelector((state) => state.alert.show_alert);
+
+  // const success = useSelector((state) => state.alert.show_alert);
   // const active_order_last_del_info = useSelector(
   //   state => state.orders.last_active_order_del_info
   // );

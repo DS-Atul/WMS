@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
@@ -7,7 +7,6 @@ import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setIsDeleted,
-  setPageNumber,
   setToggle,
 } from "../../../store/pagination/Pagination";
 import {
@@ -23,39 +22,20 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { Input } from "reactstrap";
-import { MdDelete } from "react-icons/md";
 
 const WaraiesDataFormat = ({ data, data1 }) => {
-  // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
 
   const dispatch = useDispatch();
-  const cust_user_permissions = useSelector(
-    (state) => state.permissions.cust_user_permissions
-  );
-
-  const searchData = useSelector((state) => state.searchbar.search_item);
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
-  const list_toggle = useSelector((state) => state.datalist.list_toggle);
 
   //Multi Delete function
   const close = useSelector((state) => state.datalist.close);
   const select_all = useSelector((state) => state.datalist.select_all);
-  const select = useSelector((state) => state.datalist.select);
   const delete_id = useSelector((state) => state.datalist.delete_id);
 
   const [selected, setselected] = useState([]);
-
   const ids = useSelector((state) => state.datalist.ids);
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
-
   const [click, setclick] = useState(true);
 
   const deleteCharge = (id) => {
@@ -130,7 +110,7 @@ const WaraiesDataFormat = ({ data, data1 }) => {
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       deleteCharge(ids);
     }
   }, [delete_id]);
@@ -139,9 +119,9 @@ const WaraiesDataFormat = ({ data, data1 }) => {
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("primary_charge"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("secondary_charge"));
     }
   }, [index]);

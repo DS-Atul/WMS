@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { MdAdd } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import Title from "../../../components/title/Title";
@@ -13,20 +12,11 @@ import LocationNavigate from "./locationTab/LocationNavigate";
 
 const Pincode = () => {
   const dispatch = useDispatch();
-  const toggle = useSelector((state) => state.parentfilter.toggle);
-  const primary_charges = useSelector((state) => state.filtervalue.data_a);
   const search = useSelector((state) => state.searchbar.search_item);
-  const user = useSelector((state) => state.authentication.userdetails);
-  const cm_value = useSelector((state) => state.datalist.cm_filter);
 
   // Additional Fields
   const data_len = useSelector((state) => state.pagination.data_length);
   const page_num = useSelector((state) => state.pagination.page_number);
-
-  // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
 
   //Permission
   const userpermission = useSelector(

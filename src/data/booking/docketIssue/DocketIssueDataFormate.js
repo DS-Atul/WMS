@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
@@ -17,7 +16,7 @@ import {
   setIndexValue,
   setSelect,
 } from "../../../store/dataList/DataList";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   setAlertType,
   setDataExist,
@@ -325,7 +324,7 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
       });
   };
   const handleSubmit2 = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     }
     else {
@@ -388,6 +387,7 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
             <img
               key={imageData.id}
               src={imageData.issue_image}
+              
               style={{
                 maxWidth: "150px",
                 maxHeight: "150px",
@@ -629,11 +629,11 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
               <td>
                 {order.is_solved ? (
                   <div>
-                    <img src={correct} width="16" height="16" />
+                    <img src={correct}  alt="correct" width="16" height="16" />
                   </div>
                 ) : (
                   <div>
-                    <img src={cross} width="16" height="16" />
+                    <img src={cross} alt="cross" width="16" height="16" />
                   </div>
                 )}
               </td>

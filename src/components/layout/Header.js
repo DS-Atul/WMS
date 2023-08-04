@@ -1,28 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BsGear, BsBell } from "react-icons/bs";
-import { BiUserCircle } from "react-icons/bi";
-import { FaAngleDown } from "react-icons/fa";
+import { BsGear } from "react-icons/bs";
 // import localforage from "localforage";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert } from "reactstrap";
-import { RiLogoutCircleRLine } from "react-icons/ri";
-
-import { ServerAddress } from "../../constants/ServerAddress";
-import axios from "axios";
 import {
   setAlertType,
   setDataExist,
   setShowAlert,
 } from "../../store/alert/Alert";
-import {
-  setAccessToken,
-  setRefreshToken,
-  setUserDetails,
-} from "../../store/authentication/Authentication";
 import { setNavToggle } from "../../store/dataList/DataList";
-import toTitleCase from "../../lib/titleCase/TitleCase";
-import { setPermission } from "../../store/permissions/Permissions";
 import NotificationDropdown from "../TopbarDropdown/NotificationDropdown";
 import ProfileMenu from "../TopbarDropdown/ProfileMenu";
 import { BsSearch } from "react-icons/bs";
@@ -33,19 +19,7 @@ import {
 
 const Header = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const userdetails = useSelector((state) => state.authentication.userdetails);
-
-  const login_id = useSelector((state) => state.authentication.login_id);
-  const accessTK = useSelector((state) => state.authentication.access_token);
-  const [link_clicked, setlink_clicked] = useState(false);
-
-  const [manifists, setManifists] = useState(false);
-  const [booking, setBooking] = useState(false);
-  const [profile, setProfile] = useState(false);
-  const [runsheet, setRunsheet] = useState(false);
-  const [billing, setbilling] = useState(false);
+  
   const show_alert = useSelector((state) => state.alert.show_alert);
   const data_exist = useSelector((state) => state.alert.data_exist);
   const alert_type = useSelector((state) => state.alert.alert_type);
@@ -425,7 +399,7 @@ const Header = () => {
                 <button
                   onClick={() => {
                     if (
-                      docket_number_entry == "" ||
+                      docket_number_entry === "" ||
                       docket_number_entry.length < 6
                     ) {
                       alert("Please Enter a valid Docket Number");

@@ -1,39 +1,29 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { Button, Form, Label, Col, Row } from "reactstrap";
-import toTitleCase from "../../../../lib/titleCase/TitleCase";
 import SearchList from "../../../../components/listDisplay/searchList/SearchList";
 import PageTitle from "../../../../components/pageTitle/PageTitle";
 import Title from "../../../../components/title/Title";
 import { MultiSelect } from "react-multi-select-component";
 import { ServerAddress } from "../../../../constants/ServerAddress";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { setToggle } from "../../../../store/parentFilter/ParentFilter";
 import ColumnFilter from "../../../../components/listDisplay/columnfilter/ColumnFilter";
 import NSearchInput from "../../../../components/formComponent/nsearchInput/NSearchInput";
 import ReportDataList from "../../../../components/listDisplay/ReportDatalist/ReportDataList";
 // eslint-disable-next-line
-import { JsonToCsv, useJsonToCsv } from "react-json-csv";
-import { Fragment } from "react";
+import { useJsonToCsv } from "react-json-csv";
 
 const MisDetailedReport = () => {
-  const [branch_name_filter, setbranch_name_filter] = useState([]);
+
   const [branch, setbranch] = useState([]);
   const [branches_list, setbranches_list] = useState([]);
   const username = useSelector((state) => state.filtervalue.data_b);
-  const [branch_name, setbranch_name] = useState([]);
-  const [branch_name_id, setbranch_name_id] = useState([]);
-  const [toggle, settoggle] = useState(false);
   const [client, setclient] = useState([]);
   const[billto, setbillto] = useState([]);
-  const [client_id, setclient_id] = useState("");
   const[client_list,setClient_list] = useState([]);
   const [billTo_list, setBillTo_list] = useState([]);
   const [page, setpage] = useState(1);
-  const [search_txt, setsearch_txt] = useState("");
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const dispatch = useDispatch();
   const [column_list, setcolumn_list] = useState([]);
   const search = useSelector((state) => state.searchbar.search_item);
   const [empty_billto, setempty_c] = useState(false);
@@ -51,10 +41,10 @@ const MisDetailedReport = () => {
   const [selected_report_columns, setselected_report_columns] = useState([]);
   const [selected_details_report_data, setselected_details_report_data] =
     useState([]);
-    console.log("selected_report_columns----", selected_report_columns)
-    console.log("selected_details_report_data-----", selected_details_report_data)
+    // console.log("selected_report_columns----", selected_report_columns)
+    // console.log("selected_details_report_data-----", selected_details_report_data)
   const [detailed_report_list, set_detailed_report_list] = useState([]);
-  console.log("detailed_report_list----", detailed_report_list)
+  // console.log("detailed_report_list----", detailed_report_list)
   // JSON to CSV
   const [sheet_data, setsheet_data] = useState([]);
   const [sheet_title, setsheet_title] = useState(null);
@@ -93,7 +83,7 @@ const MisDetailedReport = () => {
       )
       .then((response) => {
         for (let index = 0; index < response.data.results.length; index++) {
-          console.log("clients.....",response.data.results)
+          // console.log("clients.....",response.data.results)
           const client = response.data.results[index];
           let pair = { label: client.name, value: client.name };
           temp3.push(pair);
@@ -118,7 +108,7 @@ const MisDetailedReport = () => {
 
   const getbilltos = () => {
     let temp2 = [];
-    console.log("billto", )
+    // console.log("billto", )
     axios
       .get(
         ServerAddress +
@@ -161,7 +151,7 @@ const MisDetailedReport = () => {
       .then((response) => {
         console.log("response data report data length", response.data);
 
-        if (response.data.length != 0) {
+        if (response.data.length !== 0) {
           let sample_data = response.data[0];
           let columns = Object.keys(sample_data);
           for (let index = 0; index < columns.length; index++) {
@@ -204,7 +194,7 @@ const MisDetailedReport = () => {
 
     getDetailReportData(branches, billtos, clients);
   };
-  console.log("submit_data..client",client.length)
+  // console.log("submit_data..client",client.length)
   
   // const submit_data = () => {
   //   let branches = [];
@@ -217,7 +207,7 @@ const MisDetailedReport = () => {
   // };
 
   useEffect(() => {
-    if (detailed_report_list.length != 0) {
+    if (detailed_report_list.length !== 0) {
       setData();
     }
   }, [selected_report_columns]);
@@ -253,27 +243,27 @@ const MisDetailedReport = () => {
       for (let ind = 0; ind < entr_list.length; ind++) {
         let entry_item = entr_list[ind];
         let colmn = rmv_title(entry_item[0]);
-        console.log("colmn----", colmn)
+        // console.log("colmn----", colmn)
         let data = entry_item[1];
-        console.log("selected_report_columns----", selected_report_columns)
+        // console.log("selected_report_columns----", selected_report_columns)
         let idx = selected_report_columns.indexOf(colmn);
-        console.log("idx------", idx)
+        // console.log("idx------", idx)
         let or_idx = column_list.indexOf(colmn);
 
-        if (idx == -1) {
+        if (idx === -1) {
           entr_list[ind] = ["Removed Data", "Removed Data"];
         } else {
           sheet_dta_obj[colmn] = data;
           sheet_tle_obj[colmn] = colmn;
         }
       }
-      console.log("entr_list-----", entr_list)
+      // console.log("entr_list-----", entr_list)
       sheet_dta_list.push(sheet_dta_obj);
       selected_entries.push(entr_list);
     }
     setsheet_title(sheet_tle_obj);
     setsheet_data(sheet_dta_list);
-    console.log("selected_entries----", selected_entries)
+    // console.log("selected_entries----", selected_entries)
     setselected_details_report_data(selected_entries);
   };
 
@@ -312,7 +302,7 @@ const MisDetailedReport = () => {
                     />
                   )}
                 </span>
-                {sheet_data.length != 0 && (
+                {sheet_data.length !== 0 && (
                 <Button
                   type="button"
                   className="btn-rounded fluid mb-2 me-2 mt-3 btn btn-success"
@@ -457,7 +447,7 @@ const MisDetailedReport = () => {
           </div>
           {/* DataTable */}
           <div>
-            {selected_details_report_data.length != 0 ? (
+            {selected_details_report_data.length !== 0 ? (
               <ReportDataList
                 Data_Title={selected_report_columns}
                 Data_Format={selected_details_report_data}

@@ -19,7 +19,6 @@ import {
   CardTitle,
   Label,
   Input,
-  FormFeedback,
   Form,
   FormGroup,
 } from "reactstrap";
@@ -39,21 +38,14 @@ import DataList from "../../../components/listDisplay/dataList/DataList";
 import StatusInfoDataTitle from "../../../data/booking/statusInfo/StatusInfoDataTitle";
 import StatusInfoDataFormat from "../../../data/booking/statusInfo/StatusInfoDataFormat";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-import {
-  setCurOrderDocketNo,
-  setCurOrderId,
-} from "../../../store/booking/order/Order";
 // import Button from 'react-bootstrap/Button';
 import Modal from "react-bootstrap/Modal";
 import Main_c from "../../../components/crop/main";
 
 const AddAirportOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
-  const home_branch_id = useSelector(
-    (state) => state.authentication.userdetails.home_branch
-  );
 
-  const data_len = useSelector((state) => state.pagination.data_length);
+
   // const page_num = useSelector((state) => state.pagination.page_number);
   const [page_num, setpage_num] = useState(1);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -80,17 +72,10 @@ const AddAirportOrder = () => {
 
   // For Onfocus
   const [clicked, setclicked] = useState(false);
-
-  //For order type
-  const [order_type, setorder_type] = useState("NORMAL_ORDER");
   //local delivery_type
   const [delivery_type, setdelivery_type] = useState("LOCAL");
 
-  const [local_delivery_type_list, setlocal_delivery_type_list] = useState([
-    "Sales",
-    "Sample",
-    "Expiry Goods",
-  ]);
+
   const [local_delivery_type, setlocal_delivery_type] = useState("");
 
   // Entry Type
@@ -104,7 +89,6 @@ const AddAirportOrder = () => {
   const [cold_chain, setcold_chain] = useState(false);
   // console.log("cold_chain----", cold_chain)
   const [nonecold_chain, setnonecold_chain] = useState(true);
-  const [cod_list, setcod_list] = useState(["Yes", "No"]);
 
   const [d_cod, setd_cod] = useState("");
   //Type of Booking
@@ -136,7 +120,6 @@ const AddAirportOrder = () => {
   const [billto_list, setbillto_list] = useState([]);
   const [billto, setbillto] = useState("");
   const [billto_id, setbillto_id] = useState(0);
-  const [selectbillto, setselectbillto] = useState([]);
   const [search_billto, setsearch_billto] = useState("");
   const [billto_page, setbillto_page] = useState(1);
   const [billto_bottom, setbillto_bottom] = useState(103);
@@ -170,7 +153,6 @@ const AddAirportOrder = () => {
   const [shipper_locality_id, setshipper_locality_id] = useState(0);
   const [shipper_add_1, setshipper_add_1] = useState("");
   const [shipper_add_2, setshipper_add_2] = useState("");
-  const [search_shipper, setsearch_shipper] = useState("");
   const [all_shipper_details, setall_shipper_details] = useState([]);
   // console.log("shipper_locality_id----", shipper_locality_id);
 
@@ -189,7 +171,6 @@ const AddAirportOrder = () => {
   const [consignee_locality, setconsignee_locality] = useState("");
   const [consignee_add_1, setconsignee_add_1] = useState("");
   const [consignee_add_2, setconsignee_add_2] = useState("");
-  const [search_consignee, setsearch_consignee] = useState("");
   const [all_consignee_details, setall_consignee_details] = useState([]);
 
   // Asset Info
@@ -210,39 +191,18 @@ const AddAirportOrder = () => {
   const [logger, setlogger] = useState([]);
   const [both, setboth] = useState([]);
 
-  //Box Type
-  const [box_list, setbox_list] = useState([
-    "CREDO",
-    "VYPE",
-    "COOL GUARD",
-    "ISGO",
-    "SAFE",
-  ]);
-  const [box_selected, setbox_selected] = useState("");
-
   //Box Number
   const [box_list_1, setbox_list_1] = useState([]);
   const [box_list_2, setbox_list_2] = useState([]);
-  const [box_no_selected, setbox_no_selected] = useState("");
-  const [box_selected_id, setbox_selected_id] = useState("");
   const [box_list_page, setbox_list_page] = useState(1);
   const [search_box_list, setsearch_box_list] = useState("");
 
   //Logger Number
   const [Logger_list, setLogger_list] = useState([]);
   const [Logger_Selected, setLogger_Selected] = useState([]);
-  const [Logger_selected_id, setLogger_selected_id] = useState("");
   const [Logger_page, setLogger_page] = useState(1);
   const [search_logger, setsearch_logger] = useState("");
 
-  //Temperature Type
-  const [temp_list, settemp_list] = useState([
-    "2c-8c",
-    "15c-25c",
-    "-25c To -15c",
-    "Dry Ice",
-    "All In One",
-  ]);
   const [temp_selected, settemp_selected] = useState("");
 
   //Commodity
@@ -256,9 +216,6 @@ const AddAirportOrder = () => {
   const [commodity, setcommodity] = useState("");
   const [commodity_id, setcommodity_id] = useState(0);
   const [search_commodity, setsearch_commodity] = useState("");
-
-  //Transportation cost
-  const [transportation_cost, settransportation_cost] = useState("");
 
   //Actual Weight
   const [actual_weight, setactual_weight] = useState("0");
@@ -311,41 +268,28 @@ const AddAirportOrder = () => {
   const [origincity_list, setorigincity_list] = useState([]);
   const [origincity, setorigincity] = useState("");
   const [origincity_id, setorigincity_id] = useState(0);
-  const [origincity_error, setorigincity_error] = useState(false);
   const [origincity_page, setorigincity_page] = useState(1);
   const [origincity_search_item, setorigincity_search_item] = useState("");
   const [origincity_bottom, setorigincity_bottom] = useState(103)
   const [origincity_count, setorigincity_count] = useState(1)
   const [origincity_loaded, setorigincity_loaded] = useState(false)
+  const [origincity_error, setorigincity_error] = useState(false)
 
   //destinationcity
   const [destinationcity_list, setdestinationcity_list] = useState([]);
   const [destinationcity, setdestinationcity] = useState("");
   const [destinationcity_id, setdestinationcity_id] = useState(0);
-  const [destinationcity_error, setdestinationcity_error] = useState(false);
   const [destinationcity_page, setdestinationcity_page] = useState(1);
   const [destinationcity_search_item, setdestinationcity_search_item] =
     useState("");
   const [destinationcity_bottom, setdestinationcity_bottom] = useState(103)
   const [destinationcity_count, setdestinationcity_count] = useState(1)
   const [destinationcity_loaded, setdestinationcity_loaded] = useState(false)
+  const [destinationcity_error, setdestinationcity_error] = useState(false)
 
-  //State
-  const [state_list_s, setstate_list_s] = useState([]);
-  const [state, setstate] = useState("");
-  const [state_id, setstate_id] = useState("");
 
-  //Pincode
-  const [pincode_list_s, setpincode_list_s] = useState([]);
-  const [pincode_loaded, setpincode_loaded] = useState(false);
-  const [pincode, setpincode] = useState("");
-  const [by_pincode, setby_pincode] = useState(false);
 
   // Delivery Info
-  const [delivery_info, setdelivery_info] = useState([]);
-  const [delivered_date, setdelivered_date] = useState("");
-  const [deliverySigFile, setdeliverySigFile] = useState(null);
-  const [podSigFile, setpodSigFile] = useState(null);
   const [response_awb_no, setresponse_awb_no] = useState("");
 
 
@@ -356,19 +300,6 @@ const AddAirportOrder = () => {
   const [coloader, setcoloader] = useState("");
   const [coloader_list, setcoloader_list] = useState([]);
 
-  // const [rate_class, setrate_class] = useState("")
-  // const [flight_name, setflight_name] = useState("")
-  // const [flight_no, setflight_no] = useState("")
-  // const [no_of_bags, setno_of_bags] = useState("")
-  // const [rate, setrate] = useState("")
-  // const [other_charge, setother_charge] = useState("")
-  // const [chargeable_weight, setchargeable_weight] = useState("")
-  // const [carrier_charge, setcarrier_charge] = useState("")
-  // const [handling_charge, sethandling_charge] = useState("")
-  // const [tsp, settsp] = useState("")
-  // const [total_amount, settotal_amount] = useState("")
-  // const [remarks, setremarks] = useState("")
-  //Circle Toogle Btn
   const [circle_btn, setcircle_btn] = useState(true);
   const toggle_circle = () => {
     setcircle_btn(!circle_btn);
@@ -412,9 +343,6 @@ const AddAirportOrder = () => {
 
 
   // Error State
-  const [transportation_cost_err, settransportation_cost_err] = useState(false);
-  const [pincode_error, setpincode_error] = useState(false);
-  const [pincode_error2, setpincode_error2] = useState(false);
   const [delivery_mode_error, setdelivery_mode_error] = useState(false);
   const [client_error, setclient_error] = useState(false);
   const [client_bottom, setclient_bottom] = useState(103);
@@ -433,13 +361,6 @@ const AddAirportOrder = () => {
   const [local_delivery_type_error, setlocal_delivery_type_error] =
     useState(false);
   const [d_cod_error, setd_cod_error] = useState(false);
-  const [asset_info_selected_error, setasset_info_selected_error] =
-    useState(false);
-  const [box_selected_error, setbox_selected_error] = useState(false);
-  const [box_no_selected_error, setbox_no_selected_error] = useState(false);
-  const [Logger_Selected_error, setLogger_Selected_error] = useState(false);
-  const [temp_selected_error, settemp_selected_error] = useState("");
-  const [actual_weight_error, setactual_weight_error] = useState("");
   const [showModalOrder, setshowModalOrder] = useState({
     value: false,
     ind: "",
@@ -449,7 +370,6 @@ const AddAirportOrder = () => {
     ind: "",
   });
 
-  const [doc_result_image, setdoc_result_image] = useState([]);
 
   // Packages
   let p = row.length - 1;
@@ -649,7 +569,7 @@ const AddAirportOrder = () => {
           } else {
             setorigincity_loaded(true);
           }
-          if (origincity_page == 1) {
+          if (origincity_page === 1) {
             cities_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
@@ -726,7 +646,7 @@ const AddAirportOrder = () => {
           //   ];
           // }
 
-          if (destinationcity_page == 1) {
+          if (destinationcity_page === 1) {
             dcities_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
@@ -936,7 +856,7 @@ const AddAirportOrder = () => {
           flight_no: values.flight_no,
           no_of_bags: values.no_of_bags,
           actual_weight: actual_weight,
-          chargeable_weight: values.chargeable_weight == "" ? null : values.chargeable_weight,
+          chargeable_weight: values.chargeable_weight === "" ? null : values.chargeable_weight,
           rate: values.rate,
           other_charge: values.other_charge,
           carrier_charge: values.carrier_charge,
@@ -1016,7 +936,7 @@ const AddAirportOrder = () => {
       const ele = fields_names[j];
       let prev = location.state.airport[`${ele[0]}`];
       let new_v = ele[1];
-      if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
@@ -1050,7 +970,7 @@ const AddAirportOrder = () => {
           flight_no: values.flight_no,
           no_of_bags: values.no_of_bags,
           actual_weight: actual_weight,
-          chargeable_weight: values.chargeable_weight == "" ? null : values.chargeable_weight,
+          chargeable_weight: values.chargeable_weight === "" ? null : values.chargeable_weight,
           rate: values.rate,
           other_charge: values.other_charge,
           carrier_charge: values.carrier_charge,
@@ -1086,8 +1006,6 @@ const AddAirportOrder = () => {
       });
   };
 
-
-  const [clientdata, setclientdata] = useState([]);
   const [data, setdata] = useState(false);
 
   const getBillto = () => {
@@ -1667,25 +1585,25 @@ const AddAirportOrder = () => {
 
   useEffect(() => {
     if (box !== [] && asset_info_selected === "With Box") {
-      let item = asset_idlist.filter((p) => box.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => box.indexOf(p) === -1);
       setassetdeleted_ids(item);
       let item2 = asset_idlist.filter((p) => box.indexOf(p) !== -1);
       setassetold_ids(item2);
-      let item3 = box.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = box.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     } else if (logger !== [] && asset_info_selected === "With Logger") {
-      let item = asset_idlist.filter((p) => logger.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => logger.indexOf(p) === -1);
       setassetdeleted_ids(item);
       let item2 = asset_idlist.filter((p) => logger.indexOf(p) !== -1);
       setassetold_ids(item2);
-      let item3 = logger.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = logger.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     } else {
-      let item = asset_idlist.filter((p) => both.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => both.indexOf(p) === -1);
       setassetdeleted_ids(item);
       let item2 = asset_idlist.filter((p) => both.indexOf(p) !== -1);
       setassetold_ids(item2);
-      let item3 = both.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = both.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     }
   }, [asset_idlist, box, logger, both]);
@@ -1786,7 +1704,7 @@ const AddAirportOrder = () => {
   useLayoutEffect(() => {
     try {
       let airport_u = location.state.airport
-      console.log("airport_u====", airport_u.airport_packages[0].length);
+      // console.log("airport_u====", airport_u.airport_packages[0].length);
 
       setairport_order(airport_u);
       setawb_no_value(airport_u.awb_no);
@@ -1805,7 +1723,7 @@ const AddAirportOrder = () => {
       setbreadth(airport_u.airport_packages[0].breadth);
       setheight(airport_u.airport_packages[0].height);
       setpieces(airport_u.airport_packages[0].no_of_pieces);
-      
+
 
     } catch (error) {
 
@@ -1915,7 +1833,7 @@ const AddAirportOrder = () => {
                         <Input
                           onChange={(event) => {
                             setawb_no_value(event.target.value);
-                            if (event.target.value.length != 6) {
+                            if (event.target.value.length !== 6) {
                               setawb_error(true);
                             } else {
                               setawb_error(false);
@@ -3186,6 +3104,7 @@ const AddAirportOrder = () => {
                                   <div style={{ width: "100%" }} key={index1}>
                                     <img
                                       src={item1[0]}
+                                      alt="item1[0]"
                                       style={{
                                         height: "110px",
                                         width: "110px",
@@ -3215,7 +3134,7 @@ const AddAirportOrder = () => {
                                   alignItems: "center",
                                   height: "38px",
                                   borderRadius: 5,
-                                  height: 31,
+                                  // height: 31,
                                 }}
                                 onClick={() => {
                                   setshowModalOrder({
@@ -3459,6 +3378,7 @@ const AddAirportOrder = () => {
                                   <div style={{ width: "100%", }} key={index1}>
                                     <img
                                       src={item1[0]}
+                                      alt="item1[0]"
                                       style={{
                                         height: "110px",
                                         width: "110px",
@@ -3488,7 +3408,7 @@ const AddAirportOrder = () => {
                                   alignItems: "center",
                                   height: "38px",
                                   borderRadius: 5,
-                                  height: 31,
+                                  // height: 31,
                                 }}
                                 onClick={() => {
                                   setshowModalInvoice({

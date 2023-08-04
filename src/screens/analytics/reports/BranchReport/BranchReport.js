@@ -11,7 +11,7 @@ import axios from 'axios';
 
 import { useSelector } from "react-redux";
 // eslint-disable-next-line
-import { JsonToCsv, useJsonToCsv } from "react-json-csv";
+import { useJsonToCsv } from "react-json-csv";
 
 
 const BranchReport = () => {
@@ -92,9 +92,9 @@ const BranchReport = () => {
           .then((response) => {
             console.log("response data report  length", response);
     
-            if (response.data.length != 0) {
+            if (response.data.length !== 0) {
               let sample_data = response.data;
-              console.log("Sample data ",sample_data )
+              // console.log("Sample data ",sample_data )
             //   let records = (sample_data).split(',')
             //   console.log("records1",records)
             //  let  records2 =(records).split(']')
@@ -107,7 +107,7 @@ const BranchReport = () => {
 
             // }
               let columns = Object.keys(sample_data);
-              console.log("columns.... ",columns)
+              // console.log("columns.... ",columns)
               for (let index = 0; index < columns.length; index++) {
                 const col = columns[index];
                 temp2.push(rmv_title(col));
@@ -146,27 +146,27 @@ const BranchReport = () => {
           for (let ind = 0; ind < entr_list.length; ind++) {
             let entry_item = entr_list[ind];
             let colmn = rmv_title(entry_item[0]);
-            console.log("colmn----", colmn)
+            // console.log("colmn----", colmn)
             let data = entry_item[1];
-            console.log("selected_report_columns----", selected_report_columns)
+            // console.log("selected_report_columns----", selected_report_columns)
             let idx = selected_report_columns.indexOf(colmn);
-            console.log("idx------", idx)
+            // console.log("idx------", idx)
             let or_idx = column_list.indexOf(colmn);
     
-            if (idx == -1) {
+            if (idx === -1) {
               entr_list[ind] = ["Removed Data", "Removed Data"];
             } else {
               sheet_dta_obj[colmn] = data;
               sheet_tle_obj[colmn] = colmn;
             }
           }
-          console.log("entr_list-----", entr_list)
+          // console.log("entr_list-----", entr_list)
           sheet_dta_list.push(sheet_dta_obj);
           selected_entries.push(entr_list);
         }
         setsheet_title(sheet_tle_obj);
         setsheet_data(sheet_dta_list);
-        console.log("selected_entries----", selected_entries)
+        // console.log("selected_entries----", selected_entries)
         setselected_details_report_data(selected_entries);
       };
     const submit_data = () => {
@@ -179,10 +179,10 @@ const BranchReport = () => {
            
         getBranchReportData(branches);
       };
-    console.log("submit_data",branch.length)
+    // console.log("submit_data",branch.length)
 
     useEffect(() => {
-        if (detailed_report_list.length != 0) {
+        if (detailed_report_list.length !== 0) {
           setData();
         }
     }, [selected_report_columns]);
@@ -211,7 +211,7 @@ const BranchReport = () => {
                                 />
                                 )}
                             </span>
-                            {sheet_data.length != 0 && (
+                            {sheet_data.length !== 0 && (
                             <Button
                             type="button"
                             className="btn-rounded fluid mb-2 me-2 mt-3 btn btn-success"
@@ -299,7 +299,7 @@ const BranchReport = () => {
                     </div>
                     {/* DataTable */}
                 <div>
-                {selected_details_report_data.length != 0 ? (
+                {selected_details_report_data.length !== 0 ? (
                   <ReportDataList 
                     Data_Title={selected_report_columns}
                     Data_Format={selected_details_report_data}

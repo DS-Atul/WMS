@@ -1,8 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import "../../../assets/scss/forms/form.scss";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { MdDeleteForever, MdAdd } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -23,15 +21,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-
-import TransferList from "../../../components/formComponent/transferList/TransferList";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
   setAlertType,
   setDataExist,
   setShowAlert,
 } from "../../../store/alert/Alert";
-
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import { setToggle } from "../../../store/pagination/Pagination";
@@ -48,7 +43,7 @@ const EditManifest = () => {
   const [refresh, setrefresh] = useState("false");
   const dispatch = useDispatch();
   const location_data = useLocation();
-  console.log("location_data-mnnn7777777777--", location_data);
+  // console.log("location_data-mnnn7777777777--", location_data);
   const navigate = useNavigate();
 
   //Circle Toogle Btn

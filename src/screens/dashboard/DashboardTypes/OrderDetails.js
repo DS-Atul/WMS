@@ -24,8 +24,6 @@ const OrderDetails = () => {
   const [width, height] = useState();
   const accessToken = useSelector((state) => state.authentication.access_token);
 
-
-
   const [cold_chain_incoming, setcold_chain_incoming] = useState("");
   const [cold_chain_outgoing, setcold_chain_outgoing] = useState("");
 
@@ -41,19 +39,19 @@ const OrderDetails = () => {
   const [manifest_income_recived, setmanifest_income_recived] = useState("");
   const [manifest_income_Nrecived, setmanifest_income_Nrecived] = useState("");
 
-    const [manifest_outgoing_recived, setmanifest_outgoing_recived] = useState("")
+  const [manifest_outgoing_recived, setmanifest_outgoing_recived] = useState("")
   const [manifest_outgoing_Nrecived, setmanifest_outgoing_Nrecived] = useState("");
-//-------------------------Cold Chain Order------------------------
+  //-------------------------Cold Chain Order------------------------
 
   const [delay_incom_24, setdelay_incom_24] = useState("");
   const [delay_outgoing_24, setdelay_outgoing_24] = useState("");
-  
+
   const [Delay_incoming_48, setdelay_incom_48] = useState("");
   const [Delay_outgoing_48, setdelay_outgoing_48] = useState("");
-//-------------------Manifest state------------------------//
+  //-------------------Manifest state------------------------//
   // const [Manifest_incom, setManifest_incom] = useState("");
   // const [Manifest_outgoing, setManifest_outgoing] = useState("");
-  
+
   // const [manifest_out_rescive, setmanifest_out_rescive] = useState("");
   // const [manifest_income_nrecived, setmanifest_income_nrecived] = useState("");
 
@@ -66,73 +64,72 @@ const OrderDetails = () => {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      console.log("daily deatils-----", resp.data);
-if(resp.data.cold_chain_order.length > 0) {
-  let cold_income = resp.data.cold_chain_order[0];
-  let cold_outgoing = resp.data.cold_chain_order[1];
-  setcold_chain_incoming(cold_income.cold_chain_incoming);
-  setcold_chain_outgoing(cold_outgoing.cold_chain_outgoing)
- 
-}
-     if(resp.data.outgoing_order.length >0) {
-      let out_going_order = resp.data.outgoing_order[0];
-      let delivery_order = resp.data.outgoing_order[1];;
-let pending_order = resp.data.outgoing_order[2];
-setougoing_order(out_going_order.outgoing_order);
-setdelivery_order(delivery_order.delivered_order);
-setpending_order(pending_order.pending_order);
+      // console.log("daily deatils-----", resp.data);
+      if (resp.data.cold_chain_order.length > 0) {
+        let cold_income = resp.data.cold_chain_order[0];
+        let cold_outgoing = resp.data.cold_chain_order[1];
+        setcold_chain_incoming(cold_income.cold_chain_incoming);
+        setcold_chain_outgoing(cold_outgoing.cold_chain_outgoing)
 
-     }
+      }
+      if (resp.data.outgoing_order.length > 0) {
+        let out_going_order = resp.data.outgoing_order[0];
+        let delivery_order = resp.data.outgoing_order[1];;
+        let pending_order = resp.data.outgoing_order[2];
+        setougoing_order(out_going_order.outgoing_order);
+        setdelivery_order(delivery_order.delivered_order);
+        setpending_order(pending_order.pending_order);
 
-     if(resp.data.incoming_order.length >0) {
-      let incom_orde = resp.data.incoming_order[0];
-      let income_deliv = resp.data.incoming_order[1];
-      let income_pending = resp.data.incoming_order[2];
+      }
 
-      setincome_order_incoming(incom_orde.incoming_order);
-      setincome_deliverd_order(income_deliv.delivered_order);
-      setincome_pending_order(income_pending.pending_order);
- 
-     }
+      if (resp.data.incoming_order.length > 0) {
+        let incom_orde = resp.data.incoming_order[0];
+        let income_deliv = resp.data.incoming_order[1];
+        let income_pending = resp.data.incoming_order[2];
 
-if(resp.data.manifest_order.length > 0) {
-  let manifest_recived = resp.data.manifest_order[0];
-  let manifest_not_recived = resp.data.manifest_order[1];
-  
-  setmanifest_income_recived(manifest_recived.incoming_manifest_recieved);
-  setmanifest_income_Nrecived(manifest_not_recived.incoming_manifest_notrecived);
+        setincome_order_incoming(incom_orde.incoming_order);
+        setincome_deliverd_order(income_deliv.delivered_order);
+        setincome_pending_order(income_pending.pending_order);
 
-}
+      }
 
-if(resp.data.manifest_order.length > 0)
-{
-  let manifest_out_rescive = resp.data.manifest_order[2];
-  let manifest_not_out_rescive = resp.data.manifest_order[3];
-  
-       setmanifest_outgoing_recived(manifest_out_rescive.outgoing_manifest_recieved);
-       setmanifest_outgoing_Nrecived(manifest_not_out_rescive.outgoing_manifest_notrecieved);
-}
+      if (resp.data.manifest_order.length > 0) {
+        let manifest_recived = resp.data.manifest_order[0];
+        let manifest_not_recived = resp.data.manifest_order[1];
 
-if(resp.data.delay_cold_chain_order.length > 0) {
-  let Delay_incoming_24 = resp.data.delay_cold_chain_order[0];
-  console.log("delayed_chain_",resp.data.delay_cold_chain_order)
-  let Delay_outgoing_24 = resp.data.delay_cold_chain_order[1];
+        setmanifest_income_recived(manifest_recived.incoming_manifest_recieved);
+        setmanifest_income_Nrecived(manifest_not_recived.incoming_manifest_notrecived);
 
-  let Delay_incoming_48 = resp.data.delay_cold_chain_order[2];
-  let Delay_outgoing_48 = resp.data.delay_cold_chain_order[3];
+      }
 
-  setdelay_incom_24(Delay_incoming_24.delay24_incoming_order);
-  setdelay_outgoing_24(Delay_outgoing_24.delay24_outgoing_order);
-  setdelay_incom_48(Delay_incoming_48.delay48_incoming_order);
-  setdelay_outgoing_48(Delay_outgoing_48.delay48_outgoing_order);
+      if (resp.data.manifest_order.length > 0) {
+        let manifest_out_rescive = resp.data.manifest_order[2];
+        let manifest_not_out_rescive = resp.data.manifest_order[3];
 
-}
+        setmanifest_outgoing_recived(manifest_out_rescive.outgoing_manifest_recieved);
+        setmanifest_outgoing_Nrecived(manifest_not_out_rescive.outgoing_manifest_notrecieved);
+      }
+
+      if (resp.data.delay_cold_chain_order.length > 0) {
+        let Delay_incoming_24 = resp.data.delay_cold_chain_order[0];
+        // console.log("delayed_chain_", resp.data.delay_cold_chain_order)
+        let Delay_outgoing_24 = resp.data.delay_cold_chain_order[1];
+
+        let Delay_incoming_48 = resp.data.delay_cold_chain_order[2];
+        let Delay_outgoing_48 = resp.data.delay_cold_chain_order[3];
+
+        setdelay_incom_24(Delay_incoming_24.delay24_incoming_order);
+        setdelay_outgoing_24(Delay_outgoing_24.delay24_outgoing_order);
+        setdelay_incom_48(Delay_incoming_48.delay48_incoming_order);
+        setdelay_outgoing_48(Delay_outgoing_48.delay48_outgoing_order);
+
+      }
 
     } catch (err) {
       alert(`Error Occur in , ${err}`);
     }
   };
-  console.log("res =====>>",delay_incom_24);
+  // console.log("res =====>>", delay_incom_24);
 
 
   const get_daily_status_detail = async () => {
@@ -410,7 +407,7 @@ if(resp.data.delay_cold_chain_order.length > 0) {
         </Col>
       </div>
 
-      <div style={{ width: width, margin: "10px", display:"flex", flexWrap: "wrap" }}>
+      <div style={{ width: width, margin: "10px", display: "flex", flexWrap: "wrap" }}>
         <div
           style={{
             textAlign: "center",
@@ -553,7 +550,7 @@ if(resp.data.delay_cold_chain_order.length > 0) {
                           <div className="me-3">
                             <h6 className="text-muted mb-0.2">
                               OUTGOING ORDERS 24 hrs{" "}
-                             
+
                               <i className="icon4" style={{ color: "#66BFBF" }}>
                                 <MdDashboard />{" "}
                               </i>
@@ -587,7 +584,7 @@ if(resp.data.delay_cold_chain_order.length > 0) {
                           <div className="me-3">
                             <h6 className="text-muted mb-0.2">
                               INCOMING ORDERS 48 hrs{" "}
-                             
+
                               <i className="icon4" style={{ color: "#59CE8F" }}>
                                 <MdDashboard />{" "}
                               </i>
@@ -621,7 +618,7 @@ if(resp.data.delay_cold_chain_order.length > 0) {
                           <div className="me-3">
                             <h6 className="text-muted mb-0.2">
                               OUTGOING ORDERS 48 hrs{" "}
-                            
+
                               <i className="icon4" style={{ color: "#66BFBF" }}>
                                 <MdDashboard />{" "}
                               </i>
@@ -651,7 +648,7 @@ if(resp.data.delay_cold_chain_order.length > 0) {
           </Col>
         </Row>
       </div>
-    
+
       <div style={{ width: width, margin: "20px" }}>
         <div
           style={{
@@ -798,7 +795,7 @@ if(resp.data.delay_cold_chain_order.length > 0) {
                     >
                       <CardBody>
                         <div className="d-flex flex-wrap">
-                          <div className="me-3"> 
+                          <div className="me-3">
                             <h6 className="text-muted mb-0.2">
                               NOT RECEIVED{" "}
                               <i className="icon4" style={{ color: "#E64848" }}>

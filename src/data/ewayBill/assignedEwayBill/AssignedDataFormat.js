@@ -1,11 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
-import { Input, Col, Row, Label } from "reactstrap";
-import { FiCheckSquare, FiSquare } from "react-icons/fi";
-import { Button } from "react-bootstrap";
-import Modal from "react-bootstrap/Modal";
-import NSearchInput from "../../../components/formComponent/nsearchInput/NSearchInput";
-import { setAlertType, setDataExist, setShowAlert } from "../../../store/alert/Alert";
-import { useDispatch } from "react-redux";
+import React from "react";
 import correct from "../../../assets/images/bookings/check-mark.png";
 import cross from "../../../assets/images/bookings/remove.png";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
@@ -24,8 +17,7 @@ const PacketTitle = [
 ];
 
 const AssignedDataFormat = ({ data }) => {
-  const dispatch = useDispatch();
-
+  
   return (
     <>
          <div className="fixTableHead" style={{ overflowY: "auto", maxHeight: "58.2vh"}}>
@@ -76,9 +68,9 @@ const AssignedDataFormat = ({ data }) => {
                       <td>{toTitleCase(ewb.fromTrdName)}</td>
                       <td>{toTitleCase(ewb.toTrdName)}</td>
                       <td>{expired ?
-                        <img src={correct} height="20px" width="20px" />
+                        <img src={correct} alt="correct" height="20px" width="20px" />
                         :
-                        <img src={cross} height="20px" width="20px" />
+                        <img src={cross} alt="cross" height="20px" width="20px" />
 
 
                       }</td>

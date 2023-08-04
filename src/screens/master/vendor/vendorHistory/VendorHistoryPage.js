@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 
 const VendorHistoryPage = () => {
   const location = useLocation();
-  console.log(location)
+  // console.log(location)
   const [vendor_id, setvendor_id] = useState(location.state.vendor.id);
   return (
     <>

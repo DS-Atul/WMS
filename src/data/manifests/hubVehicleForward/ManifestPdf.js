@@ -1,11 +1,10 @@
 /* eslint-disable */
 import axios from "axios";
-import React, { useRef, useEffect, useState, useLayoutEffect } from "react";
+import React, { useRef, useState, useLayoutEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { ServerAddress } from "../../../constants/ServerAddress";
-import toTitleCase from "../../../lib/titleCase/TitleCase";
 
 const Manifest_pdf = () => {
   //   const [order, setorder] = useState([]);

@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-import { MdAdd } from "react-icons/md";
-import NavBtn from "../../../components/btn/NavBtn";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -23,13 +21,13 @@ const HiredDetails = () => {
   const search = useSelector((state) => state.searchbar.search_item);
 
   // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
+  // const user_permissions = useSelector(
+  //   (state) => state.permissions.user_permissions
+  // );
 
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
+  // let is_superuser = useSelector(
+  //   (state) => state.authentication.userdetails.is_superuser
+  // );
 
   useEffect(() => {
     dispatch(setToggle(false));
@@ -67,7 +65,7 @@ const HiredDetails = () => {
             Data_Title={HiredDetailsDataTitle}
             Data_Format={HiredDetailsDataFormate}
             path={
-              toggle == false
+              toggle === false
                 ? `master/all_clients/?search=${search}&p=${page_num}&records=${data_len}`
                 : `master/get_clientsfilter_data/?client_name=${client_name}&p=${page_num}&records=${data_len}`
             }

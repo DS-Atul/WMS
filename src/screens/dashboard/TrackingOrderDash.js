@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 // import "./Tracking.css";
 import "../track/trackingPage/Tracking.css";
-import { ImSearch } from "react-icons/im";
 import { ImCross } from "react-icons/im";
 import { FaBitbucket, FaPeopleCarry } from "react-icons/fa";
-import { FaBox, FaRoute } from "react-icons/fa";
+import { FaBox } from "react-icons/fa";
 import axios from "axios";
 import { ServerAddress } from "../../constants/ServerAddress";
 import toTitleCase from "../../lib/titleCase/TitleCase";
@@ -24,16 +22,13 @@ const TrackingOrderDash = () => {
 
   const accessToken = useSelector((state) => state.authentication.access_token);
   const docket_no = useSelector((state) => state.OrderTracking.docket_number);
-  const docket_search = useSelector((state) => state.OrderTracking.search_docket);
   console.log("doc are :", docket_no);
-  const [order_id, setorder_id] = useState("");
   const [search, setsearch] = useState(false);
-  const [next, setnext] = useState(false);
-  const [refresh, setrefresh] = useState(false);
 
   // _________
   const [get_orders, setget_orders] = useState([]);
   const [get_status, setget_status] = useState([]);
+  const [refresh, setrefresh] = useState(false);
 
   const get_order_data = (docket_list) => {
     axios
@@ -42,7 +37,7 @@ const TrackingOrderDash = () => {
 
       )
       .then((response) => {
-        console.log("Tracking response data", response.data);
+        // console.log("Tracking response data", response.data);
         const docket_info = response.data[0];
         const last = docket_info[docket_info.length - 1];
         setget_status(last);
@@ -125,7 +120,7 @@ const TrackingOrderDash = () => {
 
               return (
                 <div key={index}>
-                  {console.log("------", item)}
+                  {/* {console.log("------", item)} */}
 
                   {search ? (
                     <div
@@ -140,7 +135,7 @@ const TrackingOrderDash = () => {
                         <h5
                           style={{
                             fontSize: "21px",
-                            borderRadius: "10px",
+                            // borderRadius: "10px",
                             borderRadius: "10px 10px 0 0",
                             textAlign: "left",
                           }}
@@ -936,7 +931,7 @@ const TrackingOrderDash = () => {
                     </div>
                   ) : null}
 
-                  {item[item.length - 1] == true ? (
+                  {item[item.length - 1] === true ? (
                     <div
                       className="t-card"
                       style={{ width: "100%", borderRadius: "10px" }}
@@ -992,7 +987,7 @@ const TrackingOrderDash = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {item.length == 0 ? (
+                              {item.length === 0 ? (
                                 <tr>
                                   <td>No Data Found</td>
                                 </tr>
@@ -1001,9 +996,9 @@ const TrackingOrderDash = () => {
                                   console.log(
                                     item.length,
                                     index,
-                                    item.length - 1 != index
+                                    item.length - 1 !== index
                                   );
-                                  if (item.length - 1 != index) {
+                                  if (item.length - 1 !== index) {
                                     console.log(
                                       "not last entry",
                                       item1.updated_at

@@ -1,6 +1,6 @@
 const InvoiceDataTitle = [
   "Invoice Number *",
-  " Client Name *",
+  "Client Name *",
   "Remark *",
   "Download Invoice",
 ];

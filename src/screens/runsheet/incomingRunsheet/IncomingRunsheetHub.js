@@ -20,11 +20,6 @@ const IncomingRunsheetHub = () => {
   const page_num = useSelector((state) => state.pagination.page_number);
   const search = useSelector((state) => state.searchbar.search_item);
 
-  // // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
-
   let is_superuser = useSelector(
     (state) => state.authentication.userdetails.is_superuser
   );
@@ -33,23 +28,23 @@ const IncomingRunsheetHub = () => {
     dispatch(setToggle(false));
   }, []);
 
-    //Permission
-    const userpermission = useSelector(
-      (state) => state.authentication.userpermission
-    );
-    const [can_delete, setcan_delete] = useState(false);
-  
-    useEffect(() => {
-      if (
-        userpermission.some(
-          (e) => e.sub_model === "Raugh Manifest" && e.delete === true
-        )
-      ) {
-        setcan_delete(true);
-      } else {
-        setcan_delete(false);
-      }
-    }, [userpermission]);
+  //Permission
+  const userpermission = useSelector(
+    (state) => state.authentication.userpermission
+  );
+  const [can_delete, setcan_delete] = useState(false);
+
+  useEffect(() => {
+    if (
+      userpermission.some(
+        (e) => e.sub_model === "Raugh Manifest" && e.delete === true
+      )
+    ) {
+      setcan_delete(true);
+    } else {
+      setcan_delete(false);
+    }
+  }, [userpermission]);
   return (
     <>
       <PageTitle page="IncomingHub" />
@@ -74,9 +69,9 @@ const IncomingRunsheetHub = () => {
 
           {/* DataTable */}
           <DataList
-          can_delete={can_delete}
-          Data_Title={IncomingRunsheetHubTitle}
-          Data_Format={IncomingRunsheetHubDataFormat}
+            can_delete={can_delete}
+            Data_Title={IncomingRunsheetHubTitle}
+            Data_Format={IncomingRunsheetHubDataFormat}
             path={`manifest/get_incoming_runsheet/?search=${search}&p=${page_num}&records=${data_len}`}
             checkbox={"NO"}
           />

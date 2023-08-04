@@ -1,11 +1,7 @@
-import React,{useState,useEffect} from 'react'
-import { gstin_no } from '../../../constants/CompanyDetails';
-import { useSelector } from 'react-redux';
-import axios from 'axios';
+import React from 'react'
 import { useLocation } from "react-router-dom";
 import PageTitle from '../../../components/pageTitle/PageTitle';
 import Title from '../../../components/title/Title';
-import SearchList from '../../../components/listDisplay/searchList/SearchList';
 import ExtendDataFormat from '../../../data/ewayBill/extendEwayBill/ExtendDataFormat';
 
 const EwbExpiredYesterday = () => {
@@ -65,8 +61,7 @@ const EwbExpiredYesterday = () => {
           <div className="mb-2 row">
             {/* <div className="col-sm-4">
               <SearchList />
-            </div> */}
-           
+            </div> */}    
           
           </div>
 
@@ -74,11 +69,9 @@ const EwbExpiredYesterday = () => {
           <ExtendDataFormat
           type={location?.state?.type}
           count={location?.state?.count}
-          />
-       
+          />       
         </div>
-      </div>
-    
+      </div>    
     </>
   )
 }

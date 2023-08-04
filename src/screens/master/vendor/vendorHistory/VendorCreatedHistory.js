@@ -3,7 +3,7 @@ import {Col,Card,CardTitle,CardBody} from "reactstrap";
 import "../../../../components/historyTabComponents/NewHistoryTab.css";
 
 const VendorCreatedHistory = ({page_data}) => {
-console.log("Page data is", page_data);
+// console.log("Page data is", page_data);
   const [vendor_data, setvendor_data] = useState("");
   const [user_name, setuser_name] = useState("");
 
@@ -19,7 +19,7 @@ setvendor_data(n_data);
   }, [page_data])
   let time = new Date(vendor_data.created_at).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
 
-  console.log("vendo dta ois ====>>",vendor_data);
+  // console.log("vendo dta ois ====>>",vendor_data);
 
   return (
     <>

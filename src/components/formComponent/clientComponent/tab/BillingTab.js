@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import classnames from "classnames";
 import {
   CardBody,
@@ -14,7 +14,7 @@ import {
   Table,
   Button,
 } from "reactstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 // import Associated_Charges from "./Tab_Components/Associated_Charges";
 import { FiCheckSquare, FiSquare } from "react-icons/fi";
@@ -22,26 +22,17 @@ import { IconContext } from "react-icons";
 import { MdAdd, MdDelete } from "react-icons/md";
 import axios from "axios";
 import toTitleCase from "../../../../lib/titleCase/TitleCase";
-import { setLocalCal } from "../../../../store/master/client/Client";
-import { setLocalCalCust } from "../../../../store/master/customer/Customer";
 import { ServerAddress } from "../../../../constants/ServerAddress";
-import AssociatedCharges from "../associatedCharges/AssociatedCharges";
-import SearchInput from "../../searchInput/SearchInput";
 import MultiRowSearchInput from "../../multiRowSearchInput/MultiRowSearchInput";
 import NSearchInput from "../../nsearchInput/NSearchInput";
-import ChargeRatesAir from "../chargeRatesAir/ChargeRatesAir";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 //for css
 import "../../../../screens/test/Test.css";
 
 //for export
-import { JsonToCsv, useJsonToCsv } from "react-json-csv";
-import { object } from "yup";
+import { useJsonToCsv } from "react-json-csv";
 import { Modal } from "react-bootstrap";
-import { CleaningServices } from "@mui/icons-material";
-import { width } from "@mui/system";
-
 const BillingTab = ({
   activeTab,
   setactiveTab,
@@ -127,15 +118,6 @@ const BillingTab = ({
   //  Additional Charges
   const [ot_chg_page, setot_chg_page] = useState(1);
   const [ot_search_txt, setot_search_txt] = useState("");
-
-  // Calculation Redux States
-  const local_cal = useSelector((state) => state.client.local_cal);
-  const air_cal = useSelector((state) => state.client.air_cal);
-  const surface_cal = useSelector((state) => state.client.surface_cal);
-  const local_cal_dimn = useSelector((state) => state.client.local_cal.dimn);
-  const local_cal_box_cal = useSelector(
-    (state) => state.client.local_cal.box_cal
-  );
 
   const [local_cal_errd, setlocal_cal_errd] = useState(false);
   const [local_cal_errb, setlocal_cal_errb] = useState(false);
@@ -270,12 +252,12 @@ const BillingTab = ({
     let cc_titles = ["CC_Rate_Per_KG"];
     let nc_titles = ["NCC_Rate_Per_KG"];
 
-    if (import_for == "Local") {
-      if (dom_rate_type_local == "Upto") {
+    if (import_for === "Local") {
+      if (dom_rate_type_local === "Upto") {
         cc_titles.push("CC_Minimum_Box");
         nc_titles.push("NCC_Minimum_Box");
       }
-      if (dom_rate_type_local != "Flat") {
+      if (dom_rate_type_local !== "Flat") {
         cc_titles.push("CC_Minimum_Amount");
         nc_titles.push("NCC_Minimum_Amount");
       }
@@ -320,12 +302,12 @@ const BillingTab = ({
     let cc_titles = ["CC_Rate_Per_KG"];
     let nc_titles = ["NCC_Rate_Per_KG"];
 
-    if (dom_rate_type == "Upto") {
+    if (dom_rate_type === "Upto") {
       cc_titles.push("CC_Minimum_Box");
       nc_titles.push("NCC_Minimum_Box");
     }
 
-    if (dom_rate_type != "Flat") {
+    if (dom_rate_type !== "Flat") {
       cc_titles.push("CC_Minimum_Amount");
       nc_titles.push("NCC_Minimum_Amount");
     }
@@ -389,12 +371,12 @@ const BillingTab = ({
     let cc_titles = ["CC_Rate_Per_KG"];
     let nc_titles = ["NCC_Rate_Per_KG"];
 
-    if (dom_rate_type == "Upto") {
+    if (dom_rate_type === "Upto") {
       cc_titles.push("CC_Minimum_Box");
       nc_titles.push("NCC_Minimum_Box");
     }
 
-    if (dom_rate_type != "Flat") {
+    if (dom_rate_type !== "Flat") {
       cc_titles.push("CC_Minimum_Amount");
       nc_titles.push("NCC_Minimum_Amount");
     }
@@ -457,12 +439,12 @@ const BillingTab = ({
     let cc_titles = ["CC_Rate_Per_KG"];
     let nc_titles = ["NCC_Rate_Per_KG"];
 
-    if (dom_rate_type == "Upto") {
+    if (dom_rate_type === "Upto") {
       cc_titles.push("CC_Minimum_Box");
       nc_titles.push("NCC_Minimum_Box");
     }
 
-    if (dom_rate_type != "Flat") {
+    if (dom_rate_type !== "Flat") {
       cc_titles.push("CC_Minimum_Amount");
       nc_titles.push("NCC_Minimum_Amount");
     }
@@ -518,12 +500,12 @@ const BillingTab = ({
     let cc_titles = ["CC_Rate_Per_KG"];
     let nc_titles = ["NCC_Rate_Per_KG"];
 
-    if (dom_rate_type == "Upto") {
+    if (dom_rate_type === "Upto") {
       cc_titles.push("CC_Minimum_Box");
       nc_titles.push("NCC_Minimum_Box");
     }
 
-    if (dom_rate_type != "Flat") {
+    if (dom_rate_type !== "Flat") {
       cc_titles.push("CC_Minimum_Amount");
       nc_titles.push("NCC_Minimum_Amount");
     }
@@ -1003,11 +985,11 @@ const BillingTab = ({
   // Set Import Data to Billing Table
   const send_list_data = () => {
     let filter_chrg = local_datalisttmp.filter(
-      (g) => g[0][0][0] != "" && count_s[g[0][0][1]] == 1
+      (g) => g[0][0][0] !== "" && count_s[g[0][0][1]] === 1
     );
 
     let duplicate_chrg = local_datalisttmp.filter(
-      (g) => g[0][0][0] != "" && count_s[g[0][0][1]] > 1
+      (g) => g[0][0][0] !== "" && count_s[g[0][0][1]] > 1
     );
 
     if (duplicate_chrg.length > 1) {
@@ -1016,9 +998,9 @@ const BillingTab = ({
       );
     } else {
       let c_type = "Flat";
-      if (local_datalisttmp[0][1][2] == "") {
+      if (local_datalisttmp[0][1][2] === "") {
         c_type = "Flat";
-      } else if (local_datalisttmp[0][1][1] == "") {
+      } else if (local_datalisttmp[0][1][1] === "") {
         c_type = "Minimum";
       } else {
         c_type = "Upto";
@@ -1054,7 +1036,7 @@ const BillingTab = ({
           }
         }
 
-        let tmp = per_charge_list.filter((ch) => ch[0][0] != "");
+        let tmp = per_charge_list.filter((ch) => ch[0][0] !== "");
         setper_charge_list([...tmp, ...p_list]);
       }
       setdom_rate_type_local(c_type);
@@ -1065,17 +1047,17 @@ const BillingTab = ({
   const send_list_data_air_city = () => {
     let filter_chrg = datalisttmp.filter(
       (g) =>
-        g[0][0][0] != "" &&
-        g[0][1][0] != "" &&
-        count_s[g[0][0][1] + g[0][1][1]] == 1
+        g[0][0][0] !== "" &&
+        g[0][1][0] !== "" &&
+        count_s[g[0][0][1] + g[0][1][1]] === 1
     );
 
     // console.log("filter_chrg",filter_chrg)
 
     let duplicate_chrg = datalisttmp.filter(
       (g) =>
-        g[0][0][0] != "" &&
-        g[0][1][0] != "" &&
+        g[0][0][0] !== "" &&
+        g[0][1][0] !== "" &&
         count_s[g[0][0][1] + g[0][1][1]] > 1
     );
 
@@ -1085,9 +1067,9 @@ const BillingTab = ({
       );
     } else {
       let c_type = "Flat";
-      if (datalisttmp[0][1][2] == "") {
+      if (datalisttmp[0][1][2] === "") {
         c_type = "Flat";
-      } else if (datalisttmp[0][1][1] == "") {
+      } else if (datalisttmp[0][1][1] === "") {
         c_type = "Minimum";
       } else {
         c_type = "Upto";
@@ -1115,7 +1097,7 @@ const BillingTab = ({
           if (per_charge_names_list.indexOf(cc_headers[y].toUpperCase()) > -1) {
             // To Check Percentage Charge Available in Database or Not
             let p_data = per_chrgs.find(
-              (v) => v[1] == cc_headers[y].toUpperCase()
+              (v) => v[1] === cc_headers[y].toUpperCase()
             );
             let p_id = p_data[0];
             let p_name = p_data[1];
@@ -1127,7 +1109,7 @@ const BillingTab = ({
         }
         console.log("p_list", p_list);
 
-        let tmp = per_charge_list.filter((ch) => ch[0][0] != "");
+        let tmp = per_charge_list.filter((ch) => ch[0][0] !== "");
         setper_charge_list_air([...tmp, ...p_list]);
       }
       console.log("filter_chrg", filter_chrg);
@@ -1139,17 +1121,17 @@ const BillingTab = ({
   const send_list_data_surface_city = () => {
     let filter_chrg = datalisttmp.filter(
       (g) =>
-        g[0][0][0] != "" &&
-        g[0][1][0] != "" &&
-        count_s[g[0][0][1] + g[0][1][1]] == 1
+        g[0][0][0] !== "" &&
+        g[0][1][0] !== "" &&
+        count_s[g[0][0][1] + g[0][1][1]] === 1
     );
 
     // console.log("filter_chrg",filter_chrg)
 
     let duplicate_chrg = datalisttmp.filter(
       (g) =>
-        g[0][0][0] != "" &&
-        g[0][1][0] != "" &&
+        g[0][0][0] !== "" &&
+        g[0][1][0] !== "" &&
         count_s[g[0][0][1] + g[0][1][1]] > 1
     );
 
@@ -1159,9 +1141,9 @@ const BillingTab = ({
       );
     } else {
       let c_type = "Flat";
-      if (datalisttmp[0][1][2] == "") {
+      if (datalisttmp[0][1][2] === "") {
         c_type = "Flat";
-      } else if (datalisttmp[0][1][1] == "") {
+      } else if (datalisttmp[0][1][1] === "") {
         c_type = "Minimum";
       } else {
         c_type = "Upto";
@@ -1189,7 +1171,7 @@ const BillingTab = ({
           if (per_charge_names_list.indexOf(cc_headers[y].toUpperCase()) > -1) {
             // To Check Percentage Charge Available in Database or Not
             let p_data = per_chrgs.find(
-              (v) => v[1] == cc_headers[y].toUpperCase()
+              (v) => v[1] === cc_headers[y].toUpperCase()
             );
             let p_id = p_data[0];
             let p_name = p_data[1];
@@ -1201,7 +1183,7 @@ const BillingTab = ({
         }
         console.log("p_list", p_list);
 
-        let tmp = per_charge_list.filter((ch) => ch[0][0] != "");
+        let tmp = per_charge_list.filter((ch) => ch[0][0] !== "");
         setper_charge_list_surface([...tmp, ...p_list]);
       }
       console.log("filter_chrg", filter_chrg);
@@ -1213,17 +1195,17 @@ const BillingTab = ({
   const send_list_data_air_zone = () => {
     let filter_chrg = datalist1tmp.filter(
       (g) =>
-        g[0][0][0] != "" &&
-        g[0][1][0] != "" &&
-        count_s[g[0][0][1] + g[0][1][1]] == 1
+        g[0][0][0] !== "" &&
+        g[0][1][0] !== "" &&
+        count_s[g[0][0][1] + g[0][1][1]] === 1
     );
 
     // console.log("filter_chrg",filter_chrg)
 
     let duplicate_chrg = datalist1tmp.filter(
       (g) =>
-        g[0][0][0] != "" &&
-        g[0][1][0] != "" &&
+        g[0][0][0] !== "" &&
+        g[0][1][0] !== "" &&
         count_s[g[0][0][1] + g[0][1][1]] > 1
     );
 
@@ -1233,9 +1215,9 @@ const BillingTab = ({
       );
     } else {
       let c_type = "Flat";
-      if (datalist1tmp[0][1][2] == "") {
+      if (datalist1tmp[0][1][2] === "") {
         c_type = "Flat";
-      } else if (datalist1tmp[0][1][1] == "") {
+      } else if (datalist1tmp[0][1][1] === "") {
         c_type = "Minimum";
       } else {
         c_type = "Upto";
@@ -1257,7 +1239,7 @@ const BillingTab = ({
           if (per_charge_names_list.indexOf(cc_headers[y].toUpperCase()) > -1) {
             // To Check Percentage Charge Available in Database or Not
             let p_data = per_chrgs.find(
-              (v) => v[1] == cc_headers[y].toUpperCase()
+              (v) => v[1] === cc_headers[y].toUpperCase()
             );
             let p_id = p_data[0];
             let p_name = p_data[1];
@@ -1268,7 +1250,7 @@ const BillingTab = ({
           }
         }
 
-        let tmp = per_charge_list.filter((ch) => ch[0][0] != "");
+        let tmp = per_charge_list.filter((ch) => ch[0][0] !== "");
         setper_charge_list_air([...tmp, ...p_list]);
       }
       console.log("filter_chrg", filter_chrg);
@@ -1280,17 +1262,17 @@ const BillingTab = ({
   const send_list_data_surface_zone = () => {
     let filter_chrg = datalist1tmp.filter(
       (g) =>
-        g[0][0][0] != "" &&
-        g[0][1][0] != "" &&
-        count_s[g[0][0][1] + g[0][1][1]] == 1
+        g[0][0][0] !== "" &&
+        g[0][1][0] !== "" &&
+        count_s[g[0][0][1] + g[0][1][1]] === 1
     );
 
     // console.log("filter_chrg",filter_chrg)
 
     let duplicate_chrg = datalist1tmp.filter(
       (g) =>
-        g[0][0][0] != "" &&
-        g[0][1][0] != "" &&
+        g[0][0][0] !== "" &&
+        g[0][1][0] !== "" &&
         count_s[g[0][0][1] + g[0][1][1]] > 1
     );
 
@@ -1300,9 +1282,9 @@ const BillingTab = ({
       );
     } else {
       let c_type = "Flat";
-      if (datalist1tmp[0][1][2] == "") {
+      if (datalist1tmp[0][1][2] === "") {
         c_type = "Flat";
-      } else if (datalist1tmp[0][1][1] == "") {
+      } else if (datalist1tmp[0][1][1] === "") {
         c_type = "Minimum";
       } else {
         c_type = "Upto";
@@ -1324,7 +1306,7 @@ const BillingTab = ({
           if (per_charge_names_list.indexOf(cc_headers[y].toUpperCase()) > -1) {
             // To Check Percentage Charge Available in Database or Not
             let p_data = per_chrgs.find(
-              (v) => v[1] == cc_headers[y].toUpperCase()
+              (v) => v[1] === cc_headers[y].toUpperCase()
             );
             let p_id = p_data[0];
             let p_name = p_data[1];
@@ -1335,7 +1317,7 @@ const BillingTab = ({
           }
         }
 
-        let tmp = per_charge_list.filter((ch) => ch[0][0] != "");
+        let tmp = per_charge_list.filter((ch) => ch[0][0] !== "");
         setper_charge_list_surface([...tmp, ...p_list]);
       }
       console.log("filter_chrg", filter_chrg);
@@ -1349,25 +1331,25 @@ const BillingTab = ({
     axios
       .get(
         ServerAddress +
-          `master/all_charges/?search=${""}&p=${1}&records=${10}&charge_category=${""}&data=all`,
+        `master/all_charges/?search=${""}&p=${1}&records=${10}&charge_category=${""}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((resp) => {
         let per_chg = resp.data.results
-          .filter((g) => g.charge_category == "PERCENTAGE CHARGE")
+          .filter((g) => g.charge_category === "PERCENTAGE CHARGE")
           .map((v) => [v.id, v.charge_name]);
         let asso_chrg = resp.data.results
-          .filter((g) => g.charge_category == "ASSOCIATED CHARGE")
+          .filter((g) => g.charge_category === "ASSOCIATED CHARGE")
           .map((v) => [v.id, v.charge_name]);
 
         setper_chrgs(per_chg);
-        if (import_for == "Local") {
+        if (import_for === "Local") {
           setTable(asso_chrg);
-        } else if (import_for == "Air_City") {
+        } else if (import_for === "Air_City") {
           setTableAirCity();
-        } else if (import_for == "Air_Zone") {
+        } else if (import_for === "Air_Zone") {
           setTableAirZone();
         }
       })
@@ -1380,9 +1362,9 @@ const BillingTab = ({
     axios
       .get(
         ServerAddress +
-          `master/all_charges/?search=${""}&p=${ot_chg_page}&records=${10}&charge_category=${[
-            "PERCENTAGE CHARGE",
-          ]}&charge_name_search=${ot_search_txt}&data=all`,
+        `master/all_charges/?search=${""}&p=${ot_chg_page}&records=${10}&charge_category=${[
+          "PERCENTAGE CHARGE",
+        ]}&charge_name_search=${ot_search_txt}&data=all`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
@@ -1409,9 +1391,9 @@ const BillingTab = ({
     axios
       .get(
         ServerAddress +
-          `master/all_charges/?search=${""}&p=${sec_search_page}&records=${10}&charge_category=${[
-            "ASSOCIATED CHARGE",
-          ]}&charge_name_search=${sec_search_txt}&data=all`,
+        `master/all_charges/?search=${""}&p=${sec_search_page}&records=${10}&charge_category=${[
+          "ASSOCIATED CHARGE",
+        ]}&charge_name_search=${sec_search_txt}&data=all`,
 
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -1426,11 +1408,11 @@ const BillingTab = ({
         setsec_charges_list(temp_lis);
 
         try {
-          let fght_idx = temp_lis.find((val) => val[1] == "Freight")[0];
+          let fght_idx = temp_lis.find((val) => val[1] === "Freight")[0];
           setfreight_idx(fght_idx);
-          let wrai_idx = temp_lis.find((val) => val[1] == "Warai")[0];
+          let wrai_idx = temp_lis.find((val) => val[1] === "Warai")[0];
           setwarai_idx(wrai_idx);
-        } catch {}
+        } catch { }
       })
       .catch((err) => {
         alert(`Error Occur while getting secondary charges , ${err}`);
@@ -1443,18 +1425,18 @@ const BillingTab = ({
     axios
       .get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${origin_city_page}&records=${10}&city_search=${origin_city_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_cities/?search=${""}&p=${origin_city_page}&records=${10}&city_search=${origin_city_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
-          if (origin_city_page == 1) {
+          if (origin_city_page === 1) {
             cities_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
@@ -1482,18 +1464,18 @@ const BillingTab = ({
     axios
       .get(
         ServerAddress +
-          `master/all_cities/?search=${""}&p=${destination_city_page}&records=${10}&city_search=${destination_city_search_item}` +
-          "&place_id=" +
-          place_id +
-          "&filter_by=" +
-          filter_by,
+        `master/all_cities/?search=${""}&p=${destination_city_page}&records=${10}&city_search=${destination_city_search_item}` +
+        "&place_id=" +
+        place_id +
+        "&filter_by=" +
+        filter_by,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         }
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
-          if (destination_city_page == 1) {
+          if (destination_city_page === 1) {
             cities_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
@@ -1538,7 +1520,7 @@ const BillingTab = ({
   };
 
   const toggleSurface = (tab) => {
-    if (activeSurfaceTab !== tab){
+    if (activeSurfaceTab !== tab) {
       setactiveSurfaceTab(tab);
     }
   }
@@ -1596,7 +1578,7 @@ const BillingTab = ({
     if (is_oda_surface) {
       setoda_selected(1);
     } else setoda_selected(0);
-}, [is_oda_surface, dom_rate_type]);
+  }, [is_oda_surface, dom_rate_type]);
 
 
   // This used to filter other charges categorys
@@ -1900,7 +1882,7 @@ const BillingTab = ({
                               style={{ marginBottom: "15px" }}
                               className="form-control-md"
                               id="input"
-                              // disabled={item[6]}
+                            // disabled={item[6]}
                             >
                               <option value="" hidden></option>
                               {per_charge_categories.map((itms, index) => {
@@ -1909,7 +1891,7 @@ const BillingTab = ({
                                     className="option"
                                     value={itms}
                                     key={index}
-                                    // hidden={use_sec_ch_lst.some(v=> v[0] == itms[0])}
+                                  // hidden={use_sec_ch_lst.some(v=> v[0] == itms[0])}
                                   >
                                     {itms}
                                   </option>
@@ -2374,7 +2356,7 @@ const BillingTab = ({
 
                             {/*  For Non cold Chain */}
                             {itm[2].map((v, j) => {
-                              if (j == 0) {
+                              if (j === 0) {
                                 // CHeck
                                 return (
                                   <td key={j}>
@@ -2399,7 +2381,7 @@ const BillingTab = ({
                                 );
                               }
 
-                              if (j == 1 && dom_rate_type_local === "Upto") {
+                              if (j === 1 && dom_rate_type_local === "Upto") {
                                 return (
                                   <td key={j}>
                                     <input
@@ -2423,7 +2405,7 @@ const BillingTab = ({
                                 );
                               }
 
-                              if (j == 2 && dom_rate_type_local !== "Flat") {
+                              if (j === 2 && dom_rate_type_local !== "Flat") {
                                 return (
                                   <td key={j}>
                                     <input
@@ -2995,104 +2977,93 @@ const BillingTab = ({
 
                         {(dom_rate_category === "City to City" ||
                           dom_rate_category === "Both") && (
-                          <>
-                            <div
-                              style={{
-                                overflowX: "scroll",
-                              }}
-                            >
-                              {/* Domestic City Table */}
-                              <Table className="table-grid">
-                                <thead>
-                                  <tr>
-                                    <th
-                                      style={{
-                                        width: "2rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                      rowSpan={2}
-                                    >
-                                      SL
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "8rem",
-                                        textAlign: "center",
-                                        paddingLeft: "4px",
-                                        paddingRight: "4px",
-                                      }}
-                                      rowSpan={2}
-                                    >
-                                      Origin City
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "8rem",
-                                        textAlign: "center",
-                                        paddingLeft: "6px",
-                                        paddingRight: "4px",
-                                      }}
-                                      rowSpan={2}
-                                    >
-                                      Destination City
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "25rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                      colSpan={
-                                        cc_rate_call_span +
-                                        fillterd_charge_list.length +
-                                        oda_selected
-                                      }
-                                    >
-                                      Cold Chain
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "25rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                      colSpan={
-                                        ncc_rate_call_span +
-                                        fillterd_charge_list.length +
-                                        oda_selected
-                                      }
-                                    >
-                                      Non Cold Chain
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "2rem",
-                                        textAlign: "center",
-                                        paddingLeft: "6px",
-                                        paddingRight: "4px",
-                                      }}
-                                      rowSpan={2}
-                                    >
-                                      Delete
-                                    </th>
-                                  </tr>
+                            <>
+                              <div
+                                style={{
+                                  overflowX: "scroll",
+                                }}
+                              >
+                                {/* Domestic City Table */}
+                                <Table className="table-grid">
+                                  <thead>
+                                    <tr>
+                                      <th
+                                        style={{
+                                          width: "2rem",
+                                          textAlign: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}
+                                        rowSpan={2}
+                                      >
+                                        SL
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "8rem",
+                                          textAlign: "center",
+                                          paddingLeft: "4px",
+                                          paddingRight: "4px",
+                                        }}
+                                        rowSpan={2}
+                                      >
+                                        Origin City
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "8rem",
+                                          textAlign: "center",
+                                          paddingLeft: "6px",
+                                          paddingRight: "4px",
+                                        }}
+                                        rowSpan={2}
+                                      >
+                                        Destination City
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "25rem",
+                                          textAlign: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}
+                                        colSpan={
+                                          cc_rate_call_span +
+                                          fillterd_charge_list.length +
+                                          oda_selected
+                                        }
+                                      >
+                                        Cold Chain
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "25rem",
+                                          textAlign: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}
+                                        colSpan={
+                                          ncc_rate_call_span +
+                                          fillterd_charge_list.length +
+                                          oda_selected
+                                        }
+                                      >
+                                        Non Cold Chain
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "2rem",
+                                          textAlign: "center",
+                                          paddingLeft: "6px",
+                                          paddingRight: "4px",
+                                        }}
+                                        rowSpan={2}
+                                      >
+                                        Delete
+                                      </th>
+                                    </tr>
 
-                                  <tr>
-                                    <th
-                                      style={{
-                                        width: "2rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                    >
-                                      Rate Per Kg
-                                    </th>
-                                    {dom_rate_type === "Upto" && (
+                                    <tr>
                                       <th
                                         style={{
                                           width: "2rem",
@@ -3101,592 +3072,591 @@ const BillingTab = ({
                                           paddingRight: "2px",
                                         }}
                                       >
-                                        Minimum Box
+                                        Rate Per Kg
                                       </th>
-                                    )}
-                                    {dom_rate_type !== "Flat" && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        Minimum Amount
-                                      </th>
-                                    )}
-
-                                    {is_oda_air && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        ODA
-                                      </th>
-                                    )}
-
-                                    {fillterd_charge_list.length > 0 && (
-                                      <>
-                                        {fillterd_charge_list.map(
-                                          (itam, indx) => {
-                                            return (
-                                              <th
-                                                style={{
-                                                  width: "2rem",
-                                                  textAlign: "center",
-                                                  paddingLeft: "2px",
-                                                  paddingRight: "2px",
-                                                }}
-                                              >
-                                                {itam[0][1]}(in %)
-                                              </th>
-                                            );
-                                          }
-                                        )}
-                                      </>
-                                    )}
-
-                                    <th
-                                      style={{
-                                        width: "2rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                    >
-                                      Rate Per Kg
-                                    </th>
-
-                                    {dom_rate_type === "Upto" && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        Minimum Box
-                                      </th>
-                                    )}
-
-                                    {dom_rate_type !== "Flat" && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        Minimum Amount
-                                      </th>
-                                    )}
-
-                                    {is_oda_air && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        ODA
-                                      </th>
-                                    )}
-                                    {fillterd_charge_list.length > 0 && (
-                                      <>
-                                        {fillterd_charge_list.map(
-                                          (itam, indx) => {
-                                            return (
-                                              <th
-                                                style={{
-                                                  width: "2rem",
-                                                  textAlign: "center",
-                                                  paddingLeft: "2px",
-                                                  paddingRight: "2px",
-                                                }}
-                                              >
-                                                {itam[0][1]} (in %)
-                                              </th>
-                                            );
-                                          }
-                                        )}
-                                      </>
-                                    )}
-                                  </tr>
-                                </thead>
-
-                                <tbody>
-                                  {datalist.map((itm, idx) => {
-                                    return (
-                                      <tr key={idx}>
-                                        <td>{idx + 1}</td>
-
-                                        {/* For origin City & Destination City */}
-                                        {itm[0].map((v, i) => {
-                                          return (
-                                            <td key={i}>
-                                              <MultiRowSearchInput
-                                                data_list={city_list}
-                                                setdata_list={setcity_list}
-                                                data_item_s={
-                                                  datalist[idx][0][i]
-                                                }
-                                                page={city_page_no}
-                                                setpage={setcity_page_no}
-                                                setsearch_txt={
-                                                  setcity_search_itm
-                                                }
-                                                error_message={
-                                                  "Please Select Any Option"
-                                                }
-                                                refresh={refresh}
-                                                setrefresh={setrefresh}
-                                                current_width={"180px"}
-                                                idx={idx}
-                                              />
-                                            </td>
-                                          );
-                                        })}
-
-                                        {/* For COld Chain */}
-                                        {itm[1].map((v, i) => {
-                                          if (i == 0) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist[idx][1][i]}
-                                                  onChange={(val) => {
-                                                    datalist[idx][1][i] =
-                                                      val.target.value;
-                                                    const files =
-                                                      val.target.files;
-
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  className="input"
-                                                  type="number"
-                                                  min={0}
-                                                  step="0.5"
-                                                  accept=".csv,.xlsx,.xls"
-                                                  name="voucher_amount"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (
-                                            i == 1 &&
-                                            dom_rate_type === "Upto"
-                                          ) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist[idx][1][i]}
-                                                  onChange={(val) => {
-                                                    datalist[idx][1][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  // step={"0.5"}
-                                                  name="voucher_amount"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (
-                                            i == 2 &&
-                                            dom_rate_type != "Flat"
-                                          ) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist[idx][1][i]}
-                                                  onChange={(val) => {
-                                                    datalist[idx][1][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step={"0.5"}
-                                                  name="voucher_amount"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (i == 3 && is_oda_air) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist[idx][1][i]}
-                                                  onChange={(val) => {
-                                                    datalist[idx][1][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  min={0}
-                                                  step="0.5"
-                                                  type="number"
-                                                  name="voucher_amount"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                        })}
-
-                                        {fillterd_charge_list.map(
-                                          (itam1, index1) => {
-                                            return (
-                                              <td key={index1}>
-                                                <input
-                                                  value={
-                                                    datalist[idx][1][
-                                                      4 + index1
-                                                    ] || ""
-                                                  }
-                                                  onChange={(val) => {
-                                                    datalist[idx][1][
-                                                      4 + index1
-                                                    ] = val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step={0.01}
-                                                  name="charge"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                        )}
-
-                                        {/*  For Non cold Chain */}
-
-                                        {itm[2].map((v, i) => {
-                                          if (i === 0) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist[idx][2][i]}
-                                                  onChange={(val) => {
-                                                    datalist[idx][2][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step="0.5"
-                                                  name="voucher_amount"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (
-                                            i == 1 &&
-                                            dom_rate_type === "Upto"
-                                          ) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist[idx][2][i]}
-                                                  onChange={(val) => {
-                                                    datalist[idx][2][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  // step={"0.5"}
-                                                  name="voucher_amount"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (
-                                            i == 2 &&
-                                            dom_rate_type != "Flat"
-                                          ) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist[idx][2][i]}
-                                                  onChange={(val) => {
-                                                    datalist[idx][2][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step={"0.5"}
-                                                  name="voucher_amount"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (i == 3 && is_oda_air) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist[idx][2][i]}
-                                                  onChange={(val) => {
-                                                    datalist[idx][2][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step="0.5"
-                                                  name="voucher_amount"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                        })}
-
-                                        {fillterd_charge_list.map(
-                                          (itam1, index1) => {
-                                            return (
-                                              <td key={index1}>
-                                                <input
-                                                  value={
-                                                    datalist[idx][2][
-                                                      4 + index1
-                                                    ] || ""
-                                                  }
-                                                  onChange={(val) => {
-                                                    datalist[idx][2][
-                                                      4 + index1
-                                                    ] = val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step={0.01}
-                                                  name="Ncc_charge"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                        )}
-                                        <td
+                                      {dom_rate_type === "Upto" && (
+                                        <th
                                           style={{
-                                            color: "red",
-                                            cursor: "pointer",
-                                            size: "50px",
-                                          }}
-                                          onClick={() => {
-                                            delete_row_city(idx);
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
                                           }}
                                         >
-                                          <MdDelete />
-                                        </td>
-                                      </tr>
-                                    );
-                                  })}
-                                </tbody>
-                              </Table>
-                            </div>
+                                          Minimum Box
+                                        </th>
+                                      )}
+                                      {dom_rate_type !== "Flat" && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          Minimum Amount
+                                        </th>
+                                      )}
 
-                            {/* //Action Btn */}
-                            <div className="action_container">
-                              <Button
-                                style={{ margin: "8px" }}
-                                type="button"
-                                className="btn btn-info m-1 cu_btn"
-                                onClick={() => {
-                                  add_new_row_city();
-                                }}
-                              >
-                                Add New Row
-                              </Button>
+                                      {is_oda_air && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          ODA
+                                        </th>
+                                      )}
 
-                              {/* Import Excel Data Button */}
-                              <Button
-                                style={{ margin: "8px" }}
-                                type="button"
-                                className="btn btn-info m-1 cu_btn"
-                                onClick={() => {
-                                  setshow(true);
-                                  setimport_for("Air_City");
-                                  // navigate("/customers/ImportCityData");
-                                }}
-                              >
-                                Import
-                              </Button>
+                                      {fillterd_charge_list.length > 0 && (
+                                        <>
+                                          {fillterd_charge_list.map(
+                                            (itam, indx) => {
+                                              return (
+                                                <th
+                                                  style={{
+                                                    width: "2rem",
+                                                    textAlign: "center",
+                                                    paddingLeft: "2px",
+                                                    paddingRight: "2px",
+                                                  }}
+                                                >
+                                                  {itam[0][1]}(in %)
+                                                </th>
+                                              );
+                                            }
+                                          )}
+                                        </>
+                                      )}
 
-                              <Button
-                                style={{ margin: "8px" }}
-                                type="button"
-                                className="btn btn-info m-1 cu_btn"
-                                onClick={() => exportBillingDataAirCity()}
-                              >
-                                Export
-                              </Button>
-                            </div>
-                          </>
-                        )}
+                                      <th
+                                        style={{
+                                          width: "2rem",
+                                          textAlign: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}
+                                      >
+                                        Rate Per Kg
+                                      </th>
+
+                                      {dom_rate_type === "Upto" && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          Minimum Box
+                                        </th>
+                                      )}
+
+                                      {dom_rate_type !== "Flat" && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          Minimum Amount
+                                        </th>
+                                      )}
+
+                                      {is_oda_air && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          ODA
+                                        </th>
+                                      )}
+                                      {fillterd_charge_list.length > 0 && (
+                                        <>
+                                          {fillterd_charge_list.map(
+                                            (itam, indx) => {
+                                              return (
+                                                <th
+                                                  style={{
+                                                    width: "2rem",
+                                                    textAlign: "center",
+                                                    paddingLeft: "2px",
+                                                    paddingRight: "2px",
+                                                  }}
+                                                >
+                                                  {itam[0][1]} (in %)
+                                                </th>
+                                              );
+                                            }
+                                          )}
+                                        </>
+                                      )}
+                                    </tr>
+                                  </thead>
+
+                                  <tbody>
+                                    {datalist.map((itm, idx) => {
+                                      return (
+                                        <tr key={idx}>
+                                          <td>{idx + 1}</td>
+
+                                          {/* For origin City & Destination City */}
+                                          {itm[0].map((v, i) => {
+                                            return (
+                                              <td key={i}>
+                                                <MultiRowSearchInput
+                                                  data_list={city_list}
+                                                  setdata_list={setcity_list}
+                                                  data_item_s={
+                                                    datalist[idx][0][i]
+                                                  }
+                                                  page={city_page_no}
+                                                  setpage={setcity_page_no}
+                                                  setsearch_txt={
+                                                    setcity_search_itm
+                                                  }
+                                                  error_message={
+                                                    "Please Select Any Option"
+                                                  }
+                                                  refresh={refresh}
+                                                  setrefresh={setrefresh}
+                                                  current_width={"180px"}
+                                                  idx={idx}
+                                                />
+                                              </td>
+                                            );
+                                          })}
+
+                                          {/* For COld Chain */}
+                                          {itm[1].map((v, i) => {
+                                            if (i === 0) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][1][i] =
+                                                        val.target.value;
+                                                      const files =
+                                                        val.target.files;
+
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    className="input"
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.5"
+                                                    accept=".csv,.xlsx,.xls"
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (
+                                              i === 1 &&
+                                              dom_rate_type === "Upto"
+                                            ) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][1][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    // step={"0.5"}
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (
+                                              i === 2 &&
+                                              dom_rate_type !== "Flat"
+                                            ) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][1][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step={"0.5"}
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (i === 3 && is_oda_air) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][1][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    min={0}
+                                                    step="0.5"
+                                                    type="number"
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                          })}
+
+                                          {fillterd_charge_list.map(
+                                            (itam1, index1) => {
+                                              return (
+                                                <td key={index1}>
+                                                  <input
+                                                    value={
+                                                      datalist[idx][1][
+                                                      4 + index1
+                                                      ] || ""
+                                                    }
+                                                    onChange={(val) => {
+                                                      datalist[idx][1][
+                                                        4 + index1
+                                                      ] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step={0.01}
+                                                    name="charge"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                          )}
+
+                                          {/*  For Non cold Chain */}
+
+                                          {itm[2].map((v, i) => {
+                                            if (i === 0) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][2][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.5"
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (
+                                              i === 1 &&
+                                              dom_rate_type === "Upto"
+                                            ) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][2][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    // step={"0.5"}
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (
+                                              i === 2 &&
+                                              dom_rate_type !== "Flat"
+                                            ) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][2][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step={"0.5"}
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (i === 3 && is_oda_air) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][2][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.5"
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                          })}
+
+                                          {fillterd_charge_list.map(
+                                            (itam1, index1) => {
+                                              return (
+                                                <td key={index1}>
+                                                  <input
+                                                    value={
+                                                      datalist[idx][2][
+                                                      4 + index1
+                                                      ] || ""
+                                                    }
+                                                    onChange={(val) => {
+                                                      datalist[idx][2][
+                                                        4 + index1
+                                                      ] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step={0.01}
+                                                    name="Ncc_charge"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                          )}
+                                          <td
+                                            style={{
+                                              color: "red",
+                                              cursor: "pointer",
+                                              size: "50px",
+                                            }}
+                                            onClick={() => {
+                                              delete_row_city(idx);
+                                            }}
+                                          >
+                                            <MdDelete />
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </Table>
+                              </div>
+
+                              {/* //Action Btn */}
+                              <div className="action_container">
+                                <Button
+                                  style={{ margin: "8px" }}
+                                  type="button"
+                                  className="btn btn-info m-1 cu_btn"
+                                  onClick={() => {
+                                    add_new_row_city();
+                                  }}
+                                >
+                                  Add New Row
+                                </Button>
+
+                                {/* Import Excel Data Button */}
+                                <Button
+                                  style={{ margin: "8px" }}
+                                  type="button"
+                                  className="btn btn-info m-1 cu_btn"
+                                  onClick={() => {
+                                    setshow(true);
+                                    setimport_for("Air_City");
+                                    // navigate("/customers/ImportCityData");
+                                  }}
+                                >
+                                  Import
+                                </Button>
+
+                                <Button
+                                  style={{ margin: "8px" }}
+                                  type="button"
+                                  className="btn btn-info m-1 cu_btn"
+                                  onClick={() => exportBillingDataAirCity()}
+                                >
+                                  Export
+                                </Button>
+                              </div>
+                            </>
+                          )}
 
                         {(dom_rate_category === "Zone to Zone" ||
                           dom_rate_category === "Both") && (
-                          <>
-                            <div
-                              style={{
-                                overflowX: "scroll",
-                              }}
-                            >
-                              <table className="table-grid">
-                                <thead>
-                                  <tr>
-                                    <th
-                                      style={{
-                                        width: "2rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                      rowSpan={2}
-                                    >
-                                      SL
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "8rem",
-                                        textAlign: "center",
-                                        paddingLeft: "4px",
-                                        paddingRight: "4px",
-                                      }}
-                                      rowSpan={2}
-                                    >
-                                      Origin Zone
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "8rem",
-                                        textAlign: "center",
-                                        paddingLeft: "6px",
-                                        paddingRight: "4px",
-                                      }}
-                                      rowSpan={2}
-                                    >
-                                      Destination Zone
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "25rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                      // colSpan={is_oda ? cc_rate_call_span + 1 : cc_rate_call_span + fillterd_charge_list.length}
-                                      colSpan={
-                                        cc_rate_call_span +
-                                        fillterd_charge_list.length +
-                                        oda_selected
-                                      }
-                                    >
-                                      Cold Chain
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "25rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                      // colSpan={ is_oda ? ncc_rate_call_span + 1 : ncc_rate_call_span + fillterd_charge_list.length }
-                                      colSpan={
-                                        ncc_rate_call_span +
-                                        fillterd_charge_list.length +
-                                        oda_selected
-                                      }
-                                    >
-                                      Non Cold Chain
-                                    </th>
-                                    <th
-                                      style={{
-                                        width: "2rem",
-                                        textAlign: "center",
-                                        paddingLeft: "6px",
-                                        paddingRight: "4px",
-                                      }}
-                                      rowSpan={2}
-                                    >
-                                      Delete
-                                    </th>
-                                  </tr>
+                            <>
+                              <div
+                                style={{
+                                  overflowX: "scroll",
+                                }}
+                              >
+                                <table className="table-grid">
+                                  <thead>
+                                    <tr>
+                                      <th
+                                        style={{
+                                          width: "2rem",
+                                          textAlign: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}
+                                        rowSpan={2}
+                                      >
+                                        SL
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "8rem",
+                                          textAlign: "center",
+                                          paddingLeft: "4px",
+                                          paddingRight: "4px",
+                                        }}
+                                        rowSpan={2}
+                                      >
+                                        Origin Zone
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "8rem",
+                                          textAlign: "center",
+                                          paddingLeft: "6px",
+                                          paddingRight: "4px",
+                                        }}
+                                        rowSpan={2}
+                                      >
+                                        Destination Zone
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "25rem",
+                                          textAlign: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}
+                                        // colSpan={is_oda ? cc_rate_call_span + 1 : cc_rate_call_span + fillterd_charge_list.length}
+                                        colSpan={
+                                          cc_rate_call_span +
+                                          fillterd_charge_list.length +
+                                          oda_selected
+                                        }
+                                      >
+                                        Cold Chain
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "25rem",
+                                          textAlign: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}
+                                        // colSpan={ is_oda ? ncc_rate_call_span + 1 : ncc_rate_call_span + fillterd_charge_list.length }
+                                        colSpan={
+                                          ncc_rate_call_span +
+                                          fillterd_charge_list.length +
+                                          oda_selected
+                                        }
+                                      >
+                                        Non Cold Chain
+                                      </th>
+                                      <th
+                                        style={{
+                                          width: "2rem",
+                                          textAlign: "center",
+                                          paddingLeft: "6px",
+                                          paddingRight: "4px",
+                                        }}
+                                        rowSpan={2}
+                                      >
+                                        Delete
+                                      </th>
+                                    </tr>
 
-                                  <tr>
-                                    <th
-                                      style={{
-                                        width: "2rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                    >
-                                      Rate Per Kg
-                                    </th>
-
-                                    {dom_rate_type === "Upto" && (
+                                    <tr>
                                       <th
                                         style={{
                                           width: "2rem",
@@ -3695,487 +3665,499 @@ const BillingTab = ({
                                           paddingRight: "2px",
                                         }}
                                       >
-                                        Minimum Box
+                                        Rate Per Kg
                                       </th>
-                                    )}
 
-                                    {dom_rate_type !== "Flat" && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        Minimum Amount
-                                      </th>
-                                    )}
-
-                                    {is_oda_air && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        ODA
-                                      </th>
-                                    )}
-                                    {fillterd_charge_list.length > 0 && (
-                                      <>
-                                        {fillterd_charge_list.map(
-                                          (itam, indx) => {
-                                            return (
-                                              <th
-                                                style={{
-                                                  width: "2rem",
-                                                  textAlign: "center",
-                                                  paddingLeft: "2px",
-                                                  paddingRight: "2px",
-                                                }}
-                                              >
-                                                {itam[0][1]}(in %)
-                                              </th>
-                                            );
-                                          }
-                                        )}
-                                      </>
-                                    )}
-
-                                    <th
-                                      style={{
-                                        width: "2rem",
-                                        textAlign: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}
-                                    >
-                                      Rate Per Kg
-                                    </th>
-
-                                    {dom_rate_type === "Upto" && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        Minimum Box
-                                      </th>
-                                    )}
-
-                                    {dom_rate_type !== "Flat" && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        Minimum Amount
-                                      </th>
-                                    )}
-
-                                    {is_oda_air && (
-                                      <th
-                                        style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px",
-                                        }}
-                                      >
-                                        ODA
-                                      </th>
-                                    )}
-                                    {fillterd_charge_list.length > 0 && (
-                                      <>
-                                        {fillterd_charge_list.map(
-                                          (itam, indx) => {
-                                            return (
-                                              <th
-                                                style={{
-                                                  width: "2rem",
-                                                  textAlign: "center",
-                                                  paddingLeft: "2px",
-                                                  paddingRight: "2px",
-                                                }}
-                                              >
-                                                {itam[0][1]} (in %)
-                                              </th>
-                                            );
-                                          }
-                                        )}
-                                      </>
-                                    )}
-                                  </tr>
-                                </thead>
-
-                                <tbody>
-                                  {datalist1.map((itm, idx) => {
-                                    return (
-                                      <tr key={idx}>
-                                        <td>{idx + 1}</td>
-
-                                        {/* For origin City & Destination City */}
-                                        {itm[0].map((v, i) => {
-                                          return (
-                                            <td key={i}>
-                                              <MultiRowSearchInput
-                                                data_list={zone_list}
-                                                setdata_list={setzone_list}
-                                                data_item_s={
-                                                  datalist1[idx][0][i]
-                                                }
-                                                page={zone_page_no}
-                                                setpage={setzone_page_no}
-                                                setsearch_txt={
-                                                  setzone_search_itm
-                                                }
-                                                error_message={
-                                                  "Please Select Any Option"
-                                                }
-                                                refresh={refresh}
-                                                setrefresh={setrefresh}
-                                                current_width={"180px"}
-                                                idx={idx}
-                                              />
-                                            </td>
-                                          );
-                                        })}
-
-                                        {/* For COld Chain */}
-                                        {itm[1].map((v, i) => {
-                                          if (i == 0) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist1[idx][1][i]}
-                                                  onChange={(val) => {
-                                                    datalist1[idx][1][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  className="input"
-                                                  type="number"
-                                                  min={0}
-                                                  step="0.5"
-                                                  name=""
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (
-                                            i == 1 &&
-                                            dom_rate_type === "Upto"
-                                          ) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist1[idx][1][i]}
-                                                  onChange={(val) => {
-                                                    datalist1[idx][1][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  // step={"0.5"}
-                                                  name=""
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (
-                                            i == 2 &&
-                                            dom_rate_type !== "Flat"
-                                          ) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist1[idx][1][i]}
-                                                  onChange={(val) => {
-                                                    datalist1[idx][1][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step={"0.5"}
-                                                  name=""
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (i == 3 && is_oda_air) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist1[idx][1][i]}
-                                                  onChange={(val) => {
-                                                    datalist1[idx][1][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  min={0}
-                                                  step="0.5"
-                                                  type="number"
-                                                  name=""
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                        })}
-
-                                        {fillterd_charge_list.map(
-                                          (itam1, index1) => {
-                                            return (
-                                              <td key={index1}>
-                                                <input
-                                                  value={
-                                                    datalist1[idx][1][
-                                                      4 + index1
-                                                    ] || ""
-                                                  }
-                                                  onChange={(val) => {
-                                                    datalist1[idx][1][
-                                                      4 + index1
-                                                    ] = val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step={0.01}
-                                                  name="charge"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                        )}
-
-                                        {/*  For Non cold Chain */}
-
-                                        {itm[2].map((v, i) => {
-                                          if (i == 0) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist1[idx][2][i]}
-                                                  onChange={(val) => {
-                                                    datalist1[idx][2][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step="0.5"
-                                                  name=""
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (
-                                            i == 1 &&
-                                            dom_rate_type === "Upto"
-                                          ) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist1[idx][2][i]}
-                                                  onChange={(val) => {
-                                                    datalist1[idx][2][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  // step={"0.5"}
-                                                  name=""
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (
-                                            i == 2 &&
-                                            dom_rate_type !== "Flat"
-                                          ) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist1[idx][2][i]}
-                                                  onChange={(val) => {
-                                                    datalist1[idx][2][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step={"0.5"}
-                                                  name=""
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                          if (i == 3 && is_oda_air) {
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                  value={datalist1[idx][2][i]}
-                                                  onChange={(val) => {
-                                                    datalist1[idx][2][i] =
-                                                      val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step="0.5"
-                                                  name=""
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                        })}
-
-                                        {fillterd_charge_list.map(
-                                          (itam1, index1) => {
-                                            return (
-                                              <td key={index1}>
-                                                <input
-                                                  value={
-                                                    datalist1[idx][2][
-                                                      4 + index1
-                                                    ] || ""
-                                                  }
-                                                  onChange={(val) => {
-                                                    datalist1[idx][2][
-                                                      4 + index1
-                                                    ] = val.target.value;
-                                                    setrefresh(!refresh);
-                                                  }}
-                                                  type="number"
-                                                  min={0}
-                                                  step={0.01}
-                                                  name="Ncc_charge"
-                                                  placeholder="Enter Value"
-                                                  style={{
-                                                    borderWidth: 0,
-                                                    width: "2.5rem",
-                                                  }}
-                                                />
-                                              </td>
-                                            );
-                                          }
-                                        )}
-
-                                        <td
+                                      {dom_rate_type === "Upto" && (
+                                        <th
                                           style={{
-                                            color: "red",
-                                            cursor: "pointer",
-                                            size: "50px",
-                                          }}
-                                          onClick={() => {
-                                            delete_row_zone(idx);
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
                                           }}
                                         >
-                                          <MdDelete />
-                                        </td>
-                                      </tr>
-                                    );
-                                  })}
-                                </tbody>
-                              </table>
-                            </div>
+                                          Minimum Box
+                                        </th>
+                                      )}
 
-                            {/* //Action Btn */}
-                            <div className="action_container">
-                              <Button
-                                style={{ margin: "8px" }}
-                                type="button"
-                                className="btn btn-info m-1 cu_btn"
-                                onClick={() => {
-                                  add_new_row_zone();
-                                }}
-                              >
-                                Add New Row
-                              </Button>
+                                      {dom_rate_type !== "Flat" && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          Minimum Amount
+                                        </th>
+                                      )}
 
-                              <Button
-                                style={{ margin: "8px" }}
-                                type="button"
-                                className="btn btn-info m-1 cu_btn"
-                                onClick={() => {
-                                  setshow(true);
-                                  setimport_for("Air_Zone");
-                                  // navigate("/customers/importlocalassodata");
-                                }}
-                              >
-                                Import
-                              </Button>
+                                      {is_oda_air && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          ODA
+                                        </th>
+                                      )}
+                                      {fillterd_charge_list.length > 0 && (
+                                        <>
+                                          {fillterd_charge_list.map(
+                                            (itam, indx) => {
+                                              return (
+                                                <th
+                                                  style={{
+                                                    width: "2rem",
+                                                    textAlign: "center",
+                                                    paddingLeft: "2px",
+                                                    paddingRight: "2px",
+                                                  }}
+                                                >
+                                                  {itam[0][1]}(in %)
+                                                </th>
+                                              );
+                                            }
+                                          )}
+                                        </>
+                                      )}
 
-                              <Button
-                                style={{ margin: "8px" }}
-                                type="button"
-                                className="btn btn-info m-1 cu_btn"
-                                onClick={() => {
-                                  exportBillingDataAirZone();
-                                }}
-                              >
-                                Export
-                              </Button>
-                            </div>
-                          </>
-                        )}
+                                      <th
+                                        style={{
+                                          width: "2rem",
+                                          textAlign: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}
+                                      >
+                                        Rate Per Kg
+                                      </th>
+
+                                      {dom_rate_type === "Upto" && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          Minimum Box
+                                        </th>
+                                      )}
+
+                                      {dom_rate_type !== "Flat" && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          Minimum Amount
+                                        </th>
+                                      )}
+
+                                      {is_oda_air && (
+                                        <th
+                                          style={{
+                                            width: "2rem",
+                                            textAlign: "center",
+                                            paddingLeft: "2px",
+                                            paddingRight: "2px",
+                                          }}
+                                        >
+                                          ODA
+                                        </th>
+                                      )}
+                                      {fillterd_charge_list.length > 0 && (
+                                        <>
+                                          {fillterd_charge_list.map(
+                                            (itam, indx) => {
+                                              return (
+                                                <th
+                                                  style={{
+                                                    width: "2rem",
+                                                    textAlign: "center",
+                                                    paddingLeft: "2px",
+                                                    paddingRight: "2px",
+                                                  }}
+                                                >
+                                                  {itam[0][1]} (in %)
+                                                </th>
+                                              );
+                                            }
+                                          )}
+                                        </>
+                                      )}
+                                    </tr>
+                                  </thead>
+
+                                  <tbody>
+                                    {datalist1.map((itm, idx) => {
+                                      return (
+                                        <tr key={idx}>
+                                          <td>{idx + 1}</td>
+
+                                          {/* For origin City & Destination City */}
+                                          {itm[0].map((v, i) => {
+                                            return (
+                                              <td key={i}>
+                                                <MultiRowSearchInput
+                                                  data_list={zone_list}
+                                                  setdata_list={setzone_list}
+                                                  data_item_s={
+                                                    datalist1[idx][0][i]
+                                                  }
+                                                  page={zone_page_no}
+                                                  setpage={setzone_page_no}
+                                                  setsearch_txt={
+                                                    setzone_search_itm
+                                                  }
+                                                  error_message={
+                                                    "Please Select Any Option"
+                                                  }
+                                                  refresh={refresh}
+                                                  setrefresh={setrefresh}
+                                                  current_width={"180px"}
+                                                  idx={idx}
+                                                />
+                                              </td>
+                                            );
+                                          })}
+
+                                          {/* For COld Chain */}
+                                          {itm[1].map((v, i) => {
+                                            if (i === 0) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist1[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist1[idx][1][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    className="input"
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.5"
+                                                    name=""
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (
+                                              i === 1 &&
+                                              dom_rate_type === "Upto"
+                                            ) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist1[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist1[idx][1][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    // step={"0.5"}
+                                                    name=""
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (
+                                              i === 2 &&
+                                              dom_rate_type !== "Flat"
+                                            ) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist1[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist1[idx][1][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step={"0.5"}
+                                                    name=""
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (i === 3 && is_oda_air) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist1[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist1[idx][1][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    min={0}
+                                                    step="0.5"
+                                                    type="number"
+                                                    name=""
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                          })}
+
+                                          {fillterd_charge_list.map(
+                                            (itam1, index1) => {
+                                              return (
+                                                <td key={index1}>
+                                                  <input
+                                                    value={
+                                                      datalist1[idx][1][
+                                                      4 + index1
+                                                      ] || ""
+                                                    }
+                                                    onChange={(val) => {
+                                                      datalist1[idx][1][
+                                                        4 + index1
+                                                      ] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step={0.01}
+                                                    name="charge"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                          )}
+
+                                          {/*  For Non cold Chain */}
+
+                                          {itm[2].map((v, i) => {
+                                            if (i === 0) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist1[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist1[idx][2][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.5"
+                                                    name=""
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (
+                                              i === 1 &&
+                                              dom_rate_type === "Upto"
+                                            ) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist1[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist1[idx][2][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    // step={"0.5"}
+                                                    name=""
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (
+                                              i === 2 &&
+                                              dom_rate_type !== "Flat"
+                                            ) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist1[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist1[idx][2][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step={"0.5"}
+                                                    name=""
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                            if (i === 3 && is_oda_air) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist1[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist1[idx][2][i] =
+                                                        val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.5"
+                                                    name=""
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                          })}
+
+                                          {fillterd_charge_list.map(
+                                            (itam1, index1) => {
+                                              return (
+                                                <td key={index1}>
+                                                  <input
+                                                    value={
+                                                      datalist1[idx][2][
+                                                      4 + index1
+                                                      ] || ""
+                                                    }
+                                                    onChange={(val) => {
+                                                      datalist1[idx][2][
+                                                        4 + index1
+                                                      ] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step={0.01}
+                                                    name="Ncc_charge"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              );
+                                            }
+                                          )}
+
+                                          <td
+                                            style={{
+                                              color: "red",
+                                              cursor: "pointer",
+                                              size: "50px",
+                                            }}
+                                            onClick={() => {
+                                              delete_row_zone(idx);
+                                            }}
+                                          >
+                                            <MdDelete />
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
+
+                              {/* //Action Btn */}
+                              <div className="action_container">
+                                <Button
+                                  style={{ margin: "8px" }}
+                                  type="button"
+                                  className="btn btn-info m-1 cu_btn"
+                                  onClick={() => {
+                                    add_new_row_zone();
+                                  }}
+                                >
+                                  Add New Row
+                                </Button>
+
+                                <Button
+                                  style={{ margin: "8px" }}
+                                  type="button"
+                                  className="btn btn-info m-1 cu_btn"
+                                  onClick={() => {
+                                    setshow(true);
+                                    setimport_for("Air_Zone");
+                                    // navigate("/customers/importlocalassodata");
+                                  }}
+                                >
+                                  Import
+                                </Button>
+
+                                <Button
+                                  style={{ margin: "8px" }}
+                                  type="button"
+                                  className="btn btn-info m-1 cu_btn"
+                                  onClick={() => {
+                                    exportBillingDataAirZone();
+                                  }}
+                                >
+                                  Export
+                                </Button>
+                              </div>
+                            </>
+                          )}
                       </div>
                     </Row>
                   </TabPane>
@@ -4281,29 +4263,29 @@ const BillingTab = ({
                               </Col>
                               <Col lg={1}>
                                 <div
-                                style={{
-                                  display:"flex",
-                                  justifyContent: "center",
-                                  alignContent: "center",
-                                  height:34,
-                                  marginBottom:10,
-                                }}
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignContent: "center",
+                                    height: 34,
+                                    marginBottom: 10,
+                                  }}
                                 >
                                   <IconContext.Provider
-                                  value={{color:"red", size:"20px"}}
+                                    value={{ color: "red", size: "20px" }}
                                   >
-                                    <div 
-                                     style={{cursor: "pointer"}}
-                                     onClick={() => {
-                                      if (
-                                        window.confirm("Do you want to delete this row?")===true
-                                      ){
-                                        let temp = [...case_row];
-                                        temp.splice(idx2,1);
-                                        setcase_row(temp)
-                                      }else{}
-                                     }}
-                                     >
+                                    <div
+                                      style={{ cursor: "pointer" }}
+                                      onClick={() => {
+                                        if (
+                                          window.confirm("Do you want to delete this row?") === true
+                                        ) {
+                                          let temp = [...case_row];
+                                          temp.splice(idx2, 1);
+                                          setcase_row(temp)
+                                        } else { }
+                                      }}
+                                    >
                                       <MdDelete />
                                     </div>
                                   </IconContext.Provider>
@@ -4313,18 +4295,18 @@ const BillingTab = ({
                           );
                         })}
                         <div>
-                          <span 
-                          className="link-text"
-                          onClick={() => {
-                            let tmp1=[...case_row];
-                            tmp1.push(["",""]);
-                            setcase_row(tmp1);
-                          }}
-                           >
+                          <span
+                            className="link-text"
+                            onClick={() => {
+                              let tmp1 = [...case_row];
+                              tmp1.push(["", ""]);
+                              setcase_row(tmp1);
+                            }}
+                          >
                             <IconContext.Provider
                               value={{
-                              className: "link-text",
-                            }}
+                                className: "link-text",
+                              }}
                             >
                               <MdAdd />
                             </IconContext.Provider>
@@ -4342,28 +4324,28 @@ const BillingTab = ({
                         <Row>
                           <Col lg={3} md={4} sm={8}>
                             <div
-                            style={{display: "flex", flexDirection: "row"}}
+                              style={{ display: "flex", flexDirection: "row" }}
                             >
                               <div
-                              onClick={() => {
-                                setis_per_charge_surfc(!is_per_charge_surfc)
-                              }}
+                                onClick={() => {
+                                  setis_per_charge_surfc(!is_per_charge_surfc)
+                                }}
                               >
                                 {is_per_charge_surfc ? (
                                   <FiCheckSquare size={20} />
                                 ) : (
                                   <FiSquare size={20} />
                                 )
-                              }
+                                }
                               </div>
                               <Label className="header-child">&nbsp; % of Charge{" "}</Label>
                             </div>
                           </Col>
                           <Col lg={3}>
-                            <div 
-                            onClick={() => {
-                              setis_oda_surface(!is_oda_surface)
-                            }}
+                            <div
+                              onClick={() => {
+                                setis_oda_surface(!is_oda_surface)
+                              }}
                             >
                               {is_oda_surface ? (
                                 <FiCheckSquare size={20} />
@@ -4378,7 +4360,7 @@ const BillingTab = ({
                         {/* % of charges */}
                         {is_per_charge_surfc && (
                           <div>
-                            <Label style={{fontSize: 20}}> % of Chrages </Label>
+                            <Label style={{ fontSize: 20 }}> % of Chrages </Label>
                             <Row>
                               <Col md={4}>
                                 <Label className="header-child"> Charge Name</Label>
@@ -4393,195 +4375,683 @@ const BillingTab = ({
                                 <Label className="header-child"> Delete</Label>
                               </Col>
                             </Row>
-                          {per_charge_list_surface.map((per_chrg, idx) => {
-                            return (
-                              <Row key={idx}>
-                                <Col md={4}>
-                                <MultiRowSearchInput
-                                    data_list={oth_charges_list}
-                                    setdata_list={setoth_charges_list}
-                                    data_item_s={per_charge_list_surface[idx][0]}
-                                    page={ot_chg_page}
-                                    setpage={setot_chg_page}
-                                    setsearch_txt={setot_search_txt}
-                                    error_message={"Please Select Any Option"}
-                                    refresh={refresh}
-                                    setrefresh={setrefresh}
-                                    idx={idx}
-                                    current_width = "100%"
+                            {per_charge_list_surface.map((per_chrg, idx) => {
+                              return (
+                                <Row key={idx}>
+                                  <Col md={4}>
+                                    <MultiRowSearchInput
+                                      data_list={oth_charges_list}
+                                      setdata_list={setoth_charges_list}
+                                      data_item_s={per_charge_list_surface[idx][0]}
+                                      page={ot_chg_page}
+                                      setpage={setot_chg_page}
+                                      setsearch_txt={setot_search_txt}
+                                      error_message={"Please Select Any Option"}
+                                      refresh={refresh}
+                                      setrefresh={setrefresh}
+                                      idx={idx}
+                                      current_width="100%"
                                     />
-                                </Col>
-                                <Col md={4}>
-                                  <Input
-                                  key={idx}
-                                  value={per_chrg[1]}
-                                  type="select"
-                                  onChange={(event) => {
-                                    setrefresh(!refresh);
-                                    per_chrg[1]=event.target.value;
-                                  }}
-                                  className= "form-control-md"
-                                  id= "input"
-                                  >
-                                  <option value="" hidden></option>
-                                  {per_charge_categories.map((itms, index) => {
-                                    return(
-                                      <option className="option"
-                                      value={itms}
-                                      key={index}
-                                      >{itms}</option>
-                                    )
-                                  })}
-                                  </Input>
-                                </Col>
-                                <Col md={2}>
-                                  {per_chrg[1]=== "% of client invoice" ? (
-                                  <Input 
-                                  key={idx}
-                                  step={0.01}
-                                  classname="form-control-md"
-                                  id="input"
-                                  placeholder="Enter Rate %"
-                                  type="number"
-                                  value={per_chrg[2]}
-                                  onChange={(val)=> {
-                                    per_chrg[2]= val.target.value;
-                                    setrefresh(!refresh);
-                                  }}
-                                  disabled={false}
-                                  />
-                                  ) : (
-                                    <div
-                                    style={{
-                                      paddingTop: 8,
-                                      paddingBottom: 8,
-                                    }}
+                                  </Col>
+                                  <Col md={4}>
+                                    <Input
+                                      key={idx}
+                                      value={per_chrg[1]}
+                                      type="select"
+                                      onChange={(event) => {
+                                        setrefresh(!refresh);
+                                        per_chrg[1] = event.target.value;
+                                      }}
+                                      className="form-control-md"
+                                      id="input"
                                     >
-                                      -
-                                    </div>
-                                )}
-                                </Col>
-                                <Col md={2}>
-                                  {idx >0 ? (
-                                    <div 
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      alignItems: "center",
-                                      height:34,
-                                    }}
-                                    >
-                                    <IconContext.Provider
-                                      value={{color: "red", size:"20px"}}
-                                      >
-                                        <div 
-                                        style={{cursor: "pointer"}}
-                                        onClick={() => {
-                                          if (
-                                            window.confirm("Do you want to delete this row?") === true
-                                          ){
-                                            let temp = [...per_charge_list_surface,]
-                                            if(per_charge_list_surface[idx].length >3){
-                                              setper_del_ids_surfc([...per_del_ids_surfc , per_charge_list_surface[idx][3]]);
-                                            }
-                                            temp.splice(idx,1);
-                                            setper_charge_list_surface(temp)
-                                          } else {
-
-                                          }
-                                          setrefresh(!refresh)
+                                      <option value="" hidden></option>
+                                      {per_charge_categories.map((itms, index) => {
+                                        return (
+                                          <option className="option"
+                                            value={itms}
+                                            key={index}
+                                          >{itms}</option>
+                                        )
+                                      })}
+                                    </Input>
+                                  </Col>
+                                  <Col md={2}>
+                                    {per_chrg[1] === "% of client invoice" ? (
+                                      <Input
+                                        key={idx}
+                                        step={0.01}
+                                        classname="form-control-md"
+                                        id="input"
+                                        placeholder="Enter Rate %"
+                                        type="number"
+                                        value={per_chrg[2]}
+                                        onChange={(val) => {
+                                          per_chrg[2] = val.target.value;
+                                          setrefresh(!refresh);
                                         }}
+                                        disabled={false}
+                                      />
+                                    ) : (
+                                      <div
+                                        style={{
+                                          paddingTop: 8,
+                                          paddingBottom: 8,
+                                        }}
+                                      >
+                                        -
+                                      </div>
+                                    )}
+                                  </Col>
+                                  <Col md={2}>
+                                    {idx > 0 ? (
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                          height: 34,
+                                        }}
+                                      >
+                                        <IconContext.Provider
+                                          value={{ color: "red", size: "20px" }}
                                         >
-                                          <MdDelete />
-                                        </div>
+                                          <div
+                                            style={{ cursor: "pointer" }}
+                                            onClick={() => {
+                                              if (
+                                                window.confirm("Do you want to delete this row?") === true
+                                              ) {
+                                                let temp = [...per_charge_list_surface,]
+                                                if (per_charge_list_surface[idx].length > 3) {
+                                                  setper_del_ids_surfc([...per_del_ids_surfc, per_charge_list_surface[idx][3]]);
+                                                }
+                                                temp.splice(idx, 1);
+                                                setper_charge_list_surface(temp)
+                                              } else {
 
-                                      </IconContext.Provider>
-                                    </div>
-                                  ) :(
-                                    <div
-                                    style={{
-                                      display: "flex",
-                                      justifyContent:"center",
-                                      alignItems:"center",
-                                      height:34,
-                                    }}
-                                    >
-                                      {"-"}
-                                    </div>
-                                  )
-                                }
-                                </Col>
-                              </Row>
-                            )
-                          })}
-                          {/* % Charge Add button */}
-                          <div style={{ margin:"1px 0 10px 0"}}>
-                            <span
-                            className="link-text"
-                            onClick={() => {
-                              let per_tmp_lst = [["",""], "", ""];
-                              setper_charge_list_surface([...per_charge_list_surface, per_tmp_lst])
-                              setrefresh(!refresh);
-                            }}
-                            style= {{
-                              fontSize: "14px",
-                              color: "purple",
-                              cursor: "pointer",
-                            }}
-                            >
-                              <IconContext.Provider value={{className:"link-text"}}>
-                                <MdAdd />
-                              </IconContext.Provider>
-                              Add another % of Charge
-                            </span>
+                                              }
+                                              setrefresh(!refresh)
+                                            }}
+                                          >
+                                            <MdDelete />
+                                          </div>
 
-                          </div>
+                                        </IconContext.Provider>
+                                      </div>
+                                    ) : (
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                          height: 34,
+                                        }}
+                                      >
+                                        {"-"}
+                                      </div>
+                                    )
+                                    }
+                                  </Col>
+                                </Row>
+                              )
+                            })}
+                            {/* % Charge Add button */}
+                            <div style={{ margin: "1px 0 10px 0" }}>
+                              <span
+                                className="link-text"
+                                onClick={() => {
+                                  let per_tmp_lst = [["", ""], "", ""];
+                                  setper_charge_list_surface([...per_charge_list_surface, per_tmp_lst])
+                                  setrefresh(!refresh);
+                                }}
+                                style={{
+                                  fontSize: "14px",
+                                  color: "purple",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <IconContext.Provider value={{ className: "link-text" }}>
+                                  <MdAdd />
+                                </IconContext.Provider>
+                                Add another % of Charge
+                              </span>
+
+                            </div>
                           </div>
                         )}
-                        <Row style={{margin:"5px 0 5px 0 "}}>
+                        <Row style={{ margin: "5px 0 5px 0 " }}>
                           <Col lg={4} md={6} sm={6}>
-                          <div className="mb-2">
-                            <Label> Domestic Rate Types *</Label>
-                            <NSearchInput 
-                            data_list={dom_rate_category_list}
-                            data_item_s={dom_rate_category}
-                            set_data_item_s={setdom_rate_category}
-                            show_search={false}
-                            error_message={"Select Domestic Rate Category"}
-                            />
-                          </div>
-                        </Col>
+                            <div className="mb-2">
+                              <Label> Domestic Rate Types *</Label>
+                              <NSearchInput
+                                data_list={dom_rate_category_list}
+                                data_item_s={dom_rate_category}
+                                set_data_item_s={setdom_rate_category}
+                                show_search={false}
+                                error_message={"Select Domestic Rate Category"}
+                              />
+                            </div>
+                          </Col>
 
-                        <Col lg={3} md={6} sm={6}>
-                          <div className="mb-2"> 
-                            <Label className="header-child"> Rate Type </Label>
-                            <NSearchInput 
-                            data_list={dom_rate_type_list}
-                            data_item_s={dom_rate_type}
-                            set_data_item_s={setdom_rate_type}
-                            show_search={false}
-                            error_message={"Select ODA Rate"}
-                            />
-                            
-                          </div>
-                        </Col>
+                          <Col lg={3} md={6} sm={6}>
+                            <div className="mb-2">
+                              <Label className="header-child"> Rate Type </Label>
+                              <NSearchInput
+                                data_list={dom_rate_type_list}
+                                data_item_s={dom_rate_type}
+                                set_data_item_s={setdom_rate_type}
+                                show_search={false}
+                                error_message={"Select ODA Rate"}
+                              />
+
+                            </div>
+                          </Col>
 
                         </Row>
                         {(dom_rate_category === "City to City" ||
                           dom_rate_category === "Both") && (
                             <>
-                            <div style={{overflowX: "scroll",}}>
-                              {/* Domestic City table(surface) */}
-                              <Table className="table-grid">
+                              <div style={{ overflowX: "scroll", }}>
+                                {/* Domestic City table(surface) */}
+                                <Table className="table-grid">
+                                  <thead>
+                                    <tr>
+                                      <th style={{
+                                        width: "2rem",
+                                        textAlign: "center",
+                                        paddingLeft: "2px",
+                                        paddingRight: "2px",
+                                      }}
+                                        rowSpan={2}
+                                      >
+                                        SL
+                                      </th>
+                                      <th style={{
+                                        width: "8rem",
+                                        textAlign: "center",
+                                        paddingLeft: "4px",
+                                        paddingRight: "4px",
+                                      }}
+                                        rowSpan={2}
+                                      >
+                                        Origin City
+                                      </th>
+                                      <th style={{
+                                        width: "8rem",
+                                        textAlign: "center",
+                                        paddingLeft: "6px",
+                                        paddingRight: "4px",
+                                      }}
+                                        rowSpan={2}
+                                      >
+                                        Destination City
+                                      </th>
+                                      <th style={{
+                                        width: "25rem",
+                                        textAlign: "center",
+                                        paddingLeft: "2px",
+                                        paddingRight: "2px",
+                                      }}
+                                        colSpan={cc_rate_call_span + fillterd_charge_list.length + oda_selected}
+                                      >
+                                        Cold Chain
+                                      </th>
+                                      <th style={{
+                                        width: "25rem",
+                                        textAlign: "center",
+                                        paddingLeft: "2px",
+                                        paddingRight: "2px",
+                                      }}
+                                        colSpan={ncc_rate_call_span + fillterd_charge_list.length + oda_selected}
+                                      >
+                                        Non-Cold Chain
+                                      </th>
+                                      <th style={{
+                                        width: "2rem",
+                                        textAlign: "center",
+                                        paddingLeft: "6px",
+                                        paddingRight: "4px",
+                                      }}
+                                        rowSpan={2}
+                                      >
+                                        Delete
+                                      </th>
+                                    </tr>
+                                    <tr>
+                                      <th
+                                        style={{
+                                          width: "2rem",
+                                          alignItems: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}>
+                                        Rate Per Kg
+                                      </th>
+                                      {dom_rate_type === "Upto" && (
+                                        <th style={{
+                                          width: "2rem",
+                                          alignItems: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}>
+                                          Minimum Box
+                                        </th>
+                                      )}
+                                      {dom_rate_type !== "Flat" && (
+                                        <th style={{
+                                          width: "2rem",
+                                          alignItems: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}>
+                                          Minimum Amount
+                                        </th>
+                                      )}
+                                      {is_oda_surface && (
+                                        <th style={{
+                                          width: "2rem",
+                                          alignItems: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}>
+                                          ODA
+                                        </th>
+                                      )}
+                                      {fillterd_charge_list.length > 0 && (
+                                        <>
+                                          {fillterd_charge_list.map((itam, index) => {
+                                            return (
+                                              <th style={{
+                                                width: "2rem",
+                                                alignItems: "center",
+                                                paddingLeft: "2px",
+                                                paddingright: "2px",
+                                              }}>
+                                                {itam[0][1]} (in %)
+                                              </th>
+                                            )
+                                          })}
+                                        </>
+                                      )}
+                                      <th style={{
+                                        width: "2rem",
+                                        alignItems: "center",
+                                        paddingLeft: "2px",
+                                        paddingRight: "2px"
+                                      }}>
+                                        Rate Per Kg
+                                      </th>
+                                      {dom_rate_type === "Upto" && (
+                                        <th style={{
+                                          width: "2rem",
+                                          alignItems: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}>
+                                          Minimum Box
+                                        </th>
+                                      )}
+                                      {dom_rate_type !== "Flat" && (
+                                        <th style={{
+                                          width: "2rem",
+                                          alignItems: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}>
+                                          Minimum Amount
+                                        </th>
+                                      )}
+                                      {is_oda_surface && (
+                                        <th style={{
+                                          width: "2rem",
+                                          alignItems: "center",
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px",
+                                        }}>
+                                          ODA
+                                        </th>
+                                      )}
+                                      {fillterd_charge_list.length > 0 && (
+                                        <>
+                                          {fillterd_charge_list.map((itam, indx) => {
+                                            return (
+                                              <th style={{
+                                                width: "2rem",
+                                                alignItems: "center",
+                                                paddingLeft: "2px",
+                                                paddingRight: "2px",
+                                              }}>
+                                                {itam[0][1]} ( in % )
+                                              </th>
+                                            )
+                                          })}
+                                        </>
+                                      )}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {datalist.map((itm, idx) => {
+                                      return (
+                                        <tr key={idx}>
+                                          <td>{idx + 1}</td>
+                                          {/* for origin & destination city */}
+                                          {itm[0].map((v, i) => {
+                                            return (
+                                              <td key={i}>
+                                                <MultiRowSearchInput
+                                                  data_list={city_list}
+                                                  setdata_list={setcity_list}
+                                                  data_item_s={datalist[idx][0][i]}
+                                                  page={city_page_no}
+                                                  setpage={setcity_page_no}
+                                                  setsearch_txt={setcity_search_itm}
+                                                  error_message={"Please select any option"}
+                                                  refresh={refresh}
+                                                  setrefresh={setrefresh}
+                                                  current_width={"180px"}
+                                                  idx={idx}
+                                                />
+                                              </td>
+                                            )
+                                          })}
+                                          {/* For Cold Chain */}
+                                          {itm[1].map((v, i) => {
+                                            if (i === 0) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][1][i] = val.target.value;
+                                                      const files = val.target.files;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    className="input"
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.5"
+                                                    accept=".csv,.xlsx,.xls"
+                                                    name="voucher_amount"
+                                                    placeholder="Enter value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              )
+                                            }
+                                            if (i === 1 && dom_rate_type === "Upto") {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][1][i] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              )
+                                            }
+                                            if (i === 2 && dom_rate_type !== "Flat") {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][1][i] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step={"0.5"}
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              )
+                                            }
+                                            if (i === 3 && is_oda_surface) {
+                                              return (
+                                                <td key={i} >
+                                                  <input
+                                                    value={datalist[idx][1][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][1][i] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    min={0}
+                                                    step="0.5"
+                                                    type="number"
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              )
+                                            }
+                                          })}
+                                          {fillterd_charge_list.map((item2, index2) => {
+                                            return (
+                                              <td key={index2}>
+                                                <input
+                                                  value={datalist[idx][1][4 + index2]}
+                                                  onChange={(val) => {
+                                                    datalist[idx][1][4 + index2] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                  }}
+                                                  type="number"
+                                                  min={0}
+                                                  step={0.01}
+                                                  name="charge"
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem",
+                                                  }}
+                                                />
+                                              </td>
+                                            )
+                                          })}
+                                          {/* For Non-Cold Chain */}
+                                          {itm[2].map((v, i) => {
+                                            if (i === 0) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][2][i] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.5"
+                                                    name="voucher_name"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              )
+                                            }
+                                            if (i === 1 && dom_rate_type === "Upto") {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][2][i] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              )
+                                            }
+                                            if (i === 2 && dom_rate_type !== "Flat") {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][2][i] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    name="voucher_name"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              )
+                                            }
+                                            if (i === 3 && is_oda_surface) {
+                                              return (
+                                                <td key={i}>
+                                                  <input
+                                                    value={datalist[idx][2][i]}
+                                                    onChange={(val) => {
+                                                      datalist[idx][2][i] = val.target.value;
+                                                      setrefresh(!refresh);
+                                                    }}
+                                                    type="number"
+                                                    min={0}
+                                                    step="0.5"
+                                                    name="voucher_amount"
+                                                    placeholder="Enter Value"
+                                                    style={{
+                                                      borderWidth: 0,
+                                                      width: "2.5rem",
+                                                    }}
+                                                  />
+                                                </td>
+                                              )
+                                            }
+                                          })}
+                                          {fillterd_charge_list.map((itam2, index2) => {
+                                            return (
+                                              <td key={index2}>
+                                                <input
+                                                  value={datalist[idx][2][4 + index2] || ""}
+                                                  onChange={(val) => {
+                                                    datalist[idx][2][4 + index2] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                  }}
+                                                  type="number"
+                                                  min={0}
+                                                  step={0.01}
+                                                  name="Ncc_charge"
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem"
+                                                  }}
+                                                />
+                                              </td>
+                                            )
+                                          })}
+                                          <td
+                                            style={{
+                                              color: "red",
+                                              cursor: "pointer",
+                                              size: "50px",
+                                            }}
+                                            onClick={() => {
+                                              delete_row_city(idx);
+                                            }}
+                                          >
+                                            <MdDelete />
+                                          </td>
+                                        </tr>
+                                      )
+                                    })}
+                                  </tbody>
+                                </Table>
+                              </div>
+                              {/* Action Button */}
+                              <div className="action_container">
+                                <Button
+                                  style={{ margin: "8px" }}
+                                  type="button"
+                                  className="btn btn-info m-1 cu_btn"
+                                  onClick={() => {
+                                    add_new_row_city();
+                                  }}
+                                >
+                                  Add New Row
+                                </Button>
+                                {/* Import Button  */}
+                                <Button
+                                  style={{ margin: "8px" }}
+                                  type='button'
+                                  className="btn btn-info m-1 cu_btn"
+                                  onClick={() => {
+                                    setshow(true);
+                                    setimport_for("Surface_city");
+                                  }}
+                                >
+                                  Import
+                                </Button>
+                                <Button
+                                  style={{ margin: "8px" }}
+                                  type="button"
+                                  className="btn btn-info m-1 cu_btn"
+                                  onClick={() => {
+                                    exportBillingDataSurfaceCity()
+                                  }}
+                                >
+                                  Export
+                                </Button>
+                              </div>
+                            </>
+                          )
+                        }
+                        {(dom_rate_category === "Zone to Zone" || dom_rate_category === "Both") && (
+                          <>
+                            <div style={{
+                              overflowX: "scroll",
+                            }}>
+                              <table className="table-grid">
                                 <thead>
                                   <tr>
                                     <th style={{
                                       width: "2rem",
                                       textAlign: "center",
                                       paddingLeft: "2px",
-                                      paddingRight: "2px",
+                                      paddingRight: "2px"
                                     }}
-                                    rowSpan={2}
+                                      rowSpan={2}
                                     >
                                       SL
                                     </th>
@@ -4591,9 +5061,9 @@ const BillingTab = ({
                                       paddingLeft: "4px",
                                       paddingRight: "4px",
                                     }}
-                                    rowSpan={2}
+                                      rowSpan={2}
                                     >
-                                      Origin City
+                                      Origin Zone
                                     </th>
                                     <th style={{
                                       width: "8rem",
@@ -4601,9 +5071,9 @@ const BillingTab = ({
                                       paddingLeft: "6px",
                                       paddingRight: "4px",
                                     }}
-                                    rowSpan= {2}
+                                      rowSpan={2}
                                     >
-                                      Destination City
+                                      Destination Zone
                                     </th>
                                     <th style={{
                                       width: "25rem",
@@ -4611,7 +5081,7 @@ const BillingTab = ({
                                       paddingLeft: "2px",
                                       paddingRight: "2px",
                                     }}
-                                    colSpan= {cc_rate_call_span + fillterd_charge_list.length + oda_selected}
+                                      colSpan={cc_rate_call_span + fillterd_charge_list.length + oda_selected}
                                     >
                                       Cold Chain
                                     </th>
@@ -4621,7 +5091,7 @@ const BillingTab = ({
                                       paddingLeft: "2px",
                                       paddingRight: "2px",
                                     }}
-                                    colSpan = {ncc_rate_call_span + fillterd_charge_list.length + oda_selected}
+                                      colSpan={ncc_rate_call_span + fillterd_charge_list.length + oda_selected}
                                     >
                                       Non-Cold Chain
                                     </th>
@@ -4631,16 +5101,14 @@ const BillingTab = ({
                                       paddingLeft: "6px",
                                       paddingRight: "4px",
                                     }}
-                                    rowSpan={2}
-                                    >
+                                      rowSpan={2}>
                                       Delete
                                     </th>
                                   </tr>
                                   <tr>
-                                    <th
-                                    style={{
+                                    <th style={{
                                       width: "2rem",
-                                      alignItems: "center",
+                                      textAlign: "center",
                                       paddingLeft: "2px",
                                       paddingRight: "2px",
                                     }}>
@@ -4649,7 +5117,7 @@ const BillingTab = ({
                                     {dom_rate_type === "Upto" && (
                                       <th style={{
                                         width: "2rem",
-                                        alignItems: "center",
+                                        textAlign: "center",
                                         paddingLeft: "2px",
                                         paddingRight: "2px",
                                       }}>
@@ -4659,7 +5127,7 @@ const BillingTab = ({
                                     {dom_rate_type !== "Flat" && (
                                       <th style={{
                                         width: "2rem",
-                                        alignItems: "center",
+                                        textAlign: "center",
                                         paddingLeft: "2px",
                                         paddingRight: "2px",
                                       }}>
@@ -4669,61 +5137,7 @@ const BillingTab = ({
                                     {is_oda_surface && (
                                       <th style={{
                                         width: "2rem",
-                                        alignItems: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}>
-                                        ODA
-                                      </th>
-                                    )}
-                                    {fillterd_charge_list.length >0 && (
-                                      <>
-                                      {fillterd_charge_list.map((itam,index) => {
-                                        return (
-                                          <th style={{
-                                            width: "2rem",
-                                            alignItems: "center",
-                                            paddingLeft: "2px",
-                                            paddingright: "2px",
-                                          }}>
-                                            {itam[0][1]} (in %)
-                                          </th>
-                                        )
-                                      })}
-                                      </>
-                                    )}
-                                    <th style={{
-                                      width: "2rem",
-                                      alignItems: "center",
-                                      paddingLeft: "2px",
-                                      paddingRight: "2px"
-                                    }}>
-                                      Rate Per Kg
-                                    </th>
-                                    {dom_rate_type === "Upto" && (
-                                      <th style={{
-                                        width: "2rem",
-                                        alignItems: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}>
-                                        Minimum Box
-                                      </th>
-                                    )}
-                                    {dom_rate_type !== "Flat" && (
-                                      <th style={{
-                                        width: "2rem",
-                                        alignItems: "center",
-                                        paddingLeft: "2px",
-                                        paddingRight: "2px",
-                                      }}>
-                                        Minimum Amount
-                                      </th>
-                                    )}
-                                    {is_oda_surface && (
-                                      <th style={{
-                                        width: "2rem",
-                                        alignItems: "center",
+                                        textAlign: "center",
                                         paddingLeft: "2px",
                                         paddingRight: "2px",
                                       }}>
@@ -4732,454 +5146,22 @@ const BillingTab = ({
                                     )}
                                     {fillterd_charge_list.length > 0 && (
                                       <>
-                                      {fillterd_charge_list.map((itam, indx) => {
-                                        return(
-                                          <th style={{
-                                            width: "2rem",
-                                            alignItems: "center",
-                                            paddingLeft: "2px",
-                                            paddingRight: "2px",
-                                          }}>
-                                            {itam[0][1]} ( in % )
-                                          </th>
-                                        )
-                                      })}
-                                      </>
-                                    )}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {datalist.map((itm,idx) => {
-                                    return(
-                                      <tr key={idx}>
-                                        <td>{idx+1}</td>
-                                        {/* for origin & destination city */}
-                                        {itm[0].map((v, i)=> {
+                                        {fillterd_charge_list.map((itam, indx) => {
                                           return (
-                                            <td key={i}>
-                                              <MultiRowSearchInput 
-                                              data_list = {city_list}
-                                              setdata_list = {setcity_list}
-                                              data_item_s = {datalist[idx][0][i]}
-                                              page = {city_page_no}
-                                              setpage = {setcity_page_no}
-                                              setsearch_txt = {setcity_search_itm}
-                                              error_message = {"Please select any option"}
-                                              refresh = {refresh}
-                                              setrefresh = {setrefresh}
-                                              current_width={"180px"}
-                                              idx={idx}
-                                              />
-                                            </td>
+                                            <th style={{
+                                              width: "2rem",
+                                              textAlign: "center",
+                                              paddingLeft: "2px",
+                                              paddingRight: "2px"
+                                            }}>
+                                              {itam[0][1]} (in %)
+                                            </th>
                                           )
                                         })}
-                                         {/* For Cold Chain */}
-                                         {itm[1].map((v,i)=> {
-                                          if (i ==0) {
-                                            return (
-                                              <td key={i}>
-                                                <input 
-                                                value={datalist[idx][1][i]}
-                                                onChange= {(val) => {
-                                                  datalist[idx][1][i] = val.target.value;
-                                                  const files = val.target.files;
-                                                  setrefresh(!refresh);
-                                                }}
-                                                className = "input"
-                                                type = "number"
-                                                min = {0}
-                                                step = "0.5"
-                                                accept=".csv,.xlsx,.xls"
-                                                name="voucher_amount"
-                                                placeholder="Enter value"
-                                                style = {{
-                                                  borderWidth: 0,
-                                                  width: "2.5rem",
-                                                }}
-                                                />
-                                              </td>
-                                            )
-                                          }
-                                          if (i == 1 && dom_rate_type === "Upto"){
-                                            return (
-                                              <td key={i}>
-                                                <input
-                                                value={datalist[idx][1][i]}
-                                                onChange = {(val) => {
-                                                  datalist[idx][1][i] = val.target.value;
-                                                  setrefresh(!refresh);
-                                               }}
-                                               type="number"
-                                               min={0}
-                                               name="voucher_amount"
-                                               placeholder="Enter Value"
-                                               style={{
-                                                borderWidth: 0,
-                                                width: "2.5rem",
-                                               }}
-                                                />
-                                              </td>
-                                            )
-                                          }
-                                          if(i== 2 && dom_rate_type != "Flat"){
-                                            return (
-                                              <td key={i}>
-                                                <input 
-                                                value={datalist[idx][1][i]}
-                                                onChange = {(val) => {
-                                                  datalist[idx][1][i] = val.target.value;
-                                                  setrefresh(!refresh);
-                                                }}
-                                                type = "number"
-                                                min = {0}
-                                                step = {"0.5"}
-                                                name = "voucher_amount"
-                                                placeholder="Enter Value"
-                                                style={{
-                                                  borderWidth: 0,
-                                                  width: "2.5rem",
-                                                }}
-                                                />
-                                              </td>
-                                            )
-                                          }
-                                          if (i == 3 && is_oda_surface) {
-                                            return (
-                                              <td key={i} >
-                                                <input 
-                                                value = {datalist[idx][1][i]}
-                                                onChange = {(val) => {
-                                                  datalist[idx][1][i] = val.target.value;
-                                                  setrefresh(!refresh);
-                                                }}
-                                                min = {0}
-                                                step = "0.5"
-                                                type = "number"
-                                                name = "voucher_amount"
-                                                placeholder="Enter Value"
-                                                style={{
-                                                  borderWidth: 0,
-                                                  width: "2.5rem",
-                                                }}
-                                                />
-                                              </td>
-                                            )
-                                          }
-                                         })}
-                                         {fillterd_charge_list.map((item2, index2) => {
-                                          return (
-                                            <td key={index2}>
-                                              <input 
-                                              value={datalist[idx][1][4+index2]}
-                                              onChange= {(val)=> {
-                                                datalist[idx][1][4 + index2] = val.target.value;
-                                                setrefresh(!refresh);
-                                              }}
-                                              type= "number"
-                                              min={0}
-                                              step={0.01}
-                                              name = "charge"
-                                              placeholder="Enter Value"
-                                              style={{
-                                                borderWidth: 0,
-                                                width: "2.5rem",
-                                              }}
-                                              />
-                                            </td>
-                                          )
-                                         })}
-                                         {/* For Non-Cold Chain */}
-                                         {itm[2].map((v,i) => {
-                                          if (i === 0) {
-                                            return (
-                                              <td key={i}>
-                                                <input 
-                                                 value = {datalist[idx][2][i]}
-                                                 onChange = {(val) => {
-                                                  datalist[idx][2][i] = val.target.value;
-                                                  setrefresh(!refresh);
-                                                 }}
-                                                 type= "number"
-                                                 min={0}
-                                                 step= "0.5"
-                                                 name= "voucher_name"
-                                                 placeholder="Enter Value"
-                                                 style={{
-                                                  borderWidth: 0,
-                                                  width: "2.5rem",
-                                                 }}
-                                                />
-                                              </td>
-                                            )
-                                          }
-                                          if ( i==1 && dom_rate_type === "Upto") {
-                                            return (
-                                              <td key={i}>
-                                                <input 
-                                                value={datalist[idx][2][i]}
-                                                onChange = {(val) => {
-                                                  datalist[idx][2][i] = val.target.value;
-                                                  setrefresh(!refresh);
-                                                }}
-                                                type = "number"
-                                                min = {0}
-                                                name = "voucher_amount"
-                                                placeholder="Enter Value"
-                                                style={{
-                                                  borderWidth: 0,
-                                                  width: "2.5rem",
-                                                }}
-                                                />
-                                              </td>
-                                            )
-                                          }
-                                          if (i ==2 && dom_rate_type!="Flat") {
-                                            return (
-                                              <td key={i}>
-                                                <input 
-                                                value = {datalist[idx][2][i]}
-                                                onChange = {(val)=> {
-                                                  datalist[idx][2][i] = val.target.value;
-                                                  setrefresh(!refresh);
-                                                }}
-                                                type = "number"
-                                                min={0}
-                                                name = "voucher_name"
-                                                placeholder="Enter Value"
-                                                style = {{
-                                                  borderWidth: 0,
-                                                  width: "2.5rem",
-                                                }}
-                                                />
-                                              </td>
-                                            )
-                                          }
-                                          if (i ==3 && is_oda_surface) {
-                                            return (
-                                              <td key={i}>
-                                                <input 
-                                                value={datalist[idx][2][i]}
-                                                onChange = {(val) => {
-                                                  datalist[idx][2][i] = val.target.value;
-                                                  setrefresh(!refresh);
-                                                }}
-                                                type = "number"
-                                                min = {0}
-                                                step = "0.5"
-                                                name= "voucher_amount"
-                                                placeholder="Enter Value"
-                                                style={{
-                                                  borderWidth: 0,
-                                                  width: "2.5rem",
-                                                }}
-                                                />
-                                              </td>
-                                            )
-                                          }
-                                         })}
-                                         {fillterd_charge_list.map((itam2,index2) => {
-                                          return (
-                                            <td key={index2}>
-                                              <input
-                                              value={datalist[idx][2][4+index2] || ""}
-                                              onChange= {(val) => {
-                                                datalist[idx][2][4+ index2] = val.target.value;
-                                                setrefresh(!refresh);
-                                              }}
-                                              type = "number"
-                                              min={0}
-                                              step={0.01}
-                                              name ="Ncc_charge"
-                                              placeholder="Enter Value"
-                                              style={{
-                                                borderWidth: 0,
-                                                width: "2.5rem"
-                                              }}
-                                              />
-                                            </td>
-                                          )
-                                         })}
-                                         <td 
-                                         style={{
-                                          color: "red",
-                                          cursor: "pointer",
-                                          size:"50px",
-                                         }}
-                                         onClick={() => {
-                                          delete_row_city(idx);
-                                         }}
-                                         >
-                                          <MdDelete />
-                                         </td>
-                                      </tr>
-                                    )
-                                  })}
-                                </tbody>
-                              </Table>
-                            </div>
-                            {/* Action Button */}
-                            <div className="action_container">
-                              <Button 
-                              style={{ margin: "8px"}}
-                              type= "button"
-                              className="btn btn-info m-1 cu_btn"
-                              onClick = {() => {
-                                add_new_row_city();
-                              }}
-                              >
-                                Add New Row
-                              </Button>
-                              {/* Import Button  */}
-                              <Button 
-                              style={{margin: "8px"}}
-                              type='button'
-                              className="btn btn-info m-1 cu_btn"
-                              onClick={()=> {
-                                setshow(true);
-                                setimport_for("Surface_city");
-                              }}
-                              >
-                                Import
-                              </Button>
-                              <Button 
-                              style={{ margin: "8px"}}
-                              type = "button"
-                              className="btn btn-info m-1 cu_btn"
-                              onClick={() => {
-                                exportBillingDataSurfaceCity()
-                              }}
-                              >
-                                Export
-                              </Button>
-                            </div>
-                            </>
-                          )
-                        }
-                        {(dom_rate_category === "Zone to Zone" || dom_rate_category === "Both") && (
-                          <>
-                          <div style={{
-                            overflowX:"scroll",
-                          }}>
-                            <table className="table-grid">
-                              <thead>
-                                <tr>
-                                  <th style={{
-                                    width: "2rem",
-                                    textAlign: "center",
-                                    paddingLeft: "2px",
-                                    paddingRight: "2px"
-                                  }}
-                                  rowSpan = {2}
-                                  >
-                                    SL
-                                  </th>
-                                  <th style={{
-                                    width:"8rem",
-                                    textAlign: "center",
-                                    paddingLeft: "4px",
-                                    paddingRight: "4px",
-                                  }}
-                                  rowSpan={2}
-                                  >
-                                    Origin Zone
-                                  </th>
-                                  <th style={{
-                                    width:"8rem",
-                                    textAlign: "center",
-                                    paddingLeft: "6px",
-                                    paddingRight: "4px",
-                                  }}
-                                  rowSpan={2}
-                                  >
-                                    Destination Zone
-                                  </th>
-                                  <th style={{
-                                    width: "25rem",
-                                    textAlign: "center",
-                                    paddingLeft: "2px",
-                                    paddingRight: "2px",
-                                  }}
-                                  colSpan={cc_rate_call_span+ fillterd_charge_list.length+oda_selected}
-                                  >
-                                    Cold Chain
-                                  </th>
-                                  <th style={{
-                                    width: "25rem",
-                                    textAlign: "center",
-                                    paddingLeft: "2px",
-                                    paddingRight: "2px",
-                                  }}
-                                  colSpan={ncc_rate_call_span+ fillterd_charge_list.length+oda_selected}
-                                  >
-                                    Non-Cold Chain
-                                  </th>
-                                  <th style={{
-                                    width: "2rem",                                 
-                                    textAlign: "center",
-                                    paddingLeft: "6px",
-                                    paddingRight: "4px",
-                                    }}
-                                    rowSpan={2}>
-                                    Delete
-                                  </th>
-                                </tr>
-                                <tr>
-                                  <th style={{
-                                    width: "2rem",
-                                    textAlign: "center",
-                                    paddingLeft: "2px",
-                                    paddingRight: "2px",
-                                  }}>
-                                    Rate Per Kg
-                                  </th>
-                                  {dom_rate_type === "Upto" && (
-                                    <th style={{
-                                      width: "2rem",
-                                      textAlign: "center",
-                                      paddingLeft: "2px",
-                                      paddingRight: "2px",
-                                    }}>
-                                      Minimum Box
-                                    </th>
-                                  )}
-                                  {dom_rate_type !== "Flat" && (
-                                    <th style={{
-                                      width: "2rem",
-                                      textAlign: "center",
-                                      paddingLeft: "2px",
-                                      paddingRight: "2px",
-                                    }}>
-                                      Minimum Amount
-                                    </th>
-                                  )}
-                                  {is_oda_surface && (
-                                    <th style={{
-                                      width: "2rem",
-                                      textAlign: "center",
-                                      paddingLeft: "2px",
-                                      paddingRight: "2px",
-                                    }}>
-                                      ODA
-                                    </th>
-                                  )}
-                                  {fillterd_charge_list.length > 0 && (
-                                    <>
-                                    {fillterd_charge_list.map((itam,indx) => {
-                                      return (
-                                        <th style={{
-                                          width: "2rem",
-                                          textAlign: "center",
-                                          paddingLeft: "2px",
-                                          paddingRight: "2px"
-                                        }}>
-                                          {itam[0][1]} (in %)
-                                        </th>
-                                      )
-                                    })}
 
-                                    </>
-                                  )}
-                                  <th
+                                      </>
+                                    )}
+                                    <th
                                       style={{
                                         width: "2rem",
                                         textAlign: "center",
@@ -5228,283 +5210,283 @@ const BillingTab = ({
                                         ODA
                                       </th>
                                     )}
-                                    {fillterd_charge_list.length >0 && (
+                                    {fillterd_charge_list.length > 0 && (
                                       <>
-                                      {fillterd_charge_list.map((itam,indx) => {
-                                        return (
-                                          <th
-                                            style={{
-                                              width: "2rem",
-                                              textAlign: "center",
-                                              paddingLeft: "2px",
-                                              paddingRight: "2px",
-                                            }}
-                                          >
-                                            {itam[0][1]} (in %)
-                                          </th>
-                                        );
+                                        {fillterd_charge_list.map((itam, indx) => {
+                                          return (
+                                            <th
+                                              style={{
+                                                width: "2rem",
+                                                textAlign: "center",
+                                                paddingLeft: "2px",
+                                                paddingRight: "2px",
+                                              }}
+                                            >
+                                              {itam[0][1]} (in %)
+                                            </th>
+                                          );
                                         }
-                                      )}
+                                        )}
                                       </>
                                     )}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {datalist1.map((itm,idx) => {
-                                  return (
-                                  <tr key={idx}>
-                                    <td>{idx +1}</td>
-                                    {/* For Origin city & destination */}
-                                    {itm[0].map((v,i) => {
-                                      return (
-                                        <td key={i}>
-                                          <MultiRowSearchInput 
-                                          data_list={zone_list}
-                                          setdata_list={setzone_list}
-                                          data_item_s={datalist1[idx][0][i]}
-                                          page={zone_page_no}
-                                          setpage={setzone_page_no}
-                                          setsearch_txt={setzone_search_itm}
-                                          error_message={"Please select any option"}
-                                          refresh={refresh}
-                                          setrefresh={setrefresh}
-                                          current_width={"180px"}
-                                          idx={idx}
-                                          />
-                                        </td>
-                                      )
-                                    })}
-                                    {/* For Cold Chain */}
-                                    {itm[1].map((v,i) => {
-                                      if (i == 0) {
-                                        return (
-                                          <td key={i}>
-                                            <input 
-                                            value = {datalist1[idx][1][i]}
-                                            onChange={(val) => {
-                                             datalist1[idx][1][i] = val.target.value;
-                                             setrefresh(!refresh);
-                                             const files =
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {datalist1.map((itm, idx) => {
+                                    return (
+                                      <tr key={idx}>
+                                        <td>{idx + 1}</td>
+                                        {/* For Origin city & destination */}
+                                        {itm[0].map((v, i) => {
+                                          return (
+                                            <td key={i}>
+                                              <MultiRowSearchInput
+                                                data_list={zone_list}
+                                                setdata_list={setzone_list}
+                                                data_item_s={datalist1[idx][0][i]}
+                                                page={zone_page_no}
+                                                setpage={setzone_page_no}
+                                                setsearch_txt={setzone_search_itm}
+                                                error_message={"Please select any option"}
+                                                refresh={refresh}
+                                                setrefresh={setrefresh}
+                                                current_width={"180px"}
+                                                idx={idx}
+                                              />
+                                            </td>
+                                          )
+                                        })}
+                                        {/* For Cold Chain */}
+                                        {itm[1].map((v, i) => {
+                                          if (i === 0) {
+                                            return (
+                                              <td key={i}>
+                                                <input
+                                                  value={datalist1[idx][1][i]}
+                                                  onChange={(val) => {
+                                                    datalist1[idx][1][i] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                    const files =
                                                       val.target.files;
 
-                                            }}
-                                            className="input"
-                                            type = "number"
-                                            min={0}
-                                            step = "0.5"
-                                            name ="voucher_amount"
-                                            accept=".csv,.xlsx,.xls"
-                                            placeholder="Enter Value"
-                                            style={{
-                                              borderWidth: 0,
-                                              width: "2.5rem",
-                                            }}
-                                            />
-                                          </td>
-                                        )
-                                      }
-                                      if(i == 1 && dom_rate_type === "Upto") {
-                                        return (
-                                          <td key={i}>
-                                            <input 
-                                            value = {datalist1[idx][1][i]}
-                                            onChange = {(val)=>{
-                                              datalist1[idx][1][i] = val.target.value;
-                                              setrefresh(!refresh);
-                                            }}
-                                            type="number"
-                                            min={0}
-                                            name="voucher_amount"
-                                            placeholder="Enter Value"
-                                            style={{
-                                              borderWidth: 0,
-                                              width: "2.5rem",
-                                            }}
-                                            />
-                                          </td>
-                                        )
-                                      }
-                                      if( i==2 && dom_rate_type !== "Flat") {
-                                        return (
-                                          <td key={i}>
-                                            <input 
-                                            value = {datalist1[idx][1][i]}
-                                            onChange = {(val) => {
-                                              datalist1[idx][1][i] = val.target.value;
-                                              setrefresh(!refresh);
-                                            }}
-                                            type="number"
-                                            min = {0}
-                                            step={"0.5"}
-                                            name=""
-                                            placeholder="Enter Value"
-                                            style={{
-                                              borderWidth: 0,
-                                              width: "2.5rem",
-                                            }}
-                                            />
-                                          </td>
-                                        )
-                                      }
-                                      if(i == 3 && is_oda_surface) {
-                                        return (
-                                          <td key={i}>
-                                            <input 
-                                            value={datalist1[idx][1][i]}
-                                            onChange ={(val) => {
-                                              datalist1[idx][1][i] = val.target.value;
-                                              setrefresh(!refresh);
-                                            }}
-                                            min={0}
-                                            step="0.5"
-                                            type="number"
-                                            name=""
-                                            placeholder="Enter Value"
-                                            style={{
-                                              borderWidth: 0,
-                                              width: "2.5rem",
-                                            }}
-                                            />
-                                          </td>
-                                        )
-                                      }
-                                    })}
-                                    {fillterd_charge_list.map((itam2,index2) => {
-                                      return (
-                                        <td key={index2}>
-                                          <input 
-                                          value={datalist1[idx][1][4+index2] || ""}
-                                          onChange ={(val) => {
-                                            datalist1[idx][1][4+index2] =val.target.value;
-                                            setrefresh(!refresh);
-                                          }}
-                                          type ="number"
-                                          min={0}
-                                          step={0.01}
-                                          name="charge"
-                                          placeholder="Enter Value"
-                                          style={{
-                                            borderWidth: 0,
-                                            width:"2.5rem",
-                                          }}
-                                          />
-                                        </td>
-                                      )
-                                    })}
-                                    {/* For Non Cold Chain */}
-                                    {itm[2].map((v,i) => {
-                                      if(i ==0 ){
-                                        return(
-                                          <td key={i}>
-                                            <input 
-                                            value={datalist1[idx][2][i]}
-                                            onChange = {(val) => {
-                                              datalist1[idx][2][i] = val.target.value;
-                                              setrefresh(!refresh);
-                                            }}
-                                            type = "number"
-                                            min ={0}
-                                            step = "0.5"
-                                            name= ""
-                                            placeholder="Enter Value"
-                                            style={{
-                                              borderWidth: 0,
-                                              width: "2.5rem",
-                                            }}
-                                            />
-                                          </td>
-                                        )
-                                      }
-                                      if( i == 1 && dom_rate_type ==="Upto") {
-                                        return (
-                                          <td key={i}>
-                                            <input 
-                                            value={datalist1[idx][2][i]}
-                                            onChange = {(val) => {
-                                              datalist1[idx][2][i] =val.target.value;
-                                              setrefresh(!refresh);
-                                            }}
-                                            type = "number"
-                                            min= {0}
-                                            name=""
-                                            placeholder="Enter Value"
-                                            style={{
-                                              borderWidth: 0,
-                                              width: "2.5rem",
-                                            }}
-                                            />
-                                          </td>
-                                        )
-                                      }
-                                      if(i == 2 && dom_rate_type!== "Flat"){
-                                        return (
-                                          <td key={i}>
-                                            <input 
-                                            value={datalist1[idx][2][i]}
-                                            onChange = {(val) => {
-                                              datalist1[idx][2][i] = val.target.value;
-                                              setrefresh(!refresh);
-                                            }}
-                                            type = "number"
-                                            min={0}
-                                            step = {"0.5"}
-                                            name = ""
-                                            placeholder="Enter Value"
-                                            style={{
-                                              borderWidth: 0,
-                                              width: "2.5rem",
-                                            }}
-                                            />
-                                          </td>
-                                        )
-                                      }
-                                      if (i ==3 && is_oda_surface) {
-                                        return (
-                                          <td key={i}>
-                                            <input 
-                                            value = {datalist1[idx][2][i]}
-                                            onChange = {(val) => {
-                                              datalist1[idx][2][i] = val.target.value;
-                                              setrefresh(!refresh);
-                                            }}
-                                            type = "number"
-                                            min={0}
-                                            step="0.5"
-                                            name=""
-                                            placeholder="Enter Value"
-                                            style={{
-                                              borderWidth: 0,
-                                              width: "2.5rem",
-                                            }}
-                                            />
+                                                  }}
+                                                  className="input"
+                                                  type="number"
+                                                  min={0}
+                                                  step="0.5"
+                                                  name="voucher_amount"
+                                                  accept=".csv,.xlsx,.xls"
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem",
+                                                  }}
+                                                />
+                                              </td>
+                                            )
+                                          }
+                                          if (i === 1 && dom_rate_type === "Upto") {
+                                            return (
+                                              <td key={i}>
+                                                <input
+                                                  value={datalist1[idx][1][i]}
+                                                  onChange={(val) => {
+                                                    datalist1[idx][1][i] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                  }}
+                                                  type="number"
+                                                  min={0}
+                                                  name="voucher_amount"
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem",
+                                                  }}
+                                                />
+                                              </td>
+                                            )
+                                          }
+                                          if (i === 2 && dom_rate_type !== "Flat") {
+                                            return (
+                                              <td key={i}>
+                                                <input
+                                                  value={datalist1[idx][1][i]}
+                                                  onChange={(val) => {
+                                                    datalist1[idx][1][i] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                  }}
+                                                  type="number"
+                                                  min={0}
+                                                  step={"0.5"}
+                                                  name=""
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem",
+                                                  }}
+                                                />
+                                              </td>
+                                            )
+                                          }
+                                          if (i === 3 && is_oda_surface) {
+                                            return (
+                                              <td key={i}>
+                                                <input
+                                                  value={datalist1[idx][1][i]}
+                                                  onChange={(val) => {
+                                                    datalist1[idx][1][i] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                  }}
+                                                  min={0}
+                                                  step="0.5"
+                                                  type="number"
+                                                  name=""
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem",
+                                                  }}
+                                                />
+                                              </td>
+                                            )
+                                          }
+                                        })}
+                                        {fillterd_charge_list.map((itam2, index2) => {
+                                          return (
+                                            <td key={index2}>
+                                              <input
+                                                value={datalist1[idx][1][4 + index2] || ""}
+                                                onChange={(val) => {
+                                                  datalist1[idx][1][4 + index2] = val.target.value;
+                                                  setrefresh(!refresh);
+                                                }}
+                                                type="number"
+                                                min={0}
+                                                step={0.01}
+                                                name="charge"
+                                                placeholder="Enter Value"
+                                                style={{
+                                                  borderWidth: 0,
+                                                  width: "2.5rem",
+                                                }}
+                                              />
+                                            </td>
+                                          )
+                                        })}
+                                        {/* For Non Cold Chain */}
+                                        {itm[2].map((v, i) => {
+                                          if (i === 0) {
+                                            return (
+                                              <td key={i}>
+                                                <input
+                                                  value={datalist1[idx][2][i]}
+                                                  onChange={(val) => {
+                                                    datalist1[idx][2][i] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                  }}
+                                                  type="number"
+                                                  min={0}
+                                                  step="0.5"
+                                                  name=""
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem",
+                                                  }}
+                                                />
+                                              </td>
+                                            )
+                                          }
+                                          if (i === 1 && dom_rate_type === "Upto") {
+                                            return (
+                                              <td key={i}>
+                                                <input
+                                                  value={datalist1[idx][2][i]}
+                                                  onChange={(val) => {
+                                                    datalist1[idx][2][i] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                  }}
+                                                  type="number"
+                                                  min={0}
+                                                  name=""
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem",
+                                                  }}
+                                                />
+                                              </td>
+                                            )
+                                          }
+                                          if (i === 2 && dom_rate_type !== "Flat") {
+                                            return (
+                                              <td key={i}>
+                                                <input
+                                                  value={datalist1[idx][2][i]}
+                                                  onChange={(val) => {
+                                                    datalist1[idx][2][i] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                  }}
+                                                  type="number"
+                                                  min={0}
+                                                  step={"0.5"}
+                                                  name=""
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem",
+                                                  }}
+                                                />
+                                              </td>
+                                            )
+                                          }
+                                          if (i === 3 && is_oda_surface) {
+                                            return (
+                                              <td key={i}>
+                                                <input
+                                                  value={datalist1[idx][2][i]}
+                                                  onChange={(val) => {
+                                                    datalist1[idx][2][i] = val.target.value;
+                                                    setrefresh(!refresh);
+                                                  }}
+                                                  type="number"
+                                                  min={0}
+                                                  step="0.5"
+                                                  name=""
+                                                  placeholder="Enter Value"
+                                                  style={{
+                                                    borderWidth: 0,
+                                                    width: "2.5rem",
+                                                  }}
+                                                />
 
-                                          </td>
-                                        )
-                                      }
-                                    })}
-                                    {fillterd_charge_list.map((itam1,index3) => {
-                                      return(
-                                        <td key={index3}>
-                                          <input 
-                                          value={datalist1[idx][2][ 4 + index3 ] || ""}
-                                          onChange = {(val)=> {
-                                            datalist1[idx][2][4+index3] =val.target.value;
-                                            setrefresh(!refresh);
-                                          }}
-                                          type = "number"
-                                          min={0}
-                                          step={0.01}
-                                          name="Ncc_charge"
-                                          placeholder="Enter Value"
-                                          style={{
-                                            borderWidth: 0,
-                                            width: "2.5rem",
-                                          }}
-                                          />
-                                        </td>
-                                      )
-                                    })}
-                                    <td
+                                              </td>
+                                            )
+                                          }
+                                        })}
+                                        {fillterd_charge_list.map((itam1, index3) => {
+                                          return (
+                                            <td key={index3}>
+                                              <input
+                                                value={datalist1[idx][2][4 + index3] || ""}
+                                                onChange={(val) => {
+                                                  datalist1[idx][2][4 + index3] = val.target.value;
+                                                  setrefresh(!refresh);
+                                                }}
+                                                type="number"
+                                                min={0}
+                                                step={0.01}
+                                                name="Ncc_charge"
+                                                placeholder="Enter Value"
+                                                style={{
+                                                  borderWidth: 0,
+                                                  width: "2.5rem",
+                                                }}
+                                              />
+                                            </td>
+                                          )
+                                        })}
+                                        <td
                                           style={{
                                             color: "red",
                                             cursor: "pointer",
@@ -5516,53 +5498,54 @@ const BillingTab = ({
                                         >
                                           <MdDelete />
                                         </td>
-                                  </tr>
-                                  )
-                                })}
-                              </tbody>
-                            </table>
-                          </div>
-                          {/* //Action Btn */}
-                          <div className="action_container">
-                            <Button style={{
-                              margin: "8px"}}
-                              type = "button"
-                              className="btn btn-info m-1 cu_btn"
-                              onClick={()=>{
-                                add_new_row_zone();
+                                      </tr>
+                                    )
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+                            {/* //Action Btn */}
+                            <div className="action_container">
+                              <Button style={{
+                                margin: "8px"
                               }}
+                                type="button"
+                                className="btn btn-info m-1 cu_btn"
+                                onClick={() => {
+                                  add_new_row_zone();
+                                }}
                               >
-                              Add New Row
-                            </Button>
-                            <Button 
-                            style={{ margin: "8px"}}
-                            type = "button"
-                            className="btn btn-info m-1 cu_btn"
-                            onClick={()=>{
-                              setshow(true);
-                              setimport_for("Surface_zone")
-                            }}
-                            >
-                              Import
-                            </Button>
-                            <Button style={{
-                              margin: "8px"
-                            }}
-                            type = "button"
-                            className="btn btn-info m-1 cu_btn"
-                            onClick={() => {
-                              exportBillingDataSurfaceZone();
-                            }}
-                            >
-                              Export
-                            </Button>
-                          </div>
+                                Add New Row
+                              </Button>
+                              <Button
+                                style={{ margin: "8px" }}
+                                type="button"
+                                className="btn btn-info m-1 cu_btn"
+                                onClick={() => {
+                                  setshow(true);
+                                  setimport_for("Surface_zone")
+                                }}
+                              >
+                                Import
+                              </Button>
+                              <Button style={{
+                                margin: "8px"
+                              }}
+                                type="button"
+                                className="btn btn-info m-1 cu_btn"
+                                onClick={() => {
+                                  exportBillingDataSurfaceZone();
+                                }}
+                              >
+                                Export
+                              </Button>
+                            </div>
                           </>
 
                         )}
-                       </div>
+                      </div>
                     </Row>
-                  
+
                   </TabPane>
                 </TabContent>
               </TabPane>
@@ -5596,7 +5579,7 @@ const BillingTab = ({
       >
         <Modal.Header
           closeButton
-          //  style={{width: '90vw', backgroundColor:'red'}}
+        //  style={{width: '90vw', backgroundColor:'red'}}
         >
           {/* <!-- <Modal.Title>Update Your Image:</Modal.Title> --> */}
         </Modal.Header>
@@ -5662,11 +5645,11 @@ const BillingTab = ({
                       height: "36px",
                     }}
                     onClick={() => {
-                      if (import_for == "Local") {
+                      if (import_for === "Local") {
                         exportBillingData();
-                      } else if (import_for == "Air_City") {
+                      } else if (import_for === "Air_City") {
                         exportBillingDataAirCity();
-                      } else if (import_for == "Air_Zone") {
+                      } else if (import_for === "Air_Zone") {
                         exportBillingDataAirZone();
                       }
                       // handleSubmit();
@@ -5762,7 +5745,7 @@ const BillingTab = ({
                           SL
                         </th>
 
-                        {import_for == "Local" && (
+                        {import_for === "Local" && (
                           <th
                             style={{
                               width: "20rem",
@@ -5776,7 +5759,7 @@ const BillingTab = ({
                           </th>
                         )}
 
-                        {import_for == "Air_City" && (
+                        {import_for === "Air_City" && (
                           <>
                             <th
                               style={{
@@ -5803,7 +5786,7 @@ const BillingTab = ({
                           </>
                         )}
 
-                        {import_for == "Air_Zone" && (
+                        {import_for === "Air_Zone" && (
                           <>
                             <th
                               style={{
@@ -5895,13 +5878,13 @@ const BillingTab = ({
                           return (
                             <tr
                               key={idx}
-                              // style={{backgroundColor: itm[0][0][0] ==''? 'red' : '' }}
+                              // style={{backgroundColor: itm[0][0][0] ===''? 'red' : '' }}
                               className={
-                                itm[0][0][0] == ""
+                                itm[0][0][0] === ""
                                   ? "table-danger"
                                   : "" + count_s[itm[0][0][1]] > 1
-                                  ? "table-info"
-                                  : ""
+                                    ? "table-info"
+                                    : ""
                               }
                             >
                               <td>{idx + 1}</td>
@@ -5927,7 +5910,7 @@ const BillingTab = ({
 
                               {/* For COld Chain */}
                               {itm[1].map((v, i) => {
-                                // if (i == 0) {
+                                // if (i === 0) {
                                 return (
                                   <td key={i}>
                                     <input
@@ -5985,14 +5968,14 @@ const BillingTab = ({
                           return (
                             <tr
                               key={idx}
-                              // style={{backgroundColor: itm[0][0][0] ==''? 'red' : '' }}
+                              // style={{backgroundColor: itm[0][0][0] ===''? 'red' : '' }}
                               className={
-                                itm[0][0][0] == ""
+                                itm[0][0][0] === ""
                                   ? "table-danger"
                                   : "" + count_s[itm[0][0][1] + itm[0][1][1]] >
                                     1
-                                  ? "table-info"
-                                  : ""
+                                    ? "table-info"
+                                    : ""
                               }
                             >
                               <td>{idx + 1}</td>
@@ -6018,7 +6001,7 @@ const BillingTab = ({
 
                               {/* For COld Chain */}
                               {itm[1].map((v, i) => {
-                                // if (i == 0) {
+                                // if (i === 0) {
                                 return (
                                   <td key={i}>
                                     <input
@@ -6076,14 +6059,14 @@ const BillingTab = ({
                           return (
                             <tr
                               key={idx}
-                              // style={{backgroundColor: itm[0][0][0] ==''? 'red' : '' }}
+                              // style={{backgroundColor: itm[0][0][0] ===''? 'red' : '' }}
                               className={
-                                itm[0][0][0] == ""
+                                itm[0][0][0] === ""
                                   ? "table-danger"
                                   : "" + count_s[itm[0][0][1] + itm[0][1][1]] >
                                     1
-                                  ? "table-info"
-                                  : ""
+                                    ? "table-info"
+                                    : ""
                               }
                             >
                               <td>{idx + 1}</td>
@@ -6109,7 +6092,7 @@ const BillingTab = ({
 
                               {/* For COld Chain */}
                               {itm[1].map((v, i) => {
-                                // if (i == 0) {
+                                // if (i === 0) {
                                 return (
                                   <td key={i}>
                                     <input
@@ -6172,15 +6155,15 @@ const BillingTab = ({
                       margin: "10px",
                     }}
                     onClick={() => {
-                      if (import_for == "Local") {
+                      if (import_for === "Local") {
                         send_list_data();
-                      } else if (import_for == "Air_City") {
+                      } else if (import_for === "Air_City") {
                         send_list_data_air_city();
-                      } else if (import_for == "Air_Zone") {
+                      } else if (import_for === "Air_Zone") {
                         send_list_data_air_zone();
-                      } else if(import_for == "Surface_City") {
+                      } else if (import_for === "Surface_City") {
                         send_list_data_surface_city();
-                      } else if(import_for== "Surface_Zone"){
+                      } else if (import_for === "Surface_Zone") {
                         send_list_data_surface_zone();
                       }
                       setshow(false);

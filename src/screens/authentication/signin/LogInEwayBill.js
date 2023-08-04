@@ -1,5 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setBusinesssAccessToken, setEAccessToken, setOrgs } from "../../../store/ewayBill/EwayBill";
@@ -196,7 +195,7 @@ function LogInEwayBill() {
 
   // For Step 2 Eway Bill
   useLayoutEffect(() => {
-    if (e_access_token != "" && ass_token && orgId) {
+    if (e_access_token !== "" && ass_token && orgId) {
       GetBusiness_token();
     }
     if (time_diff >= 6 && orgId) {

@@ -6,7 +6,7 @@ import { ServerAddress } from "../../../constants/ServerAddress";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { setFilterA, setFilterB } from "../../../store/filterValue/FilterValue";
+import { setFilterA } from "../../../store/filterValue/FilterValue";
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import MultiSelect from "../../../components/formComponent/multiSelect/MultiSelect";
 
@@ -14,8 +14,6 @@ function RouteFilter() {
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.authentication.access_token);
   // Additional Fields
-  const data_len = useSelector((state) => state.pagination.data_length);
-  const page_num = useSelector((state) => state.pagination.page_number);
   const [page, setpage] = useState(1);
 
   const [route_filter, setroute_filter] = useState([]);

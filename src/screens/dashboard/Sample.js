@@ -19,7 +19,6 @@ import {
   Input,
   FormFeedback,
   Form,
-  FormGroup,
   Button,
 } from "reactstrap";
 import axios from "axios";
@@ -47,6 +46,7 @@ import StatusInfoDataTitle from "../../data/booking/statusInfo/StatusInfoDataTit
 import StatusInfoDataFormat from "../../data/booking/statusInfo/StatusInfoDataFormat";
 import { useLocation } from "react-router-dom";
 // import StatusInfoDataFormat from "../../../data/booking/statusInfo/StatusInfoDataFormat";
+
 const Sample = () => {
   const { width } = useWindowDimensions();
 
@@ -66,7 +66,7 @@ const Sample = () => {
 
   //Get Updated Location Data
   const [order, setorder] = useState([]);
-  console.log("order----", order);
+  // console.log("order----", order);
   const [order_id, setorder_id] = useState("");
   const [isupdating, setisupdating] = useState(false);
   const [hash, sethash] = useState("");
@@ -128,7 +128,6 @@ const Sample = () => {
   const [billto_list, setbillto_list] = useState([]);
   const [billto, setbillto] = useState("");
   const [billto_id, setbillto_id] = useState(0);
-  const [selectbillto, setselectbillto] = useState([]);
   const [search_billto, setsearch_billto] = useState("");
 
   //transport Mode
@@ -157,7 +156,6 @@ const Sample = () => {
   const [shipper_locality, setshipper_locality] = useState("");
   const [shipper_add_1, setshipper_add_1] = useState("");
   const [shipper_add_2, setshipper_add_2] = useState("");
-  const [search_shipper, setsearch_shipper] = useState("");
   const [all_shipper_details, setall_shipper_details] = useState([]);
 
   //consignee
@@ -175,7 +173,6 @@ const Sample = () => {
   const [consignee_locality, setconsignee_locality] = useState("");
   const [consignee_add_1, setconsignee_add_1] = useState("");
   const [consignee_add_2, setconsignee_add_2] = useState("");
-  const [search_consignee, setsearch_consignee] = useState("");
   const [all_consignee_details, setall_consignee_details] = useState([]);
 
   // Asset Info
@@ -197,38 +194,35 @@ const Sample = () => {
   const [both, setboth] = useState([]);
 
   //Box Type
-  const [box_list, setbox_list] = useState([
-    "CREDO",
-    "VYPE",
-    "COOL GUARD",
-    "ISGO",
-    "SAFE",
-  ]);
-  const [box_selected, setbox_selected] = useState("");
+  // const [box_list, setbox_list] = useState([
+  //   "CREDO",
+  //   "VYPE",
+  //   "COOL GUARD",
+  //   "ISGO",
+  //   "SAFE",
+  // ]);
+  // const [box_selected, setbox_selected] = useState("");
 
   //Box Number
   const [box_list_1, setbox_list_1] = useState([]);
   const [box_list_2, setbox_list_2] = useState([]);
-  const [box_no_selected, setbox_no_selected] = useState("");
-  const [box_selected_id, setbox_selected_id] = useState("");
   const [box_list_page, setbox_list_page] = useState(1);
   const [search_box_list, setsearch_box_list] = useState("");
 
   //Logger Number
   const [Logger_list, setLogger_list] = useState([]);
   const [Logger_Selected, setLogger_Selected] = useState([]);
-  const [Logger_selected_id, setLogger_selected_id] = useState("");
   const [Logger_page, setLogger_page] = useState(1);
   const [search_logger, setsearch_logger] = useState("");
 
   //Temperature Type
-  const [temp_list, settemp_list] = useState([
-    "2c-8c",
-    "15c-25c",
-    "-25c To -15c",
-    "Dry Ice",
-    "All In One",
-  ]);
+  // const [temp_list, settemp_list] = useState([
+  //   "2c-8c",
+  //   "15c-25c",
+  //   "-25c To -15c",
+  //   "Dry Ice",
+  //   "All In One",
+  // ]);
   const [temp_selected, settemp_selected] = useState("");
 
   //Commodity
@@ -284,7 +278,6 @@ const Sample = () => {
   const [origincity_list, setorigincity_list] = useState([]);
   const [origincity, setorigincity] = useState("");
   const [origincity_id, setorigincity_id] = useState(0);
-  const [origincity_error, setorigincity_error] = useState(false);
   const [origincity_page, setorigincity_page] = useState(1);
   const [origincity_search_item, setorigincity_search_item] = useState("");
 
@@ -292,27 +285,12 @@ const Sample = () => {
   const [destinationcity_list, setdestinationcity_list] = useState([]);
   const [destinationcity, setdestinationcity] = useState("");
   const [destinationcity_id, setdestinationcity_id] = useState(0);
-  const [destinationcity_error, setdestinationcity_error] = useState(false);
   const [destinationcity_page, setdestinationcity_page] = useState(1);
   const [destinationcity_search_item, setdestinationcity_search_item] =
     useState("");
 
-  //State
-  const [state_list_s, setstate_list_s] = useState([]);
-  const [state, setstate] = useState("");
-  const [state_id, setstate_id] = useState("");
-
-  //Pincode
-  const [pincode_list_s, setpincode_list_s] = useState([]);
-  const [pincode_loaded, setpincode_loaded] = useState(false);
-  const [pincode, setpincode] = useState("");
-  const [by_pincode, setby_pincode] = useState(false);
-
   // Delivery Info
   const [delivery_info, setdelivery_info] = useState([]);
-  const [delivered_date, setdelivered_date] = useState("");
-  const [deliverySigFile, setdeliverySigFile] = useState(null);
-  const [podSigFile, setpodSigFile] = useState(null);
   const [response_awb_no, setresponse_awb_no] = useState("");
 
   //Circle Toogle Btn
@@ -358,8 +336,6 @@ const Sample = () => {
 
   // Error State
   const [transportation_cost_err, settransportation_cost_err] = useState(false);
-  const [pincode_error, setpincode_error] = useState(false);
-  const [pincode_error2, setpincode_error2] = useState(false);
   const [delivery_mode_error, setdelivery_mode_error] = useState(false);
   const [client_error, setclient_error] = useState(false);
   const [billto_error, setbillto_error] = useState(false);
@@ -370,13 +346,6 @@ const Sample = () => {
   const [local_delivery_type_error, setlocal_delivery_type_error] =
     useState(false);
   const [d_cod_error, setd_cod_error] = useState(false);
-  const [asset_info_selected_error, setasset_info_selected_error] =
-    useState(false);
-  const [box_selected_error, setbox_selected_error] = useState(false);
-  const [box_no_selected_error, setbox_no_selected_error] = useState(false);
-  const [Logger_Selected_error, setLogger_Selected_error] = useState(false);
-  const [temp_selected_error, settemp_selected_error] = useState("");
-  const [actual_weight_error, setactual_weight_error] = useState("");
 
   // Packages
   let p = row.length - 1;
@@ -610,7 +579,7 @@ const Sample = () => {
       )
       .then((resp) => {
         if (resp.data.results.length > 0) {
-          if (origincity_page == 1) {
+          if (origincity_page === 1) {
             cities_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
@@ -622,7 +591,7 @@ const Sample = () => {
             ];
           }
 
-          if (destinationcity_page == 1) {
+          if (destinationcity_page === 1) {
             dcities_list = resp.data.results.map((v) => [
               v.id,
               toTitleCase(v.city),
@@ -869,7 +838,7 @@ const Sample = () => {
       const ele = fields_names[j];
       let prev = location.state.order[`${ele[0]}`];
       let new_v = ele[1];
-      if (String(prev).toUpperCase() != String(new_v).toUpperCase()) {
+      if (String(prev).toUpperCase() !== String(new_v).toUpperCase()) {
         change_fields[`${ele[0]}`] = new_v.toString().toUpperCase();
       }
     }
@@ -1489,25 +1458,25 @@ const Sample = () => {
 
   useEffect(() => {
     if (box !== [] && asset_info_selected === "With Box") {
-      let item = asset_idlist.filter((p) => box.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => box.indexOf(p) === -1);
       setassetdeleted_ids(item);
       let item2 = asset_idlist.filter((p) => box.indexOf(p) !== -1);
       setassetold_ids(item2);
-      let item3 = box.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = box.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     } else if (logger !== [] && asset_info_selected === "With Logger") {
-      let item = asset_idlist.filter((p) => logger.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => logger.indexOf(p) === -1);
       setassetdeleted_ids(item);
       let item2 = asset_idlist.filter((p) => logger.indexOf(p) !== -1);
       setassetold_ids(item2);
-      let item3 = logger.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = logger.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     } else {
-      let item = asset_idlist.filter((p) => both.indexOf(p) == -1);
+      let item = asset_idlist.filter((p) => both.indexOf(p) === -1);
       setassetdeleted_ids(item);
       let item2 = asset_idlist.filter((p) => both.indexOf(p) !== -1);
       setassetold_ids(item2);
-      let item3 = both.filter((a) => asset_idlist.indexOf(a) == -1);
+      let item3 = both.filter((a) => asset_idlist.indexOf(a) === -1);
       setassetnew_ids(item3);
     }
   }, [asset_idlist, box, logger, both]);
@@ -1522,12 +1491,12 @@ const Sample = () => {
   }, [package_id_list, packages_id]);
 
   // Modal
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  const [message, setmessage] = useState("");
-  const [ewaybill, setewaybill] = useState(false);
+  // const handleClose = () => setShow(false);
+  // const handleShow = () => setShow(true);
+  // const [message, setmessage] = useState("");
+  // const [ewaybill, setewaybill] = useState(false);
 
   useLayoutEffect(() => {
     getCities("all", "all");
@@ -2043,7 +2012,7 @@ const Sample = () => {
                               disabled={isupdating ? docket_no_value : ""}
                               onChange={(event) => {
                                 setdocket_no_value(event.target.value);
-                                if (event.target.value.length != 6) {
+                                if (event.target.value.length !== 6) {
                                   setdocket_error(true);
                                 } else {
                                   setdocket_error(false);

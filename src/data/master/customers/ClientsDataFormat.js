@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
@@ -18,39 +18,28 @@ import {
   setShowAlert,
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { Input } from "reactstrap";
 
 const ClientsDataFormat = ({ data, data1, can_delete }) => {
-console.log("data-------", data)
-  // Permissions
-  const user_permissions = useSelector(
-    (state) => state.permissions.user_permissions
-  );
 
+console.log("data-------", data)
+  
   const dispatch = useDispatch();
   const cust_user_permissions = useSelector(
     (state) => state.permissions.cust_user_permissions
   );
 
   const commidity_checker_maker_row = cust_user_permissions.find(
-    (v) => v[0] == "Commodity"
+    (v) => v[0] === "Commodity"
   );
   let commidity_checker_maker = "Maker";
 
   const searchData = useSelector((state) => state.searchbar.search_item);
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
-  const user_id = useSelector((state) => state.authentication.userdetails.id);
-  const [refresh, setrefresh] = useState(false);
-  const [cu_status_com_id, setcu_status_com_id] = useState(null);
-  const [cu_status, setcu_status] = useState("");
   const user = useSelector((state) => state.authentication.userdetails);
 
   const ids = useSelector((state) => state.datalist.ids);
-  let is_superuser = useSelector(
-    (state) => state.authentication.userdetails.is_superuser
-  );
-
+  
   const [click, setclick] = useState(true);
   const delete_client_row = (id) => {
     axios
@@ -136,7 +125,7 @@ console.log("data-------", data)
   }, [close]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       // delete_commidity_row(ids);
     }
   }, [delete_id]);
@@ -145,11 +134,11 @@ console.log("data-------", data)
   const index = useSelector((state) => state.datalist.index);
 
   useEffect(() => {
-    if (index == 0) {
+    if (index === 0) {
       dispatch(setIndexValue("name"));
-    } else if (index == 1) {
+    } else if (index === 1) {
       dispatch(setIndexValue("commodity_type"));
-    } else if (index == 2) {
+    } else if (index === 2) {
       dispatch(setIndexValue("current_status"));
     }
   }, [index]);
@@ -171,7 +160,7 @@ console.log("data-------", data)
   }, [userpermission]);
 
   useEffect(() => {
-    if (delete_id == true) {
+    if (delete_id === true) {
       delete_client_row(ids);
     }
   }, [delete_id]);

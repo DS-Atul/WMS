@@ -28,7 +28,7 @@ import {
 import Button from 'react-bootstrap/Button';
 
 const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
-  console.log("Issue data", data)
+  // console.log("Issue data", data)
   const dispatch = useDispatch();
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -315,7 +315,7 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
       });
   };
   const handleSubmit2 = () => {
-    if (message == "") {
+    if (message === "") {
       setmessage_error(true);
     }
     else {
@@ -349,7 +349,7 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
         </Modal.Header>
         <Modal.Body>
             <div style={{overflow:"hidden"}}>
-              <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px", transform: `rotate(${rotationAngle}deg)` }}
+              <img src={img} alt="img" style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px", transform: `rotate(${rotationAngle}deg)` }}
                 onClick={handleClick}
               />
           </div>
@@ -540,7 +540,7 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
                   setopenModal(true)
                 }}
               >
-                <img src={order.pod_image} style={{ width: 70, height: 50 }} />
+                <img src={order.pod_image} alt="pod_image" style={{ width: 70, height: 50 }} />
               </td>
               <td
                 onClick={() => {
@@ -548,7 +548,7 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
                   setopenModal(true)
                 }}
               >
-                <img src={order.image} style={{ width: 70, height: 50 }} />
+                <img src={order.image} alt="order_image" style={{ width: 70, height: 50 }} />
               </td>
               <td>
                 {

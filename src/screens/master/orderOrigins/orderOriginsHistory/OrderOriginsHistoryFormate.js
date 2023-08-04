@@ -11,8 +11,8 @@ const OrderOriginsHistoryFormate = ({ table_data}) => {
           // console.log("CHnage msg", item.change_message);
           const new_data = JSON.parse(item.change_message);
           var time = new Date(item.action_time).toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
-        console.log("length",new_data)
-        console.log(item)
+        // console.log("length",new_data)
+        // console.log(item)
         return (
           <tr key={idx}   style={{
             borderWidth: 1,

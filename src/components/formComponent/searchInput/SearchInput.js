@@ -3,16 +3,10 @@ import { Input } from "reactstrap";
 import { MdOutlineKeyboardArrowDown, MdErrorOutline } from "react-icons/md";
 import { AiOutlinePlus } from "react-icons/ai";
 import { IconContext } from "react-icons";
-import { setIsSearch, setSearchItem } from "../../../store/searchBar/SearchBar";
-import { useDispatch, useSelector } from "react-redux";
-import { setFilterToggle } from "../../../store/filterValue/FilterValue";
-import { setPageNumber } from "../../../store/pagination/Pagination";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
-import { useNavigate } from "react-router-dom";
 
 const SearchInput = ({
   data_list,
-  setdata_list,
   data_item_s,
   set_data_item_s,
   error_s = false,
@@ -32,8 +26,6 @@ const SearchInput = ({
   setbottom,
   count=1,
 }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   //  Dropdown Handle
   const [showfilter, setshowfilter] = useState(false);
@@ -110,7 +102,7 @@ const SearchInput = ({
           }}
           className="form-control-sm"
           onClick={() => {
-            if (disable_me == false) {
+            if (disable_me === false) {
               setshowfilter(!showfilter);
             }
           }}
@@ -146,7 +138,7 @@ const SearchInput = ({
 
         </button>
 
-        {add_nav != "" && (
+        {add_nav !== "" && (
           <div
             style={{
               display: "flex",
