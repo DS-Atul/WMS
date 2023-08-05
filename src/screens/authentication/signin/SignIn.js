@@ -571,7 +571,7 @@ const SignIn = () => {
           dropdown: "Booking",
           dropdownMenu: [
             ["Orders", "/booking/orders"],
-            ["Check Orders", "/orderCheckingPage/OrderCheckingPage"],
+            // ["Check Orders", "/orderCheckingPage/OrderCheckingPage"],
             ["Docket Issues", "/booking/docketIssue/DocketIssue"],
             ["Delivery Info", "/booking/deliveryinfo"],
             // ["Airport Order", "/booking/airportorder/airportorder"],

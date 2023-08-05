@@ -286,7 +286,7 @@ const OrderDataFormat = ({ data, data1, can_delete }) => {
                               (
                                 <Link
                                   to="/booking/orders/addorder"
-                                  state={{ order: order }}
+                                  state={{ order: order ,is_checkermaker:false}}
                                 >
                                   {order.docket_no}
                                 </Link>)

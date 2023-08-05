@@ -1033,18 +1033,18 @@ const UserInfo = () => {
 
   useLayoutEffect(() => {
     let timeoutId;
-    if (locations.state === null && org_id !== "" && org_id) {
+    if (locations.state === null && org_id !== "" && org_id && home_branch_id) {
       timeoutId = setTimeout(() => {
         getAssBranches("all",home_branch_id);
       }, 1);
     }
-    else if (locations.state === null) {
+    else if (locations.state === null && home_branch_id) {
       getAssBranches("all",home_branch_id);
     }
-    else if (locations.state !== null && org_id !== "" && org_id) {
+    else if (locations.state !== null && org_id !== "" && org_id && home_branch_id) {
       getAssBranches(parseInt(up_params.user.id),home_branch_id);
     }
-    else if (locations.state !== null) {
+    else if (locations.state !== null && home_branch_id) {
       timeoutId = setTimeout(() => {
         getAssBranches(parseInt(up_params.user.id),home_branch_id);
       }, 1);

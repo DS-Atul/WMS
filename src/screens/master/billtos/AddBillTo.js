@@ -1775,7 +1775,7 @@ const AddClient = () => {
                   </Col>
 
                   <Col lg={4} md={6} sm={6}>
-                    <Label className="header-child">Account number*</Label>
+                    <Label className="header-child">Account Number*</Label>
                     <div className="mb-3">
                       <Input
                         onChange={validation.handleChange}
@@ -1791,7 +1791,7 @@ const AddClient = () => {
                         name="account_number"
                         className="form-control-md"
                         id="input"
-                        placeholder="Enter phone number"
+                        placeholder="Enter Account Number"
                         min={0}
                       />
                       {validation.touched.account_number &&

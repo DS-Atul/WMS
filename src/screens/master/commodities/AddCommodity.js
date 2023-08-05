@@ -567,8 +567,8 @@ const Add_Commodity = () => {
           "transactionType": "1",
           "subSupplyType": "1",
           "docType": "INV",
-          "docNo": `DHLMH423199${index}`,
-          "docDate": "31/07/2023",
+          "docNo": `DHLMH423398${index}`,
+          "docDate": "04/08/2023",
           "invTyp": "B2B",
           "fromGstin": "05AAAAT2562R1Z3",
           "fromTrdName": "K R AGENCIES",
@@ -598,7 +598,7 @@ const Add_Commodity = () => {
           "otherValue": "0",
           "transMode": "2",
           "transDistance": "196",
-          "transDocDate": "31/07/2023",
+          "transDocDate": "04/08/2023",
           "transDocNo": "124423",
           "transId": "05AAAAR1685F1ZO",
           "transName": "Ashwin Guj Trans",
@@ -661,7 +661,7 @@ const Add_Commodity = () => {
   };
 
   useEffect(() => {
-    for (let index = 0; index < 3; index++) {
+    for (let index = 0; index < 6; index++) {
       // post_awb(index)
     }
   }, [])

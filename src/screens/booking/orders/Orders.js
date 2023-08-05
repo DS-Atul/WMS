@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MdAdd } from "react-icons/md";
+import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import NavBtn from "../../../components/btn/NavBtn";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
@@ -36,33 +38,33 @@ const Orders = () => {
     dispatch(setToggle(false));
   }, []);
 
-    //Permission
-    const userpermission = useSelector(
-      (state) => state.authentication.userpermission
-    );
-    const [can_add, setcan_add] = useState(false);
-    const [can_delete, setcan_delete] = useState(false);
-  
-    useEffect(() => {
-      if (
-        userpermission.some((e) => e.sub_model === "Order" && e.write === true)
-      ) {
-        setcan_add(true);
-      } else {
-        setcan_add(false);
-      }
-    }, [userpermission]);
-  
-    useEffect(() => {
-      if (
-        userpermission.some((e) => e.sub_model === "Order" && e.delete === true)
-      ) {
-        setcan_delete(true);
-      } else {
-        setcan_delete(false);
-      }
-    }, [userpermission]);
-  
+  //Permission
+  const userpermission = useSelector(
+    (state) => state.authentication.userpermission
+  );
+  const [can_add, setcan_add] = useState(false);
+  const [can_delete, setcan_delete] = useState(false);
+
+  useEffect(() => {
+    if (
+      userpermission.some((e) => e.sub_model === "Order" && e.write === true)
+    ) {
+      setcan_add(true);
+    } else {
+      setcan_add(false);
+    }
+  }, [userpermission]);
+
+  useEffect(() => {
+    if (
+      userpermission.some((e) => e.sub_model === "Order" && e.delete === true)
+    ) {
+      setcan_delete(true);
+    } else {
+      setcan_delete(false);
+    }
+  }, [userpermission]);
+
 
   return (
     <>
@@ -83,30 +85,45 @@ const Orders = () => {
                 onClick={() => dispatch(setPageNumber(1))}
               >
                 {(can_add || user.is_superuser) && (
-                <NavBtn
-                  btn_name="Add Order"
-                  icon={<MdAdd size={15} />}
-                  form_path="/booking/orders/addorder"
-                />
+                  <>
+                    <NavBtn
+                      btn_name="Add Order"
+                      icon={<MdAdd size={15} />}
+                      form_path="/booking/orders/addorder"
+                    />
+                    <Link
+                      to="/booking/orders/addorder"
+                      state={{ is_checkermaker: true }}
+                      style={{ color: "white" }}
+                    >
+                      <Button
+                        style={{ padding: "5.8px", }}
+                        type="button"
+                        className="btn-rounded mb-2 me-2 mt-3 btn btn-success"
+                      >
+                        Check Orders
+                      </Button>
+                    </Link>
+                  </>
                 )}
                 {/* Filter */}
                 <Filter type={"booking"} />
               </div>
             </div>
             {(!user.is_superuser) &&
-            (
-            <OperationNavigate />
-            )
-                }
+              (
+                <OperationNavigate />
+              )
+            }
           </div>
 
           {/* DataTable */}
           <DataList
-           can_delete={can_delete}
+            can_delete={can_delete}
             Data_Title={OrderDataTitle}
             Data_Format={OrderDataFormat}
             path={`booking/all_orders/?search=${search}&p=${page_num}&records=${data_len}&delivery_type=${delivery_type}&cold_chain_order=${cold_chain_btn}&transportation_mode=${transportation_mode}&created_by=${created_by_id}&current_branch=${current_branch}&current_status=${current_status}&iscompleted=${iscompleted}&order_type=${ordertype}&order_channel=${order_channel}&value=${cm_value}`}
-            // `bookings/api/get_orderfilter_data/?delivery_type=${delivery_type}&cold_chain_order=${cold_chain_btn}&transportation_mode=${transportation_mode}&current_status=${current_status}&created_by=${created_by_id}&current_branch=${current_branch}&order_origin=${order_origin_id}&order_destination=${order_destination_id}&iscompleted=${iscompleted}&p=${page_num}&records=${data_len}`
+          // `bookings/api/get_orderfilter_data/?delivery_type=${delivery_type}&cold_chain_order=${cold_chain_btn}&transportation_mode=${transportation_mode}&current_status=${current_status}&created_by=${created_by_id}&current_branch=${current_branch}&order_origin=${order_origin_id}&order_destination=${order_destination_id}&iscompleted=${iscompleted}&p=${page_num}&records=${data_len}`
           />
           <NumPagination path={"path"} />
         </div>
