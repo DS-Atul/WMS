@@ -11,7 +11,7 @@ import {
   Row,
 } from "reactstrap";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { ServerAddress } from "../../../constants/ServerAddress";
+import { ServerAddress, bucket_address } from "../../../constants/ServerAddress";
 import { useSelector } from "react-redux";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import axios from "axios";
@@ -147,7 +147,7 @@ const UserInfo = () => {
   const [modal, setmodal] = useState(false);
   const [uploaded_img, setuploaded_img] = useState("");
   const [result_img, setresult_img] = useState("");
-  const [document, setdocument] = useState("");
+  console.log("result_img----", result_img)
 
   const getBranches = () => {
     let temp3 = [];
@@ -161,7 +161,6 @@ const UserInfo = () => {
         }
       )
       .then((response) => {
-        settoOrg(true);
         if (response.data.next === null) {
           setbranch_loaded(false);
         } else {
@@ -503,8 +502,9 @@ const UserInfo = () => {
       } else {
         setorg_loaded(true);
       }
-
+      settoOrg(true);
       if (resp.data.results.length > 0) {
+
         if (org_page === 1) {
           orgs_list = resp.data.results.map((v) => [
             v.id,
@@ -534,6 +534,7 @@ const UserInfo = () => {
       .post(
         ServerAddress + "ems/add-user/",
         {
+          user_image: result_img,
           username: values.username,
           email: values.email,
           first_name: toTitleCase(values.first_name).toUpperCase(),
@@ -566,9 +567,6 @@ const UserInfo = () => {
       )
       .then(function (resp) {
         if (resp.status === 201) {
-          if (document) {
-            send_user_pic(resp.data.user_id);
-          }
           add_user_permission(resp.data.user_id);
           dispatch(setShowAlert(true));
           dispatch(setDataExist(`${values.username} Added sucessfully`));
@@ -635,7 +633,7 @@ const UserInfo = () => {
       )
       .then(function (resp) {
         if (resp.data.status === "success") {
-          if(validation.values.username===username){
+          if (validation.values.username === username) {
             getUserPermissions(validation.values.username)
           }
           dispatch(setDataExist(`${user.username} Updated sucessfully`));
@@ -654,6 +652,8 @@ const UserInfo = () => {
       .post(
         ServerAddress + "ems/update-user/",
         {
+          user_image: result_img?.substring(0, 4) !== "http" ? result_img : null,
+          image_id: user?.user_image[0]?.id ? user?.user_image[0]?.id : "",
           id: user.id,
           username: values.username,
           email: values.email,
@@ -687,17 +687,14 @@ const UserInfo = () => {
         }
       )
       .then(function (resp) {
-        if (is_update && resp.status === 202 && validation.values.username===username) {
+        if (is_update && resp.status === 202 && validation.values.username === username) {
           getUserDetails(validation.values.username)
           // getUserPermissions(validation.values.username)
         }
-    
+
         if (resp.status === 202 && is_superuser === false && permission_title_list[1][6] !== "") {
           // setlodated(true)
           update_user_permission();
-          if (document) {
-            send_user_pic(up_params.user.id);
-          }
 
           // navigate("/ems/users");
         }
@@ -936,39 +933,16 @@ const UserInfo = () => {
     confirm_password,
   ]);
 
-
-  const send_user_pic = (u_id) => {
-    const docket_imageform = new FormData();
-    docket_imageform.append(`user_image`, document, document?.name)
-    docket_imageform.append(`user_id`, u_id)
-
-    axios
-      .post(ServerAddress + "ems/add_profilepic/", docket_imageform, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "content-type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        if (res.data.Data === "Done") {
-          dispatch(setShowAlert(true));
-          dispatch(
-            setDataExist(`Image Has Been Saved Successfully !`)
-          );
-          dispatch(setAlertType("success"));
-          // alert(`Your Docket Image Saved Successfully`);
-
-        }
-      })
-      .catch((err) => { });
-
-  }
   useLayoutEffect(() => {
     try {
       let user_u = up_params.user;
+      console.log("user_u----", user_u)
       let date1 = user_u.date_joined;
       let fdate = date1.split("T")[0];
       setis_update(true);
+      if (user_u.user_image.length > 0) {
+        setresult_img(bucket_address + user_u.user_image[0].user_image);
+      }
       setuser(user_u);
       sethome_branch(toTitleCase(user_u.branch_nm));
       setdate_joined(fdate);
@@ -1035,18 +1009,18 @@ const UserInfo = () => {
     let timeoutId;
     if (locations.state === null && org_id !== "" && org_id && home_branch_id) {
       timeoutId = setTimeout(() => {
-        getAssBranches("all",home_branch_id);
+        getAssBranches("all", home_branch_id);
       }, 1);
     }
     else if (locations.state === null && home_branch_id) {
-      getAssBranches("all",home_branch_id);
+      getAssBranches("all", home_branch_id);
     }
     else if (locations.state !== null && org_id !== "" && org_id && home_branch_id) {
-      getAssBranches(parseInt(up_params.user.id),home_branch_id);
+      getAssBranches(parseInt(up_params.user.id), home_branch_id);
     }
     else if (locations.state !== null && home_branch_id) {
       timeoutId = setTimeout(() => {
-        getAssBranches(parseInt(up_params.user.id),home_branch_id);
+        getAssBranches(parseInt(up_params.user.id), home_branch_id);
       }, 1);
     }
     return () => clearTimeout(timeoutId);
@@ -1563,7 +1537,7 @@ const UserInfo = () => {
       sethome_branch("");
       sethome_branch_list([]);
     }
-  }, [org, toOrg]);
+  }, [org]);
 
   useEffect(() => {
     if (is_update) {
@@ -2057,7 +2031,7 @@ const UserInfo = () => {
                         </div>
                       </div>
                     </Col>
-                    
+
                     {/* <Col lg={2} md={3} sm={3}>
                       <div className="mb-3">
                         <Label className="header-child">Cold Chain</Label>
@@ -2071,7 +2045,7 @@ const UserInfo = () => {
                       </div>
                     </Col> */}
 
-                  {/* Need To Add */}
+                    {/* Need To Add */}
                     {/* <Col lg={is_docket ? 2 : 4} md={3} sm={3}>
                       <div className="mb-3">
                         <Label className="header-child">Docket Start From</Label>
@@ -2151,11 +2125,25 @@ const UserInfo = () => {
                         </div>
                       </div>
                     </Col> */}
-                    <Col lg={4} md={6} sm={6}>
+                    <ImgModal
+                      modal={modal}
+                      modal_set={() => {
+                        setmodal(false);
+                      }}
+                      pre_image={result_img ? result_img : ""}
+                      upload_image={(val) => {
+                        setuploaded_img(val);
+                      }}
+                      result_image={(val) => {
+                        setresult_img(val);
+                      }}
+                    />
+                    {(result_img === "" || !result_img) &&
+                      <Col lg={4} md={6} sm={6}>
                         <div className="mb-2" style={{ position: "relative" }}>
                           <Label>Profile Pic</Label>
                           <Input
-                          style={{background:"white"}}
+                            style={{ background: "white" }}
                             className="form-control-md"
                             name="logo"
                             type=""
@@ -2169,56 +2157,46 @@ const UserInfo = () => {
                           />
                           <button
                             style={{
-                              border:"none",
+                              border: "none",
                               position: "absolute",
-                              borderRadius:"2px",
+                              borderRadius: "2px",
                               height: "29px",
                               top: "28.5px",
                               padding: "0.375rem 0.75rem",
                               marginLeft: "1px",
-                              background:"#e9ecef",
+                              background: "#e9ecef",
                             }}
                             className="form-control-md"
                             id="input"
                             type="button"
                             onClick={() => setmodal(true)}
                           >
-                            Choose Image 
+                            Choose Image
                           </button>
-                          <ImgModal
-                            modal={modal}
-                            modal_set={() => {
-                              setmodal(false);
-                            }}
-                            upload_image={(val) => {
-                              setuploaded_img(val);
-                            }}
-                            result_image={(val) => {
-                              setresult_img(val);
-                            }}
-                          />
                           <FormFeedback type="invalid">
-                           Profile Pic is required
+                            Profile Pic is required
                           </FormFeedback>
                         </div>
                       </Col>
-                      {result_img !== "" && (
-                        <Col lg={1} md={4} sm={6}>
-                          <div className="mb-3 parent_div">
-                            <img
-                              onClick={() => setmodal(true)}
-                              src={result_img}
-                              alt="result_img"
-                              style={{
-                                width: "70px",
-                                height: "70px",
-                                borderRadius: "8px",
-                                boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                              }}
-                            />
-                          </div>
-                        </Col>
-                      )}
+                    }
+                    {result_img && (
+                      <Col lg={4} md={4} sm={6}>
+                        <Label>Profile Pic</Label>
+                        <div className="mb-3">
+                          <img
+                            onClick={() => setmodal(true)}
+                            src={result_img}
+                            alt="result_img"
+                            style={{
+                              width: "95px",
+                              height: "95px",
+                              borderRadius: "8px",
+                              boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                            }}
+                          />
+                        </div>
+                      </Col>
+                    )}
                     <Col lg={12} md={6} sm={12}>
                       <div style={{ width: "" }}>
                         <Label className="header-child">

@@ -14,6 +14,12 @@ import {
   setFilterB,
   setFilterC,
   setFilterD,
+  setFilterE,
+  setFilterF,
+  setFilterG,
+  setFilterH,
+  setFilterI,
+  setFilterJ,
 } from "../../store/filterValue/FilterValue";
 import { setDepartTab, setEwayBilltTab, setHubTab, setIncomingTab, setLocationTab, setManifestTab, setRoughTab, setRunsheetTab } from "../../store/parentFilter/ParentFilter";
 
@@ -41,6 +47,12 @@ const SideBar = () => {
     dispatch(setFilterB([]));
     dispatch(setFilterC([]));
     dispatch(setFilterD([]));
+    dispatch(setFilterE([]));
+    dispatch(setFilterF([]));
+    dispatch(setFilterG([]));
+    dispatch(setFilterH([]));
+    dispatch(setFilterI([]));
+    dispatch(setFilterJ([]));
   };
 
   const handleClick = (e) => {
