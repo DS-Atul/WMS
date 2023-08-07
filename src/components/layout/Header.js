@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { BsGear } from "react-icons/bs";
 // import localforage from "localforage";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +19,7 @@ import {
 
 const Header = () => {
   const dispatch = useDispatch();
-  
+
   const show_alert = useSelector((state) => state.alert.show_alert);
   const data_exist = useSelector((state) => state.alert.data_exist);
   const alert_type = useSelector((state) => state.alert.alert_type);
@@ -66,14 +66,14 @@ const Header = () => {
   const [docket_number_entry, setdocket_number_entry] = useState([]);
 
   useEffect(() => {
-    if(docket_number_entry === "") {
+    if (docket_number_entry === "") {
       dispatch(setDocketNumber([]));
       dispatch(setSearchDocket(false));
     }
   }, [docket_number_entry])
 
-   // This Function Used for full screen
-   function toggleFullscreen() {
+  // This Function Used for full screen
+  function toggleFullscreen() {
     if (
       !document.fullscreenElement &&
       /* alternative standard method */ !document.mozFullScreenElement &&
@@ -99,8 +99,31 @@ const Header = () => {
       }
     }
   }
+  const docket_no = useSelector((state) => state.OrderTracking.docket_number);
+  const search_docket = useSelector((state) => state.OrderTracking.search_docket);
+  // console.log("docket_no----", docket_no)
+  // useEffect(() => {
+  //   if ((docket_no !==[] || docket_no !== "") && search_docket) {
+  //     // You can update this URL with your desired link
+  //     const url = "/booking/orders/addorder";
+  //     window.open(url, "_blank");
+  //     // setShouldOpenLink(false); // Reset the flag after opening the link
+  //   }
+  // }, [docket_no, search_docket]);
 
-  
+  // const click = useCallback(() => {
+  //   if ((docket_no !==[] || docket_no !== "") && search_docket) {
+  //     alert()
+  //     return   <a
+  //     href={""}
+  //     target="_blank"
+  //     rel="noopener noreferrer"
+  //   >
+  //   <BsSearch />               
+  //   </a>
+  //   }
+  // }, [docket_no,search_docket]);
+
   return (
     <header>
       {show_alert ? (
@@ -417,7 +440,16 @@ const Header = () => {
                     width: "28px",
                   }}
                 >
-                  <BsSearch />
+                    <a
+                      href={`/booking/orders?${(
+                        (docket_number_entry)
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <BsSearch />
+                    </a>
+
                 </button>
               </div>
 

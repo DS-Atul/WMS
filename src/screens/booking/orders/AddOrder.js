@@ -869,19 +869,19 @@ const AddOrder = () => {
       } else if (d_cod === "" && order_type !== "Airport To Airport") {
         setd_cod_error(true);
         tariff_info.scrollIntoView();
-      } else if (
+      } else if ( order_type !== "Airport To Airport" &&
         cal_type === "DIMENSION" &&
         (length === "" || breadth === "" || height === "" || pieces === "")
       ) {
         alert("Please Add Dimensions Details");
-      } else if (
+      } else if (order_type !== "Airport To Airport" &&
         (length !== "" || breadth !== "" || height !== "" || pieces !== "") &&
         (length === "" || breadth === "" || height === "" || pieces === "")
       ) {
         alert(
           "Dimensions All Details Is Required"
         );
-      } else if (total_no_of_pieces !== parseInt(values.total_quantity)) {
+      } else if (order_type !== "Airport To Airport" && total_no_of_pieces !== parseInt(values.total_quantity)) {
         alert(
           "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
         );
@@ -2270,6 +2270,7 @@ const AddOrder = () => {
       console.log("order_data-----", order_data)
       setisupdating(true);
       setshipper_n(toTitleCase(order_data.shipper));
+      setm_shipper(toTitleCase(order_data.shipper));
       setorder_type(toTitleCase(order_data.order_type));
       settax_slab(order_data.tax_slab)
       setcoloader(order_data.coloader_name ? toTitleCase(order_data.coloader_name) : "")
@@ -2300,6 +2301,7 @@ const AddOrder = () => {
       setlocality_id_f(order_data.shipper_location);
       setcity(toTitleCase(order_data.shipper_city));
       setconsignee_n(toTitleCase(order_data.consignee));
+      setm_consignee(toTitleCase(order_data.consignee));
       setpincode(order_data.shipper_pincode);
       setconsginee_st(toTitleCase(order_data.consignee_state));
       // setlocality_sel_to(toTitleCase(order_data.consignee_locality ? order_data.consignee_locality : locslity_to_list?.length === 0 ? order_data.consignee_na_locality : ""));
@@ -2967,6 +2969,8 @@ const AddOrder = () => {
   const [shipper_address, setshipper_address] = useState("");
   const [shipper_contact_no, setshipper_contact_no] = useState(null)
   const [m_origin, setm_origin] = useState(null)
+  const [m_shipper, setm_shipper] = useState(null)
+  const [m_consignee, setm_consignee] = useState(null)
   const [m_destination, setm_destination] = useState(null)
   // Address Line 1 Shipper and consignee Ended
   const [state_error, setstate_error] = useState(false);
@@ -5974,6 +5978,25 @@ const AddOrder = () => {
                                 <Col lg={4} md={6} sm={6}>
                                   <div className="mb-2">
                                     <Label className="header-child">
+                                      Mobile Shipper
+                                    </Label>
+                                    <Input
+                                      value={m_shipper}
+                                      type="text"
+                                      className="form-control-md"
+                                      id="input"
+                                      onChange={(e) => {
+                                        setm_shipper(e.target.value);
+                                      }}
+                                      disabled
+                                    />
+                                  </div>
+                                </Col>
+                              }
+                              {!booking_through && isupdating && order?.order_channel === "MOBILE" && !locality_id_f &&
+                                <Col lg={4} md={6} sm={6}>
+                                  <div className="mb-2">
+                                    <Label className="header-child">
                                       Mobile Origin
                                     </Label>
                                     <Input
@@ -6269,6 +6292,25 @@ const AddOrder = () => {
                                 </div>
                               </Col>
 
+                              {!booking_through && isupdating && order?.order_channel === "MOBILE" && !locality_id_f_c &&
+                                <Col lg={4} md={6} sm={6}>
+                                  <div className="mb-2">
+                                    <Label className="header-child">
+                                      Mobile Consignee
+                                    </Label>
+                                    <Input
+                                      value={m_consignee}
+                                      type="text"
+                                      className="form-control-md"
+                                      id="input"
+                                      onChange={(e) => {
+                                        setm_consignee(e.target.value);
+                                      }}
+                                      disabled
+                                    />
+                                  </div>
+                                </Col>
+}
                               {!booking_through && isupdating && order?.order_channel === "MOBILE" && !locality_id_f_c &&
                                 <Col lg={4} md={6} sm={6}>
                                   <div className="mb-2">
@@ -7201,20 +7243,6 @@ const AddOrder = () => {
                               />
                             </div>
                           </Col>
-                          <Col lg={4} md={6} sm={6}>
-                            <div className="mb-3">
-                              <Label className="header-child">Type</Label>
-                              <NSearchInput
-                                data_list={type_list}
-                                data_item_s={type}
-                                set_data_item_s={settype}
-                                show_search={false}
-                              />
-                              {/* <div className="mt-1 error-text" color="danger">
-                          {d_cod_error ? "Select COD Type" : null}
-                        </div> */}
-                            </div>
-                          </Col>
                         </Row>
                       </CardBody>
                     ) : null}
@@ -7360,35 +7388,7 @@ const AddOrder = () => {
                               />
                             </div>
                           </Col>
-                          <Col lg={4} md={6} sm={6}>
-                            <div className="mb-2">
-                              <Label className="header-child">Total Quantity *</Label>
-                              <Input
-                                min={0}
-                                onChange={validation.handleChange}
-                                onBlur={validation.handleBlur}
-                                value={validation.values.total_quantity || ""}
-                                invalid={
-                                  validation.touched.total_quantity &&
-                                    validation.errors.total_quantity
-                                    ? true
-                                    : false
-                                }
-                                type="number"
-                                name="total_quantity"
-                                className="form-control-md"
-                                id="input"
-                                placeholder="Enter Total Quantity"
-                              />
-                              {validation.touched.total_quantity &&
-                                validation.errors.total_quantity ? (
-                                <FormFeedback type="invalid">
-                                  {validation.errors.total_quantity}
-                                </FormFeedback>
-                              ) : null}
-                            </div>
-                          </Col>
-                          <Col lg={8}>
+                          <Col lg={12}>
                             <div className="mb-2">
                               <Label className="header-child">Remarks</Label>
                               <Input
@@ -8667,7 +8667,7 @@ const AddOrder = () => {
                           let no_pi = package_i[3];
                           total_no_of_pieces += no_pi !== "" ? parseInt(no_pi) : 0;
                         });
-                        if (
+                        if ( order_type !== "Airport To Airport" &&
                           (length !== "" || breadth !== "" || height !== "" || pieces !== "") &&
                           (length === "" || breadth === "" || height === "" || pieces === "")
                         ) {
@@ -8675,7 +8675,7 @@ const AddOrder = () => {
                             "Dimensions All Details Is Required"
                           );
                         }
-                        else if (total_no_of_pieces !== parseInt(validation.values.total_quantity)) {
+                        else if (order_type !== "Airport To Airport" && total_no_of_pieces !== parseInt(validation.values.total_quantity)) {
                           alert(
                             "Total Number Of Pieces Is Not Equal To Total Number Of Quantity"
                           );

@@ -567,15 +567,15 @@ const Add_Commodity = () => {
           "transactionType": "1",
           "subSupplyType": "1",
           "docType": "INV",
-          "docNo": `DHLMH423398${index}`,
-          "docDate": "04/08/2023",
+          "docNo": `DHLMH42000${index}`,
+          "docDate": "06/08/2023",
           "invTyp": "B2B",
           "fromGstin": "05AAAAT2562R1Z3",
           "fromTrdName": "K R AGENCIES",
           "dispatchFromGstin": "05AAAAT2562R1Z3",
           "dispatchFromTradeNam": "Nandss entity-1",
-          "fromAddr1": "f 174 ground floor saraswati loke, ; sardhana road Roorkee road uttaranchal",
-          "fromAddr2": "shyam vihar phase 3 complex;HO 1272 indira nagar sastri nagar; GDN: 25 5/2, OPP.MANDI, DELHI ROAD,MEERUT",
+          "fromAddr1": "f 174 ground floor saraswati loke,",
+          "fromAddr2": "shyam vihar phase 3 complex;HO 1272 indira nagar sastri nagar",
           "fromPlace": "Shirur",
           "fromStateCode": "27",
           "fromPincode": "413249",
@@ -598,7 +598,7 @@ const Add_Commodity = () => {
           "otherValue": "0",
           "transMode": "2",
           "transDistance": "196",
-          "transDocDate": "04/08/2023",
+          "transDocDate": "06/08/2023",
           "transDocNo": "124423",
           "transId": "05AAAAR1685F1ZO",
           "transName": "Ashwin Guj Trans",
@@ -661,7 +661,7 @@ const Add_Commodity = () => {
   };
 
   useEffect(() => {
-    for (let index = 0; index < 6; index++) {
+    for (let index = 0; index < 10; index++) {
       // post_awb(index)
     }
   }, [])

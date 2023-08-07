@@ -3,6 +3,7 @@ import { MdAdd } from "react-icons/md";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import NavBtn from "../../../components/btn/NavBtn";
+import { useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import DataList from "../../../components/listDisplay/dataList/DataList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
@@ -15,9 +16,12 @@ import NumPagination from "../../../components/listDisplay/numPagination/NumPagi
 import OrderDataFormat from "../../../data/booking/order/OrderDataFormat";
 import OrderDataTitle from "../../../data/booking/order/OrderDataTitle";
 import OperationNavigate from "../navigateTab/OperationNavigate";
+import { setDocketNumber, setSearchDocket } from "../../../store/orderTracking/OrderTracking";
 
 const Orders = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
+  console.log("location====", location)
   const delivery_type = useSelector((state) => state.filtervalue.data_a);
   const cold_chain_btn = useSelector((state) => state.filtervalue.data_b);
   const transportation_mode = useSelector((state) => state.filtervalue.data_c);
@@ -64,6 +68,14 @@ const Orders = () => {
       setcan_delete(false);
     }
   }, [userpermission]);
+
+  useEffect(() => {
+    if (location.search !== "") {
+      const result = location.search.replace(/[?]/g, "");
+      dispatch(setSearchDocket(true));
+      dispatch(setDocketNumber(result));
+    }
+  }, [])
 
 
   return (

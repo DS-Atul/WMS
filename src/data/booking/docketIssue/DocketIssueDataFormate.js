@@ -7,6 +7,7 @@ import { setIsDeleted, setToggle } from "../../../store/pagination/Pagination";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import correct from "../../../assets/images/bookings/check-mark.png";
 import cross from "../../../assets/images/bookings/remove.png";
+import { BiRotateRight } from "react-icons/bi";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import {
@@ -360,7 +361,7 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
   return (
     <>
       {/* For Big Img Modal */}
-      <Modal show={showimg} fullscreen={fullscreen} onHide={() => setshowimg(false)}>
+      <Modal show={showimg} size={"lg"} onHide={() => setshowimg(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Issue Image</Modal.Title>
         </Modal.Header>
@@ -369,6 +370,9 @@ const DocketIssueDataFormate = ({ data, data1, can_delete }) => {
             <img src={img_data} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px", transform: `rotate(${rotationAngle}deg)` }}
               onClick={handleClick}
             />
+          </div>
+          <div style={{display:"flex", justifyContent:"right", cursor:"pointer", color:"blue"}}  onClick={handleClick}>
+            <BiRotateRight size={25}/>
           </div>
         </Modal.Body>
       </Modal>

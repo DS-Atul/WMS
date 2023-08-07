@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
+import { BiRotateRight } from "react-icons/bi";
 import axios from "axios";
 import { ServerAddress } from "../../../constants/ServerAddress";
 import { setIsDeleted, setToggle } from "../../../store/pagination/Pagination";
@@ -349,9 +350,12 @@ const OrderDeliveryDataFormate = ({ data, data1, can_delete }) => {
         </Modal.Header>
         <Modal.Body>
             <div style={{overflow:"hidden"}}>
-              <img src={img} alt="img" style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px", transform: `rotate(${rotationAngle}deg)` }}
+              <img src={img} alt="img" style={{ width: "100%", height: "100%", display: "block", margin: "auto", borderRaidus: "15px", transform: `rotate(${rotationAngle}deg)` }}
                 onClick={handleClick}
               />
+          </div>
+          <div style={{display:"flex", justifyContent:"right", cursor:"pointer", color:"blue"}}  onClick={handleClick}>
+            <BiRotateRight size={25}/>
           </div>
 
         </Modal.Body>

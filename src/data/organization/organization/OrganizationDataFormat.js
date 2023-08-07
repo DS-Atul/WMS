@@ -5,6 +5,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Modal from 'react-bootstrap/Modal';
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
+import { BiRotateRight } from "react-icons/bi";
 import {
   setDeleteId,
   setIds,
@@ -157,6 +158,9 @@ const OrganizationDataFormat = ({ data, data1 }) => {
             <img src={img} style={{ maxWidth: "100%", maxHeight: "100%", display: "block", margin: "auto", borderRaidus: "15px", transform: `rotate(${rotationAngle}deg)` }}
               onClick={handleClick}
             />
+          </div>
+          <div style={{display:"flex", justifyContent:"right", cursor:"pointer", color:"blue"}}  onClick={handleClick}>
+            <BiRotateRight size={25}/>
           </div>
         </Modal.Body>
 

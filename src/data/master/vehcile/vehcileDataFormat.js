@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FiSquare, FiCheckSquare } from "react-icons/fi";
 import axios from "axios";
+import { BiRotateRight } from "react-icons/bi";
 import Modal from 'react-bootstrap/Modal';
 import { ServerAddress } from "../../../constants/ServerAddress";
 import {
@@ -194,6 +195,10 @@ const VehcileDataFormat = ({ data, data1, can_delete }) => {
               onClick={handleClick}
             />
           </div>
+          <div style={{display:"flex", justifyContent:"right", cursor:"pointer", color:"blue"}}  onClick={handleClick}>
+            <BiRotateRight size={25}/>
+          </div>
+
         </Modal.Body>
 
       </Modal>
