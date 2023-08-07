@@ -62,9 +62,7 @@ import { gstin_no } from "../../../constants/CompanyDetails";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 import ImgModal from "../../../components/crop/ImgModal";
 import Loader from "../../../components/loader/Loader";
-import { RiNurseFill } from "react-icons/ri";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
-import { Hidden } from "@mui/material";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);

@@ -40,9 +40,9 @@ const AdminChangePassword = () => {
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
     const [check_Regex, setcheck_Regex] = useState(false);
 
-    const validatePassword = ((password) => {
+    const validatePassword = (password) => {
         return passwordRegex.test(password);
-    },[]);
+    };
 
     const changepassword = (newpassword) => {
         axios
@@ -83,7 +83,7 @@ const AdminChangePassword = () => {
         if (validatePassword(new_password)) {
             setcheck_Regex(false);
         }
-    }, [user_name, new_password, check_Regex, validatePassword])
+    }, [user_name, new_password, check_Regex])
 
     return (
         <>

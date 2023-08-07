@@ -156,13 +156,13 @@ const AddVehicleWheel = () => {
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          if (model == "") {
+          if (model === "") {
             setmodel_error(true);
           }
-          if (driver_type == "") {
+          if (driver_type === "") {
             setdriver_type_error(true);
           }
-          if (brake_system == "") {
+          if (brake_system === "") {
             setbrake_type_error(true);
           }
           validation.handleSubmit(e.values);
