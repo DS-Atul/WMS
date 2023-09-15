@@ -110,7 +110,7 @@ const AddVehicleWheel = () => {
           dispatch(setShowAlert(true));
           dispatch(setAlertType("success"));
           dispatch(
-            setDataExist(`Vehicle Engine Added ${model} Added Sucessfully`)
+            setDataExist(`Vehicle Wheel Added ${model} Added Sucessfully`)
           );
           navigate(-1);
         }
@@ -125,7 +125,7 @@ const AddVehicleWheel = () => {
     axios
       .get(
         ServerAddress +
-          `vms/get_vehclemodel/?p=${page}&records=${10}&name=${[
+          `vms/get_vehiclemodel/?p=${page}&records=${10}&name=${[
             "",
           ]}&model_name_search=${model_search_item}`,
         {
@@ -156,13 +156,13 @@ const AddVehicleWheel = () => {
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          if (model === "") {
+          if (model == "") {
             setmodel_error(true);
           }
-          if (driver_type === "") {
+          if (driver_type == "") {
             setdriver_type_error(true);
           }
-          if (brake_system === "") {
+          if (brake_system == "") {
             setbrake_type_error(true);
           }
           validation.handleSubmit(e.values);

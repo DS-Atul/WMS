@@ -10,8 +10,8 @@ import { setToggle } from "../../../store/parentFilter/ParentFilter";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
+import VehicleDataFormat from "../../../data/vms/vehicle/VehicleDataFormat";
 import VehicleDataTitle from "../../../data/vms/vehicle/VehicleDataTitle";
-import VehicleDataFormate from "../../../data/vms/vehicle/VehicleDataFormate";
 
 const Vehicle = () => {
   const dispatch = useDispatch();
@@ -54,7 +54,7 @@ const Vehicle = () => {
                 <NavBtn
                   btn_name="Add Vehicle"
                   icon={<MdAdd size={15} />}
-                  form_path="/Vehicle/AddVehicle"
+                  form_path="/vms/vehicle/add_vehicle"
                 />
 
                 {/* Filter Tool */}
@@ -66,8 +66,8 @@ const Vehicle = () => {
           {/* DataTable */}
           <DataList
             Data_Title={VehicleDataTitle}
-            Data_Format={VehicleDataFormate}
-            path={`vms/get_vehicle/?search=${search}&p=${page_num}&records=${data_len}`}
+            Data_Format={VehicleDataFormat}
+            path={`vms/get_vehicle_details/?search=${search}&p=${page_num}&records=${data_len}`}
           />
           <NumPagination path={"client"} />
         </div>

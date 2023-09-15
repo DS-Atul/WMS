@@ -12,7 +12,7 @@ import Filter from "../../../components/listDisplay/filter/Filter";
 import NumPagination from "../../../components/listDisplay/numPagination/NumPagination";
 // import ClientsDataTitle from "../../../data/master/clients/ClientsDataTitles";
 import TransporterDataTitle from "../../../data/trip/transporter/TransporterDataTitle";
-import TransporterDtataFormate from "../../../data/trip/transporter/TransporterDataFormate";
+import TransporterDataFormat from "../../../data/trip/transporter/TransporterDataFormat";
 
 const Transporter = () => {
   const dispatch = useDispatch();
@@ -53,7 +53,7 @@ const Transporter = () => {
                 <NavBtn
                   btn_name="Add Transporter"
                   icon={<MdAdd size={15} />}
-                  form_path="/transporter/AddTransporter"
+                  form_path="/trip/transporter/add_transporter"
                 />
 
                 {/* Filter Tool */}
@@ -65,11 +65,11 @@ const Transporter = () => {
           {/* DataTable */}
           <DataList
             Data_Title={TransporterDataTitle}
-            Data_Format={TransporterDtataFormate}
+            Data_Format={TransporterDataFormat}
             path={
               // toggle == false
               //   ?
-              `trip/get_transporter/?search=${search}&p=${page_num}&records=${data_len}`
+              `/master/all_transporter/?search=${search}&p=${page_num}&records=${data_len}`
               // : `master/get_clientsfilter_data/?client_name=${client_name}&p=${page_num}&records=${data_len}`
             }
           />

@@ -271,7 +271,7 @@ const ImgModal = ({
     });
     setloader(false);
   };
-  console.log(loader, "loader");
+  // console.log(loader, "loader");
 
   const [adjust_brightness, setadjust_brightness] = useState(false);
 

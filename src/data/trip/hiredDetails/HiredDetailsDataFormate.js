@@ -7,6 +7,7 @@ import HiredDetailsModal from "../../../screens/trip/hiredDetails/HiredDetailsMo
 // import { Toggle } from "../../../store/Filter/Parent_Filter/action";
 
 const HiredDetailsDataFormate = ({ data }) => {
+  console.log("object", data);
   // const dispatch = useDispatch();
   // const accessToken = useSelector(state => state.token.access_token);
   //--------state-------

@@ -47,10 +47,10 @@ const AddVehicleInspection = () => {
     setcircle_btn(!circle_btn);
   };
 
-  const [vehicle_reg_no_list, setvehicle_reg_no_list] = useState([]);
-  const [vehicle_reg_no, setvehicle_reg_no] = useState("");
-  const [vehicle_reg_no_id, setvehicle_reg_no_id] = useState("");
-  const [vehicle_reg_no_error, setvehicle_reg_no_error] = useState(false);
+  // const [vehicle_reg_no_list, setvehicle_reg_no_list] = useState([]);
+  // const [vehicle_reg_no, setvehicle_reg_no] = useState("");
+  // const [vehicle_reg_no_id, setvehicle_reg_no_id] = useState("");
+  // const [vehicle_reg_no_error, setvehicle_reg_no_error] = useState(false);
 
   const [engine, setengine] = useState("");
   const [pass_fail_list, setpass_fail_list] = useState(["PASS", "FAIL"]);
@@ -137,45 +137,45 @@ const AddVehicleInspection = () => {
   //       });
   //   };
 
-  const get_vehicle_reg_no = () => {
-    let temp = [...vehicle_reg_no_list];
-    axios
-      .get(
-        ServerAddress +
-          `vms/get_vehicle/?p=${page}&records=${10}&name=${[
-            "",
-          ]}&model_name_search=${search_vehicle_reg_no}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then(function (response) {
-        let data = response.data.results;
-        for (let index = 0; index < data.length; index++) {
-          temp.push([data[index].id, data[index].registeration_no]);
-        }
-        temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
-        setvehicle_reg_no_list(temp);
-      })
-      .catch((error) => {
-        alert(`Error occured while Gettting Data ${error}`);
-      });
-  };
+  // const get_vehicle_reg_no = () => {
+  //   let temp = [...vehicle_reg_no_list];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `vms/get_vehicle/?p=${page}&records=${10}&name=${[
+  //           "",
+  //         ]}&model_name_search=${search_vehicle_reg_no}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       let data = response.data.results;
+  //       for (let index = 0; index < data.length; index++) {
+  //         temp.push([data[index].id, data[index].registeration_no]);
+  //       }
+  //       temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
+  //       setvehicle_reg_no_list(temp);
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error occured while Gettting Data ${error}`);
+  //     });
+  // };
 
-  useLayoutEffect(() => {
-    get_vehicle_reg_no();
-  }, [page, search_vehicle_reg_no]);
+  // useLayoutEffect(() => {
+  //   get_vehicle_reg_no();
+  // }, [page, search_vehicle_reg_no]);
 
   return (
     <div>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          if (vehicle_reg_no == "") {
-            setvehicle_reg_no_error(true);
-          }
+          // if (vehicle_reg_no == "") {
+          //   setvehicle_reg_no_error(true);
+          // }
           validation.handleSubmit(e.values);
           return false;
         }}
@@ -210,9 +210,10 @@ const AddVehicleInspection = () => {
               {circle_btn ? (
                 <CardBody>
                   <Row>
-                    <Col lg={4} md={6} sm={6}>
+
+                    {/* <Col lg={4} md={6} sm={6}>
                       <div className="mb-3">
-                        <Label className="header-child">Vehicle Reg.No:*</Label>
+                        <Label className="header-child">Model Name : *</Label>
                         <SearchInput
                           data_list={vehicle_reg_no_list}
                           setdata_list={setvehicle_reg_no_list}
@@ -226,7 +227,7 @@ const AddVehicleInspection = () => {
                           setsearch_item={setsearch_vehicle_reg_no}
                         />
                       </div>
-                    </Col>
+                    </Col> */}
 
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">

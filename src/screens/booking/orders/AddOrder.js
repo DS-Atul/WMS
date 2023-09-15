@@ -62,7 +62,9 @@ import { gstin_no } from "../../../constants/CompanyDetails";
 import LogInEwayBill from "../../authentication/signin/LogInEwayBill";
 import ImgModal from "../../../components/crop/ImgModal";
 import Loader from "../../../components/loader/Loader";
+import { RiNurseFill } from "react-icons/ri";
 import SearchList from "../../../components/listDisplay/searchList/SearchList";
+import { Hidden } from "@mui/material";
 
 const AddOrder = () => {
   const user = useSelector((state) => state.authentication.userdetails);
@@ -137,6 +139,8 @@ const AddOrder = () => {
   const [is_logger_return, setis_logger_return] = useState(false)
 
   const [assettype_remarks, setassettype_remarks] = useState("")
+
+
 
   //Cold chain
   const [cold_chain, setcold_chain] = useState(false);
@@ -415,6 +419,21 @@ const AddOrder = () => {
   const [state_list_s, setstate_list_s] = useState([]);
   const [state, setstate] = useState("");
   const [state_id, setstate_id] = useState(0);
+
+
+  // WareHouse
+  const [is_warehouse, setis_warehouse] = useState(false)
+  const [warehouse_list, setwarehouse_list] = useState([])
+  const [warehouse, setwarehouse] = useState("")
+  const [warehouse_id, setwarehouse_id] = useState(null)
+  const [warehouse_page, setwarehouse_page] = useState(1)
+  const [warehouse_error, setwarehouse_error] = useState(false)
+  const [warehouse_loaded, setwarehouse_loaded] = useState(false)
+  const [warehouse_count, setwarehouse_count] = useState(1)
+  const [warehouse_bottom, setwarehouse_bottom] = useState(103)
+  const [search_warehouse, setsearch_warehouse] = useState("")
+
+
 
   //Pincode
   const [pincode_list_s, setpincode_list_s] = useState([]);
@@ -867,7 +886,7 @@ const AddOrder = () => {
       } else if (d_cod === "" && order_type !== "Airport To Airport") {
         setd_cod_error(true);
         tariff_info.scrollIntoView();
-      } else if ( order_type !== "Airport To Airport" &&
+      } else if (order_type !== "Airport To Airport" &&
         cal_type === "DIMENSION" &&
         (length === "" || breadth === "" || height === "" || pieces === "")
       ) {
@@ -1180,6 +1199,8 @@ const AddOrder = () => {
         ServerAddress + "booking/add_order/",
         {
           // organization: user.organization,
+          is_warehouse: is_warehouse,
+          warehouse: is_warehouse ? warehouse_id : null,
           shipper_na_state: (!locality_id && eway_confirm) ? toTitleCase(from_state_eway).toUpperCase() : "",
           shipper_na_pincode: (!locality_id && eway_confirm) ? eway_list?.fromPincode : "",
           shipper_na_locality: (!locality_id && eway_confirm) ? toTitleCase(locality_sel).toUpperCase() : "",
@@ -1450,6 +1471,8 @@ const AddOrder = () => {
         ServerAddress + "booking/update_order/" + id,
         {
           change_fields: change_fields,
+          is_warehouse: is_warehouse,
+          warehouse: is_warehouse ? warehouse_id : null,
           shipper_na_state: (!locality_id && eway_confirm) ? toTitleCase(from_state_eway).toUpperCase() : "",
           shipper_na_pincode: (!locality_id && eway_confirm) ? eway_list?.fromPincode : "",
           shipper_na_locality: (!locality_id && eway_confirm) ? toTitleCase(locality_sel).toUpperCase() : "",
@@ -2267,6 +2290,8 @@ const AddOrder = () => {
       let order_data = location.state.order;
       console.log("order_data-----", order_data)
       setisupdating(true);
+      setis_warehouse(order_data.is_warehouse)
+      setwarehouse(order_data.name ? toTitleCase(order_data.name) : "")
       setshipper_n(toTitleCase(order_data.shipper));
       setm_shipper(toTitleCase(order_data.shipper));
       setorder_type(toTitleCase(order_data.order_type));
@@ -4577,6 +4602,54 @@ const AddOrder = () => {
     setall_images(data)
   }, [all_ord_images, all_inv_images])
 
+  //Warehouse
+  const getWarehouse = () => {
+    let w_list = [];
+    axios
+      .get(
+        ServerAddress +
+        `wms/get_warehouse/?search=${""}&p=${warehouse_page}&records=${10}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      )
+      .then((response) => {
+        console.log("wresponse====", response)
+        if (response.data.results.length > 0) {
+          if (response.data.next === null) {
+            setwarehouse_loaded(false);
+          } else {
+            setwarehouse_loaded(true);
+          }
+          if (warehouse_page === 1) {
+            w_list = response.data.results.map((v) => [
+              v.id,
+              toTitleCase(v.name),
+            ]);
+          } else {
+            w_list = [
+              ...warehouse_list,
+              ...response.data.results.map((v) => [v.id, toTitleCase(v.name)]),
+            ];
+          }
+          setwarehouse_count(warehouse_count + 2);
+          setwarehouse_list(w_list);
+        }
+        else {
+          setwarehouse_list([])
+        }
+      })
+      .catch((err) => {
+        alert(`Error Occur in Get Data ${err}`);
+      });
+  };
+
+  useEffect(() => {
+    // if(is_warehouse){
+    getWarehouse();
+    // }
+  }, [warehouse_page, search_warehouse]);
+
   return (
     <div style={{ display: "flex", height: "100%" }}>
       {/* {!eway_loaded && memoizedLogInEwayBill} */}
@@ -5446,24 +5519,46 @@ const AddOrder = () => {
                             </div>
                           </Col>
                         )}
-
-                        {/* <Col lg={4} md={6} sm={6}>
-                      <div className="mb-3">
-                        <Label className="header-child">By Ewaybill</Label>
-                        <br />
-                        <Input
-                          className="form-check-input-sm"
-                          type="checkbox"
-                          // value="false"
-                          id="defaultCheck1"
-                          onClick={() => {
-                            setewaybill(!ewaybill);
-                          }}
-                          readOnly={true}
-                          checked={ewaybill}
-                        />
-                      </div>
-                    </Col> */}
+                        <Col lg={4} md={6} sm={6}>
+                          <div className="mb-3">
+                            <Label className="header-child">Is Warehouse</Label>
+                            <br />
+                            <Input
+                              className="form-check-input-sm"
+                              type="checkbox"
+                              // value="false"
+                              id="is_warehouse"
+                              onClick={() => {
+                                setis_warehouse(!is_warehouse);
+                              }}
+                              readOnly={true}
+                              checked={is_warehouse}
+                              disabled={isupdating}
+                            />
+                          </div>
+                        </Col>
+                        {is_warehouse &&
+                          <Col lg={4} md={6} sm={6}>
+                            <Label className="header-child">Warehouse *</Label>
+                            <SearchInput
+                              data_list={warehouse_list}
+                              setdata_list={setwarehouse_list}
+                              data_item_s={warehouse}
+                              set_data_item_s={setwarehouse}
+                              set_id={setwarehouse_id}
+                              // disable_me={isupdating}
+                              page={warehouse_page}
+                              setpage={setwarehouse_page}
+                              setsearch_item={setsearch_warehouse}
+                              error_message={"Plesae Select Any Warehouse"}
+                              error_s={warehouse_error}
+                              loaded={warehouse_loaded}
+                              count={warehouse_count}
+                              bottom={warehouse_bottom}
+                              setbottom={setwarehouse_bottom}
+                            />
+                          </Col>
+                        }
                       </Row>
                     </CardBody>
                   ) : null}
@@ -6308,7 +6403,7 @@ const AddOrder = () => {
                                     />
                                   </div>
                                 </Col>
-}
+                              }
                               {!booking_through && isupdating && order?.order_channel === "MOBILE" && !locality_id_f_c &&
                                 <Col lg={4} md={6} sm={6}>
                                   <div className="mb-2">
@@ -8665,7 +8760,7 @@ const AddOrder = () => {
                           let no_pi = package_i[3];
                           total_no_of_pieces += no_pi !== "" ? parseInt(no_pi) : 0;
                         });
-                        if ( order_type !== "Airport To Airport" &&
+                        if (order_type !== "Airport To Airport" &&
                           (length !== "" || breadth !== "" || height !== "" || pieces !== "") &&
                           (length === "" || breadth === "" || height === "" || pieces === "")
                         ) {
@@ -8826,7 +8921,7 @@ const AddOrder = () => {
                         }}
                       >
 
-                          {/* <img
+                        {/* <img
                             src={item.split(" ")[1]}
                             alt="React"
                             style={{
@@ -8839,22 +8934,22 @@ const AddOrder = () => {
                               objectFit: "cover",
                             }}
                           /> */}
-                          <ReactImageMagnify {...{
-                            smallImage: {
-                              alt: 'Wristwatch by Ted Baker London',
-                              isFluidWidth: true,
-                              src: item.split(" ")[1],
-                              // width: 380,
-                              // height: 240,
-                            },
-                            largeImage: {
-                              src: item.split(" ")[1],
-                              width: 1200,
-                              height: 1800,
-                            },
-                            enlargedImagePosition:"over",
-                            // enlargedImageContainerDimensions:{width: '100%', height: '100%'},
-                          }} />
+                        <ReactImageMagnify {...{
+                          smallImage: {
+                            alt: 'Wristwatch by Ted Baker London',
+                            isFluidWidth: true,
+                            src: item.split(" ")[1],
+                            // width: 380,
+                            // height: 240,
+                          },
+                          largeImage: {
+                            src: item.split(" ")[1],
+                            width: 1200,
+                            height: 1800,
+                          },
+                          enlargedImagePosition: "over",
+                          // enlargedImageContainerDimensions:{width: '100%', height: '100%'},
+                        }} />
                       </CardBody>
                     </Card>
                   </Col>

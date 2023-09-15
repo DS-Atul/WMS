@@ -18,8 +18,12 @@ import {
 } from "../../../store/alert/Alert";
 import toTitleCase from "../../../lib/titleCase/TitleCase";
 import { ServerAddress } from "../../../constants/ServerAddress";
+import { IconContext } from "react-icons";
+import { BiEdit } from "react-icons/bi";
 
 const ModelDataFormate = ({ data }) => {
+
+  console.log("ModelDataFormate DATA is==", data);
   const navigate = useNavigate();
   const total_data = useSelector((state) => state.pagination.total_data);
   const accessToken = useSelector((state) => state.authentication.access_token);
@@ -130,6 +134,8 @@ const ModelDataFormate = ({ data }) => {
       ) : (
         <>
           {data.map((item, index) => {
+            console.log("return ModelDataFormate DATA is==", data);
+
             return (
               <>
                 <tr
@@ -151,11 +157,33 @@ const ModelDataFormate = ({ data }) => {
                       <FiSquare size={14} />
                     )}
                   </td>
-                  <Link to="/Vehicle/Tab/Tabs" state={{ item: item }}>
+                  <Link to="/Vehicle/Tab/modelTabs"
+                    state={{ item: item }}>
                     <td>{toTitleCase(item.model_name)}</td>
                   </Link>
                   <td>{toTitleCase(item.make)}</td>
                   <td>{item.make_year}</td>
+                  <td>
+                    <IconContext.Provider value={{ size: "20px", color: "#3194fc" }}>
+                      <div
+                        onClick={() => {
+                          navigate("/vehicleModel/AddModel", {
+                            state: { item: item },
+                          });
+                        }}
+                      >
+                        <BiEdit />
+                      </div>
+                    </IconContext.Provider>
+                  </td>
+                  <td>{item.towing_capacity}</td>
+                  <td>{item.max_payload}</td>
+                  <td>{item.kmpl_city}</td>
+                  <td>{item.kmpl_highway}</td>
+                  <td>{item.kmpl_combined}</td>
+                  <td>{item.kerb_weight}</td>
+                  <td>{item.gross_weight}</td>
+                  <td>{item.created_by_nm}</td>
                 </tr>
               </>
             );

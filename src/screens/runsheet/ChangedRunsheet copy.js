@@ -197,7 +197,7 @@ const ChangedRusheet = () => {
 
   const getVehicles = () => {
     axios
-      .get(ServerAddress + `vms/get_vehicle/?p=1&records=10`, {
+      .get(ServerAddress + ``, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {

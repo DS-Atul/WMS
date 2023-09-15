@@ -32,7 +32,7 @@ import {
 import { ServerAddress } from "../../constants/ServerAddress";
 import axios from "axios";
 import { setPermission } from "../../store/permissions/Permissions";
-import { resetAuthenticationState } from "../../store/authentication/Authentication";
+import {resetAuthenticationState} from "../../store/authentication/Authentication";
 import {
   setDocketNumber,
   setSearchDocket,
@@ -431,11 +431,11 @@ const ProfileMenu = (apiCall) => {
           </DropdownItem>
           {/* <DropdownItem tag="a" href="/authentication/userProfile/Profile">
             {" "} */}
-          <DropdownItem className="dropdown-item">
+           <DropdownItem  className="dropdown-item">
             <Link to="/authentication/userProfile/Profile"
-            >
-              <i className="bx bx-user font-size-16 align-middle me-1" />
-              Profile
+>
+            <i className="bx bx-user font-size-16 align-middle me-1" />
+            Profile
             </Link>
           </DropdownItem>
 
@@ -459,15 +459,15 @@ const ProfileMenu = (apiCall) => {
 
           {/* ////// */}
           <DropdownItem className="dropdown-item">
-            <Link
-              to="/"
-            >
-              <i className="bx bx-reset font-size-20 align-middle me-1" />
-              <span onClick={() => {
-                setopenModal(true);
-              }}
-              >Change Password</span>
-            </Link>
+          <Link
+            to="/"
+          >
+            <i className="bx bx-reset font-size-20 align-middle me-1" />
+            <span onClick={() => {
+              setopenModal(true);
+            }}
+            >Change Password</span>
+          </Link>
           </DropdownItem>
 
           {/* ////// */}

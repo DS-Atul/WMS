@@ -83,7 +83,7 @@ const DataList = ({
       const response = await axios.get(ServerAddress + path, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      console.log(" response.data==========",  response.data)
+      // console.log(" response.data==========",  response.data)
   
       const { results, count, previous, next } = response.data;
   

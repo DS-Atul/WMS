@@ -20,6 +20,7 @@ const Organization = () => {
   const search = useSelector((state) => state.searchbar.search_item);
 
   const user = useSelector((state) => state.authentication.userdetails);
+  console.log("the user details====",user);
 
 
   useEffect(() => {

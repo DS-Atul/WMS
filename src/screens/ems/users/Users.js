@@ -72,6 +72,10 @@ const Users = () => {
                 className="text-sm-end"
                 onClick={() => dispatch(setPageNumber(1))}
               >
+                <Nav_Btn
+                  btn_name="Invite User"
+                  form_path="/ems/users/InviteUsers"
+                />
                 {(can_add || user.is_superuser) && (
                   <Nav_Btn
                     btn_name="Add User"

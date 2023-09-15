@@ -56,7 +56,7 @@ const Model = () => {
           <DataList
             Data_Title={ModelDataTitle}
             Data_Format={ModelDataFormate}
-            path={`vms/get_vehclemodel/?search=${search}&p=${page_num}&records=${data_len}`}
+            path={`vms/get_vehiclemodel/?search=${search}&p=${page_num}&records=${data_len}`}
           />
           <NumPagination path={"client"} />
         </div>

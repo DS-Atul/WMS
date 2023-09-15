@@ -9,8 +9,8 @@ import SearchList from "../../../components/listDisplay/searchList/SearchList";
 import PageTitle from "../../../components/pageTitle/PageTitle";
 import Title from "../../../components/title/Title";
 import Nav_Btn from "../../../components/btn/NavBtn";
-import DesignationDataFormat from "../../../data/master/designation/DesignationDataFormat";
-import DesignationDataTitle from "../../../data/master/designation/DesignationDataTitle";
+import DesignationDataFormat from "../../../data/organization/designation/DesignationDataFormat";
+import DesignationDataTitle from "../../../data/organization/designation/DesignationDataTitle"
 import { setToggle } from "../../../store/parentFilter/ParentFilter";
 
 function Designation() {

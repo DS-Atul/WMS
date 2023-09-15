@@ -71,7 +71,9 @@ const AddVehicleEngine = () => {
   //--------------
   const [model_list, setmodel_list] = useState([]);
   const [model, setmodel] = useState("");
-  const [model_id, setmodel_id] = useState("");
+  // const [model_id, setmodel_id] = useState("");
+  // console.log("MODEL LIST==",model_list);
+  // console.log("MODEL ID==",model_id);
   const [model_search_item, setmodel_search_item] = useState("");
 
   const [aspiration, setaspiration] = useState("");
@@ -92,11 +94,11 @@ const AddVehicleEngine = () => {
       .post(
         ServerAddress + "vms/add_vehicleengine/",
         {
-          vehicle: model_id,
+          // vehicle_model: model_id,
           engine_summary: values.engine_summary,
           engine_brand: values.engine_brand,
           aspiration: aspiration,
-          bloack_type: bloack_type,
+          block_type: bloack_type,
           bore: values.bore,
           cam_type: cam_type,
           compression: values.compression,
@@ -124,36 +126,38 @@ const AddVehicleEngine = () => {
       });
   };
 
-  const get_vehicle_model = () => {
-    let temp = [...model_list];
-    axios
-      .get(
-        ServerAddress +
-          `vms/get_vehclemodel/?p=${page}&records=${10}&name=${[
-            "",
-          ]}&model_name_search=${model_search_item}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then(function (response) {
-        let data = response.data.results;
-        for (let index = 0; index < data.length; index++) {
-          temp.push([data[index].id, data[index].model_name]);
-        }
-        temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
-        setmodel_list(temp);
-      })
-      .catch((error) => {
-        alert(`Error occured while Gettting Data ${error}`);
-      });
-  };
+  // const get_vehicle_model = () => {
+  //   let temp = [...model_list];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `vms/get_vehiclemodel/?p=${page}&records=${10}&name=${[
+  //           "",
+  //         ]}&model_name_search=${model_search_item}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       let data = response.data.results;
+  //       for (let index = 0; index < data.length; index++) {
+  //         temp.push([data[index].id, data[index].model_name]);
+  //       }
+  //       temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
+  //       setmodel_list(temp);
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error occured while Gettting Data ${error}`);
+  //     });
+  // };
 
-  useLayoutEffect(() => {
-    get_vehicle_model();
-  }, [page, model_search_item]);
+  // useLayoutEffect(() => {
+  //   get_vehicle_model();
+  // }, [page, model_search_item]);
+  
+  
   return (
     <div>
       <Form
@@ -164,8 +168,8 @@ const AddVehicleEngine = () => {
         }}
       >
         <div className="mt-3">
-          <PageTitle page=" Vehicle Engine" />
-          <Title title=" Add Vehicle Engine" parent_title="Vms" />
+          <PageTitle page="Engine" />
+          <Title title=" Add Engine" parent_title="Vms" />
         </div>
 
         {/*  Vehicle modal*/}
@@ -193,9 +197,10 @@ const AddVehicleEngine = () => {
               {circle_btn ? (
                 <CardBody>
                   <Row>
-                    <Col lg={4} md={6} sm={6}>
+                    
+                    {/* <Col lg={4} md={6} sm={6}>
                       <div className="mb-3">
-                        <Label className="header-child">Vehicle:</Label>
+                        <Label className="header-child">Model Name:</Label>
                         <SearchInput
                           data_list={model_list}
                           setdata_list={setmodel_list}
@@ -209,7 +214,7 @@ const AddVehicleEngine = () => {
                           // error_s={vehicle_model_error}
                         />
                       </div>
-                    </Col>
+                    </Col> */}
 
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-2">

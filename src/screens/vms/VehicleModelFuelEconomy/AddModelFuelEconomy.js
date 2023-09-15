@@ -104,7 +104,7 @@ const AddModelFuelEconomy = () => {
     axios
       .get(
         ServerAddress +
-          `vms/get_vehclemodel/?p=${page}&records=${10}&name=${[
+          `vms/get_vehiclemodel/?p=${page}&records=${10}&name=${[
             "",
           ]}&model_name_search=${model_search_item}`,
         {
@@ -153,7 +153,7 @@ const AddModelFuelEconomy = () => {
             <Card className="shadow bg-white rounded">
               <CardTitle className="mb-1 header">
                 <div className="header-text-icon header-text">
-                  Model Performance
+                  Model Fuel Economy
                   <IconContext.Provider
                     value={{
                       className: "header-add-icon",
@@ -172,6 +172,7 @@ const AddModelFuelEconomy = () => {
               {circle_btn ? (
                 <CardBody>
                   <Row>
+
                     <Col lg={4} md={6} sm={6}>
                       <div className="mb-3">
                         <Label className="header-child">Vehicle:*</Label>
@@ -276,6 +277,7 @@ const AddModelFuelEconomy = () => {
                         ) : null}
                       </div>
                     </Col>
+                    
                   </Row>
                 </CardBody>
               ) : null}

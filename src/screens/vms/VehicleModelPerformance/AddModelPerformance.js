@@ -68,9 +68,9 @@ const AddModelPerformance = () => {
   const send_vehicle_model_performence = (values) => {
     axios
       .post(
-        ServerAddress + "vms/add_vehicleperformance/",
+        ServerAddress + "vms/add_modelperformance/",
         {
-          vehicle: model_id,
+          vehicle_model: model_id,
           towing_capacity: values.towing_capacity,
           max_payload: values.max_payload,
         },
@@ -81,6 +81,7 @@ const AddModelPerformance = () => {
         }
       )
       .then(function (response) {
+        console.log("ADD MODEL PERFORMANCE response is==",response);
         if (response.data.status === "success") {
           dispatch(setShowAlert(true));
           dispatch(setAlertType("success"));
@@ -102,7 +103,7 @@ const AddModelPerformance = () => {
     axios
       .get(
         ServerAddress +
-          `vms/get_vehclemodel/?p=${page}&records=${10}&name=${[
+          `vms/get_vehiclemodel/?p=${page}&records=${10}&name=${[
             "",
           ]}&model_name_search=${model_search_item}`,
         {
@@ -127,6 +128,8 @@ const AddModelPerformance = () => {
   useLayoutEffect(() => {
     get_vehicle_model();
   }, [page, model_search_item]);
+
+  
   return (
     <div>
       <Form
@@ -246,6 +249,7 @@ const AddModelPerformance = () => {
                         ) : null}
                       </div>
                     </Col>
+                    
                   </Row>
                 </CardBody>
               ) : null}

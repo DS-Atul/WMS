@@ -173,7 +173,9 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                                 "-"
                         }
                     </td></tr>
-                    <tr><th colSpan={1}>&nbsp;E-way Bill No.</th><td colSpan={3}>
+                    <tr>
+                        {/* <th colSpan={1}>&nbsp;E-way Bill No.</th> */}
+                        {/* <td colSpan={3}>
                         {
                             eway_bill.length !== 0 ? eway_bill.filter(v => v !== "").map((v, index) => (
 
@@ -184,7 +186,8 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                                 :
                                 "-"
                         }
-                    </td></tr>
+                    </td> */}
+                    </tr>
 
                     <tr>
                         <th rowSpan={2}>&nbsp;Contact No.</th><td rowSpan={2}>{order.consignee_contact_no ? order.consignee_contact_no : "-"}<br></br>&nbsp;</td>
@@ -198,14 +201,14 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                         <th colSpan={4}>&nbsp;Special Instruction :<br></br>&nbsp;Dry ice with data logger.<br></br>&nbsp;<br></br><span style={{ paddingLeft: "3px" }}>Remarks : </span><span style={{ fontWeight: "normal" }}>{order.assettype_remarks ? toTitleCase(order.assettype_remarks) : "-"}</span></th>
                     </tr>
 
-                    <tr>
+                    {/* <tr>
                         <td rowSpan={3} colSpan={2}>Sensitive Supply Chain Logistics LTD liability is limited. By tendering the <br></br>shipment to Sensitive
                             Supply Chain Logistics LTD shipper agrees to the terms and conditions.Sensitive Supply <br></br>
                             Chain Logistics LTD liability for any loss or damage of the shipment will not exceed more<br></br> than $50 or declared value for insurance where shown . This is the non negotiable airway bill. </td>
-                    </tr>
-                    <tr colSpan={4}>
+                    </tr> */}
+                    {/* <tr colSpan={4}>
                         <td> {order.type === "AMBIENT" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Ambient</td><td> {order.type === "FROZEN" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Frozen</td><td> {order.type === "REFRIGERATED" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Refrigerated</td><td> {order.type === "CONTROLLED AMBIENT" ? <FiCheckSquare size={14} /> : <FiSquare size={14} />} <br></br>Controlled Ambient&emsp;</td>
-                        {/* Other */}
+                        Other
                     </tr>
                     <tr>
                         <td colSpan={4} style={{ textAlign: "left", paddingLeft: "4px" }}>
@@ -213,7 +216,7 @@ export const ComponentToPrint = React.forwardRef(({ order }, ref) => {
                             <div> UN Number </div>
                             <div><b> Expected  &emsp;&emsp; Packing Group</b> </div>
                         </td>
-                    </tr>
+                    </tr> */}
 
                     <tr>
                         <th rowSpan={2}>&nbsp;Shipper's Signature <br></br>&emsp;<br></br>&emsp;<br></br>&emsp;</th>

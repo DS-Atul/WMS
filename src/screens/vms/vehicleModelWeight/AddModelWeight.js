@@ -103,7 +103,7 @@ const AddModelWeight = () => {
     axios
       .get(
         ServerAddress +
-          `vms/get_vehclemodel/?p=${page}&records=${10}&name=${[
+          `vms/get_vehiclemodel/?p=${page}&records=${10}&name=${[
             "",
           ]}&model_name_search=${model_search_item}`,
         {
@@ -248,6 +248,7 @@ const AddModelWeight = () => {
                         ) : null}
                       </div>
                     </Col>
+                    
                   </Row>
                 </CardBody>
               ) : null}

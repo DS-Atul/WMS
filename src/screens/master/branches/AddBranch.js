@@ -556,7 +556,6 @@ const AddBranch = () => {
   };
 
   const getStates = async () => {
-    alert()
     let state_list = [];
     try {
       const resp = await axios.get(

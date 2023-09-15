@@ -30,10 +30,12 @@ const AddVehicleDimension = () => {
   const [page, setpage] = useState(1);
   const [model_search_item, setmodel_search_item] = useState("");
 
-  const [model_list, setmodel_list] = useState([]);
-  const [model, setmodel] = useState("");
+  // const [model_list, setmodel_list] = useState([]);
+  // const [model, setmodel] = useState("");
   const [model_id, setmodel_id] = useState("");
-  const [vehicle_model_error, setvehicle_model_error] = useState(false);
+  // console.log("MODEL ID is==",model_id);
+  // console.log("MODEL LIST is==",model_list);
+  // const [vehicle_model_error, setvehicle_model_error] = useState(false);
 
   //circle btn
   const [circle_btn, setcircle_btn] = useState(true);
@@ -77,7 +79,7 @@ const AddVehicleDimension = () => {
       .post(
         ServerAddress + "vms/add_vehicledimension/",
         {
-          vehicle: model_id,
+          // vehicle_model: model_id,
           width: values.width,
           height: values.height,
           length: values.length,
@@ -94,6 +96,7 @@ const AddVehicleDimension = () => {
         }
       )
       .then(function (response) {
+        console.log("Add Vehicle Dimension Response is ",response);
         if (response.data.status === "success") {
           alert("done");
           navigate(-1);
@@ -104,45 +107,47 @@ const AddVehicleDimension = () => {
       });
   };
 
-  const get_vehicle_model = () => {
-    let temp = [...model_list];
-    axios
-      .get(
-        ServerAddress +
-          `vms/get_vehclemodel/?p=${page}&records=${10}&name=${[
-            "",
-          ]}&model_name_search=${model_search_item}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      )
-      .then(function (response) {
-        let data = response.data.results;
-        for (let index = 0; index < data.length; index++) {
-          temp.push([data[index].id, data[index].model_name]);
-        }
-        temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
-        setmodel_list(temp);
-      })
-      .catch((error) => {
-        alert(`Error occured while Gettting Data ${error}`);
-      });
-  };
+  // const get_vehicle_model = () => {
+  //   let temp = [...model_list];
+  //   axios
+  //     .get(
+  //       ServerAddress +
+  //         `vms/get_vehiclemodel/?p=${page}&records=${10}&name=${[
+  //           "",
+  //         ]}&model_name_search=${model_search_item}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     )
+  //     .then(function (response) {
+  //       console.log("get_vehicle_model response is==",response.data);
+  //       let data = response.data.results;
+  //       // setmodel_id(data.id)
+  //       for (let index = 0; index < data.length; index++) {
+  //         temp.push([data[index].id, data[index].model_name]);
+  //       }
+  //       temp = [...new Set(temp.map((v) => `${v}`))].map((v) => v.split(","));
+  //       setmodel_list(temp);
+  //     })
+  //     .catch((error) => {
+  //       alert(`Error occured while Gettting Data ${error}`);
+  //     });
+  // };
 
-  useLayoutEffect(() => {
-    get_vehicle_model();
-  }, [page, model_search_item]);
+  // useLayoutEffect(() => {
+  //   get_vehicle_model();
+  // }, [page, model_search_item]);
 
   return (
     <div>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          if (model == "") {
-            setvehicle_model_error(true);
-          }
+          // if (model == "") {
+          //   setvehicle_model_error(true);
+          // }
           validation.handleSubmit(e.values);
           return false;
         }}
@@ -177,9 +182,10 @@ const AddVehicleDimension = () => {
               {circle_btn ? (
                 <CardBody>
                   <Row>
-                    <Col lg={4} md={6} sm={6}>
+                    
+                    {/* <Col lg={4} md={6} sm={6}>
                       <div className="mb-3">
-                        <Label className="header-child">Vehicle:</Label>
+                        <Label className="header-child">Model Name:</Label>
                         <SearchInput
                           data_list={model_list}
                           setdata_list={setmodel_list}
@@ -192,6 +198,35 @@ const AddVehicleDimension = () => {
                           // error_s={vehicle_model_error}
                           setsearch_item={setmodel_search_item}
                         />
+                      </div>
+                    </Col> */}
+
+                    <Col lg={4} md={6} sm={6}>
+                      <div className="mb-2">
+                        <Label className="header_child">Length:</Label>
+                        <Input
+                          onChange={validation.handleChange}
+                          onBlur={validation.handleBlur}
+                          value={validation.values.length || ""}
+                          invalid={
+                            validation.touched.length &&
+                            validation.errors.length
+                              ? true
+                              : false
+                          }
+                          className="form-control-md "
+                          name="length"
+                          id="input"
+                          type="number"
+                          min={0}
+                          placeholder="Enter Length"
+                        />
+                        {validation.touched.length &&
+                        validation.errors.length ? (
+                          <FormFeedback type="invalid">
+                            {validation.errors.length}
+                          </FormFeedback>
+                        ) : null}
                       </div>
                     </Col>
 
@@ -246,35 +281,6 @@ const AddVehicleDimension = () => {
                         validation.errors.height ? (
                           <FormFeedback type="invalid">
                             {validation.errors.height}
-                          </FormFeedback>
-                        ) : null}
-                      </div>
-                    </Col>
-
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="mb-2">
-                        <Label className="header_child">Length:</Label>
-                        <Input
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.length || ""}
-                          invalid={
-                            validation.touched.length &&
-                            validation.errors.length
-                              ? true
-                              : false
-                          }
-                          className="form-control-md "
-                          name="length"
-                          id="input"
-                          type="number"
-                          min={0}
-                          placeholder="Enter Length"
-                        />
-                        {validation.touched.length &&
-                        validation.errors.length ? (
-                          <FormFeedback type="invalid">
-                            {validation.errors.length}
                           </FormFeedback>
                         ) : null}
                       </div>

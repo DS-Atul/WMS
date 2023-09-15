@@ -502,54 +502,106 @@ const SignIn = () => {
         //   trigger: false,
         // },
         {
+          id: 15,
+          dropdown:"WMS",
+          dropdownMenu :[
+            ["Warehouse","/wms/warehouse/Warehouse"],
+            ["BinDetails","/wms/bindetails/BinDetails"],
+            ["Outbound","/Outbound"],
+            ["Inbound","/Inbound"],
+            ["Inventory","/Inventory"],
+          ],
+          trigger:false,
+        },
+        {
           id: 1,
+          dropdown: "Organization",
+          dropdownMenu: [
+          ["Organization", "/organization/organization"],
+          ["Departments", "/organization/Department"],
+          ["Designations", "/organization/designation"],       
+          [" Holidays", "/organization/holidays/HolidayMain"],       
+          ["Salary Parameter", "/organization/SalaryParameter"],       
+          ["Salary Component", "/organization/SalaryComponent"],       
+        ],
+          trigger: false,
+        },
+        {  
+          id: 2,
+          dropdown: "HR",
+          dropdownMenu: [
+            ["OnBoard Employee", "/hr/onBoardEmployee/"],
+            ["Employees", "/hr/Employee"],
+            ["Job Advertisements", "/hr/recruitment/jobAdvertisements/JobList"],
+            ["Job Applications", "/hr/recruitment/jobApplications"],
+            ["Assign Work", "/"],
+          ],
+          trigger: false,
+        },
+        {
+          id: 3,
           dropdown: "EMS",
           dropdownMenu: [
             ["Login Details", "/ems/logindetails"],
             ["Users", "/ems/users"],
-            ["Departments", "/ems/department"],
-            ["Designations", "/ems/designation"],
+            // ["Departments", "/ems/department"],
+            // ["Designations", "/ems/designation"],
             ["Change Password", "/ems/adminChangePassword"],
-          ],
-          trigger: false,
-        },
-        // {
-        //   id: 2,
-        //   dropdown: "VMS",
-        //   dropdownMenu: [
-        //     ["Vehicle Model", "/vehicleModel/Model"],
-        //     ["Vehicle Engine", "/vehicleEngine/AddVehicleEngine"],
-        //     ["Vehicle Dimension", "/vehicleDimension/AddVehicleDimension"],
-        //     [
-        //       "Vehicle Model Performance",
-        //       "/VehicleModelPerformance/AddModelPerformance",
-        //     ],
-        //     [
-        //       "Vehicle Model Fuel Economy ",
-        //       "/VehicleModelFuelEconomy/AddModelFuelEconomy",
-        //     ],
-        //     ["Vehicle Model Weight", "/vehicleModelWeight/AddModelWeight"],
-        //     ["Vehicle Inspection", "/vehicleInspection/AddVehicleInspection"],
-        //     [
-        //       "Vehicle Transmission ",
-        //       "/vehicleTransmission/AddVehicleTransmission",
-        //     ],
-        //     ["Vehicle Wheels", "/vehicleWheels/AddVehicleWheel"],
-        //     ["Vehicle", "/Vehicle/Vehicle"],
-        //   ],
-        //   trigger: false,
-        // },
-        {
-          id: 3,
-          dropdown: "EwayBill",
-          dropdownMenu: [
-            ["DocketWithEwayBill", "/ewaybill/docketEwayBill"],
-            ["Eway Dashboard", "/ewaybill/dashboard"],
+            ["Attendance", "/attendance/userAttendance/AddAttendance"],
+            ["Leave Apply", "/ems/leave"],
+            ["Leave Tracker", "/ems/leave/leaveTracker"],
+            ["PaySlip", "/ems/payroll/PaySlip"],
+            ["Training", "/ems/traning/AddTraining"],
+            ["Training Schedules", "/ems/traning/AddTrainingShedule"],
           ],
           trigger: false,
         },
         {
           id: 4,
+          dropdown: "VMS",
+          dropdownMenu: [
+            ["Dashboard ","/"],
+            ["Model", "/vehicleModel/Model"],
+            ["Vehicle", "/vms/vehicle/vehicle"],
+            // ["Engine", "/vehicleEngine/VehicleEngine"],
+            // ["Dimension", "/vehicleDimension/VehicleDimension"],
+            // [
+            //   "Model Performance",
+            //   "/VehicleModelPerformance/ModelPerformance",
+            // ],
+            // [
+            //   "Model Fuel Economy ",
+            //   "/VehicleModelFuelEconomy/AddModelFuelEconomy",
+            // ],
+            // ["Model Weight", "/vehicleModelWeight/AddModelWeight"],
+            // ["Inspection", "/vehicleInspection/AddVehicleInspection"],
+            // [
+            //   "Transmission ",
+            //   "/vehicleTransmission/AddVehicleTransmission",
+            // ],
+            // ["Wheels", "/vehicleWheels/AddVehicleWheel"],
+            ["Reminders", "/"],
+            ["Issues","/"],
+            ["Service Vendor","/"],
+            ["Service ","/"],
+
+          ],
+          trigger: false,
+        },
+        {
+          id: 5,
+          dropdown: "TRIP",
+          dropdownMenu: [
+            ["Dashboard", ""],
+            ["Transporter", "/trip/transporter/transporter"],
+            ["Hired Details", "/trip/hiredDetails/hired_details"],
+            ["Tracking", "/trip/AllVehicle"],
+            ["Vehicle InTransit", "/"],
+          ],
+          trigger: false,
+        },
+        {
+          id: 6,
           dropdown: "Master",
           dropdownMenu: [
             ["Commodities", "/master/commodities"],
@@ -561,13 +613,46 @@ const SignIn = () => {
             ["Assets", "/master/assets"],
             ["Routes", "/master/routes"],
             ["Vendors", "/master/vendor/Vendor"],
-            ["Vehicle", "/master/Vehcile"],
+            // ["Vehicle", "/master/Vehcile"],
+          ],
+          trigger: false,
+        },
+        {
+          id: 7,
+          dropdown: "Accounts",
+          dropdownMenu: [
+            ["Ledgers", "/account/ledger"],
+            ["Voucher", "/accounts/voucher/Voucher"], 
+           
+          ],
+          trigger: false,
+        },
+        {
+          id: 8,
+          dropdown: "Finance",
+          dropdownMenu: [
+            ["Loan", "/finance/Loan"],
+            ["Card Master", "/finance/cardmaster/CardMaster"],
+            ["Advances", "/finance/advances/Advance"],
+            ["Expenses", "/finance/expenses/Expense"],
+            ["Bank Account Master", "/finance/bankaccountmaster/BankAccountMaster"],
+            ["Account Sub-Group Master", "/finance/accountsubgroupmaster/AccountSubGroupMaster"],
+            ["Fund Master Entry", "/finance/fundmaster/FundMaster"],
+          ],
+          trigger: false,
+        },
+        {
+          id: 9,
+          dropdown: "EwayBill",
+          dropdownMenu: [
+            ["DocketWithEwayBill", "/ewaybill/docketEwayBill"],
+            ["Eway Dashboard", "/ewaybill/dashboard"],
           ],
           trigger: false,
         },
 
         {
-          id: 5,
+          id: 10,
           dropdown: "Booking",
           dropdownMenu: [
             ["Orders", "/booking/orders"],
@@ -580,7 +665,7 @@ const SignIn = () => {
           trigger: false,
         },
         {
-          id: 6,
+          id: 11,
           dropdown: "Runsheet",
           dropdownMenu: [
             ["Pending Delivery", "/runsheet/pendingdelivery"],
@@ -589,7 +674,7 @@ const SignIn = () => {
           trigger: false,
         },
         {
-          id: 7,
+          id: 12,
           dropdown: "Manifest",
           dropdownMenu: [
             ["Pending For Dispatch", "/manifest/pendingfordispatch"],
@@ -602,7 +687,7 @@ const SignIn = () => {
           trigger: false,
         },
         {
-          id: 8,
+          id: 13,
           dropdown: "Billing",
           dropdownMenu: [
             ["Bill Closeds", "/billing/billclosed"],
@@ -611,20 +696,15 @@ const SignIn = () => {
           ],
           trigger: false,
         },
+        
         {
-          id: 9,
-          dropdown: "Organization",
-          dropdownMenu: [["Organization", "/organization/organization"]],
-          trigger: false,
-        },
-        {
-          id: 10,
+          id: 14,
           dropdown: "Analytics",
           dropdownMenu: [["Reports", "/analytics/reports"]],
           trigger: false,
         },
         {
-          id: 11,
+          id: 15,
           dropdown: "Miscellaneous",
           dropdownMenu: [[" Notice Category", "/miscellaneous/Miscellaneous"]],
           trigger: false,

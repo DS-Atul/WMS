@@ -29,7 +29,7 @@ const NumPagination = ({ path, pathb }) => {
   const [first, setfirst] = useState(0);
   const [page_no, setpage_no] = useState(1);
   let total = total_data;
-  console.log("next=========", next)
+  // console.log("next=========", next)
   const leftClick = () => {
     if (prev !== null && is_loaded === true) {
       setpage_no(page_no - 1);
